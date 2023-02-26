@@ -41,12 +41,10 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const branch = context.payload.pull_request.head.ref;
-          return github.actions.createWorkflowDispatch({
-            workflow_id: '12345678', // Replace with the ID of your npm-patch workflow
-            ref: branch,
-            inputs: {
-              branch: branch
-            }
+          const response = await github.repos.createDispatchEvent({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            event_type: 'publish-components'
           });
+          console.log(response);
 

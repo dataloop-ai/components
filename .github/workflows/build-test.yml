@@ -22,17 +22,3 @@ jobs:
       run: npm run build
     - name: Test
       run: npm test
-    - name: Trigger npm-patch
-      if: success()
-      uses: actions/github-script@v4
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const branch = context.payload.pull_request.head.ref;
-          return github.actions.createWorkflowDispatch({
-            workflow_id: '12345678', // Replace with the ID of your npm-patch workflow
-            ref: branch,
-            inputs: {
-              branch: branch
-            }
-          });
