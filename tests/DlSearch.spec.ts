@@ -1,0 +1,10 @@
+import { mount } from '@vue/test-utils'
+import { DlSearch } from '../src/components'
+
+describe('DlSearch component', () => {
+    it('should mount the component', async () => {
+        const wrapper = mount(DlSearch)
+
+        expect(wrapper.exists()).toBe(true)
+    })
+})

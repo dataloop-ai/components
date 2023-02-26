@@ -1,0 +1,44 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "useDefineForClassFields": true,
+        "moduleResolution": "node",
+        "strict": true,
+        "jsx": "preserve",
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "lib": ["esnext", "dom"],
+        "skipLibCheck": true,
+        "paths": {
+            "@/*": ["./src/components"]
+        },
+        "types": [
+            "vite/client",
+            "@types/jest",
+            "@types/lodash",
+            "@types/node"
+        ],
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "strictPropertyInitialization": false,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictNullChecks": false,
+        "allowJs": true,
+        "importHelpers": true,
+        "declaration": true,
+        "declarationMap": true,
+    },
+    "vueCompilerOptions": {
+        "target": 2.7,
+        "experimentalDisableTemplateSupport": true
+    },
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "exclude": ["node_modules", "**/*.stories.ts"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

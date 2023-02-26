@@ -1,0 +1,136 @@
+.my-sticky-header-column-table {
+  /* height or max-height is important */
+  height: 400px;
+
+  /* specifying max-width so the example can
+    highlight the sticky column on any browser window */
+  max-width: 800px;
+
+  td:first-child {
+    /* bg color is important for td; just specify one */
+    background-color: #c1f4cd !important;
+  }
+
+  tr th {
+    position: sticky !important;
+    /* higher than z-index for td below */
+    z-index: 2;
+    /* bg color is important; just specify one */
+    background: #fff !important;
+    ;
+  }
+
+  /* this will be the loading indicator */
+  thead tr:last-child th {
+    /* height of all previous header rows */
+    top: 48px;
+    /* highest z-index */
+    z-index: 3;
+  }
+
+  thead tr:first-child th {
+    top: 0;
+    z-index: 1;
+  }
+
+  tr:first-child th:first-child {
+    /* highest z-index */
+    z-index: 3;
+  }
+
+  td:first-child {
+    z-index: 1;
+  }
+
+  td:first-child,
+  th:first-child {
+    position: sticky !important;
+    left: 0;
+  }
+}
+
+.my-sticky-header-column-table-2 {
+  /* height or max-height is important */
+  height: 400px;
+
+  /* specifying max-width so the example can
+    highlight the sticky column on any browser window */
+  max-width: 800px;
+
+  td:nth-child(1) {
+    /* bg color is important for td; just specify one */
+    background-color: #c1f4cd !important;
+  }
+
+  td:nth-child(2) {
+    /* bg color is important for td; just specify one */
+    background-color: #f0e912 !important;
+  }
+
+  tr th {
+    position: sticky !important;
+    /* higher than z-index for td below */
+    z-index: 2;
+    /* bg color is important; just specify one */
+    background: #fff !important;
+    ;
+  }
+
+  /* this will be the loading indicator */
+  thead tr:last-child th {
+    /* height of all previous header rows */
+    top: 48px;
+    /* highest z-index */
+    // z-index: 3;
+  }
+
+  thead tr:first-child,
+  tr:nth-child(2) th {
+    top: 0;
+    z-index: 1;
+  }
+
+
+
+  tr:first-child th:first-child,
+  th:nth-child(2) {
+    /* highest z-index */
+    z-index: 3 !important;
+  }
+
+
+  td:first-child {
+    z-index: 1;
+  }
+
+  td:nth-child(2) {
+    z-index: 1;
+  }
+
+  td:first-child,
+  th:first-child {
+    position: sticky !important;
+    left: 0;
+  }
+
+  td:nth-child(2),
+  th:nth-child(2) {
+    position: sticky !important;
+    left: 206px;
+  }
+}
+
+
+.add-row-input {
+  border: 1px solid #E4E4E4;
+  outline: none;
+
+  &:focus {
+    border: 1px solid #20ABFA;
+  }
+
+  border-radius: 3px;
+
+  padding: 5px;
+  font-size: 14px;
+}
