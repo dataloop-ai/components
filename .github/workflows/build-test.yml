@@ -1,0 +1,38 @@
+name: build-test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2.1.2
+      with:
+        node-version: '16.x'
+    - name: Install npm dependencies
+      run: npm install
+    - name: Build
+      run: npm run build
+    - name: Test
+      run: npm test
+    - name: Trigger npm-patch
+      if: success()
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const branch = context.payload.pull_request.head.ref;
+          return github.actions.createWorkflowDispatch({
+            workflow_id: '12345678', // Replace with the ID of your npm-patch workflow
+            ref: branch,
+            inputs: {
+              branch: branch
+            }
+          });

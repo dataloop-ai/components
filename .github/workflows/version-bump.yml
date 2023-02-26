@@ -1,0 +1,52 @@
+name: npm-patch
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2.1.2
+      with:
+        node-version: '16.x'
+    - name: Install npm dependencies
+      run: npm install
+    - name: Bump version
+      run: |
+        if [ ${{ github.ref }} = 'refs/heads/development' ]
+        then
+          npm version minor -m "Bump version to %s"
+        else
+          npm version patch -m "Bump version to %s"
+        fi
+    - name: Commit changes
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "github-action@users.noreply.github.com"
+        git commit -am "Bump version"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: ${{ github.ref }}
+    - name: Trigger npm-publish
+      if: success()
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const branch = context.payload.pull_request.head.ref;
+          return github.actions.createWorkflowDispatch({
+            workflow_id: '12345678', // Replace with the ID of your npm-patch workflow
+            ref: branch,
+            inputs: {
+              branch: branch
+            }
+          });
+
