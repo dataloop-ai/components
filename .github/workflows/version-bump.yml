@@ -1,50 +1,40 @@
-name: npm-patch
+name: Update package version
 
 on:
-  push:
-    branches:
-      - main
-      - development
+  pull_request:
+    types: [closed]
 
 jobs:
-  bump:
+  update-version:
     runs-on: ubuntu-latest
-
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2.1.2
-      with:
-        node-version: '16.x'
-    - name: Install npm dependencies
-      run: npm install
-    - name: Bump version
-      run: |
-        if [ ${{ github.ref }} = 'refs/heads/development' ]
-        then
-          npm version minor -m "Bump version to %s"
-        else
-          npm version patch -m "Bump version to %s"
-        fi
-    - name: Commit changes
-      run: |
-        git config --global user.name "GitHub Action"
-        git config --global user.email "github-action@users.noreply.github.com"
-        git commit -am "Bump version"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        branch: ${{ github.ref }}
-    - name: Trigger npm-publish
-      if: success()
-      uses: actions/github-script@v4
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const response = await github.repos.createDispatchEvent({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            event_type: 'publish-components'
-          });
-          console.log(response);
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: '16.x'
+      - name: Update package version
+        run: |
+          if [[ "${{ github.event.pull_request.head.ref }}" == "development" ]]; then
+            npm version minor
+          else
+            npm version patch
+          fi
+      - name: Push changes
+        run: |
+          git push --follow-tags
+      - name: Trigger npm-publish
+        if: success()
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const response = await github.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'publish-components'
+            });
+            console.log(response);
 
