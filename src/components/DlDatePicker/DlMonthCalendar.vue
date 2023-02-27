@@ -67,14 +67,8 @@ export default defineComponent({
             default: null
         },
         modelValue: {
-            type: Object as PropType<DateInterval>,
-            default: () => {
-                const date = new Date()
-                return {
-                    from: date,
-                    to: date
-                }
-            }
+            type: Object as PropType<DateInterval | null>,
+            default: null
         },
         withLeftChevron: Boolean,
         withRightChevron: Boolean,
@@ -106,21 +100,24 @@ export default defineComponent({
     },
     methods: {
         handleClick(value: number) {
-            const d = new CalendarDate(this.modelValue.from)
+            const d = new CalendarDate()
             d.year(parseInt(this.title)).month(value).startOf('month')
 
             if (!isInRange(this.availableRange, d)) return
 
+            const date = d.toDate()
             const newDate = {
-                from: d.toDate(),
-                to: d.toDate()
+                from: date,
+                to: date
             }
             this.$emit('update:modelValue', newDate)
             this.$emit('change', newDate)
         },
 
         handleMouseenter(value: number) {
-            const d = new CalendarDate(this.modelValue.from)
+            if (this.modelValue === null) return
+
+            const d = new CalendarDate()
             d.year(parseInt(this.title)).month(value).startOf('month')
 
             if (!isInRange(this.availableRange, d)) return
@@ -132,7 +129,7 @@ export default defineComponent({
         },
 
         handleMousedown(value: number) {
-            const d = new CalendarDate(this.modelValue.from)
+            const d = new CalendarDate()
             d.year(parseInt(this.title)).month(value).startOf('month')
 
             if (!isInRange(this.availableRange, d)) return
@@ -148,18 +145,17 @@ export default defineComponent({
                 background: 'var(--dl-color-secondary)'
             }
 
-            const currentD = new CalendarDate(this.modelValue.from)
-            const d = new CalendarDate(currentD)
-            d.month(value).year(parseInt(this.title))
+            const initialD = new CalendarDate()
+            const d = new CalendarDate()
+
+            d.year(parseInt(this.title)).month(value).startOf('month')
 
             if (!isInRange(this.availableRange, d)) {
                 style = {
                     'border-color': 'var(--dl-color-disabled)',
                     color: 'var(--dl-color-disabled)'
                 }
-            } else {
-                const initialD = new CalendarDate()
-
+            } else if (this.modelValue !== null) {
                 const from = new CalendarDate(this.modelValue.from)
                 const to = new CalendarDate(this.modelValue.to)
 
@@ -202,6 +198,10 @@ export default defineComponent({
                 ) {
                     style.color = 'var(--dl-color-secondary)'
                 } else if (d.isSame(initialD, 'month') && !isIntervalBoundary) {
+                    style.color = 'var(--dl-color-secondary)'
+                }
+            } else {
+                if (d.isSame(initialD, 'month')) {
                     style.color = 'var(--dl-color-secondary)'
                 }
             }

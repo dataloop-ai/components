@@ -93,14 +93,8 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Object as PropType<DateInterval>,
-            default: () => {
-                const date = new Date()
-                return {
-                    from: date,
-                    to: date
-                }
-            }
+            type: Object as PropType<DateInterval | null>,
+            default: null
         },
         type: {
             type: String,
@@ -120,7 +114,7 @@ export default defineComponent({
         calendarFrom: Calendar | null
         calendarTo: Calendar | null
         isSelectionMode: boolean
-        dateInterval: DateInterval
+        dateInterval: DateInterval | null
     } {
         return {
             uuid: `dl-date-picker-${v4()}`,
@@ -133,8 +127,7 @@ export default defineComponent({
     },
     watch: {
         type(value: string) {
-            const cDateFrom = new CalendarDate(this.modelValue.from)
-            const cDateTo = new CalendarDate(this.modelValue.to)
+            const [cDateFrom, cDateTo] = this.getCalendarDates(this.modelValue)
 
             this.calendarFrom!.currentDate = cDateFrom
             this.calendarTo!.currentDate = cDateTo
@@ -148,10 +141,9 @@ export default defineComponent({
             )
         },
         modelValue: {
-            handler(value: DateInterval) {
+            handler(value: DateInterval | null) {
                 this.dateInterval = value
-                const cDateFrom = new CalendarDate(value.from)
-                const cDateTo = new CalendarDate(value.to)
+                const [cDateFrom, cDateTo] = this.getCalendarDates(value)
 
                 this.calendarFrom!.currentDate = cDateFrom
                 this.calendarTo!.currentDate = cDateTo
@@ -169,8 +161,7 @@ export default defineComponent({
         }
     },
     beforeMount() {
-        const cDateFrom = new CalendarDate(this.modelValue.from)
-        const cDateTo = new CalendarDate(this.modelValue.to)
+        const [cDateFrom, cDateTo] = this.getCalendarDates(this.modelValue)
 
         const unit = this.type === 'day' ? 'month' : 'year'
 
@@ -189,6 +180,14 @@ export default defineComponent({
         }
     },
     methods: {
+        getCalendarDates(value: DateInterval): [CalendarDate, CalendarDate] {
+            if (value === null) {
+                const now = new CalendarDate()
+                return [now, now]
+            }
+
+            return [new CalendarDate(value.from), new CalendarDate(value.to)]
+        },
         updateModelValue(value: DateInterval) {
             if (this.disabled) return
             this.$emit('update:modelValue', value)

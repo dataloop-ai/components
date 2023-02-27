@@ -90,14 +90,8 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Object as PropType<DateInterval>,
-            default: () => {
-                const date = new Date()
-                return {
-                    from: date,
-                    to: date
-                }
-            }
+            type: Object as PropType<DateInterval | null>,
+            default: null
         },
         showTime: Boolean,
         type: {
@@ -118,36 +112,38 @@ export default defineComponent({
         },
         withSelectedOption: Boolean,
         disabled: Boolean,
-        autoClose: Boolean
+        autoClose: Boolean,
+        placeholder: {
+            type: String,
+            default: 'Set Due Date'
+        }
     },
     emits: ['update:modelValue', 'set-type', 'change'],
     data(): {
         uuid: string
-        dateInterval: DateInterval
+        dateInterval: DateInterval | null
         typeState: 'day' | 'month'
         isOpen: boolean
         isInputDisabled: boolean
-        dayTypeOptions: DayTypeOption[]
-        monthTypeOptions: MonthTypeOption[]
         currentSidebarOption: DAY_SIDEBAR_OPTION | MONTH_SIDEBAR_OPTION
     } {
-        const today = CustomDate.startOf('day').toDate()
-        const yesterday = CustomDate.subtract(1, 'day').startOf('day').toDate()
-        const thisMonth = CustomDate.startOf('month').toDate()
-        const lastMonth = CustomDate.subtract(1, 'months')
-            .startOf('month')
-            .toDate()
-
         return {
             uuid: `dl-date-time-range-${v4()}`,
-            dateInterval: {
-                from: this.modelValue.from,
-                to: this.modelValue.to
-            },
+            dateInterval: this.modelValue,
             typeState: this.type,
             isOpen: false,
             isInputDisabled: false,
-            dayTypeOptions: [
+            currentSidebarOption: DAY_SIDEBAR_OPTION.custom
+        }
+    },
+    computed: {
+        dayTypeOptions(): DayTypeOption[] {
+            const today = CustomDate.startOf('day').toDate()
+            const yesterday = CustomDate.subtract(1, 'day')
+                .startOf('day')
+                .toDate()
+
+            return [
                 {
                     title: 'today',
                     key: DAY_SIDEBAR_OPTION.today,
@@ -162,7 +158,9 @@ export default defineComponent({
                     title: 'last 7 days',
                     key: DAY_SIDEBAR_OPTION.last_7_days,
                     value: {
-                        from: CustomDate.subtract(7, 'day').toDate(),
+                        from: CustomDate.subtract(7, 'day')
+                            .startOf('day')
+                            .toDate(),
                         to: today
                     }
                 },
@@ -170,7 +168,9 @@ export default defineComponent({
                     title: 'last 14 days',
                     key: DAY_SIDEBAR_OPTION.last_14_days,
                     value: {
-                        from: CustomDate.subtract(14, 'day').toDate(),
+                        from: CustomDate.subtract(14, 'day')
+                            .startOf('day')
+                            .toDate(),
                         to: today
                     }
                 },
@@ -188,17 +188,24 @@ export default defineComponent({
                 {
                     title: 'custom by month',
                     key: DAY_SIDEBAR_OPTION.custom_by_month,
-                    value: {
-                        from: new CalendarDate(this.modelValue.from)
+                    value: this.dateInterval && {
+                        from: new CalendarDate(this.dateInterval.from)
                             .startOf('month')
                             .toDate(),
-                        to: new CalendarDate(this.modelValue.from)
+                        to: new CalendarDate(this.dateInterval.from)
                             .startOf('month')
                             .toDate()
                     }
                 }
-            ],
-            monthTypeOptions: [
+            ]
+        },
+        monthTypeOptions(): MonthTypeOption[] {
+            const thisMonth = CustomDate.startOf('month').toDate()
+            const lastMonth = CustomDate.subtract(1, 'months')
+                .startOf('month')
+                .toDate()
+
+            return [
                 {
                     title: 'this month',
                     key: MONTH_SIDEBAR_OPTION.this_month,
@@ -216,7 +223,7 @@ export default defineComponent({
                         from: CustomDate.subtract(3, 'months')
                             .startOf('month')
                             .toDate(),
-                        to: today
+                        to: thisMonth
                     }
                 },
                 {
@@ -226,7 +233,7 @@ export default defineComponent({
                         from: CustomDate.subtract(6, 'months')
                             .startOf('month')
                             .toDate(),
-                        to: today
+                        to: thisMonth
                     }
                 },
                 {
@@ -236,27 +243,24 @@ export default defineComponent({
                         from: CustomDate.subtract(1, 'year')
                             .startOf('month')
                             .toDate(),
-                        to: today
+                        to: thisMonth
                     }
                 },
                 { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom },
                 {
                     title: 'custom by day',
                     key: MONTH_SIDEBAR_OPTION.custom_by_day,
-                    value: {
-                        from: new CalendarDate(this.modelValue.from)
+                    value: this.dateInterval && {
+                        from: new CalendarDate(this.dateInterval.from)
                             .startOf('day')
                             .toDate(),
-                        to: new CalendarDate(this.modelValue.from)
+                        to: new CalendarDate(this.dateInterval.from)
                             .startOf('day')
                             .toDate()
                     }
                 }
-            ],
-            currentSidebarOption: DAY_SIDEBAR_OPTION.custom
-        }
-    },
-    computed: {
+            ]
+        },
         sidebarDayOptions(): DayTypeOption[] {
             return this.dayTypeOptions.map((o) => ({
                 ...o,
@@ -273,6 +277,10 @@ export default defineComponent({
             return { width: `${this.dateInputText.length / 2}em` }
         },
         dateInputText(): string {
+            if (this.dateInterval === null) {
+                return this.placeholder
+            }
+
             let text = ''
 
             if (this.typeState === 'month') {
@@ -361,7 +369,9 @@ export default defineComponent({
         type(value: 'day' | 'month') {
             this.typeState = value
 
-            const date = new CustomDate(this.modelValue.from)
+            if (this.dateInterval === null) return
+
+            const date = new CustomDate(this.dateInterval.from)
                 .startOf(value)
                 .toDate()
 
@@ -382,10 +392,8 @@ export default defineComponent({
                     this.typeState === 'day'
                         ? DAY_SIDEBAR_OPTION.custom
                         : MONTH_SIDEBAR_OPTION.custom
-                this.updateDateInterval({
-                    from: this.modelValue.from,
-                    to: this.modelValue.to
-                })
+
+                this.updateDateInterval(null)
             },
             deep: true
         }
@@ -401,7 +409,7 @@ export default defineComponent({
             this.typeState = value
             this.$emit('set-type', value)
         },
-        updateDateInterval(value: DateInterval) {
+        updateDateInterval(value: DateInterval | null) {
             this.dateInterval = value
             this.$emit('update:modelValue', value)
             this.$emit('change', value)

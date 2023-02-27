@@ -89,14 +89,8 @@ export default defineComponent({
             default: null
         },
         modelValue: {
-            type: Object as PropType<DateInterval>,
-            default: () => {
-                const date = new Date()
-                return {
-                    from: date,
-                    to: date
-                }
-            }
+            type: Object as PropType<DateInterval | null>,
+            default: null
         },
         withLeftChevron: Boolean,
         withRightChevron: Boolean,
@@ -138,6 +132,8 @@ export default defineComponent({
             this.$emit('change', newDate)
         },
         getDayStyle(value: Partial<CalendarDate>) {
+            if (this.modelValue === null) return
+
             const style: Record<string, any> = {}
 
             const from = new CalendarDate(this.modelValue.from)
@@ -170,8 +166,12 @@ export default defineComponent({
 
         getInnerDayStyle(value: Partial<CalendarDate>) {
             let style: Record<string, any> = {}
+            const disabledOpacity = 0.6
 
-            const isToday = value.isSame(new CalendarDate(), 'date')
+            const isToday = value.isSame(
+                new CalendarDate().startOf('day'),
+                'day'
+            )
 
             if (
                 !isInRange(
@@ -179,19 +179,20 @@ export default defineComponent({
                     new CustomDate(value.toString())
                 )
             ) {
-                if (isToday) {
+                if (isToday && this.disabled) {
+                    style.color = 'var(--dl-color-secondary)'
+                    style.opacity = disabledOpacity
+                } else if (isToday) {
                     style.color = 'var(--dl-color-secondary)'
                 } else {
-                    style.color = 'var(--dl-color-lighter)'
+                    style.color = 'var(--dl-color-disabled)'
                 }
-            } else {
+            } else if (this.modelValue !== null) {
                 const selectedStyle = {
                     backgroundColor: 'var(--dl-color-secondary)',
                     color: 'var(--dl-color-text-buttons)',
                     borderRadius: '11px'
                 }
-
-                const disabledOpacity = 0.6
 
                 const from = new CalendarDate(this.modelValue.from)
                 const to = new CalendarDate(this.modelValue.to)
@@ -221,6 +222,18 @@ export default defineComponent({
                 } else if (value.isDisabled) {
                     style.color = 'var(--dl-color-lighter)'
                 }
+            } else {
+                if (isToday) {
+                    style.color = 'var(--dl-color-secondary)'
+
+                    if (this.disabled) {
+                        style.opacity = disabledOpacity
+                    }
+                } else if (this.disabled) {
+                    style.color = 'var(--dl-color-disabled)'
+                } else if (value.isDisabled) {
+                    style.color = 'var(--dl-color-lighter)'
+                }
             }
 
             return style
@@ -232,6 +245,7 @@ export default defineComponent({
         },
 
         handleMouseEnter(value: CustomDate) {
+            if (this.modelValue === null) return
             if (!isInRange(this.availableRange, value)) return
 
             if (value.isBefore(new CustomDate(this.modelValue.from))) return

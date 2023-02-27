@@ -5,11 +5,11 @@
     >
         <div
             class="dl-time-picker--input"
-            :class="{ 'dl-time-picker--input-disabled': disabled }"
+            :class="{ 'dl-time-picker--input-disabled': disableInput }"
         >
             <span>From: {{ formatedFrom }}</span>
             <dl-time-picker-input
-                :disabled="disabled"
+                :disabled="disableInput"
                 :model-value="formatedFromValue"
                 @update:modelValue="handleFromTimeChange"
             />
@@ -19,11 +19,11 @@
         </div>
         <div
             class="dl-time-picker--input"
-            :class="{ 'dl-time-picker--input-disabled': disabled }"
+            :class="{ 'dl-time-picker--input-disabled': disableInput }"
         >
             <span>To: {{ formatedTo }}</span>
             <dl-time-picker-input
-                :disabled="disabled"
+                :disabled="disableInput"
                 :model-value="formatedToValue"
                 @update:modelValue="handleToTimeChange"
             />
@@ -44,14 +44,8 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Object as PropType<DateInterval>,
-            default: () => {
-                const date = new Date()
-                return {
-                    from: date,
-                    to: date
-                }
-            }
+            type: Object as PropType<DateInterval | null>,
+            default: null
         },
         disabled: Boolean
     },
@@ -62,13 +56,22 @@ export default defineComponent({
         }
     },
     computed: {
+        disableInput(): boolean {
+            return this.modelValue === null || this.disabled
+        },
         formatedFrom(): string {
-            return (
-                new CustomDate(this.modelValue.from).format('MMM DD, YYYY') ||
-                ''
-            )
+            return this.modelValue !== null
+                ? new CustomDate(this.modelValue.from).format('MMM DD, YYYY')
+                : ''
         },
         formatedFromValue(): Time {
+            if (this.modelValue === null) {
+                return {
+                    hour: '00',
+                    minute: '00'
+                }
+            }
+
             const selectionObj = new CustomDate(this.modelValue.from)
             return {
                 hour: selectionObj.format('HH'),
@@ -76,11 +79,18 @@ export default defineComponent({
             }
         },
         formatedTo(): string {
-            return (
-                new CustomDate(this.modelValue.to).format('MMM DD, YYYY') || ''
-            )
+            return this.modelValue !== null
+                ? new CustomDate(this.modelValue.to).format('MMM DD, YYYY')
+                : ''
         },
         formatedToValue(): Time {
+            if (this.modelValue === null) {
+                return {
+                    hour: '00',
+                    minute: '00'
+                }
+            }
+
             const selectionObj = new CustomDate(this.modelValue.to)
             return {
                 hour: selectionObj.format('HH'),
