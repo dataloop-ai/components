@@ -1,7 +1,9 @@
-name: Publish Components
+name: Publish components
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - '*'
   repository_dispatch:
     types: [publish-components]
 
