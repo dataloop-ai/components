@@ -1,4 +1,4 @@
-# Dataloop Components Library
+# Dataloop Components Library ![components version](https://img.shields.io/npm/v/@dataloop-ai/components?label=Latest%20Library%20Version) ![release status](https://img.shields.io/badge/Relese%20Status-Beta-yellowgreen)
 
 This repository contains custom made vue components for Dataloop platform and apps use
 
