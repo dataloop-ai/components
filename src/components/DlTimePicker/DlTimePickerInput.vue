@@ -92,8 +92,8 @@ export default defineComponent({
         modelValue: {
             type: Object as PropType<Time>,
             default: () => ({
-                hour: formatTime(new Date().getHours()),
-                minute: formatTime(new Date().getMinutes())
+                hour: '00',
+                minute: '00'
             })
         },
         disabled: Boolean
