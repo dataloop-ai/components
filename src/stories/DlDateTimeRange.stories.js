@@ -6,6 +6,16 @@ export default {
     title: 'Library/Components/DlDateTimeRange',
     component: DlDateTimeRange,
     argTypes: {
+        modelValue: {
+            name: 'modelValue',
+            defaultValue: null,
+            control: 'object',
+            description: 'A DateInterval object',
+            table: {
+                type: { summary: Object },
+                defaultValue: { summary: null }
+            }
+        },
         showTime: {
             name: 'showTime',
             defaultValue: false,
@@ -95,6 +105,17 @@ export default {
                 type: { summary: Object },
                 defaultValue: { summary: null }
             }
+        },
+        placeholder: {
+            name: 'placeholder',
+            type: { name: 'string', required: false },
+            defaultValue: 'Set Due Date',
+            description: 'Specifies the placeholder for the input',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: 'Set Due Date' }
+            },
+            control: 'text'
         }
     }
 }
@@ -105,11 +126,6 @@ const Template = (args) => {
     return {
         components: { DlDateTimeRange, DlSwitch },
         setup() {
-            const date = ref({
-                from: new Date('2023-01-10T12:39:55.854Z'),
-                to: new Date('2023-02-22T12:39:55.854Z')
-            })
-
             const availableRange = ref({
                 from: new Date('2023-01-01T12:39:55.854Z'),
                 to: new Date('2023-03-15T12:39:55.854Z')
@@ -135,12 +151,10 @@ const Template = (args) => {
 
             const updateModelValue = (value) => {
                 console.log(value)
-                date.value = value
             }
 
             return {
                 args,
-                date,
                 availableRange,
                 setRangeFrom,
                 setRangeTo,
@@ -176,7 +190,6 @@ const Template = (args) => {
         <div class="dl-dtr--input">
             <dl-date-time-range
                 v-bind="args"
-                :modelValue="date"
                 :available-range="availableRange"
                 @set-type="handleSetType"
                 @update:modelValue="updateModelValue"
