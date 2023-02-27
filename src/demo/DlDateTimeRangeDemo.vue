@@ -72,13 +72,14 @@
         </div>
         <div class="dl-dtr--input">
             <dl-date-time-range
+                v-model="date"
                 :type="type"
                 :available-range="range ? availableRange : null"
                 :mode="mode"
                 :show-time="showTime"
                 :auto-close="autoClose"
                 @set-type="handleSetType"
-                @update:modelValue="handleModelValueUpdate"
+                @change="handleModelValueUpdate"
             />
         </div>
     </div>
@@ -94,6 +95,7 @@ export default defineComponent({
         DlDateTimeRange
     },
     data(): {
+        date: DateInterval
         switchState: any[]
         availableRange: Partial<DateInterval>
     } {
@@ -103,6 +105,7 @@ export default defineComponent({
         to.setDate(to.getDate() + 35)
 
         return {
+            date: null,
             availableRange: {
                 from,
                 to
