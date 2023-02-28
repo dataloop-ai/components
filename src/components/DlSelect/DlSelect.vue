@@ -718,6 +718,7 @@ export default defineComponent({
             if (!this.preserveSearch) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 if (inputRef) inputRef.value = ''
+                this.$emit('filter', '')
             }
         },
         getLabel,
