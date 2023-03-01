@@ -51,10 +51,7 @@
                     </template>
                 </dl-list>
             </div>
-            <div
-                v-if="activeDemo !== 'stepper'"
-                class="content"
-            >
+            <div class="content">
                 <div style="display: flex; justify-content: center">
                     <dl-typography
                         size="h2"
