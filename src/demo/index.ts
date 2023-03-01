@@ -13,11 +13,7 @@ import DlDialogBoxDemo from './DlDialogBoxDemo.vue'
 import DlPanelContainerDemo from './DlPanelContainerDemo.vue'
 import DlSelectDemo from './DlSelectDemo.vue'
 import TabsDemo from './DlTabsDemo.vue'
-import {
-    SimpleStepper,
-    StepperInDialogBox,
-    CenteredStepperInDialogBox
-} from './DlStepperDemo'
+import { DlStepperDemo } from './DlStepperDemo'
 import DlTrDemo from './DlTrDemo.vue'
 import DlThDemo from './DlThDemo.vue'
 import DlTdDemo from './DlTdDemo.vue'
@@ -62,8 +58,7 @@ export {
     DlDialogBoxDemo,
     DlPanelContainerDemo,
     TabsDemo,
-    SimpleStepper,
-    StepperInDialogBox,
+    DlStepperDemo,
     DlTrDemo,
     DlThDemo,
     DlTdDemo,
@@ -90,8 +85,7 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlSwitchDemo,
-    CenteredStepperInDialogBox
+    DlSwitchDemo
 }
 
 export const demoState = {
@@ -121,7 +115,7 @@ export const demoState = {
     select: DlSelectDemo,
     skeleton: DlSkeletonDemo,
     slider: DlSliderDemo,
-    stepper: StepperInDialogBox,
+    stepper: DlStepperDemo,
     table: DlTableDemo,
     table_td: DlTdDemo,
     table_th: DlThDemo,
