@@ -92,7 +92,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { Widget } from './types'
-import cloneDeep from 'lodash/cloneDeep'
+import { cloneDeep } from 'lodash'
 import { equateElements, getTargetWidget, getIndex } from './utils'
 import DlWidget from './DlWidget.vue'
 import DlIcon from '../DlIcon.vue'
