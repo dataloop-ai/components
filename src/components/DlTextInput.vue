@@ -102,6 +102,15 @@
                     </dl-tooltip>
                 </span>
             </div>
+            <div
+                v-show="hasAction"
+                :class="[
+                    ...adornmentClasses,
+                    'dl-text-input__adornment-container--pos-right-out'
+                ]"
+            >
+                <slot name="action" />
+            </div>
             <dl-menu
                 v-if="showSuggestItems"
                 v-model="isMenuOpen"
@@ -390,6 +399,9 @@ export default defineComponent({
                     this.type === 'password') &&
                 !this.isSmall
             )
+        },
+        hasAction(): boolean {
+            return !!this.$slots.action && !this.isSmall
         },
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
@@ -725,7 +737,11 @@ export default defineComponent({
 
         &--pos-right {
             top: 0;
-            right: 0px;
+            right: 0;
+        }
+        &--pos-right-out {
+            top: 0;
+            right: -30px;
         }
     }
 
