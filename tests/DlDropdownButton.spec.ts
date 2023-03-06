@@ -11,6 +11,7 @@ describe('DlDropdownButton', () => {
         expect(wrapper.props()).toStrictEqual({
             autoClose: false,
             color: '',
+            fit: true,
             contained: true,
             contentClass: '',
             contentStyle: '',
