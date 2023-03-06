@@ -332,9 +332,9 @@ export default defineComponent({
     computed: {
         bottomMessage(): boolean {
             return (
-                !!this.infoMessage.length ||
-                !!this.errorMessage.length ||
-                !!this.warningMessage.length ||
+                !!this.infoMessage?.length ||
+                !!this.errorMessage?.length ||
+                !!this.warningMessage?.length ||
                 this.showCounter
             )
         },
