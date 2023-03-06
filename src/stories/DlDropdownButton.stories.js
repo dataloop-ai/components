@@ -15,6 +15,18 @@ export default {
                 defaultValue: { summary: false }
             }
         },
+        fit: {
+            name: 'fit',
+            defaultValue: true,
+            description:
+                'Allows the options to match at least the full width of its target',
+
+            control: 'boolean',
+            table: {
+                type: { summary: Boolean },
+                defaultValue: { summary: true }
+            }
+        },
         dropdownIcon: {
             name: 'dropdownIcon',
             defaultValue: '',
@@ -318,6 +330,7 @@ const Template = (args) => ({
 export const Preview = Template.bind({})
 Preview.args = {
     split: false,
+    fit: true,
     dropdownIcon: 'icon-dl-down-chevron',
     maxHeight: '210px',
     maxWidth: '100%',
