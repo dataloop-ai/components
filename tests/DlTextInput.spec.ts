@@ -54,11 +54,15 @@ describe('DlTextInput component', () => {
         await wrapper.find('input').trigger('blur')
         // @ts-ignore // handled in jest setup
         await window.delay(50)
+        await wrapper.vm.$nextTick()
 
         const blurEvent: any = wrapper.emitted('blur')
         expect(blurEvent).toHaveLength(1)
 
         await wrapper.find('input').trigger('focus')
+        // @ts-ignore // handled in jest setup
+        await window.delay(50)
+        await wrapper.vm.$nextTick()
 
         const focusEvent: any = wrapper.emitted('focus')
         expect(focusEvent).toHaveLength(1)
