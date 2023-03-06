@@ -12,7 +12,7 @@
             />
             <div
                 class="dialog-wrapper"
-                :style="{ maxWidth: `${width}px` }"
+                :style="{ maxWidth: Number(width) ? `${width}px` : width }"
                 :class="{ 'dialog-wrapper--fullscreen': fullscreen }"
             >
                 <div
@@ -49,7 +49,7 @@ export default defineComponent({
         event: 'update:modelValue'
     },
     props: {
-        width: { type: Number, default: 400 },
+        width: { type: [Number, String], default: 400 },
         fullscreen: Boolean,
         modelValue: Boolean,
         volatile: { type: Boolean, default: false }
