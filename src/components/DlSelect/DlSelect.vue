@@ -76,6 +76,7 @@
                     class="select-search-input"
                     :style="!isExpanded ? 'display: none;' : 'width: 100%;'"
                     :disabled="disabled"
+                    :readonly="readonly"
                     @input="handleSearchInput"
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
@@ -139,7 +140,7 @@
                 no-focus
                 :offset="[0, 3]"
                 style="border-radius: 0"
-                :disabled="disabled"
+                :disabled="disabled || readonly"
                 @show="onMenuOpen"
                 @hide="closeMenu"
             >
@@ -309,6 +310,7 @@ export default defineComponent({
         errorMessage: { type: String, default: '' },
         error: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
+        readonly: { type: Boolean, default: false },
         emitValue: { type: Boolean, default: false }, // We emit the value from the option and compare with it as a modelvalue
         options: {
             type: Array as PropType<SelectOptionType[]>,
@@ -496,6 +498,9 @@ export default defineComponent({
             }
             if (this.disabled) {
                 classes.push('dl_select__select--disabled')
+            }
+            if (this.readonly) {
+                classes.push('dl_select__select--readonly')
             }
             if (this.isExpanded) {
                 classes.push('dl_select__select--focused')
@@ -894,6 +899,18 @@ export default defineComponent({
             border-color: var(--dl-color-separator);
             color: var(--dl-color-disabled);
             cursor: not-allowed;
+
+            &:hover {
+                border-color: var(--dl-color-separator);
+            }
+            & input {
+                pointer-events: none;
+            }
+        }
+
+        &--readonly {
+            border-color: var(--dl-color-separator);
+            cursor: text;
 
             &:hover {
                 border-color: var(--dl-color-separator);

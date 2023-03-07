@@ -10,11 +10,21 @@
                 style="padding: 0; margin-bottom: 10px"
                 @click.stop.prevent="$emit('onClose')"
             />
-            <h2 class="title">
-                {{ title }}
+            <h2
+                v-if="hasTitle"
+                class="title"
+            >
+                <slot name="title">
+                    {{ title }}
+                </slot>
             </h2>
-            <p class="subtitle">
-                {{ subtitle }}
+            <p
+                v-if="hasSubtitle"
+                class="subtitle"
+            >
+                <slot name="subtitle">
+                    {{ subtitle }}
+                </slot>
             </p>
         </div>
         <dl-button
@@ -44,7 +54,15 @@ export default defineComponent({
         closeButton: { type: Boolean, default: true },
         hasBackButton: Boolean
     },
-    emits: ['onClose']
+    emits: ['onClose'],
+    computed: {
+        hasTitle() {
+            return !!this.title || this.$slots.title
+        },
+        hasSubtitle() {
+            return !!this.subtitle || this.$slots.subtitle
+        }
+    }
 })
 </script>
 
@@ -60,6 +78,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-h2);
     margin: 0;
     color: var(--dl-color-darker);
+    line-height: 2rem !important;
 }
 
 .subtitle {
