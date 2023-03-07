@@ -12,11 +12,14 @@
             />
             <div
                 class="dialog-wrapper"
-                :style="{ maxWidth: Number(width) ? `${width}px` : width }"
+                :style="{
+                    width: Number(width) ? `${width}px` : width,
+                    height: Number(height) ? `${height}px` : height
+                }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
-                    'dialog-wrapper--right': right,
-                    'dialog-wrapper--left': left
+                    'dialog-wrapper--right': position === 'right',
+                    'dialog-wrapper--left': position === 'left'
                 }"
             >
                 <div
@@ -44,7 +47,7 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlDialogBox',
@@ -54,9 +57,12 @@ export default defineComponent({
     },
     props: {
         width: { type: [Number, String], default: 400 },
+        height: { type: [Number, String], default: 'fit-content' },
         fullscreen: Boolean,
-        right: Boolean,
-        left: Boolean,
+        position: {
+            type: String as PropType<'left' | 'right' | 'center'>,
+            default: 'center'
+        },
         modelValue: Boolean,
         volatile: { type: Boolean, default: false }
     },
