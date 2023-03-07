@@ -54,11 +54,15 @@ describe('DlTextInput component', () => {
         await wrapper.find('input').trigger('blur')
         // @ts-ignore // handled in jest setup
         await window.delay(50)
+        await wrapper.vm.$nextTick()
 
         const blurEvent: any = wrapper.emitted('blur')
         expect(blurEvent).toHaveLength(1)
 
         await wrapper.find('input').trigger('focus')
+        // @ts-ignore // handled in jest setup
+        await window.delay(50)
+        await wrapper.vm.$nextTick()
 
         const focusEvent: any = wrapper.emitted('focus')
         expect(focusEvent).toHaveLength(1)
@@ -101,6 +105,36 @@ describe('DlTextInput component', () => {
                 expect(wrapper.find('input').classes()).not.toContain(
                     'dl-text-input__input--warning'
                 )
+            })
+        })
+    })
+    describe.skip(`Trigger blur() method`, () => {
+        // Should be skipped until we find a way to test this
+        const wrapper = mount(DlTextInput)
+
+        describe(`When blur() method is triggered`, () => {
+            beforeAll(async () => {
+                await wrapper.vm.blur()
+                await wrapper.vm.$nextTick()
+            })
+            it(`should emit 'blur' event`, () => {
+                const focusEvent: any = wrapper.emitted('blur')
+                expect(focusEvent).toHaveLength(1)
+            })
+        })
+    })
+    describe.skip(`Trigger focus() method`, () => {
+        // Should be skipped until we find a way to test this
+        const wrapper = mount(DlTextInput)
+
+        describe(`When focus() method is triggered`, () => {
+            beforeAll(async () => {
+                await wrapper.vm.focus()
+                await wrapper.vm.$nextTick()
+            })
+            it(`should emit 'focus' event`, () => {
+                const focusEvent: any = wrapper.emitted('focus')
+                expect(focusEvent).toHaveLength(1)
             })
         })
     })

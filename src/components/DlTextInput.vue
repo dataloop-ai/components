@@ -455,9 +455,17 @@ export default defineComponent({
             this.$emit('input', e.target.value, e)
             this.$emit('update:model-value', e.target.value)
         },
+        focus(): void {
+            const inputRef = this.$refs.input as HTMLInputElement
+            inputRef.focus()
+        },
         onFocus(e: InputEvent): void {
             this.focused = true
             this.$emit('focus', e)
+        },
+        blur(): void {
+            const inputRef = this.$refs.input as HTMLInputElement
+            inputRef.blur()
         },
         onBlur(e: InputEvent): void {
             this.focused = false
@@ -485,8 +493,7 @@ export default defineComponent({
             inputRef.value = item
         },
         onMenuShow(): void {
-            const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.focus()
+            this.focus()
         },
         getSuggestWords(
             item: string,
