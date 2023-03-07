@@ -59,6 +59,7 @@ export default defineComponent({
         width: { type: [Number, String], default: 400 },
         height: { type: [Number, String], default: 'fit-content' },
         fullscreen: Boolean,
+        separators: { type: Boolean, default: true },
         position: {
             type: String as PropType<'left' | 'right' | 'center'>,
             default: 'center'
@@ -78,7 +79,10 @@ export default defineComponent({
             return {
                 '--dl-backdrop-color': this.hasParent
                     ? 'transparent'
-                    : 'rgba(0, 0, 0, 0.4)'
+                    : 'rgba(0, 0, 0, 0.4)',
+                '--dl-dialog-separator': this.separators
+                    ? '1px solid var(--dl-color-separator)'
+                    : 'none'
             }
         },
         hasParent(): boolean {
@@ -184,7 +188,7 @@ export default defineComponent({
 .header {
     display: flex;
     padding: 16px;
-    border-bottom: 1px solid var(--dl-color-separator);
+    border-bottom: var(--dl-dialog-separator);
 }
 
 .content {
@@ -199,7 +203,7 @@ export default defineComponent({
 .footer {
     display: flex;
     padding: 16px;
-    border-top: 1px solid var(--dl-color-separator);
+    border-top: var(--dl-dialog-separator);
 }
 
 .fade {
