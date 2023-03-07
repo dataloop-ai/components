@@ -165,6 +165,9 @@ export default defineComponent({
     display: flex;
     padding: 16px;
     border-bottom: 1px solid var(--dl-color-separator);
+    h2 {
+        line-height: 2rem;
+    }
 }
 
 .content {
@@ -178,7 +181,7 @@ export default defineComponent({
 
 .footer {
     display: flex;
-    padding: 20px 16px;
+    padding: 16px;
     border-top: 1px solid var(--dl-color-separator);
 }
 
