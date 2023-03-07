@@ -17,8 +17,14 @@ export default {
         width: {
             name: 'width',
             defaultValue: 400,
-            control: 'number',
+            control: 'string',
             description: 'The width of the dialog'
+        },
+        height: {
+            name: 'height',
+            defaultValue: 'fit-content',
+            control: 'string',
+            description: 'The height of the dialog'
         },
         fullscreen: {
             name: 'fullscreen',
