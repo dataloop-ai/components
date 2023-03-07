@@ -13,7 +13,11 @@
             <div
                 class="dialog-wrapper"
                 :style="{ maxWidth: Number(width) ? `${width}px` : width }"
-                :class="{ 'dialog-wrapper--fullscreen': fullscreen }"
+                :class="{
+                    'dialog-wrapper--fullscreen': fullscreen,
+                    'dialog-wrapper--right': right,
+                    'dialog-wrapper--left': left
+                }"
             >
                 <div
                     v-if="hasHeader"
@@ -51,6 +55,8 @@ export default defineComponent({
     props: {
         width: { type: [Number, String], default: 400 },
         fullscreen: Boolean,
+        right: Boolean,
+        left: Boolean,
         modelValue: Boolean,
         volatile: { type: Boolean, default: false }
     },
@@ -158,6 +164,14 @@ export default defineComponent({
         height: 100vh;
         max-width: 100vw !important;
         border-radius: 0px;
+    }
+    &--right {
+        position: absolute !important;
+        right: 0;
+    }
+    &--left {
+        position: absolute !important;
+        left: 0;
     }
 }
 
