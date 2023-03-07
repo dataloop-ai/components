@@ -78,6 +78,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-h2);
     margin: 0;
     color: var(--dl-color-darker);
+    line-height: 2rem !important;
 }
 
 .subtitle {

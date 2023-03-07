@@ -179,9 +179,6 @@ export default defineComponent({
     display: flex;
     padding: 16px;
     border-bottom: 1px solid var(--dl-color-separator);
-    h2 {
-        line-height: 2rem;
-    }
 }
 
 .content {
