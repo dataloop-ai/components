@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { computed, defineComponent } from 'vue-demi'
 import { DlButton } from '../DlButton'
 
 export default defineComponent({
@@ -55,13 +55,10 @@ export default defineComponent({
         hasBackButton: Boolean
     },
     emits: ['onClose'],
-    computed: {
-        hasTitle() {
-            return !!this.title || this.$slots.title
-        },
-        hasSubtitle() {
-            return !!this.subtitle || this.$slots.subtitle
-        }
+    setup(props, { slots }) {
+        const hasTitle = computed(() => !!props.title || !!slots.title)
+        const hasSubtitle = computed(() => !!props.subtitle || !!slots.subtitle)
+        return { hasTitle, hasSubtitle }
     }
 })
 </script>
