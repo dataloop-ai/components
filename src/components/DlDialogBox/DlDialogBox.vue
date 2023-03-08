@@ -170,9 +170,8 @@ export default defineComponent({
 
     &--fullscreen {
         margin: 0;
-        width: 100vw;
-        height: 100vh;
-        max-width: 100vw !important;
+        width: 100vw !important;
+        height: 100vh !important;
         border-radius: 0px;
     }
     &--right {
@@ -196,7 +195,7 @@ export default defineComponent({
     overflow: auto;
 
     &--fullscreen {
-        flex-grow: 1;
+        flex-grow: 1 !important;
     }
 }
 
