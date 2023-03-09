@@ -13,7 +13,11 @@ import DlDialogBoxDemo from './DlDialogBoxDemo.vue'
 import DlPanelContainerDemo from './DlPanelContainerDemo.vue'
 import DlSelectDemo from './DlSelectDemo.vue'
 import TabsDemo from './DlTabsDemo.vue'
-import { DlStepperDemo } from './DlStepperDemo'
+import {
+    SimpleStepper,
+    StepperInDialogBox,
+    CenteredStepperInDialogBox
+} from './DlStepperDemo'
 import DlTrDemo from './DlTrDemo.vue'
 import DlThDemo from './DlThDemo.vue'
 import DlTdDemo from './DlTdDemo.vue'
@@ -40,6 +44,8 @@ import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
 import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlColumnChartDemo from './ColumnChartDemo.vue'
+import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
 
 export {
@@ -58,7 +64,8 @@ export {
     DlDialogBoxDemo,
     DlPanelContainerDemo,
     TabsDemo,
-    DlStepperDemo,
+    SimpleStepper,
+    StepperInDialogBox,
     DlTrDemo,
     DlThDemo,
     DlTdDemo,
@@ -85,7 +92,10 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlSwitchDemo
+    DlColumnChartDemo,
+    DlSwitchDemo,
+    CenteredStepperInDialogBox,
+    DlBarChartDemo
 }
 
 export const demoState = {
@@ -94,6 +104,8 @@ export const demoState = {
     avatar: AvatarDemo,
     badge: DlBadgeDemo,
     button: DlButtonDemo,
+    column_chart: DlColumnChartDemo,
+    bar_chart: DlBarChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,
@@ -115,7 +127,7 @@ export const demoState = {
     select: DlSelectDemo,
     skeleton: DlSkeletonDemo,
     slider: DlSliderDemo,
-    stepper: DlStepperDemo,
+    stepper: StepperInDialogBox,
     table: DlTableDemo,
     table_td: DlTdDemo,
     table_th: DlThDemo,

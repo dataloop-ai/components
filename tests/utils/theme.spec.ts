@@ -1,4 +1,5 @@
 import { getThemeModeAttr } from '../../src/utils/theme'
+import { describe, it, expect } from 'vitest'
 
 describe('getThemeModeAttr', () => {
     it('should return "dark-mode" if dark value is true, and empty string if false value is given', () => {

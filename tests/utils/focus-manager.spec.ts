@@ -4,12 +4,13 @@ import {
     addFocusFn,
     removeFocusFn
 } from '../../src/utils/focus-manager'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('focus-manage', () => {
     describe('addFocusFn', () => {
         describe('should add focus', () => {
             it('should return undefined', () => {
-                expect(addFocusFn(jest.fn())).toBe(undefined)
+                expect(addFocusFn(vi.fn())).toBe(undefined)
             })
         })
     })
@@ -33,7 +34,7 @@ describe('focus-manage', () => {
     describe('removeFocusFn', () => {
         describe('should remove focus', () => {
             it('should return undefined', () => {
-                expect(removeFocusFn(jest.fn())).toBe(undefined)
+                expect(removeFocusFn(vi.fn())).toBe(undefined)
             })
         })
     })

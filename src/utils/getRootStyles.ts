@@ -40,7 +40,7 @@ function getElementCSSVariables(
         const value = elStyles.getPropertyValue(key)
         if (value) {
             //@ts-ignore
-            cssVars[key] = value
+            cssVars[key] = value.trim()
         }
     }
     return cssVars

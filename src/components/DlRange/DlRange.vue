@@ -98,6 +98,7 @@ import { v4 } from 'uuid'
 type DlRangeModelValue = {
     min: number | null
     max: number | null
+    both?: boolean
 }
 
 interface DlRangeProps extends SliderProps {
@@ -234,7 +235,7 @@ export default defineComponent({
             return evt
         })
 
-        function getEvents(side: 'min' | 'max') {
+        function getEvents(side: 'min' | 'max' | 'both') {
             return isMobile !== true && state.editable.value === true
                 ? {
                       onFocus: () => {
@@ -385,7 +386,7 @@ export default defineComponent({
                 evt,
                 {
                     step: state.step.value,
-                    focus: state.focus.value,
+                    focus: state.focus.value as 'min' | 'max',
                     decimals: state.decimals.value
                 },
                 { min: props.min, max: props.max },

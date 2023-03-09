@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
 import { DlCounters } from '../src/components'
 
 describe('DlCounters component', () => {
@@ -35,7 +36,7 @@ describe('DlCounters component', () => {
     })
 
     it('should throw error when the item limit is exceeded', () => {
-        jest.spyOn(console, 'warn')
+        vi.spyOn(console, 'warn')
 
         mount(DlCounters, {
             props: {

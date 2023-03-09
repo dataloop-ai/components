@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
 import DlTimePicker from '../../src/components/DlTimePicker/DlTimePicker.vue'
 import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(1990, 12, 1))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(1990, 12, 1))
 
 describe('Time picker', () => {
     it('should emit new values for the time object when the methods are called', () => {
@@ -40,6 +41,6 @@ describe('Time picker', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

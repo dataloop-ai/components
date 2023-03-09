@@ -1,6 +1,7 @@
 import { ComputedRef, Ref } from 'vue'
 import { mountComposition } from 'vue-composition-test-utils'
 import { TablePagination } from '../../../src/components/DlTable/hooks/tablePagination'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
     useTableSortProps,
     useTableSort
@@ -29,7 +30,7 @@ const pagination: TablePagination = {
 
 const colList: TableColumn[] = []
 
-const setPagination = jest.fn()
+const setPagination = vi.fn()
 
 describe('useTableSort', () => {
     beforeEach(() => {

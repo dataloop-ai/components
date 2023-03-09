@@ -134,7 +134,7 @@ export default defineComponent({
                 return
             }
 
-            modalOne.value.openModal()
+            modalOne.value?.openModal()
         }
 
         const closeModal = () => {
@@ -142,7 +142,7 @@ export default defineComponent({
                 return
             }
 
-            modalOne.value.closeModal()
+            modalOne.value?.closeModal()
         }
 
         const openSecondModal = () => {
@@ -150,7 +150,7 @@ export default defineComponent({
                 return
             }
 
-            modalTwo.value.openModal()
+            modalTwo.value?.openModal()
         }
 
         const closeSecondModal = () => {
@@ -158,7 +158,7 @@ export default defineComponent({
                 return
             }
 
-            modalTwo.value.closeModal()
+            modalTwo.value?.closeModal()
         }
 
         return {
