@@ -193,6 +193,7 @@ export default defineComponent({
 .content {
     padding: 10px 16px 30px 16px;
     overflow: auto;
+    height: 100%;
 
     &--fullscreen {
         flex-grow: 1 !important;
