@@ -383,9 +383,7 @@ describe('DlDatePicker', () => {
                 })
 
                 wrapper.vm.handleMouseenter(
-                    wrapper.vm.calendarTo.dates[
-                        wrapper.vm.calendarTo.dates.length - 1
-                    ]
+                    wrapper.vm.calendarTo.activeDate.endOf('month')
                 )
 
                 expect(clearTimeoutSpy).toHaveBeenCalled()
