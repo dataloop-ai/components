@@ -112,19 +112,23 @@ export default defineComponent({
                 (this.$el as HTMLElement).blur()
             }
             this.show = false
-            this.$emit('hide')
             this.$emit('update:modelValue', false)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'auto'
             }
+            this.$nextTick(() => {
+                this.$emit('hide')
+            })
         },
         openModal() {
             this.show = true
-            this.$emit('show')
             this.$emit('update:modelValue', true)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'hidden'
             }
+            this.$nextTick(() => {
+                this.$emit('show')
+            })
         }
     }
 })
