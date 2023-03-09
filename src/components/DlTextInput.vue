@@ -51,6 +51,7 @@
                 :maxlength="maxLength"
                 :type="showPass ? 'text' : type"
                 :disabled="disabled"
+                :readonly="readonly"
                 @input="onChange"
                 @focus="onFocus"
                 @blur="debouncedBlur()"
@@ -283,6 +284,10 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        readonly: {
+            type: Boolean,
+            default: false
+        },
         maxLength: {
             type: Number,
             default: null
@@ -412,6 +417,7 @@ export default defineComponent({
                 !this.disableClearBtn &&
                 this.type !== 'password' &&
                 !this.disabled &&
+                !this.readonly &&
                 !!this.modelValue
                 // this.focused
             )
@@ -715,6 +721,13 @@ export default defineComponent({
             border-color: var(--dl-color-separator);
             color: var(--dl-color-disabled);
             cursor: not-allowed;
+        }
+        &:readonly {
+            border-color: var(--dl-color-separator);
+            cursor: text;
+            &:hover {
+                border-color: var(--dl-color-separator) !important;
+            }
         }
     }
 

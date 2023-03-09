@@ -12,8 +12,15 @@
             />
             <div
                 class="dialog-wrapper"
-                :style="{ maxWidth: Number(width) ? `${width}px` : width }"
-                :class="{ 'dialog-wrapper--fullscreen': fullscreen }"
+                :style="{
+                    width: Number(width) ? `${width}px` : width,
+                    height: Number(height) ? `${height}px` : height
+                }"
+                :class="{
+                    'dialog-wrapper--fullscreen': fullscreen,
+                    'dialog-wrapper--right': position === 'right',
+                    'dialog-wrapper--left': position === 'left'
+                }"
             >
                 <div
                     v-if="hasHeader"
@@ -40,7 +47,7 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlDialogBox',
@@ -50,7 +57,13 @@ export default defineComponent({
     },
     props: {
         width: { type: [Number, String], default: 400 },
+        height: { type: [Number, String], default: 'fit-content' },
         fullscreen: Boolean,
+        separators: { type: Boolean, default: true },
+        position: {
+            type: String as PropType<'left' | 'right' | 'center'>,
+            default: 'center'
+        },
         modelValue: Boolean,
         volatile: { type: Boolean, default: false }
     },
@@ -66,7 +79,10 @@ export default defineComponent({
             return {
                 '--dl-backdrop-color': this.hasParent
                     ? 'transparent'
-                    : 'rgba(0, 0, 0, 0.4)'
+                    : 'rgba(0, 0, 0, 0.4)',
+                '--dl-dialog-separator': this.separators
+                    ? '1px solid var(--dl-color-separator)'
+                    : 'none'
             }
         },
         hasParent(): boolean {
@@ -154,17 +170,24 @@ export default defineComponent({
 
     &--fullscreen {
         margin: 0;
-        width: 100vw;
-        height: 100vh;
-        max-width: 100vw !important;
+        width: 100vw !important;
+        height: 100vh !important;
         border-radius: 0px;
+    }
+    &--right {
+        position: absolute !important;
+        right: 0;
+    }
+    &--left {
+        position: absolute !important;
+        left: 0;
     }
 }
 
 .header {
     display: flex;
     padding: 16px;
-    border-bottom: 1px solid var(--dl-color-separator);
+    border-bottom: var(--dl-dialog-separator);
 }
 
 .content {
@@ -172,14 +195,14 @@ export default defineComponent({
     overflow: auto;
 
     &--fullscreen {
-        flex-grow: 1;
+        flex-grow: 1 !important;
     }
 }
 
 .footer {
     display: flex;
-    padding: 20px 16px;
-    border-top: 1px solid var(--dl-color-separator);
+    padding: 16px;
+    border-top: var(--dl-dialog-separator);
 }
 
 .fade {

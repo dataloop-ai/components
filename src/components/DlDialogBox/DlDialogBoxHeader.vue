@@ -10,11 +10,21 @@
                 style="padding: 0; margin-bottom: 10px"
                 @click.stop.prevent="$emit('onClose')"
             />
-            <h2 class="title">
-                {{ title }}
+            <h2
+                v-if="hasTitle"
+                class="title"
+            >
+                <slot name="title">
+                    {{ title }}
+                </slot>
             </h2>
-            <p class="subtitle">
-                {{ subtitle }}
+            <p
+                v-if="hasSubtitle"
+                class="subtitle"
+            >
+                <slot name="subtitle">
+                    {{ subtitle }}
+                </slot>
             </p>
         </div>
         <dl-button
@@ -30,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { computed, defineComponent } from 'vue-demi'
 import { DlButton } from '../DlButton'
 
 export default defineComponent({
@@ -44,7 +54,12 @@ export default defineComponent({
         closeButton: { type: Boolean, default: true },
         hasBackButton: Boolean
     },
-    emits: ['onClose']
+    emits: ['onClose'],
+    setup(props, { slots }) {
+        const hasTitle = computed(() => !!props.title || !!slots.title)
+        const hasSubtitle = computed(() => !!props.subtitle || !!slots.subtitle)
+        return { hasTitle, hasSubtitle }
+    }
 })
 </script>
 
@@ -60,6 +75,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-h2);
     margin: 0;
     color: var(--dl-color-darker);
+    line-height: 2rem !important;
 }
 
 .subtitle {
