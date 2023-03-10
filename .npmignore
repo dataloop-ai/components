@@ -71,3 +71,7 @@ storybook-static
 # for dlgit
 tsconfig.tsbuildinfo
 tsconfig.node.tsbuildinfo
+
+# Git related files and conduct
+CODE_OF_CONDUCT.md
+CONTRIBUTION.md
