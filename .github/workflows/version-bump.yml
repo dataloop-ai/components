@@ -13,14 +13,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.CICD_TOKEN }}
+  
       - name: Set up Node.js
         uses: actions/setup-node@v2.5.1
         with:
           node-version: '16.x'
+
       - name: Setup Git User
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "github-action@users.noreply.github.com"
+
       - name: Update package version
         run: |
           if [[ "${{ github.event.pull_request.head.ref }}" == "development" ]]; then
@@ -28,9 +35,13 @@ jobs:
           else
             npm version patch
           fi
+
       - name: Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.CICD_TOKEN }}
         run: |
           git push --follow-tags
+
       - name: Trigger npm-publish
         if: success()
         uses: actions/github-script@v4
