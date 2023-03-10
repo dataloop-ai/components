@@ -2,7 +2,7 @@
 Thank you for your interest in contributing to our project! We welcome contributions from everyone. Please take a moment to review these guidelines before submitting a pull request or issue.
 
 ## Code of Conduct
-Our project has a Code of Conduct that we expect all contributors to follow. Please read it before making any contribution.
+Our project has a [Code of Conduct](./CODE_OF_CONDUCT.md) that we expect all contributors to follow. Please read it before making any contribution.
 
 ## Issues
 If you find any issues or bugs, please search the existing issues to see if the issue has already been reported. If it hasn't, please create a new issue with a clear and concise title and description. Be sure to include any relevant information, such as error messages or steps to reproduce the issue.
@@ -25,7 +25,7 @@ If the pull request is working on a specific component please start the pull req
 
 ### Coding Style Guidelines
 Please follow these coding style guidelines when submitting a pull request:
-- Use consistent indentation (either tabs or spaces, but not both)
+- Use consistent indentation
 - Use descriptive variable names
 - Use comments to explain non-obvious code behavior
 - Follow the provided linter configuration
@@ -42,6 +42,6 @@ Steps to submit a pull request:
 7. Please make sure that your pull request clearly explains the problem you are trying to solve, the solution you have implemented, and any potential side effects of your changes.
 
 ## License
-By contributing to our project, you agree that your contributions will be licensed under the [project's license]('./LICENSE').
+By contributing to our project, you agree that your contributions will be licensed under the [project's license](./LICENSE.md).
 
 Thank you for your contributions!
