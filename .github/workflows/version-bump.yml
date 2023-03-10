@@ -28,7 +28,7 @@ jobs:
           fi
       - name: Push changes
         run: |
-          git push --follow-tags
+          git push --follow-tags -o "auth.token=${{ env.CICD_TOKEN }}"
       - name: Trigger npm-publish
         if: success()
         uses: actions/github-script@v4
