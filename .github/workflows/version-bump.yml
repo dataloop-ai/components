@@ -42,16 +42,16 @@ jobs:
         run: |
           git push --follow-tags
 
-      - name: Trigger npm-publish
-        if: success()
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const response = await github.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'publish-components'
-            });
-            console.log(response);
+      # - name: Trigger npm-publish
+      #   if: success()
+      #   uses: actions/github-script@v4
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const response = await github.repos.createDispatchEvent({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         event_type: 'publish-components'
+      #       });
+      #       console.log(response);
 
