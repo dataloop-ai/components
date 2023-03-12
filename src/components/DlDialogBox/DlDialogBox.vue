@@ -18,6 +18,7 @@
                 }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
+                    'dialog-wrapper--fullheight': fullHeight,
                     'dialog-wrapper--right': position === 'right',
                     'dialog-wrapper--left': position === 'left'
                 }"
@@ -30,7 +31,10 @@
                 </div>
                 <div
                     class="content"
-                    :class="{ 'content--fullscreen': fullscreen }"
+                    :class="{
+                        'content--fullscreen': fullscreen,
+                        'content--fullheight': fullHeight
+                    }"
                 >
                     <slot name="body" />
                 </div>
@@ -59,6 +63,7 @@ export default defineComponent({
         width: { type: [Number, String], default: 400 },
         height: { type: [Number, String], default: 'fit-content' },
         fullscreen: Boolean,
+        fullHeight: Boolean,
         separators: { type: Boolean, default: true },
         position: {
             type: String as PropType<'left' | 'right' | 'center'>,
@@ -178,6 +183,11 @@ export default defineComponent({
         height: 100vh !important;
         border-radius: 0px;
     }
+    &--fullheight {
+        margin: 0;
+        height: 100vh !important;
+        border-radius: 0px;
+    }
     &--right {
         position: absolute !important;
         right: 0;
@@ -200,6 +210,9 @@ export default defineComponent({
     height: 100%;
 
     &--fullscreen {
+        flex-grow: 1 !important;
+    }
+    &--fullheight {
         flex-grow: 1 !important;
     }
 }
