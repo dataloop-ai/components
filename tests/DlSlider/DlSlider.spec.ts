@@ -1,9 +1,10 @@
-import { mount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import { DlSlider } from '../../src'
+import { describe, it, expect } from 'vitest'
 
 describe('DlSlider', () => {
     it('should behave accordingly', async () => {
-        const wrapper = mount(DlSlider, {
+        const wrapper = shallowMount(DlSlider, {
             props: {
                 width: '500px',
                 color: 'red',
@@ -30,9 +31,8 @@ describe('DlSlider', () => {
         expect(wrapper.find(_nonEditableSliderInput).exists()).toBe(true)
         expect(wrapper.find(_nonEditableSliderBtn).exists()).toBe(true)
 
-        const nonEditableSliderBtn = wrapper
-            .get(_nonEditableSliderBtn)
-            .find('.dl-button')
+        const nonEditableSliderBtn = wrapper.find(_nonEditableSliderBtn)
+
         await nonEditableSliderBtn.trigger('click')
 
         expect(wrapper.emitted()['update:model-value']).not.toBeDefined()
@@ -73,7 +73,7 @@ describe('DlSlider', () => {
         expect(wrapper.find(_editableSlider).exists()).toBe(true)
         expect(wrapper.find(_editableSliderInput).exists()).toBe(true)
 
-        const editableSliderInput = wrapper.get(_editableSliderInput)
+        const editableSliderInput = wrapper.findComponent(_editableSliderInput)
 
         await editableSliderInput.setValue(1)
         expect(wrapper.emitted()['update:model-value'][1]).toEqual([1])

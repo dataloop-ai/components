@@ -2,11 +2,12 @@ import { mount } from '@vue/test-utils'
 import DlMonthCalendar from '../../src/components/DlDatePicker/DlMonthCalendar.vue'
 import { CalendarDate } from '../../src/components/DlDatePicker/classes/CalendarDate'
 import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const date = new Date(1990, 12, 1)
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(date))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(date))
 
 describe('DlMonthCalendar', () => {
     it('should emit date on mousedown', () => {
@@ -47,6 +48,6 @@ describe('DlMonthCalendar', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

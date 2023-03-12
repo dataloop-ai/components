@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
 import DlTimeCounter from '../../src/components/DlTimePicker/DlTimeCounter.vue'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(1990, 12, 1))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(1990, 12, 1))
 
 describe('Time Counter', () => {
     it('should set the hour', () => {
@@ -17,6 +18,6 @@ describe('Time Counter', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

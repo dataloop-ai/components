@@ -1,3 +1,5 @@
-import DlStepperDemo from './DlStepperDemo.vue'
+import SimpleStepper from './SimpleStepper.vue'
+import StepperInDialogBox from './StepperInDialogBox.vue'
+import CenteredStepperInDialogBox from './CenteredStepperInDialogBox.vue'
 
-export { DlStepperDemo }
+export { SimpleStepper, StepperInDialogBox, CenteredStepperInDialogBox }

@@ -3,6 +3,7 @@ import {
     removeGlobalNode,
     changeGlobalNodesTarget
 } from '../../src/utils/global-nodes'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('global-nodes', () => {
     describe('createGlobalNode', () => {
@@ -24,7 +25,7 @@ describe('global-nodes', () => {
             it('should return undefined', () => {
                 expect(
                     removeGlobalNode({
-                        remove: jest.fn()
+                        remove: vi.fn()
                     } as unknown as HTMLElement)
                 ).toBe(undefined)
             })

@@ -50,8 +50,9 @@ import { DlDateTimeRange } from './DlDateTimeRange'
 import { DateInterval } from './DlDatePicker/types'
 import { DlSmartSearch } from './DlSmartSearch'
 import { DlWidget } from './DlWidget'
-import { DlWidgetGrid } from './DlWidget'
+import { DlGrid } from './DlWidget'
 import DlTextHolder from './DlTextHolder.vue'
+import { DlColumnChart } from './DlChart'
 
 export {
     DlAccordion,
@@ -111,8 +112,9 @@ export {
     DlDateTimeRange,
     DlSmartSearch,
     DlWidget,
-    DlWidgetGrid,
-    DlTextHolder
+    DlGrid,
+    DlTextHolder,
+    DlColumnChart
 }
 
 export type { StepState, DateInterval }

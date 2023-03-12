@@ -18,9 +18,8 @@
                 }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
-                    'dialog-wrapper--fullheight': fullHeight,
-                    'dialog-wrapper--right': position === 'right',
-                    'dialog-wrapper--left': position === 'left'
+                    'dialog-wrapper--right': right,
+                    'dialog-wrapper--left': left
                 }"
             >
                 <div
@@ -63,12 +62,8 @@ export default defineComponent({
         width: { type: [Number, String], default: 400 },
         height: { type: [Number, String], default: 'fit-content' },
         fullscreen: Boolean,
-        fullHeight: Boolean,
-        separators: { type: Boolean, default: true },
-        position: {
-            type: String as PropType<'left' | 'right' | 'center'>,
-            default: 'center'
-        },
+        right: Boolean,
+        left: Boolean,
         modelValue: Boolean,
         volatile: { type: Boolean, default: false }
     },
@@ -179,22 +174,10 @@ export default defineComponent({
 
     &--fullscreen {
         margin: 0;
-        width: 100vw !important;
-        height: 100vh !important;
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw !important;
         border-radius: 0px;
-    }
-    &--fullheight {
-        margin: 0;
-        height: 100vh !important;
-        border-radius: 0px;
-    }
-    &--right {
-        position: absolute !important;
-        right: 0;
-    }
-    &--left {
-        position: absolute !important;
-        left: 0;
     }
 }
 
@@ -210,10 +193,7 @@ export default defineComponent({
     height: 100%;
 
     &--fullscreen {
-        flex-grow: 1 !important;
-    }
-    &--fullheight {
-        flex-grow: 1 !important;
+        flex-grow: 1;
     }
 }
 
