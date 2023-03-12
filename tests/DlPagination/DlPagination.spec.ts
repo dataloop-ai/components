@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
 import DlPagination from '../../src/components/DlPagination/DlPagination.vue'
+import { describe, it, expect } from 'vitest'
 
 describe('DlPagination', () => {
     it('should render the pagination component', async () => {

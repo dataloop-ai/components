@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlInfoErrorMessage } from '../src'
+import { describe, it, expect } from 'vitest'
 
 describe('DlColorPicker DlInfoErrorMessage component', () => {
     it('should mount the component', () => {
@@ -16,11 +17,11 @@ describe('DlColorPicker DlInfoErrorMessage component', () => {
             }
         })
 
-        expect(wrapper.element.classList).toContain('text-error')
-        expect(wrapper.element.classList).toContain('text-above')
+        expect(wrapper.classes()).toContain('text-error')
+        expect(wrapper.classes()).toContain('text-above')
 
         await wrapper.setProps({ position: 'below' })
 
-        expect(wrapper.element.classList).toContain('text')
+        expect(wrapper.classes()).toContain('text')
     })
 })

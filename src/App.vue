@@ -51,7 +51,10 @@
                     </template>
                 </dl-list>
             </div>
-            <div class="content">
+            <div
+                v-if="activeDemo !== 'stepper'"
+                class="content"
+            >
                 <div style="display: flex; justify-content: center">
                     <dl-typography
                         size="h2"
@@ -61,16 +64,28 @@
                         {{ parseName(activeDemo) }} component
                     </dl-typography>
                 </div>
+
                 <component
                     :is="demoState[activeDemo]"
                     class="data-container"
                 />
+            </div>
+            <div
+                v-else
+                class="content"
+            >
+                <SimpleStepper />
+                <div style="height: 10px" />
+                <StepperInDialogBox />
+                <div style="height: 10px" />
+                <CenteredStepperInDialogBox />
             </div>
         </div>
     </DlThemeProvider>
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { defineComponent, ref, computed } from 'vue-demi'
 import {
     DlThemeProvider,
@@ -80,7 +95,12 @@ import {
     DlTypography,
     DlSearch
 } from './components'
-import { demoState } from './demo'
+import {
+    demoState,
+    SimpleStepper,
+    StepperInDialogBox,
+    CenteredStepperInDialogBox
+} from './demo'
 import { parseName } from './utils'
 
 export default defineComponent({
@@ -91,7 +111,10 @@ export default defineComponent({
         DlListItem,
         DlList,
         DlTypography,
-        DlSearch
+        DlSearch,
+        SimpleStepper,
+        StepperInDialogBox,
+        CenteredStepperInDialogBox
     },
     props: {
         isDark: { required: false, default: null, type: Boolean }

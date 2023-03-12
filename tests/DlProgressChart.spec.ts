@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlProgressChart } from '../src/'
+import { describe, it, expect } from 'vitest'
 
 describe('DlProgressChart', () => {
     const _counterLink = '[data-test="counter-link"]'

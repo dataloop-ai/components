@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlTr } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlTr', () => {
     it('should compute right class name', async () => {

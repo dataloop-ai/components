@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import DlStepperSidebar from '../../src/components/DlStepper/DlStepperSidebar.vue'
 import { StepState } from '../../src/components/DlStepper/interfaces'
+import { describe, it, expect } from 'vitest'
 
 describe('DlStepperSidebar', () => {
     it('should render the steps', async () => {

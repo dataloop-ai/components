@@ -1,12 +1,13 @@
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue-demi'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { DlTooltip } from '../src/components'
 
 describe('DlTooltip', () => {
     beforeEach(() => {
-        jest.resetModules()
+        vi.resetModules()
     })
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     it('should apply the props', async () => {
         const Parent = defineComponent({
             name: 'DlParent',
@@ -50,12 +51,12 @@ describe('DlTooltip', () => {
         expect(wrapper.vm.offset).toEqual([9, 9])
 
         wrapper.vm.$el.parentNode.dispatchEvent(new MouseEvent('mouseenter'))
-        jest.runAllTimers()
+        vi.runAllTimers()
         expect(document.querySelector('[data-test-id="portal"]')).not.toBeNull()
         expect(wrapper.emitted()).toHaveProperty('before-show')
 
         wrapper.vm.$el.parentNode.dispatchEvent(new MouseEvent('mouseleave'))
-        jest.runAllTimers()
+        vi.runAllTimers()
 
         expect(wrapper.emitted()).toHaveProperty('before-hide')
         expect(wrapper.emitted()).toHaveProperty('hide')

@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
 import { DlTypography } from '../src/'
 
 describe('DlTypography', () => {
@@ -15,13 +16,13 @@ describe('DlTypography', () => {
         })
 
         expect(wrapper.html()).toBe(
-            `<p id="${wrapper.vm.uuid}" class="dl-typography dl-typography--30px" style="text-transform: uppercase; font-weight: 400; font-size: 30px;">some</p>`
+            `<p data-v-ee704567="" id="${wrapper.vm.uuid}" class="dl-typography dl-typography--30px" style="text-transform: uppercase; font-weight: 400; font-size: 30px;">some</p>`
         )
 
         await wrapper.setProps({ uppercase: false, bold: true })
 
         expect(wrapper.html()).toBe(
-            `<p id="${wrapper.vm.uuid}" class="dl-typography dl-typography--30px" style="text-transform: none; font-weight: bold; font-size: 30px;">some</p>`
+            `<p data-v-ee704567="" id="${wrapper.vm.uuid}" class="dl-typography dl-typography--30px" style="text-transform: none; font-weight: bold; font-size: 30px;">some</p>`
         )
     })
 })

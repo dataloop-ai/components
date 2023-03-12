@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlAlpha } from '../../src/components/DlColorPicker'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('DlColorPicker DlAlpha component', () => {
     it('should mount the component', async () => {
@@ -11,8 +12,8 @@ describe('DlColorPicker DlAlpha component', () => {
     it('should execute the watcher functions', async () => {
         const wrapper = mount(DlAlpha)
 
-        const renderColorSpy = jest.spyOn(wrapper.vm, 'renderColor')
-        const renderSlideSpy = jest.spyOn(wrapper.vm, 'renderSlide')
+        const renderColorSpy = vi.spyOn(wrapper.vm, 'renderColor')
+        const renderSlideSpy = vi.spyOn(wrapper.vm, 'renderSlide')
 
         await wrapper.setProps({
             color: '#111111',
@@ -28,7 +29,7 @@ describe('DlColorPicker DlAlpha component', () => {
         expect(renderColorSpy).toHaveBeenCalled()
         expect(renderSlideSpy).toHaveBeenCalled()
 
-        const selectAlphaSpy = jest.spyOn(wrapper.vm, 'selectAlpha')
+        const selectAlphaSpy = vi.spyOn(wrapper.vm, 'selectAlpha')
 
         await wrapper.find('.color-alpha').trigger('mousedown')
 

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { DlSliderBase } from '../../src/components/DlSlider/components'
 import touchPanDirective from '../../src/directives/TouchPan'
+import { describe, it, expect } from 'vitest'
 
 describe('DlSliderBase', () => {
     const _slider = '[data-test="slider"]'

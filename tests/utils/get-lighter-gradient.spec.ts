@@ -1,4 +1,5 @@
 import { getLighterGradient } from '../../src/utils/getLighterGradient'
+import { describe, it, expect } from 'vitest'
 
 describe('when passing a css color name', () => {
     it('should return a lighter hex value', () => {

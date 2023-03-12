@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import DlCardSidebar from '../../src/components/DlDateTimeRange/DlCardSidebar.vue'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const daySidebar = [
     {
@@ -12,8 +13,8 @@ const daySidebar = [
     }
 ]
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(1990, 12, 1))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(1990, 12, 1))
 
 describe('DlCardSidebar', () => {
     it('should emit an option upon clicking it', () => {
@@ -28,6 +29,6 @@ describe('DlCardSidebar', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

@@ -2,6 +2,7 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import { ComponentOptionsBase, ComponentPublicInstance } from 'vue'
 import { DlRange } from '../../src'
 import touchPanDirective from '../../src/directives/TouchPan'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 const _resetBtn = '[data-test="reset-btn"]'
 const _sliderBar = '[data-test="slider-bar"]'

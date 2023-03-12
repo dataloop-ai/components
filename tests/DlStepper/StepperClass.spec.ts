@@ -1,6 +1,7 @@
 import { Stepper as StepperClass } from '../../src/components/DlStepper/Stepper'
 import { Step } from '../../src/components/DlStepper/Step'
 import { StepState } from '../../src/components/DlStepper/interfaces'
+import { describe, it, expect } from 'vitest'
 
 // jest.mock('../../src/components/DlStepper/Stepper')
 

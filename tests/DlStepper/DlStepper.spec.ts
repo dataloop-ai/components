@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { DlStepper } from '../../src'
 import { StepState } from '../../src/components/DlStepper/interfaces'
+import { describe, it, expect } from 'vitest'
 
 describe('DlStepper', () => {
     it('should render the stepper', async () => {

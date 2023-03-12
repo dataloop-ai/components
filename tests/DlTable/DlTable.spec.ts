@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlTable } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 const COLUMNS = [
     {
