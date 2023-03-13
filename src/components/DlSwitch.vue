@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, toRaw, nextTick } from 'vue-demi'
-import debounce from 'lodash/debounce'
+import { debounce } from 'lodash'
 import { getColor } from '../utils'
 import { v4 } from 'uuid'
 import {

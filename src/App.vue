@@ -85,7 +85,6 @@
 </template>
 
 <script lang="ts">
-// @ts-nocheck
 import { defineComponent, ref, computed } from 'vue-demi'
 import {
     DlThemeProvider,

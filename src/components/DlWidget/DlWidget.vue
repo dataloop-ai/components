@@ -18,13 +18,13 @@
                 </div>
                 <dl-icon
                     :style="`visibility: ${
-                        visibleDragIcon ? 'visible' : 'hidden'
+                        visibleDragIcon && !isDragging ? 'visible' : 'hidden'
                     }`"
                     class="dl-widget__header--drag-icon"
                     icon="icon-dl-drag"
                     color="dl-color-medium"
                     size="15px"
-                    @mousedown="startDragging"
+                    @mousedown.native="startDragging"
                 />
                 <slot name="menu" />
             </div>
@@ -197,10 +197,12 @@ export default defineComponent({
         display: flex;
         padding: 10px;
         border-bottom: 1px solid var(--dl-color-separator);
+        text-align: start;
 
         &--drag-icon {
             flex-grow: 1;
             cursor: pointer;
+            text-align: start;
 
             &::v-deep .dl-icon {
                 transform: rotate(90deg) !important;

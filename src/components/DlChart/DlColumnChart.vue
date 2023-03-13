@@ -101,10 +101,7 @@ import type {
     ActiveElement,
     ChartType
 } from 'chart.js'
-import orderBy from 'lodash/orderBy'
-import merge from 'lodash/merge'
-import isEqual from 'lodash/isEqual'
-import unionBy from 'lodash/unionBy'
+import { isEqual, orderBy, merge, unionBy } from 'lodash'
 import { useThemeVariables } from '../../hooks/use-theme'
 
 ChartJS.register(
