@@ -61,10 +61,10 @@ export function createTypedChart<
 
 export const Bar = /* #__PURE__ */ createTypedChart('bar', BarController)
 
-// export const Doughnut = /* #__PURE__ */ createTypedChart(
-//     'doughnut',
-//     DoughnutController
-// )
+export const Doughnut = /* #__PURE__ */ createTypedChart(
+    'doughnut',
+    DoughnutController
+)
 
 // export const Line = /* #__PURE__ */ createTypedChart('line', LineController)
 
