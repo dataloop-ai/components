@@ -1,8 +1,8 @@
 import { Chart } from './chart'
 import {
     createTypedChart,
-    Bar
-    // Doughnut,
+    Bar,
+    Doughnut
     // Line,
     // Pie,
     // PolarArea,
@@ -23,7 +23,7 @@ export {
     Chart,
     createTypedChart,
     Bar,
-    // Doughnut,
+    Doughnut,
     // Line,
     // Pie,
     // PolarArea,

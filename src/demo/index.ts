@@ -47,6 +47,7 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 
 export {
     AvatarDemo,
@@ -95,7 +96,8 @@ export {
     DlColumnChartDemo,
     DlSwitchDemo,
     CenteredStepperInDialogBox,
-    DlBarChartDemo
+    DlBarChartDemo,
+    DlChartDoughnutDemo
 }
 
 export const demoState = {
@@ -111,6 +113,7 @@ export const demoState = {
     color_picker: DlColorPickerDemo,
     counter: DlCounterDemo,
     dialog_box: DlDialogBoxDemo,
+    doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
