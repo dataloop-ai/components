@@ -20,5 +20,7 @@ jobs:
       run: npm install
     - name: Build
       run: npm run build
+    - name: Check only
+      run: npm run check-only
     - name: Test
       run: npm test
