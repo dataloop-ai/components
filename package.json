@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:2": "./packAndRunV2.sh",
+    "dev:2": "./misc/packAndRunV2.sh",
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
