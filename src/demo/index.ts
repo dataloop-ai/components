@@ -41,6 +41,7 @@ import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
 import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlToastMessageDemo from './DlToastMessageDemo.vue'
 
 export {
     AvatarDemo,
@@ -85,7 +86,8 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlSwitchDemo
+    DlSwitchDemo,
+    DlToastMessageDemo
 }
 
 export const demoState = {
@@ -131,5 +133,6 @@ export const demoState = {
     widget: DlWidgetDemo,
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
-    smart_search: DlSmartSearchDemo
+    smart_search: DlSmartSearchDemo,
+    toast_message: DlToastMessageDemo
 }
