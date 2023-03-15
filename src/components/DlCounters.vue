@@ -11,7 +11,11 @@
             >
                 <div :class="computeClass('item-content')">
                     <p :class="computeClass('item-value')">
-                        {{ abbreviateNumber(item.value) }}
+                        {{
+                            abbreviateNumbers
+                                ? abbreviateNumber(item.value)
+                                : item.value
+                        }}
                     </p>
                     <p
                         v-show="item.text"
@@ -56,6 +60,10 @@ export default defineComponent({
             validator(value: CounterItem[]): boolean {
                 return value.length <= 8
             }
+        },
+        abbreviateNumbers: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
