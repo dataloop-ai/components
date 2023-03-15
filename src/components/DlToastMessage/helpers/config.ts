@@ -1,10 +1,10 @@
-const Positions: Object = Object.freeze({
-    TOP_RIGHT: 'top-right',
-    TOP: 'top',
-    TOP_LEFT: 'top-left',
-    BOTTOM_RIGHT: 'bottom-right',
-    BOTTOM: 'bottom',
-    BOTTOM_LEFT: 'bottom-left'
+const Positions = Object.freeze({
+    top_right: 'top-right',
+    top: 'top',
+    top_left: 'top-left',
+    bottom_right: 'bottom-right',
+    bottom: 'bottom',
+    bottom_left: 'bottom-left'
 })
 
 export { Positions }

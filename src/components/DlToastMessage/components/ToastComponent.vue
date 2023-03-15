@@ -12,6 +12,7 @@
             <dl-alert
                 :type="type"
                 :closable="true"
+                fluid
             >
                 <!-- eslint-disable vue/no-v-html -->
                 <span v-html="message" />
@@ -52,7 +53,7 @@ export default defineComponent({
         },
         position: {
             type: String,
-            default: Positions.BOTTOM,
+            default: Positions.bottom,
             validator(value) {
                 return Object.values(Positions).includes(value)
             }
@@ -79,8 +80,8 @@ export default defineComponent({
             activeDuration
         } = props
         const root = ref(null)
-        let parentTop = ref(null)
-        let parentBottom = ref(null)
+        let parentTop: HTMLElement = null
+        let parentBottom: HTMLElement = null
         const toastParentPosition = ref(null)
         const isActive = ref(false)
         function closeToastMessage(): void {
@@ -109,14 +110,14 @@ export default defineComponent({
 
         const correctParent = computed(() => {
             switch (position) {
-                case Positions.TOP:
-                case Positions.TOP_RIGHT:
-                case Positions.TOP_LEFT:
+                case Positions.top:
+                case Positions.top_right:
+                case Positions.top_left:
                     toastParentPosition.value = 'top'
                     return parentTop
-                case Positions.BOTTOM:
-                case Positions.BOTTOM_RIGHT:
-                case Positions.BOTTOM_LEFT:
+                case Positions.bottom:
+                case Positions.bottom_right:
+                case Positions.bottom_left:
                     toastParentPosition.value = 'bottom'
                     return parentBottom
             }
@@ -124,16 +125,16 @@ export default defineComponent({
 
         const transition = computed((): Animation => {
             switch (position) {
-                case Positions.TOP:
-                case Positions.TOP_RIGHT:
-                case Positions.TOP_LEFT:
+                case Positions.top:
+                case Positions.top_right:
+                case Positions.top_left:
                     return {
                         enter: 'v-toast--fade-in-down',
                         leave: 'v-toast--fade-out'
                     }
-                case Positions.BOTTOM:
-                case Positions.BOTTOM_RIGHT:
-                case Positions.BOTTOM_LEFT:
+                case Positions.bottom:
+                case Positions.bottom_right:
+                case Positions.bottom_left:
                     return {
                         enter: 'v-toast--fade-in-up',
                         leave: 'v-toast--fade-out'
