@@ -3,8 +3,9 @@
 cd misc
 
 # check if vue2-playground exists
-if [ ! -d "vue2-playground" ]; then
-   tar -xf vue2-playground.zip
+if [ ! -d "vue2.6-vite" ]; then
+   tar -zxvf vue2-template.tar.gz
+
    sleep 0.5s
 fi
 
@@ -17,7 +18,7 @@ sleep 0.5s
 yourfilenames=`ls ./*.tgz`
 
 cd misc
-cd vue2-playground
+cd vue2.6-vite
 npm i
 
 for eachfile in $yourfilenames

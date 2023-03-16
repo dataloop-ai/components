@@ -4,7 +4,7 @@
         :class="identifierClass"
         class="accordion"
     >
-        <accordion-header
+        <dl-accordion-header
             :additional-info="additionalInfo"
             :default-opened="defaultOpened"
             :title="title"
@@ -21,7 +21,7 @@
             >
                 <slot name="header" />
             </template>
-        </accordion-header>
+        </dl-accordion-header>
         <div
             ref="dlAccordionContent"
             class="accordion-content"
@@ -33,14 +33,14 @@
 </template>
 
 <script lang="ts">
-import AccordionHeader from './AccordionHeader.vue'
+import DlAccordionHeader from './AccordionHeader.vue'
 import { defineComponent } from 'vue-demi'
 import { v4 } from 'uuid'
 
 export default defineComponent({
     name: 'DlAccordion',
     components: {
-        AccordionHeader
+        DlAccordionHeader
     },
     model: {
         prop: 'modelValue',

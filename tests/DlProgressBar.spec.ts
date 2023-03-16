@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
 import { DlProgressBar } from '../src/'
 
 describe('DlProgressBar', () => {

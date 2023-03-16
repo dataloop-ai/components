@@ -40,8 +40,11 @@ import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
 import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlColumnChartDemo from './ColumnChartDemo.vue'
+import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
 import DlToastMessageDemo from './DlToastMessageDemo.vue'
+import DlSpinner from './DlSpinnerDemo.vue'
 
 export {
     AvatarDemo,
@@ -87,7 +90,11 @@ export {
     DlRadioDemo,
     DlTextHolderDemo,
     DlSwitchDemo,
-    DlToastMessageDemo
+    DlToastMessageDemo,
+    DlColumnChartDemo,
+    DlBarChartDemo,
+    DlSwitchDemo,
+    DlSpinner
 }
 
 export const demoState = {
@@ -96,6 +103,8 @@ export const demoState = {
     avatar: AvatarDemo,
     badge: DlBadgeDemo,
     button: DlButtonDemo,
+    column_chart: DlColumnChartDemo,
+    bar_chart: DlBarChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,
@@ -134,5 +143,7 @@ export const demoState = {
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
-    toast_message: DlToastMessageDemo
+    toast_message: DlToastMessageDemo,
+    smart_search: DlSmartSearchDemo,
+    spinner: DlSpinner
 }

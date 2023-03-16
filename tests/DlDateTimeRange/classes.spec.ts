@@ -1,9 +1,10 @@
 import { Calendar } from '../../src/components/DlDatePicker/classes/Calendar'
 import { CalendarDate } from '../../src/components/DlDatePicker/classes/CalendarDate'
 import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(1990, 12, 1))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(1990, 12, 1))
 
 describe('Calendar', () => {
     it('should get and set the dates of the calendar object', () => {
@@ -64,6 +65,6 @@ describe('CustomDate', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

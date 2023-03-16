@@ -1,157 +1,119 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
-import DlWidgetGrid from '../components/DlWidget/DlWidgetGrid.vue'
-import { DlButton } from '../components'
-import BadgeDemo from './DlBadgeDemo.vue'
-import { Widget } from '../components/DlWidget/types'
-import DlDialogBox from '../components/DlDialogBox/DlDialogBox.vue'
-import DlDialogBoxHeader from '../components/DlDialogBox/DlDialogBoxHeader.vue'
-import DlDialogBoxFooter from '../components/DlDialogBox/DlDialogBoxFooter.vue'
-import DlChip from '../components/DlChip/DlChip.vue'
+import { defineComponent } from 'vue-demi'
+import DlBarChart from '../components/DlChart/DlBarChart.vue'
+import DlGrid from '../components/DlWidget/DlGrid.vue'
+import DlGridRow from '../components/DlWidget/DlGridRow.vue'
+import DlWidget from '../components/DlWidget/DlWidget.vue'
+
+const labelsFn = () => {
+    const a = []
+    for (let i = 0; i < 20; i++) {
+        a.push(`${i}`)
+    }
+    return a
+}
+
+const dataFn = () => {
+    const a = []
+    for (let i = 1; i <= 20; i++) {
+        a.push(i)
+    }
+    return a
+}
+
+const data = {
+    labels: labelsFn(),
+    datasets: [
+        {
+            label: 'Data One',
+            backgroundColor: '--dl-color-secondary',
+            borderRadius: 4,
+            data: dataFn()
+        },
+        {
+            label: 'Data Two',
+            backgroundColor: '--dl-color-warning',
+            borderRadius: 4,
+            data: dataFn()
+        }
+    ]
+}
 
 export default defineComponent({
     components: {
-        DlWidgetGrid,
-        DlButton,
-        DlDialogBox,
-        DlDialogBoxHeader,
-        DlDialogBoxFooter,
-        DlChip
+        DlGrid,
+        DlWidget,
+        DlBarChart,
+        DlGridRow
     },
     setup() {
-        const isEditable = ref(false)
-        const addDialog = ref(false)
-        const handleEditMode = () => (isEditable.value = !isEditable.value)
-
-        const widgetLibrary = ref([
-            {
-                title: 'Widget 1',
-                subTitle: 'first widget',
-                content: BadgeDemo,
-                description:
-                    'Lorem ipsum dolor sit amet consectetur. Ultricies odio sagittis bibendum tristique congue pretium ac massa proin. Leo blandit commodo sit nibh sem. dfsdfdsfsdf dfsdfsdfsdfsd'
-            }
-        ] as Widget[])
-
-        const widgets = ref([
-            [
-                {
-                    title: 'Widget 8',
-                    subTitle: 'eighth widget',
-                    content: `Do I contradict myself?
-                              Very well then I contradict myself,
-                              (I am large, I contain multitudes.)
-                              I concentrate toward them that are nigh, I wait on the door-slab.
-                              Who has done his day's work? who will soonest be through with his supper?
-                              Who wishes to walk with me?`,
-                    description:
-                        'Lorem dolor sit amet consectetur. Ultricies odio sagittis bibendum tristique congue pretium ac massa proin. Leo blandit commodo sit nibh sem. dfsdfdsfsdf dfsdfsdfsdfsd'
-                }
-            ],
-            [
-                {
-                    title: 'Widget 2',
-                    subTitle: 'second widget',
-                    content: `“Later she remembered all the hours of the afternoon as happy -- one of those uneventful times that seem at the moment only a link between past and future pleasure, but turn out to have been the pleasure itself.”`,
-                    description:
-                        'Lorem ipsum dolor sit amet consectetur. Ultricies odio sagittis bibendum tristique congue pretium ac massa proin. Leo blandit commodo sit nibh sem. dfsdfdsfsdf dfsdfsdfsdfsd'
-                },
-                {
-                    title: 'Widget 3',
-                    subTitle: 'third widget',
-                    content: `The Bat that flits at close of Eve
-                          Has left the Brain that wont Believe
-                          The Owl that calls upon the Night
-                          Speaks the Unbelievers fright`,
-                    description:
-                        'Lorem ipsum dolor sit amet consectetur. Ultricies odio sagittis bibendum tristique congue pretium ac massa proin. Leo blandit commodo sit nibh sem. dfsdfdsfsdf dfsdfsdfsdfsd'
-                }
-            ],
-            [
-                {
-                    title: 'Widget 4',
-                    subTitle: 'fourth widget',
-                    content: `That motley drama—oh, be sure   
-                             It shall not be forgot!
-                          With its Phantom chased for evermore   
-                             By a crowd that seize it not,`,
-                    description:
-                        'Lorem ipsum dolor sit amet consectetur. Ultricies odio sagittis bibendum tristique congue pretium ac massa proin. Leo blandit commodo sit nibh sem. dfsdfdsfsdf dfsdfsdfsdfsd'
-                }
-            ]
-        ] as Widget[][])
-
-        const addWidget = (widget: Widget) => {
-            widgets.value[widgets.value.length - 1].push(widget)
-            addDialog.value = false
-        }
-
-        const handleRemove = (widget: Widget) => {
-            widgetLibrary.value.push(widget)
-        }
-
-        return {
-            widgets,
-            widgetLibrary,
-            isEditable,
-            addDialog,
-            handleEditMode,
-            addWidget,
-            handleRemove
-        }
+        return { data }
     }
 })
 </script>
 
 <template>
-    <div style="width: 900px">
-        <div
-            style="width: 200px; display: flex; justify-content: space-between"
-        >
-            <dl-button
-                :label="isEditable ? 'Done' : 'Edit'"
-                @click="handleEditMode"
-            />
-            <dl-button
-                label="Add"
-                @click="addDialog = true"
-            />
-        </div>
-        <dl-widget-grid
-            v-model="widgets"
-            :is-editable="isEditable"
-            @remove="handleRemove"
-        />
+    <div>
+        <dl-grid gap="20px">
+            <dl-grid-row>
+                <dl-widget>
+                    <template #header>
+                        <span>Widget 1</span>
+                        <span style="font-size: 12px; color: gray">Subtitle</span>
+                    </template>
+                    <template #menu>
+                        <div>
+                            Menu
+                            <div />
+                        </div>
+                    </template>
+                    <template #content>
+                        <dl-bar-chart
+                            :legend-props="legendProps"
+                            :data="data"
+                            :options="options"
+                            :items-in-view="8"
+                        />
+                    </template>
+                    <template #description>
+                        <span>Lorem ipsum dolor sit amet consectetur adipisicing
+                            elit. Libero eligendi dolore, similique possimus
+                            veritatis in vitae quia praesentium fuga quibusdam
+                            autem. Doloremque tenetur repudiandae a cupiditate
+                            modi dicta eveniet veritatis?</span>
+                    </template>
+                </dl-widget>
+            </dl-grid-row>
 
-        <dl-dialog-box v-model="addDialog">
-            <template #header>
-                <dl-dialog-box-header
-                    title="Add new widget"
-                    @on-close="addDialog = false"
-                />
-            </template>
-            <template #body>
-                <div
-                    class="flex"
-                    style="gap: 10px"
-                >
-                    <dl-chip
-                        v-for="(widget, index) in widgetLibrary"
-                        :key="index"
-                        style="cursor: pointer"
-                        @click="addWidget(widget)"
-                    >
-                        {{ widget.title }}
-                    </dl-chip>
-                </div>
-            </template>
-            <template #footer>
-                <dl-dialog-box-footer>
-                    <dl-button @click="addDialog = false">
-                        Close
-                    </dl-button>
-                </dl-dialog-box-footer>
-            </template>
-        </dl-dialog-box>
+            <dl-grid-row gap="20px">
+                <dl-widget>
+                    <template #header>
+                        <span>Widget 2</span>
+                    </template>
+                    <template #content>
+                        <dl-bar-chart
+                            :legend-props="legendProps"
+                            :data="data"
+                            :options="options"
+                            :items-in-view="6"
+                        />
+                    </template>
+                </dl-widget>
+
+                <dl-widget>
+                    <template #header>
+                        <span>Widget 3</span>
+                    </template>
+                    <template #content>
+                        <dl-bar-chart
+                            :legend-props="legendProps"
+                            :data="data"
+                            :options="options"
+                            :items-in-view="6"
+                        />
+                    </template>
+                </dl-widget>
+            </dl-grid-row>
+        </dl-grid>
     </div>
 </template>

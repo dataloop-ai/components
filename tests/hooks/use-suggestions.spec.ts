@@ -1,5 +1,6 @@
 import { mountComposition } from 'vue-composition-test-utils'
 import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
+import { describe, it, expect } from 'vitest'
 
 export const schema: Schema = {
     name: 'string',

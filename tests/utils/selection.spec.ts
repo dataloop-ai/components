@@ -1,11 +1,12 @@
 import { clearSelection } from '../../src/utils'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 describe('Selection utils', () => {
     describe('clearSelection', () => {
-        let spy: jest.SpyInstance
+        let spy
 
         beforeEach(() => {
-            spy = jest.spyOn(window, 'getSelection')
+            spy = vi.spyOn(window, 'getSelection')
         })
 
         afterEach(() => {
@@ -31,7 +32,7 @@ describe('Selection utils', () => {
             describe('when selection has "empty" method', () => {
                 it('should call it', () => {
                     spy.mockImplementation(() => ({
-                        empty: jest.fn()
+                        empty: vi.fn()
                     }))
                     clearSelection()
                     expect(window.getSelection()!.empty).toBeDefined()
@@ -41,7 +42,7 @@ describe('Selection utils', () => {
             describe('otherwise, if "remooveAllRanges" is defined', () => {
                 it('should call it', () => {
                     spy.mockImplementation(() => ({
-                        removeAllRanges: jest.fn()
+                        removeAllRanges: vi.fn()
                     }))
                     clearSelection()
                     expect(window.getSelection()!.removeAllRanges).toBeDefined()
@@ -49,15 +50,12 @@ describe('Selection utils', () => {
 
                 describe('if the window has "ontouchstart" method', () => {
                     it('should call the "addRange" method', () => {
-                        window.ontouchstart = jest.fn()
-                        const docSpy = jest.spyOn(
-                            document,
-                            'createRange'
-                        ) as jest.SpyInstance
+                        window.ontouchstart = vi.fn()
+                        const docSpy = vi.spyOn(document, 'createRange')
 
                         spy.mockImplementation(() => ({
-                            removeAllRanges: jest.fn(),
-                            addRange: jest.fn()
+                            removeAllRanges: vi.fn(),
+                            addRange: vi.fn()
                         }))
 
                         docSpy.mockImplementation(() => ({

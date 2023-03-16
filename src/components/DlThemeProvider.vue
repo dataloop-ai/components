@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, onMounted, watch, provide, ref } from 'vue-demi'
 import { getThemeModeAttr } from '../utils'
 import '@dataloop-ai/icons/docs/style.css'
 import { v4 } from 'uuid'
@@ -18,22 +18,31 @@ export default defineComponent({
             default: false
         }
     },
+    setup(props) {
+        onMounted(() => {
+            const mode = getThemeModeAttr(props.isDark)
+            document.documentElement.setAttribute('data-theme', mode)
+        })
+
+        const isDarkTheme = ref(props.isDark)
+
+        provide('theme', isDarkTheme)
+
+        watch(
+            () => props.isDark,
+            (isDark: boolean) => {
+                isDarkTheme.value = isDark
+                document.documentElement.setAttribute(
+                    'data-theme',
+                    getThemeModeAttr(isDark)
+                ) // sets the dl data-theme attr
+            }
+        )
+    },
     data() {
         return {
             uuid: `dl-theme-provider-${v4()}`
         }
-    },
-    watch: {
-        isDark(colorMode: boolean) {
-            document.documentElement.setAttribute(
-                'data-theme',
-                getThemeModeAttr(colorMode)
-            ) // sets the dl data-theme attr
-        }
-    },
-    created() {
-        const mode = getThemeModeAttr(this.isDark)
-        document.documentElement.setAttribute('data-theme', mode)
     }
 })
 </script>

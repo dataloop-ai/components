@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
-import { DlChip } from '../src/components'
+import DlChip from '../src/components/DlChip/DlChip.vue'
+import { describe, it, expect } from 'vitest'
 
 describe('DlChip', () => {
-    test('testing DlChip functionality', async () => {
+    it('testing DlChip functionality', async () => {
         const wrapper = mount(DlChip, {
             props: {
                 filled: true,

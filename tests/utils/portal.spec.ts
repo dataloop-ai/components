@@ -3,6 +3,7 @@ import {
     closePortalMenus,
     closePortals
 } from '../../src/utils/portal'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('portal', () => {
     describe('getPortalVm', () => {
@@ -24,7 +25,7 @@ describe('portal', () => {
                             $props: {
                                 separateClosePopup: true
                             },
-                            hide: jest.fn(),
+                            hide: vi.fn(),
                             $options: {
                                 name: 'DlMenu'
                             }
@@ -42,7 +43,7 @@ describe('portal', () => {
                             $props: {
                                 separateClosePopup: false
                             },
-                            hide: jest.fn(),
+                            hide: vi.fn(),
                             $options: {
                                 name: 'DlAnyComponent'
                             }
@@ -71,8 +72,8 @@ describe('portal', () => {
                 expect(
                     closePortals(
                         {
-                            __dlPortalInnerRef: jest.fn(),
-                            hide: jest.fn(),
+                            __dlPortalInnerRef: vi.fn(),
+                            hide: vi.fn(),
                             $options: {
                                 name: 'empty'
                             }
@@ -89,8 +90,8 @@ describe('portal', () => {
                 expect(
                     closePortals(
                         {
-                            __dlPortalInnerRef: jest.fn(),
-                            hide: jest.fn(),
+                            __dlPortalInnerRef: vi.fn(),
+                            hide: vi.fn(),
                             $options: {
                                 name: 'DlMenu'
                             }
