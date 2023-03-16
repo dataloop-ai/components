@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.13.13",
+  "version": "0.13.18",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:2": "./packAndRunV2.sh",
+    "dev:2": "./misc/packAndRunV2.sh",
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview",
     "storybook": "start-storybook -p 6006",
@@ -16,7 +16,7 @@
     "lint": "eslint ./src --ext .ts,.vue ",
     "lint:fix": "eslint ./src --ext .ts,.vue --fix",
     "format": "prettier --write ./src",
-    "lint-staged": "lint-staged && npm run check-only && npm run test",
+    "lint-staged": "lint-staged",
     "test": "vitest run --coverage",
     "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
   },
