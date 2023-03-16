@@ -115,8 +115,9 @@
         <div
             v-if="text"
             class="spinner-text"
+            :style="textStyles"
         >
-            <span :style="textStyles">{{ text }}</span>
+            <span>{{ text }}</span>
         </div>
     </div>
 </template>
