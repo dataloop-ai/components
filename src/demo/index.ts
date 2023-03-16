@@ -44,6 +44,7 @@ import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
+import DlSpinner from './DlSpinnerDemo.vue'
 
 export {
     AvatarDemo,
@@ -91,7 +92,8 @@ export {
     DlColumnChartDemo,
     DlSwitchDemo,
     DlBarChartDemo,
-    DlChartDoughnutDemo
+    DlChartDoughnutDemo,
+    DlSpinner
 }
 
 export const demoState = {
@@ -140,5 +142,6 @@ export const demoState = {
     widget: DlWidgetDemo,
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
-    smart_search: DlSmartSearchDemo
+    smart_search: DlSmartSearchDemo,
+    spinner: DlSpinner
 }
