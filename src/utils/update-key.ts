@@ -1,11 +1,11 @@
-import deepClone from 'lodash/cloneDeep'
+import { cloneDeep } from 'lodash'
 
 export function updateKey(
     data: Record<string, any>,
     key: string,
     mapFn: Function
 ): Record<string, any> {
-    const input = deepClone(data)
+    const input = cloneDeep(data)
 
     recursiveKeyUpdate(input, key, mapFn)
 
