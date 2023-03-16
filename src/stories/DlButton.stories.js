@@ -187,7 +187,7 @@ const FiledSmallTemplate = (args) => ({
             :label="button.label"
             color="dl-color-secondary"
             @click="click" 
-            v-bind="args" 
+            v-bind="args"
         />
     </div>`,
     methods: {
@@ -218,7 +218,6 @@ const FiledMediumTemplate = (args) => ({
             :label="button.label"
             color="dl-color-secondary"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -249,7 +248,6 @@ const FiledLargeTemplate = (args) => ({
             :label="button.label"
             color="dl-color-secondary"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -280,7 +278,6 @@ const FiledXlTemplate = (args) => ({
             :label="button.label"
             color="dl-color-secondary"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -311,7 +308,6 @@ const OutlinedSmallTemplate = (args) => ({
             :size="button.size"
             :label="button.label"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -341,7 +337,6 @@ const OutlinedMediumTemplate = (args) => ({
             :size="button.size"
             :label="button.label"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -371,7 +366,6 @@ const OutlinedLargeTemplate = (args) => ({
             :size="button.size"
             :label="button.label"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -401,7 +395,6 @@ const OutlinedXlTemplate = (args) => ({
             :size="button.size"
             :label="button.label"
             @click="click" 
-            v-bind="args" 
         />
     </div>`,
     methods: {
@@ -419,8 +412,9 @@ const FlatPrimarySmallTemplate = (args) => ({
     components: { DlButton },
     setup() {
         const button = {
-            size: 'xl',
-            label: 'Flat primary small'
+            size: 's',
+            label: 'Flat primary small',
+            color: 'primary'
         }
 
         return { args, button }
@@ -428,6 +422,7 @@ const FlatPrimarySmallTemplate = (args) => ({
     template: `<div style="padding: 50px">
         <DlButton
             flat
+            :color="button.color"
             :size="button.size"
             :label="button.label"
             @click="click" 
@@ -444,46 +439,1157 @@ FlatPrimarySmall.args = {
     label: 'Flat Primary Small'
 }
 
-export const FlatSecondary = Template.bind({})
-FlatSecondary.args = {
+const FlatPrimaryMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Flat primary medium',
+            color: 'primary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatPrimaryMedium = FlatPrimaryMediumTemplate.bind({})
+FlatPrimaryMedium.args = {
     flat: true,
-    color: 'secondary',
-    label: 'Flat Secondary'
+    color: 'primary',
+    size: 'm',
+    label: 'Flat Primary medium'
 }
 
-export const ButtonWithIcon = Template.bind({})
-ButtonWithIcon.args = {
-    filled: true,
-    label: 'Label',
+const FlatPrimaryLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Flat primary large',
+            color: 'primary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatPrimaryLarge = FlatPrimaryLargeTemplate.bind({})
+FlatPrimaryLarge.args = {
+    flat: true,
+    color: 'primary',
+    size: 'l',
+    label: 'Flat Primary medium'
+}
+
+const FlatPrimaryXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Flat primary XL',
+            color: 'primary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatPrimaryXl = FlatPrimaryXlTemplate.bind({})
+FlatPrimaryXl.args = {
+    flat: true,
+    color: 'primary',
+    size: 'xl',
+    label: 'Flat Primary XL'
+}
+
+const FlatSecondarySmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Flat Secondary Small',
+            color: 'secondary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatSecondarySmall = Template.bind({})
+FlatSecondarySmall.args = {
+    flat: true,
+    size: 's',
+    color: 'secondary',
+    label: 'Flat Secondary Small'
+}
+
+const FlatSecondaryMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Flat Secondary Medium',
+            color: 'secondary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatSecondaryMedium = FlatSecondaryMediumTemplate.bind({})
+FlatSecondaryMedium.args = {
+    flat: true,
+    size: 'm',
+    color: 'secondary',
+    label: 'Flat Secondary Medium'
+}
+
+const FlatSecondaryLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Flat Secondary Large',
+            color: 'secondary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatSecondaryLarge = FlatSecondaryLargeTemplate.bind({})
+FlatSecondaryLarge.args = {
+    flat: true,
+    size: 'l',
+    color: 'secondary',
+    label: 'Flat Secondary Large'
+}
+
+const FlatSecondaryXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Flat Secondary XL',
+            color: 'secondary'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :color="button.color"
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatSecondaryXl = FlatSecondaryXlTemplate.bind({})
+FlatSecondaryXl.args = {
+    flat: true,
+    size: 'xl',
+    color: 'secondary',
+    label: 'Flat Secondary XL'
+}
+
+const FlatDisabledSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Flat Disabled Small'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatDisabledSmall = FlatDisabledSmallTemplate.bind({})
+FlatDisabledSmall.args = {
+    flat: true,
+    disabled: true,
+    size: 's',
+    label: 'Flat Disabled Small'
+}
+
+const FlatDisabledMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Flat Disabled Medium'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatDisabledMedium = FlatDisabledMediumTemplate.bind({})
+FlatDisabledMedium.args = {
+    flat: true,
+    disabled: true,
+    size: 'm',
+    label: 'Flat Disabled Medium'
+}
+
+const FlatDisabledLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Flat Disabled Large'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatDisabledLarge = FlatDisabledLargeTemplate.bind({})
+FlatDisabledLarge.args = {
+    flat: true,
+    disabled: true,
+    size: 'l',
+    label: 'Flat Disabled Large'
+}
+
+const FlatDisabledXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Flat Disabled XL'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatDisabledXl = FlatDisabledXlTemplate.bind({})
+FlatDisabledXl.args = {
+    flat: true,
+    disabled: true,
+    size: 'xl',
+    label: 'Flat Disabled XL'
+}
+
+const DisabledSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Disabled Small'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DisabledSmall = DisabledSmallTemplate.bind({})
+DisabledSmall.args = {
+    disabled: true,
+    size: 's',
+    label: 'Disabled Small'
+}
+
+const DisabledMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Disabled Medium'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DisabledMedium = DisabledMediumTemplate.bind({})
+DisabledMedium.args = {
+    disabled: true,
+    size: 'm',
+    label: 'Disabled Medium'
+}
+
+const DisabledLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Disabled Large'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DisabledLarge = DisabledLargeTemplate.bind({})
+DisabledMedium.args = {
+    disabled: true,
+    size: 'l',
+    label: 'Disabled Large'
+}
+
+const DisabledXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Disabled XL'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            disabled
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DisabledXl = DisabledXlTemplate.bind({})
+DisabledXl.args = {
+    disabled: true,
+    size: 'xl',
+    label: 'Disabled XL'
+}
+
+const WithIconSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'With icon small',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const WithIconSmall = WithIconSmallTemplate.bind({})
+WithIconSmall.args = {
+    size: 's',
+    label: 'With icon small',
     icon: 'icon-dl-add'
 }
 
-export const IconButton = Template.bind({})
-IconButton.args = {
+const WithIconMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'With icon medium',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const WithIconMedium = WithIconMediumTemplate.bind({})
+WithIconMedium.args = {
+    size: 'm',
+    label: 'With icon medium',
+    icon: 'icon-dl-add'
+}
+
+const WithIconLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'With icon large',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const WithIconLarge = WithIconLargeTemplate.bind({})
+WithIconLarge.args = {
+    size: 'l',
+    label: 'With icon large',
+    icon: 'icon-dl-add'
+}
+
+const WithIconXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'With icon XL',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const WithIconXl = WithIconXlTemplate.bind({})
+WithIconXl.args = {
+    size: 'xl',
+    label: 'With icon XL',
+    icon: 'icon-dl-add'
+}
+
+const IconButtonSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            icon: 'icon-dl-dark-theme'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonSmall = IconButtonSmallTemplate.bind({})
+IconButtonSmall.args = {
     filled: true,
-    round: false,
     icon: 'icon-dl-dark-theme'
 }
 
-export const Fluid = Template.bind({})
-Fluid.args = {
+const IconButtonMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            icon: 'icon-dl-dark-theme'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonMedium = IconButtonMediumTemplate.bind({})
+IconButtonMedium.args = {
+    filled: true,
+    size: 'm',
+    icon: 'icon-dl-dark-theme'
+}
+
+const IconButtonLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            icon: 'icon-dl-dark-theme'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonLarge = IconButtonLargeTemplate.bind({})
+IconButtonLarge.args = {
+    filled: true,
+    size: 'l',
+    icon: 'icon-dl-dark-theme'
+}
+
+const IconButtonXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            icon: 'icon-dl-dark-theme'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonXl = IconButtonXlTemplate.bind({})
+IconButtonXl.args = {
+    filled: true,
+    size: 'xl',
+    icon: 'icon-dl-dark-theme'
+}
+
+const IconButtonRoundSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            round
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonRoundSmall = IconButtonRoundSmallTemplate.bind({})
+IconButtonRoundSmall.args = {
+    filled: true,
+    round: true,
+    size: 's',
+    icon: 'icon-dl-add'
+}
+
+const IconButtonRoundMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            round
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonRoundMedium = IconButtonRoundMediumTemplate.bind({})
+IconButtonRoundMedium.args = {
+    filled: true,
+    round: true,
+    size: 'm',
+    icon: 'icon-dl-add'
+}
+
+const IconButtonRoundLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            round
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonRoundLarge = IconButtonRoundLargeTemplate.bind({})
+IconButtonRoundLarge.args = {
+    filled: true,
+    round: true,
+    size: 'l',
+    icon: 'icon-dl-add'
+}
+
+const IconButtonRoundXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            icon: 'icon-dl-add'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            round
+            :size="button.size"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const IconButtonRoundXl = IconButtonRoundXlTemplate.bind({})
+IconButtonRoundXl.args = {
+    filled: true,
+    round: true,
+    size: 'xl',
+    icon: 'icon-dl-add'
+}
+
+const FluidSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Fluid small'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            fluid
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidSmall = FluidSmallTemplate.bind({})
+FluidSmall.args = {
     filled: true,
     fluid: true,
+    size: 's',
     label: 'Fluid Button'
 }
 
-export const FluidWithIcon = Template.bind({})
-FluidWithIcon.args = {
-    outlined: true,
+const FluidMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Fluid medium'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            fluid
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidMedium = FluidMediumTemplate.bind({})
+FluidMedium.args = {
+    filled: true,
     fluid: true,
-    label: 'Fluid Button with icon',
-    icon: 'icon-dl-id'
+    size: 'm',
+    label: 'Fluid Button'
 }
 
-export const DenseIcon = Template.bind({})
-DenseIcon.args = {
-    dense: true,
-    icon: 'icon-dl-id',
-    textColor: 'dl-color-secondary',
-    color: 'white'
-}
+const FluidLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Fluid large'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            fluid
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidLarge = FluidLargeTemplate.bind({})
+
+const FluidXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Fluid XL'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            filled
+            fluid
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidXl = FluidXlTemplate.bind({})
+
+const FluidWithIconSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Fluid with icon small',
+            icon: 'icon-dl-id'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            fluid
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidWithIconSmall = FluidWithIconSmallTemplate.bind({})
+
+const FluidWithIconMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Fluid with icon medium',
+            icon: 'icon-dl-id'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            fluid
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidWithIconMedium = FluidWithIconMediumTemplate.bind({})
+
+const FluidWithIconLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Fluid with icon large',
+            icon: 'icon-dl-id'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            fluid
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidWithIconLarge = FluidWithIconLargeTemplate.bind({})
+
+const FluidWithIconXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Fluid with icon XL',
+            icon: 'icon-dl-id'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            fluid
+            :size="button.size"
+            :label="button.label"
+            :icon="button.icon"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FluidWithIconXl = FluidWithIconXlTemplate.bind({})
+
+const DenseIconSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            icon: 'icon-dl-id',
+            textColor: 'dl-color-secondary',
+            color: 'white'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            dense
+            :size="button.size"
+            :icon="button.icon"
+            :textColor="button.textColor"
+            :color="button.color"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DenseIconSmall = DenseIconSmallTemplate.bind({})
+
+const DenseIconMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            icon: 'icon-dl-id',
+            textColor: 'dl-color-secondary',
+            color: 'white'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            dense
+            :size="button.size"
+            :icon="button.icon"
+            :textColor="button.textColor"
+            :color="button.color"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DenseIconMedium = DenseIconMediumTemplate.bind({})
+
+const DenseIconLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            icon: 'icon-dl-id',
+            textColor: 'dl-color-secondary',
+            color: 'white'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            dense
+            :size="button.size"
+            :icon="button.icon"
+            :textColor="button.textColor"
+            :color="button.color"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DenseIconLarge = DenseIconLargeTemplate.bind({})
+
+const DenseIconXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            icon: 'icon-dl-id',
+            textColor: 'dl-color-secondary',
+            color: 'white'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            dense
+            :size="button.size"
+            :icon="button.icon"
+            :textColor="button.textColor"
+            :color="button.color"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const DenseIconXl = DenseIconXlTemplate.bind({})
