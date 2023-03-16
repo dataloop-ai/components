@@ -155,7 +155,6 @@ export default defineComponent({
                 )
 
                 dumpPropsData.datasets[0].originalBackgroundColor = cloneDeep(
-                    // dumpPropsData?.datasets[0]?.backgroundColor
                     dumpPropsData?.datasets[0]?.backgroundColor
                 )
             }

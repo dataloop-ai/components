@@ -76,10 +76,4 @@ describe('DlDoughnutChart', () => {
         const summary = wrapper.find({ ref: 'dlDoughnutChartSummaryRef' })
         expect(summary.exists()).toBe(false)
     })
-
-    /*
-    it('', () => {
-        expect(1).toBe(1)
-    })
-    */
 })
