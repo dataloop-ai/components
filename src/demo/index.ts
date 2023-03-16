@@ -90,7 +90,6 @@ export {
     DlTextHolderDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
-    CenteredStepperInDialogBox,
     DlBarChartDemo,
     DlChartDoughnutDemo
 }
