@@ -10,7 +10,7 @@
                 class="dl-chart-labels--label"
             >
                 <dl-tooltip v-if="isOverflowing[index]">
-                    {{ label.title || label }}
+                    {{ stringVerification(label.title, label) }}
                 </dl-tooltip>
                 <dl-typography
                     v-if="isVue2"
@@ -28,7 +28,7 @@
                     :size="fontSize"
                     :color="labelColor"
                 >
-                    {{ label.title || label }}
+                    {{ stringVerification(label.title, label) }}
                 </dl-typography>
             </div>
         </div>
@@ -42,7 +42,7 @@
                 class="dl-chart-labels--label"
             >
                 <dl-tooltip v-if="isOverFlowingSubtitles[index]">
-                    {{ label.subtitle || '' }}
+                    {{ stringVerification(label.subtitle) }}
                 </dl-tooltip>
                 <dl-typography
                     v-if="isVue2"
@@ -60,7 +60,7 @@
                     :size="fontSize"
                     color="dl-color-medium"
                 >
-                    {{ label.subtitle || '' }}
+                    {{ stringVerification(label.subtitle) }}
                 </dl-typography>
             </div>
         </div>
@@ -206,6 +206,9 @@ export default defineComponent({
         })
     },
     methods: {
+        stringVerification(value: string, fallback = '') {
+            return value || fallback
+        },
         getEllipsedElements(elements: ResizeObserverEntry[], state: boolean[]) {
             for (const entry of elements) {
                 const index = parseInt(

@@ -276,7 +276,9 @@ export const defaultLineChartProps = {
                         if (typeof label === 'string') {
                             context[0].label = label
                         } else {
-                            context[0].label = Object.values(label).join(' | ')
+                            context[0].label = Object.values(label)
+                                .filter((item) => !!item)
+                                .join(' | ')
                         }
                     }
                 }

@@ -617,9 +617,6 @@ export default defineComponent({
             chart,
             labelStyles
         }
-    },
-    data() {
-        return {}
     }
 })
 </script>
