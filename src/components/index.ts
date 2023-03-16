@@ -52,7 +52,7 @@ import { DlSmartSearch } from './DlSmartSearch'
 import { DlWidget } from './DlWidget'
 import { DlGrid } from './DlWidget'
 import DlTextHolder from './DlTextHolder.vue'
-import { DlColumnChart } from './DlChart'
+import { DlColumnChart, DlLineChart } from './DlChart'
 
 export {
     DlAccordion,
@@ -114,7 +114,8 @@ export {
     DlWidget,
     DlGrid,
     DlTextHolder,
-    DlColumnChart
+    DlColumnChart,
+    DlLineChart
 }
 
 export type { StepState, DateInterval }
