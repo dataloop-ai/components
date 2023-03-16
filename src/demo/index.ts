@@ -93,7 +93,6 @@ export {
     DlToastMessageDemo,
     DlColumnChartDemo,
     DlBarChartDemo,
-    DlSwitchDemo,
     DlSpinner
 }
 
@@ -144,6 +143,5 @@ export const demoState = {
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
     toast_message: DlToastMessageDemo,
-    smart_search: DlSmartSearchDemo,
     spinner: DlSpinner
 }
