@@ -85,6 +85,12 @@ import { isEllipsisActive } from '../../utils/is-ellipsis-active'
 import DlTypography from '../DlTypography.vue'
 import DlTooltip from '../DlTooltip.vue'
 
+type ObserverRefs = {
+    ref: 'resizeObserverTitle' | 'resizeObserverSubtitle'
+    elementRef: 'textRef' | 'subtitleRef'
+    state: 'isOverflowing' | 'isOverFlowingSubtitles'
+}
+
 const observerRefs = [
     {
         ref: 'resizeObserverTitle',
@@ -96,7 +102,7 @@ const observerRefs = [
         elementRef: 'subtitleRef',
         state: 'isOverFlowingSubtitles'
     }
-]
+] as ObserverRefs[]
 
 export default defineComponent({
     name: 'DlChartLabels',
@@ -177,7 +183,7 @@ export default defineComponent({
     mounted() {
         observerRefs.forEach(({ ref, state }) => {
             this[ref] = new ResizeObserver((entries) => {
-                const tempArr = [...(this[state] as boolean[])]
+                const tempArr = [...this[state]]
                 this.getEllipsedElements(entries, tempArr)
                 this[state] = tempArr
             })
@@ -208,7 +214,11 @@ export default defineComponent({
                 state[index] = isEllipsisActive(entry.target)
             }
         },
-        forwardChildEl(el: { $el: Element }, refName: string, index: number) {
+        forwardChildEl(
+            el: { $el: Element },
+            refName: 'textRef' | 'subtitleRef',
+            index: number
+        ) {
             if (el?.$el) {
                 (this[refName] as Element[])[index] = el.$el
             }
