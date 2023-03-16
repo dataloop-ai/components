@@ -39,7 +39,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { abbreviateToString } from '../utils/abbreviateToString'
+import { abbreviateToString } from '../utils/abbreviate-to-string'
 
 interface CounterItem {
     value?: number
