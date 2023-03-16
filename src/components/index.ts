@@ -53,6 +53,7 @@ import { DlWidget } from './DlWidget'
 import { DlGrid } from './DlWidget'
 import DlTextHolder from './DlTextHolder.vue'
 import { DlColumnChart, DlLineChart } from './DlChart'
+import DlSpinner from './DlSpinner.vue'
 
 export {
     DlAccordion,
@@ -115,7 +116,8 @@ export {
     DlGrid,
     DlTextHolder,
     DlColumnChart,
-    DlLineChart
+    DlLineChart,
+    DlSpinner
 }
 
 export type { StepState, DateInterval }
