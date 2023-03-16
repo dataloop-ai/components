@@ -8,13 +8,16 @@
   overflow: hidden;
   z-index: 1052;
   pointer-events: none;
+  &__text {
+    min-width: 300px;
+    max-width: 800px;
+  }
   &__item {
     display: inline-flex;
     align-items: center;
     pointer-events: auto;
     cursor: pointer;
     animation-duration: 150ms;
-    opacity: 0.92;
     &.v-toast__item--top, &.v-toast__item--bottom {
       align-self: center;
     }

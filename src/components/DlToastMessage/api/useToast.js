@@ -17,15 +17,7 @@ export const useToast = (globalProps = {}) => {
                 globalProps,
                 options
             )
-            const instance = createComponent(
-                toastComponent,
-                propsData,
-                document.body
-            )
-
-            return {
-                dismiss: instance.ctx.dismiss
-            }
+            createComponent(toastComponent, propsData, document.body)
         },
         success(message, options = {}) {
             return this.open(

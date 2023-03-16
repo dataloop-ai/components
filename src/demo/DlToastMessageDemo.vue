@@ -18,6 +18,10 @@
                     v-model="indentFromScreenBorder"
                     title="Indent from screen border"
                 />
+                <dl-text-input
+                    v-model="lineHeight"
+                    title="Change line height"
+                />
             </div>
             <div class="flex">
                 <div>
@@ -76,10 +80,17 @@
                         label="Top right"
                     />
                 </div>
-                <dl-switch
-                    v-model="activeDuration"
-                    left-label="Active duration"
-                />
+                <div>
+                    <dl-switch
+                        v-model="activeDuration"
+                        left-label="Active duration"
+                    />
+                    <hr>
+                    <dl-switch
+                        v-model="hideRemoveButton"
+                        left-label="Hidde remove button"
+                    />
+                </div>
             </div>
         </div>
         <dl-button @click="showToastMessage">
@@ -115,15 +126,19 @@ export default defineComponent({
         const spaceBetween = ref(10)
         const indentFromScreenBorder = ref(10)
         const activeDuration = ref(true)
+        const hideRemoveButton = ref(false)
+        const lineHeight = ref(18)
         function showToastMessage() {
             useDlToast.open({
                 message: message.value,
                 position: position.value,
                 type: type.value,
                 duration: +duration.value,
-                spaceBetweenMessages: spaceBetween.value,
-                indentFromScreenBorder: indentFromScreenBorder.value,
-                activeDuration: activeDuration.value
+                spaceBetweenMessages: +spaceBetween.value,
+                indentFromScreenBorder: +indentFromScreenBorder.value,
+                activeDuration: activeDuration.value,
+                lineHeight: +lineHeight.value,
+                hideRemoveButton: hideRemoveButton.value
             })
         }
         return {
@@ -134,7 +149,9 @@ export default defineComponent({
             position,
             spaceBetween,
             indentFromScreenBorder,
-            activeDuration
+            activeDuration,
+            hideRemoveButton,
+            lineHeight
         }
     }
 })

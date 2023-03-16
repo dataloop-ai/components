@@ -11,11 +11,16 @@
         >
             <dl-alert
                 :type="type"
-                :closable="true"
-                fluid
+                :closable="!hideRemoveButton"
+                @update:model-value="(val) => closeToast(val)"
             >
                 <!-- eslint-disable vue/no-v-html -->
-                <span v-html="message" />
+                <span
+                    :style="{ lineHeight: `${lineHeight}px` }"
+                    class="v-toast__text"
+                    data-test="message-text"
+                    v-html="message"
+                />
                 <!--eslint-enable-->
             </dl-alert>
         </div>
@@ -69,6 +74,14 @@ export default defineComponent({
         indentFromScreenBorder: {
             type: Number,
             default: 10
+        },
+        hideRemoveButton: {
+            type: Boolean,
+            default: false
+        },
+        lineHeight: {
+            type: Number,
+            default: 18
         }
     },
     setup(props) {
@@ -163,11 +176,15 @@ export default defineComponent({
                 }, duration * 1000)
             }
         }
+        function closeToast(val: boolean) {
+            if (!val) removeElement(root.value)
+        }
 
         return {
             root,
             transition,
-            isActive
+            isActive,
+            closeToast
         }
     }
 })
