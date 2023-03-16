@@ -171,23 +171,277 @@ const Template = (args) => ({
     }
 })
 
-export const Filled = Template.bind({})
-Filled.args = {
+const FiledSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Filled'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            color="dl-color-secondary"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+
+export const FilledSmall = FiledSmallTemplate.bind({})
+FilledSmall.args = {
     filled: true,
-    label: 'Filled'
+    label: 'Filled',
+    size: 's'
 }
 
-export const Outlined = Template.bind({})
-Outlined.args = {
+const FiledMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Filled medium'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            color="dl-color-secondary"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+
+export const FilledMedium = FiledMediumTemplate.bind({})
+FilledMedium.args = {
+    filled: true,
+    label: 'Filled medium',
+    size: 'm'
+}
+
+const FiledLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Filled large'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            color="dl-color-secondary"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+
+export const FilledLarge = FiledLargeTemplate.bind({})
+FilledLarge.args = {
+    filled: true,
+    label: 'Filled large',
+    size: 'l'
+}
+
+const FiledXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Filled XL'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            :size="button.size"
+            :label="button.label"
+            color="dl-color-secondary"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+
+export const FilledXL = FiledXlTemplate.bind({})
+FilledXL.args = {
+    filled: true,
+    label: 'Filled XL',
+    size: 'xl'
+}
+
+const OutlinedSmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 's',
+            label: 'Outlined small'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const OutlinedSmall = OutlinedSmallTemplate.bind({})
+OutlinedSmall.args = {
     outlined: true,
-    label: 'Outlined'
+    label: 'Outlined small',
+    size: 's'
 }
 
-export const FlatPrimary = Template.bind({})
-FlatPrimary.args = {
+const OutlinedMediumTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'm',
+            label: 'Outlined medium'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const OutlinedMedium = OutlinedMediumTemplate.bind({})
+OutlinedMedium.args = {
+    outlined: true,
+    label: 'Outlined medium',
+    size: 'm'
+}
+
+const OutlinedLargeTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'l',
+            label: 'Outlined large'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const OutlinedLarge = OutlinedLargeTemplate.bind({})
+OutlinedLarge.args = {
+    outlined: true,
+    label: 'Outlined large',
+    size: 'l'
+}
+
+const OutlinedXlTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Outlined xl'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            outlined
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+            v-bind="args" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const OutlinedXL = OutlinedXlTemplate.bind({})
+OutlinedXL.args = {
+    outlined: true,
+    label: 'Outlined XL',
+    size: 'xl'
+}
+
+const FlatPrimarySmallTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        const button = {
+            size: 'xl',
+            label: 'Flat primary small'
+        }
+
+        return { args, button }
+    },
+    template: `<div style="padding: 50px">
+        <DlButton
+            flat
+            :size="button.size"
+            :label="button.label"
+            @click="click" 
+        />
+    </div>`,
+    methods: {
+        click: action('click')
+    }
+})
+export const FlatPrimarySmall = FlatPrimarySmallTemplate.bind({})
+FlatPrimarySmall.args = {
     flat: true,
     color: 'primary',
-    label: 'Flat Primary'
+    label: 'Flat Primary Small'
 }
 
 export const FlatSecondary = Template.bind({})
