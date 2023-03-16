@@ -12,7 +12,7 @@ export const DAY_SIDEBAR_OPTION = {
 } as const
 
 export type DAY_SIDEBAR_OPTION =
-    typeof DAY_SIDEBAR_OPTION[keyof typeof DAY_SIDEBAR_OPTION]
+    (typeof DAY_SIDEBAR_OPTION)[keyof typeof DAY_SIDEBAR_OPTION]
 
 export const MONTH_SIDEBAR_OPTION = {
     this_month: 'this_month',
@@ -25,7 +25,7 @@ export const MONTH_SIDEBAR_OPTION = {
 } as const
 
 export type MONTH_SIDEBAR_OPTION =
-    typeof MONTH_SIDEBAR_OPTION[keyof typeof MONTH_SIDEBAR_OPTION]
+    (typeof MONTH_SIDEBAR_OPTION)[keyof typeof MONTH_SIDEBAR_OPTION]
 
 export type DayTypeOption = {
     title: string

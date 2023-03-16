@@ -1,9 +1,18 @@
 import { mount } from '@vue/test-utils'
 import DlDatePicker from '../../src/components/DlDatePicker/DlDatePicker.vue'
 import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
+import {
+    describe,
+    it,
+    expect,
+    afterAll,
+    beforeEach,
+    afterEach,
+    vi
+} from 'vitest'
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(1990, 12, 1))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(1990, 12, 1))
 
 const date = new Date(1990, 12, 1)
 const date2 = new Date(1990, 12, 2)
@@ -330,16 +339,16 @@ describe('DlDatePicker', () => {
     })
 
     describe('handle mouseenter', () => {
-        let clearTimeoutSpy: jest.SpyInstance
-        let setTimeoutSpy: jest.SpyInstance
+        let clearTimeoutSpy: vi.SpyInstance
+        let setTimeoutSpy: vi.SpyInstance
 
         beforeEach(() => {
-            clearTimeoutSpy = jest.spyOn(global, 'clearTimeout')
-            setTimeoutSpy = jest.spyOn(global, 'setTimeout')
+            clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
+            setTimeoutSpy = vi.spyOn(global, 'setTimeout')
         })
 
         afterEach(() => {
-            jest.clearAllMocks()
+            vi.clearAllMocks()
         })
 
         describe('when mousedown is not triggered', () => {
@@ -428,6 +437,6 @@ describe('DlDatePicker', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

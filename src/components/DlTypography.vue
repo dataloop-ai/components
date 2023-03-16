@@ -15,7 +15,7 @@ import { getColor } from '../utils'
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p'
 
-const sizes = ['h1', 'h2', 'h3', 'h4', 'body']
+const sizes = ['h1', 'h2', 'h3', 'h4', 'body', 'small']
 
 export default defineComponent({
     name: 'DlTypography',

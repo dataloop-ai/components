@@ -40,6 +40,8 @@ import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
 import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlColumnChartDemo from './ColumnChartDemo.vue'
+import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
 
 export {
@@ -85,7 +87,9 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlSwitchDemo
+    DlColumnChartDemo,
+    DlSwitchDemo,
+    DlBarChartDemo
 }
 
 export const demoState = {
@@ -94,6 +98,8 @@ export const demoState = {
     avatar: AvatarDemo,
     badge: DlBadgeDemo,
     button: DlButtonDemo,
+    column_chart: DlColumnChartDemo,
+    bar_chart: DlBarChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,

@@ -1,4 +1,5 @@
 import { getLinkRel, getLinkTarget } from '../../src/components/DlLink'
+import { describe, it, expect } from 'vitest'
 
 describe('DlLink getLinkTarget util', () => {
     it('should return "_blank" if given value is true and "null" if false value is given', () => {

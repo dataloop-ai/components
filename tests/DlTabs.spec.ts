@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
 import { DlTab, DlTabPanels, DlTabs } from '../src'
 import {
     getChildrenFromSlot,
@@ -108,7 +109,7 @@ describe('Tabs and Tab Groups', () => {
             }
         })
 
-        const unsubscribe = jest.spyOn(wrapper.vm, 'unsubscribeListeners')
+        const unsubscribe = vi.spyOn(wrapper.vm, 'unsubscribeListeners')
         wrapper.unmount()
 
         expect(unsubscribe).toBeCalled()

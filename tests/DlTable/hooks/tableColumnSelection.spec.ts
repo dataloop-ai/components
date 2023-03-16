@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { mountComposition } from 'vue-composition-test-utils'
 import { useTableColumnSelection } from '../../../src/components/DlTable/hooks/tableColumnSelection'
 import { TablePagination } from '../../../src/components/DlTable/hooks/tablePagination'
+import { describe, it, expect } from 'vitest'
 
 const COLUMNS = [
     { name: 'name', label: 'Dessert name', field: 'name' },

@@ -1,13 +1,15 @@
 import { mount } from '@vue/test-utils'
 import useSlider, { Dragging } from '../../src/components/DlSlider/useSlider'
 import { DlRange } from '../../src'
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 
-jest.mock('vue-demi', () => {
-    const original = jest.requireActual('vue-demi')
+vi.mock('vue-demi', async () => {
+    const original = await vi.importActual('vue-demi')
+
     return {
         ...original,
-        getCurrentInstance: jest.fn(),
-        onBeforeUnmount: jest.fn()
+        getCurrentInstance: vi.fn(),
+        onBeforeUnmount: vi.fn()
     }
 })
 
@@ -25,7 +27,6 @@ const dragging: Dragging = {
     ratioMax: 1,
     ratioMin: 0,
     right: 0,
-    toJSON: () => {},
     top: 0,
     valueMax: 10,
     valueMin: 0,
@@ -35,7 +36,7 @@ const dragging: Dragging = {
 }
 
 function mockCurrentInstance(props: Record<string, any>, emitFn: any) {
-    (getCurrentInstance as unknown as jest.Mock).mockImplementation(() => ({
+    (getCurrentInstance as unknown as vi.Mock).mockImplementation(() => ({
         props,
         emit: emitFn
     }))
@@ -50,10 +51,10 @@ describe('useSlider', () => {
             }
         ]
     } as unknown as MouseEvent
-    const updateValueFn = jest.fn()
-    const updatePositionFn = jest.fn()
-    const getDraggingFn = jest.fn()
-    const emitFn = jest.fn()
+    const updateValueFn = vi.fn()
+    const updatePositionFn = vi.fn()
+    const getDraggingFn = vi.fn()
+    const emitFn = vi.fn()
 
     afterEach(() => {
         updateValueFn.mockReset()
@@ -133,7 +134,7 @@ describe('useSlider', () => {
             emitFn
         )
 
-        const updateValue = jest.fn()
+        const updateValue = vi.fn()
 
         const { state } = useSlider({
             updateValue,
@@ -413,7 +414,7 @@ describe('useSlider', () => {
                 getDragging: getDraggingFn
             }) as ReturnType<typeof useSlider>
 
-            const documentSpy = jest.spyOn(document, 'addEventListener')
+            const documentSpy = vi.spyOn(document, 'addEventListener')
 
             methods.onActivate(mouseEventMock)
 
@@ -445,7 +446,7 @@ describe('useSlider', () => {
                 getDragging: getDraggingFn
             }) as ReturnType<typeof useSlider>
 
-            const documentSpy = jest.spyOn(document, 'removeEventListener')
+            const documentSpy = vi.spyOn(document, 'removeEventListener')
 
             const method = methods.onDeactivate
 
@@ -512,7 +513,7 @@ describe('useSlider', () => {
 
     describe('onBeforeUnmount', () => {
         it('should remove the event listener onBeforeUnmount', () => {
-            (onBeforeUnmount as unknown as jest.Mock).mockImplementation(
+            (onBeforeUnmount as unknown as vi.Mock).mockImplementation(
                 () => ({})
             )
 
@@ -525,7 +526,7 @@ describe('useSlider', () => {
                 emitFn
             )
 
-            const documentSpy = jest.spyOn(document, 'removeEventListener')
+            const documentSpy = vi.spyOn(document, 'removeEventListener')
 
             const { methods } = useSlider({
                 updateValue: updateValueFn,

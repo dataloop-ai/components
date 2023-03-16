@@ -1,10 +1,11 @@
 import { addFocusout, removeFocusout } from '../../src/utils/focusout'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('focusout', () => {
     describe('addFocusout', () => {
         describe('should add focusout', () => {
             it('should return undefined', () => {
-                expect(addFocusout(jest.fn())).toBe(undefined)
+                expect(addFocusout(vi.fn())).toBe(undefined)
             })
         })
     })
@@ -12,7 +13,7 @@ describe('focusout', () => {
     describe('removeFocusout', () => {
         describe('should add focusout', () => {
             it('should return undefined', () => {
-                expect(removeFocusout(jest.fn())).toBe(undefined)
+                expect(removeFocusout(vi.fn())).toBe(undefined)
             })
         })
     })

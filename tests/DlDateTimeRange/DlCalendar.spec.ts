@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { CalendarDate } from '../../src/components/DlDatePicker/classes/CalendarDate'
 import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
 import DlCalendar from '../../src/components/DlDatePicker/DlCalendar.vue'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const month = 11
 const year = 1990
@@ -18,8 +19,8 @@ for (let i = 1; i <= lastDayOfTheMonth; i++) {
     calendarDates.push(new CalendarDate(new Date(year, month, i)))
 }
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(year, month, 10))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(year, month, 10))
 
 const date = new Date(year, month, 5)
 const date2 = new Date(year, month, 15)
@@ -174,6 +175,6 @@ describe('DlCalendar', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

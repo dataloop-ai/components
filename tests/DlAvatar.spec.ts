@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlAvatar } from '../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlAvatar', () => {
     it('should compute right first letters', async () => {

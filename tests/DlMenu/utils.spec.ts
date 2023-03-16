@@ -9,12 +9,13 @@ import {
     conditionalHandler
 } from '../../src/components/DlMenu/utils'
 import { Ref } from 'vue-demi'
+import { describe, it, expect, vi } from 'vitest'
 import { AnchorEvent } from '../../src/hooks/use-model-toggle'
 import * as events from '../../src/utils/events'
 import { ClickOutsideEvent } from '../../src/utils/click-outside'
 
-const mockCallback = jest.fn()
-const mockPropagation = jest.fn()
+const mockCallback = vi.fn()
+const mockPropagation = vi.fn()
 
 const event: Partial<AnchorEvent> | any = {
     stopPropagation: mockPropagation,
@@ -50,11 +51,11 @@ describe('DlMenu utils', () => {
     describe('handleWatcherEvents', () => {
         describe('boolean value is given', () => {
             it('should call addEscapeKey', () => {
-                handleWatcherEvents(true, jest.fn(), {})
+                handleWatcherEvents(true, vi.fn(), {})
             })
 
             it('should call removeEscapeKey', () => {
-                handleWatcherEvents(false, jest.fn(), {})
+                handleWatcherEvents(false, vi.fn(), {})
             })
         })
     })
@@ -82,7 +83,7 @@ describe('DlMenu utils', () => {
 
         describe('if contextMenu is given and position is defined', () => {
             it('should return top/left = 10', () => {
-                jest.spyOn(events, 'position').mockImplementation(() => ({
+                vi.spyOn(events, 'position').mockImplementation(() => ({
                     top: 20,
                     left: 20
                 }))
@@ -114,7 +115,7 @@ describe('DlMenu utils', () => {
                             autoClose: false,
                             innerRef: {
                                 value: {
-                                    click: () => jest.fn()
+                                    click: () => vi.fn()
                                 }
                             } as unknown as Ref<HTMLElement>
                         })
@@ -128,7 +129,7 @@ describe('DlMenu utils', () => {
                             autoClose: true,
                             innerRef: {
                                 value: {
-                                    click: () => jest.fn()
+                                    click: () => vi.fn()
                                 }
                             } as unknown as Ref<HTMLElement>
                         })
@@ -140,7 +141,7 @@ describe('DlMenu utils', () => {
         describe('updateUnwatchPosition', () => {
             describe('function prop is given', () => {
                 it('should be called prop function', () => {
-                    expect(updateUnwatchPosition(jest.fn())).toBe(undefined)
+                    expect(updateUnwatchPosition(vi.fn())).toBe(undefined)
                 })
             })
         })
@@ -152,7 +153,7 @@ describe('DlMenu utils', () => {
                         refocusTargetFn(
                             new Event('click') as ClickOutsideEvent,
                             {
-                                focus: jest.fn()
+                                focus: vi.fn()
                             } as unknown as HTMLElement
                         )
                     ).toBe(null)
@@ -163,13 +164,11 @@ describe('DlMenu utils', () => {
         describe('conditionalHandler', () => {
             describe('boolean condition is given', () => {
                 it('should return true', () => {
-                    expect(conditionalHandler(true, jest.fn(), true)).toBe(true)
+                    expect(conditionalHandler(true, vi.fn(), true)).toBe(true)
                 })
 
                 it('should return false', () => {
-                    expect(conditionalHandler(false, jest.fn(), true)).toBe(
-                        false
-                    )
+                    expect(conditionalHandler(false, vi.fn(), true)).toBe(false)
                 })
             })
         })

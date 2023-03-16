@@ -1,6 +1,7 @@
 import { DOMWrapper, mount, VueWrapper } from '@vue/test-utils'
 import { DlIcon } from '../src'
 import { isEqual } from 'lodash'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlIcon', () => {
     it('should display icon content', () => {

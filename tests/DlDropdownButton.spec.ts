@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlDropdownButton } from '../src'
+import { describe, it, expect } from 'vitest'
 
 describe('DlDropdownButton', () => {
     it('should display DlDropdownButton content', async () => {
@@ -11,7 +12,6 @@ describe('DlDropdownButton', () => {
         expect(wrapper.props()).toStrictEqual({
             autoClose: false,
             color: '',
-            fit: true,
             contained: true,
             contentClass: '',
             contentStyle: '',
