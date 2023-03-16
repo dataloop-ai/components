@@ -71,8 +71,7 @@ import {
     BarControllerDatasetOptions
 } from 'chart.js'
 import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
-import merge from 'lodash/merge'
-import isEqual from 'lodash/isEqual'
+import { isEqual, merge } from 'lodash'
 import { rgba2hex, hexToRgbA, revertRGBAOpacity } from '../../utils'
 import { useThemeVariables } from '../../hooks/use-theme'
 

@@ -4,8 +4,8 @@ on:
   push:
     tags:
       - '*'
-  repository_dispatch:
-    types: [publish-components]
+  # repository_dispatch:
+  #   types: [publish-components]
 
 jobs:
   publish-npm:
