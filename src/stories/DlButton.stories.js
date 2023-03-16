@@ -1,6 +1,6 @@
 // Button.stories.js|jsx|ts|tsx
 
-import { DlButton } from '..'
+import { DlButton, DlBadge, DlIcon } from '..'
 import { action } from '@storybook/addon-actions'
 
 export default {
@@ -169,6 +169,7 @@ const FilledTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             filled
+            label="Filled"
             v-bind="args"
         />
     </div>
@@ -190,6 +191,7 @@ const OutlinedTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             outlined
+            label="Outlined"
             v-bind="args"
         />
     </div>
@@ -211,6 +213,7 @@ const DisabledTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             disabled
+            label="Disabled"
             v-bind="args"
         />
     </div>
@@ -232,6 +235,7 @@ const FlatTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             flat
+            label="Flat"
             v-bind="args"
         />
     </div>
@@ -274,6 +278,7 @@ const RoundTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             round
+            label="Round button"
             v-bind="args"
         />
     </div>
@@ -295,6 +300,7 @@ const FluidTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             fluid
+            label="Fluid button"
             v-bind="args"
         />
     </div>
@@ -316,6 +322,7 @@ const DenseTemplate = (args) => ({
     <div style="padding: 50px">
         <DlButton
             dense
+            label="Dense button"
             v-bind="args"
         />
     </div>
@@ -326,4 +333,81 @@ Dense.args = {
     filled: true,
     dense: true,
     label: 'Dense button'
+}
+
+const WithBadgeTemplate = (args) => ({
+    components: { DlButton, DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            label="With badge"
+            v-bind="args"
+        >
+            <dl-badge
+                with-border
+                floating
+                align="top"
+                color="red"
+            />
+        </DlButton>
+    </div>
+    `
+})
+export const WithBadge = WithBadgeTemplate.bind({})
+WithBadge.args = {
+    label: 'With badge'
+}
+
+const WithIconAndSlotTemplate = (args) => ({
+    components: { DlButton, DlBadge, DlIcon },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            icon="icon-dl-search"
+            v-bind="args"
+        >
+            <dl-icon
+                size="16px"
+                icon="icon-dl-cart"
+            />
+            <dl-badge
+                with-border
+                floating
+                align="top"
+                color="red"
+            />
+        </DlButton>
+    </div>
+    `
+})
+export const WithIconAndSlot = WithIconAndSlotTemplate.bind({})
+WithIconAndSlot.args = {
+    icon: 'icon-dl-search'
+}
+
+const WithLabelAndSlotTemplate = (args) => ({
+    components: { DlButton, DlBadge, DlIcon },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            label="Hello"
+            v-bind="args"
+        >
+            World
+        </DlButton>
+    </div>
+    `
+})
+export const WithLabelAndSlot = WithLabelAndSlotTemplate.bind({})
+WithLabelAndSlot.args = {
+    label: 'Hello'
 }
