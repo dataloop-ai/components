@@ -1,6 +1,5 @@
 import { useDlToast } from '../components/DlToastMessage'
 import { DlButton } from '..'
-import { action } from '@storybook/addon-actions'
 
 export default {
     title: 'Library/Components/DlToastMessage',
@@ -25,7 +24,7 @@ const Template = (args) => ({
     },
     template: `<div style="padding: 50px"><DlButton @click="click" v-bind="args" /></div>`,
     methods: {
-        click () {
+        click() {
             console.log(this.args)
             useDlToast.open({
                 message: 'sdfgfdgdf',
