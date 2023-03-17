@@ -54,6 +54,7 @@ export function useTablePaginationState(
     getCellValue: Function
 ) {
     const { props, emit } = vm
+
     const innerPagination = ref(
         Object.assign(
             {
@@ -61,9 +62,9 @@ export function useTablePaginationState(
                 descending: false,
                 page: 1,
                 rowsPerPage:
-                    props.rowsPerPageOptions.length > 0
-                        ? props.rowsPerPageOptions[0]
-                        : 5,
+                    props.pagination?.rowsPerPage ||
+                    props.rowsPerPageOptions[0] ||
+                    5,
                 min: 1,
                 maxPages: 0,
                 boundaryNumbers: true,
@@ -72,7 +73,8 @@ export function useTablePaginationState(
                 withQuickNavigation: true,
                 itemsName: 'Rows',
                 withLegend: true,
-                withRowsPerPage: true
+                withRowsPerPage: true,
+                rowsPerPageOptions: props.rowsPerPageOptions
             },
             props.pagination
         )

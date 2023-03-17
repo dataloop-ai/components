@@ -2,6 +2,9 @@
     <div style="width: 900px; align-items: inherit">
         <div>
             <div class="settings">
+                <button @click="addRowPerPage">
+                    Add Row Per Page
+                </button>
                 <dl-switch
                     left-label="bordered"
                     value="bordered"
@@ -104,14 +107,11 @@
                 :rows="rows"
                 :resizable="resizable"
                 row-key="name"
-                :pagination="{
-                    rowsPerPage: 25,
-                    maxPages: 4
-                }"
                 color="dl-color-secondary"
                 title="Table Title"
                 :virtual-scroll="vScroll"
                 style="height: 500px"
+                :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @update:selected="updateSeleted"
             >
@@ -184,8 +184,8 @@
                 <!-- <template #loading> Loading ... </template> -->
 
                 <!-- <template #bottom="props">
-                <dl-pagination v-bind="props.pagination" />
-            </template> -->
+                    <dl-pagination v-bind="props.pagination" />
+                </template> -->
             </DlTable>
         </div>
     </div>
@@ -200,7 +200,7 @@ import {
     // DlTr,
     // DlTh,
     // DlTd,
-    // DlPagination,
+    // DlPagination
     // DlButton
 } from '../components'
 import { defineComponent } from 'vue-demi'
@@ -365,7 +365,7 @@ export default defineComponent({
         DlTextInput
         // DlTr,
         // DlTh,
-        // DlPagination,
+        // DlPagination
         // DlTd,
         // DlButton
     },
@@ -386,10 +386,16 @@ export default defineComponent({
             resizableState: [] as boolean[],
             rows,
             draggable: 'both',
-            columns
+            columns,
+            rowsPerPageOptions: [10, 12, 14, 16]
         }
     },
     methods: {
+        addRowPerPage() {
+            this.rowsPerPageOptions.push(
+                this.rowsPerPageOptions[this.rowsPerPageOptions.length - 1] + 2
+            )
+        },
         updateSeleted(payload: any) {
             this.selected = payload
         },
