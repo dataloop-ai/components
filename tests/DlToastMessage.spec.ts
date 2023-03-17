@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
 import ToastComponent from '../src/components/DlToastMessage/components/ToastComponent.vue'
 
 describe('DlToastMessage component', () => {
