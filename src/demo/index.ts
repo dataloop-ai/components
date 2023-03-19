@@ -43,6 +43,7 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 
 export {
@@ -89,8 +90,9 @@ export {
     DlRadioDemo,
     DlTextHolderDemo,
     DlColumnChartDemo,
-    DlBarChartDemo,
     DlSwitchDemo,
+    DlBarChartDemo,
+    DlLineChartDemo,
     DlSpinner
 }
 
@@ -102,6 +104,7 @@ export const demoState = {
     button: DlButtonDemo,
     column_chart: DlColumnChartDemo,
     bar_chart: DlBarChartDemo,
+    line_chart: DlLineChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,
