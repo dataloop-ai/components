@@ -163,6 +163,7 @@ body {
     --dl-color-chart-brush: #EEF1FF;
 
     --dl-date-picker-shadow: 0px 3px 6px #101e7326;
+    --dl-date-picker-selected-strip: rgb(52, 82, 255, 0.2);
 
     // z-index
     --dl-z-index-panel: 3000; // panel & panel contaiener content
@@ -197,7 +198,7 @@ body {
     --dl-color-disabled: #ffffff40;
     --dl-color-fill: #ffffff40;
     --dl-color-fill-secondary: #F8F8F8;
-    
+
     --dl-color-fill-hover: #ffffff26;
     --dl-color-separator: #ffffff26;
     --dl-color-body-background: #24282D;
@@ -223,6 +224,7 @@ body {
     --dl-color-chart-brush: #475077;
 
     --dl-date-picker-shadow: 0px 3px 6px #292e3580;
+    --dl-date-picker-selected-strip: rgb(124, 140, 255, 0.2);
 }
 
 // scrollbar
