@@ -51,7 +51,7 @@
                     :data-index="index"
                     color="dl-color-medium"
                 >
-                    {{ label.subtitle || '' }}
+                    {{ stringVerification(label.subtitle) }}
                 </dl-typography>
                 <dl-typography
                     v-else
