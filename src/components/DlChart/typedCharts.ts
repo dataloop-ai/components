@@ -66,23 +66,23 @@ export const Doughnut = /* #__PURE__ */ createTypedChart(
     DoughnutController
 )
 
-// export const Line = /* #__PURE__ */ createTypedChart('line', LineController)
+export const Line = /* #__PURE__ */ createTypedChart('line', LineController)
 
-// export const Pie = /* #__PURE__ */ createTypedChart('pie', PieController)
+export const Pie = /* #__PURE__ */ createTypedChart('pie', PieController)
 
-// export const PolarArea = /* #__PURE__ */ createTypedChart(
-//     'polarArea',
-//     PolarAreaController
-// )
+export const PolarArea = /* #__PURE__ */ createTypedChart(
+    'polarArea',
+    PolarAreaController
+)
 
-// export const Radar = /* #__PURE__ */ createTypedChart('radar', RadarController)
+export const Radar = /* #__PURE__ */ createTypedChart('radar', RadarController)
 
-// export const Bubble = /* #__PURE__ */ createTypedChart(
-//     'bubble',
-//     BubbleController
-// )
+export const Bubble = /* #__PURE__ */ createTypedChart(
+    'bubble',
+    BubbleController
+)
 
-// export const Scatter = /* #__PURE__ */ createTypedChart(
-//     'scatter',
-//     ScatterController
-// )
+export const Scatter = /* #__PURE__ */ createTypedChart(
+    'scatter',
+    ScatterController
+)

@@ -52,7 +52,7 @@ import { DlSmartSearch } from './DlSmartSearch'
 import { DlWidget } from './DlWidget'
 import { DlGrid } from './DlWidget'
 import DlTextHolder from './DlTextHolder.vue'
-import { DlColumnChart } from './DlChart'
+import { DlColumnChart, DlLineChart } from './DlChart'
 import DlSpinner from './DlSpinner.vue'
 
 export {
@@ -116,6 +116,7 @@ export {
     DlGrid,
     DlTextHolder,
     DlColumnChart,
+    DlLineChart,
     DlSpinner
 }
 
