@@ -1,7 +1,14 @@
 <template>
     <div class="dl-pagination--rows_selector">
         <span class="dl-pagination--rows_per_page_label">{{ itemsName }} per page:</span>
+        <dl-typography
+            v-if="hasSingeValue"
+            color="dl-color-darker"
+        >
+            {{ modelValue }}
+        </dl-typography>
         <dl-select
+            v-else
             size="s"
             :options="options"
             :disabled="disabled"
@@ -19,11 +26,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { DlSelect } from '../DlSelect'
+import DlTypography from '../DlTypography.vue'
 
 export default defineComponent({
     name: 'RowsSelector',
     components: {
-        DlSelect
+        DlSelect,
+        DlTypography
     },
     model: {
         prop: 'modelValue',
@@ -45,6 +54,11 @@ export default defineComponent({
         disabled: Boolean
     },
     emits: ['update:modelValue'],
+    computed: {
+        hasSingeValue() {
+            return this.options.length <= 1
+        }
+    },
     methods: {
         setSelectedItem(val: number) {
             this.$emit('update:modelValue', val)
