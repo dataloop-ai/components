@@ -87,7 +87,7 @@
                     />
                     <hr>
                     <dl-switch
-                        v-model="hideRemoveButton"
+                        v-model="closable"
                         left-label="Hidde remove button"
                     />
                 </div>
@@ -126,7 +126,7 @@ export default defineComponent({
         const spaceBetween = ref(10)
         const indentFromScreenBorder = ref(10)
         const activeDuration = ref(true)
-        const hideRemoveButton = ref(false)
+        const closable = ref(true)
         const lineHeight = ref(18)
         function showToastMessage() {
             useDlToast.open({
@@ -138,7 +138,7 @@ export default defineComponent({
                 indentFromScreenBorder: +indentFromScreenBorder.value,
                 activeDuration: activeDuration.value,
                 lineHeight: +lineHeight.value,
-                hideRemoveButton: hideRemoveButton.value
+                closable: closable.value
             })
         }
         return {
@@ -150,7 +150,7 @@ export default defineComponent({
             spaceBetween,
             indentFromScreenBorder,
             activeDuration,
-            hideRemoveButton,
+            closable,
             lineHeight
         }
     }

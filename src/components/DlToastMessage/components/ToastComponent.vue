@@ -11,7 +11,7 @@
         >
             <dl-alert
                 :type="type"
-                :closable="!hideRemoveButton"
+                :closable="closable"
                 @update:model-value="(val) => closeToast(val)"
             >
                 <!-- eslint-disable vue/no-v-html -->
@@ -75,7 +75,7 @@ export default defineComponent({
             type: Number,
             default: 10
         },
-        hideRemoveButton: {
+        closable: {
             type: Boolean,
             default: false
         },
@@ -159,7 +159,6 @@ export default defineComponent({
             showNotice()
         })
         function showNotice(): void {
-            const wrapper = root.value.parentElement
             const parent = correctParent.value
             if (toastParentPosition.value === 'top') {
                 root.value.style.marginBottom = `${spaceBetweenMessages}px`
@@ -168,7 +167,6 @@ export default defineComponent({
             }
             parent.insertAdjacentElement('afterbegin', root.value)
             parent.style.padding = `${indentFromScreenBorder}px`
-            removeElement(wrapper)
             isActive.value = true
             if (duration && activeDuration) {
                 setTimeout(() => {

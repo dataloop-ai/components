@@ -18,54 +18,6 @@ export const useToast = (globalProps = {}) => {
                 options
             )
             createComponent(toastComponent, propsData, document.body)
-        },
-        success(message, options = {}) {
-            return this.open(
-                Object.assign(
-                    {},
-                    {
-                        message,
-                        type: 'success'
-                    },
-                    options
-                )
-            )
-        },
-        error(message, options = {}) {
-            return this.open(
-                Object.assign(
-                    {},
-                    {
-                        message,
-                        type: 'error'
-                    },
-                    options
-                )
-            )
-        },
-        info(message, options = {}) {
-            return this.open(
-                Object.assign(
-                    {},
-                    {
-                        message,
-                        type: 'info'
-                    },
-                    options
-                )
-            )
-        },
-        warning(message, options = {}) {
-            return this.open(
-                Object.assign(
-                    {},
-                    {
-                        message,
-                        type: 'warning'
-                    },
-                    options
-                )
-            )
         }
     }
 }
