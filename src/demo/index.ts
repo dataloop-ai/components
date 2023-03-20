@@ -43,7 +43,8 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
-import DlSpinner from './DlSpinnerDemo.vue'
+import DlSpinnerDemo from './DlSpinnerDemo.vue'
+import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 
 export {
     AvatarDemo,
@@ -91,7 +92,8 @@ export {
     DlColumnChartDemo,
     DlBarChartDemo,
     DlSwitchDemo,
-    DlSpinner
+    DlSpinnerDemo,
+    DlConfusionMatrix
 }
 
 export const demoState = {
@@ -124,6 +126,7 @@ export const demoState = {
     skeleton: DlSkeletonDemo,
     slider: DlSliderDemo,
     stepper: DlStepperDemo,
+    confusion_matrix: DlConfusionMatrix,
     table: DlTableDemo,
     table_td: DlTdDemo,
     table_th: DlThDemo,
@@ -140,5 +143,5 @@ export const demoState = {
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
-    spinner: DlSpinner
+    spinner: DlSpinnerDemo
 }
