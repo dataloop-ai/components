@@ -62,8 +62,9 @@ export function useTablePaginationState(
                 descending: false,
                 page: 1,
                 rowsPerPage:
-                    props.pagination?.rowsPerPage ??
-                    props.rowsPerPageOptions[0],
+                    props.rowsPerPageOptions.length > 0
+                        ? props.rowsPerPageOptions[0]
+                        : 5,
                 min: 1,
                 maxPages: 0,
                 boundaryNumbers: true,
@@ -138,7 +139,11 @@ export function useTablePagination(
 ) {
     const { props, emit } = vm
 
-    const computedRowsNumber = computed(() => filteredSortedRowsNumber.value)
+    const computedRowsNumber = computed(
+        () =>
+            computedPagination.value?.rowsNumber ||
+            filteredSortedRowsNumber.value
+    )
 
     const firstRowIndex = computed(() => {
         const { page, rowsPerPage } = computedPagination.value
