@@ -36,7 +36,7 @@ import {
     onMounted
 } from 'vue-demi'
 import DlAlert from '../../DlAlert.vue'
-import { Positions } from '../helpers/config'
+import { Positions, Types } from '../helpers/config'
 import { removeElement } from '../helpers/render'
 import { Animation } from '../types'
 
@@ -50,7 +50,10 @@ export default defineComponent({
         },
         type: {
             type: String,
-            default: 'success'
+            default: 'success',
+            validator(value) {
+                return Object.values(Types).includes(value)
+            }
         },
         duration: {
             type: Number,
@@ -77,7 +80,7 @@ export default defineComponent({
         },
         closable: {
             type: Boolean,
-            default: false
+            default: true
         },
         lineHeight: {
             type: Number,
@@ -182,7 +185,8 @@ export default defineComponent({
             root,
             transition,
             isActive,
-            closeToast
+            closeToast,
+            correctParent
         }
     }
 })

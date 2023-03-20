@@ -5,14 +5,51 @@ export default {
     title: 'Library/Components/DlToastMessage',
     component: DlButton,
     argTypes: {
-        toastMessage: {
-            name: 'Trigger toast message',
-            defaultValue: false,
+        type: {
+            options: ['success', 'warning', 'error', 'info'],
+            control: 'select',
+            defaultValue: 'success'
+        },
+        message: {
+            control: 'text',
+            defaultValue:
+                'This is a sample message with a <a href="https://google.com/">link</a>'
+        },
+        position: {
+            options: [
+                'bottom',
+                'bottom-left',
+                'bottom-right',
+                'top',
+                'top-left',
+                'top-right'
+            ],
+            control: 'select',
+            defaultValue: 'bottom'
+        },
+        duration: {
+            control: 'number',
+            defaultValue: 10
+        },
+        spaceBetweenMessages: {
+            control: 'number',
+            defaultValue: 10
+        },
+        indentFromScreenBorder: {
+            control: 'number',
+            defaultValue: 10
+        },
+        activeDuration: {
             control: 'boolean',
-            table: {
-                type: { summary: Boolean },
-                defaultValue: { summary: false }
-            }
+            defaultValue: true
+        },
+        lineHeight: {
+            control: 'number',
+            defaultValue: 18
+        },
+        closable: {
+            control: 'boolean',
+            defaultValue: true
         }
     }
 }
@@ -25,10 +62,28 @@ const Template = (args) => ({
     template: `<div style="padding: 50px"><DlButton @click="click" v-bind="args" /></div>`,
     methods: {
         click() {
-            console.log(this.args)
+            const {
+                type,
+                message,
+                position,
+                duration,
+                spaceBetweenMessages,
+                indentFromScreenBorder,
+                activeDuration,
+                lineHeight,
+                closable
+            } = this.args
+
             useDlToast.open({
-                message: 'sdfgfdgdf',
-                type: this.type
+                type,
+                message,
+                position,
+                duration,
+                spaceBetweenMessages,
+                indentFromScreenBorder,
+                activeDuration,
+                lineHeight,
+                closable
             })
         }
     }

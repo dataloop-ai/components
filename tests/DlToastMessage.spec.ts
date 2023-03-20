@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest'
 import ToastComponent from '../src/components/DlToastMessage/components/ToastComponent.vue'
 
 describe('DlToastMessage component', () => {
-    it('should render the given message prop', () => {
+    it('dom node test', () => {
         mount(ToastComponent, {
             props: {
                 message: 'Test message'
@@ -14,5 +14,21 @@ describe('DlToastMessage component', () => {
             toast[0].querySelector('[data-test="message-text"]').textContent
         ).toContain('Test message')
         expect(toast.length).toEqual(1)
+        toast[0].querySelector('[data-test="close-btn-icon"]').click()
+        setTimeout(() => expect(toast.length).toEqual(0), 200)
+    })
+    it('check computed properties', () => {
+        const wrapper = mount(ToastComponent, {
+            props: {
+                position: 'bottom'
+            }
+        })
+        expect(wrapper.vm.transition).toEqual({
+            enter: 'v-toast--fade-in-up',
+            leave: 'v-toast--fade-out'
+        })
+        expect(
+            wrapper.vm.correctParent.classList.contains('v-toast--bottom')
+        ).toBe(true)
     })
 })

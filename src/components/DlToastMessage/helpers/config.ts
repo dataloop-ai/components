@@ -7,4 +7,11 @@ const Positions = Object.freeze({
     bottom_left: 'bottom-left'
 })
 
-export { Positions }
+const Types = Object.freeze({
+    success: 'success',
+    warning: 'warning',
+    error: 'error',
+    info: 'info'
+})
+
+export { Positions, Types }
