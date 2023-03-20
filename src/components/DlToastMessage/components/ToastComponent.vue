@@ -51,8 +51,8 @@ export default defineComponent({
         type: {
             type: String,
             default: 'success',
-            validator(value) {
-                return Object.values(Types).includes(value)
+            validator(value: string): boolean {
+                return Object.values(Types as unknown).includes(value)
             }
         },
         duration: {
@@ -62,8 +62,8 @@ export default defineComponent({
         position: {
             type: String,
             default: Positions.bottom,
-            validator(value) {
-                return Object.values(Positions).includes(value)
+            validator(value: string): boolean {
+                return Object.values(Positions as unknown).includes(value)
             }
         },
         activeDuration: {
