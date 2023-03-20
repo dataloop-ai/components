@@ -114,95 +114,13 @@
                 :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @update:selected="updateSeleted"
-            >
-                <!-- <template #top> Top Table </template> -->
-                <!-- <template #top-left> Top Table Left </template> -->
-                <!-- <template #top-right> Top Table Right </template>
-
-            <template #top-selection> Top Selection </template> -->
-
-                <!-- <template #header="props">
-                <dl-tr :props="props">
-                    <dl-th auto-width />
-                    <dl-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                    >
-                        {{ col.label }}
-                    </dl-th>
-                </dl-tr>
-            </template> -->
-
-                <!-- <template #header-cell="props">
-                <dl-th :props="props">
-                    {{ props.col.label }}
-                </dl-th>
-            </template>
-
-            <template #header-cell-calories="props">
-                <dl-th :props="props">
-                    custom
-                    {{ props.col.label }}
-                </dl-th>
-            </template> -->
-
-                <!-- <template #body="props">
-                <dl-tr :props="props">
-                    <dl-td auto-width>
-                        <dl-button
-                            flat
-                            size="s"
-                            text-color="dl-color-darker"
-                            style="padding: 0; border-width: 0!important; :active: border-width: 0"
-                            :icon="
-                                props.expand
-                                    ? 'icon-dl-down-chevron'
-                                    : 'icon-dl-right-chevron'
-                            "
-                            @click="props.expand = !props.expand"
-                        />
-                    </dl-td>
-                    <dl-td
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                    >
-                        {{ col.value }}
-                    </dl-td>
-                </dl-tr>
-                <dl-tr v-show="props.expand" :props="props">
-                    <dl-td colspan="100%" style="padding: 16px">
-                        <div class="text-left">
-                            This is expand slot for row above:
-                            {{ props.row.name }}.
-                        </div>
-                    </dl-td>
-                </dl-tr>
-            </template> -->
-
-                <!-- <template #loading> Loading ... </template> -->
-
-                <!-- <template #bottom="props">
-                    <dl-pagination v-bind="props.pagination" />
-                </template> -->
-            </DlTable>
+            />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {
-    DlTable,
-    DlOptionGroup,
-    DlSwitch,
-    DlTextInput
-    // DlTr,
-    // DlTh,
-    // DlTd,
-    // DlPagination
-    // DlButton
-} from '../components'
+import { DlTable, DlOptionGroup, DlSwitch, DlTextInput } from '../components'
 import { defineComponent } from 'vue-demi'
 import { times } from 'lodash'
 
@@ -363,11 +281,6 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlTextInput
-        // DlTr,
-        // DlTh,
-        // DlPagination
-        // DlTd,
-        // DlButton
     },
     data() {
         return {

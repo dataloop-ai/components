@@ -62,9 +62,8 @@ export function useTablePaginationState(
                 descending: false,
                 page: 1,
                 rowsPerPage:
-                    props.pagination?.rowsPerPage ||
-                    props.rowsPerPageOptions[0] ||
-                    5,
+                    props.pagination?.rowsPerPage ??
+                    props.rowsPerPageOptions[0],
                 min: 1,
                 maxPages: 0,
                 boundaryNumbers: true,
