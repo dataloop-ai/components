@@ -80,14 +80,14 @@ import {
 
 ChartJS.register(Tooltip, Legend, DoughnutController, ArcElement)
 
-import cloneDeep from 'lodash/cloneDeep'
+import { cloneDeep, merge } from 'lodash'
 import { Doughnut } from '../index'
 import { useThemeVariables } from '../../../hooks/use-theme'
 import { updateNestedArrayValues } from '../../../utils/update-key'
 import DlDoughnutChartLegend from './DlDoughnutChartLegend.vue'
 import { defaultDoughnutChartProps } from '../props'
-import merge from 'lodash/merge'
-import CloneDeep from 'lodash/cloneDeep'
+// import { merge } from 'lodash/merge'
+// import CloneDeep from 'lodash/cloneDeep'
 import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
 
 export default defineComponent({
@@ -123,7 +123,7 @@ export default defineComponent({
         const doughnutChartWidgetWidth = ref()
         const doughnutChartWidgetHeight = ref()
         const dlDoughnutChartSummaryRef = ref<HTMLDivElement>(null)
-        const defaultOptions = CloneDeep(defaultDoughnutChartProps.options)
+        const defaultOptions = cloneDeep(defaultDoughnutChartProps.options)
 
         const sizePercents = 70
 
