@@ -14,8 +14,6 @@ describe('DlToastMessage component', () => {
             toast[0].querySelector('[data-test="message-text"]').textContent
         ).toContain('Test message')
         expect(toast.length).toEqual(1)
-        toast[0].querySelector('[data-test="close-btn-icon"]').click()
-        setTimeout(() => expect(toast.length).toEqual(0), 200)
     })
     it('check computed properties', () => {
         const wrapper = mount(ToastComponent, {

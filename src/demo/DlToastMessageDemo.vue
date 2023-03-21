@@ -88,7 +88,7 @@
                     <hr>
                     <dl-switch
                         v-model="closable"
-                        left-label="Hidde remove button"
+                        left-label="Closable"
                     />
                 </div>
             </div>
