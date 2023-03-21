@@ -1,6 +1,7 @@
 name: Bump package version
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [closed]
 
