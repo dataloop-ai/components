@@ -94,3 +94,55 @@ export const Preview = Template.bind({})
 Preview.args = {
     text: 'Alert text'
 }
+
+const FluidTemplate = (args) => ({
+    components: { DlAlert, DlThemeProvider },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div style="padding: 20px">
+      <DlThemeProvider :isDark="false">
+          <dl-alert
+              fluid
+              text="Alert text"
+              v-bind="args"
+          />
+      </DlThemeProvider>
+    </div>
+   `
+})
+
+export const Fluid = FluidTemplate.bind({})
+Fluid.args = {
+    text: 'Alert text',
+    fluid: true
+}
+
+const ClosableTemplate = (args) => ({
+    components: { DlAlert, DlThemeProvider },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div style="padding: 20px">
+      <DlThemeProvider :isDark="false">
+          <dl-alert
+              closable
+              text="Alert text"
+              v-bind="args"
+          />
+      </DlThemeProvider>
+    </div>
+   `
+})
+
+export const Closable = ClosableTemplate.bind({})
+Closable.args = {
+    text: 'Alert text',
+    closable: true
+}
