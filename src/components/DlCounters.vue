@@ -12,7 +12,11 @@
             >
                 <div :class="computeClass('item-content')">
                     <p :class="computeClass('item-value')">
-                        {{ item.value }}
+                        {{
+                            abbreviateNumbers
+                                ? abbreviateNumber(item.value)
+                                : item.value
+                        }}
                     </p>
                     <p
                         v-show="item.text"
@@ -36,6 +40,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
+import { abbreviateToString } from '../utils/abbreviate-to-string'
 
 interface CounterItem {
     value?: number
@@ -60,6 +65,10 @@ export default defineComponent({
             validator(value: CounterItem[]): boolean {
                 return value.length <= 8
             }
+        },
+        abbreviateNumbers: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
@@ -77,6 +86,9 @@ export default defineComponent({
     methods: {
         capitalize(value: string): string {
             return value[0].toUpperCase() + value.slice(1)
+        },
+        abbreviateNumber(nr: number) {
+            if (nr) return abbreviateToString(nr)
         },
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]
