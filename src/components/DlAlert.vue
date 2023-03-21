@@ -219,5 +219,9 @@ export default defineComponent({
     .icon-dl-close:hover {
         cursor: pointer;
     }
+
+    .close-btn-icon:hover {
+        cursor: pointer;
+    }
 }
 </style>
