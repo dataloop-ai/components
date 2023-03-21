@@ -1,7 +1,7 @@
 <template>
     <div
+        v-if="modelValue"
         :id="uuid"
-        ref="dlChipRef"
         :tabindex="tabIndex"
         class="dl-chip"
         :style="cssChipVars"
@@ -17,12 +17,23 @@
                 :icon="icon"
             />
         </span>
-        <slot>
-            {{ hasLabel ? label : null }}
-        </slot>
         <dl-tooltip v-if="overflow && isOverflowing">
             {{ label }}
         </dl-tooltip>
+        <div
+            v-if="hasLabelSlot || hasLabel"
+            class="dl-chip--content"
+        >
+            <div
+                ref="dlChipRef"
+                class="dl-chip--ellipsis"
+            >
+                <slot>
+                    {{ hasLabel ? label : null }}
+                </slot>
+            </div>
+        </div>
+
         <span
             v-if="removable"
             class="dl-chip-remove-icon-container"
@@ -82,6 +93,10 @@ export default defineComponent({
         iconColor: { type: String, default: '' },
         label: { type: [String, Number], default: '' },
         maxWidth: { type: [String, Number], default: '' },
+        modelValue: {
+            type: Boolean,
+            default: true
+        },
         removable: Boolean,
         tabIndex: { type: [String, Number], default: '' },
         transform: {
@@ -92,7 +107,7 @@ export default defineComponent({
         },
         overflow: { type: Boolean, default: false }
     },
-    emits: ['remove'],
+    emits: ['remove', 'update:modelValue'],
     setup() {
         const dlChipRef = ref(null)
         const { hasEllipsis } = useSizeObserver(dlChipRef)
@@ -110,6 +125,9 @@ export default defineComponent({
                 this.label !== null &&
                 this.label !== ''
             )
+        },
+        hasLabelSlot(): boolean {
+            return !!this.$slots['default']
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
@@ -169,7 +187,8 @@ export default defineComponent({
     methods: {
         onRemove(e: Event) {
             if (!this.disabled) {
-                this.$emit('remove', this.label)
+                this.$emit('update:modelValue', false)
+                this.$emit('remove')
             }
         }
     }
@@ -179,6 +198,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-chip {
     position: relative;
+    display: flex;
     vertical-align: middle;
     text-transform: var(--dl-chip-text-transform);
     font-size: var(--dl-font-size-body);
@@ -189,18 +209,26 @@ export default defineComponent({
     min-width: 18px; // +2px from borders
     max-height: 18px; // +2px from borders
     min-height: 12px;
-    height: fit-content;
     max-width: var(--dl-chip-max-width);
-    width: fit-content;
     color: var(--dl-chip-text-color);
     background-color: var(--dl-chip-bg-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     border: var(--dl-chip-border);
     &::first-letter,
     & > *::first-letter {
         text-transform: capitalize;
+    }
+
+    &--content {
+        cursor: default;
+        width: auto;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    &--ellipsis {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
 }
 .dl-chip-remove-icon-container {
@@ -223,7 +251,7 @@ export default defineComponent({
 
 .dl-chip-left-icon-container {
     @extend .dl-chip-remove-icon-container;
-    cursor: text;
+    cursor: default;
     left: 0;
     width: 18px;
     &:active {
@@ -240,5 +268,6 @@ export default defineComponent({
 
 .dl-chip-remove-icon {
     color: var(--dl-chip-text-color);
+    display: flex !important;
 }
 </style>
