@@ -1,7 +1,8 @@
 <template>
     <div
         :id="uuid"
-        class="container"
+        class="dl-counters-container"
+        :style="cssVars"
     >
         <ul>
             <li
@@ -49,6 +50,10 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        spacing: {
+            type: String,
+            default: '30px'
+        },
         items: {
             type: Array as PropType<CounterItem[]>,
             default: (): CounterItem[] => [],
@@ -60,6 +65,13 @@ export default defineComponent({
     data() {
         return {
             uuid: `dl-counters-${v4()}`
+        }
+    },
+    computed: {
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-counter-spacing': this.spacing
+            }
         }
     },
     methods: {
@@ -74,7 +86,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.container {
+.dl-counters-container {
     padding: 10px;
     width: fit-content;
 }
@@ -96,12 +108,12 @@ ul {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-left: 30px;
-        padding-right: 30px;
+        padding-left: var(--dl-counter-spacing);
+        padding-right: var(--dl-counter-spacing);
 
         &--small {
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-left: var(--dl-counter-spacing);
+            padding-right: var(--dl-counter-spacing);
         }
     }
 
