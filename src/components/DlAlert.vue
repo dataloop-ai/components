@@ -219,13 +219,5 @@ export default defineComponent({
     .icon-dl-close:hover {
         cursor: pointer;
     }
-
-    .close-btn-icon {
-        display: flex !important;
-        align-items: center;
-        &:hover {
-            cursor: pointer;
-        }
-    }
 }
 </style>
