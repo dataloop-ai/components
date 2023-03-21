@@ -28,6 +28,11 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "github-action@users.noreply.github.com"
 
+      - name: Generate Docs
+        run: |
+          npm i
+          npm run build:storybook
+
       - name: Update package version
         run: |
           if [[ "${{ github.event.pull_request.head.ref }}" == "development" ]]; then
@@ -41,17 +46,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CICD_TOKEN }}
         run: |
           git push --follow-tags
-
-      # - name: Trigger npm-publish
-      #   if: success()
-      #   uses: actions/github-script@v4
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       const response = await github.repos.createDispatchEvent({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         event_type: 'publish-components'
-      #       });
-      #       console.log(response);
-
