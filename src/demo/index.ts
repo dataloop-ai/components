@@ -45,6 +45,8 @@ import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlKpi from '../components/DlKpi/DlKpi.vue'
+import DlKpiDemo from './DlKpiDemo.vue'
 
 export {
     AvatarDemo,
@@ -121,6 +123,7 @@ export const demoState = {
     popup: PopupDemo,
     progress_bar: DlProgressBarDemo,
     progress_chart: DlProgressChartDemo,
+    kpi: DlKpiDemo,
     range: DlRangeDemo,
     search: DlSearchDemo,
     select: DlSelectDemo,

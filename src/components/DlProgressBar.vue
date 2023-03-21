@@ -29,11 +29,20 @@
                 />
             </span>
             <p
-                v-if="showValue && !indeterminate"
+                v-if="showValue && !indeterminate && !summary"
                 class="dl-progress-bar-label"
             >
                 {{ computedValue }}{{ showPercentage ? '%' : '' }}
             </p>
+        </div>
+        <div
+            v-if="summary"
+            class="summary"
+        >
+            <div>
+                {{ summary }}
+            </div>
+            <div>{{ computedValue }}%</div>
         </div>
     </div>
 </template>
@@ -75,6 +84,10 @@ export default defineComponent({
         width: {
             type: String,
             default: '100%'
+        },
+        summary: {
+            type: String,
+            default: ''
         }
     },
     data() {
@@ -130,6 +143,19 @@ export default defineComponent({
     animation-iteration-count: infinite;
 }
 
+.summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 12px;
+    text-transform: capitalize;
+    font-feature-settings: 'cpsp' on;
+    color: var(--dl-color-lighter);
+}
 @keyframes indeterminate-loading {
     0% {
         width: 0%;
