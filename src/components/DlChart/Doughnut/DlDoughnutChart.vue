@@ -86,8 +86,6 @@ import { useThemeVariables } from '../../../hooks/use-theme'
 import { updateNestedArrayValues } from '../../../utils/update-key'
 import DlDoughnutChartLegend from './DlDoughnutChartLegend.vue'
 import { defaultDoughnutChartProps } from '../props'
-// import { merge } from 'lodash/merge'
-// import CloneDeep from 'lodash/cloneDeep'
 import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
 
 export default defineComponent({
