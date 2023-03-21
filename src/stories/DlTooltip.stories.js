@@ -185,3 +185,69 @@ const Template = (args) => ({
 })
 export const Preview = Template.bind({})
 Preview.args = {}
+
+const TopTemplate = (args) => ({
+    components: { DlTooltip, DlLink },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <div
+            style="
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            justify-content: center;
+            "
+        >
+            <div style="border: 1px solid black">
+                <dl-tooltip
+                    anchor="top middle"
+                    v-bind="args"
+                >
+                    Top Middle
+                </dl-tooltip>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+            </div>
+        </div>
+    </div>
+   `
+})
+export const TopAnchor = TopTemplate.bind({})
+TopAnchor.args = {
+    anchor: 'top middle'
+}
+
+const TopSelfTemplate = (args) => ({
+    components: { DlTooltip, DlLink },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <div
+            style="
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            justify-content: center;
+            "
+        >
+            <div style="border: 1px solid black">
+                <dl-tooltip
+                    self="top middle"
+                    v-bind="args"
+                >
+                    Top Middle
+                </dl-tooltip>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+            </div>
+        </div>
+    </div>
+   `
+})
+export const TopSelf = TopSelfTemplate.bind({})
+TopSelf.args = {
+    self: 'top middle'
+}

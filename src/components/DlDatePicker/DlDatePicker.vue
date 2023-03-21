@@ -253,11 +253,13 @@ export default defineComponent({
             if (!this.isSelectionMode) return
 
             if (this.type === 'day') {
-                if (
-                    this.calendarTo?.dates[
-                        this.calendarTo?.dates.length - 1
-                    ].isSame(new CalendarDate(date))
-                ) {
+                const calendarDateClone = this.calendarTo?.activeDate.clone()
+
+                const isLastDayOfTheMonth = calendarDateClone
+                    .endOf('month')
+                    .isSame(new CalendarDate(date), 'day')
+
+                if (isLastDayOfTheMonth) {
                     if (this.timeout) {
                         clearTimeout(this.timeout)
                     }
@@ -293,6 +295,7 @@ export default defineComponent({
     }
 })
 </script>
+
 <style lang="scss" scoped>
 .dl-date-picker {
     user-select: none;

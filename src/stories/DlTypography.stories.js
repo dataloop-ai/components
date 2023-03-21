@@ -92,3 +92,51 @@ const Template = (args) => ({
 
 export const Preview = Template.bind({})
 Preview.args = {}
+
+const UppercaseTemplate = (args) => ({
+    components: { DlTypography },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div style="padding: 20px">
+        <dl-typography 
+            uppercase
+            v-bind="args"
+        >
+            Typography content
+        </dl-typography>
+    </div>
+   `
+})
+
+export const Uppercase = UppercaseTemplate.bind({})
+Uppercase.args = {
+    uppercase: true
+}
+
+const BoldTemplate = (args) => ({
+    components: { DlTypography },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div style="padding: 20px">
+        <dl-typography 
+            bold
+            v-bind="args"
+        >
+            Typography content
+        </dl-typography>
+    </div>
+   `
+})
+
+export const Bold = BoldTemplate.bind({})
+Bold.args = {
+    bold: true
+}

@@ -128,3 +128,109 @@ Preview.args = {
     startIcon: 'icon-dl-master',
     endIcon: 'icon-dl-vehicles'
 }
+
+const DefaultTemplate = (args) => ({
+    components: { DlListItem },
+    setup() {
+        return { args }
+    },
+    methods: {
+        click: action('click')
+    },
+    template: `
+    <div style="padding: 50px;">
+        <dl-list-item 
+            @click="click" 
+            v-bind="args"
+        >
+            Default list item
+        </dl-list-item>
+    </div>
+    `
+})
+
+export const Default = DefaultTemplate.bind({})
+Default.args = {
+    endIcon: ''
+}
+
+const DisabledTemplate = (args) => ({
+    components: { DlListItem },
+    setup() {
+        return { args }
+    },
+    methods: {
+        click: action('click')
+    },
+    template: `
+    <div style="padding: 50px;">
+        <dl-list-item
+            disabled
+            v-bind="args"
+            @click="click"
+        >
+            Disabled list item
+        </dl-list-item>
+    </div>
+    `
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    disabled: true,
+    endIcon: ''
+}
+
+const ClickableTemplate = (args) => ({
+    components: { DlListItem },
+    setup() {
+        return { args }
+    },
+    methods: {
+        click: action('click')
+    },
+    template: `
+    <div style="padding: 50px;">
+        <dl-list-item
+            clickable
+            v-bind="args"
+            @click="click"
+        >
+            Clickable list item
+        </dl-list-item>
+    </div>
+    `
+})
+
+export const Clickable = ClickableTemplate.bind({})
+Clickable.args = {
+    clickable: true,
+    endIcon: ''
+}
+
+const BorderedTemplate = (args) => ({
+    components: { DlListItem },
+    setup() {
+        return { args }
+    },
+    methods: {
+        click: action('click')
+    },
+    template: `
+    <div style="padding: 50px;">
+        <dl-list-item
+            bordered
+            v-bind="args"
+            @click="click"
+        >
+            Bordered list item
+        </dl-list-item>
+    </div>
+    `
+})
+
+export const Bordered = BorderedTemplate.bind({})
+Bordered.args = {
+    bordered: true,
+    endIcon: ''
+}
