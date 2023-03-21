@@ -12,26 +12,22 @@ jobs:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: main
           token: ${{ secrets.CICD_TOKEN }}
-  
-      - name: Set up Node.js
-        uses: actions/setup-node@v2.5.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
 
       - name: Setup Git User
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "github-action@users.noreply.github.com"
-
-      - name: Generate Docs
-        run: |
-          npm i
-          npm run build:storybook
 
       - name: Update package version
         run: |
