@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.13.18",
+  "version": "0.13.19",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -78,15 +78,17 @@
   },
   "keywords": [],
   "author": "fadi@dataloop.ai",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/dataloop-ai/dl-components#readme",
+  "license": "Apache-2.0",
   "publishConfig": {
-    "@dataloop:registry": "https://dev-gate.dataloop.ai/npm-registry/",
-    "access": "public"
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/dataloop-ai/dl-components.git"
+    "url": "git+ssh://git@github.com/dataloop-ai/components.git"
+  },
+  "homepage": "https://github.com/dataloop-ai/components#readme",
+  "bugs": {
+    "url": "https://github.com/dataloop-ai/components/issues"
   },
   "lint-staged": {
     "*.ts": [

@@ -250,13 +250,13 @@ const Template = (args) => ({
     },
     data() {
         return {
-            name: 'Dropdown Button Controlled',
+            label: 'Dropdown Button Controlled',
             showing: false
         }
     },
     methods: {
         onClose(name) {
-            this.name = name
+            this.label = name
             this.showing = false
         },
         onOpen() {
@@ -264,18 +264,18 @@ const Template = (args) => ({
         },
         onClick() {
             if (args.split) {
-                alert(this.name)
+                alert(this.label)
             }
         }
     },
     template: `
     <dl-dropdown-button
-    v-bind="args"
-    :model-value="showing"
-    :label="name"
-    @show="onOpen"
-    @click="onClick"
->
+        v-bind="args"
+        :model-value="showing"
+        :label="label"
+        @show="onOpen"
+        @click="onClick"
+    >
     <dl-list>
         <dl-list-item clickable @click="() => onClose('Photos')">
             <dl-item-section> Photos </dl-item-section>
@@ -344,4 +344,760 @@ Preview.args = {
     uppercase: false,
     outlined: false,
     disableDropdown: false
+}
+
+const SplitTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Split',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        split
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        size="m"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+    >
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Split = SplitTemplate.bind({})
+Split.args = {
+    split: true,
+    label: 'Split',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;',
+    size: 'm'
+}
+
+const CoverTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Covered',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        cover
+        label="Covered"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Cover = CoverTemplate.bind({})
+Cover.args = {
+    cover: true,
+    label: 'Covered',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const PersistentTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Persistent',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        persistent
+        label="Persistent"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Persistent = PersistentTemplate.bind({})
+Persistent.args = {
+    persistent: true,
+    label: 'Persistent',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const StretchTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Stretch',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        stretch
+        label="Stretch"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Stretch = StretchTemplate.bind({})
+Stretch.args = {
+    stretch: true,
+    label: 'Stretch',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const AutocloseTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Autoclose',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        auto-close
+        label="Autoclose"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Autoclose = AutocloseTemplate.bind({})
+Autoclose.args = {
+    autoClose: true,
+    label: 'Autoclose',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const DisableMainBtnTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Disable Main Btn',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        disable-main-btn
+        label="Disable Main Btn"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const DisableMainBtn = DisableMainBtnTemplate.bind({})
+DisableMainBtn.args = {
+    disableMainBtn: true,
+    label: 'Disable Main Btn',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const NoIconAnimationTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'No Icon Animation',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        no-icon-animation
+        label="No Icon Animation"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const NoIconAnimation = NoIconAnimationTemplate.bind({})
+NoIconAnimation.args = {
+    noIconAnimation: true,
+    label: 'No Icon Animation',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const DisabledTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'No Icon Animation',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        disabled
+        label="Disabled"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    disabled: true,
+    label: 'Disabled',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const FluidTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Fluid',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        fluid
+        label="Fluid"
+        dropdownIcon="icon-dl-down-chevron"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Fluid = FluidTemplate.bind({})
+Fluid.args = {
+    fluid: true,
+    label: 'Fluid',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0]
+    // mainBtnStyle: 'width: 150px;'
+}
+
+const FlatTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Flat',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        flat
+        label="Flat"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Flat = FlatTemplate.bind({})
+Flat.args = {
+    flat: true,
+    label: 'Flat',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const OutlinedTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Outlined',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        outlined
+        label="Outlined"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const Outlined = OutlinedTemplate.bind({})
+Outlined.args = {
+    outlined: true,
+    label: 'Outlined',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
+}
+
+const DisableDropdownTemplate = (args) => ({
+    components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            label: 'Disable Dropdown',
+            showing: false
+        }
+    },
+    methods: {
+        onClose(name) {
+            this.label = name
+            this.showing = false
+        },
+        onOpen() {
+            this.showing = true
+        },
+        onClick() {
+            if (args.split) {
+                alert(this.label)
+            }
+        }
+    },
+    template: `
+    <dl-dropdown-button
+        disable-dropdown
+        label="Disable Dropdown"
+        dropdownIcon="icon-dl-down-chevron"
+        mainBtnStyle="width: 150px;"
+        :menuOffset="[0, 0]"
+        :model-value="showing"
+        v-bind="args"
+        @show="onOpen"
+        @click="onClick"
+>
+    <dl-list>
+        <dl-list-item clickable @click="() => onClose('Photos')">
+            <dl-item-section> Photos </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable  @click="() => onClose('Videos and long text text')">
+            <dl-item-section> Videos and long text text </dl-item-section>
+        </dl-list-item>
+
+        <dl-list-item clickable @click="() => onClose('Articles')">
+            <dl-item-section> Articles </dl-item-section>
+        </dl-list-item>
+    </dl-list>
+</dl-dropdown-button>
+    `
+})
+
+export const DisableDropdown = DisableDropdownTemplate.bind({})
+DisableDropdown.args = {
+    disableDropdown: true,
+    label: 'Disable Dropdown',
+    dropdownIcon: 'icon-dl-down-chevron',
+    menuOffset: [0, 0],
+    mainBtnStyle: 'width: 150px;'
 }

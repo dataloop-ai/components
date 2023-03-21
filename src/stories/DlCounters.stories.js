@@ -64,3 +64,24 @@ Preview.args = {
     small: false,
     items: defaultValue
 }
+
+const SmallTemplate = (args) => ({
+    components: { DlCounters },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlCounters
+            small
+            v-bind="args" 
+        />
+    </div>
+  `
+})
+
+export const Small = SmallTemplate.bind({})
+Small.args = {
+    small: true,
+    items: defaultValue
+}

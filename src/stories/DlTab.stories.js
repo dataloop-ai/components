@@ -127,3 +127,101 @@ const Template = (args) => ({
 
 export const Preview = Template.bind({})
 Preview.args = {}
+
+const IsActiveTemplate = (args) => ({
+    components: { DlTab },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div :style="{ padding: '50px', minWidth: '120px', width: 'fit-content' }">
+          <dl-tab
+            isActive
+            label="is active"
+            v-bind="args"   
+          />
+    </div>
+   `
+})
+
+export const IsActive = IsActiveTemplate.bind({})
+IsActive.args = {
+    isActive: true,
+    label: 'is active'
+}
+
+const DisabledTemplate = (args) => ({
+    components: { DlTab },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div :style="{ padding: '50px', minWidth: '120px', width: 'fit-content' }">
+          <dl-tab
+            disabled
+            label="disabled"
+            v-bind="args"   
+          />
+    </div>
+   `
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    disabled: true,
+    label: 'disalbed'
+}
+
+const VerticalTemplate = (args) => ({
+    components: { DlTab },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div :style="{ padding: '50px', minWidth: '120px', width: 'fit-content' }">
+          <dl-tab
+            vertical
+            label="Vertical label"
+            v-bind="args"   
+          />
+    </div>
+   `
+})
+
+export const Vertical = VerticalTemplate.bind({})
+Vertical.args = {
+    vertical: true,
+    label: 'Vertical label'
+}
+
+const TooltipTemplate = (args) => ({
+    components: { DlTab },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div :style="{ padding: '50px', minWidth: '120px', width: 'fit-content' }">
+          <dl-tab
+            showTooltip
+            label="Tooltip label"
+            tooltip="Tooltip content here"
+            v-bind="args"   
+          />
+    </div>
+   `
+})
+
+export const ShowTooltip = TooltipTemplate.bind({})
+ShowTooltip.args = {
+    showTooltip: true,
+    label: 'Tooltip label',
+    tooltip: 'Tooltip content here'
+}

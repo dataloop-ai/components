@@ -1,6 +1,7 @@
 name: Bump package version
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [closed]
 
@@ -12,16 +13,17 @@ jobs:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: main
           token: ${{ secrets.CICD_TOKEN }}
-  
-      - name: Set up Node.js
-        uses: actions/setup-node@v2.5.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
 
       - name: Setup Git User
         run: |
@@ -41,17 +43,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CICD_TOKEN }}
         run: |
           git push --follow-tags
-
-      # - name: Trigger npm-publish
-      #   if: success()
-      #   uses: actions/github-script@v4
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       const response = await github.repos.createDispatchEvent({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         event_type: 'publish-components'
-      #       });
-      #       console.log(response);
-

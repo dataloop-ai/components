@@ -1,3 +1,5 @@
+const { mergeConfig } = require('vite')
+
 module.exports = {
     stories: [
         '../src/**/*.stories.mdx',
@@ -13,14 +15,13 @@ module.exports = {
         builder: '@storybook/builder-vite'
     },
     viteFinal: (config) => {
-        return {
-            ...config,
+        return mergeConfig(config, {
+            base: '/components/',
             build: {
-                ...config.build,
                 minify: false,
                 sourcemap: false
             }
-        }
+        })
     },
     env: (config) => ({ ...config }),
     rollupOptions: {
