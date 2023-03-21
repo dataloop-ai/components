@@ -23,6 +23,8 @@ describe('DlChip', () => {
             iconColor: '',
             removable: true,
             maxWidth: '',
+            modelValue: true,
+
             tabIndex: '',
             icon: '',
             textColor: '',
