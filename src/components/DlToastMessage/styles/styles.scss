@@ -16,6 +16,8 @@
     display: inline-flex;
     align-items: center;
     pointer-events: auto;
+    margin-bottom: 5px;
+    margin-top: 5px;
     cursor: pointer;
     animation-duration: 150ms;
     &.v-toast__item--top, &.v-toast__item--bottom {

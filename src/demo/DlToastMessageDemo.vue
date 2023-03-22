@@ -8,19 +8,12 @@
                 />
                 <dl-text-input
                     v-model="duration"
+                    type="number"
                     title="Duration seconds"
                 />
                 <dl-text-input
-                    v-model="spaceBetween"
-                    title="Space between"
-                />
-                <dl-text-input
-                    v-model="indentFromScreenBorder"
-                    title="Indent from screen border"
-                />
-                <dl-text-input
-                    v-model="lineHeight"
-                    title="Change line height"
+                    v-model="classItem"
+                    title="Custom class for toast item"
                 />
             </div>
             <div class="flex">
@@ -82,11 +75,6 @@
                 </div>
                 <div>
                     <dl-switch
-                        v-model="activeDuration"
-                        left-label="Active duration"
-                    />
-                    <hr>
-                    <dl-switch
                         v-model="closable"
                         left-label="Closable"
                     />
@@ -101,7 +89,7 @@
 
 <script lang="ts">
 import { DlButton } from '../components'
-import { useDlToast } from '../components/DlToastMessage'
+import { DlToast } from '../components/DlToastMessage'
 import { defineComponent, ref } from 'vue-demi'
 import DlTextInput from '../components/DlTextInput.vue'
 import DlRadio from '../components/DlRadio.vue'
@@ -123,21 +111,15 @@ export default defineComponent({
         const duration = ref(10)
         const type = ref('success')
         const position = ref('bottom')
-        const spaceBetween = ref(10)
-        const indentFromScreenBorder = ref(10)
-        const activeDuration = ref(true)
         const closable = ref(true)
-        const lineHeight = ref(18)
+        const classItem = ref('demo-toast')
         function showToastMessage() {
-            useDlToast.open({
+            DlToast.open({
                 message: message.value,
                 position: position.value,
                 type: type.value,
-                duration: +duration.value,
-                spaceBetweenMessages: +spaceBetween.value,
-                indentFromScreenBorder: +indentFromScreenBorder.value,
-                activeDuration: activeDuration.value,
-                lineHeight: +lineHeight.value,
+                duration: duration.value,
+                classItem: classItem.value,
                 closable: closable.value
             })
         }
@@ -147,11 +129,8 @@ export default defineComponent({
             duration,
             type,
             position,
-            spaceBetween,
-            indentFromScreenBorder,
-            activeDuration,
-            closable,
-            lineHeight
+            classItem,
+            closable
         }
     }
 })

@@ -7,21 +7,21 @@
             v-show="isActive"
             ref="root"
             class="v-toast__item"
-            :class="[`v-toast__item--${type}`, `v-toast__item--${position}`]"
+            :class="[
+                `v-toast__item--${type}`,
+                `v-toast__item--${position}`,
+                classItem
+            ]"
         >
             <dl-alert
                 :type="type"
                 :closable="closable"
                 @update:model-value="(val) => closeToast(val)"
             >
-                <!-- eslint-disable vue/no-v-html -->
                 <span
-                    :style="{ lineHeight: `${lineHeight}px` }"
                     class="v-toast__text"
                     data-test="message-text"
-                    v-html="message"
                 />
-                <!--eslint-enable-->
             </dl-alert>
         </div>
     </transition>
@@ -36,8 +36,8 @@ import {
     onMounted
 } from 'vue-demi'
 import DlAlert from '../../DlAlert.vue'
-import { Positions, Types } from '../helpers/config'
-import { removeElement } from '../helpers/render'
+import { Positions, Types } from '../utils/config'
+import { removeElement } from '../utils/render'
 import { Animation } from '../types'
 
 export default defineComponent({
@@ -46,7 +46,7 @@ export default defineComponent({
     props: {
         message: {
             type: String,
-            default: ''
+            required: true
         },
         type: {
             type: String,
@@ -54,6 +54,10 @@ export default defineComponent({
             validator(value: string): boolean {
                 return Object.values(Types as unknown).includes(value)
             }
+        },
+        classItem: {
+            type: String,
+            default: ''
         },
         duration: {
             type: Number,
@@ -66,35 +70,13 @@ export default defineComponent({
                 return Object.values(Positions as unknown).includes(value)
             }
         },
-        activeDuration: {
-            type: Boolean,
-            default: true
-        },
-        spaceBetweenMessages: {
-            type: Number,
-            default: 10
-        },
-        indentFromScreenBorder: {
-            type: Number,
-            default: 10
-        },
         closable: {
             type: Boolean,
             default: true
-        },
-        lineHeight: {
-            type: Number,
-            default: 18
         }
     },
     setup(props) {
-        const {
-            position,
-            duration,
-            spaceBetweenMessages,
-            indentFromScreenBorder,
-            activeDuration
-        } = props
+        const { position, duration, message } = props
         const root = ref(null)
         let parentTop: HTMLElement = null
         let parentBottom: HTMLElement = null
@@ -163,15 +145,12 @@ export default defineComponent({
         })
         function showNotice(): void {
             const parent = correctParent.value
-            if (toastParentPosition.value === 'top') {
-                root.value.style.marginBottom = `${spaceBetweenMessages}px`
-            } else {
-                root.value.style.marginTop = `${spaceBetweenMessages}px`
-            }
+            const container = root.value.closest('.v-toast--pending')
+            root.value.querySelector('.v-toast__text').innerHTML = message
             parent.insertAdjacentElement('afterbegin', root.value)
-            parent.style.padding = `${indentFromScreenBorder}px`
+            container?.remove()
             isActive.value = true
-            if (duration && activeDuration) {
+            if (duration) {
                 setTimeout(() => {
                     closeToastMessage()
                 }, duration * 1000)

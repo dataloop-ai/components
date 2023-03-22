@@ -1,5 +1,5 @@
 import toastComponent from '../components/ToastComponent.vue'
-import { createComponent } from '../helpers/render'
+import { createComponent } from '../utils/render'
 
 export const useToast = (globalProps = {}) => {
     return {

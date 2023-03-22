@@ -1,5 +1,5 @@
 import { useToast } from './api/useToast'
 
-const useDlToast = useToast()
+const DlToast = useToast()
 
-export { useDlToast }
+export { DlToast }

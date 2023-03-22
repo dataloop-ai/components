@@ -1,4 +1,4 @@
-import { useDlToast } from '../components/DlToastMessage'
+import { DlToast } from '../components/DlToastMessage'
 import { DlButton } from '..'
 
 export default {
@@ -31,21 +31,9 @@ export default {
             control: 'number',
             defaultValue: 10
         },
-        spaceBetweenMessages: {
-            control: 'number',
-            defaultValue: 10
-        },
-        indentFromScreenBorder: {
-            control: 'number',
-            defaultValue: 10
-        },
-        activeDuration: {
-            control: 'boolean',
-            defaultValue: true
-        },
-        lineHeight: {
-            control: 'number',
-            defaultValue: 18
+        classItem: {
+            control: 'text',
+            defaultValue: 'demo-toast'
         },
         closable: {
             control: 'boolean',
@@ -62,28 +50,16 @@ const Template = (args) => ({
     template: `<div style="padding: 50px"><DlButton @click="click" v-bind="args" /></div>`,
     methods: {
         click() {
-            const {
-                type,
-                message,
-                position,
-                duration,
-                spaceBetweenMessages,
-                indentFromScreenBorder,
-                activeDuration,
-                lineHeight,
-                closable
-            } = this.args
+            const { type, message, position, duration, closable, classItem } =
+                this.args
 
-            useDlToast.open({
+            DlToast.open({
                 type,
                 message,
                 position,
                 duration,
-                spaceBetweenMessages,
-                indentFromScreenBorder,
-                activeDuration,
-                lineHeight,
-                closable
+                closable,
+                classItem
             })
         }
     }
