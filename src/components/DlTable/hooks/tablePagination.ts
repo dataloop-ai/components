@@ -141,7 +141,7 @@ export function useTablePagination(
 
     const computedRowsNumber = computed(
         () =>
-            computedPagination.value?.rowsNumber ||
+            computedPagination.value?.rowsNumber ??
             filteredSortedRowsNumber.value
     )
 
