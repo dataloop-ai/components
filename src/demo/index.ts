@@ -43,6 +43,7 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlToastMessageDemo from './DlToastMessageDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
@@ -92,6 +93,7 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
+    DlToastMessageDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
     DlChartDoughnutDemo,
@@ -149,5 +151,6 @@ export const demoState = {
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
+    toast_message: DlToastMessageDemo,
     spinner: DlSpinner
 }

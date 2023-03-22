@@ -32,30 +32,30 @@
             <DlChip
                 removable
                 label="Chip filled"
-                @remove="log"
+                @remove="log('removable')"
             />
             <DlChip
                 removable
                 outlined
                 label="Chip outlined"
-                @remove="log"
+                @remove="log('outlined')"
             />
             <DlChip
                 removable
                 disabled
                 label="Chip disabled"
-                @remove="log"
+                @remove="log('disabled')"
             />
             <DlChip
                 removable
                 label="Ellipsed Chip with a multiple words"
-                @remove="log"
+                @remove="log('ellipsed')"
             />
             <DlChip
                 removable
                 label="custom max width (200px)"
                 max-width="200px"
-                @remove="log"
+                @remove="log('test')"
             />
         </div>
         <h4>Removable Chips with icon</h4>
@@ -67,39 +67,39 @@
                 removable
                 icon="icon-dl-search"
                 label="Chip filled"
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 icon="icon-dl-search"
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 icon="icon-dl-search"
                 outlined
                 label="Chip outlined"
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 icon="icon-dl-search"
                 disabled
                 label="Chip disabled"
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 label="Ellipsed Chip with a multiple words"
                 icon="icon-dl-search"
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 label="custom max width (200px)"
                 icon="icon-dl-search"
                 max-width="200px"
-                @remove="log"
+                @remove="log('test')"
             />
         </div>
         <h4>Removable Chips without icon and label</h4>
@@ -109,17 +109,34 @@
         >
             <DlChip
                 removable
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 outlined
-                @remove="log"
+                @remove="log('test')"
             />
             <DlChip
                 removable
                 disabled
-                @remove="log"
+                @remove="log('test')"
+            />
+        </div>
+        <h4>Chips with label slot</h4>
+        <div
+            class="col"
+            style="margin-bottom: 30px"
+        >
+            <DlChip
+                ref="removableChip"
+                removable
+                label="Ellipsed Chip with a multiple words"
+            />
+        </div>
+        <div class="col">
+            <DlButton
+                label="remove chip"
+                @click="removeChip"
             />
         </div>
         <h4>Chips with icon and without label</h4>
@@ -152,16 +169,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
-import { DlChip } from '../components'
+import { defineComponent, ref } from 'vue-demi'
+import { DlChip, DlButton } from '../components'
 export default defineComponent({
     name: 'DlChipDemo',
     components: {
-        DlChip
+        DlChip,
+        DlButton
     },
     setup() {
         const log = (e: Event) => console.log(e)
-        return { log }
+        const removableValue = ref(true)
+        return { log, removableValue }
+    },
+    methods: {
+        removeChip() {
+            (this.$refs.removableChip as typeof DlChip).remove()
+        }
     }
 })
 </script>
