@@ -18,6 +18,7 @@ describe('DlToastMessage component', () => {
     it('check computed properties', () => {
         const wrapper = mount(ToastComponent, {
             props: {
+                message: 'Test message',
                 position: 'bottom'
             }
         })
