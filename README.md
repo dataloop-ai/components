@@ -1,8 +1,10 @@
-# Dataloop Components Library ![components version](https://img.shields.io/npm/v/@dataloop-ai/components?label=Latest%20Library%20Version) ![release status](https://img.shields.io/badge/Relese%20Status-Beta-yellowgreen)
+# [Dataloop Components Library](https://dataloop-ai.github.io/components/) ![components version](https://img.shields.io/npm/v/@dataloop-ai/components?label=Latest%20Library%20Version) ![release status](https://img.shields.io/badge/Relese%20Status-Beta-yellowgreen)
 
 This repository contains custom made vue components for Dataloop platform and apps use
 
 The vue components are written in vue3 composition api and can be used in vue 2 projects as well as long as you install vue-demi
+
+You can see our documentation with our storybook link [here](https://dataloop-ai.github.io/components/)
 
 ## Development
 
