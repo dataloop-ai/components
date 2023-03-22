@@ -188,14 +188,6 @@ export default defineComponent({
         height: 100vh !important;
         border-radius: 0px;
     }
-    &--right {
-        position: absolute !important;
-        right: 0;
-    }
-    &--left {
-        position: absolute !important;
-        left: 0;
-    }
 }
 
 .header {

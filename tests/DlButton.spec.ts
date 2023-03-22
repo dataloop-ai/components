@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { DlButton } from '../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlButton', () => {
-    test('testing setup functionality', async () => {
+    it('testing setup functionality', async () => {
         const wrapper = mount(DlButton, {
             props: {
                 filled: true,

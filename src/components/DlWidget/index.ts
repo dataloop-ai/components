@@ -1,4 +1,4 @@
 import DlWidget from './DlWidget.vue'
-import DlWidgetGrid from './DlWidgetGrid.vue'
+import DlGrid from './DlGrid.vue'
 
-export { DlWidget, DlWidgetGrid }
+export { DlWidget, DlGrid }

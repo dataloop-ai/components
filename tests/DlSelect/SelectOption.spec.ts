@@ -1,5 +1,6 @@
 import { SelectOption } from '../../src/components/DlSelect'
 import { mount } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
 
 describe('select option computed', () => {
     it('should compute the color', async () => {

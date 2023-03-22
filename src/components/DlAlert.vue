@@ -15,7 +15,7 @@
                 <dl-icon
                     :icon="icon"
                     :color="iconColor"
-                    size="16px"
+                    size="24px"
                 />
             </div>
             <span
@@ -32,8 +32,7 @@
                 class="close-btn-icon"
                 data-test="close-btn-icon"
                 icon="icon-dl-close"
-                :color="iconColor"
-                size="8px"
+                size="12px"
                 @click="handleClose"
             />
         </div>
@@ -52,7 +51,7 @@ const typeToIconMap: Record<AlertType, string> = {
     info: 'icon-dl-info-filled',
     success: 'icon-dl-approve-filled',
     warning: 'icon-dl-alert-filled',
-    error: 'icon-dl-alert-filled'
+    error: 'icon-dl-error-filled'
 }
 
 const typeToIconColorMap: Record<AlertType, string> = {
@@ -200,7 +199,7 @@ export default defineComponent({
     > div {
         display: flex;
         flex-direction: row;
-        padding: 10px;
+        padding: 10px 10px 10px 16px;
     }
 
     .text {
@@ -213,7 +212,8 @@ export default defineComponent({
     }
 
     .close-btn {
-        padding: 5px 5px 0 0;
+        padding-right: 16px;
+        padding-left: 10px;
     }
 
     .icon-dl-close:hover {

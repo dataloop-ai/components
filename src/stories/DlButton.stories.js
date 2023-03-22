@@ -1,6 +1,6 @@
 // Button.stories.js|jsx|ts|tsx
 
-import { DlButton } from '..'
+import { DlButton, DlBadge, DlIcon } from '..'
 import { action } from '@storybook/addon-actions'
 
 export default {
@@ -160,76 +160,254 @@ export default {
     }
 }
 
-const Template = (args) => ({
+const FilledTemplate = (args) => ({
     components: { DlButton },
     setup() {
         return { args }
     },
-    template: `<div style="padding: 50px"><DlButton @click="click" v-bind="args" /></div>`,
-    methods: {
-        click: action('click')
-    }
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            filled
+            label="Filled"
+            v-bind="args"
+        />
+    </div>
+    `
 })
 
-export const Filled = Template.bind({})
+export const Filled = FilledTemplate.bind({})
 Filled.args = {
     filled: true,
     label: 'Filled'
 }
 
-export const Outlined = Template.bind({})
+const OutlinedTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            outlined
+            label="Outlined"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+
+export const Outlined = OutlinedTemplate.bind({})
 Outlined.args = {
     outlined: true,
     label: 'Outlined'
 }
 
-export const FlatPrimary = Template.bind({})
-FlatPrimary.args = {
+const DisabledTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            disabled
+            label="Disabled"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    disabled: true,
+    label: 'Disabled'
+}
+
+const FlatTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            flat
+            label="Flat"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+
+export const Flat = FlatTemplate.bind({})
+Flat.args = {
     flat: true,
-    color: 'primary',
-    label: 'Flat Primary'
+    label: 'Flat'
 }
 
-export const FlatSecondary = Template.bind({})
-FlatSecondary.args = {
-    flat: true,
-    color: 'secondary',
-    label: 'Flat Secondary'
-}
-
-export const ButtonWithIcon = Template.bind({})
-ButtonWithIcon.args = {
+const WithIconTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            icon="icon-dl-add"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+export const WithIcon = WithIconTemplate.bind({})
+WithIcon.args = {
     filled: true,
-    label: 'Label',
-    icon: 'icon-dl-add'
+    icon: 'icon-dl-add',
+    label: 'With icon'
 }
 
-export const IconButton = Template.bind({})
-IconButton.args = {
+const RoundTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            round
+            label="Round button"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+export const Round = RoundTemplate.bind({})
+Round.args = {
     filled: true,
-    round: false,
-    icon: 'icon-dl-dark-theme'
+    round: true,
+    label: 'Round button'
 }
 
-export const Fluid = Template.bind({})
+const FluidTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            fluid
+            label="Fluid button"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+export const Fluid = FluidTemplate.bind({})
 Fluid.args = {
     filled: true,
     fluid: true,
-    label: 'Fluid Button'
+    label: 'Fluid button'
 }
 
-export const FluidWithIcon = Template.bind({})
-FluidWithIcon.args = {
-    outlined: true,
-    fluid: true,
-    label: 'Fluid Button with icon',
-    icon: 'icon-dl-id'
-}
-
-export const DenseIcon = Template.bind({})
-DenseIcon.args = {
+const DenseTemplate = (args) => ({
+    components: { DlButton },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            dense
+            label="Dense button"
+            v-bind="args"
+        />
+    </div>
+    `
+})
+export const Dense = DenseTemplate.bind({})
+Dense.args = {
+    filled: true,
     dense: true,
-    icon: 'icon-dl-id',
-    textColor: 'dl-color-secondary',
-    color: 'white'
+    label: 'Dense button'
+}
+
+const WithBadgeTemplate = (args) => ({
+    components: { DlButton, DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            label="With badge"
+            v-bind="args"
+        >
+            <dl-badge
+                with-border
+                floating
+                align="top"
+                color="red"
+            />
+        </DlButton>
+    </div>
+    `
+})
+export const WithBadge = WithBadgeTemplate.bind({})
+WithBadge.args = {
+    label: 'With badge'
+}
+
+const WithIconAndSlotTemplate = (args) => ({
+    components: { DlButton, DlBadge, DlIcon },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            icon="icon-dl-search"
+            v-bind="args"
+        >
+            <dl-icon
+                size="16px"
+                icon="icon-dl-cart"
+            />
+            <dl-badge
+                with-border
+                floating
+                align="top"
+                color="red"
+            />
+        </DlButton>
+    </div>
+    `
+})
+export const WithIconAndSlot = WithIconAndSlotTemplate.bind({})
+WithIconAndSlot.args = {
+    icon: 'icon-dl-search'
+}
+
+const WithLabelAndSlotTemplate = (args) => ({
+    components: { DlButton, DlBadge, DlIcon },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <DlButton
+            label="Hello"
+            v-bind="args"
+        >
+            World
+        </DlButton>
+    </div>
+    `
+})
+export const WithLabelAndSlot = WithLabelAndSlotTemplate.bind({})
+WithLabelAndSlot.args = {
+    label: 'Hello'
 }

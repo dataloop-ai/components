@@ -40,7 +40,13 @@ import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
 import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlColumnChartDemo from './ColumnChartDemo.vue'
+import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlToastMessageDemo from './DlToastMessageDemo.vue'
+import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
+import DlLineChartDemo from './DlLineChartDemo.vue'
+import DlSpinner from './DlSpinnerDemo.vue'
 
 export {
     AvatarDemo,
@@ -85,7 +91,13 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlSwitchDemo
+    DlToastMessageDemo,
+    DlColumnChartDemo,
+    DlSwitchDemo,
+    DlChartDoughnutDemo,
+    DlBarChartDemo,
+    DlLineChartDemo,
+    DlSpinner
 }
 
 export const demoState = {
@@ -94,11 +106,15 @@ export const demoState = {
     avatar: AvatarDemo,
     badge: DlBadgeDemo,
     button: DlButtonDemo,
+    column_chart: DlColumnChartDemo,
+    bar_chart: DlBarChartDemo,
+    line_chart: DlLineChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,
     counter: DlCounterDemo,
     dialog_box: DlDialogBoxDemo,
+    doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
@@ -131,5 +147,7 @@ export const demoState = {
     widget: DlWidgetDemo,
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
-    smart_search: DlSmartSearchDemo
+    smart_search: DlSmartSearchDemo,
+    toast_message: DlToastMessageDemo,
+    spinner: DlSpinner
 }

@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlListItem } from '../src'
+import { describe, it, expect } from 'vitest'
 import {
     itemBorder,
     itemColor,

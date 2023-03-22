@@ -4,6 +4,7 @@ import {
     useTableRowSelection,
     useTableRowSelectionProps
 } from '../../../src/components/DlTable/hooks/tableRowSelection'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { TableProps, TableRow } from '../../../src/components/DlTable/types'
 
 describe('useTableRowSelectionProps', () => {
@@ -24,7 +25,7 @@ const props = {
 } as unknown as TableProps
 
 const rows: TableRow[] = [{ key: 'value', test: 'value' }, { test: 'value' }]
-const emitFn = jest.fn()
+const emitFn = vi.fn()
 const getRowKey = () => 'key'
 
 describe('useTableRowSelection', () => {

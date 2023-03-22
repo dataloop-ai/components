@@ -1,4 +1,5 @@
 import { css, getElement, childHasFocus } from '../../src/utils/dom'
+import { describe, it, expect } from 'vitest'
 
 const element = {
     style: {}

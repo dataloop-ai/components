@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlSwitch } from '../src/'
+import { describe, it, expect } from 'vitest'
 import {
     calculateActiveMarginLeft,
     calculateBorderRadius,

@@ -1045,7 +1045,10 @@ export default defineComponent({
         })
 
         const marginalsScope = computed(() => ({
-            pagination: paginationState.value
+            pagination: paginationState.value,
+            pagesNumber: pagesNumber.value,
+            isFirstPage: isFirstPage.value,
+            isLastPage: isLastPage.value
         }))
 
         function getCellValue(

@@ -2,6 +2,8 @@ import {
     getWeekDayNames,
     getMonths
 } from '../../src/components/DlDatePicker/utils'
+import { describe, it, expect } from 'vitest'
+
 const months = [
     { name: 'Jan', value: 0 },
     { name: 'Feb', value: 1 },

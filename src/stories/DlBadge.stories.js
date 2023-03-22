@@ -87,8 +87,11 @@ const Template = (args) => ({
     },
     template: `
     <dl-badge
+        color="red"
+        textColor="red"
+        align="top"
+        borderColor="panel-background"
         v-bind="args"
-        :label="name"
     />`
 })
 
@@ -96,9 +99,138 @@ export const Preview = Template.bind({})
 Preview.args = {
     color: 'red',
     textColor: 'red',
-    floating: false,
-    transparent: false,
-    withBorder: false,
+    borderColor: 'panel-background',
+    align: 'top'
+}
+
+const FloatingTemplate = (args) => ({
+    components: { DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <dl-badge
+        floating
+        color="red"
+        textColor="red"
+        align="top"
+        borderColor="panel-background"
+        v-bind="args"
+    />`
+})
+
+export const Floating = FloatingTemplate.bind({})
+Floating.args = {
+    floating: true,
+    color: 'red',
+    textColor: 'red',
+    borderColor: 'panel-background',
+    align: 'top'
+}
+
+const TransparentTemplate = (args) => ({
+    components: { DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <dl-badge
+        transparent
+        color="red"
+        textColor="red"
+        align="top"
+        borderColor="panel-background"
+        v-bind="args"
+    />`
+})
+
+export const Transparent = TransparentTemplate.bind({})
+Transparent.args = {
+    color: 'red',
+    textColor: 'red',
+    transparent: true,
+    borderColor: 'panel-background',
+    align: 'top'
+}
+
+const OutlineTemplate = (args) => ({
+    components: { DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <dl-badge
+        outline
+        color="red"
+        textColor="red"
+        align="top"
+        borderColor="panel-background"
+        v-bind="args"
+    />`
+})
+
+export const Outline = OutlineTemplate.bind({})
+Outline.args = {
+    outline: true,
+    color: 'red',
+    textColor: 'red',
+    borderColor: 'panel-background',
+    align: 'top'
+}
+
+const WithNameTemplate = (args) => ({
+    components: { DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <dl-badge
+        outline
+        label="name"
+        color="red"
+        textColor="red"
+        align="top"
+        borderColor="panel-background"
+        v-bind="args"
+    />`
+})
+
+export const WithName = WithNameTemplate.bind({})
+WithName.args = {
+    outline: true,
+    label: 'name',
+    color: 'red',
+    textColor: 'red',
+    align: 'top',
+    borderColor: 'panel-background'
+}
+
+const MultilineTemplate = (args) => ({
+    components: { DlBadge },
+    setup() {
+        return { args }
+    },
+    template: `
+    <dl-badge
+        multiline
+        outline
+        color="red"
+        textColor="red"
+        align="top"
+        borderColor="panel-background"
+        v-bind="args"
+    >
+        <div style="width: 30px">
+            Multi line
+        </div>
+    </dl-badge>`
+})
+
+export const Multiline = MultilineTemplate.bind({})
+Multiline.args = {
+    multiline: true,
+    color: 'red',
+    textColor: 'red',
     borderColor: 'panel-background',
     align: 'top'
 }

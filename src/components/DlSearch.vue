@@ -55,7 +55,7 @@ const SearchSizes = {
     l: 'l',
     m: 'm'
 } as const
-type TSearchSizes = typeof SearchSizes[keyof typeof SearchSizes]
+type TSearchSizes = (typeof SearchSizes)[keyof typeof SearchSizes]
 
 export default defineComponent({
     name: 'DlSearch',

@@ -60,5 +60,4 @@ storybook-static
 tsconfig.tsbuildinfo
 tsconfig.node.tsbuildinfo
 
-vue2-playground
-
+vue2.6-vite

@@ -54,6 +54,7 @@ export function useTablePaginationState(
     getCellValue: Function
 ) {
     const { props, emit } = vm
+
     const innerPagination = ref(
         Object.assign(
             {
@@ -72,7 +73,8 @@ export function useTablePaginationState(
                 withQuickNavigation: true,
                 itemsName: 'Rows',
                 withLegend: true,
-                withRowsPerPage: true
+                withRowsPerPage: true,
+                rowsPerPageOptions: props.rowsPerPageOptions
             },
             props.pagination
         )
@@ -137,7 +139,11 @@ export function useTablePagination(
 ) {
     const { props, emit } = vm
 
-    const computedRowsNumber = computed(() => filteredSortedRowsNumber.value)
+    const computedRowsNumber = computed(
+        () =>
+            computedPagination.value?.rowsNumber ??
+            filteredSortedRowsNumber.value
+    )
 
     const firstRowIndex = computed(() => {
         const { page, rowsPerPage } = computedPagination.value

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
 import { DlDateTimeRange } from '../../src/components'
+import { describe, it, expect, afterAll, vi } from 'vitest'
 import {
     DayTypeOption,
     MonthTypeOption
@@ -9,8 +10,8 @@ import {
 const date1 = new Date(1990, 12, 1)
 const date2 = new Date(1990, 12, 2)
 
-jest.useFakeTimers('modern')
-jest.setSystemTime(new Date(date1))
+vi.useFakeTimers('modern')
+vi.setSystemTime(new Date(date1))
 
 describe('Date Time Range', () => {
     it('should select the current day', () => {
@@ -270,6 +271,6 @@ describe('Date Time Range', () => {
     })
 
     afterAll(() => {
-        jest.useRealTimers()
+        vi.useRealTimers()
     })
 })

@@ -1,5 +1,6 @@
 import { mountComposition } from 'vue-composition-test-utils'
 import { useTableFilter } from '../../../src/components/DlTable/hooks/tableFilter'
+import { describe, it, expect, vi } from 'vitest'
 
 const COLUMNS = [
     { name: 'name', label: 'Dessert name', field: 'name' },
@@ -18,8 +19,8 @@ function getCellValue(col: Record<string, any>, row: Record<string, any>) {
     return row[col.field]
 }
 
-const setPaginationMock = jest.fn().mockImplementation(() => {})
-const filterMethodMock = jest.fn().mockImplementation(() => {})
+const setPaginationMock = vi.fn().mockImplementation(() => {})
+const filterMethodMock = vi.fn().mockImplementation(() => {})
 
 describe('use-table-filter', () => {
     it('should filter the rows', function () {

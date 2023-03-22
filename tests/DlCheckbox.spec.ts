@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlCheckbox } from '../src'
+import { describe, it, expect } from 'vitest'
 
 describe('DlCheckbox', () => {
     it('should add value to v-model array', async () => {

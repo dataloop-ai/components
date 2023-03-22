@@ -1,4 +1,5 @@
 import { Step } from '../../src/components/DlStepper/Step'
+import { describe, it, expect } from 'vitest'
 
 describe('Step', () => {
     const step = new Step({
