@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlChip from '../src/components/DlChip/DlChip.vue'
+import { DlChip } from '../src/'
 import { describe, it, expect } from 'vitest'
 
 describe('DlChip', () => {
@@ -23,8 +23,6 @@ describe('DlChip', () => {
             iconColor: '',
             removable: true,
             maxWidth: '',
-            modelValue: true,
-
             tabIndex: '',
             icon: '',
             textColor: '',
