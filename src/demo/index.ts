@@ -43,6 +43,7 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 import DlKpi from '../components/DlKpi/DlKpi.vue'
@@ -93,6 +94,7 @@ export {
     DlTextHolderDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
+    DlChartDoughnutDemo,
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner
@@ -112,6 +114,7 @@ export const demoState = {
     color_picker: DlColorPickerDemo,
     counter: DlCounterDemo,
     dialog_box: DlDialogBoxDemo,
+    doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
