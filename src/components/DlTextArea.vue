@@ -5,6 +5,7 @@
         :style="cssVars"
     >
         <textarea
+            ref="textarea"
             :value="modelValue"
             class="textarea"
             :placeholder="placeholder"
@@ -85,6 +86,14 @@ export default defineComponent({
         },
         onBlur(e: InputEvent) {
             this.$emit('blur', e)
+        },
+        focus() {
+            const inputRef = this.$refs.textarea as HTMLTextAreaElement
+            inputRef.focus()
+        },
+        blur() {
+            const inputRef = this.$refs.textarea as HTMLTextAreaElement
+            inputRef.blur()
         }
     }
 })
