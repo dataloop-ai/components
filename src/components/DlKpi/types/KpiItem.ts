@@ -4,7 +4,6 @@ export type KpiItem = {
         isAbbreviated: boolean
     }
     subtitle: string
-    hasPercentage?: boolean
     progress?: {
         value?: number
         text?: string
