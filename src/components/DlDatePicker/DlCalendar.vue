@@ -47,6 +47,7 @@
                 @mouseenter="handleMouseEnter(date)"
             >
                 <div
+                    v-if="!date.isDisabled"
                     class="dl-calendar--inner_day"
                     :style="getInnerDayStyle(date)"
                 >
@@ -135,27 +136,37 @@ export default defineComponent({
             if (this.modelValue === null) return
 
             const style: Record<string, any> = {}
+            if (value.isDisabled) return style
 
             const from = new CalendarDate(this.modelValue.from)
             const to = new CalendarDate(this.modelValue.to)
 
             if (!from.isSameOrAfter(to, 'date')) {
-                const bgColor = 'rgba(52, 82, 255, 0.1)'
+                const bgColor = 'var(--dl-date-picker-selected-strip)'
 
-                if (value.isAfter(from, 'date') && value.isBefore(to, 'date')) {
+                if (value.isAfter(from, 'day') && value.isBefore(to, 'day')) {
                     style.background = bgColor
-                } else if (value.isSame(from, 'date')) {
+                } else if (value.isSame(from, 'day')) {
                     style.background = `linear-gradient(to right, transparent 50%, ${bgColor} 50%)`
-                } else if (value.isSame(to, 'date')) {
+                } else if (value.isSame(to, 'day')) {
                     style.background = `linear-gradient(to right, ${bgColor} 50%, transparent 50%)`
                 }
 
                 const radius = '11px'
+                const valueClone = value.clone()
 
-                if (value.day() === 0) {
+                if (
+                    value.day() === 0 ||
+                    value.isSame(valueClone.startOf('month'), 'day')
+                ) {
                     style.borderTopLeftRadius = radius
                     style.borderBottomLeftRadius = radius
-                } else if (value.day() === DAYS_IN_WEEK - 1) {
+                }
+
+                if (
+                    value.day() === DAYS_IN_WEEK - 1 ||
+                    value.isSame(valueClone.endOf('month'), 'day')
+                ) {
                     style.borderTopRightRadius = radius
                     style.borderBottomRightRadius = radius
                 }
@@ -166,8 +177,10 @@ export default defineComponent({
 
         getInnerDayStyle(value: Partial<CalendarDate>) {
             let style: Record<string, any> = {}
-            const disabledOpacity = 0.6
 
+            if (value.isDisabled) return style
+
+            const disabledOpacity = 0.6
             const isToday = value.isSame(
                 new CalendarDate().startOf('day'),
                 'day'
@@ -198,14 +211,13 @@ export default defineComponent({
                 const to = new CalendarDate(this.modelValue.to)
 
                 const isIntervalBoundary =
-                    value.isSame(from, 'date') || value.isSame(to, 'date')
+                    value.isSame(from, 'day') || value.isSame(to, 'day')
 
                 if (isIntervalBoundary && this.disabled) {
                     style = {
                         ...style,
                         ...selectedStyle,
-                        opacity: disabledOpacity,
-                        color: 'var(--dl-color-disabled)'
+                        opacity: disabledOpacity
                     }
                 } else if (isIntervalBoundary) {
                     style = {

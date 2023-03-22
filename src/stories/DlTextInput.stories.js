@@ -315,28 +315,99 @@ Preview.args = {
     suggestMenuWidth: 'auto'
 }
 
-export const ErrorPreview = Template.bind({})
+const ErrorTemplate = (args) => ({
+    components: { DlTextInput },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            model: ref('')
+        }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlTextInput
+            error
+            title="Username"
+            topMessage="This will be the username that you will use to log in."
+            placeholder="Type here..."
+            errorMessage="This username already exists."
+            v-model="model"
+            v-bind="args"
+            @focus="focus"
+            @blur="blur"
+            @input="input"
+            @clear="clear"
+            @enter="enter"
+        />
+    </div>
+  `,
+    methods: {
+        focus: action('focus'),
+        blur: action('blur'),
+        input: action('input'),
+        clear: action('clear'),
+        enter: action('enter')
+    }
+})
+
+export const ErrorPreview = ErrorTemplate.bind({})
 ErrorPreview.args = {
-    size: 'l',
-    placeholder: 'Type here...',
-    title: 'Username',
-    required: true,
-    tooltip: 'Your login username',
+    error: true,
+    maxLength: 16,
     type: 'text',
+    size: 'l',
+    title: 'Username',
+    placeholder: 'Type here...',
+    tooltip: 'Your login username',
     topMessage: 'This will be the username that you will use to log in.',
-    redAsterisk: true,
     infoMessage: 'Use only alphanumeric characters.',
     errorMessage: 'This username already exists.',
-    error: true,
-    disabled: false,
-    maxLength: 16,
-    showCounter: true,
-    disableClearBtn: false,
-    counterReverse: false,
     suggestMenuWidth: 'auto'
 }
 
-export const WarningPreview = Template.bind({})
+const WarningTemplate = (args) => ({
+    components: { DlTextInput },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            model: ref('')
+        }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlTextInput
+            warning
+            redAsterisk
+            showCounter
+            required
+            title="Username"
+            topMessage="This will be the username that you will use to log in."
+            placeholder="Type here..."
+            warningMessage="This username already exists."
+            v-model="model"
+            v-bind="args"
+            @focus="focus"
+            @blur="blur"
+            @input="input"
+            @clear="clear"
+            @enter="enter"
+        />
+    </div>
+  `,
+    methods: {
+        focus: action('focus'),
+        blur: action('blur'),
+        input: action('input'),
+        clear: action('clear'),
+        enter: action('enter')
+    }
+})
+
+export const WarningPreview = WarningTemplate.bind({})
 WarningPreview.args = {
     size: 'l',
     placeholder: 'Type here...',

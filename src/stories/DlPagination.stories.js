@@ -206,6 +206,9 @@ export default {
     }
 }
 
+const totalItems = 375
+const maxPages = 6
+
 const Template = (args) => ({
     components: { DlPagination },
     setup() {
@@ -225,10 +228,232 @@ const Template = (args) => ({
 
 export const Preview = Template.bind({})
 Preview.args = {
-    totalItems: 375,
-    maxPages: 6,
+    totalItems,
+    maxPages,
     boundaryNumbers: true,
     boundaryLinks: true,
     directionLinks: true,
     disabled: false
+}
+
+const DefaultTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const Default = DefaultTemplate.bind({})
+Default.args = {
+    totalItems,
+    maxPages
+}
+
+const DisabledTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          disabled
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    totalItems,
+    maxPages,
+    disabled: true
+}
+
+const BoundaryNumbersTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          boundaryNumbers
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const BoundaryNumbers = BoundaryNumbersTemplate.bind({})
+BoundaryNumbers.args = {
+    totalItems,
+    maxPages,
+    boundaryNumbers: true
+}
+
+const BoundaryLinksTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          boundaryLinks
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const BoundaryLinks = BoundaryLinksTemplate.bind({})
+BoundaryLinks.args = {
+    totalItems,
+    maxPages,
+    boundaryLinks: true
+}
+
+const DirectionLinksTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          directionLinks
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const DirectionLinks = DirectionLinksTemplate.bind({})
+DirectionLinks.args = {
+    totalItems,
+    maxPages,
+    directionLinks: true
+}
+
+const WithQuickNavigationTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          withQuickNavigation
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const WithQuickNavigation = WithQuickNavigationTemplate.bind({})
+WithQuickNavigation.args = {
+    totalItems,
+    maxPages,
+    withQuickNavigation: true
+}
+
+const WithRowsPerPageTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          withRowsPerPage
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const WithRowsPerPage = WithRowsPerPageTemplate.bind({})
+WithRowsPerPage.args = {
+    totalItems,
+    maxPages,
+    withRowsPerPage: true
+}
+
+const WithLegendTemplate = (args) => ({
+    components: { DlPagination },
+    setup() {
+        const value = ref(14)
+
+        return {
+            args,
+            value
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <dl-pagination
+          withLegend
+          v-model="value" 
+          v-bind="args" 
+      />
+    </div>
+    `
+})
+
+export const WithLegend = WithLegendTemplate.bind({})
+WithLegend.args = {
+    totalItems,
+    maxPages,
+    withLegend: true
 }

@@ -62,11 +62,7 @@ export default defineComponent({
             }
         },
         maxScroll(): number {
-            return (
-                (this.$refs as any).wrapper.offsetHeight -
-                    (this.$refs as any).offsetHeight -
-                    50 || 1
-            )
+            return (this.$refs as any).wrapper.offsetHeight - 50 || 1
         }
     },
     mounted() {
