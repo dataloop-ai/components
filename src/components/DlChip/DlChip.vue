@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="modelValue"
+        v-if="isVisible"
         :id="uuid"
         :tabindex="tabIndex"
         class="dl-chip"
@@ -37,7 +37,7 @@
         <span
             v-if="removable"
             class="dl-chip-remove-icon-container"
-            @click="onRemove"
+            @click="remove"
         >
             <dl-icon
                 class="dl-chip-remove-icon"
@@ -93,10 +93,6 @@ export default defineComponent({
         iconColor: { type: String, default: '' },
         label: { type: [String, Number], default: '' },
         maxWidth: { type: [String, Number], default: '' },
-        modelValue: {
-            type: Boolean,
-            default: true
-        },
         removable: Boolean,
         tabIndex: { type: [String, Number], default: '' },
         transform: {
@@ -107,12 +103,14 @@ export default defineComponent({
         },
         overflow: { type: Boolean, default: false }
     },
-    emits: ['remove', 'update:modelValue'],
+    emits: ['remove'],
     setup() {
+        const isVisible = ref(true)
         const dlChipRef = ref(null)
         const { hasEllipsis } = useSizeObserver(dlChipRef)
 
         return {
+            isVisible,
             uuid: `dl-chip-${v4()}`,
             dlChipRef,
             isOverflowing: hasEllipsis
@@ -185,9 +183,9 @@ export default defineComponent({
         }
     },
     methods: {
-        onRemove(e: Event) {
+        remove(e: Event) {
             if (!this.disabled) {
-                this.$emit('update:modelValue', false)
+                this.isVisible = false
                 this.$emit('remove')
             }
         }

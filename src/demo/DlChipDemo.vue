@@ -128,9 +128,15 @@
             style="margin-bottom: 30px"
         >
             <DlChip
-                v-model="removableValue"
+                ref="removableChip"
                 removable
                 label="Ellipsed Chip with a multiple words"
+            />
+        </div>
+        <div class="col">
+            <DlButton
+                label="remove chip"
+                @click="removeChip"
             />
         </div>
         <h4>Chips with icon and without label</h4>
@@ -164,17 +170,22 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlChip } from '../components'
+import { DlChip, DlButton } from '../components'
 export default defineComponent({
     name: 'DlChipDemo',
     components: {
-        DlChip
+        DlChip,
+        DlButton
     },
     setup() {
         const log = (e: Event) => console.log(e)
-
         const removableValue = ref(true)
         return { log, removableValue }
+    },
+    methods: {
+        removeChip() {
+            (this.$refs.removableChip as typeof DlChip).remove()
+        }
     }
 })
 </script>
