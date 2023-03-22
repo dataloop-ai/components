@@ -1,11 +1,12 @@
 export type KpiItem = {
-    title: number | Date
+    title: {
+        value: number | string
+        isAbbreviated: boolean
+    }
     subtitle: string
-    infoMessage: string
     hasPercentage?: boolean
-    hasSummary?: boolean
     progress?: {
-        value: number
-        text: string
+        value?: number
+        text?: string
     }
 }

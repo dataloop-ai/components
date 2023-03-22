@@ -1,22 +1,6 @@
-<template>
-    <div style="width: 90%">
-        <dl-kpi :items="kpiItems.slice(0, 3)" />
-        <dl-kpi :items="kpiItems.slice(0, 4)" />
-        <dl-kpi :items="kpiItems.slice(0, 5)" />
-        <dl-kpi :items="kpiItems.slice(0, 6)" />
-        <dl-kpi
-            :items="kpiItems"
-            :title-font-size="24"
-        />
-    </div>
-</template>
+import { DlKpi } from '..'
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
-import { DlKpi } from '../components'
-import { KpiItem } from '../components/DlKpi/types/KpiItem'
-
-const kpiData: KpiItem[] = [
+const itemsData = [
     {
         title: {
             value: 200000000,
@@ -92,19 +76,49 @@ const kpiData: KpiItem[] = [
     }
 ]
 
-export default defineComponent({
-    name: 'DlKpiDemo',
-    components: {
-        DlKpi
-    },
-    setup() {
-        const kpiItems: KpiItem[] = kpiData
-
-        return {
-            kpiItems
+export default {
+    title: 'Library/Components/DlKpi',
+    component: DlKpi,
+    argTypes: {
+        items: {
+            name: 'items',
+            defaultValue: itemsData,
+            control: 'array',
+            description: 'The items data array',
+            table: {
+                type: { summary: Array },
+                defaultValue: { summary: itemsData }
+            }
+        },
+        titleFontSize: {
+            name: 'titleFontSize',
+            type: { name: 'number', required: false },
+            defaultValue: 30,
+            description: 'Title Font Size',
+            table: {
+                type: { summary: 'number' },
+                defaultValue: { summary: 30 }
+            },
+            control: {
+                type: 'number'
+            }
         }
     }
-})
-</script>
+}
 
-<style scoped></style>
+const Template = (args) => ({
+    components: { DlKpi },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div>
+        <dl-kpi v-bind="args" />
+    </div>
+    `
+})
+
+export const Preview = Template.bind({})
+Preview.args = {
+    items: itemsData
+}

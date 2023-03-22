@@ -9,14 +9,43 @@
             class="kpi__box"
         >
             <div class="kpi__box__title">
-                {{ formatTitle(item.title) }}
+                <dl-typography
+                    color="dl-color-secondary"
+                    variant="h1"
+                    :size="`${titleFontSize}px`"
+                >
+                    {{ formatTitle(item.title) }}
+                </dl-typography>
             </div>
             <div class="kpi__box__subtitle">
                 <div
-                    ref="kpiSubtitleTextRef"
+                    v-if="isVue2"
+                    ref="subtitleRef"
                     class="kpi__box__subtitle__text"
+                    :data-index="index"
                 >
-                    <dl-tooltip anchor="top middle">
+                    <dl-tooltip
+                        v-if="isOverflowing[index]"
+                        anchor="top middle"
+                    >
+                        {{ item.subtitle }}
+                    </dl-tooltip>
+                    {{ item.subtitle }}
+                </div>
+                <div
+                    v-else
+                    :ref="
+                        (el) => {
+                            subtitleRef[index] = el
+                        }
+                    "
+                    class="kpi__box__subtitle__text"
+                    :data-index="index"
+                >
+                    <dl-tooltip
+                        v-if="isOverflowing[index]"
+                        anchor="top middle"
+                    >
                         {{ item.subtitle }}
                     </dl-tooltip>
                     {{ item.subtitle }}
@@ -24,7 +53,6 @@
                 <div>
                     <dl-icon
                         icon="icon-dl-info"
-                        color=""
                         size="16px"
                     />
                 </div>
@@ -44,9 +72,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, onMounted } from 'vue-demi'
+import {
+    defineComponent,
+    PropType,
+    ref,
+    onMounted,
+    onBeforeUnmount,
+    isVue2
+} from 'vue-demi'
 import { KpiItem } from './types/KpiItem'
-import { DlIcon, DlProgressBar, DlTooltip } from '../../components'
+import {
+    DlIcon,
+    DlProgressBar,
+    DlTooltip,
+    DlTypography
+} from '../../components'
+import { abbreviateNumber, numberWithComma } from '../../utils/formatNumber'
+import { isEllipsisActive } from '../../utils/is-ellipsis-active'
 
 type TTitle = {
     value: number | string
@@ -58,45 +100,32 @@ export default defineComponent({
     components: {
         DlIcon,
         DlProgressBar,
-        DlTooltip
+        DlTooltip,
+        DlTypography
     },
     props: {
         items: {
             type: Array as PropType<KpiItem[]>,
             default: () => [] as KpiItem[]
         },
-        abbreviatedTitle: {
-            type: Boolean,
-            default: false
+        titleFontSize: {
+            type: Number,
+            default: 30
         }
     },
-    setup(props) {
-        // const items = props.items
+    setup() {
+        const subtitleRef = ref([])
+        const resizeObserver = ref<ResizeObserver | null>(null)
+        const isOverflowing = ref<boolean[]>([])
 
         const progressValue = (item: KpiItem) => {
             return item?.progress?.value ? item.progress.value / 100 : null
         }
 
-        const abbreviateIntlNumber = (nr: number) => {
-            if (nr)
-                return new Intl.NumberFormat('en-US', {
-                    maximumFractionDigits: 1,
-                    notation: 'compact',
-                    compactDisplay: 'short'
-                }).format(nr)
-        }
-
-        const numberWithComma = (amount: number) => {
-            if (!amount) return 0
-            return new Intl.NumberFormat('en-US', {
-                style: 'decimal'
-            }).format(amount)
-        }
-
         const formatTitle = (title: TTitle) => {
             if (typeof title.value === 'number') {
                 return title.isAbbreviated
-                    ? abbreviateIntlNumber(title.value as number)
+                    ? abbreviateNumber(title.value as number)
                     : numberWithComma(title.value as number)
             }
             if (typeof title.value === 'string') {
@@ -105,11 +134,39 @@ export default defineComponent({
             }
         }
 
+        onMounted(() => {
+            resizeObserver.value = new ResizeObserver((entries) => {
+                const tempArr = [...isOverflowing.value]
+                for (const entry of entries) {
+                    const index = parseInt(
+                        (entry.target as HTMLDivElement).dataset.index ?? '0'
+                    )
+                    tempArr[index] = isEllipsisActive(entry.target)
+                }
+
+                isOverflowing.value = tempArr
+            })
+
+            const elements = isVue2
+                ? (subtitleRef.value as HTMLDivElement[])
+                : subtitleRef.value
+
+            for (const el of elements) {
+                resizeObserver.value.observe(el)
+            }
+        })
+
+        onBeforeUnmount(() => {
+            resizeObserver.value.disconnect()
+            resizeObserver.value = null
+        })
+
         return {
             progressValue,
-            abbreviateIntlNumber,
-            numberWithComma,
-            formatTitle
+            formatTitle,
+            isOverflowing,
+            subtitleRef,
+            isVue2
         }
     }
 })
@@ -117,7 +174,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .kpi {
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -129,22 +186,14 @@ export default defineComponent({
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        /*text-align: center;*/
         padding: 20px 6px;
-        /*margin: 10px;*/
         background: #ffffff;
         border: 1px solid #e4e4e4;
         border-radius: 2px;
         overflow: hidden;
 
         &__title {
-            font-family: 'Roboto';
-            font-style: normal;
-            font-weight: 500;
-            font-size: 30px;
-            line-height: 35px;
             text-align: center;
-            color: var(--dl-color-secondary);
         }
 
         &__subtitle {
@@ -157,7 +206,6 @@ export default defineComponent({
 
             &__text {
                 max-width: 90%;
-                font-family: 'Roboto';
                 font-style: normal;
                 font-weight: 400;
                 font-size: 16px;
@@ -166,8 +214,6 @@ export default defineComponent({
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-            }
-            &__icon {
             }
         }
 
