@@ -107,3 +107,71 @@ Preview.args = {
     showCounter: false,
     enableResize: false
 }
+
+const CounterTemplate = (args) => ({
+    components: { DlTextArea },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            model: ref('Sample Text')
+        }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlTextArea
+            showCounter
+            v-model="model" 
+            v-bind="args" 
+            @focus="focus" 
+            @blur="blur" 
+            @input="input" 
+        />
+    </div>
+  `,
+    methods: {
+        focus: action('focus'),
+        blur: action('blur'),
+        input: action('input')
+    }
+})
+
+export const ShowCounter = CounterTemplate.bind({})
+ShowCounter.args = {
+    showCounter: true
+}
+
+const ResizeTemplate = (args) => ({
+    components: { DlTextArea },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            model: ref('Sample Text')
+        }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlTextArea
+            enableResize
+            v-model="model" 
+            v-bind="args" 
+            @focus="focus" 
+            @blur="blur" 
+            @input="input" 
+        />
+    </div>
+  `,
+    methods: {
+        focus: action('focus'),
+        blur: action('blur'),
+        input: action('input')
+    }
+})
+
+export const Resize = ResizeTemplate.bind({})
+Resize.args = {
+    enableResize: true
+}

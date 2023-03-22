@@ -136,7 +136,11 @@ const Template = (args) => ({
     template: `
     <div style="padding: 50px">
       <DlThemeProvider :isDark="false">
-          <dl-range v-model="range" v-bind="args"/>
+          <dl-range
+              text="Range"
+              v-model="range" 
+              v-bind="args"
+          />
       </DlThemeProvider>
     </div>
    `
@@ -145,4 +149,64 @@ const Template = (args) => ({
 export const Preview = Template.bind({})
 Preview.args = {
     text: 'range'
+}
+
+const DisabledTemplate = (args) => ({
+    components: { DlRange, DlThemeProvider },
+    setup() {
+        const range = ref({ min: 0, max: 100 })
+
+        return {
+            args,
+            range
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <DlThemeProvider :isDark="false">
+        <dl-range
+            disabled
+            text="Range"
+            v-model="range" 
+            v-bind="args"
+        />
+      </DlThemeProvider>
+    </div>
+   `
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    text: 'range',
+    disabled: true
+}
+
+const ReadOnlyTemplate = (args) => ({
+    components: { DlRange, DlThemeProvider },
+    setup() {
+        const range = ref({ min: 0, max: 100 })
+
+        return {
+            args,
+            range
+        }
+    },
+    template: `
+    <div style="padding: 50px">
+      <DlThemeProvider :isDark="false">
+        <dl-range
+            readonly
+            text="Range"
+            v-model="range" 
+            v-bind="args"
+        />
+      </DlThemeProvider>
+    </div>
+   `
+})
+
+export const Readonly = ReadOnlyTemplate.bind({})
+Readonly.args = {
+    text: 'range',
+    readonly: true
 }

@@ -10,7 +10,7 @@
                     <DlButton
                         :size="buttonSize"
                         color="dl-color-negative"
-                        label="COntained text"
+                        label="COntained text filled"
                         @click="log"
                     />
                     <DlButton
