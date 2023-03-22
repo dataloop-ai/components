@@ -3,7 +3,7 @@ import { createComponent } from '../utils/render'
 
 export const useToast = (globalProps = {}) => {
     return {
-        open(options) {
+        open(options: Object | string) {
             let message = null
             if (typeof options === 'string') message = options
 

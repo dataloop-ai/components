@@ -143,6 +143,7 @@ export default defineComponent({
         onMounted(() => {
             showNotice()
         })
+
         function showNotice(): void {
             const parent = correctParent.value
             const container = root.value.closest('.v-toast--pending')
@@ -171,4 +172,108 @@ export default defineComponent({
 })
 </script>
 
-<style src="../styles/styles.scss" lang="scss"></style>
+<style lang="scss">
+.v-toast {
+    position: fixed;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 1052;
+    pointer-events: none;
+    &__text {
+        min-width: 300px;
+        max-width: 800px;
+    }
+    &__item {
+        display: inline-flex;
+        align-items: center;
+        pointer-events: auto;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        cursor: pointer;
+        animation-duration: 150ms;
+        &.v-toast__item--top,
+        &.v-toast__item--bottom {
+            align-self: center;
+        }
+
+        &.v-toast__item--top-right,
+        &.v-toast__item--bottom-right {
+            align-self: flex-end;
+        }
+
+        &.v-toast__item--top-left,
+        &.v-toast__item--bottom-left {
+            align-self: flex-start;
+        }
+    }
+
+    &.v-toast--top {
+        flex-direction: column;
+    }
+
+    &.v-toast--bottom {
+        flex-direction: column-reverse;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.v-toast--fade-out {
+    animation-name: fadeOut;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -100%, 0);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.v-toast--fade-in-down {
+    animation-name: fadeInDown;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 100%, 0);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.v-toast--fade-in-up {
+    animation-name: fadeInUp;
+}
+
+/**
+ * Vue Transitions
+ */
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 150ms ease-out;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
