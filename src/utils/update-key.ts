@@ -66,3 +66,25 @@ export function recursiveKeysUpdate(
     }
     return input
 }
+
+export function updateNestedArrayValues(
+    data: Record<string, any>,
+    keys: string[],
+    mapFn: Function
+) {
+    if (keys.length === 0) {
+        // If there are no more keys left in the array, apply the callback to the data and return the result
+        return mapFn(data)
+    }
+
+    const key = keys[0] // Get the first key in the array
+    const restKeys = keys.slice(1) // Get the rest of the keys in the array
+
+    // If the data is an object and contains the key, update the value of the key with the recursive call of the function
+    if (typeof data === 'object' && data !== null && data.hasOwnProperty(key)) {
+        data[key] = data[key].map((item: string) => mapFn(item))
+        updateNestedArrayValues(data, restKeys, mapFn)
+    }
+
+    return data // Return the updated data
+}

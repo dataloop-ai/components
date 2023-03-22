@@ -7,6 +7,8 @@ import type {
     UpdateMode,
     DatasetChartOptions
 } from 'chart.js'
+import { TDoughnutProps } from './Doughnut/types/TDoughnutChartProps'
+import { TDoughnutChartData } from './Doughnut/types/TDoughnutChartData'
 
 export const CommonProps = {
     data: {
@@ -326,6 +328,21 @@ export const defaultLineChartProps = {
                     color: '--dl-color-separator'
                 }
             }
+        }
+    }
+}
+
+export const defaultDoughnutChartProps: TDoughnutProps = {
+    data: <TDoughnutChartData>{},
+    isSmall: false,
+    hasSummary: false,
+    options: {
+        responsive: true,
+        cutout: undefined,
+        circumference: 360,
+        animation: {
+            animateRotate: true,
+            animateScale: false
         }
     }
 }
