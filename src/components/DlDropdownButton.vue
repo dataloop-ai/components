@@ -349,19 +349,6 @@ export default defineComponent({
             }
         }
 
-        // expose public methods
-        Object.assign(proxy, {
-            show,
-            hide,
-            toggle,
-            onClickHide,
-            onClick,
-            onBeforeShow,
-            onShow,
-            onBeforeHide,
-            onHide
-        })
-
         onMounted(() => {
             if (props.modelValue) {
                 show()
