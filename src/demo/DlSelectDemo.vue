@@ -167,7 +167,7 @@
             multiselect
             search
             capitalized-options
-            fit
+            fit-container
         />
         With Label and sub label
         <dl-select
