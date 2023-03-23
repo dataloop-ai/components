@@ -116,7 +116,10 @@
                     </dl-list-item>
 
                     <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
+                        <dl-item-section>
+                            Articles Articles Articles Articles Articles
+                            Articles
+                        </dl-item-section>
                     </dl-list-item>
                 </dl-list>
             </dl-dropdown-button>
@@ -188,6 +191,7 @@
                 auto-close
                 :model-value="showing"
                 :label="name"
+                fit-content
                 main-btn-style="width: 150px;"
                 @show="onOpen"
             >
@@ -204,7 +208,7 @@
                         @click="() => onClose('Videos and long text')"
                     >
                         <dl-item-section>
-                            Videos and long text
+                            Videos and long text Videos and long text
                         </dl-item-section>
                     </dl-list-item>
 

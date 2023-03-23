@@ -79,6 +79,7 @@
             :style="contentStyle"
             :cover="cover"
             fit
+            fit-content
             :persistent="persistent"
             :auto-close="autoClose"
             :anchor="menuAnchor"
@@ -143,6 +144,7 @@
             :style="contentStyle"
             :cover="cover"
             fit
+            fit-content
             :persistent="persistent"
             :auto-close="autoClose"
             :anchor="menuAnchor"
