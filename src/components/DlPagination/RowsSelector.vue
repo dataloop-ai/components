@@ -55,7 +55,7 @@ export default defineComponent({
     },
     emits: ['update:modelValue'],
     computed: {
-        hasSingeValue() {
+        hasSingeValue(): boolean {
             return this.options.length <= 1
         }
     },
