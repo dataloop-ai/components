@@ -134,7 +134,7 @@
             <dl-menu
                 ref="menu"
                 v-model="isExpanded"
-                :fit="fit"
+                :fit-container="fitContainer"
                 square
                 no-focus
                 :offset="[0, 3]"
@@ -297,7 +297,7 @@ export default defineComponent({
         search: { type: Boolean, default: false },
         required: { type: Boolean, default: false },
         optional: { type: Boolean, default: false },
-        fit: { type: Boolean, default: true },
+        fitContainer: { type: Boolean, default: true },
         tooltip: { type: String, default: '' },
         highlightSelected: { type: Boolean, default: false },
         type: { type: String, default: 'text' },

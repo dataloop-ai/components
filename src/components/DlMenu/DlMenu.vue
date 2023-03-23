@@ -98,7 +98,8 @@ export default defineComponent({
 
         noRefocus: Boolean,
 
-        fit: Boolean,
+        fitContainer: Boolean,
+        fitContent: Boolean,
         cover: Boolean,
 
         square: Boolean,
@@ -358,7 +359,8 @@ export default defineComponent({
                 anchorOrigin: anchorOrigin.value,
                 selfOrigin: selfOrigin.value,
                 absoluteOffset,
-                fit: props.fit,
+                fitContainer: props.fitContainer,
+                fitContent: props.fitContent,
                 cover: props.cover,
                 maxHeight: props.maxHeight,
                 maxWidth: props.maxWidth
