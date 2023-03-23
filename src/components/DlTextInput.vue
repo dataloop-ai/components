@@ -51,6 +51,7 @@
                 :maxlength="maxLength"
                 :type="showPass ? 'text' : type"
                 :disabled="disabled"
+                :readonly="readonly"
                 @input="onChange"
                 @focus="onFocus"
                 @blur="debouncedBlur()"
@@ -102,13 +103,23 @@
                     </dl-tooltip>
                 </span>
             </div>
+            <div
+                v-show="hasAction"
+                :class="[
+                    ...adornmentClasses,
+                    'dl-text-input__adornment-container--pos-right-out'
+                ]"
+            >
+                <slot name="action" />
+            </div>
             <dl-menu
                 v-if="showSuggestItems"
                 v-model="isMenuOpen"
                 auto-close
                 no-focus
                 :offset="[0, 3]"
-                fit
+                fit-container
+                :fit-content="fitContent"
                 @click="onMenuShow"
             >
                 <dl-list
@@ -274,6 +285,10 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        readonly: {
+            type: Boolean,
+            default: false
+        },
         maxLength: {
             type: Number,
             default: null
@@ -309,7 +324,8 @@ export default defineComponent({
         clearButtonTooltip: {
             type: Boolean,
             default: false
-        }
+        },
+        fitContent: Boolean
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     data() {
@@ -323,9 +339,9 @@ export default defineComponent({
     computed: {
         bottomMessage(): boolean {
             return (
-                !!this.infoMessage.length ||
-                !!this.errorMessage.length ||
-                !!this.warningMessage.length ||
+                !!this.infoMessage?.length ||
+                !!this.errorMessage?.length ||
+                !!this.warningMessage?.length ||
                 this.showCounter
             )
         },
@@ -391,6 +407,9 @@ export default defineComponent({
                 !this.isSmall
             )
         },
+        hasAction(): boolean {
+            return !!this.$slots.action && !this.isSmall
+        },
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
         },
@@ -400,6 +419,7 @@ export default defineComponent({
                 !this.disableClearBtn &&
                 this.type !== 'password' &&
                 !this.disabled &&
+                !this.readonly &&
                 !!this.modelValue
                 // this.focused
             )
@@ -443,9 +463,17 @@ export default defineComponent({
             this.$emit('input', e.target.value, e)
             this.$emit('update:model-value', e.target.value)
         },
+        focus(): void {
+            const inputRef = this.$refs.input as HTMLInputElement
+            inputRef.focus()
+        },
         onFocus(e: InputEvent): void {
             this.focused = true
             this.$emit('focus', e)
+        },
+        blur(): void {
+            const inputRef = this.$refs.input as HTMLInputElement
+            inputRef.blur()
         },
         onBlur(e: InputEvent): void {
             this.focused = false
@@ -473,8 +501,7 @@ export default defineComponent({
             inputRef.value = item
         },
         onMenuShow(): void {
-            const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.focus()
+            this.focus()
         },
         getSuggestWords(
             item: string,
@@ -697,6 +724,13 @@ export default defineComponent({
             color: var(--dl-color-disabled);
             cursor: not-allowed;
         }
+        &:readonly {
+            border-color: var(--dl-color-separator);
+            cursor: text;
+            &:hover {
+                border-color: var(--dl-color-separator) !important;
+            }
+        }
     }
 
     &__adornment-container {
@@ -725,7 +759,11 @@ export default defineComponent({
 
         &--pos-right {
             top: 0;
-            right: 0px;
+            right: 0;
+        }
+        &--pos-right-out {
+            top: 0;
+            right: -30px;
         }
     }
 

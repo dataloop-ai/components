@@ -1,7 +1,9 @@
-import * as VueDemi from 'vue-demi'
+import * as VueDemiModule from 'vue-demi'
 import ToastComponent from '../components/ToastComponent.vue'
 
 let createComponent: Function
+
+const VueDemi: any = VueDemiModule
 
 if (VueDemi.isVue3) {
     createComponent = function (
