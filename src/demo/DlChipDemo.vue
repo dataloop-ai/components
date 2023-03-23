@@ -184,7 +184,7 @@ export default defineComponent({
     },
     methods: {
         removeChip() {
-            (this.$refs.removableChip as typeof DlChip).remove()
+            (this.$refs.removableChip as any).remove()
         }
     }
 })
