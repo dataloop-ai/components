@@ -389,7 +389,7 @@
             <h4>Sizing and styling</h4>
             <div>
                 <dl-button label="Fit Menu">
-                    <dl-menu fit>
+                    <dl-menu fit-container>
                         <dl-list>
                             <dl-list-item clickable>
                                 <dl-item-section>New tab</dl-item-section>
