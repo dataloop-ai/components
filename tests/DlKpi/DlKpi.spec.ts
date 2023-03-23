@@ -1,77 +1,80 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlKpi } from '../../src'
-import { KpiItem } from '../../src/components/DlKpi/types/KpiItem'
+import { EFormat, KpiItem } from '../../src/components/DlKpi/types/KpiItem'
 
 const kpiData: KpiItem[] = [
     {
-        title: {
+        counter: {
             value: 200000000,
-            isAbbreviated: true
+            format: EFormat.short
         },
-        subtitle:
-            'Complete Complete Complete Complete Complete Complete Complete Complete'
+        title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
+        infoMessage: 'info message'
     },
     {
-        title: {
-            value: 200000000,
-            isAbbreviated: false
+        counter: {
+            value: 200000000
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 30
         }
     },
     {
-        title: {
-            value: '154h:35m:20s',
-            isAbbreviated: false
+        counter: {
+            value: '154H:35M:20s',
+            format: EFormat.hm
         },
-        subtitle: 'Complete',
+        title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
+        infoMessage: 'info message',
         progress: {
             value: 40,
             text: '75/100 Items'
         }
     },
     {
-        title: {
+        counter: {
             value: '154h:35m:20s',
-            isAbbreviated: true
+            format: EFormat.hms
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 50,
             text: '75/100 Items'
         }
     },
     {
-        title: {
+        counter: {
             value: 73,
-            isAbbreviated: true
+            format: EFormat.short
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 60,
             text: '75/100 Items'
         }
     },
     {
-        title: {
-            value: 73,
-            isAbbreviated: true
+        counter: {
+            value: 73
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 70,
             text: '75/100 Items'
         }
     },
     {
-        title: {
-            value: 73,
-            isAbbreviated: true
+        counter: {
+            value: 73
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 80,
             text: '75/100 Items'
@@ -102,9 +105,9 @@ describe('DlKpi', () => {
         const expected = [
             'kpi',
             'kpi__box',
+            'kpi__box__counter',
             'kpi__box__title',
-            'kpi__box__subtitle',
-            'kpi__box__subtitle__text',
+            'kpi__box__title__text',
             'kpi__box__progress_bar'
         ]
 
@@ -126,9 +129,9 @@ describe('DlKpi', () => {
         const expected = [
             'kpi',
             'kpi__box',
+            'kpi__box__counter',
             'kpi__box__title',
-            'kpi__box__subtitle',
-            'kpi__box__subtitle__text',
+            'kpi__box__title__text',
             'kpi__box__progress_bar'
         ]
 
