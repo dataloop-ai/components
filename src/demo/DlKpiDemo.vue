@@ -1,92 +1,159 @@
 <template>
     <div style="width: 90%">
+        <dl-kpi :items="kpiItems.slice(0, 2)" />
         <dl-kpi :items="kpiItems.slice(0, 3)" />
         <dl-kpi :items="kpiItems.slice(0, 4)" />
         <dl-kpi :items="kpiItems.slice(0, 5)" />
         <dl-kpi :items="kpiItems.slice(0, 6)" />
         <dl-kpi
-            :items="kpiItems"
-            :title-font-size="24"
+            :items="kpiTimeItems"
+            :counter-font-size="24"
         />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 import { DlKpi } from '../components'
-import { KpiItem } from '../components/DlKpi/types/KpiItem'
+import { EFormat, KpiItem } from '../components/DlKpi/types/KpiItem'
 
 const kpiData: KpiItem[] = [
     {
-        title: {
+        counter: {
             value: 200000000,
-            isAbbreviated: true
+            format: EFormat.short
         },
-        subtitle:
-            'Complete Complete Complete Complete Complete Complete Complete Complete'
+        title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
+        infoMessage: 'info message'
     },
     {
-        title: {
-            value: 200000000,
-            isAbbreviated: false
+        counter: {
+            value: 200000000
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 30
         }
     },
     {
-        title: {
-            value: '154h:35m:20s',
-            isAbbreviated: false
+        counter: {
+            value: '154H:35M:20s',
+            format: EFormat.hm
         },
-        subtitle: 'Complete',
+        title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
+        infoMessage: 'info message',
         progress: {
             value: 40,
             text: '75/100 Items'
         }
     },
     {
-        title: {
+        counter: {
             value: '154h:35m:20s',
-            isAbbreviated: true
+            format: EFormat.hms
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 50,
             text: '75/100 Items'
         }
     },
     {
-        title: {
+        counter: {
             value: 73,
-            isAbbreviated: true
+            format: EFormat.short
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 60,
             text: '75/100 Items'
         }
     },
     {
-        title: {
-            value: 73,
-            isAbbreviated: true
+        counter: {
+            value: 73
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 70,
             text: '75/100 Items'
         }
     },
     {
-        title: {
-            value: 73,
-            isAbbreviated: true
+        counter: {
+            value: 73
         },
-        subtitle: 'Complete',
+        title: 'Complete',
+        infoMessage: 'info message',
         progress: {
             value: 80,
+            text: '75/100 Items'
+        }
+    }
+]
+const kpiTimeData: KpiItem[] = [
+    {
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.hms
+        },
+        title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
+    },
+    {
+        counter: {
+            value: '35m:20s',
+            format: EFormat.hm
+        },
+        title: 'Complete',
+        progress: {
+            value: 30
+        }
+    },
+    {
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.h
+        },
+        title: 'Complete',
+        progress: {
+            value: 40,
+            text: '75/100 Items'
+        }
+    },
+    {
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.ms
+        },
+        title: 'Complete',
+        progress: {
+            value: 50,
+            text: '75/100 Items'
+        }
+    },
+    {
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.m
+        },
+        title: 'Complete',
+        progress: {
+            value: 60,
+            text: '75/100 Items'
+        }
+    },
+    {
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.s
+        },
+        title: 'Complete',
+        progress: {
+            value: 70,
             text: '75/100 Items'
         }
     }
@@ -99,9 +166,11 @@ export default defineComponent({
     },
     setup() {
         const kpiItems: KpiItem[] = kpiData
+        const kpiTimeItems: KpiItem[] = kpiTimeData
 
         return {
-            kpiItems
+            kpiItems,
+            kpiTimeItems
         }
     }
 })

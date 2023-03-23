@@ -8,53 +8,50 @@
             :key="index"
             class="kpi__box"
         >
-            <div class="kpi__box__title">
+            <div class="kpi__box__counter">
                 <dl-typography
                     color="dl-color-secondary"
                     variant="h1"
-                    :size="`${titleFontSize}px`"
+                    :size="`${counterFontSize}px`"
                 >
-                    {{ formatTitle(item.title) }}
+                    {{ formatCounter(item.counter).toLowerCase() }}
                 </dl-typography>
             </div>
-            <div class="kpi__box__subtitle">
+            <div class="kpi__box__title">
                 <div
                     v-if="isVue2"
-                    ref="subtitleRef"
-                    class="kpi__box__subtitle__text"
+                    ref="titleRef"
+                    class="kpi__box__title__text"
                     :data-index="index"
                 >
                     <dl-tooltip
                         v-if="isOverflowing[index]"
                         anchor="top middle"
                     >
-                        {{ item.subtitle }}
+                        {{ item.title }}
                     </dl-tooltip>
-                    {{ item.subtitle }}
+                    {{ item.title }}
                 </div>
                 <div
                     v-else
                     :ref="
                         (el) => {
-                            subtitleRef[index] = el
+                            titleRef[index] = el
                         }
                     "
-                    class="kpi__box__subtitle__text"
+                    class="kpi__box__title__text"
                     :data-index="index"
                 >
                     <dl-tooltip
                         v-if="isOverflowing[index]"
                         anchor="top middle"
                     >
-                        {{ item.subtitle }}
+                        {{ item.title }}
                     </dl-tooltip>
-                    {{ item.subtitle }}
+                    {{ item.title }}
                 </div>
                 <div>
-                    <dl-icon
-                        icon="icon-dl-info"
-                        size="16px"
-                    />
+                    <KpiInfo :info-message="item.infoMessage" />
                 </div>
             </div>
             <div class="kpi__box__progress_bar">
@@ -80,57 +77,72 @@ import {
     onBeforeUnmount,
     isVue2
 } from 'vue-demi'
-import { KpiItem } from './types/KpiItem'
-import {
-    DlIcon,
-    DlProgressBar,
-    DlTooltip,
-    DlTypography
-} from '../../components'
+import { EFormat, KpiItem, TCounter } from './types/KpiItem'
+import { DlProgressBar, DlTooltip, DlTypography } from '../../components'
 import { abbreviateNumber, numberWithComma } from '../../utils/formatNumber'
 import { isEllipsisActive } from '../../utils/is-ellipsis-active'
-
-type TTitle = {
-    value: number | string
-    isAbbreviated: boolean
-}
+import KpiInfo from './KpiInfo.vue'
 
 export default defineComponent({
     name: 'DlKpi',
     components: {
-        DlIcon,
         DlProgressBar,
         DlTooltip,
-        DlTypography
+        DlTypography,
+        KpiInfo
     },
     props: {
         items: {
             type: Array as PropType<KpiItem[]>,
             default: () => [] as KpiItem[]
         },
-        titleFontSize: {
+        counterFontSize: {
             type: Number,
             default: 30
         }
     },
     setup() {
-        const subtitleRef = ref([])
+        const titleRef = ref([])
         const resizeObserver = ref<ResizeObserver | null>(null)
         const isOverflowing = ref<boolean[]>([])
+        const isVisibleInfoMessage = ref(false)
 
         const progressValue = (item: KpiItem) => {
             return item?.progress?.value ? item.progress.value / 100 : null
         }
-
-        const formatTitle = (title: TTitle) => {
-            if (typeof title.value === 'number') {
-                return title.isAbbreviated
-                    ? abbreviateNumber(title.value as number)
-                    : numberWithComma(title.value as number)
+        const formatCounter = (counter: TCounter) => {
+            if (typeof counter.value === 'number') {
+                return counter.format === 'short'
+                    ? abbreviateNumber(counter.value as number)
+                    : numberWithComma(counter.value as number)
             }
-            if (typeof title.value === 'string') {
-                const [hour, ...rest] = (title.value as string).split(':')
-                return title.isAbbreviated ? hour : title.value
+            if (typeof counter.value === 'string') {
+                const [hour, minutes, seconds] = (
+                    counter.value as string
+                ).split(':')
+                switch (counter.format) {
+                    case EFormat.hms: {
+                        return `${hour}:${minutes}:${seconds}`
+                    }
+                    case EFormat.hm: {
+                        return `${hour}:${minutes}`
+                    }
+                    case EFormat.h: {
+                        return `${hour}`
+                    }
+                    case EFormat.ms: {
+                        return `${minutes}:${seconds}`
+                    }
+                    case EFormat.m: {
+                        return `${minutes}`
+                    }
+                    case EFormat.s: {
+                        return `${seconds}`
+                    }
+                    default: {
+                        return `${hour}:${minutes}:${seconds}`
+                    }
+                }
             }
         }
 
@@ -148,8 +160,8 @@ export default defineComponent({
             })
 
             const elements = isVue2
-                ? (subtitleRef.value as HTMLDivElement[])
-                : subtitleRef.value
+                ? (titleRef.value as HTMLDivElement[])
+                : titleRef.value
 
             for (const el of elements) {
                 resizeObserver.value.observe(el)
@@ -163,10 +175,11 @@ export default defineComponent({
 
         return {
             progressValue,
-            formatTitle,
+            formatCounter,
             isOverflowing,
-            subtitleRef,
-            isVue2
+            titleRef,
+            isVue2,
+            isVisibleInfoMessage
         }
     }
 })
@@ -177,10 +190,10 @@ export default defineComponent({
     width: 100%;
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 30px;
 
     &__box {
-        width: min(95%, 45rem);
+        width: min(100%, 50rem);
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -192,11 +205,12 @@ export default defineComponent({
         border-radius: 2px;
         overflow: hidden;
 
-        &__title {
+        &__counter {
             text-align: center;
+            text-transform: lowercase;
         }
 
-        &__subtitle {
+        &__title {
             display: flex;
             align-items: center;
             width: 100%;
@@ -206,12 +220,13 @@ export default defineComponent({
 
             &__text {
                 max-width: 90%;
+                max-height: 40px;
                 font-style: normal;
                 font-weight: 400;
                 font-size: 16px;
                 line-height: 19px;
                 text-transform: capitalize;
-                white-space: nowrap;
+                text-align: center;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
