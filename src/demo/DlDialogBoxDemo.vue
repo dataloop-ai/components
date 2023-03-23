@@ -6,6 +6,7 @@
         <dl-dialog-box
             ref="modalOne"
             v-model="isOpenedFirstModal"
+            :draggable="true"
         >
             <template #header>
                 <dl-dialog-box-header
