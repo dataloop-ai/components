@@ -26,7 +26,7 @@
             >
                 <dl-icon
                     v-if="draggable"
-                    class="dialog-wrapper--draggable-icon draggable-button"
+                    class="dialog-wrapper--draggable-icon"
                     icon="icon-dl-drag"
                     color="dl-color-medium"
                     :style="{ cursor: draggableOptions.draggableCursor }"
