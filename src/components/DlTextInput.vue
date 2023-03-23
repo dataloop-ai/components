@@ -108,7 +108,7 @@
                 auto-close
                 no-focus
                 :offset="[0, 3]"
-                fit
+                fit-container
                 @click="onMenuShow"
             >
                 <dl-list

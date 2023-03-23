@@ -78,7 +78,7 @@
             :class="contentClass"
             :style="contentStyle"
             :cover="cover"
-            fit
+            fit-container
             fit-content
             :persistent="persistent"
             :auto-close="autoClose"
@@ -143,7 +143,7 @@
             :class="contentClass"
             :style="contentStyle"
             :cover="cover"
-            fit
+            fit-container
             fit-content
             :persistent="persistent"
             :auto-close="autoClose"

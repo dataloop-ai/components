@@ -28,7 +28,7 @@ describe('DlMenu', () => {
             contextMenu: false,
             cover: false,
             disabled: false,
-            fit: false,
+            fitContainer: false,
             fitContent: false,
             maxHeight: null,
             maxWidth: null,

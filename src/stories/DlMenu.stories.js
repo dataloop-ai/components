@@ -90,11 +90,25 @@ export default {
                 type: 'boolean'
             }
         },
-        fit: {
-            name: 'fit',
+        fitContainer: {
+            name: 'fit container',
             type: { name: 'boolean', required: false },
             description:
                 'Allows the menu to match at least the full width of its target',
+            defaultValue: false,
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
+            },
+            control: {
+                type: 'boolean'
+            }
+        },
+        fitContent: {
+            name: 'fit content',
+            type: { name: 'boolean', required: false },
+            description:
+                'Allows the menu to match at least the full width of its content',
             defaultValue: false,
             table: {
                 type: { summary: 'boolean' },
