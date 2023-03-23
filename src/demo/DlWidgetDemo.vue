@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlBarChart from '../components/DlChart/DlBarChart.vue'
+// import DlBarChart from '../components/DlChart/DlBarChart.vue'
 import DlGrid from '../components/DlWidget/DlGrid.vue'
 // import DlGridRow from '../components/DlWidget/DlGridRow.vue'
-import DlWidget from '../components/DlWidget/DlWidget.vue'
+// import DlWidget from '../components/DlWidget/DlWidget.vue'
 
 const labelsFn = () => {
     const a = []
@@ -41,9 +41,9 @@ const data = {
 
 export default defineComponent({
     components: {
-        DlGrid,
-        DlWidget,
-        DlBarChart
+        DlGrid
+        // DlWidget,
+        // DlBarChart
         // DlGridRow
     },
     setup() {
@@ -56,10 +56,14 @@ export default defineComponent({
     <div>
         <dl-grid
             gap="20px"
-            :layout="[2]"
+            :layout="[2, 1]"
         >
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
             <!--            <dl-grid-row>-->
-            <dl-grid>
+            <!--            <dl-grid>-->
+            <!--
                 <dl-widget>
                     <template #header>
                         <span>Widget 1</span>
@@ -87,10 +91,12 @@ export default defineComponent({
                             modi dicta eveniet veritatis?</span>
                     </template>
                 </dl-widget>
-            </dl-grid>
+            -->
+            <!--            </dl-grid>-->
 
             <!--            <dl-grid-row gap="20px">-->
-            <dl-grid gap="20px">
+            <!--            <dl-grid gap="20px">-->
+            <!--
                 <dl-widget>
                     <template #header>
                         <span>Widget 2</span>
@@ -118,7 +124,8 @@ export default defineComponent({
                         />
                     </template>
                 </dl-widget>
-            </dl-grid>
+            -->
+            <!--            </dl-grid>-->
         </dl-grid>
     </div>
 </template>
