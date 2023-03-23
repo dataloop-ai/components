@@ -29,6 +29,7 @@ describe('DlMenu', () => {
             cover: false,
             disabled: false,
             fit: false,
+            fitContent: false,
             maxHeight: null,
             maxWidth: null,
             menuClass: '',
@@ -48,19 +49,7 @@ describe('DlMenu', () => {
 
         expect(wrapper.vm.showing).toBe(false)
 
-        // expect(wrapper.vm.anchorOrigin).toBe('bottom start')
-
         await wrapper.vm.$el.parentNode.dispatchEvent(new MouseEvent('click'))
         vi.runAllTimers()
-
-        // expect(wrapper.emitted()).not.toHaveProperty('click')
-
-        // await wrapper.setProps({ clickable: true })
-
-        // expect(wrapper.vm.isClickable).toBe(true)
-
-        // await wrapper.find('div').trigger('click')
-
-        // expect(wrapper.emitted()).toHaveProperty('click')
     })
 })
