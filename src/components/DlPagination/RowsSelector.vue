@@ -12,7 +12,6 @@
             size="s"
             :options="options"
             :disabled="disabled"
-            :fit-container="false"
             width="min-content"
             align-right
             disable-dropdown-icon-padding

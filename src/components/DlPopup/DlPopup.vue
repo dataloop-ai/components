@@ -384,7 +384,6 @@ export default defineComponent({
                 anchorOrigin: anchorOrigin.value,
                 selfOrigin: selfOrigin.value,
                 absoluteOffset,
-                fitContainer: false,
                 cover: false,
                 maxHeight: props.maxHeight,
                 maxWidth: props.maxWidth

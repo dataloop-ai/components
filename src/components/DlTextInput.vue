@@ -119,6 +119,7 @@
                 no-focus
                 :offset="[0, 3]"
                 fit-container
+                :fit-content="fitContent"
                 @click="onMenuShow"
             >
                 <dl-list
@@ -323,7 +324,8 @@ export default defineComponent({
         clearButtonTooltip: {
             type: Boolean,
             default: false
-        }
+        },
+        fitContent: Boolean
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     data() {

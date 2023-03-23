@@ -79,7 +79,7 @@
             :style="contentStyle"
             :cover="cover"
             fit-container
-            fit-content
+            :fit-content="fitContent"
             :persistent="persistent"
             :auto-close="autoClose"
             :anchor="menuAnchor"
@@ -144,7 +144,7 @@
             :style="contentStyle"
             :cover="cover"
             fit-container
-            fit-content
+            :fit-content="fitContent"
             :persistent="persistent"
             :auto-close="autoClose"
             :anchor="menuAnchor"
@@ -229,7 +229,8 @@ export default defineComponent({
         flat: Boolean,
         uppercase: Boolean,
         outlined: Boolean,
-        padding: { type: String, default: '5px' }
+        padding: { type: String, default: '5px' },
+        fitContent: Boolean
     },
     emits: [
         'update:model-value',
