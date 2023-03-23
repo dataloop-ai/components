@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue-demi'
 import DlBarChart from '../components/DlChart/DlBarChart.vue'
 import DlGrid from '../components/DlWidget/DlGrid.vue'
-import DlGridRow from '../components/DlWidget/DlGridRow.vue'
+// import DlGridRow from '../components/DlWidget/DlGridRow.vue'
 import DlWidget from '../components/DlWidget/DlWidget.vue'
 
 const labelsFn = () => {
@@ -43,8 +43,8 @@ export default defineComponent({
     components: {
         DlGrid,
         DlWidget,
-        DlBarChart,
-        DlGridRow
+        DlBarChart
+        // DlGridRow
     },
     setup() {
         return { data }
@@ -54,8 +54,12 @@ export default defineComponent({
 
 <template>
     <div>
-        <dl-grid gap="20px">
-            <dl-grid-row>
+        <dl-grid
+            gap="20px"
+            :layout="[2]"
+        >
+            <!--            <dl-grid-row>-->
+            <dl-grid>
                 <dl-widget>
                     <template #header>
                         <span>Widget 1</span>
@@ -83,9 +87,10 @@ export default defineComponent({
                             modi dicta eveniet veritatis?</span>
                     </template>
                 </dl-widget>
-            </dl-grid-row>
+            </dl-grid>
 
-            <dl-grid-row gap="20px">
+            <!--            <dl-grid-row gap="20px">-->
+            <dl-grid gap="20px">
                 <dl-widget>
                     <template #header>
                         <span>Widget 2</span>
@@ -113,7 +118,7 @@ export default defineComponent({
                         />
                     </template>
                 </dl-widget>
-            </dl-grid-row>
+            </dl-grid>
         </dl-grid>
     </div>
 </template>
