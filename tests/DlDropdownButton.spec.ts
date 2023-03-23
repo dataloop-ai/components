@@ -41,7 +41,8 @@ describe('DlDropdownButton', () => {
             split: false,
             stretch: false,
             textColor: '',
-            uppercase: false
+            uppercase: false,
+            fitContent: false
         })
 
         expect(wrapper.vm.btnCSSStyles).toStrictEqual({

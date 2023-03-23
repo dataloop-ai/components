@@ -75,7 +75,7 @@ export default defineComponent({
             default: true
         }
     },
-    setup(props) {
+    setup(props: any) {
         const { position, duration, message } = props
         const root = ref(null)
         let parentTop: HTMLElement = null
