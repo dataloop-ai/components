@@ -5,11 +5,11 @@ export default {
     title: 'Library/Components/DlSelect',
     component: DlSelect,
     argTypes: {
-        fit: {
-            name: 'fit',
-            defaultValue: true,
+        fitConntent: {
+            name: 'fitConntent',
+            defaultValue: false,
             description:
-                'Allows the options to match at least the full width of its target',
+                'Allows the options to match at least the full width of its content',
 
             control: 'boolean',
             table: {
@@ -707,5 +707,5 @@ SelectWithoutFit.args = {
     size: 'm',
     multiselect: true,
     hasPrepend: true,
-    fit: false
+    fitContainer: false
 }

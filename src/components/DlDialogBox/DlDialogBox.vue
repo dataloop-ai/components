@@ -242,6 +242,14 @@ export default defineComponent({
         cursor: pointer;
         transform: rotate(90deg);
     }
+    &--right {
+        position: absolute !important;
+        right: 0;
+    }
+    &--left {
+        position: absolute !important;
+        left: 0;
+    }
 }
 
 .header {

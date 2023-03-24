@@ -13,6 +13,7 @@
             :disabled="disabled"
             :class="!enableResize ? 'textarea-disable-resize' : ''"
             @input="onChange"
+            @keydown="onKeydown"
             @focus="onFocus"
             @blur="onBlur"
         />
@@ -63,7 +64,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['input', 'focus', 'blur', 'update:model-value'],
+    emits: ['input', 'focus', 'blur', 'update:model-value', 'keydown'],
     data() {
         return {
             uuid: `dl-text-area-${v4()}`
@@ -80,6 +81,9 @@ export default defineComponent({
         onChange(e: any) {
             this.$emit('input', e.target.value, e)
             this.$emit('update:model-value', e.target.value)
+        },
+        onKeydown(e: KeyboardEvent) {
+            this.$emit('keydown', e)
         },
         onFocus(e: InputEvent) {
             this.$emit('focus', e)
@@ -104,8 +108,8 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    width: max-content;
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--dl-textarea-width);
 }
 
 .textarea {
@@ -115,13 +119,14 @@ export default defineComponent({
     padding: 10px;
     font-family: 'Roboto', sans-serif;
     font-size: var(--dl-font-size-body);
-    width: var(--dl-textarea-width);
+    width: 100%;
     min-width: 100px;
     max-width: 100%;
     min-height: 80px;
     max-height: 120px;
     outline: none;
     color: var(--dl-color-darker);
+    box-sizing: border-box;
 
     &:hover {
         border-color: var(--dl-color-hover);

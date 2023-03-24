@@ -35,7 +35,7 @@
         >
             <dl-menu
                 ref="menu"
-                fit
+                fit-container
             >
                 <dl-option-group
                     v-model="switchValue"

@@ -271,8 +271,8 @@ export default defineComponent({
             &__counter {
                 display: flex;
                 width: 100%;
-                text-align: end;
-                justify-content: end;
+                text-align: flex-end;
+                justify-content: flex-end;
                 color: var(--dl-color-darker);
             }
         }
