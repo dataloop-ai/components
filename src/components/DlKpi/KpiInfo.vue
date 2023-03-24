@@ -1,22 +1,23 @@
 <template>
-    <div>
+    <div
+        @mouseover="setIsVisibleInfoMessage(true)"
+        @mouseleave="setIsVisibleInfoMessage(false)"
+    >
         <dl-tooltip
             v-if="isVisibleInfoMessage"
             anchor="top middle"
         >
-            {{ infoMessage }}
+            {{ message }}
         </dl-tooltip>
         <dl-icon
             icon="icon-dl-info"
             size="16px"
-            @mouseover="isVisibleInfoMessage = true"
-            @mouseleave="isVisibleInfoMessage = false"
         />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref, computed } from 'vue-demi'
 import { DlTooltip, DlIcon } from '../'
 
 export default defineComponent({
@@ -32,11 +33,19 @@ export default defineComponent({
             required: false
         }
     },
-    setup() {
+    setup(props) {
         const isVisibleInfoMessage = ref(false)
+        const setIsVisibleInfoMessage = (value: boolean): void => {
+            isVisibleInfoMessage.value = value
+        }
+        const message = computed(() =>
+            props.infoMessage ? props.infoMessage : 'no data'
+        )
 
         return {
-            isVisibleInfoMessage
+            isVisibleInfoMessage,
+            setIsVisibleInfoMessage,
+            message
         }
     }
 })

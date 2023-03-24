@@ -28,7 +28,8 @@ const kpiData: KpiItem[] = [
     },
     {
         counter: {
-            value: 200000000
+            value: 200000000,
+            format: EFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -74,18 +75,20 @@ const kpiData: KpiItem[] = [
     },
     {
         counter: {
-            value: 73
+            value: null,
+            format: EFormat.long
         },
-        title: 'Complete',
-        infoMessage: 'info message',
+        title: null,
+        infoMessage: null,
         progress: {
-            value: 70,
-            text: '75/100 Items'
+            value: null,
+            text: null
         }
     },
     {
         counter: {
-            value: 73
+            value: 0,
+            format: EFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -98,7 +101,7 @@ const kpiData: KpiItem[] = [
 const kpiTimeData: KpiItem[] = [
     {
         counter: {
-            value: '154h:35m:20s',
+            value: '',
             format: EFormat.hms
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
@@ -148,12 +151,12 @@ const kpiTimeData: KpiItem[] = [
     },
     {
         counter: {
-            value: '154h:35m:20s',
+            value: '',
             format: EFormat.s
         },
-        title: 'Complete',
+        title: '',
         progress: {
-            value: 70,
+            value: 0,
             text: '75/100 Items'
         }
     }

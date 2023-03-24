@@ -1,76 +1,65 @@
 import { DlKpi } from '..'
+import { EFormat } from '../components/DlKpi/types/KpiItem'
 
 const itemsData = [
     {
-        title: {
-            value: 200000000,
-            isAbbreviated: true
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.hms
         },
-        subtitle:
-            'Complete Complete Complete Complete Complete Complete Complete Complete'
+        title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
     },
     {
-        title: {
-            value: 200000000,
-            isAbbreviated: false
+        counter: {
+            value: '154h:35m:20s',
+            format: EFormat.hm
         },
-        subtitle: 'Complete',
+        title: 'Complete',
         progress: {
             value: 30
         }
     },
     {
-        title: {
+        counter: {
             value: '154h:35m:20s',
-            isAbbreviated: false
+            format: EFormat.h
         },
-        subtitle: 'Complete',
+        title: 'Complete',
         progress: {
             value: 40,
             text: '75/100 Items'
         }
     },
     {
-        title: {
+        counter: {
             value: '154h:35m:20s',
-            isAbbreviated: true
+            format: EFormat.ms
         },
-        subtitle: 'Complete',
+        title: 'Complete',
         progress: {
             value: 50,
             text: '75/100 Items'
         }
     },
     {
-        title: {
-            value: 73,
-            isAbbreviated: true
+        counter: {
+            value: 200000000,
+            format: EFormat.long
         },
-        subtitle: 'Complete',
+        title: 'Complete',
         progress: {
             value: 60,
             text: '75/100 Items'
         }
     },
     {
-        title: {
-            value: 73,
-            isAbbreviated: true
+        counter: {
+            value: 200000000,
+            format: EFormat.short
         },
-        subtitle: 'Complete',
+        title: 'Complete',
         progress: {
             value: 70,
-            text: '75/100 Items'
-        }
-    },
-    {
-        title: {
-            value: 73,
-            isAbbreviated: true
-        },
-        subtitle: 'Complete',
-        progress: {
-            value: 80,
             text: '75/100 Items'
         }
     }

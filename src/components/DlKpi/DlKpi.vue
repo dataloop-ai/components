@@ -14,41 +14,12 @@
                     variant="h1"
                     :size="`${counterFontSize}px`"
                 >
-                    {{ formatCounter(item.counter).toLowerCase() }}
+                    {{ formatCounter(item.counter) }}
                 </dl-typography>
             </div>
             <div class="kpi__box__title">
-                <div
-                    v-if="isVue2"
-                    ref="titleRef"
-                    class="kpi__box__title__text"
-                    :data-index="index"
-                >
-                    <dl-tooltip
-                        v-if="isOverflowing[index]"
-                        anchor="top middle"
-                    >
-                        {{ item.title }}
-                    </dl-tooltip>
-                    {{ item.title }}
-                </div>
-                <div
-                    v-else
-                    :ref="
-                        (el) => {
-                            titleRef[index] = el
-                        }
-                    "
-                    class="kpi__box__title__text"
-                    :data-index="index"
-                >
-                    <dl-tooltip
-                        v-if="isOverflowing[index]"
-                        anchor="top middle"
-                    >
-                        {{ item.title }}
-                    </dl-tooltip>
-                    {{ item.title }}
+                <div class="kpi__box__title__text">
+                    {{ validateTitle(item.title) }}
                 </div>
                 <div>
                     <KpiInfo :info-message="item.infoMessage" />
@@ -69,25 +40,16 @@
 </template>
 
 <script lang="ts">
-import {
-    defineComponent,
-    PropType,
-    ref,
-    onMounted,
-    onBeforeUnmount,
-    isVue2
-} from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { EFormat, KpiItem, TCounter } from './types/KpiItem'
-import { DlProgressBar, DlTooltip, DlTypography } from '../../components'
+import { DlProgressBar, DlTypography } from '../../components'
 import { abbreviateNumber, numberWithComma } from '../../utils/formatNumber'
-import { isEllipsisActive } from '../../utils/is-ellipsis-active'
 import KpiInfo from './KpiInfo.vue'
 
 export default defineComponent({
     name: 'DlKpi',
     components: {
         DlProgressBar,
-        DlTooltip,
         DlTypography,
         KpiInfo
     },
@@ -102,84 +64,63 @@ export default defineComponent({
         }
     },
     setup() {
-        const titleRef = ref([])
-        const resizeObserver = ref<ResizeObserver | null>(null)
-        const isOverflowing = ref<boolean[]>([])
-        const isVisibleInfoMessage = ref(false)
-
         const progressValue = (item: KpiItem) => {
             return item?.progress?.value ? item.progress.value / 100 : null
         }
+
+        const validateTitle = (title: string) => (title ? title : '---')
+
         const formatCounter = (counter: TCounter) => {
+            if (!counter.value) {
+                return 0
+            }
             if (typeof counter.value === 'number') {
+                if (!counter.value || counter.value === 0) {
+                    return 0
+                }
                 return counter.format === 'short'
-                    ? abbreviateNumber(counter.value as number)
+                    ? (
+                          abbreviateNumber(counter.value as number) as string
+                      ).toLowerCase()
                     : numberWithComma(counter.value as number)
             }
             if (typeof counter.value === 'string') {
+                if (!counter.value.length) {
+                    return '---'
+                }
                 const [hour, minutes, seconds] = (
                     counter.value as string
                 ).split(':')
                 switch (counter.format) {
                     case EFormat.hms: {
-                        return `${hour}:${minutes}:${seconds}`
+                        return `${hour}:${minutes}:${seconds}`.toLowerCase()
                     }
                     case EFormat.hm: {
-                        return `${hour}:${minutes}`
+                        return `${hour}:${minutes}`.toLowerCase()
                     }
                     case EFormat.h: {
-                        return `${hour}`
+                        return `${hour}`.toLowerCase()
                     }
                     case EFormat.ms: {
-                        return `${minutes}:${seconds}`
+                        return `${minutes}:${seconds}`.toLowerCase()
                     }
                     case EFormat.m: {
-                        return `${minutes}`
+                        return `${minutes}`.toLowerCase()
                     }
                     case EFormat.s: {
-                        return `${seconds}`
+                        return `${seconds}`.toLowerCase()
                     }
                     default: {
-                        return `${hour}:${minutes}:${seconds}`
+                        return `${hour}:${minutes}:${seconds}`.toLowerCase()
                     }
                 }
             }
         }
 
-        onMounted(() => {
-            resizeObserver.value = new ResizeObserver((entries) => {
-                const tempArr = [...isOverflowing.value]
-                for (const entry of entries) {
-                    const index = parseInt(
-                        (entry.target as HTMLDivElement).dataset.index ?? '0'
-                    )
-                    tempArr[index] = isEllipsisActive(entry.target)
-                }
-
-                isOverflowing.value = tempArr
-            })
-
-            const elements = isVue2
-                ? (titleRef.value as HTMLDivElement[])
-                : titleRef.value
-
-            for (const el of elements) {
-                resizeObserver.value.observe(el)
-            }
-        })
-
-        onBeforeUnmount(() => {
-            resizeObserver.value.disconnect()
-            resizeObserver.value = null
-        })
-
         return {
             progressValue,
             formatCounter,
-            isOverflowing,
-            titleRef,
-            isVue2,
-            isVisibleInfoMessage
+            validateTitle
         }
     }
 })
@@ -228,7 +169,6 @@ export default defineComponent({
                 text-transform: capitalize;
                 text-align: center;
                 overflow: hidden;
-                text-overflow: ellipsis;
             }
         }
 

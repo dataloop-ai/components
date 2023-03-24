@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlKpi } from '../../src'
 import { EFormat, KpiItem } from '../../src/components/DlKpi/types/KpiItem'
@@ -14,7 +14,8 @@ const kpiData: KpiItem[] = [
     },
     {
         counter: {
-            value: 200000000
+            value: 200000000,
+            format: EFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -60,7 +61,8 @@ const kpiData: KpiItem[] = [
     },
     {
         counter: {
-            value: 73
+            value: 73,
+            format: EFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -71,7 +73,8 @@ const kpiData: KpiItem[] = [
     },
     {
         counter: {
-            value: 73
+            value: 73,
+            format: EFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -82,6 +85,20 @@ const kpiData: KpiItem[] = [
     }
 ]
 const kpiEmptyData: KpiItem[] = []
+const kpiEmptyParams: KpiItem[] = [
+    {
+        counter: {
+            value: null,
+            format: null
+        },
+        title: null,
+        infoMessage: null,
+        progress: {
+            text: null,
+            value: null
+        }
+    }
+]
 
 describe('DlKpi', () => {
     it('should render kpi box', () => {
@@ -113,7 +130,7 @@ describe('DlKpi', () => {
 
         const result = wrapper.classes(className)
 
-        expected.forEach((item) => {
+        expected.forEach(() => {
             expect(result).toBe(true)
         })
     })
@@ -137,8 +154,31 @@ describe('DlKpi', () => {
 
         const result = wrapper.classes(className)
 
-        expected.forEach((item) => {
+        expected.forEach(() => {
             expect(result).toBe(false)
+        })
+    })
+    it('should to display when it passed empty params', () => {
+        const wrapper = mount(DlKpi, {
+            props: {
+                items: kpiEmptyParams
+            }
+        })
+
+        const className = 'kpi'
+        const expected = [
+            'kpi',
+            'kpi__box',
+            'kpi__box__counter',
+            'kpi__box__title',
+            'kpi__box__title__text',
+            'kpi__box__progress_bar'
+        ]
+
+        const result = wrapper.classes(className)
+
+        expected.forEach(() => {
+            expect(result).toBe(true)
         })
     })
 })

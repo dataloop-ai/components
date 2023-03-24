@@ -1,4 +1,5 @@
 export enum EFormat {
+    long = 'long',
     short = 'short',
     hms = 'h:m:s',
     hm = 'h:m',
@@ -9,8 +10,9 @@ export enum EFormat {
 }
 
 export type TCounter = {
+    /* for string it should be have 0h:0m:0s format */
     value: number | string
-    format?: EFormat
+    format: EFormat
 }
 
 export type KpiItem = {
