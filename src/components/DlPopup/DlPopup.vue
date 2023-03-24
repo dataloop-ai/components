@@ -15,7 +15,10 @@
                 :class="classes"
                 :style="styles"
             >
-                <draggable-upper @move="movePopup" />
+                <draggable-upper
+                    v-if="draggable"
+                    @move="movePopup"
+                />
                 <popup-header
                     :title="title"
                     :additional-info="additionalInfo"
@@ -157,7 +160,8 @@ export default defineComponent({
         maxHeight: { type: String, default: 'auto' },
         maxWidth: { type: String, default: 'auto' },
         height: { type: String, default: 'auto' },
-        width: { type: String, default: 'auto' }
+        width: { type: String, default: 'auto' },
+        draggable: Boolean
     },
     emits: [
         'hide-button-click',
