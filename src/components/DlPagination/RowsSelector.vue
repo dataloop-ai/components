@@ -12,7 +12,6 @@
             size="s"
             :options="options"
             :disabled="disabled"
-            :fit="false"
             width="min-content"
             align-right
             disable-dropdown-icon-padding
@@ -55,7 +54,7 @@ export default defineComponent({
     },
     emits: ['update:modelValue'],
     computed: {
-        hasSingeValue() {
+        hasSingeValue(): boolean {
             return this.options.length <= 1
         }
     },

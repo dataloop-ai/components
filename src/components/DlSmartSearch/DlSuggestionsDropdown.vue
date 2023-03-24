@@ -7,7 +7,7 @@
             :target="defaultTarget"
             :offset="offset"
             :disabled="disabled"
-            fit
+            fit-container
             :model-value="modelValue"
             @update:modelValue="$emit('update:modelValue', $event)"
         >
