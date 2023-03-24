@@ -12,10 +12,12 @@
                 `v-toast__item--${position}`,
                 classItem
             ]"
+            :style="{ width }"
         >
             <dl-alert
                 :type="type"
                 :closable="closable"
+                fluid
                 @update:model-value="(val) => closeToast(val)"
             >
                 <span
@@ -58,6 +60,10 @@ export default defineComponent({
         classItem: {
             type: String,
             default: ''
+        },
+        width: {
+            type: String,
+            default: 'auto'
         },
         duration: {
             type: Number,
@@ -183,16 +189,13 @@ export default defineComponent({
     overflow: hidden;
     z-index: 1052;
     pointer-events: none;
-    &__text {
-        min-width: 300px;
-        max-width: 800px;
-    }
     &__item {
         display: inline-flex;
         align-items: center;
         pointer-events: auto;
-        margin-bottom: 5px;
-        margin-top: 5px;
+        min-width: 400px;
+        max-width: 900px;
+        margin: 5px;
         cursor: pointer;
         animation-duration: 150ms;
         &.v-toast__item--top,
