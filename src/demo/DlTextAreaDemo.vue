@@ -31,7 +31,7 @@ export default defineComponent({
         const textAreaValue = ref('')
         const textAreaFocused = ref(false)
 
-        const log = (e) => console.log(e)
+        const log = (e: KeyboardEvent) => console.log(e)
 
         return {
             log,
