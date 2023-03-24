@@ -78,8 +78,8 @@ export default defineComponent({
         id: { type: [String, Number], default: null },
         label: { type: String, default: null },
         padding: { type: String, default: '5px' },
-        modelValue: { type: [String, Number], required: true },
-        value: { type: [String, Number], required: true },
+        modelValue: { type: [String, Number, Boolean], required: true },
+        value: { type: [String, Number, Boolean], required: true },
         tabindex: { type: String, default: '0' },
         subLabel: { type: String, default: '' },
         subLabelSize: { type: String, default: '10px' }
