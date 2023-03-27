@@ -79,6 +79,5 @@ const Template = (args) => ({
 
 export const ToastMessage = Template.bind({})
 ToastMessage.args = {
-    filled: true,
     label: 'Toast message'
 }
