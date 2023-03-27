@@ -65,7 +65,7 @@ import useSlider, {
 } from '../DlSlider/useSlider'
 
 import { between, isMobileOrTablet, getColor } from '../../utils'
-import DlBrushThumb from './BrushThumb.vue'
+import DlBrushThumb from '../DlBrush/BrushThumb.vue'
 import touchPanDirective from '../../directives/TouchPan'
 
 export default defineComponent({
@@ -97,6 +97,10 @@ export default defineComponent({
         trackColor: {
             type: String,
             default: 'dl-color-panel-background'
+        },
+        maxRange: {
+            type: Number,
+            default: null
         },
         selectionColor: {
             type: String,
@@ -387,6 +391,8 @@ export default defineComponent({
                     break
             }
 
+            if (pos.max - pos.min < props.maxRange) return
+
             model.value =
                 model.value.min === null || model.value.max === null
                     ? { min: pos.min || props.min, max: pos.max || props.max }
@@ -454,6 +460,7 @@ export default defineComponent({
             }
 
             & .thumb {
+                background-color: var(--color);
                 z-index: 1;
                 outline: 0;
                 transition: transform 0.18s ease-out, fill 0.18s ease-out,

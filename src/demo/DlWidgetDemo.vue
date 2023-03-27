@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
+import DlConfusionMatrix from '../components/DlConfusionMatrix/DlConfusionMatrix.vue'
 import DlBarChart from '../components/DlChart/DlBarChart.vue'
 import DlGrid from '../components/DlWidget/DlGrid.vue'
 import DlGridRow from '../components/DlWidget/DlGridRow.vue'
@@ -39,15 +40,34 @@ const data = {
     ]
 }
 
+const matrix = []
+const labels = []
+const size = 10
+
+for (let i = 0; i < size; i++) {
+    const row = []
+    for (let j = 0; j < size; j++) {
+        row.push(Math.floor(Math.random() * 10))
+    }
+    matrix.push(row)
+}
+
+const items = ['Van', 'Truck', 'Motorcycle', 'Car', 'Bus']
+
+for (let i = 0; i < size; i++) {
+    labels.push(items[Math.floor(Math.random() * items.length)])
+}
+
 export default defineComponent({
     components: {
         DlGrid,
         DlWidget,
         DlBarChart,
-        DlGridRow
+        DlGridRow,
+        DlConfusionMatrix
     },
     setup() {
-        return { data }
+        return { data, labels, matrix }
     }
 })
 </script>
@@ -58,29 +78,19 @@ export default defineComponent({
             <dl-grid-row>
                 <dl-widget>
                     <template #header>
-                        <span>Widget 1</span>
+                        <span>Widget 7</span>
                         <span style="font-size: 12px; color: gray">Subtitle</span>
                     </template>
-                    <template #menu>
-                        <div>
-                            Menu
-                            <div />
-                        </div>
-                    </template>
                     <template #content>
-                        <dl-bar-chart
-                            :legend-props="legendProps"
-                            :data="data"
-                            :options="options"
-                            :items-in-view="8"
+                        <dl-confusion-matrix
+                            :matrix="matrix"
+                            :labels="labels"
                         />
                     </template>
                     <template #description>
                         <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Libero eligendi dolore, similique possimus
-                            veritatis in vitae quia praesentium fuga quibusdam
-                            autem. Doloremque tenetur repudiandae a cupiditate
-                            modi dicta eveniet veritatis?</span>
+                            elit. Libero eligee a cupiditate modi dicta eveniet
+                            veritatis?</span>
                     </template>
                 </dl-widget>
             </dl-grid-row>

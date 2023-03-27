@@ -17,7 +17,7 @@
 import { defineComponent, computed } from 'vue-demi'
 import { getColor } from '../../utils'
 
-import { DlIcon } from '../'
+import { DlIcon } from '..'
 
 export default defineComponent({
     name: 'DlBrushThumb',
