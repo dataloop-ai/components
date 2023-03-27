@@ -7,6 +7,8 @@ import type {
     UpdateMode,
     DatasetChartOptions
 } from 'chart.js'
+import { TDoughnutProps } from './Doughnut/types/TDoughnutChartProps'
+import { TDoughnutChartData } from './Doughnut/types/TDoughnutChartData'
 
 export const CommonProps = {
     data: {
@@ -241,5 +243,106 @@ export const BarChartProps = {
             width: '100%',
             alignItems: 'center'
         })
+    }
+}
+
+export const defaultLineChartProps = {
+    brushProps: {
+        width: '100%',
+        thumbSize: '20px',
+        trackSize: '18px',
+        step: 1,
+        dragRange: true
+    },
+    legendProps: {
+        alignItems: 'center'
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+            duration: 100,
+            easing: 'linear'
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    beforeTitle(context: any) {
+                        const label =
+                            context[0]?.chart?.data?.labels[
+                                context[0]?.dataIndex
+                            ] || context[0].label
+                        if (typeof label === 'string') {
+                            context[0].label = label
+                        } else {
+                            context[0].label = Object.values(label)
+                                .filter((item) => !!item)
+                                .join(' | ')
+                        }
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                title: {
+                    color: '--dl-color-medium',
+                    display: true,
+                    font: {
+                        size: 12
+                    },
+                    text: 'Axis Y (sec)'
+                },
+                ticks: {
+                    font: {
+                        size: 12
+                    },
+                    color: '--dl-color-darker'
+                },
+                grid: {
+                    color: '--dl-color-separator'
+                }
+            },
+            x: {
+                title: {
+                    font: {
+                        size: 12
+                    },
+                    color: '--dl-color-medium',
+                    display: false,
+                    text: 'Axis X'
+                },
+                min: 0,
+                ticks: {
+                    font: {
+                        size: 12
+                    },
+                    display: false,
+                    color: '--dl-color-darker'
+                },
+                grid: {
+                    display: false,
+                    color: '--dl-color-separator'
+                }
+            }
+        }
+    }
+}
+
+export const defaultDoughnutChartProps: TDoughnutProps = {
+    data: <TDoughnutChartData>{},
+    isSmall: false,
+    hasSummary: false,
+    options: {
+        responsive: true,
+        cutout: undefined,
+        circumference: 360,
+        animation: {
+            animateRotate: true,
+            animateScale: false
+        }
     }
 }

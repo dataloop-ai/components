@@ -204,7 +204,7 @@
                         @click="() => onClose('Videos and long text')"
                     >
                         <dl-item-section>
-                            Videos and long text
+                            Videos and long text Videos and long text
                         </dl-item-section>
                     </dl-list-item>
 

@@ -461,11 +461,11 @@ export default {
             name: 'rowsPerPageOptions',
             control: 'object',
             description: 'Choose how many rows fit per page indiviually',
-            defaultValue: [5, 7, 10, 15, 20, 25, 50, 100],
+            defaultValue: [10, 15, 20, 25, 50],
             table: {
                 type: { summary: 'object' },
                 defaultValue: {
-                    summary: [5, 7, 10, 15, 20, 25, 50, 100]
+                    summary: [10, 15, 20, 25, 50]
                 }
             }
         },

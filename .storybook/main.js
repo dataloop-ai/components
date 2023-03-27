@@ -1,3 +1,4 @@
+const { mergeConfig } = require('vite')
 module.exports = {
     stories: [
         '../src/**/*.stories.mdx',
@@ -6,24 +7,29 @@ module.exports = {
     addons: [
         '@storybook/addon-links',
         '@storybook/addon-essentials',
-        'storybook-addon-themes'
+        'storybook-addon-themes',
+        '@storybook/addon-mdx-gfm'
     ],
-    framework: '@storybook/vue3',
-    core: {
-        builder: '@storybook/builder-vite'
+    framework: {
+        name: '@storybook/vue3-vite',
+        options: {}
     },
     viteFinal: (config) => {
-        return {
-            ...config,
+        return mergeConfig(config, {
+            base: '/components/',
             build: {
-                ...config.build,
                 minify: false,
                 sourcemap: false
             }
-        }
+        })
     },
-    env: (config) => ({ ...config }),
+    env: (config) => ({
+        ...config
+    }),
     rollupOptions: {
         external: ['@storybook/client-api']
+    },
+    docs: {
+        autodocs: true
     }
 }
