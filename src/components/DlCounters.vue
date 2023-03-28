@@ -11,25 +11,17 @@
                 class="item"
             >
                 <div :class="computeClass('item-content')">
-                    <p :class="computeClass('item-value')">
-                        {{
-                            abbreviateNumbers
-                                ? abbreviateNumber(item.value)
-                                : item.value
-                        }}
-                    </p>
-                    <p
-                        v-show="item.text"
-                        class="item-text"
-                    >
-                        {{ capitalize(item.text) }}
-                    </p>
-                    <p
-                        v-show="item.subtext"
-                        class="item-subtext"
-                    >
-                        {{ item.subtext && capitalize(item.subtext) }}
-                    </p>
+                    <dl-kpi
+                        :counter="item.value"
+                        counter-font-size="30px"
+                        :title="capitalize(item.text)"
+                        title-font-size="16px"
+                        :subtitle="item.subtext && capitalize(item.subtext)"
+                        subtitle-font-size="12px"
+                        :info-message="null"
+                        :progress="null"
+                        :is-small="small"
+                    />
                 </div>
                 <div class="divider" />
             </li>
@@ -40,7 +32,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { abbreviateToString } from '../utils/abbreviate-to-string'
+import DlKpi from '../components/DlKpi/DlKpi.vue'
 
 interface CounterItem {
     value?: number
@@ -50,6 +42,9 @@ interface CounterItem {
 
 export default defineComponent({
     name: 'DlCounters',
+    components: {
+        DlKpi
+    },
     props: {
         small: {
             type: Boolean,
@@ -86,9 +81,6 @@ export default defineComponent({
     methods: {
         capitalize(value: string): string {
             return value[0].toUpperCase() + value.slice(1)
-        },
-        abbreviateNumber(nr: number) {
-            if (nr) return abbreviateToString(nr)
         },
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]

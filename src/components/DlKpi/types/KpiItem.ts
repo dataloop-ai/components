@@ -1,4 +1,4 @@
-export enum EFormat {
+export enum EKpiCounterFormat {
     long = 'long',
     short = 'short',
     hms = 'h:m:s',
@@ -9,18 +9,20 @@ export enum EFormat {
     s = 's'
 }
 
-export type TCounter = {
+export type TKpiCounter = {
     /* for string it should be have 0h:0m:0s format */
     value: number | string
-    format: EFormat
+    format: EKpiCounterFormat
+}
+
+export type TKpiProgress = {
+    value?: number
+    text?: string
 }
 
 export type KpiItem = {
-    counter: TCounter
+    counter: TKpiCounter | number
     title: string
     infoMessage?: string
-    progress?: {
-        value?: number
-        text?: string
-    }
+    progress?: TKpiProgress
 }

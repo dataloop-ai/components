@@ -1,27 +1,96 @@
 <template>
     <div style="width: 90%">
-        <dl-kpi :items="kpiItems.slice(0, 2)" />
-        <dl-kpi :items="kpiItems.slice(0, 3)" />
-        <dl-kpi :items="kpiItems.slice(0, 4)" />
-        <dl-kpi :items="kpiItems.slice(0, 5)" />
-        <dl-kpi :items="kpiItems.slice(0, 6)" />
-        <dl-kpi
-            :items="kpiTimeItems"
-            :counter-font-size="24"
-        />
+        <div class="inlineKpi">
+            <div
+                v-for="(kpi, kpiIndex) in kpiItems.slice(0, 2)"
+                :key="kpiIndex"
+                class="autoWidth"
+            >
+                <dl-kpi
+                    :counter="kpi.counter"
+                    :title="kpi.title"
+                    :info-message="kpi.infoMessage"
+                    :progress="kpi.progress"
+                    :with-border="true"
+                    :with-progress-bar="true"
+                />
+            </div>
+        </div>
+        <div class="inlineKpi">
+            <div
+                v-for="(kpiThree, kpiThreeIndex) in kpiItems.slice(0, 3)"
+                :key="kpiThreeIndex"
+                class="autoWidth"
+            >
+                <dl-kpi
+                    :counter="kpiThree.counter"
+                    :title="kpiThree.title"
+                    :info-message="kpiThree.infoMessage"
+                    :progress="kpiThree.progress"
+                    :with-border="true"
+                />
+            </div>
+        </div>
+        <div class="inlineKpi">
+            <div
+                v-for="(kpiFour, kpiFourIndex) in kpiItems.slice(0, 4)"
+                :key="kpiFourIndex"
+                class="autoWidth"
+            >
+                <dl-kpi
+                    :counter="kpiFour.counter"
+                    :title="kpiFour.title"
+                    :info-message="kpiFour.infoMessage"
+                    :progress="kpiFour.progress"
+                    :with-border="true"
+                />
+            </div>
+        </div>
+        <div class="inlineKpi">
+            <div
+                v-for="(kpiFive, kpiFiveIndex) in kpiItems.slice(0, 5)"
+                :key="kpiFiveIndex"
+                class="autoWidth"
+            >
+                <dl-kpi
+                    :counter="kpiFive.counter"
+                    :title="kpiFive.title"
+                    :info-message="kpiFive.infoMessage"
+                    :progress="kpiFive.progress"
+                    :is-small="true"
+                />
+            </div>
+        </div>
+        <div class="inlineKpi">
+            <div
+                v-for="(kpiSix, kpiSixIndex) in kpiItems.slice(0, 6)"
+                :key="kpiSixIndex"
+                class="autoWidth"
+            >
+                <dl-kpi
+                    :counter="kpiSix.counter"
+                    :counter-font-size="'1em'"
+                    :title="kpiSix.title"
+                    :info-message="kpiSix.infoMessage"
+                    :progress="kpiSix.progress"
+                    :with-border="false"
+                    :with-progress-bar="true"
+                />
+            </div>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlKpi } from '../components'
-import { EFormat, KpiItem } from '../components/DlKpi/types/KpiItem'
+import { EKpiCounterFormat, KpiItem } from '../components/DlKpi/types/KpiItem'
 
 const kpiData: KpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EFormat.short
+            format: EKpiCounterFormat.short
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message'
@@ -29,7 +98,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EFormat.long
+            format: EKpiCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -40,7 +109,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154H:35M:20s',
-            format: EFormat.hm
+            format: EKpiCounterFormat.hm
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message',
@@ -52,7 +121,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.hms
+            format: EKpiCounterFormat.hms
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -64,7 +133,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 73,
-            format: EFormat.short
+            format: EKpiCounterFormat.short
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -76,7 +145,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: null,
-            format: EFormat.long
+            format: EKpiCounterFormat.long
         },
         title: null,
         infoMessage: null,
@@ -88,7 +157,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 0,
-            format: EFormat.long
+            format: EKpiCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -102,14 +171,14 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '',
-            format: EFormat.hms
+            format: EKpiCounterFormat.hms
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
     },
     {
         counter: {
             value: '35m:20s',
-            format: EFormat.hm
+            format: EKpiCounterFormat.hm
         },
         title: 'Complete',
         progress: {
@@ -119,7 +188,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.h
+            format: EKpiCounterFormat.h
         },
         title: 'Complete',
         progress: {
@@ -130,7 +199,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.ms
+            format: EKpiCounterFormat.ms
         },
         title: 'Complete',
         progress: {
@@ -141,7 +210,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.m
+            format: EKpiCounterFormat.m
         },
         title: 'Complete',
         progress: {
@@ -152,7 +221,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '',
-            format: EFormat.s
+            format: EKpiCounterFormat.s
         },
         title: '',
         progress: {
@@ -179,4 +248,14 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.inlineKpi {
+    display: flex;
+    width: 100%;
+    gap: 30px;
+}
+.autoWidth {
+    width: min(100%, 50rem);
+    height: 100%;
+}
+</style>

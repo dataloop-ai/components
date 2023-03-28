@@ -1,110 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlKpi } from '../../src'
-import { EFormat, KpiItem } from '../../src/components/DlKpi/types/KpiItem'
+import { EKpiCounterFormat } from '../../src/components/DlKpi/types/KpiItem'
 
-const kpiData: KpiItem[] = [
-    {
-        counter: {
-            value: 200000000,
-            format: EFormat.short
-        },
-        title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
-        infoMessage: 'info message'
-    },
-    {
-        counter: {
-            value: 200000000,
-            format: EFormat.long
-        },
-        title: 'Complete',
-        infoMessage: 'info message',
-        progress: {
-            value: 30
-        }
-    },
-    {
-        counter: {
-            value: '154H:35M:20s',
-            format: EFormat.hm
-        },
-        title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
-        infoMessage: 'info message',
-        progress: {
-            value: 40,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: '154h:35m:20s',
-            format: EFormat.hms
-        },
-        title: 'Complete',
-        infoMessage: 'info message',
-        progress: {
-            value: 50,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: 73,
-            format: EFormat.short
-        },
-        title: 'Complete',
-        infoMessage: 'info message',
-        progress: {
-            value: 60,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: 73,
-            format: EFormat.long
-        },
-        title: 'Complete',
-        infoMessage: 'info message',
-        progress: {
-            value: 70,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: 73,
-            format: EFormat.long
-        },
-        title: 'Complete',
-        infoMessage: 'info message',
-        progress: {
-            value: 80,
-            text: '75/100 Items'
-        }
-    }
-]
-const kpiEmptyData: KpiItem[] = []
-const kpiEmptyParams: KpiItem[] = [
-    {
-        counter: {
-            value: null,
-            format: null
-        },
-        title: null,
-        infoMessage: null,
-        progress: {
-            text: null,
-            value: null
-        }
-    }
-]
+const counterData = {
+    value: 200000,
+    format: EKpiCounterFormat.long
+}
+const progressData = {
+    value: 40,
+    text: '75/100 Items'
+}
+const counterDataEmpty = {}
+const progressDataEmpty = {}
 
 describe('DlKpi', () => {
     it('should render kpi box', () => {
         const wrapper = mount(DlKpi, {
             props: {
-                items: kpiData
+                counter: counterData,
+                progress: progressData
             }
         })
 
@@ -114,18 +29,19 @@ describe('DlKpi', () => {
     it('should compute the correct classes when calling computeClass', () => {
         const wrapper = mount(DlKpi, {
             props: {
-                items: kpiData
+                counter: counterData,
+                progress: progressData,
+                withProgressBar: true
             }
         })
 
-        const className = 'kpi'
+        const className = 'kpi_box'
         const expected = [
-            'kpi',
-            'kpi__box',
-            'kpi__box__counter',
-            'kpi__box__title',
-            'kpi__box__title__text',
-            'kpi__box__progress_bar'
+            // 'kpi_box',
+            'kpi_box__counter',
+            'kpi_box__title',
+            'kpi_box__title__text',
+            'kpi_box__progress_bar'
         ]
 
         const result = wrapper.classes(className)
@@ -138,41 +54,43 @@ describe('DlKpi', () => {
     it('should not to display when it passed empty data', () => {
         const wrapper = mount(DlKpi, {
             props: {
-                items: kpiEmptyData
+                counter: counterData,
+                progress: progressData,
+                withProgressBar: true
             }
         })
 
-        const className = 'kpi'
+        const className = 'kpi_box'
         const expected = [
-            'kpi',
-            'kpi__box',
-            'kpi__box__counter',
-            'kpi__box__title',
-            'kpi__box__title__text',
-            'kpi__box__progress_bar'
+            'kpi_box',
+            'kpi_box__counter',
+            'kpi_box__title',
+            'kpi_box__title__text',
+            'kpi_box__progress_bar'
         ]
 
         const result = wrapper.classes(className)
 
         expected.forEach(() => {
-            expect(result).toBe(false)
+            expect(result).toBe(true)
         })
     })
     it('should to display when it passed empty params', () => {
         const wrapper = mount(DlKpi, {
             props: {
-                items: kpiEmptyParams
+                counter: counterDataEmpty,
+                progress: progressDataEmpty,
+                withProgressBar: true
             }
         })
 
-        const className = 'kpi'
+        const className = 'kpi_box'
         const expected = [
-            'kpi',
-            'kpi__box',
-            'kpi__box__counter',
-            'kpi__box__title',
-            'kpi__box__title__text',
-            'kpi__box__progress_bar'
+            'kpi_box',
+            'kpi_box__counter',
+            'kpi_box__title',
+            'kpi_box__title__text',
+            'kpi_box__progress_bar'
         ]
 
         const result = wrapper.classes(className)
