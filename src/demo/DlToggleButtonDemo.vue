@@ -3,7 +3,11 @@
         <DlToggleButton
             v-model="selectedValue"
             :options="options"
-        />
+        >
+            <template #button-1="{ label }">
+                <p>{{ label }} dgsdgdsgdsgdsg</p>
+            </template>
+        </DlToggleButton>
         {{ selectedValue }}
     </div>
 </template>

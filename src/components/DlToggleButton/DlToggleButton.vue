@@ -12,9 +12,17 @@
                 color="black"
                 text-color="black"
                 outlined
+                :label="btn.label"
                 @click="handleChange(btn.value)"
             >
-                {{ btn.label }}
+                <slot
+                    :name="`button-${idx}`"
+                    :label="btn.label"
+                />
+                <slot
+                    name="button"
+                    :label="btn.label"
+                />
             </dl-button>
         </div>
     </div>
@@ -73,4 +81,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.DlToggleButton {
+    display: inline-flex;
+}
+</style>
