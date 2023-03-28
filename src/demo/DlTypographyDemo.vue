@@ -39,9 +39,8 @@
 </template>
 
 <script lang="ts">
-import DlTypography from '../components/Basic/DlTypography/DlTypography.vue'
-import { DlButton } from '../components/DlButton'
 import { defineComponent } from 'vue-demi'
+import { DlButton, DlTypography } from '../components'
 
 export default defineComponent({
     name: 'DlTypographyDemo',

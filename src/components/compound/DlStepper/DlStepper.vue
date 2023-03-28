@@ -55,11 +55,11 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import DlStepperContainer from './DlStepperContainer.vue'
-import DlStepperHeader from '../../components/DlStepper/DlStepperHeader.vue'
-import DlStepperFooter from '../../components/DlStepper/DlStepperFooter.vue'
-import DlStepperSidebar from '../../components/DlStepper/DlStepperSidebar.vue'
-import DlStepperContent from '../../components/DlStepper/DlStepperContent.vue'
+import DlStepperContainer from './components/DlStepperContainer.vue'
+import DlStepperHeader from './components/DlStepperHeader.vue'
+import DlStepperFooter from './components/DlStepperFooter.vue'
+import DlStepperSidebar from './components/DlStepperSidebar.vue'
+import DlStepperContent from './components/DlStepperContent.vue'
 import { StepState } from './models/interfaces'
 import { Step } from './models'
 import { getColor } from '../../../utils'

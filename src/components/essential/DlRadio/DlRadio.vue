@@ -62,9 +62,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { stopAndPrevent } from '../utils'
+import { stopAndPrevent, getColor } from '../../../utils'
 import { v4 } from 'uuid'
-import { getColor } from '../utils'
 
 export default defineComponent({
     name: 'DlRadio',

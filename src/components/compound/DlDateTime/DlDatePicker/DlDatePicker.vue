@@ -72,8 +72,8 @@
     </div>
 </template>
 <script lang="ts">
-import DlCalendar from './DlCalendar.vue'
-import DlMonthCalendar from './DlMonthCalendar.vue'
+import DlCalendar from './components/DlCalendar.vue'
+import DlMonthCalendar from './components/DlMonthCalendar.vue'
 import { CalendarDate, Calendar } from './models'
 import { defineComponent, PropType } from 'vue-demi'
 import { DateInterval } from './types'

@@ -20,7 +20,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { getColor } from '../utils'
+import { getColor } from '../../../utils'
 
 const colorValidator = (val: string | null) =>
     val === 'negative' || val === 'positive' || val === null

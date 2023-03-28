@@ -99,7 +99,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlListItem } from '../../../basic'
-import { DlItemSection, DlIcon, DlCheckbox } from '../../../essential'
+import { DlIcon, DlCheckbox } from '../../../essential'
+import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 

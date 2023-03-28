@@ -247,14 +247,8 @@
 <script lang="ts">
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { DlListItem } from '../../basic'
-import {
-    DlTooltip,
-    DlItemSection,
-    DlList,
-    DlIcon,
-    DlMenu
-} from '../../essential'
-import { DlInfoErrorMessage } from '../../shared'
+import { DlTooltip, DlList, DlIcon, DlMenu } from '../../essential'
+import { DlInfoErrorMessage, DlItemSection } from '../../shared'
 import { defineComponent, isVue2, PropType } from 'vue-demi'
 import {
     getLabel,

@@ -60,12 +60,12 @@
 </template>
 
 <script lang="ts">
-import Saturation from './DlSaturation.vue'
-import Hue from './DlHue.vue'
-import Alpha from './DlAlpha.vue'
-import Preview from './DlPreview.vue'
-import Box from './DlBox.vue'
-import Colors from './DlColors.vue'
+import Saturation from './components/DlSaturation.vue'
+import Hue from './components/DlHue.vue'
+import Alpha from './components/DlAlpha.vue'
+import Preview from './components/DlPreview.vue'
+import Box from './components/DlBox.vue'
+import Colors from './components/DlColors.vue'
 import { defineComponent, PropType } from 'vue-demi'
 import { rgb2hex, setColorValue } from './utils'
 import { NewColor } from './types'

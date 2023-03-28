@@ -46,7 +46,6 @@
 <script lang="ts">
 import { defineComponent, PropType, toRaw, nextTick } from 'vue-demi'
 import { debounce } from 'lodash'
-import { getColor } from '../utils'
 import { v4 } from 'uuid'
 import {
     calculateBorderRadius,
@@ -54,8 +53,9 @@ import {
     calculateMargin,
     calculateActiveMarginLeft,
     calculateWidth,
-    stopAndPrevent
-} from '../utils'
+    stopAndPrevent,
+    getColor
+} from '../../../utils'
 
 const Any = [Array, Boolean, String, Number, Object]
 

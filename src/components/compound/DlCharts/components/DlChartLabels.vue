@@ -82,8 +82,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType, isVue2 } from 'vue-demi'
 import { isEllipsisActive } from '../../../../utils/is-ellipsis-active'
-import DlTypography from '../Basic/DlTypography/DlTypography.vue'
-import DlTooltip from '../DlTooltip.vue'
+import { DlTooltip, DlTypography } from '../../../essential'
 
 type ObserverRefs = {
     ref: 'resizeObserverTitle' | 'resizeObserverSubtitle'

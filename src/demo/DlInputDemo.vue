@@ -1,6 +1,6 @@
 <template>
     <div>
-        <dl-text-input
+        <dl-input
             v-model="textInputValue"
             style="width: 220px"
             placeholder="Select option"
@@ -20,7 +20,7 @@
             show-counter
             :max-length="20"
         />
-        <dl-text-input
+        <dl-input
             v-model="passFieldValue"
             title="Password"
             style="width: 220px"
@@ -31,7 +31,7 @@
             error-message="The password entered is incorrect."
             info-message="This won't show, error is true"
         />
-        <dl-text-input
+        <dl-input
             v-model="warningFieldValue"
             title="Warning Example"
             style="width: 220px"
@@ -42,7 +42,7 @@
             info-message="This won't show, error is true"
             optional
         />
-        <dl-text-input
+        <dl-input
             v-model="errorFieldValue"
             title="Error Example"
             style="width: 220px"
@@ -54,7 +54,7 @@
             warning-message="This won't show, error is true"
             info-message="This won't show, error is true"
         />
-        <dl-text-input
+        <dl-input
             style="width: 220px"
             placeholder="Select option"
             title="Min"
@@ -66,11 +66,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlTextInput } from '../components'
+import { DlInput } from '../components'
 export default defineComponent({
-    name: 'DlTextInputDemo',
+    name: 'DlInputDemo',
     components: {
-        DlTextInput
+        DlInput
     },
     setup() {
         const textInputValue = ref<string>('')

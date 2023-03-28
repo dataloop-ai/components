@@ -1,6 +1,6 @@
 import { computed, ComputedRef } from 'vue-demi'
 
-import { isNumber } from '../../../utils/is'
+import { isNumber } from '../../../../utils/is'
 import { TableProps, TableColumn, TableRow } from '../types'
 import { TablePagination } from './tablePagination'
 

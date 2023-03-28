@@ -76,10 +76,9 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, isVue2 } from 'vue-demi'
-import { getColor } from '../utils'
-import { isEllipsisActive } from '../utils/is-ellipsis-active'
-import DlLink from './DlLink/DlLink.vue'
-import DlTooltip from './DlTooltip.vue'
+import { getColor } from '../../../utils'
+import { isEllipsisActive } from '../../../utils/is-ellipsis-active'
+import { DlTooltip, DlLink } from '../../essential'
 
 type ProgressChartOption = {
     name: string

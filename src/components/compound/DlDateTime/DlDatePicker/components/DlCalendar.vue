@@ -58,11 +58,11 @@
     </div>
 </template>
 <script lang="ts">
-import DlIcon from '../DlIcon.vue'
-import { CalendarDate, CustomDate } from './models'
+import { DlIcon } from '../../../../essential'
+import { CalendarDate, CustomDate } from '../models'
 import { defineComponent, PropType } from 'vue-demi'
-import { getWeekDayNames, isInRange } from './utils'
-import { DateInterval } from './types'
+import { getWeekDayNames, isInRange } from '../utils'
+import { DateInterval } from '../types'
 
 const DAYS_IN_WEEK = 7
 

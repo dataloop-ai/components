@@ -1,2 +1,2 @@
-import DlProgressBar from './DLProgressBar.vue'
+import DlProgressBar from './DlProgressBar.vue'
 export { DlProgressBar }

@@ -69,10 +69,9 @@
     </div>
 </template>
 <script lang="ts">
-import { Time } from './types'
-import DlIcon from '../DlIcon.vue'
+import { Time } from '../types'
 import DlTimeCounter from './DlTimeCounter.vue'
-import { DlMenu } from '../../../essential'
+import { DlMenu, DlIcon } from '../../../../essential'
 import { defineComponent, PropType } from 'vue-demi'
 
 const MAX_HOUR = 23

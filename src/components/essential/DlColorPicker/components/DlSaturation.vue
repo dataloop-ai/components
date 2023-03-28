@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { createLinearGradient } from './utils'
+import { createLinearGradient } from '../utils'
 
 export default defineComponent({
     name: 'DlSaturation',

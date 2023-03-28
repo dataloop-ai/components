@@ -14,7 +14,7 @@
                 @mouseout="onChartLeave"
                 @wheel.native="handleChartScroll"
             />
-            <dl-scroll-bar
+            <dl-chart-scroll-bar
                 v-if="maxItems > thisItemsInView"
                 :height="wrapperHeight"
                 :item-count="maxItems"
@@ -60,7 +60,7 @@ import {
 } from '../../types/props'
 import { defineComponent, reactive, ref, watch, computed } from 'vue-demi'
 import DlChartLegend from '../../components/DlChartLegend.vue'
-import DlScrollBar from '../../components/DlScrollBar.vue'
+import DlChartScrollBar from '../../components/DlChartScrollBar.vue'
 import { updateKey } from '../../../../../utils/update-key'
 import {
     Chart as ChartJS,
@@ -93,7 +93,7 @@ export default defineComponent({
     name: 'DlBarChart',
     components: {
         Bar,
-        DlScrollBar,
+        DlChartScrollBar,
         DlChartLegend
     },
     props: {

@@ -47,4 +47,4 @@ export default defineComponent({
 })
 </script>
 
-<style src="../assets/globals.scss" lang="scss" />
+<style src="../../../assets/globals.scss" lang="scss" />

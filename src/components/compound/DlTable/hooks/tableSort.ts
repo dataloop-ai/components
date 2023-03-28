@@ -1,7 +1,7 @@
 import { computed, ComputedRef } from 'vue-demi'
 
-import { sortDate } from '../../../utils/sort'
-import { isNumber, isDate, isObject } from '../../../utils/is'
+import { sortDate } from '../../../../utils/sort'
+import { isNumber, isDate, isObject } from '../../../../utils/is'
 import { TableProps, TableColumn, SortMethod } from '../types'
 import { TablePagination } from './tablePagination'
 

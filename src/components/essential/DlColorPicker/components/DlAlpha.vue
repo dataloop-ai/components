@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { createAlphaSquare, createLinearGradient } from './utils'
+import { createAlphaSquare, createLinearGradient } from '../utils'
 
 export default defineComponent({
     name: 'DlAlpha',

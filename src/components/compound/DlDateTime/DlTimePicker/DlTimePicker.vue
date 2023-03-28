@@ -32,7 +32,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import DlTimePickerInput from './DlTimePickerInput.vue'
+import DlTimePickerInput from './components/DlTimePickerInput.vue'
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
 import { Time } from './types'
 import { DateInterval } from '../DlDatePicker/types'

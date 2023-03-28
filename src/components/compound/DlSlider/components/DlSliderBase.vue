@@ -49,8 +49,8 @@ import {
     position,
     keyCodes,
     between
-} from '../../../utils'
-import touchPanDirective from '../../../directives/TouchPan'
+} from '../../../../utils'
+import touchPanDirective from '../../../../directives/TouchPan'
 
 export default defineComponent({
     name: 'DlSliderBase',

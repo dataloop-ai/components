@@ -27,7 +27,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import DlIcon from '../DlIcon.vue'
+import { DlIcon } from '../../../essential'
 
 export default defineComponent({
     components: {

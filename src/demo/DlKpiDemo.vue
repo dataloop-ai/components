@@ -15,13 +15,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlKpi } from '../components'
-import { EFormat, KpiItem } from '../components/DlKpi'
+import { DlCounterFormat, DlKpiItem } from '../components/types'
 
-const kpiData: KpiItem[] = [
+const kpiData: DlKpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EFormat.short
+            format: DlCounterFormat.short
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message'
@@ -29,7 +29,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EFormat.long
+            format: DlCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -40,7 +40,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154H:35M:20s',
-            format: EFormat.hm
+            format: DlCounterFormat.hm
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message',
@@ -52,7 +52,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.hms
+            format: DlCounterFormat.hms
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -64,7 +64,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 73,
-            format: EFormat.short
+            format: DlCounterFormat.short
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -76,7 +76,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: null,
-            format: EFormat.long
+            format: DlCounterFormat.long
         },
         title: null,
         infoMessage: null,
@@ -88,7 +88,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 0,
-            format: EFormat.long
+            format: DlCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -98,18 +98,18 @@ const kpiData: KpiItem[] = [
         }
     }
 ]
-const kpiTimeData: KpiItem[] = [
+const kpiTimeData: DlKpiItem[] = [
     {
         counter: {
             value: '',
-            format: EFormat.hms
+            format: DlCounterFormat.hms
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
     },
     {
         counter: {
             value: '35m:20s',
-            format: EFormat.hm
+            format: DlCounterFormat.hm
         },
         title: 'Complete',
         progress: {
@@ -119,7 +119,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.h
+            format: DlCounterFormat.h
         },
         title: 'Complete',
         progress: {
@@ -130,7 +130,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.ms
+            format: DlCounterFormat.ms
         },
         title: 'Complete',
         progress: {
@@ -141,7 +141,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.m
+            format: DlCounterFormat.m
         },
         title: 'Complete',
         progress: {
@@ -152,7 +152,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '',
-            format: EFormat.s
+            format: DlCounterFormat.s
         },
         title: '',
         progress: {
@@ -168,8 +168,8 @@ export default defineComponent({
         DlKpi
     },
     setup() {
-        const kpiItems: KpiItem[] = kpiData
-        const kpiTimeItems: KpiItem[] = kpiTimeData
+        const kpiItems: DlKpiItem[] = kpiData
+        const kpiTimeItems: DlKpiItem[] = kpiTimeData
 
         return {
             kpiItems,

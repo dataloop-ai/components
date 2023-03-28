@@ -108,9 +108,9 @@ import {
     refocusTargetFn,
     conditionalHandler,
     handleClickOutside
-} from '../DlMenu/utils'
-import DraggableUpper from './DraggableUpper.vue'
-import PopupHeader from './PopupHeader.vue'
+} from '../../essential/DlMenu/utils'
+import DraggableUpper from './components/DraggableUpper.vue'
+import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
 
 export default defineComponent({

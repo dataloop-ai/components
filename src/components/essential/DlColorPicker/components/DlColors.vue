@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { createAlphaSquare } from './utils'
+import { createAlphaSquare } from '../utils'
 
 export default defineComponent({
     name: 'DlColors',

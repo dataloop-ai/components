@@ -13,12 +13,17 @@ export const components: { [key: string]: any } = isVue3
       }
     : {
           radio: () =>
-              import('../../essential/DlRadio.vue').then((d) => d.default),
+              import('../../essential/DlRadio/DlRadio.vue').then(
+                  (d) => d.default
+              ),
           checkbox: () =>
-              import('../../essential/DlCheckbox.vue').then((d) => d.default),
+              import('../../essential/DlCheckbox/DlCheckbox.vue').then(
+                  (d) => d.default
+              ),
           switch: () =>
-              import('../../essential/DlSwitch.vue').then((d) => d.default)
-          // toggle: () => import('../DlToggle.vue').then(d => d.default),
+              import('../../essential/DlSwitch/DlSwitch.vue').then(
+                  (d) => d.default
+              )
       }
 export const componentsType = Object.keys(components)
 

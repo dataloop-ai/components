@@ -249,7 +249,7 @@ export default defineComponent({
 })
 </script>
 <style scoped lang="scss">
-@import '../DlTable/dl-table-styles.scss';
+@import '../../compound/DlTable/styles/dl-table-styles.scss';
 .dl-virtual-scroll {
     &:focus {
         outline: 0;

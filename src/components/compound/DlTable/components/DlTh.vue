@@ -122,4 +122,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped src="./dl-table-styles.scss" lang="scss" />
+<style scoped src="../styles/dl-table-styles.scss" lang="scss" />

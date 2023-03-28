@@ -48,8 +48,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlTooltip from '../DlTooltip.vue'
-import DlIcon from '../DlIcon/DlIcon.vue'
+import { DlTooltip, DlIcon } from '../../../essential'
 
 export default defineComponent({
     components: {

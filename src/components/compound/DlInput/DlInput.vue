@@ -197,14 +197,13 @@ import { debounce } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { DlInfoErrorMessage } from '../../shared'
 import { DlListItem } from '../../basic'
-import { DlMenu, DlIcon, DlList } from '../../essential'
+import { DlMenu, DlIcon, DlList, DlTooltip } from '../../essential'
 import { DlButton } from '../../basic'
-import DlTooltip from './DlTooltip.vue'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { v4 } from 'uuid'
 
 export default defineComponent({
-    name: 'DlTextInput',
+    name: 'DlInput',
     components: {
         DlButton,
         DlIcon,

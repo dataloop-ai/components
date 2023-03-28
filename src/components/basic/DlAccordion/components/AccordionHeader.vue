@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlIcon, DlTooltip } from '../../../essential'
 import { defineComponent, ref } from 'vue-demi'
-import { getColor } from '../../../utils'
-import { useSizeObserver } from '../../../hooks/use-size-observer'
+import { getColor } from '../../../../utils'
+import { useSizeObserver } from '../../../../hooks/use-size-observer'
 export default defineComponent({
     name: 'AccordionHeader',
     components: {
