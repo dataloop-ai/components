@@ -136,7 +136,11 @@ export default defineComponent({
         }
     },
     methods: {
-        startDragElement(e) {
+        startDragElement(e: {
+            preventDefault: () => void
+            y: number
+            x: number
+        }) {
             e.preventDefault()
             if (
                 !this.draggableOptions.originalY &&
