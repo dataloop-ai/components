@@ -35,9 +35,9 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { hasOverflowing } from '../../utils'
-import { DlTab } from './'
-import TabsWrapper from './TabsWrapper.vue'
+import { hasOverflowing } from '../../../utils'
+import DlTab from './components/DlTab.vue'
+import TabsWrapper from './components/TabsWrapper.vue'
 import type { TabDetails } from './types'
 
 export default defineComponent({

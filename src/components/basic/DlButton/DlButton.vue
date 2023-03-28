@@ -70,21 +70,7 @@ import { defineComponent, PropType, ref } from 'vue-demi'
 import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
-
-export enum ButtonState {
-    Active = 'ACTIVE',
-    Hover = 'HOVER',
-    Pressed = 'PRESSED',
-    Disabled = 'DISABLED'
-}
-
-export enum ButtonPart {
-    Text = 'TEXT',
-    Background = 'BACKGROUND',
-    Border = 'BORDER'
-}
-
-export type ButtonColors = Record<ButtonState, Record<ButtonPart, string>>
+import { ButtonColors } from './types'
 
 export default defineComponent({
     name: 'DlButton',

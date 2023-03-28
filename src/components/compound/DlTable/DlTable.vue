@@ -466,13 +466,15 @@ import {
     useTablePaginationState,
     useTablePaginationProps
 } from './hooks/tablePagination'
-import { DlTr, DlTh, DlTd } from './'
+import DlTr from './components/DlTr.vue'
+import DlTh from './components/DlTh.vue'
+import DlTd from './components/DlTd.vue'
 import {
     commonVirtPropsList,
     commonVirtScrollProps,
     ScrollDetails
-} from '../DlVirtualScroll/useVirtualScroll'
-import { DlVirtualScroll } from '../DlVirtualScroll'
+} from '../../shared/DlVirtualScroll/useVirtualScroll'
+import { DlVirtualScroll } from '../../shared/DlVirtualScroll'
 import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
 import { useTableSort, useTableSortProps } from './hooks/tableSort'
 import {
@@ -493,14 +495,12 @@ import { useTableActionsProps, useTableActions } from './hooks/tableActions'
 import {
     applyDraggableRows,
     applyDraggableColumns
-} from '../../utils/draggable-table'
-import { injectProp } from '../../utils/inject-object-prop'
+} from '../../../utils/draggable-table'
+import { injectProp } from '../../../utils/inject-object-prop'
 import { TableRow, TableProps, TableColumn } from './types'
 import { DlPagination } from '../DlPagination'
-import DlCheckbox from '../Basic/DlCheckbox/DlCheckbox.vue'
-import DlProgressBar from '../../essential/DlProgressBar/DlProgressBar.vue'
-import { ResizableManager } from './ResizableManager'
-import DlIcon from '../DlIcon.vue'
+import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
+import { ResizableManager } from './utils'
 import { v4 } from 'uuid'
 
 export default defineComponent({

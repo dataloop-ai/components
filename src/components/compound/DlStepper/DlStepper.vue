@@ -60,9 +60,9 @@ import DlStepperHeader from '../../components/DlStepper/DlStepperHeader.vue'
 import DlStepperFooter from '../../components/DlStepper/DlStepperFooter.vue'
 import DlStepperSidebar from '../../components/DlStepper/DlStepperSidebar.vue'
 import DlStepperContent from '../../components/DlStepper/DlStepperContent.vue'
-import { StepState } from './interfaces'
-import { Step } from './Step'
-import { getColor } from '../../utils'
+import { StepState } from './models/interfaces'
+import { Step } from './models'
+import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
 
 export default defineComponent({

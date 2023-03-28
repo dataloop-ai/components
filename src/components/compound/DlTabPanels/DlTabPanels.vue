@@ -6,7 +6,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, VNode, isVue2 } from 'vue-demi'
-import { textSlot } from '../../utils/render'
+import { textSlot } from '../../../utils/render'
 
 export default defineComponent({
     name: 'DlTabPanels',

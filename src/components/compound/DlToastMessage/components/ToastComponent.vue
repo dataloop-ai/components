@@ -35,7 +35,7 @@ import {
     computed,
     onMounted
 } from 'vue-demi'
-import DlAlert from '../../basic/DlAlert/DlAlert.vue'
+import { DlAlert } from '../../../basic'
 import { Positions, Types } from '../utils/config'
 import { removeElement } from '../utils/render'
 import { Animation } from '../types'
