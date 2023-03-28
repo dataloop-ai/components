@@ -1,12 +1,12 @@
 <template>
     <div>
-        <dl-button @click="openModal">
-            Open modal
-        </dl-button>
         <dl-switch
             v-model="draggable"
             left-label="Draggable"
         />
+        <dl-button @click="openModal">
+            Open modal
+        </dl-button>
         <dl-dialog-box
             ref="modalOne"
             v-model="isOpenedFirstModal"
