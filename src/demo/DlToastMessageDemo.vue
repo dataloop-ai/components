@@ -15,6 +15,10 @@
                     v-model="classItem"
                     title="Custom class for toast item"
                 />
+                <dl-text-input
+                    v-model="width"
+                    title="Custom width for toast item"
+                />
             </div>
             <div class="flex">
                 <div>
@@ -95,6 +99,7 @@ import DlTextInput from '../components/DlTextInput.vue'
 import DlRadio from '../components/DlRadio.vue'
 import DlTextArea from '../components/DlTextArea.vue'
 import DlSwitch from '../components/DlSwitch.vue'
+
 export default defineComponent({
     name: 'DlToast',
     components: {
@@ -113,6 +118,7 @@ export default defineComponent({
         const position = ref('bottom')
         const closable = ref(true)
         const classItem = ref('demo-toast')
+        const width = ref('auto')
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
@@ -120,7 +126,8 @@ export default defineComponent({
                 type: type.value,
                 duration: duration.value,
                 classItem: classItem.value,
-                closable: closable.value
+                closable: closable.value,
+                width: width.value
             })
         }
         return {
@@ -130,7 +137,8 @@ export default defineComponent({
             type,
             position,
             classItem,
-            closable
+            closable,
+            width
         }
     }
 })
