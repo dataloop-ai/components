@@ -13,6 +13,9 @@
         <dl-accordion
             additional-info="Some additional info"
             title="Uncontrolled with Lorem Ipsum"
+            :right-side="true"
+            font-size="12px"
+            title-color="dl-color-medium"
         >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
