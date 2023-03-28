@@ -3,15 +3,16 @@ import { DlButton } from '..'
 
 export default {
     title: 'Library/Components/DlToastMessage',
-    component: DlButton,
     argTypes: {
         type: {
             options: ['success', 'warning', 'error', 'info'],
             control: 'select',
+            description: 'toast type',
             defaultValue: 'success'
         },
         message: {
             control: 'text',
+            description: 'message text for toast',
             defaultValue:
                 'This is a sample message with a <a href="https://google.com/">link</a>'
         },
@@ -24,23 +25,28 @@ export default {
                 'top-left',
                 'top-right'
             ],
+            description: 'toast position, bottom, top, top-left etc.',
             control: 'select',
             defaultValue: 'bottom'
         },
         duration: {
             control: 'number',
+            description: 'number of seconds the component is displayed',
             defaultValue: 10
         },
         classItem: {
             control: 'text',
+            description: 'custom class for toast item',
             defaultValue: 'demo-toast'
         },
         width: {
             control: 'text',
+            description: 'toast width size',
             defaultValue: 'auto'
         },
         closable: {
             control: 'boolean',
+            description: 'specifies if the close icon should be displayed',
             defaultValue: true
         }
     }

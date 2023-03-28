@@ -44,11 +44,11 @@ import { v4 } from 'uuid'
 import {
     computed,
     defineComponent,
+    nextTick,
     onMounted,
-    Ref,
     ref,
-    watch,
-    nextTick
+    Ref,
+    watch
 } from 'vue-demi'
 import { getColor, includes } from '../utils'
 import { DlIcon } from './'
@@ -209,7 +209,7 @@ export default defineComponent({
     > div {
         display: flex;
         flex-direction: row;
-        padding: 10px 10px 10px 16px;
+        padding: 10px 16px;
     }
 
     .text {
