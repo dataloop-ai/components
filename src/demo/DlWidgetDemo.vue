@@ -1,9 +1,8 @@
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
-// import DlBarChart from '../components/DlChart/DlBarChart.vue'
+import { defineComponent, ref } from 'vue-demi'
+import DlBarChart from '../components/DlChart/DlBarChart.vue'
 import DlGrid from '../components/DlWidget/DlGrid.vue'
-// import DlGridRow from '../components/DlWidget/DlGridRow.vue'
-// import DlWidget from '../components/DlWidget/DlWidget.vue'
+import DlWidget from '../components/DlWidget/DlWidget.vue'
 
 const labelsFn = () => {
     const a = []
@@ -41,10 +40,9 @@ const data = {
 
 export default defineComponent({
     components: {
-        DlGrid
-        // DlWidget,
-        // DlBarChart
-        // DlGridRow
+        DlGrid,
+        DlWidget,
+        DlBarChart
     },
     setup() {
         return { data }
@@ -56,76 +54,121 @@ export default defineComponent({
     <div>
         <dl-grid
             gap="20px"
-            :layout="[2, 1]"
+            :layout="[3, 2]"
         >
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <!--            <dl-grid-row>-->
-            <!--            <dl-grid>-->
-            <!--
-                <dl-widget>
-                    <template #header>
-                        <span>Widget 1</span>
-                        <span style="font-size: 12px; color: gray">Subtitle</span>
-                    </template>
-                    <template #menu>
-                        <div>
-                            Menu
-                            <div />
-                        </div>
-                    </template>
-                    <template #content>
-                        <dl-bar-chart
-                            :legend-props="legendProps"
-                            :data="data"
-                            :options="options"
-                            :items-in-view="8"
-                        />
-                    </template>
-                    <template #description>
-                        <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Libero eligendi dolore, similique possimus
-                            veritatis in vitae quia praesentium fuga quibusdam
-                            autem. Doloremque tenetur repudiandae a cupiditate
-                            modi dicta eveniet veritatis?</span>
-                    </template>
-                </dl-widget>
-            -->
-            <!--            </dl-grid>-->
-
-            <!--            <dl-grid-row gap="20px">-->
-            <!--            <dl-grid gap="20px">-->
-            <!--
-                <dl-widget>
-                    <template #header>
-                        <span>Widget 2</span>
-                    </template>
-                    <template #content>
-                        <dl-bar-chart
-                            :legend-props="legendProps"
-                            :data="data"
-                            :options="options"
-                            :items-in-view="6"
-                        />
-                    </template>
-                </dl-widget>
-
-                <dl-widget>
-                    <template #header>
-                        <span>Widget 3</span>
-                    </template>
-                    <template #content>
-                        <dl-bar-chart
-                            :legend-props="legendProps"
-                            :data="data"
-                            :options="options"
-                            :items-in-view="6"
-                        />
-                    </template>
-                </dl-widget>
-            -->
-            <!--            </dl-grid>-->
+            <dl-widget>
+                <template #header>
+                    <span>Widget 1</span>
+                    <span style="font-size: 12px; color: gray">Subtitle</span>
+                </template>
+                <template #menu>
+                    <div>
+                        Menu
+                        <div />
+                    </div>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+                <template #description>
+                    <span>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Libero eligendi dolore, similique possimus veritatis in
+                        vitae quia praesentium fuga quibusdam autem. Doloremque
+                        tenetur repudiandae a cupiditate modi dicta eveniet
+                        veritatis?
+                    </span>
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 2</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+        </dl-grid>
+        <dl-grid gap="20px">
+            <dl-widget>
+                <template #header>
+                    <span>Widget 1</span>
+                    <span style="font-size: 12px; color: gray">Subtitle</span>
+                </template>
+                <template #menu>
+                    <div>
+                        Menu
+                        <div />
+                    </div>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+                <template #description>
+                    <span>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Libero eligendi dolore, similique possimus veritatis in
+                        vitae quia praesentium fuga quibusdam autem. Doloremque
+                        tenetur repudiandae a cupiditate modi dicta eveniet
+                        veritatis?
+                    </span>
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 2</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
         </dl-grid>
     </div>
 </template>
+
+<style lang="scss"></style>

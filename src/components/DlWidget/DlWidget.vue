@@ -51,7 +51,6 @@ import {
     getElementAbove,
     addMouseEnter,
     removeMouseEnter,
-    setFlexBasis,
     insertAfter
 } from './utils'
 import { swapNodes } from '../../utils/swapNodes'
@@ -77,9 +76,6 @@ export default defineComponent({
         widgetStyles() {
             return `${this.isDragging ? 'dl-widget__drag' : 'dl-widget'}`
         }
-    },
-    mounted() {
-        setFlexBasis()
     },
     methods: {
         startDragging(e: MouseEvent) {
@@ -171,7 +167,6 @@ export default defineComponent({
                 'mousemove',
                 this.handleMouseInsideWidget
             )
-            setFlexBasis()
         },
         handleMouseInsideWidget(e: MouseEvent) {
             const mouseOffsetInside = e.clientX - this.hoveredWidget.offsetLeft
