@@ -37,7 +37,7 @@
 import { defineComponent } from 'vue-demi'
 import { DlButton } from '../components/DlButton'
 import DlPopup from '../components/DlPopup'
-import DlTextArea from '../components/DlTextArea.vue'
+import DlTextArea from '../components/Basic/DlTextArea/DlTextArea.vue'
 export default defineComponent({
     components: {
         DlButton,

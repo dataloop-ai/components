@@ -93,7 +93,7 @@ import { DlToast } from '../components/DlToastMessage'
 import { defineComponent, ref } from 'vue-demi'
 import DlTextInput from '../components/DlTextInput.vue'
 import DlRadio from '../components/DlRadio.vue'
-import DlTextArea from '../components/DlTextArea.vue'
+import DlTextArea from '../components/Basic/DlTextArea/DlTextArea.vue'
 import DlSwitch from '../components/DlSwitch.vue'
 export default defineComponent({
     name: 'DlToast',

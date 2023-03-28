@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlKpi } from '../components'
-import { EFormat, KpiItem } from '../components/DlKpi/types/KpiItem'
+import { EFormat, KpiItem } from '../components/DlKpi'
 
 const kpiData: KpiItem[] = [
     {

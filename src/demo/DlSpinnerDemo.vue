@@ -10,7 +10,7 @@
 
 <script>
 import { defineComponent } from 'vue-demi'
-import DlSpinner from '../components/DlSpinner.vue'
+import DlSpinner from '../components/Basic/DlSpinner/DlSpinner.vue'
 
 export default defineComponent({
     components: {

@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlAvatar from '../components/DlAvatar.vue'
+import DlAvatar from '../components/Basic/DlAvatar/DlAvatar.vue'
 import DlIcon from '../components/DlIcon.vue'
 export default defineComponent({
     components: { DlAvatar, DlIcon }

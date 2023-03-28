@@ -57,7 +57,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import DlColumnChart from '../components/DlChart/DlColumnChart.vue'
-import DlAvatar from '../components/DlAvatar.vue'
+import DlAvatar from '../components/Basic/DlAvatar/DlAvatar.vue'
 
 import { orderBy } from 'lodash'
 

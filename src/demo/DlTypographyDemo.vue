@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import DlTypography from '../components/DlTypography.vue'
+import DlTypography from '../components/Basic/DlTypography/DlTypography.vue'
 import { DlButton } from '../components/DlButton'
 import { defineComponent } from 'vue-demi'
 
