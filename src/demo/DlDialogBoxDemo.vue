@@ -6,6 +6,7 @@
         <dl-dialog-box
             ref="modalOne"
             v-model="isOpenedFirstModal"
+            :draggable="true"
         >
             <template #header>
                 <dl-dialog-box-header
@@ -112,8 +113,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlDialogBox, DlButton } from '../components'
-import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components/DlDialogBox'
+import { DlButton, DlDialogBox } from '../components'
+import { DlDialogBoxFooter, DlDialogBoxHeader } from '../components/DlDialogBox'
 
 export default defineComponent({
     name: 'DlDialogBoxDemo',

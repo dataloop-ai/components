@@ -14,7 +14,8 @@
                 class="dialog-wrapper"
                 :style="{
                     width: Number(width) ? `${width}px` : width,
-                    height: Number(height) ? `${height}px` : height
+                    height: Number(height) ? `${height}px` : height,
+                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`
                 }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
@@ -23,6 +24,15 @@
                     'dialog-wrapper--left': position === 'left'
                 }"
             >
+                <dl-icon
+                    v-if="draggable"
+                    :style="{ cursor: draggableOptions.draggableCursor }"
+                    class="dialog-wrapper--draggable-icon"
+                    color="dl-color-medium"
+                    icon="icon-dl-drag"
+                    size="15px"
+                    @mousedown="startDragElement"
+                />
                 <div
                     v-if="hasHeader"
                     class="header"
@@ -52,9 +62,12 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
+import DlIcon from '../DlIcon.vue'
+import _ from 'lodash'
 
 export default defineComponent({
     name: 'DlDialogBox',
+    components: { DlIcon },
     model: {
         prop: 'modelValue',
         event: 'update:modelValue'
@@ -70,13 +83,24 @@ export default defineComponent({
             default: 'center'
         },
         modelValue: Boolean,
-        volatile: { type: Boolean, default: false }
+        volatile: { type: Boolean, default: false },
+        draggable: {
+            type: Boolean,
+            default: false
+        }
     },
     emits: ['update:modelValue', 'hide', 'show'],
     data() {
         return {
             uuid: `dl-dialog-box-${v4()}`,
-            show: this.modelValue
+            show: this.modelValue,
+            draggableOptions: {
+                draggableX: 0,
+                draggableY: 0,
+                originalX: 0,
+                originalY: 0,
+                draggableCursor: 'pointer'
+            }
         }
     },
     computed: {
@@ -112,6 +136,33 @@ export default defineComponent({
         }
     },
     methods: {
+        startDragElement(e: {
+            preventDefault: () => void
+            y: number
+            x: number
+        }) {
+            e.preventDefault()
+            if (
+                !this.draggableOptions.originalY &&
+                !this.draggableOptions.originalX
+            ) {
+                this.draggableOptions.originalY = e.y
+                this.draggableOptions.originalX = e.x
+            }
+            this.draggableOptions.draggableCursor = 'grabbing'
+            document.onmousemove = _.throttle((e) => {
+                this.draggableOptions.draggableX =
+                    e.x - this.draggableOptions.originalX
+                this.draggableOptions.draggableY =
+                    e.y - this.draggableOptions.originalY
+            }, 5)
+            document.onmouseup = this.stopDragElement
+        },
+        stopDragElement() {
+            document.onmousemove = null
+            document.onmouseup = null
+            this.draggableOptions.draggableCursor = 'pointer'
+        },
         closeModal() {
             if ((this.$el as HTMLElement)?.blur) {
                 (this.$el as HTMLElement).blur()
@@ -183,15 +234,26 @@ export default defineComponent({
         height: 100vh !important;
         border-radius: 0px;
     }
+
     &--fullheight {
         margin: 0;
         height: 100vh !important;
         border-radius: 0px;
     }
+
+    &--draggable-icon {
+        position: absolute;
+        top: -1px;
+        left: 3px;
+        cursor: pointer;
+        transform: rotate(90deg);
+    }
+
     &--right {
         position: absolute !important;
         right: 0;
     }
+
     &--left {
         position: absolute !important;
         left: 0;
