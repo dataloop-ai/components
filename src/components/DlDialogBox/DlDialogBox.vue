@@ -63,7 +63,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import DlIcon from '../DlIcon.vue'
-import _ from 'lodash'
+import { throttle } from 'lodash'
 
 export default defineComponent({
     name: 'DlDialogBox',
@@ -150,7 +150,7 @@ export default defineComponent({
                 this.draggableOptions.originalX = e.x
             }
             this.draggableOptions.draggableCursor = 'grabbing'
-            document.onmousemove = _.throttle((e) => {
+            document.onmousemove = throttle((e) => {
                 this.draggableOptions.draggableX =
                     e.x - this.draggableOptions.originalX
                 this.draggableOptions.draggableY =
