@@ -47,6 +47,7 @@ import DlToastMessageDemo from './DlToastMessageDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 
 export {
     AvatarDemo,
@@ -97,7 +98,8 @@ export {
     DlChartDoughnutDemo,
     DlBarChartDemo,
     DlLineChartDemo,
-    DlSpinner
+    DlSpinner,
+    DlToggleButtonDemo
 }
 
 export const demoState = {
@@ -149,5 +151,6 @@ export const demoState = {
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
     toast_message: DlToastMessageDemo,
-    spinner: DlSpinner
+    spinner: DlSpinner,
+    toggle_button: DlToggleButtonDemo
 }
