@@ -127,6 +127,39 @@ export default defineComponent({
                     />
                 </template>
             </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :data="data"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
         </dl-grid>
         <dl-grid gap="20px">
             <dl-widget>
