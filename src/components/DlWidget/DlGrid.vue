@@ -50,7 +50,9 @@ export default defineComponent({
     methods: {
         applyGridElementStyles() {
             if (!this.layout) return
-            const gridElements = Array.from(this.$refs.grid.children)
+            const gridElements = Array.from(
+                (this.$refs.grid as HTMLElement).children
+            )
             const gridTemplate = getGridTemplate(this.layout)
             if (gridElements.length !== gridTemplate.length) return
 
