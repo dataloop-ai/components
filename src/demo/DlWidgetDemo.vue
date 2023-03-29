@@ -52,7 +52,7 @@ export default defineComponent({
 
 <template>
     <div>
-        <dl-grid :layout="[2, 3]">
+        <dl-grid :layout="[3, 2]">
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>

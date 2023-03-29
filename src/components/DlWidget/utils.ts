@@ -1,10 +1,12 @@
 export function leastCommonMultiple(arr: number[]) {
+    if (!arr) return
     const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b)
     const lcm = (a: number, b: number): number => (a * b) / gcd(a, b)
     return arr.reduce(lcm)
 }
 
 export function getGridTemplate(layout: number[]) {
+    if (!layout) return
     const template = []
     const lcm = leastCommonMultiple(layout)
     for (let i = 0; i < layout.length; i++) {

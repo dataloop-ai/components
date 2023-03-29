@@ -15,7 +15,7 @@ export default defineComponent({
     props: {
         layout: {
             type: Array as PropType<number[]>,
-            default: () => []
+            default: null
         },
         rowGap: {
             type: String,
@@ -29,7 +29,7 @@ export default defineComponent({
     computed: {
         gridStyles() {
             return {
-                '--grid-rows': this.layout.length,
+                '--grid-rows': this.layout?.length,
                 '--grid-columns': leastCommonMultiple(this.layout),
                 '--row-gap': this.rowGap,
                 '--column-gap': this.columnGap
@@ -41,7 +41,7 @@ export default defineComponent({
     },
     methods: {
         applyGridElementStyles() {
-            getGridTemplate(this.layout)
+            if (!this.layout) return
             const gridElements = Array.from(
                 document.getElementsByClassName('widget-wrapper')
             )
