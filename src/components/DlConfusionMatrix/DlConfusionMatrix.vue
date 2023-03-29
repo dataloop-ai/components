@@ -18,7 +18,7 @@
             >
                 <div
                     v-for="(row, index) in currentMatrix"
-                    :key="row"
+                    :key="index"
                     class="y-axis__element"
                 >
                     <img
@@ -49,8 +49,8 @@
                         )}; color: var(--dl-color-text${
                             cell.value < 0.5 ? '-darker' : ''
                         }-buttons)`"
-                        @mouseenter="showTooltip(cell, $event)"
-                        @mouseleave="hideTooltip"
+                        @mouseenter="showTooltip(this, cell, $event)"
+                        @mouseleave="hideTooltip(this)"
                     >
                         {{
                             cell.value > 0
@@ -64,12 +64,10 @@
                 <div class="x-axis">
                     <span
                         v-for="(row, index) in currentMatrix"
-                        :key="row"
+                        :key="index"
                         class="x-axis__element"
                         :style="`${
-                            !labelImages[0]
-                                ? 'transform: rotate(70deg);'
-                                : ''
+                            !labelImages[0] ? 'transform: rotate(70deg);' : ''
                         }`"
                     >
                         <span class="x-axis__element--text">
@@ -147,7 +145,7 @@
 import { defineComponent, PropType } from 'vue-demi'
 import DlBrush from '../DlBrush/DlBrush.vue'
 import DlTooltip from '../DlTooltip.vue'
-import { MatrixCell } from './types'
+import { MatrixCell, Label, BrushState } from './types'
 import { hexToRgbA } from '../../utils/colors'
 import { colorNames } from '../../utils/css-color-names'
 import { useThemeVariables } from '../../hooks/use-theme'
@@ -161,13 +159,13 @@ export default defineComponent({
     props: {
         labels: {
             required: true,
-            type: Array as PropType<string[]>,
-            default: () => []
+            type: Array as PropType<string[] | Label[]>,
+            default: (): [] => []
         },
         matrix: {
             required: true,
             type: Array as PropType<number[][]>,
-            default: () => []
+            default: (): [] => []
         },
         normalized: {
             type: Boolean,
@@ -189,7 +187,7 @@ export default defineComponent({
     setup(props) {
         const { variables } = useThemeVariables()
 
-        const getCellBackground = (value: number) => {
+        const getCellBackground = (value: number = 1) => {
             return hexToRgbA(
                 { ...variables, ...colorNames }[props.color],
                 value
@@ -197,7 +195,13 @@ export default defineComponent({
         }
         return { variables, getCellBackground }
     },
-    data() {
+    data(): {
+        currentMatrix: number[][]
+        tooltipState: { x: string; y: string } | null
+        currentBrushState: { min: number; max: number }
+        cellWidth: number
+        timer: number
+    } {
         return {
             currentMatrix: this.matrix,
             tooltipState: null,
@@ -207,17 +211,13 @@ export default defineComponent({
         }
     },
     computed: {
-        labelStrings(): string[] {
+        labelStrings(): string[] | Label[] {
             if (typeof this.labels[0] === 'object')
-                return this.labels.map(
-                    (label: { title: string; image: string }) => label.title
-                )
+                return this.labels.map((label: any) => label.title)
             else return this.labels
         },
         labelImages(): string[] {
-            return this.labels.map(
-                (label: { title: string; image: string }) => label.image
-            )
+            return this.labels.map((label: any) => label.image)
         },
         isValidMatrix(): boolean {
             return validateMatrix(this.matrix, this.labelStrings)
@@ -230,6 +230,7 @@ export default defineComponent({
                             (cellValue: number, cellIndex: number) => {
                                 return {
                                     value: cellValue,
+                                    unnormalizedValue: cellValue,
                                     xLabel: this.labelStrings[rowIndex],
                                     yLabel: this.labelStrings[cellIndex],
                                     x: rowIndex,
@@ -264,58 +265,59 @@ export default defineComponent({
         if (!this.isValidMatrix) return
         this.resizeMatrix()
         const resizeObserver = new ResizeObserver(this.resizeMatrix)
-        resizeObserver.observe(this.$refs.wrapper)
+        resizeObserver.observe(this.$refs.wrapper as Element)
         window.onresize = this.resizeMatrix
     },
     methods: {
-        log(e) {
-            console.log(e)
-        },
         resizeMatrix() {
-            const width = this.$refs.verticalWrapper.offsetWidth
+            const colorSpectrum = this.$refs.colorSpectrum as HTMLElement
+            const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
+            const yAxis = this.$refs.yAxis as HTMLElement
+            const labelY = this.$refs.labelY as HTMLElement
+            const width = verticalWrapper.offsetWidth
+
             this.cellWidth = width / this.currentMatrix.length
 
-            this.$refs.colorSpectrum.style.height = `${width}px`
-            this.$refs.yAxis.style.height = `${width}px`
+            colorSpectrum.style.height = `${width}px`
+            yAxis.style.height = `${width}px`
 
-            this.$refs.labelY.style.height = `${this.$refs.labelY.offsetWidth}px`
-            this.$refs.labelY.style.marginTop = `${
-                this.$refs.yAxis.offsetHeight / 2
-            }px`
+            labelY.style.height = `${labelY.offsetWidth}px`
+            labelY.style.marginTop = `${yAxis.offsetHeight / 2}px`
         },
-        handleBrushUpdate({ min, max }) {
+        handleBrushUpdate(brush: BrushState) {
             if (
-                min === this.currentBrushState.min &&
-                max === this.currentBrushState.max
+                brush.min === this.currentBrushState.min &&
+                brush.max === this.currentBrushState.max
             )
                 return
-            this.updateBrush({ min, max })
+            this.updateBrush(this, brush)
         },
-        updateBrush: debounce(function ({ min, max }) {
+        updateBrush: debounce((context: any, brush: BrushState) => {
             const matrix: number[][] = []
-            for (let i = min; i < max; i++) matrix.push([...this.matrix[i]])
-            const newMatrix = []
+            for (let i = brush.min; i < brush.max; i++)
+                matrix.push([...context.matrix[i]])
+            const newMatrix: number[][] = []
             matrix.forEach((row) => {
-                newMatrix.push(row.slice(min, max))
+                newMatrix.push(row.slice(brush.min, brush.max))
             })
-            this.currentMatrix = newMatrix
-            this.currentBrushState = { min, max }
+            context.currentMatrix = newMatrix
+            context.currentBrushState = brush
+            context.resizeMatrix()
         }, 30),
-        showTooltip: debounce(function (
-            { xLabel, yLabel, value },
-            e: MouseEvent
-        ) {
-            this.tooltipState = {
-                value,
-                xLabel,
-                yLabel,
-                x: e.pageX,
-                y: e.pageY,
-                visible: true
+        showTooltip: debounce(
+            (context: any, { xLabel, yLabel, value }, e: MouseEvent) => {
+                context.tooltipState = {
+                    value,
+                    xLabel,
+                    yLabel,
+                    x: e.pageX,
+                    y: e.pageY,
+                    visible: true
+                }
             }
-        }),
-        hideTooltip: debounce(function () {
-            this.tooltipState.visible = false
+        ),
+        hideTooltip: debounce((context: any) => {
+            context.tooltipState.visible = false
         })
     }
 })

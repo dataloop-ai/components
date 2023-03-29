@@ -40,9 +40,9 @@ const data = {
     ]
 }
 
-const matrix = []
-const labels = []
-const size = 10
+const matrix: number[][] = []
+const labels: string[] = []
+const size: number = 10
 
 for (let i = 0; i < size; i++) {
     const row = []

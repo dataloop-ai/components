@@ -1,6 +1,6 @@
-import { MatrixCell } from './types'
+import { MatrixCell, Label } from './types'
 
-export function validateMatrix(matrix: number[][], labels: string[]) {
+export function validateMatrix(matrix: number[][], labels: string[] | Label[]) {
     let validation = true
     if (matrix.length !== labels.length) return false
     for (let i = 0; i < matrix.length; i++) {
