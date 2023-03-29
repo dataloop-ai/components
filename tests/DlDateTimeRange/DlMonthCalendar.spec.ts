@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlMonthCalendar from '../../src/components/compound/DlDateTime/components/DlMonthCalendar.vue'
+import DlMonthCalendar from '../../src/components/compound/DlDateTime/DlDatePicker/components/DlMonthCalendar.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const date = new Date(1990, 12, 1)

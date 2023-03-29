@@ -1,16 +1,16 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeAll } from 'vitest'
-import { DlTextInput } from '../src/components'
+import { DlInput } from '../src/components'
 
-describe('DlTextInput component', () => {
+describe('DlInput component', () => {
     it('should mount the component', () => {
-        const wrapper = mount(DlTextInput)
+        const wrapper = mount(DlInput)
 
         expect(wrapper.exists()).toBe(true)
     })
 
     it('should have the correct classes', async () => {
-        const wrapper = mount(DlTextInput, {
+        const wrapper = mount(DlInput, {
             slots: {
                 prepend: '<p>Slot</p>'
             },
@@ -45,7 +45,7 @@ describe('DlTextInput component', () => {
     })
 
     it('should trigger the correct events', async () => {
-        const wrapper = mount(DlTextInput)
+        const wrapper = mount(DlInput)
 
         await wrapper.find('input').trigger('input')
 
@@ -85,7 +85,7 @@ describe('DlTextInput component', () => {
     })
 
     describe(`When there's a warning`, () => {
-        const wrapper = mount(DlTextInput, { props: { warning: true } })
+        const wrapper = mount(DlInput, { props: { warning: true } })
 
         describe(`When there's no error message`, () => {
             it(`should show the warning only`, async () => {
@@ -111,7 +111,7 @@ describe('DlTextInput component', () => {
     })
     describe.skip(`Trigger blur() method`, () => {
         // Should be skipped until we find a way to test this
-        const wrapper = mount(DlTextInput)
+        const wrapper = mount(DlInput)
 
         describe(`When blur() method is triggered`, () => {
             beforeAll(async () => {
@@ -126,7 +126,7 @@ describe('DlTextInput component', () => {
     })
     describe.skip(`Trigger focus() method`, () => {
         // Should be skipped until we find a way to test this
-        const wrapper = mount(DlTextInput)
+        const wrapper = mount(DlInput)
 
         describe(`When focus() method is triggered`, () => {
             beforeAll(async () => {
