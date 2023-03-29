@@ -116,7 +116,9 @@ export default defineComponent({
         },
         stopDragging(e: MouseEvent) {
             this.isDragging = false
-            ;(this.$refs.clone as HTMLElement).innerHTML = ''
+            const clone = this.$refs.clone as HTMLElement
+            clone.style.visibility = 'hidden'
+            clone.innerHTML = ''
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
             if (target && this.draggedWidget) {
                 swapNodes({
@@ -129,7 +131,6 @@ export default defineComponent({
             setTimeout(() => {
                 removeMouseEnter('dl-widget', this.handleMouseEnter as any)
             }, 1)
-            this.$refs.clone.style.visibility = 'hidden'
         },
         handleMouseEnter(e: MouseEvent) {
             this.hoveredWidget = e.target as HTMLElement
