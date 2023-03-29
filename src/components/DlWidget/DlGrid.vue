@@ -1,5 +1,6 @@
 <template>
     <div
+        ref="grid"
         :style="gridStyles"
         class="dl-grid-wrapper"
     >
@@ -36,15 +37,20 @@ export default defineComponent({
             }
         }
     },
-    mounted() {
-        this.applyGridElementStyles()
+    watch: {
+        layout: {
+            handler() {
+                this.$nextTick(() => {
+                    this.applyGridElementStyles()
+                })
+            },
+            immediate: true
+        }
     },
     methods: {
         applyGridElementStyles() {
             if (!this.layout) return
-            const gridElements = Array.from(
-                document.getElementsByClassName('widget-wrapper')
-            )
+            const gridElements = Array.from(this.$refs.grid.children)
             const gridTemplate = getGridTemplate(this.layout)
             if (gridElements.length !== gridTemplate.length) return
 
