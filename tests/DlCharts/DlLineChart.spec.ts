@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import DlLineChart from '../../src/components/DlChart/DlLineChart.vue'
+import { DlLineChart } from '../../src/components'
 import { config } from './config'
 
 describe('LineChart', () => {

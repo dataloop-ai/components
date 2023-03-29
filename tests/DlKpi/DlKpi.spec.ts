@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlKpi } from '../../src'
-import { EFormat, KpiItem } from '../../src/components/DlKpi/types/KpiItem'
+import { DlCounterFormat, DlKpiItem } from '../../src/components/types'
 
-const kpiData: KpiItem[] = [
+const kpiData: DlKpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EFormat.short
+            format: DlCounterFormat.short
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message'
@@ -15,7 +15,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EFormat.long
+            format: DlCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -26,7 +26,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154H:35M:20s',
-            format: EFormat.hm
+            format: DlCounterFormat.hm
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message',
@@ -38,7 +38,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EFormat.hms
+            format: DlCounterFormat.hms
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -50,7 +50,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 73,
-            format: EFormat.short
+            format: DlCounterFormat.short
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -62,7 +62,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 73,
-            format: EFormat.long
+            format: DlCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -74,7 +74,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 73,
-            format: EFormat.long
+            format: DlCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -84,8 +84,10 @@ const kpiData: KpiItem[] = [
         }
     }
 ]
-const kpiEmptyData: KpiItem[] = []
-const kpiEmptyParams: KpiItem[] = [
+const kpiEmptyData: DlKpiItem[] = []
+
+// todo: Fix this - remove the any
+const kpiEmptyParams: (DlKpiItem & any)[] = [
     {
         counter: {
             value: null,
