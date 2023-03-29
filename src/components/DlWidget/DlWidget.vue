@@ -18,7 +18,7 @@
                 </div>
                 <dl-icon
                     :style="`visibility: ${
-                        visibleDragIcon ? 'visible' : 'hidden'
+                        visibleDragIcon && !isDragging ? 'visible' : 'hidden'
                     }`"
                     class="dl-widget__header--drag-icon"
                     icon="icon-dl-drag"
@@ -51,7 +51,6 @@ import {
     getElementAbove,
     addMouseEnter,
     removeMouseEnter,
-    setFlexBasis,
     insertAfter
 } from './utils'
 import { swapNodes } from '../../utils/swapNodes'
@@ -78,9 +77,6 @@ export default defineComponent({
             return `${this.isDragging ? 'dl-widget__drag' : 'dl-widget'}`
         }
     },
-    mounted() {
-        setFlexBasis()
-    },
     methods: {
         startDragging(e: MouseEvent) {
             this.isDragging = true
@@ -89,9 +85,11 @@ export default defineComponent({
                 'dl-widget'
             )
             if (this.draggedWidget) {
-                (this.$refs.clone as HTMLElement).appendChild(
-                    this.draggedWidget.cloneNode(true)
-                )
+                const clone = this.$refs.clone as HTMLElement
+                clone.appendChild(this.draggedWidget.cloneNode(true))
+                clone.style.visibility = 'visible'
+                clone.style.width = `${this.draggedWidget.offsetWidth}px`
+                clone.style.height = `${this.draggedWidget.offsetHeight}px`
             }
 
             const sourceCanvas = this.draggedWidget?.querySelector('canvas')
@@ -131,6 +129,7 @@ export default defineComponent({
             setTimeout(() => {
                 removeMouseEnter('dl-widget', this.handleMouseEnter as any)
             }, 1)
+            this.$refs.clone.style.visibility = 'hidden'
         },
         handleMouseEnter(e: MouseEvent) {
             this.hoveredWidget = e.target as HTMLElement
@@ -157,21 +156,20 @@ export default defineComponent({
             )
             const targetRow = getElementAbove(this.hoveredWidget, 'dl-grid-row')
             if (this.isLeftSide) {
-                targetRow.insertBefore(
-                    this.$refs.wrapper as HTMLElement,
-                    targetWidget
-                )
+                // targetRow.insertBefore(
+                //     this.$refs.wrapper as HTMLElement,
+                //     targetWidget
+                // )
             } else {
-                insertAfter(
-                    this.$refs.wrapper as unknown as HTMLElement,
-                    targetWidget
-                )
+                // insertAfter(
+                //     this.$refs.wrapper as unknown as HTMLElement,
+                //     targetWidget
+                // )
             }
             this.hoveredWidget.removeEventListener(
                 'mousemove',
                 this.handleMouseInsideWidget
             )
-            setFlexBasis()
         },
         handleMouseInsideWidget(e: MouseEvent) {
             const mouseOffsetInside = e.clientX - this.hoveredWidget.offsetLeft

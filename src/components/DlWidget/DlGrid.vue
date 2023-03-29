@@ -16,13 +16,23 @@ export default defineComponent({
         layout: {
             type: Array as PropType<number[]>,
             default: () => []
+        },
+        rowGap: {
+            type: String,
+            default: '10px'
+        },
+        columnGap: {
+            type: String,
+            default: '10px'
         }
     },
     computed: {
         gridStyles() {
             return {
                 '--grid-rows': this.layout.length,
-                '--grid-columns': leastCommonMultiple(this.layout)
+                '--grid-columns': leastCommonMultiple(this.layout),
+                '--row-gap': this.rowGap,
+                '--column-gap': this.columnGap
             }
         }
     },
@@ -49,6 +59,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-grid-wrapper {
     display: grid;
+    row-gap: var(--row-gap);
+    column-gap: var(--column-gap);
     grid-template-columns: var(--grid-columns);
     grid-template-rows: var(--grid-rows);
 }

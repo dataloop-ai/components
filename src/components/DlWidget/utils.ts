@@ -1,3 +1,9 @@
+export function leastCommonMultiple(arr: number[]) {
+    const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b)
+    const lcm = (a: number, b: number): number => (a * b) / gcd(a, b)
+    return arr.reduce(lcm)
+}
+
 export function getGridTemplate(layout: number[]) {
     const template = []
     const lcm = leastCommonMultiple(layout)
@@ -38,22 +44,6 @@ export function removeMouseEnter(
     })
 }
 
-export function setFlexBasis() {
-    Array.from(document.getElementsByClassName('dl-grid-row')).forEach(
-        (row) => {
-            Array.from(row.children).forEach((widget: any) => {
-                widget.style.flexBasis = `${100 / row.children.length}%`
-            })
-        }
-    )
-}
-
 export function insertAfter(newNode: HTMLElement, existingNode: HTMLElement) {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling)
-}
-
-export function leastCommonMultiple(arr: number[]) {
-    const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b)
-    const lcm = (a: number, b: number): number => (a * b) / gcd(a, b)
-    return arr.reduce(lcm)
 }
