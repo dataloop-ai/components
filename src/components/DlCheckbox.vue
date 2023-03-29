@@ -82,7 +82,7 @@ import { getColor } from '../utils'
 import { v4 } from 'uuid'
 import { stopAndPrevent } from '../utils'
 
-const ValueTypes = [Array, Boolean, String, Number, Object, Function]
+const ValueTypes = [Array, Boolean, String, Number, Object, Function, null]
 
 export default defineComponent({
     name: 'DlCheckbox',
