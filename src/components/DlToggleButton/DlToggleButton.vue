@@ -1,30 +1,28 @@
 <template>
     <div
-        class="DlToggleButton"
-        :style="{ width: width }"
+        :style="{ width }"
+        class="container"
     >
-        <div
+        <dl-button
             v-for="(btn, idx) in toggleButtons"
             :key="idx"
-            :class="{ selected: btn.value === value }"
+            :styles="getStyles(btn.value === scopedValue)"
+            data-test="button"
+            fluid
+            @click="value = btn.value"
         >
-            <dl-button
-                color="black"
-                text-color="black"
-                outlined
+            <span v-if="!$slots.button && !$slots[`button-${idx}`]">
+                {{ btn.label }}
+            </span>
+            <slot
                 :label="btn.label"
-                @click="handleChange(btn.value)"
-            >
-                <slot
-                    :name="`button-${idx}`"
-                    :label="btn.label"
-                />
-                <slot
-                    name="button"
-                    :label="btn.label"
-                />
-            </dl-button>
-        </div>
+                :name="`button-${idx}`"
+            />
+            <slot
+                :label="btn.label"
+                name="button"
+            />
+        </dl-button>
     </div>
 </template>
 
@@ -55,34 +53,63 @@ export default defineComponent({
         }
     },
     emits: ['update:modelValue', 'change'],
+    data: () => ({
+        scopedValue: null as string | number,
+        generalStyles: {
+            padding: '7px 10px',
+            height: '28px',
+            fontSize: 'var(--dl-font-size-body)',
+            borderRadius: '0'
+        },
+        nonActiveStyles: {
+            color: 'var(--dl-color-darker)',
+            borderColor: 'var(--dl-color-separator)',
+            background: 'var(--dl-color-bg)'
+        },
+        activeStyles: {
+            color: 'var(--dl-color-secondary)',
+            borderColor: 'var(--dl-color-secondary)',
+            background: 'var(--dl-color-secondary-opacity)'
+        }
+    }),
     computed: {
         value: {
             get() {
                 return this.modelValue
             },
-            set(value) {
-                this.$emit('update:modelValue', value)
+            set(value: any) {
+                this.$emit('change', value)
+                let buttonValue
+                if (this.scopedValue !== value) {
+                    buttonValue = value
+                } else {
+                    buttonValue = null
+                }
+                this.scopedValue = buttonValue
+                this.$emit('update:modelValue', buttonValue)
             }
         },
         toggleButtons() {
             return this.options.slice(0, 3)
         }
     },
+    created() {
+        this.scopedValue = this.value
+    },
     methods: {
-        handleChange(value) {
-            this.$emit('change', value)
-            if (this.value !== value) {
-                this.value = value
-            } else {
-                this.value = null
-            }
+        getStyles(activeBtn: boolean) {
+            return activeBtn
+                ? { ...this.generalStyles, ...this.activeStyles }
+                : { ...this.generalStyles, ...this.nonActiveStyles }
         }
     }
 })
 </script>
 
 <style lang="scss" scoped>
-.DlToggleButton {
+.container {
     display: inline-flex;
+    border-radius: 2px;
+    overflow: hidden;
 }
 </style>

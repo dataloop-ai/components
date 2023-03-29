@@ -3,13 +3,14 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
+        :style="containerStyles"
     >
         <button
             v-if="hasContent || hasIcon"
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
-            :style="cssButtonVars"
+            :style="[cssButtonVars, styles]"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"
@@ -52,20 +53,20 @@
 <script lang="ts">
 import DlIcon from '../DlIcon.vue'
 import DlTooltip from '../DlTooltip.vue'
-import {
-    setPadding,
-    setFontSize,
-    setTextColor,
-    setBgColor,
-    setBorder,
-    setColorOnHover,
-    setBorderOnHover,
-    setBgOnHover,
-    setIconSize,
-    setIconPadding,
-    setMaxHeight
-} from './utils'
 import type { ButtonSizes } from './utils'
+import {
+    setBgColor,
+    setBgOnHover,
+    setBorder,
+    setBorderOnHover,
+    setColorOnHover,
+    setFontSize,
+    setIconPadding,
+    setIconSize,
+    setMaxHeight,
+    setPadding,
+    setTextColor
+} from './utils'
 import { textTransform } from '../../utils/string'
 import { defineComponent, PropType, ref } from 'vue-demi'
 import { colorNames } from '../../utils/css-color-names'
@@ -119,7 +120,8 @@ export default defineComponent({
         noWrap: Boolean,
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        styles: { type: Object, default: null }
     },
     emits: ['click', 'mousedown'],
     setup() {
@@ -154,6 +156,9 @@ export default defineComponent({
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
+        },
+        containerStyles(): object {
+            return this.fluid ? { width: '100%' } : {}
         },
         hasContent(): boolean {
             return !!this.$slots.default || this.hasLabel

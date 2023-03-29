@@ -1,24 +1,31 @@
 <template>
     <div style="width: 950px; padding-top: 20px">
+        <dl-text-input
+            v-model="width"
+            title="Custom width container"
+        />
         <DlToggleButton
             v-model="selectedValue"
             :options="options"
+            :width="width"
+            @change="change"
         >
-            <template #button-1="{ label }">
-                <p>{{ label }} dgsdgdsgdsgdsg</p>
+            <template #button-1>
+                <p>Changed with slot</p>
             </template>
         </DlToggleButton>
-        {{ selectedValue }}
+        Selected button: {{ label || 'Not selected' }}
     </div>
 </template>
 
 <script lang="ts">
 import { DlToggleButton } from '../components'
 import { defineComponent } from 'vue-demi'
+import DlTextInput from '../components/DlTextInput.vue'
 
 export default defineComponent({
     name: 'DlToggleButtonDemo',
-    components: { DlToggleButton },
+    components: { DlTextInput, DlToggleButton },
     setup() {
         return {
             DlToggleButton
@@ -26,13 +33,23 @@ export default defineComponent({
     },
     data: () => ({
         options: [
-            { label: 'demo 1', value: 1 },
-            { label: 'demo 2', value: 2 },
-            { label: 'demo 3', value: 3 }
+            { label: 'Button 1', value: 1 },
+            { label: 'Button 2', value: 2 },
+            { label: 'Button 3', value: 3 }
         ],
-        selectedValue: null
-    })
+        selectedValue: 1,
+        width: '100%'
+    }),
+    computed: {
+        label() {
+            return this.options.find((o) => o.value === this.selectedValue)
+                ?.label
+        }
+    },
+    methods: {
+        change(val: any) {
+            console.log(val)
+        }
+    }
 })
 </script>
-
-<style scoped></style>
