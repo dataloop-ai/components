@@ -29,6 +29,8 @@
                     (split === false && disableMainBtn === true) ||
                     disableDropdown === true
             "
+            :overflow="overflow"
+            :tooltip="tooltip"
             @click="onClickHide"
         />
         <dl-button
@@ -47,6 +49,9 @@
                     (split === false && disableMainBtn === true) ||
                     disableDropdown === true
             "
+            :no-wrap="noWrap"
+            :overflow="overflow"
+            :tooltip="tooltip"
         >
             <div
                 class="dl-btn-dropdown--separator"
@@ -111,6 +116,8 @@
         :disabled="disabled === true || disableMainBtn === true"
         :style="mainBtnStyle"
         no-wrap
+        :overflow="overflow"
+        :tooltip="tooltip"
         @click="onClick"
     >
         <div
@@ -230,7 +237,10 @@ export default defineComponent({
         uppercase: Boolean,
         outlined: Boolean,
         padding: { type: String, default: '5px' },
-        fitContent: Boolean
+        fitContent: Boolean,
+        noWrap: Boolean,
+        overflow: { type: Boolean, default: false, required: false },
+        tooltip: { type: String, default: null, required: false }
     },
     emits: [
         'update:model-value',

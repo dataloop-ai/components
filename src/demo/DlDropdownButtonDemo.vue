@@ -84,8 +84,9 @@
                         clickable
                         @click="() => onClose('Videos and long text')"
                     >
-                        <dl-item-section>
-                            Videos and long text
+                        <dl-item-section :no-wrap="true">
+                            Videos and long text ideos and long text ideos and
+                            long text ideos and long text ideos and long text
                         </dl-item-section>
                     </dl-list-item>
 
@@ -189,6 +190,9 @@
                 :model-value="showing"
                 :label="name"
                 main-btn-style="width: 150px;"
+                :overflow="true"
+                :no-wrap="true"
+                tooltip="Tooltip message"
                 @show="onOpen"
             >
                 <dl-list>
@@ -203,7 +207,7 @@
                         clickable
                         @click="() => onClose('Videos and long text')"
                     >
-                        <dl-item-section>
+                        <dl-item-section :no-wrap="true">
                             Videos and long text Videos and long text
                         </dl-item-section>
                     </dl-list-item>
