@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import { DlTypography } from '../src/components'
 
-describe.only('DlTypography', () => {
+describe('DlTypography', () => {
     it('should compute values properly', async () => {
         const wrapper = mount(DlTypography, {
             props: {
