@@ -57,8 +57,7 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import DlIcon from './DlIcon.vue'
-import DlTypography from './DlTypography.vue'
+import { DlIcon, DlTypography } from '../../essential'
 import { defineComponent, computed, ref } from 'vue-demi'
 
 export default defineComponent({

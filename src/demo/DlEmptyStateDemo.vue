@@ -88,10 +88,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlEmptyState, DlButton } from '../components'
-import DlGrid from '../components/DlWidget/DlGrid.vue'
-import DlGridRow from '../components/DlWidget/DlGridRow.vue'
-import DlWidget from '../components/DlWidget/DlWidget.vue'
+import {
+    DlEmptyState,
+    DlButton,
+    DlGrid,
+    DlGridRow,
+    DlWidget
+} from '../components/basic'
 export default defineComponent({
     name: 'DlEmptyStateDemo',
     components: {
