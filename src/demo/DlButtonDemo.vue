@@ -234,7 +234,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue-demi'
 import { DlButton, DlBadge, DlIcon } from '../components'
-import { ButtonSizes } from '../components/DlButton'
+import { ButtonSizes } from '../components/basic/DlButton/utils'
 export default defineComponent({
     name: 'DlButtonDemo',
     components: {

@@ -3,7 +3,7 @@ import {
     HSVColor,
     RGBAColor,
     RGBColor
-} from '../../src/components/DlColorPicker/types'
+} from '../../src/components/types'
 import {
     createAlphaSquare,
     createLinearGradient,
@@ -11,7 +11,7 @@ import {
     rgb2hsv,
     rgb2rgba,
     setColorValue
-} from '../../src/components/DlColorPicker/utils'
+} from '../../src/components/essential/DlColorPicker/utils'
 import { describe, it, expect } from 'vitest'
 
 describe('DlColorPicker setColorValue util', () => {

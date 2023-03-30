@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlPagination } from '../components/DlPagination'
+import { DlPagination } from '../components'
 
 export default defineComponent({
     name: 'DlPaginationDemo',

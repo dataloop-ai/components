@@ -1,5 +1,5 @@
 import { mountComposition } from 'vue-composition-test-utils'
-import { useTableRowExpand } from '../../../src/components/DlTable/hooks/tableRowExpand'
+import { useTableRowExpand } from '../../../src/components/compound/DlTable/hooks/tableRowExpand'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const emitFn = vi.fn()

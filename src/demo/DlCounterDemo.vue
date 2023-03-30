@@ -26,7 +26,7 @@
                     text: 'lorem ipsum'
                 },
                 {
-                    value: 45,
+                    value: null,
                     text: 'ipsum lorem',
                     subtext:
                         'Cupidatat est labore et nisi do culpa veniam reprehenderit anim consectetur dolor mollit.'

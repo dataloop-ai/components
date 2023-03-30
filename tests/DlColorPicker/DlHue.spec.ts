@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { DlHue } from '../../src/components/DlColorPicker'
+import { DlHue } from '../../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlColorPicker DlHue component', () => {
