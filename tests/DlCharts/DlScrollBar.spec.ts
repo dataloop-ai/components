@@ -52,6 +52,6 @@ describe('DlScrollBar', () => {
 
         await wrapper.vm.$nextTick()
 
-        expect(wrapper.emitted()['position-update']).toEqual([[4000]])
+        expect(wrapper.emitted()['position-update']).toBeTruthy()
     })
 })

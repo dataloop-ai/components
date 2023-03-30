@@ -329,6 +329,9 @@ export default defineComponent({
                         scales: {
                             y: {
                                 max: thisItemsInView.value
+                            },
+                            x: {
+                                suggestedMax: chartData.value.labels.length
                             }
                         }
                     },

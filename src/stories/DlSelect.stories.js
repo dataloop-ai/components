@@ -5,11 +5,11 @@ export default {
     title: 'Library/Components/DlSelect',
     component: DlSelect,
     argTypes: {
-        fit: {
-            name: 'fit',
-            defaultValue: true,
+        fitConntent: {
+            name: 'fitConntent',
+            defaultValue: false,
             description:
-                'Allows the options to match at least the full width of its target',
+                'Allows the options to match at least the full width of its content',
 
             control: 'boolean',
             table: {
@@ -299,6 +299,126 @@ const SimpleTemplate = (args) => ({
   `
 })
 
+const DisabledTemplate = (args) => ({
+    components: { DlSelect },
+    setup() {
+        return { args }
+    },
+    props: {},
+    data() {
+        return {
+            data: [],
+            options: [
+                { label: 'Option 1', value: 1 },
+                { label: 'Option 2', value: 2 },
+                { label: 'Option 3', value: 3 }
+            ]
+        }
+    },
+    methods: {
+        show: action('show'),
+        hide: action('hide'),
+        beforeShow: action('before-show'),
+        beforeHide: action('before-hide'),
+        updateModelValue: action('update:model-value')
+    },
+    template: `
+    <div style='padding: 50px'>
+      <dl-select
+        disabled
+        :options="options"
+        v-model="data"
+        v-bind="args"
+        @show="show"
+        @before-show="beforeShow"
+        @hide="hide"
+        @before-hide="beforeHide"
+        @update:model-value="updateModelValue"
+      />
+    </div>
+  `
+})
+
+const MultiselectTemplate = (args) => ({
+    components: { DlSelect },
+    setup() {
+        return { args }
+    },
+    props: {},
+    data() {
+        return {
+            data: [],
+            options: [
+                { label: 'Option 1', value: 1 },
+                { label: 'Option 2', value: 2 },
+                { label: 'Option 3', value: 3 }
+            ]
+        }
+    },
+    methods: {
+        show: action('show'),
+        hide: action('hide'),
+        beforeShow: action('before-show'),
+        beforeHide: action('before-hide'),
+        updateModelValue: action('update:model-value')
+    },
+    template: `
+    <div style='padding: 50px'>
+      <dl-select
+        multiselect
+        :options="options"
+        v-model="data"
+        v-bind="args"
+        @show="show"
+        @before-show="beforeShow"
+        @hide="hide"
+        @before-hide="beforeHide"
+        @update:model-value="updateModelValue"
+      />
+    </div>
+  `
+})
+
+const ErrorTemplate = (args) => ({
+    components: { DlSelect },
+    setup() {
+        return { args }
+    },
+    props: {},
+    data() {
+        return {
+            data: [],
+            options: [
+                { label: 'Option 1', value: 1 },
+                { label: 'Option 2', value: 2 },
+                { label: 'Option 3', value: 3 }
+            ]
+        }
+    },
+    methods: {
+        show: action('show'),
+        hide: action('hide'),
+        beforeShow: action('before-show'),
+        beforeHide: action('before-hide'),
+        updateModelValue: action('update:model-value')
+    },
+    template: `
+    <div style='padding: 50px'>
+      <dl-select
+        error
+        :options="options"
+        v-model="data"
+        v-bind="args"
+        @show="show"
+        @before-show="beforeShow"
+        @hide="hide"
+        @before-hide="beforeHide"
+        @update:model-value="updateModelValue"
+      />
+    </div>
+  `
+})
+
 const CustomContentTemplate = (args) => ({
     components: { DlSelect, DlChip },
     setup() {
@@ -406,6 +526,7 @@ const SearchTemplate = (args) => ({
     template: `
     <div style='padding: 50px'>
       <dl-select
+          search
           v-model="selectedBySearch"
           :options="searchOptions"
           @filter="filterFn"
@@ -530,6 +651,26 @@ SimpleSelect.args = {
     width: '300px'
 }
 
+export const DisabledSelect = DisabledTemplate.bind({})
+DisabledSelect.args = {
+    placeholder: 'Select An Option',
+    width: '300px',
+    disabled: true
+}
+
+export const Multiselect = MultiselectTemplate.bind({})
+Multiselect.args = {
+    placeholder: 'Select An Option',
+    width: '300px',
+    multiselect: true
+}
+export const ErrorSelect = ErrorTemplate.bind({})
+ErrorSelect.args = {
+    placeholder: 'Select An Option',
+    width: '300px',
+    error: true
+}
+
 export const SelectWithoutBorders = CustomContentTemplate.bind({})
 SelectWithoutBorders.args = {
     withoutBorders: true,
@@ -566,5 +707,5 @@ SelectWithoutFit.args = {
     size: 'm',
     multiselect: true,
     hasPrepend: true,
-    fit: false
+    fitContainer: false
 }

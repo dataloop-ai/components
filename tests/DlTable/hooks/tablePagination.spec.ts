@@ -81,6 +81,7 @@ describe('useTablePaginationState', () => {
                     page: 1,
                     rowsNumber: 50,
                     rowsPerPage: 0,
+                    rowsPerPageOptions: [10, 25, 100],
                     sortBy: 'field',
                     withLegend: true,
                     withQuickNavigation: true,

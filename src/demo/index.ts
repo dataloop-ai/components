@@ -43,8 +43,10 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
-import DlSpinnerDemo from './DlSpinnerDemo.vue'
-import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
+import DlToastMessageDemo from './DlToastMessageDemo.vue'
+import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
+import DlLineChartDemo from './DlLineChartDemo.vue'
+import DlSpinner from './DlSpinnerDemo.vue'
 
 export {
     AvatarDemo,
@@ -89,11 +91,13 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
+    DlToastMessageDemo,
     DlColumnChartDemo,
-    DlBarChartDemo,
     DlSwitchDemo,
-    DlSpinnerDemo,
-    DlConfusionMatrix
+    DlChartDoughnutDemo,
+    DlBarChartDemo,
+    DlLineChartDemo,
+    DlSpinner
 }
 
 export const demoState = {
@@ -104,11 +108,13 @@ export const demoState = {
     button: DlButtonDemo,
     column_chart: DlColumnChartDemo,
     bar_chart: DlBarChartDemo,
+    line_chart: DlLineChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,
     counter: DlCounterDemo,
     dialog_box: DlDialogBoxDemo,
+    doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
@@ -126,7 +132,6 @@ export const demoState = {
     skeleton: DlSkeletonDemo,
     slider: DlSliderDemo,
     stepper: DlStepperDemo,
-    confusion_matrix: DlConfusionMatrix,
     table: DlTableDemo,
     table_td: DlTdDemo,
     table_th: DlThDemo,
@@ -143,5 +148,6 @@ export const demoState = {
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
-    spinner: DlSpinnerDemo
+    toast_message: DlToastMessageDemo,
+    spinner: DlSpinner
 }

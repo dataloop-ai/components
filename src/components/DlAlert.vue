@@ -15,7 +15,7 @@
                 <dl-icon
                     :icon="icon"
                     :color="iconColor"
-                    size="16px"
+                    size="24px"
                 />
             </div>
             <span
@@ -32,8 +32,7 @@
                 class="close-btn-icon"
                 data-test="close-btn-icon"
                 icon="icon-dl-close"
-                :color="iconColor"
-                size="8px"
+                size="12px"
                 @click="handleClose"
             />
         </div>
@@ -42,7 +41,15 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    nextTick,
+    onMounted,
+    ref,
+    Ref,
+    watch
+} from 'vue-demi'
 import { getColor, includes } from '../utils'
 import { DlIcon } from './'
 
@@ -52,7 +59,7 @@ const typeToIconMap: Record<AlertType, string> = {
     info: 'icon-dl-info-filled',
     success: 'icon-dl-approve-filled',
     warning: 'icon-dl-alert-filled',
-    error: 'icon-dl-alert-filled'
+    error: 'icon-dl-error-filled'
 }
 
 const typeToIconColorMap: Record<AlertType, string> = {
@@ -139,32 +146,29 @@ export default defineComponent({
         )
 
         function normalizeStyles(fluid?: boolean) {
-            const { height } = (
-                rootRef as Ref<HTMLElement | null>
-            ).value!.getBoundingClientRect()
-
-            const iconS: Record<string, any> = {
-                display: 'flex'
-            }
-
-            const rootS: Record<string, any> = {
-                backgroundColor: getColor(typeToBackgroundMap[type])
-            }
-
-            if (height > 36) {
-                iconS.alignSelf = 'flex-start'
-            } else {
-                iconS.alignSelf = 'center'
-            }
-
-            if (fluid === true) {
-                rootS.width = '100%'
-            } else {
-                rootS.width = 'fit-content'
-            }
-
-            iconStyle.value = iconS
-            rootStyle.value = rootS
+            nextTick(() => {
+                const { height } = (
+                    rootRef as Ref<HTMLElement | null>
+                ).value!.getBoundingClientRect()
+                const iconS: Record<string, any> = {
+                    display: 'flex'
+                }
+                const rootS: Record<string, any> = {
+                    backgroundColor: getColor(typeToBackgroundMap[type])
+                }
+                if (height > 36) {
+                    iconS.alignSelf = 'flex-start'
+                } else {
+                    iconS.alignSelf = 'center'
+                }
+                if (fluid === true) {
+                    rootS.width = '100%'
+                } else {
+                    rootS.width = 'fit-content'
+                }
+                iconStyle.value = iconS
+                rootStyle.value = rootS
+            })
         }
 
         function handleClose() {
@@ -200,7 +204,7 @@ export default defineComponent({
     > div {
         display: flex;
         flex-direction: row;
-        padding: 10px;
+        padding: 10px 16px;
     }
 
     .text {
@@ -213,7 +217,8 @@ export default defineComponent({
     }
 
     .close-btn {
-        padding: 5px 5px 0 0;
+        padding-right: 16px;
+        padding-left: 10px;
     }
 
     .icon-dl-close:hover {

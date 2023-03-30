@@ -78,7 +78,8 @@
             :class="contentClass"
             :style="contentStyle"
             :cover="cover"
-            fit
+            fit-container
+            :fit-content="fitContent"
             :persistent="persistent"
             :auto-close="autoClose"
             :anchor="menuAnchor"
@@ -142,7 +143,8 @@
             :class="contentClass"
             :style="contentStyle"
             :cover="cover"
-            fit
+            fit-container
+            :fit-content="fitContent"
             :persistent="persistent"
             :auto-close="autoClose"
             :anchor="menuAnchor"
@@ -227,7 +229,8 @@ export default defineComponent({
         flat: Boolean,
         uppercase: Boolean,
         outlined: Boolean,
-        padding: { type: String, default: '5px' }
+        padding: { type: String, default: '5px' },
+        fitContent: Boolean
     },
     emits: [
         'update:model-value',
@@ -348,19 +351,6 @@ export default defineComponent({
                 (menuRef.value as Record<string, Function>).hide(evt)
             }
         }
-
-        // expose public methods
-        Object.assign(proxy, {
-            show,
-            hide,
-            toggle,
-            onClickHide,
-            onClick,
-            onBeforeShow,
-            onShow,
-            onBeforeHide,
-            onHide
-        })
 
         onMounted(() => {
             if (props.modelValue) {

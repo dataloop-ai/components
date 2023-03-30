@@ -1,7 +1,8 @@
 <template>
     <div
         :id="uuid"
-        class="container"
+        class="dl-counters-container"
+        :style="cssVars"
     >
         <ul>
             <li
@@ -11,7 +12,11 @@
             >
                 <div :class="computeClass('item-content')">
                     <p :class="computeClass('item-value')">
-                        {{ item.value }}
+                        {{
+                            abbreviateNumbers
+                                ? abbreviateNumber(item.value)
+                                : item.value
+                        }}
                     </p>
                     <p
                         v-show="item.text"
@@ -35,6 +40,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
+import { abbreviateToString } from '../utils/abbreviate-to-string'
 
 interface CounterItem {
     value?: number
@@ -49,12 +55,20 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        spacing: {
+            type: String,
+            default: '30px'
+        },
         items: {
             type: Array as PropType<CounterItem[]>,
             default: (): CounterItem[] => [],
             validator(value: CounterItem[]): boolean {
                 return value.length <= 8
             }
+        },
+        abbreviateNumbers: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
@@ -62,9 +76,22 @@ export default defineComponent({
             uuid: `dl-counters-${v4()}`
         }
     },
+    computed: {
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-counter-spacing': this.spacing
+            }
+        }
+    },
     methods: {
         capitalize(value: string): string {
             return value[0].toUpperCase() + value.slice(1)
+        },
+        abbreviateNumber(nr: number) {
+            if (typeof nr === 'number') {
+                return abbreviateToString(nr)
+            }
+            return nr
         },
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]
@@ -74,7 +101,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.container {
+.dl-counters-container {
     padding: 10px;
     width: fit-content;
 }
@@ -96,12 +123,12 @@ ul {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-left: 30px;
-        padding-right: 30px;
+        padding-left: var(--dl-counter-spacing);
+        padding-right: var(--dl-counter-spacing);
 
         &--small {
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-left: var(--dl-counter-spacing);
+            padding-right: var(--dl-counter-spacing);
         }
     }
 
