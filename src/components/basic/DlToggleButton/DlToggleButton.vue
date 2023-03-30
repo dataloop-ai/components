@@ -6,9 +6,13 @@
         <dl-button
             v-for="(btn, idx) in toggleButtons"
             :key="idx"
-            :styles="getStyles(btn.value === scopedValue)"
+            :styles="
+                getStyles(btn.value === scopedValue, hoverBtn === btn.value)
+            "
             data-test="button"
             fluid
+            @mouseenter="hoverBtn = btn.value"
+            @mouseleave="hoverBtn = null"
             @click="value = btn.value"
         >
             <span v-if="!$slots.button && !$slots[`button-${idx}`]">
@@ -30,6 +34,7 @@
 import { defineComponent } from 'vue-demi'
 import { OptionItem } from './types'
 import DlButton from '../DlButton/DlButton.vue'
+import { ButtonsStyles } from './config'
 
 export default defineComponent({
     name: 'DlToggleButton',
@@ -55,29 +60,14 @@ export default defineComponent({
     emits: ['update:modelValue', 'change'],
     data: () => ({
         scopedValue: null as string | number,
-        generalStyles: {
-            padding: '7px 10px',
-            height: '28px',
-            fontSize: 'var(--dl-font-size-body)',
-            borderRadius: '0'
-        },
-        nonActiveStyles: {
-            color: 'var(--dl-color-darker)',
-            borderColor: 'var(--dl-color-separator)',
-            background: 'var(--dl-color-bg)'
-        },
-        activeStyles: {
-            color: 'var(--dl-color-secondary)',
-            borderColor: 'var(--dl-color-secondary)',
-            background: 'var(--dl-color-secondary-opacity)'
-        }
+        hoverBtn: null as string | number
     }),
     computed: {
         value: {
             get() {
                 return this.modelValue
             },
-            set(value: any) {
+            set(value: string | number) {
                 this.$emit('change', value)
                 let buttonValue
                 if (this.scopedValue !== value) {
@@ -97,10 +87,14 @@ export default defineComponent({
         this.scopedValue = this.value
     },
     methods: {
-        getStyles(activeBtn: boolean) {
-            return activeBtn
-                ? { ...this.generalStyles, ...this.activeStyles }
-                : { ...this.generalStyles, ...this.nonActiveStyles }
+        getStyles(activeBtn: boolean, hovered: boolean) {
+            if (activeBtn) {
+                return ButtonsStyles.activeStyles
+            } else if (hovered) {
+                return ButtonsStyles.hoverStyles
+            } else {
+                return ButtonsStyles.nonActiveStyles
+            }
         }
     }
 })
