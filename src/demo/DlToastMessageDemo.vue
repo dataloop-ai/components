@@ -2,18 +2,22 @@
     <div style="width: 950px; padding-top: 20px">
         <div class="flex">
             <div>
-                <dl-text-area
+                <dl-area
                     v-model="message"
                     title="Message"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="duration"
                     type="number"
                     title="Duration seconds"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="classItem"
                     title="Custom class for toast item"
+                />
+                <dl-text-input
+                    v-model="width"
+                    title="Custom width for toast item"
                 />
             </div>
             <div class="flex">
@@ -88,20 +92,15 @@
 </template>
 
 <script lang="ts">
-import { DlButton } from '../components'
-import { DlToast } from '../components/DlToastMessage'
 import { defineComponent, ref } from 'vue-demi'
-import DlTextInput from '../components/DlTextInput.vue'
-import DlRadio from '../components/DlRadio.vue'
-import DlTextArea from '../components/DlTextArea.vue'
-import DlSwitch from '../components/DlSwitch.vue'
+import { DlButton, DlToast, DlInput, DlRadio, DlSwitch } from '../components'
+
 export default defineComponent({
     name: 'DlToast',
     components: {
         DlSwitch,
-        DlTextArea,
         DlRadio,
-        DlTextInput,
+        DlInput,
         DlButton
     },
     setup() {
@@ -113,6 +112,7 @@ export default defineComponent({
         const position = ref('bottom')
         const closable = ref(true)
         const classItem = ref('demo-toast')
+        const width = ref('auto')
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
@@ -120,7 +120,8 @@ export default defineComponent({
                 type: type.value,
                 duration: duration.value,
                 classItem: classItem.value,
-                closable: closable.value
+                closable: closable.value,
+                width: width.value
             })
         }
         return {
@@ -130,7 +131,8 @@ export default defineComponent({
             type,
             position,
             classItem,
-            closable
+            closable,
+            width
         }
     }
 })

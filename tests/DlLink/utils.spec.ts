@@ -1,4 +1,7 @@
-import { getLinkRel, getLinkTarget } from '../../src/components/DlLink'
+import {
+    getLinkRel,
+    getLinkTarget
+} from '../../src/components/essential/DlLink/utils'
 import { describe, it, expect } from 'vitest'
 
 describe('DlLink getLinkTarget util', () => {

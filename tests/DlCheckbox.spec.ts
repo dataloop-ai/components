@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { DlCheckbox } from '../src'
+import { DlCheckbox } from '../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlCheckbox', () => {

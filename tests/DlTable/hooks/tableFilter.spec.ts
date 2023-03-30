@@ -1,5 +1,5 @@
 import { mountComposition } from 'vue-composition-test-utils'
-import { useTableFilter } from '../../../src/components/DlTable/hooks/tableFilter'
+import { useTableFilter } from '../../../src/components/compound/DlTable/hooks/tableFilter'
 import { describe, it, expect, vi } from 'vitest'
 
 const COLUMNS = [

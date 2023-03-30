@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
-import DlPagination from '../../src/components/DlPagination/DlPagination.vue'
+import { DlPagination } from '../../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlPagination', () => {

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlTimeCounter from '../../src/components/DlTimePicker/DlTimeCounter.vue'
+import DlTimeCounter from '../../src/components/compound/DlDateTime/DlTimePicker/components/DlTimeCounter.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
 vi.useFakeTimers('modern')
