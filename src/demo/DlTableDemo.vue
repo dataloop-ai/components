@@ -29,7 +29,7 @@
                     :model-value="resizableState"
                     @update:model-value="updateResizableState"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="filter"
                     title="Filter"
                     style="width: 220px"
@@ -120,7 +120,7 @@
 </template>
 
 <script lang="ts">
-import { DlTable, DlOptionGroup, DlSwitch, DlTextInput } from '../components'
+import { DlTable, DlOptionGroup, DlSwitch, DlInput } from '../components'
 import { defineComponent } from 'vue-demi'
 import { times } from 'lodash'
 
@@ -280,7 +280,7 @@ export default defineComponent({
         DlTable,
         DlSwitch,
         DlOptionGroup,
-        DlTextInput
+        DlInput
     },
     data() {
         return {

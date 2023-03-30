@@ -1,6 +1,6 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import { ComponentOptionsBase, ComponentPublicInstance } from 'vue'
-import { DlRange } from '../../src'
+import { DlRange } from '../../src/components'
 import touchPanDirective from '../../src/directives/TouchPan'
 import { describe, it, expect, beforeEach } from 'vitest'
 

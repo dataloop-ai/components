@@ -4,7 +4,7 @@ import {
     useTablePaginationState,
     useTablePagination,
     TablePagination
-} from '../../../src/components/DlTable/hooks/tablePagination'
+} from '../../../src/components/compound/DlTable/hooks/tablePagination'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const pagination = {

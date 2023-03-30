@@ -65,7 +65,7 @@
                         color="dl-color-separator"
                         text-color="dl-color-darker"
                     />
-                    <dl-text-input
+                    <dl-input
                         v-model="percentage"
                         style="width: 60px; margin: 0 10px 0 15px"
                         size="m"
@@ -109,7 +109,7 @@ import { defineComponent } from 'vue-demi'
 import {
     DlButton,
     DlCheckbox,
-    DlTextInput,
+    DlInput,
     DlTypography,
     DlOptionGroup,
     DlSelect,
@@ -120,7 +120,7 @@ export default defineComponent({
     components: {
         DlButton,
         DlTypography,
-        DlTextInput,
+        DlInput,
         DlOptionGroup,
         DlSelect,
         DlCheckbox,

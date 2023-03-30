@@ -22,7 +22,7 @@
             />
         </div>
         <div class="inputs-container">
-            <dl-text-input
+            <dl-input
                 without-root-padding
                 required
                 title="Name"
@@ -57,7 +57,7 @@
                 required
                 :options="['High', 'Medium', 'Low']"
             />
-            <dl-text-input
+            <dl-input
                 without-root-padding
                 title="Completion Due Date"
                 placeholder="dd/mm/yy"
@@ -70,7 +70,7 @@
 import { defineComponent } from 'vue-demi'
 import {
     DlButton,
-    DlTextInput,
+    DlInput,
     DlSelect,
     DlOptionGroup,
     DlTypography
@@ -80,7 +80,7 @@ export default defineComponent({
         DlButton,
         DlTypography,
         DlOptionGroup,
-        DlTextInput,
+        DlInput,
         DlSelect
     },
     emits: ['reset-click', 'error-click', 'complete-click', 'warning-click'],

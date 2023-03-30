@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlAccordion } from '../src/components'
-import AccordionHeader from '../src/components/DlAccordion/AccordionHeader.vue'
+import AccordionHeader from '../src/components/basic/DlAccordion/components/AccordionHeader.vue'
 import { describe, it, expect } from 'vitest'
 
 describe('DlAccordion', () => {
