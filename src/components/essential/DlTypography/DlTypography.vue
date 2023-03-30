@@ -27,7 +27,8 @@ export default defineComponent({
         },
         size: {
             type: String,
-            default: 'body'
+            required: false,
+            default: null
         },
         uppercase: Boolean,
         bold: Boolean,
@@ -49,7 +50,11 @@ export default defineComponent({
                 fontWeight: this.bold ? 'bold' : 400
             }
 
-            if (!sizes.includes(this.size)) {
+            if (!this.size) {
+                if (sizes.includes(this.variant)) {
+                    styles.fontSize = this.variant as string
+                }
+            } else {
                 styles.fontSize = this.size as string
             }
 
