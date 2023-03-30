@@ -43,7 +43,7 @@ import DlTextHolderDemo from './DlTextHolderDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
-import DlToastMessageDemo from './DlToastMessageDemo.vue'
+import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
@@ -93,7 +93,7 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlToastMessageDemo,
+    DlToastDemo as DlToastMessageDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
     DlChartDoughnutDemo,
@@ -141,7 +141,7 @@ export const demoState = {
     table_th: DlThDemo,
     table_tr: DlTrDemo,
     tabs: TabsDemo,
-    text_input: DlInputDemo,
+    input: DlInputDemo,
     textarea: DlTextareaDemo,
     text_holder: DlTextHolderDemo,
     time_picker: DlDateTimeRangeDemo,
@@ -152,7 +152,7 @@ export const demoState = {
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
-    toast_message: DlToastMessageDemo,
+    toast: DlToastDemo,
     spinner: DlSpinner,
     toggle_button: DlToggleButtonDemo
 }

@@ -2,14 +2,14 @@
     <tr
         :class="trClasses"
         v-bind="$attrs"
-        v-on="$listeners"
+        v-on="listeners"
     >
         <slot />
     </tr>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, isVue2 } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlTr',
@@ -18,6 +18,14 @@ export default defineComponent({
         noHover: Boolean
     },
     computed: {
+        listeners(): any {
+            if (isVue2) {
+                // @ts-ignore
+                return this.$listeners
+            } else {
+                return this.$attrs
+            }
+        },
         trClasses(): string {
             let classes = 'dl-tr'
 

@@ -5,10 +5,11 @@ import {
     DlInput,
     DlTypography,
     DlIcon,
-    DlTooltip
+    DlTooltip,
+    DlDialogBoxHeader,
+    DlDialogBoxFooter
 } from '../'
 import { ref } from 'vue-demi'
-import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components/DlDialogBox'
 
 export default {
     title: 'Library/Components/DlDialogBox',

@@ -82,7 +82,7 @@ import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
 import { stopAndPrevent } from '../../../utils'
 
-const ValueTypes = [Array, Boolean, String, Number, Object, Function]
+const ValueTypes = [Array, Boolean, String, Number, Object, Function, null]
 
 export default defineComponent({
     name: 'DlCheckbox',
@@ -94,7 +94,7 @@ export default defineComponent({
         color: { type: String, default: 'dl-color-secondary' },
         disabled: { type: Boolean, default: false },
         id: { type: [String, Number], default: null },
-        modelValue: { type: ValueTypes, required: true },
+        modelValue: { type: ValueTypes, required: false, default: null },
         label: { default: null, type: String },
         subLabel: { type: String, default: '' },
         toggleIndeterminate: { type: Boolean, default: false },

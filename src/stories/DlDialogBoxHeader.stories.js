@@ -1,5 +1,4 @@
-import { ref } from 'vue-demi'
-import { DlDialogBoxHeader } from '../components/DlDialogBox'
+import { DlDialogBoxHeader } from '../components'
 
 export default {
     title: 'Library/Components/DlDialogBoxHeader',

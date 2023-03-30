@@ -8,8 +8,8 @@
         <dl-icon
             class="expand-icon"
             :size="$props.fontSize"
-            :class="{ expanded: isOpen }"
-            icon="icon-dl-right-chevron"
+            :class="{ expanded: isOpen, rightSide }"
+            :icon="rightSide ? 'icon-dl-down-chevron' : 'icon-dl-right-chevron'"
             :color="titleColor"
         />
         <div class="header-content">
@@ -105,7 +105,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .accordion-header {
-    padding: 13px 16px;
+    padding: 12px 16px;
     cursor: pointer;
     font-size: var(--dl-accordion-header-fontsize);
     display: flex;
@@ -140,6 +140,16 @@ export default defineComponent({
     display: flex !important;
     color: var(--dl-expand-icon-color);
     transition: all 300ms;
+
+    &.rightSide {
+        padding-left: 10px;
+        padding-right: 16px;
+    }
+
+    &.expanded.rightSide {
+        transform: rotate(180deg);
+    }
+
     &.expanded {
         transform: rotate(90deg);
     }

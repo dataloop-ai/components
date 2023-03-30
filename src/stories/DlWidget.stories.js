@@ -1,7 +1,4 @@
-import DlBarChart from '../components/DlChart/DlBarChart.vue'
-import DlGrid from '../components/DlWidget/DlGrid.vue'
-import DlGridRow from '../components/DlWidget/DlGridRow.vue'
-import DlWidget from '../components/DlWidget/DlWidget.vue'
+import { DlBarChart, DlGrid, DlGridRow, DlWidget } from '../components'
 import { ref } from 'vue'
 
 const labelsFn = () => {

@@ -1,9 +1,9 @@
 import { DlKpi } from '..'
-import { EKpiCounterFormat } from '../components/DlKpi/types/KpiItem'
+import { DlKpiCounterFormat } from '../components/types'
 
 const counterData = {
     value: 200000,
-    format: EKpiCounterFormat.long
+    format: DlKpiCounterFormat.long
 }
 const progressData = {
     value: 40,
