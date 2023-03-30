@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue-demi'
-import DlTooltip from '../components/DlTooltip.vue'
+import DlTooltip from '../components/essential/DlTooltip/DlTooltip.vue'
 import { useSizeObserver } from '../hooks/use-size-observer'
 
 export default defineComponent({

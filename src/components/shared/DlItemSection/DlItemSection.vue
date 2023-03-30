@@ -11,7 +11,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, ref, computed } from 'vue-demi'
-import { getColor } from '../utils'
+import { getColor } from '../../../utils'
 
 export default defineComponent({
     name: 'DlItemSection',
