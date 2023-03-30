@@ -47,6 +47,7 @@ import DlToastMessageDemo from './DlToastMessageDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlEmptyStateDemo from './DlEmptyStateDemo.vue'
 
 export {
     AvatarDemo,
@@ -97,7 +98,8 @@ export {
     DlChartDoughnutDemo,
     DlBarChartDemo,
     DlLineChartDemo,
-    DlSpinner
+    DlSpinner,
+    DlEmptyStateDemo
 }
 
 export const demoState = {
@@ -116,6 +118,7 @@ export const demoState = {
     dialog_box: DlDialogBoxDemo,
     doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
+    empty_state: DlEmptyStateDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
     list: DlListDemo,
