@@ -1,5 +1,5 @@
 import { computed, ComputedRef } from 'vue-demi'
-import { TableProps, TableRow } from '../types'
+import { DlTableProps, DlTableRow } from '../types'
 
 export const useTableRowSelectionProps = {
     selection: {
@@ -9,17 +9,17 @@ export const useTableRowSelectionProps = {
     },
     selected: {
         type: Array,
-        default: () => [] as (string | TableRow)[]
+        default: () => [] as (string | DlTableRow)[]
     }
 }
 
 export const useTableRowSelectionEmits = ['update:selected', 'selection']
 
 export function useTableRowSelection(
-    props: TableProps,
+    props: DlTableProps,
     emit: (event: string, val: any) => void,
-    computedRows: ComputedRef<TableRow[]>,
-    getRowKey: ComputedRef<(val: string | TableRow) => any>
+    computedRows: ComputedRef<DlTableRow[]>,
+    getRowKey: ComputedRef<(val: string | DlTableRow) => any>
 ) {
     const selectedKeys = computed(() => {
         return props.selected
@@ -71,7 +71,7 @@ export function useTableRowSelection(
 
     function updateSelection(
         keys: string[],
-        rows: (string | TableRow)[],
+        rows: (string | DlTableRow)[],
         added: boolean,
         evt?: (event: string, val: any) => void
     ) {

@@ -1,6 +1,6 @@
 import { TInputSizes } from '../../../utils/input-sizes'
 
-export type SelectOptionType = string | number | Record<string, any>
+export type DlSelectOptionType = string | number | Record<string, any>
 
 export const getLabel = (option: any) => {
     if (typeof option === 'object' && 'label' in option) {
@@ -18,7 +18,7 @@ const ICON_SIZES = {
 
 export const getLabelOfSelectedOption = (
     valueToSearch: string,
-    options: SelectOptionType[]
+    options: DlSelectOptionType[]
 ) => {
     if (options.length === 0) return ''
 
@@ -32,7 +32,7 @@ export const getLabelOfSelectedOption = (
 
 export const getIconSize = (size: TInputSizes) => ICON_SIZES[size] ?? '14px'
 
-export const optionsValidator = (opts: SelectOptionType[]) => {
+export const optionsValidator = (opts: DlSelectOptionType[]) => {
     return opts.every((opt: string | any) => {
         if (typeof opt === 'string' || typeof opt === 'number') {
             return true

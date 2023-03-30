@@ -54,10 +54,10 @@
 import { defineComponent, PropType } from 'vue-demi'
 import { components, typeValidator, optionsValidator, wrappers } from './utils'
 import {
-    OptionGroupOptions,
-    OptionProps,
-    SelectedValue
-} from './OptionGroup.types'
+    DlOptionGroupOptions,
+    DlOptionProps,
+    DlSelectedValueType
+} from './types'
 import { loggerFactory } from '../../../utils'
 import { v4 } from 'uuid'
 import { DlIcon, DlTooltip } from '../../essential'
@@ -79,7 +79,7 @@ export default defineComponent({
         leftLabel: { type: Boolean, default: false },
         maxWidth: { type: String, default: '100%' },
         options: {
-            type: Array as PropType<OptionGroupOptions>,
+            type: Array as PropType<DlOptionGroupOptions>,
             required: true,
             validator: optionsValidator
         },
@@ -96,7 +96,7 @@ export default defineComponent({
         }
     },
     computed: {
-        individualProps(): (OptionProps & { id: string })[] {
+        individualProps(): (DlOptionProps & { id: string })[] {
             return this.options.map((option) => {
                 const { value, label, ...rest } = option
                 return {
@@ -151,7 +151,7 @@ export default defineComponent({
                 )
             }
         },
-        handleUpdate(newValue: SelectedValue, e: Event) {
+        handleUpdate(newValue: DlSelectedValueType, e: Event) {
             this.$emit('update:model-value', newValue, e)
         }
     },

@@ -254,7 +254,7 @@ import {
     getLabel,
     getIconSize,
     optionsValidator,
-    SelectOptionType,
+    DlSelectOptionType,
     getLabelOfSelectedOption
 } from './utils'
 import DlSelectOption from './components/DlSelectOption.vue'
@@ -310,8 +310,8 @@ export default defineComponent({
         readonly: { type: Boolean, default: false },
         emitValue: { type: Boolean, default: false }, // We emit the value from the option and compare with it as a modelvalue
         options: {
-            type: Array as PropType<SelectOptionType[]>,
-            default: (): SelectOptionType[] => [],
+            type: Array as PropType<DlSelectOptionType[]>,
+            default: (): DlSelectOptionType[] => [],
             validator: optionsValidator
         },
         capitalizedOptions: { type: Boolean, default: false },

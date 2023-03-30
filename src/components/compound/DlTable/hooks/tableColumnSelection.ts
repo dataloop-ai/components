@@ -1,7 +1,7 @@
 import { computed, ComputedRef } from 'vue-demi'
 
 import { isNumber } from '../../../../utils/is'
-import { TableProps, TableColumn, TableRow } from '../types'
+import { DlTableProps, DlTableColumn, DlTableRow } from '../types'
 import { TablePagination } from './tablePagination'
 
 export const useTableColumnSelectionProps = {
@@ -9,7 +9,7 @@ export const useTableColumnSelectionProps = {
 }
 
 export function useTableColumnSelection(
-    props: TableProps,
+    props: DlTableProps,
     computedPagination: ComputedRef<TablePagination>,
     hasSelectionMode: ComputedRef<boolean>,
     hasDraggableRows: ComputedRef<boolean>
@@ -32,7 +32,7 @@ export function useTableColumnSelection(
                       sortable: true
                   }))
                 : []
-        ) as TableColumn[]
+        ) as DlTableColumn[]
     })
 
     const computedCols = computed(() => {
@@ -76,7 +76,7 @@ export function useTableColumnSelection(
                     col.classes !== void 0
                         ? typeof col.classes !== 'function'
                             ? () => alignClass + ' ' + col.classes
-                            : (row: TableRow) =>
+                            : (row: DlTableRow) =>
                                   alignClass +
                                   ' ' +
                                   (col.classes as Function)(row)
@@ -88,7 +88,7 @@ export function useTableColumnSelection(
     })
 
     const computedColsMap = computed(() => {
-        const names: Record<string, TableColumn> = {}
+        const names: Record<string, DlTableColumn> = {}
         computedCols.value.forEach((col) => {
             names[col.name] = col
         })

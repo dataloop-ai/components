@@ -497,7 +497,7 @@ import {
     applyDraggableColumns
 } from '../../../utils/draggable-table'
 import { injectProp } from '../../../utils/inject-object-prop'
-import { TableRow, TableProps, TableColumn } from './types'
+import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
@@ -855,7 +855,7 @@ export default defineComponent({
             useTableRowExpand(props, emit)
 
         const filteredSortedRows = computed(() => {
-            let rows = props.rows as TableRow[]
+            let rows = props.rows as DlTableRow[]
 
             if (rows.length === 0) {
                 return rows
@@ -935,22 +935,22 @@ export default defineComponent({
             clearSelection,
             updateSelection
         } = useTableRowSelection(
-            props as unknown as TableProps,
+            props as unknown as DlTableProps,
             emit,
             computedRows,
-            getRowKey as ComputedRef<(val: string | TableRow) => any>
+            getRowKey as ComputedRef<(val: string | DlTableRow) => any>
         )
 
         const { colList, computedCols, computedColsMap, computedColspan } =
             useTableColumnSelection(
-                props as unknown as TableProps,
+                props as unknown as DlTableProps,
                 computedPagination,
                 hasSelectionMode,
                 hasDraggableRows
             )
 
         const { columnToSort, computedSortMethod, sort } = useTableSort(
-            props as unknown as TableProps,
+            props as unknown as DlTableProps,
             computedPagination,
             colList,
             setPagination
@@ -1107,7 +1107,7 @@ export default defineComponent({
 
         const onTrClick = (
             evt: MouseEvent,
-            row: TableRow,
+            row: DlTableRow,
             pageIndex: number
         ) => {
             if (hasClickEvent.value) {
@@ -1117,7 +1117,7 @@ export default defineComponent({
 
         const onTrDblClick = (
             evt: MouseEvent,
-            row: TableRow,
+            row: DlTableRow,
             pageIndex: number
         ) => {
             if (hasDblClickEvent.value) {
@@ -1127,7 +1127,7 @@ export default defineComponent({
 
         const onTrContextMenu = (
             evt: MouseEvent,
-            row: TableRow,
+            row: DlTableRow,
             pageIndex: number
         ) => {
             if (hasContextMenuEvent.value) {
@@ -1170,7 +1170,7 @@ export default defineComponent({
         function getBodyScope(data: Record<string, any>) {
             injectBodyCommonScope(data)
 
-            data.cols = data.cols.map((col: TableColumn) =>
+            data.cols = data.cols.map((col: DlTableColumn) =>
                 Object.defineProperty({ ...col }, 'value', {
                     get: () => getCellValue(col, data.row),
                     enumerable: true

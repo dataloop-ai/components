@@ -1,6 +1,6 @@
 import { DlRadio, DlSwitch, DlCheckbox } from '../../essential'
 import { isVue3, shallowRef } from 'vue-demi'
-import { OptionGroupOptions } from './OptionGroup.types'
+import { DlOptionGroupOptions } from './types'
 import MenuItemWrapper from './components/MenuItemWrapper.vue'
 import SimpleWrapper from './components/SimpleWrapper.vue'
 
@@ -29,7 +29,7 @@ export const componentsType = Object.keys(components)
 
 export const typeValidator = (type: string) => componentsType.includes(type)
 
-export const optionsValidator = (opts: OptionGroupOptions) => {
+export const optionsValidator = (opts: DlOptionGroupOptions) => {
     return opts.every((opt) => 'value' in opt && 'label' in opt)
 }
 

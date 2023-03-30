@@ -38,7 +38,7 @@ import { defineComponent, PropType } from 'vue-demi'
 import { hasOverflowing } from '../../../utils'
 import DlTab from './components/DlTab.vue'
 import TabsWrapper from './components/TabsWrapper.vue'
-import type { TabDetails } from './types'
+import type { DlTabDetails } from './types'
 
 export default defineComponent({
     name: 'DlTabs',
@@ -51,7 +51,7 @@ export default defineComponent({
         event: 'update:model-value'
     },
     props: {
-        items: { type: Array as PropType<TabDetails[]>, required: true },
+        items: { type: Array as PropType<DlTabDetails[]>, required: true },
         vertical: { type: Boolean, default: false },
         fullWidth: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },

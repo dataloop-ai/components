@@ -2,7 +2,7 @@ import { computed, ComputedRef } from 'vue-demi'
 
 import { sortDate } from '../../../../utils/sort'
 import { isNumber, isDate, isObject } from '../../../../utils/is'
-import { TableProps, TableColumn, SortMethod } from '../types'
+import { DlTableProps, DlTableColumn, DlTableSortMethod } from '../types'
 import { TablePagination } from './tablePagination'
 
 export const useTableSortProps = {
@@ -16,9 +16,9 @@ export const useTableSortProps = {
 }
 
 export function useTableSort(
-    props: TableProps,
+    props: DlTableProps,
     computedPagination: ComputedRef<TablePagination>,
-    colList: ComputedRef<TableColumn[]>,
+    colList: ComputedRef<DlTableColumn[]>,
     setPagination: Function
 ) {
     const columnToSort = computed(() => {
@@ -73,18 +73,18 @@ export function useTableSort(
 
                       return A < B ? -1 * dir : A === B ? 0 : dir
                   })
-              }) as SortMethod)
+              }) as DlTableSortMethod)
     )
 
-    function sort(col: string | TableColumn) {
-        let sortOrder: TableProps['columnSortOrder'] = props.columnSortOrder
+    function sort(col: string | DlTableColumn) {
+        let sortOrder: DlTableProps['columnSortOrder'] = props.columnSortOrder
 
         if (isObject(col) === true) {
-            if ((col as TableColumn).sortOrder) {
-                sortOrder = (col as TableColumn).sortOrder
+            if ((col as DlTableColumn).sortOrder) {
+                sortOrder = (col as DlTableColumn).sortOrder
             }
 
-            col = (col as TableColumn).name
+            col = (col as DlTableColumn).name
         } else {
             const def = colList.value.find((def) => def.name === col)
             if (def !== void 0 && def.sortOrder) {

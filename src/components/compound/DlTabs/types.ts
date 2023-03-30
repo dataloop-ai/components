@@ -1,4 +1,4 @@
-export interface TabDetails {
+export interface DlTabDetails {
     label: string
     name: string
     noCaps?: boolean

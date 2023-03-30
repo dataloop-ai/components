@@ -1,5 +1,5 @@
 import { computed, watch, nextTick } from 'vue-demi'
-import { TableProps, FilterMethod } from '../types'
+import { DlTableProps, DlTableFilterMethod } from '../types'
 
 export const useTableFilterProps = {
     filter: [String, Object],
@@ -25,7 +25,7 @@ export function useTableFilter(props: any, setPagination: Function) {
                               return haystack.indexOf(lowerTerms) !== -1
                           })
                       )
-                  }) as FilterMethod
+                  }) as DlTableFilterMethod
     )
 
     watch(

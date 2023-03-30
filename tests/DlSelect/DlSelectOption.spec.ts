@@ -1,4 +1,4 @@
-import { DlSelectOption } from '../../src/components/types'
+import { DlSelectOption } from '../../src/components'
 import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 
