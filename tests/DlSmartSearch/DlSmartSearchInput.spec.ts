@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import DlSmartSearchInput from '../../src/components/DlSmartSearch/DlSmartSearchInput.vue'
+import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
 import { describe, it, expect, vi } from 'vitest'
 
 window.ResizeObserver =

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import RowsSelector from '../../src/components/DlPagination/RowsSelector.vue'
+import RowsSelector from '../../src/components/compound/DlPagination/components/RowsSelector.vue'
 import { describe, it, expect } from 'vitest'
 
 describe('RowsSelector', () => {

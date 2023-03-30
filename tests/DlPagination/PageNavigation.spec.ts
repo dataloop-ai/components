@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import PageNavigation from '../../src/components/DlPagination/PageNavigation.vue'
+import PageNavigation from '../../src/components/compound/DlPagination/components/PageNavigation.vue'
 import { describe, it, expect } from 'vitest'
 
 describe('PageNavigation', () => {

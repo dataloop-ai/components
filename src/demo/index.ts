@@ -33,7 +33,7 @@ import DlChipDemo from './DlChipDemo.vue'
 import DlListDemo from './DlListDemo.vue'
 import DlCounterDemo from './DlCounterDemo.vue'
 import DlTextareaDemo from './DlTextAreaDemo.vue'
-import DlTextInputDemo from './DlTextInputDemo.vue'
+import DlInputDemo from './DlInputDemo.vue'
 import DlSearchDemo from './DlSearchDemo.vue'
 import DlBadgeDemo from './DlBadgeDemo.vue'
 import DlTrendDemo from './DlTrendDemo.vue'
@@ -47,7 +47,6 @@ import DlToastMessageDemo from './DlToastMessageDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
-import DlKpi from '../components/DlKpi/DlKpi.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 
 export {
@@ -86,7 +85,7 @@ export {
     DlListDemo,
     DlCounterDemo,
     DlTextareaDemo,
-    DlTextInputDemo,
+    DlInputDemo,
     DlSearchDemo,
     DlBadgeDemo,
     DlTrendDemo,
@@ -140,7 +139,7 @@ export const demoState = {
     table_th: DlThDemo,
     table_tr: DlTrDemo,
     tabs: TabsDemo,
-    text_input: DlTextInputDemo,
+    text_input: DlInputDemo,
     textarea: DlTextareaDemo,
     text_holder: DlTextHolderDemo,
     time_picker: DlDateTimeRangeDemo,

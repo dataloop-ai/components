@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import DlBarChart from '../../src/components/DlChart/DlBarChart.vue'
+import { DlBarChart } from '../../src/components'
 import { config } from './config'
 
 describe('BarChart', () => {

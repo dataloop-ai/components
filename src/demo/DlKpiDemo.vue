@@ -84,13 +84,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlKpi } from '../components'
-import { EKpiCounterFormat, KpiItem } from '../components/DlKpi/types/KpiItem'
+import { DlKpiCounterFormat, DlKpiItem } from '../components/types'
 
-const kpiData: KpiItem[] = [
+const kpiData: DlKpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EKpiCounterFormat.short
+            format: DlKpiCounterFormat.short
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message'
@@ -98,7 +98,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 200000000,
-            format: EKpiCounterFormat.long
+            format: DlKpiCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -109,7 +109,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154H:35M:20s',
-            format: EKpiCounterFormat.hm
+            format: DlKpiCounterFormat.hm
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete',
         infoMessage: 'info message',
@@ -121,7 +121,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EKpiCounterFormat.hms
+            format: DlKpiCounterFormat.hms
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -133,7 +133,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 73,
-            format: EKpiCounterFormat.short
+            format: DlKpiCounterFormat.short
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -145,7 +145,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: null,
-            format: EKpiCounterFormat.long
+            format: DlKpiCounterFormat.long
         },
         title: null,
         infoMessage: null,
@@ -157,7 +157,7 @@ const kpiData: KpiItem[] = [
     {
         counter: {
             value: 0,
-            format: EKpiCounterFormat.long
+            format: DlKpiCounterFormat.long
         },
         title: 'Complete',
         infoMessage: 'info message',
@@ -167,18 +167,18 @@ const kpiData: KpiItem[] = [
         }
     }
 ]
-const kpiTimeData: KpiItem[] = [
+const kpiTimeData: DlKpiItem[] = [
     {
         counter: {
             value: '',
-            format: EKpiCounterFormat.hms
+            format: DlKpiCounterFormat.hms
         },
         title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
     },
     {
         counter: {
             value: '35m:20s',
-            format: EKpiCounterFormat.hm
+            format: DlKpiCounterFormat.hm
         },
         title: 'Complete',
         progress: {
@@ -188,7 +188,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EKpiCounterFormat.h
+            format: DlKpiCounterFormat.h
         },
         title: 'Complete',
         progress: {
@@ -199,7 +199,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EKpiCounterFormat.ms
+            format: DlKpiCounterFormat.ms
         },
         title: 'Complete',
         progress: {
@@ -210,7 +210,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '154h:35m:20s',
-            format: EKpiCounterFormat.m
+            format: DlKpiCounterFormat.m
         },
         title: 'Complete',
         progress: {
@@ -221,7 +221,7 @@ const kpiTimeData: KpiItem[] = [
     {
         counter: {
             value: '',
-            format: EKpiCounterFormat.s
+            format: DlKpiCounterFormat.s
         },
         title: '',
         progress: {
@@ -237,8 +237,8 @@ export default defineComponent({
         DlKpi
     },
     setup() {
-        const kpiItems: KpiItem[] = kpiData
-        const kpiTimeItems: KpiItem[] = kpiTimeData
+        const kpiItems: DlKpiItem[] = kpiData
+        const kpiTimeItems: DlKpiItem[] = kpiTimeData
 
         return {
             kpiItems,

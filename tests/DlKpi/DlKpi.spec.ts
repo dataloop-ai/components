@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlKpi } from '../../src'
-import { EKpiCounterFormat } from '../../src/components/DlKpi/types/KpiItem'
+import { DlKpiCounterFormat } from '../../src/components/types'
 
 const counterData = {
     value: 200000,
-    format: EKpiCounterFormat.long
+    format: DlKpiCounterFormat.long
 }
 const progressData = {
     value: 40,

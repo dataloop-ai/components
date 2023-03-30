@@ -1,4 +1,4 @@
-import { TDoughnutChartData } from '../../src/components/DlChart/Doughnut/types/TDoughnutChartData'
+import { TDoughnutChartData } from '../../src/components/compound/DlCharts/charts/DlDoughnutChart/types'
 
 export const doughnutData: TDoughnutChartData = {
     labels: [
