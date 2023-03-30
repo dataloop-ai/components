@@ -14,7 +14,7 @@ export default defineComponent({
     props: {
         isDark: {
             type: Boolean,
-            required: true,
+            required: false,
             default: false
         }
     },
