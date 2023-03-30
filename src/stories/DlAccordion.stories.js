@@ -1,4 +1,4 @@
-import { DlAccordion } from '..'
+import { DlAccordion } from '../components'
 import { action } from '@storybook/addon-actions'
 
 export default {

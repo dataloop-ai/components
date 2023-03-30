@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlAlert } from '../src/'
-import { describe, expect, it } from 'vitest'
+import { DlAlert } from '../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlAlert', () => {
     const _closeBtn = '[data-test="close-btn-icon"]'

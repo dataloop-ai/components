@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue-demi'
 import { describe, it, expect, vi } from 'vitest'
-import { DlMenu } from '../../src'
+import { DlMenu } from '../../src/components'
 
 const Parent = defineComponent({
     name: 'DlParent',

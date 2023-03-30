@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
-import DlTimePickerInput from '../../src/components/DlTimePicker/DlTimePickerInput.vue'
+import DlTimePickerInput from '../../src/components/compound/DlDateTime/DlTimePicker/components/DlTimePickerInput.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
-vi.useFakeTimers('modern')
+vi.useFakeTimers('modern' as any)
 vi.setSystemTime(new Date(1990, 12, 1))
 
 describe('Time Picker Input', () => {

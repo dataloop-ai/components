@@ -23,6 +23,9 @@ Each pull request should reflect the issue it is trying to close or have a short
 
 If the pull request is working on a specific component please start the pull request title with the components name. Example: ``` DlButton > 'description of issue' ```
 
+If a component / module or type that is being developed or introduced will not be exported it should not have the ```Dl``` prefix. 
+If it is being exported it is required for it to have the ```Dl``` prefix. 
+
 ### Coding Style Guidelines
 Please follow these coding style guidelines when submitting a pull request:
 - Use consistent indentation
@@ -30,6 +33,9 @@ Please follow these coding style guidelines when submitting a pull request:
 - Use comments to explain non-obvious code behavior
 - Follow the provided linter configuration
     - Please note that any build that does not pass the linter will fail. as part of our CI/CD
+- When developing a component it should be assigned to the correct scope and have its own aligned code structure
+    - if the component has inner components they should be in the components directory under ```/components```
+    - every component should export index.ts and types.ts
 
 
 Steps to submit a pull request:

@@ -1,7 +1,6 @@
 // Button.stories.js|jsx|ts|tsx
 
 import { DlButton, DlBadge, DlIcon } from '..'
-import { action } from '@storybook/addon-actions'
 
 export default {
     title: 'Library/Components/DlButton',

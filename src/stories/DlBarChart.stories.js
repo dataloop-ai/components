@@ -1,4 +1,4 @@
-import DlBarChart from '../components/DlChart/DlBarChart.vue'
+import { DlBarChart } from '..'
 import { ref } from 'vue'
 
 const labelsFn = () => {
