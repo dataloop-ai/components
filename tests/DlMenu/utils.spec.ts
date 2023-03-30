@@ -7,7 +7,7 @@ import {
     updateUnwatchPosition,
     refocusTargetFn,
     conditionalHandler
-} from '../../src/components/DlMenu/utils'
+} from '../../src/components/essential/DlMenu/utils'
 import { Ref } from 'vue-demi'
 import { describe, it, expect, vi } from 'vitest'
 import { AnchorEvent } from '../../src/hooks/use-model-toggle'

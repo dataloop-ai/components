@@ -16,7 +16,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DlColorPicker } from '../components'
-import { NewColor } from '../components/DlColorPicker'
+import { NewColor } from '../components/types'
 
 export default defineComponent({
     name: 'DlColorPickerDemo',

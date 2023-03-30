@@ -2,16 +2,16 @@
     <div style="width: 950px; padding-top: 20px">
         <div class="flex">
             <div>
-                <dl-text-area
+                <dl-area
                     v-model="message"
                     title="Message"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="duration"
                     type="number"
                     title="Duration seconds"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="classItem"
                     title="Custom class for toast item"
                 />
@@ -92,21 +92,15 @@
 </template>
 
 <script lang="ts">
-import { DlButton } from '../components'
-import { DlToast } from '../components/DlToastMessage'
 import { defineComponent, ref } from 'vue-demi'
-import DlTextInput from '../components/DlTextInput.vue'
-import DlRadio from '../components/DlRadio.vue'
-import DlTextArea from '../components/DlTextArea.vue'
-import DlSwitch from '../components/DlSwitch.vue'
+import { DlButton, DlToast, DlInput, DlRadio, DlSwitch } from '../components'
 
 export default defineComponent({
     name: 'DlToast',
     components: {
         DlSwitch,
-        DlTextArea,
         DlRadio,
-        DlTextInput,
+        DlInput,
         DlButton
     },
     setup() {

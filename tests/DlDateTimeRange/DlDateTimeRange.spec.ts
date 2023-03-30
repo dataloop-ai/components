@@ -1,16 +1,16 @@
 import { mount } from '@vue/test-utils'
-import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
+import { CustomDate } from '../../src/components/compound/DlDateTime/DlDatePicker/models/CustomDate'
 import { DlDateTimeRange } from '../../src/components'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 import {
     DayTypeOption,
     MonthTypeOption
-} from '../../src/components/DlDateTimeRange/types'
+} from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
 
 const date1 = new Date(1990, 12, 1)
 const date2 = new Date(1990, 12, 2)
 
-vi.useFakeTimers('modern')
+vi.useFakeTimers('modern' as any)
 vi.setSystemTime(new Date(date1))
 
 describe('Date Time Range', () => {

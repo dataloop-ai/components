@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { DlWidget } from '../../src'
+import { DlWidget } from '../../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlWidget', () => {
