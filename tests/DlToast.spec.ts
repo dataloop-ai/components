@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
-import ToastComponent from '../src/components/compound/DlToastMessage/components/ToastComponent.vue'
+import ToastComponent from '../src/components/compound/DlToast/components/ToastComponent.vue'
 
 describe('DlToastMessage component', () => {
     it('dom node test', () => {

@@ -1,8 +1,8 @@
-import { DlToast } from '../components/DlToastMessage'
+import { DlToast } from '../components'
 import { DlButton } from '..'
 
 export default {
-    title: 'Library/Components/DlToastMessage',
+    title: 'Library/Components/DlToast',
     argTypes: {
         type: {
             options: ['success', 'warning', 'error', 'info'],
