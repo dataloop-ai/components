@@ -1,4 +1,4 @@
-export enum DlCounterFormat {
+export enum DlKpiCounterFormat {
     long = 'long',
     short = 'short',
     hms = 'h:m:s',
@@ -9,18 +9,20 @@ export enum DlCounterFormat {
     s = 's'
 }
 
-export type DlCounterType = {
+export type DlKpiCounterType = {
     /* for string it should be have 0h:0m:0s format */
     value: number | string
-    format: DlCounterFormat
+    format: DlKpiCounterFormat
+}
+
+export type DlKpiProgressType = {
+    value?: number
+    text?: string
 }
 
 export type DlKpiItem = {
-    counter: DlCounterType
+    counter: DlKpiCounterType | number
     title: string
     infoMessage?: string
-    progress?: {
-        value?: number
-        text?: string
-    }
+    progress?: DlKpiProgressType
 }

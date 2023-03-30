@@ -1,42 +1,37 @@
 <template>
-    <dl-kpi :items="kpiModels" />
-    <!-- <div :id="uuid" class="dl-counters-container" :style="cssVars">
-        <ul> -->
-    <!-- <li v-for="(item, index) in items" :key="index" class="item"> -->
-    <!-- <div :class="computeClass('item-content')">
-                    <p :class="computeClass('item-value')">
-                        {{
-                            abbreviateNumbers
-                                ? abbreviateNumber(item.value)
-                                : item.value
-                        }}
-                    </p>
-                    <p
-                        v-show="item.text"
-                        class="item-text"
-                    >
-                        {{ capitalize(item.text) }}
-                    </p>
-                    <p
-                        v-show="item.subtext"
-                        class="item-subtext"
-                    >
-                        {{ item.subtext && capitalize(item.subtext) }}
-                    </p>
+    <div
+        :id="uuid"
+        class="dl-counters-container"
+        :style="cssVars"
+    >
+        <ul>
+            <li
+                v-for="(item, index) in items"
+                :key="index"
+                class="item"
+            >
+                <div :class="computeClass('item-content')">
+                    <dl-kpi
+                        :counter="item.value"
+                        counter-font-size="30px"
+                        :title="capitalize(item.text)"
+                        title-font-size="16px"
+                        :subtitle="item.subtext && capitalize(item.subtext)"
+                        subtitle-font-size="12px"
+                        :info-message="null"
+                        :progress="null"
+                        :is-small="small"
+                    />
                 </div>
-                <div class="divider" /> -->
-
-    <!-- </li> -->
-
-    <!-- </ul>
-    </div> -->
+                <div class="divider" />
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { abbreviateToString } from '../../../utils/abbreviate-to-string'
-import { DlCounterFormat, DlKpiItem } from '../../basic/types'
 import { DlKpi } from '../../basic'
 
 interface CounterItem {
@@ -81,31 +76,11 @@ export default defineComponent({
             return {
                 '--dl-counter-spacing': this.spacing
             }
-        },
-        kpiModels(): any {
-            const kpis: DlKpiItem[] = []
-            for (const item of this.items) {
-                kpis.push({
-                    counter: {
-                        value: item.value ?? 0,
-                        format: DlCounterFormat.short
-                    },
-                    title: item.text,
-                    infoMessage: item.subtext
-                })
-            }
-            return kpis
         }
     },
     methods: {
         capitalize(value: string): string {
             return value[0].toUpperCase() + value.slice(1)
-        },
-        abbreviateNumber(nr: number) {
-            if (typeof nr === 'number') {
-                return abbreviateToString(nr)
-            }
-            return nr
         },
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]

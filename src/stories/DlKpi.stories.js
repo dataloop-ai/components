@@ -1,95 +1,158 @@
 import { DlKpi } from '..'
-import { EFormat } from '../components/DlKpi/types/KpiItem'
+import { EKpiCounterFormat } from '../components/DlKpi/types/KpiItem'
 
-const itemsData = [
-    {
-        counter: {
-            value: '154h:35m:20s',
-            format: EFormat.hms
-        },
-        title: 'Complete Complete Complete Complete Complete Complete Complete Complete'
-    },
-    {
-        counter: {
-            value: '154h:35m:20s',
-            format: EFormat.hm
-        },
-        title: 'Complete',
-        progress: {
-            value: 30
-        }
-    },
-    {
-        counter: {
-            value: '154h:35m:20s',
-            format: EFormat.h
-        },
-        title: 'Complete',
-        progress: {
-            value: 40,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: '154h:35m:20s',
-            format: EFormat.ms
-        },
-        title: 'Complete',
-        progress: {
-            value: 50,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: 200000000,
-            format: EFormat.long
-        },
-        title: 'Complete',
-        progress: {
-            value: 60,
-            text: '75/100 Items'
-        }
-    },
-    {
-        counter: {
-            value: 200000000,
-            format: EFormat.short
-        },
-        title: 'Complete',
-        progress: {
-            value: 70,
-            text: '75/100 Items'
-        }
-    }
-]
+const counterData = {
+    value: 200000,
+    format: EKpiCounterFormat.long
+}
+const progressData = {
+    value: 40,
+    text: '75/100 Items'
+}
 
 export default {
     title: 'Library/Components/DlKpi',
     component: DlKpi,
     argTypes: {
-        items: {
-            name: 'items',
-            defaultValue: itemsData,
-            control: 'array',
-            description: 'The items data array',
+        counter: {
+            name: 'counter',
+            defaultValue: counterData,
+            control: 'object',
+            description: 'The counter object',
             table: {
-                type: { summary: Array },
-                defaultValue: { summary: itemsData }
+                type: { summary: Object },
+                defaultValue: { summary: counterData }
             }
         },
         titleFontSize: {
             name: 'titleFontSize',
-            type: { name: 'number', required: false },
-            defaultValue: 30,
+            type: { name: 'string', required: false },
+            defaultValue: '16px',
             description: 'Title Font Size',
             table: {
-                type: { summary: 'number' },
-                defaultValue: { summary: 30 }
+                type: {
+                    name: 'string',
+                    required: false,
+                    default: '16px'
+                },
+                defaultValue: { summary: '16px' }
             },
             control: {
-                type: 'number'
+                type: 'text'
+            }
+        },
+        counterFontSize: {
+            name: 'counterFontSize',
+            type: { name: 'string', required: false },
+            defaultValue: '1.88em',
+            description: 'Title Font Size',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '1.88em' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        title: {
+            name: 'title',
+            type: { name: 'string', required: false },
+            defaultValue: 'Completed',
+            description: 'Title',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: 'Completed' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        subtitle: {
+            name: 'subtitle',
+            type: { name: 'string', required: false },
+            defaultValue: 'Sub title',
+            description: 'Subtitle',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: 'Sub title' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        subtitleFontSize: {
+            name: 'subtitleFontSize',
+            type: { name: 'string', required: false },
+            defaultValue: '12px',
+            description: 'subtitle FontSize',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '12px' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        infoMessage: {
+            name: 'infoMessage',
+            type: { name: 'string', required: false },
+            defaultValue: 'No data',
+            description: 'infoMessage',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '12px' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        progress: {
+            name: 'progress',
+            defaultValue: progressData,
+            control: 'object',
+            description: 'The progress object',
+            table: {
+                type: { summary: Object },
+                defaultValue: { summary: progressData }
+            }
+        },
+        withBorder: {
+            name: 'withBorder',
+            type: { name: 'boolean', required: false },
+            defaultValue: false,
+            description: 'withBorder',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
+            },
+            control: {
+                type: 'boolean'
+            }
+        },
+        withProgressBar: {
+            name: 'withProgressBar',
+            type: { name: 'boolean', required: false },
+            defaultValue: false,
+            description: 'withProgressBar',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
+            },
+            control: {
+                type: 'boolean'
+            }
+        },
+        isSmall: {
+            name: 'isSmall',
+            type: { name: 'boolean', required: false },
+            defaultValue: false,
+            description: 'isSmall',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
+            },
+            control: {
+                type: 'boolean'
             }
         }
     }
@@ -109,5 +172,7 @@ const Template = (args) => ({
 
 export const Preview = Template.bind({})
 Preview.args = {
-    items: itemsData
+    counter: counterData,
+    progress: progressData,
+    title: 'Completed'
 }
