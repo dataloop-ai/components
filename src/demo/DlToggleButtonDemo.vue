@@ -11,7 +11,10 @@
             @change="change"
         >
             <template #button-1>
-                <p>Changed with slot</p>
+                <p>
+                    Changed with slot
+                    <DlIcon icon="icon-dl-info-filled" />
+                </p>
             </template>
         </DlToggleButton>
         Selected button: {{ label || 'Not selected' }}
@@ -22,10 +25,11 @@
 import { DlToggleButton } from '../components'
 import { defineComponent } from 'vue-demi'
 import DlTextInput from '../components/DlTextInput.vue'
+import DlIcon from '../components/DlIcon.vue'
 
 export default defineComponent({
     name: 'DlToggleButtonDemo',
-    components: { DlTextInput, DlToggleButton },
+    components: { DlIcon, DlTextInput, DlToggleButton },
     setup() {
         return {
             DlToggleButton
