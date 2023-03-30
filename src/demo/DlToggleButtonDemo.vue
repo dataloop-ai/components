@@ -1,6 +1,6 @@
 <template>
     <div style="width: 950px; padding-top: 20px">
-        <dl-text-input
+        <dl-input
             v-model="width"
             title="Custom width container"
         />
@@ -22,14 +22,12 @@
 </template>
 
 <script lang="ts">
-import { DlToggleButton } from '../components'
+import { DlIcon, DlInput, DlToggleButton } from '../components'
 import { defineComponent } from 'vue-demi'
-import DlTextInput from '../components/DlTextInput.vue'
-import DlIcon from '../components/DlIcon.vue'
 
 export default defineComponent({
     name: 'DlToggleButtonDemo',
-    components: { DlIcon, DlTextInput, DlToggleButton },
+    components: { DlIcon, DlInput, DlToggleButton },
     setup() {
         return {
             DlToggleButton
