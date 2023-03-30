@@ -41,7 +41,15 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { computed, defineComponent, onMounted, Ref, ref, watch } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    nextTick,
+    onMounted,
+    Ref,
+    ref,
+    watch
+} from 'vue-demi'
 import { getColor, includes } from '../../../utils'
 import { DlIcon } from '../../essential'
 
@@ -138,32 +146,29 @@ export default defineComponent({
         )
 
         function normalizeStyles(fluid?: boolean) {
-            const { height } = (
-                rootRef as Ref<HTMLElement | null>
-            ).value!.getBoundingClientRect()
-
-            const iconS: Record<string, any> = {
-                display: 'flex'
-            }
-
-            const rootS: Record<string, any> = {
-                backgroundColor: getColor(typeToBackgroundMap[type])
-            }
-
-            if (height > 36) {
-                iconS.alignSelf = 'flex-start'
-            } else {
-                iconS.alignSelf = 'center'
-            }
-
-            if (fluid === true) {
-                rootS.width = '100%'
-            } else {
-                rootS.width = 'fit-content'
-            }
-
-            iconStyle.value = iconS
-            rootStyle.value = rootS
+            nextTick(() => {
+                const { height } = (
+                    rootRef as Ref<HTMLElement | null>
+                ).value!.getBoundingClientRect()
+                const iconS: Record<string, any> = {
+                    display: 'flex'
+                }
+                const rootS: Record<string, any> = {
+                    backgroundColor: getColor(typeToBackgroundMap[type])
+                }
+                if (height > 36) {
+                    iconS.alignSelf = 'flex-start'
+                } else {
+                    iconS.alignSelf = 'center'
+                }
+                if (fluid === true) {
+                    rootS.width = '100%'
+                } else {
+                    rootS.width = 'fit-content'
+                }
+                iconStyle.value = iconS
+                rootStyle.value = rootS
+            })
         }
 
         function handleClose() {
@@ -199,7 +204,7 @@ export default defineComponent({
     > div {
         display: flex;
         flex-direction: row;
-        padding: 10px 10px 10px 16px;
+        padding: 10px 16px;
     }
 
     .text {

@@ -102,7 +102,10 @@ export default defineComponent({
             return value[0].toUpperCase() + value.slice(1)
         },
         abbreviateNumber(nr: number) {
-            if (nr) return abbreviateToString(nr)
+            if (typeof nr === 'number') {
+                return abbreviateToString(nr)
+            }
+            return nr
         },
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]

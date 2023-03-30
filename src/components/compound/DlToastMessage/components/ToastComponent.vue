@@ -12,6 +12,7 @@
                 `v-toast__item--${position}`,
                 classItem
             ]"
+            :style="{ width }"
         >
             <dl-alert
                 :type="type"
@@ -29,11 +30,11 @@
 
 <script lang="ts">
 import {
-    defineComponent,
-    ref,
-    onBeforeMount,
     computed,
-    onMounted
+    defineComponent,
+    onBeforeMount,
+    onMounted,
+    ref
 } from 'vue-demi'
 import { DlAlert } from '../../../basic'
 import { Positions, Types } from '../utils/config'
@@ -58,6 +59,10 @@ export default defineComponent({
         classItem: {
             type: String,
             default: ''
+        },
+        width: {
+            type: String,
+            default: 'auto'
         },
         duration: {
             type: Number,
@@ -183,18 +188,16 @@ export default defineComponent({
     overflow: hidden;
     z-index: 1052;
     pointer-events: none;
-    &__text {
-        min-width: 300px;
-        max-width: 800px;
-    }
     &__item {
         display: inline-flex;
         align-items: center;
         pointer-events: auto;
-        margin-bottom: 5px;
-        margin-top: 5px;
+        min-width: 400px;
+        max-width: 900px;
+        margin: 5px;
         cursor: pointer;
         animation-duration: 150ms;
+
         &.v-toast__item--top,
         &.v-toast__item--bottom {
             align-self: center;
