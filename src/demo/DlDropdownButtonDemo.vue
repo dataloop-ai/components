@@ -208,7 +208,20 @@
                         @click="() => onClose('Videos and long text')"
                     >
                         <dl-item-section :no-wrap="true">
-                            Videos and long text Videos and long text
+                            <dl-ellipsis
+                                text="Very very very very long long long long text text text"
+                                :has-ellipsis-in-middle="true"
+                            />
+                        </dl-item-section>
+                    </dl-list-item>
+                    <dl-list-item
+                        clickable
+                        @click="() => onClose('Movies and long text')"
+                    >
+                        <dl-item-section :no-wrap="true">
+                            <dl-ellipsis
+                                text="Very very very very long long long long text text text"
+                            />
                         </dl-item-section>
                     </dl-list-item>
 
@@ -232,6 +245,7 @@ import {
     DlList,
     DlDropdownButton
 } from '../components'
+import DlEllipsis from '../components/DlEllipsis.vue'
 
 export default defineComponent({
     name: 'DlDropdownButtonDemo',
@@ -239,7 +253,8 @@ export default defineComponent({
         DlListItem,
         DlItemSection,
         DlList,
-        DlDropdownButton
+        DlDropdownButton,
+        DlEllipsis
     },
     data() {
         return {

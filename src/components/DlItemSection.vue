@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref, computed } from 'vue-demi'
 import { getColor } from '../utils'
 
 export default defineComponent({
@@ -23,24 +23,29 @@ export default defineComponent({
         side: Boolean,
         noWrap: Boolean
     },
-    data() {
-        return {
-            uuid: `dl-item-section-${v4()}`
-        }
-    },
-    computed: {
-        classes(): Record<string, boolean> {
+    setup(props) {
+        const uuid = `dl-item-section-${v4()}`
+
+        const classes = computed(() => {
             return {
                 'dl-item__section': true,
-                'dl-item__section--side': this.side,
-                'dl-item__section--nowrap': this.noWrap,
-                'dl-item__section--main': !this.side
+                'dl-item__section--side': props.side,
+                'dl-item__section--nowrap': props.noWrap,
+                'dl-item__section--main': !props.side
             }
-        },
-        cssVars(): Record<string, string> {
+        })
+        const cssVars = computed(() => {
             return {
-                '--dl-item-color': this.color ? getColor(this.color) : 'inherit'
+                '--dl-item-color': props.color
+                    ? getColor(props.color)
+                    : 'inherit'
             }
+        })
+
+        return {
+            uuid,
+            classes,
+            cssVars
         }
     }
 })
@@ -56,8 +61,9 @@ export default defineComponent({
     justify-content: flex-start;
     &--nowrap {
         white-space: nowrap;
+        width: 100%;
         overflow: hidden;
-        text-overflow: ellipsis;
+        text-overflow-middle: ellipsis;
         & > * {
             overflow: hidden;
             text-overflow: ellipsis;

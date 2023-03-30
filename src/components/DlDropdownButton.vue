@@ -115,19 +115,18 @@
         "
         :disabled="disabled === true || disableMainBtn === true"
         :style="mainBtnStyle"
-        no-wrap
-        :overflow="overflow"
+        :no-wrap="props.noWrap"
         :tooltip="tooltip"
+        :max-width="maxWidth"
         @click="onClick"
     >
-        <div
-            style="
-                display: flex;
-                align-items: center;
-                justify-content: space-around;
-            "
-        >
-            <span style="margin-right: 5px">
+        <div class="dl-btn-dropdown--simple__title">
+            <span
+                :class="{
+                    'dl-button-no-wrap': noWrap
+                }"
+                style="margin-right: 5px"
+            >
                 {{ label }}
             </span>
             <dl-icon
@@ -392,13 +391,20 @@ export default defineComponent({
             toggle,
             show,
             hide,
-            menuModel
+            menuModel,
+            props
         }
     }
 })
 </script>
 
 <style scoped lang="scss">
+.dl-button-no-wrap {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .dl-btn-dropdown {
     padding-right: var(--dl-btn-padding-right) !important;
     &--split .dl-btn-dropdown__arrow-container {
@@ -433,6 +439,19 @@ export default defineComponent({
     &--simple {
         ::v-deep .dl-button-no-wrap {
             padding-right: 8px;
+        }
+        &__title {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            text-align: center;
+            padding: 0;
+            flex: 10000 1 0%;
+            flex-wrap: nowrap;
+            line-height: 1;
+            z-index: 0;
+            user-select: none !important;
+            min-width: 1.5em;
         }
     }
     &__arrow {
