@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlAlert } from '../src/'
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 describe('DlAlert', () => {
     const _closeBtn = '[data-test="close-btn-icon"]'
@@ -44,7 +44,7 @@ describe('DlAlert', () => {
             })
 
             await wrapper.setProps({ fluid: true })
-
+            await wrapper.vm.$nextTick()
             expect(
                 (wrapper.get(_root).element as HTMLElement).style.width
             ).toEqual('100%')
