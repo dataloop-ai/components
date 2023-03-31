@@ -88,44 +88,44 @@ body {
 }
 
 .no-outline {
-  outline: 0;
+    outline: 0;
 }
 
 .text-center {
-  text-align: center;
+    text-align: center;
 }
 
 .items-center {
-  align-items: center;
+    align-items: center;
 }
 
 .items-top {
-  align-items: start;
+    align-items: start;
 }
 
 .items-bottom {
-  align-items: end;
+    align-items: end;
 }
 
 .col {
-  flex: 10000 1 0%;
+    flex: 10000 1 0%;
 }
 
 .full-width {
-  width: 100%;
+    width: 100%;
 }
 
 :root, .offDarkMode {
-  // common
-  --dl-color-white: #fff;
-  --dl-color-black: #000;
-  --dl-color-bg: #fff;
-  --dl-color-transparent: transparent;
+    // common
+    --dl-color-white: #fff;
+    --dl-color-black: #000;
+    --dl-color-bg: #fff;
+    --dl-color-transparent: transparent;
 
-  // fontSizes
-  --dl-font-size-h1: 30px;
-  --dl-font-size-h2: 20px;
-  --dl-font-size-h3: 16px;
+    // fontSizes
+    --dl-font-size-h1: 30px;
+    --dl-font-size-h2: 20px;
+    --dl-font-size-h3: 16px;
     --dl-font-size-h4: 14px;
     --dl-font-size-body: 12px;
     --dl-font-size-small: 10px;
