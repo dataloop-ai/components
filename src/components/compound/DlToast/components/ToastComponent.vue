@@ -17,6 +17,8 @@
             <dl-alert
                 :type="type"
                 :closable="closable"
+                :dark-mode="false"
+                close-button-position="center"
                 @update:model-value="closeToast"
             >
                 <span

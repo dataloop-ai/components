@@ -4,6 +4,7 @@
         :id="uuid"
         ref="rootRef"
         class="root"
+        :class="{ offDarkMode: !darkMode }"
         :style="rootStyle"
         data-test="root"
     >
@@ -26,12 +27,14 @@
         <div
             v-if="closable"
             class="close-btn"
+            :class="closeBtnPos"
             data-test="close-btn"
         >
             <dl-icon
                 class="close-btn-icon"
                 data-test="close-btn-icon"
                 icon="icon-dl-close"
+                color="--dl-color-darker"
                 size="12px"
                 @click="handleClose"
             />
@@ -54,6 +57,7 @@ import { getColor, includes } from '../../../utils'
 import { DlIcon } from '../../essential'
 
 type AlertType = 'info' | 'success' | 'warning' | 'error'
+type CloseButtonPositionType = 'top' | 'center' | 'bottom'
 
 const typeToIconMap: Record<AlertType, string> = {
     info: 'icon-dl-info-filled',
@@ -67,6 +71,12 @@ const typeToIconColorMap: Record<AlertType, string> = {
     success: 'dl-color-positive',
     warning: 'dl-color-warning',
     error: 'dl-color-negative'
+}
+
+const closeButtonPositionClass: Record<CloseButtonPositionType, string> = {
+    top: 'items-top',
+    center: 'items-center',
+    bottom: 'items-bottom'
 }
 
 const typeToBackgroundMap: Record<AlertType, string> = {
@@ -111,6 +121,16 @@ export default defineComponent({
         text: {
             type: String,
             default: null
+        },
+        darkMode: {
+            type: Boolean,
+            default: true
+        },
+        closeButtonPosition: {
+            type: String,
+            default: 'top',
+            validator: (value: string) =>
+                includes(['top', 'center', 'bottom'], value)
         }
     },
     emits: ['update:model-value'],
@@ -122,6 +142,12 @@ export default defineComponent({
         const textStyle = computed(() => ({
             color: getColor(props.textColor, 'dl-color-darker')
         }))
+        const closeBtnPos = computed(
+            (): string =>
+                closeButtonPositionClass[
+                    props.closeButtonPosition as CloseButtonPositionType
+                ]
+        )
 
         const rootRef = ref(null)
         const rootStyle = ref()
@@ -185,7 +211,8 @@ export default defineComponent({
             rootStyle,
             iconStyle,
             textStyle,
-            handleClose
+            handleClose,
+            closeBtnPos
         }
     },
     template: 'dl-alert'

@@ -2,7 +2,7 @@
     <div style="width: 950px; padding-top: 20px">
         <div class="flex">
             <div>
-                <dl-area
+                <dl-text-area
                     v-model="message"
                     title="Message"
                 />
@@ -93,11 +93,19 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlButton, DlToast, DlInput, DlRadio, DlSwitch } from '../components'
+import {
+    DlButton,
+    DlInput,
+    DlRadio,
+    DlSwitch,
+    DlTextArea,
+    DlToast
+} from '../components'
 
 export default defineComponent({
     name: 'DlToast',
     components: {
+        DlTextArea,
         DlSwitch,
         DlRadio,
         DlInput,
