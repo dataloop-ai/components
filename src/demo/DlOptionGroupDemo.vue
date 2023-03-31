@@ -50,7 +50,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DlOptionGroup, DlMenu, DlButton } from '../components'
-import { OptionGroupOptions } from '../components/DlOptionGroup'
+import { DlOptionGroupOptions } from '../components/types'
 export default defineComponent({
     name: 'DlOptionGroupDemo',
     components: {
@@ -62,7 +62,7 @@ export default defineComponent({
         const optionValue = ref<number>(1)
         const switchValue = ref<number[]>([1, 3])
 
-        const options = ref<OptionGroupOptions>([
+        const options = ref<DlOptionGroupOptions>([
             { label: 'Option 1', value: 1, color: 'dl-color-positive' },
             { label: 'Option 2', value: 2 },
             { label: 'Option 3', value: 3, tooltip: 'Option tooltip' },

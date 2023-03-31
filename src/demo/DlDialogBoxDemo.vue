@@ -118,7 +118,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DlButton, DlDialogBox, DlSwitch } from '../components'
-import { DlDialogBoxFooter, DlDialogBoxHeader } from '../components/DlDialogBox'
+import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components'
 
 export default defineComponent({
     name: 'DlDialogBoxDemo',

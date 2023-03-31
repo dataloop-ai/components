@@ -1,12 +1,10 @@
 import { mount } from '@vue/test-utils'
-import DlMonthCalendar from '../../src/components/DlDatePicker/DlMonthCalendar.vue'
-import { CalendarDate } from '../../src/components/DlDatePicker/classes/CalendarDate'
-import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
+import DlMonthCalendar from '../../src/components/compound/DlDateTime/DlDatePicker/components/DlMonthCalendar.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const date = new Date(1990, 12, 1)
 
-vi.useFakeTimers('modern')
+vi.useFakeTimers('modern' as any)
 vi.setSystemTime(new Date(date))
 
 describe('DlMonthCalendar', () => {

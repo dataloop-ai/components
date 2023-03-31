@@ -87,7 +87,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlSwitch, DlDateTimeRange } from '../components'
-import { DateInterval } from '../components/DlDatePicker/types'
+import { DateInterval } from '../components/types'
 
 export default defineComponent({
     components: {

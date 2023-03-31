@@ -1,4 +1,4 @@
-import DlDoughnutChart from '../components/DlChart/Doughnut/DlDoughnutChart.vue'
+import { DlDoughnutChart } from '../components'
 
 import {
     Chart as ChartJS,

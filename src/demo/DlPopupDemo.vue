@@ -35,9 +35,8 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlButton } from '../components/DlButton'
-import DlPopup from '../components/DlPopup'
-import DlTextArea from '../components/DlTextArea.vue'
+import { DlButton, DlPopup, DlTextArea } from '../components'
+
 export default defineComponent({
     components: {
         DlButton,

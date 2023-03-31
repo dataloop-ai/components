@@ -5,7 +5,7 @@ import {
     itemBorder,
     itemColor,
     itemCursor
-} from '../src/components/DlListItem/utils'
+} from '../src/components/basic/DlListItem/utils'
 
 describe('DlItemItem', () => {
     it('should display list item content', async () => {

@@ -1,12 +1,12 @@
-import { DlTextInput } from '../components'
+import { DlInput } from '../components'
 import { action } from '@storybook/addon-actions'
 import { ref } from 'vue-demi'
 
 const defaultSuggestions = ['foo', 'bar', 'foobar', 'foo bar']
 
 export default {
-    title: 'Library/Components/DlTextInput',
-    component: DlTextInput,
+    title: 'Library/Components/DlInput',
+    component: DlInput,
     argTypes: {
         autoSuggestItems: {
             name: 'autoSuggestItems',
@@ -263,7 +263,7 @@ export default {
 }
 
 const Template = (args) => ({
-    components: { DlTextInput },
+    components: { DlInput },
     setup() {
         return { args }
     },
@@ -274,7 +274,7 @@ const Template = (args) => ({
     },
     template: `
     <div style="padding: 50px;">
-        <DlTextInput
+        <DlInput
             v-model="model"
             v-bind="args"
             @focus="focus"
@@ -316,7 +316,7 @@ Preview.args = {
 }
 
 const ErrorTemplate = (args) => ({
-    components: { DlTextInput },
+    components: { DlInput },
     setup() {
         return { args }
     },
@@ -327,7 +327,7 @@ const ErrorTemplate = (args) => ({
     },
     template: `
     <div style="padding: 50px;">
-        <DlTextInput
+        <DlInput
             error
             title="Username"
             topMessage="This will be the username that you will use to log in."
@@ -368,7 +368,7 @@ ErrorPreview.args = {
 }
 
 const WarningTemplate = (args) => ({
-    components: { DlTextInput },
+    components: { DlInput },
     setup() {
         return { args }
     },
@@ -379,7 +379,7 @@ const WarningTemplate = (args) => ({
     },
     template: `
     <div style="padding: 50px;">
-        <DlTextInput
+        <DlInput
             warning
             redAsterisk
             showCounter
