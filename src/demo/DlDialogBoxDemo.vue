@@ -103,7 +103,10 @@
             </template>
             <template #footer>
                 <dl-dialog-box-footer>
-                    <dl-button @click="openSecondModal">
+                    <dl-button
+                        outlined
+                        @click="openSecondModal"
+                    >
                         Open second modal
                     </dl-button>
                     <dl-button @click="closeModal">
