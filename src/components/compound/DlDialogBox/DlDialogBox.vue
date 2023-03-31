@@ -62,7 +62,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import DlIcon from '../DlIcon.vue'
+import DlIcon from '../../essential/DlIcon/DlIcon.vue'
 import { throttle } from 'lodash'
 
 export default defineComponent({
