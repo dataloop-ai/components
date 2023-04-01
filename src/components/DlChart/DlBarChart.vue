@@ -16,10 +16,14 @@
             />
             <dl-scroll-bar
                 v-if="maxItems > thisItemsInView"
+                :wrapper-styles="{
+                    marginTop: '10px'
+                }"
                 :height="wrapperHeight"
                 :item-count="maxItems"
                 :items-in-view="thisItemsInView"
                 :position="scrollPosition"
+                :scroll-deficit="50"
                 @position-update="handleScrollUpdate"
             />
         </div>
@@ -56,7 +60,7 @@ import { Bar } from './'
 import { CommonProps, BarChartProps, defaultBarChartProps } from './props'
 import { defineComponent, reactive, ref, watch, computed } from 'vue-demi'
 import DlChartLegend from './DlChartLegend.vue'
-import DlScrollBar from './DlScrollBar.vue'
+import DlScrollBar from '../DlScrollBar.vue'
 import { updateKey } from '../../utils/update-key'
 import {
     Chart as ChartJS,
@@ -357,7 +361,7 @@ export default defineComponent({
 
         const maxItems = computed(() => chartData.value?.labels.length)
 
-        const handleScrollUpdate = (position: number) => {
+        const handleScrollUpdate = ({ position }: { position: number }) => {
             if (position >= maxItems.value - thisItemsInView.value) return
             chart.value.options.scales.y.min = position
             chart.value.options.scales.y.max = position + thisItemsInView.value

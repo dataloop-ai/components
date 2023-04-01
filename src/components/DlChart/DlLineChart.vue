@@ -77,7 +77,7 @@
 import { Line as DlLine } from '.'
 import { CommonProps, ColumnChartProps, defaultLineChartProps } from './props'
 import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
-import DlBrush from './DlBrush.vue'
+import DlBrush from '../DlBrush/DlBrush.vue'
 import DlChartLegend from './DlChartLegend.vue'
 import DlChartLabels from './DlChartLabels.vue'
 import { updateKeys } from '../../utils/update-key'

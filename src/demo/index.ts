@@ -47,6 +47,7 @@ import DlToastMessageDemo from './DlToastMessageDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 
 export {
     AvatarDemo,
@@ -97,7 +98,8 @@ export {
     DlChartDoughnutDemo,
     DlBarChartDemo,
     DlLineChartDemo,
-    DlSpinner
+    DlSpinner,
+    DlConfusionMatrix
 }
 
 export const demoState = {
@@ -115,6 +117,7 @@ export const demoState = {
     counter: DlCounterDemo,
     dialog_box: DlDialogBoxDemo,
     doughnut_chart: DlChartDoughnutDemo,
+    confusion_matrix: DlConfusionMatrix,
     dropdown_button: DropdownButtonDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,

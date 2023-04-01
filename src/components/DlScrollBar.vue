@@ -1,9 +1,29 @@
+<template>
+    <div
+        ref="wrapper"
+        :style="wrapperStyles"
+        class="scroll-bar-wrapper"
+    >
+        <div
+            v-show="show"
+            ref="scroll"
+            :style="scrollStyles"
+            :class="scrollClasses"
+            @mousedown="startDragging"
+        />
+    </div>
+</template>
+
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, watch } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlScrollBar',
     props: {
+        show: {
+            type: Boolean,
+            default: true
+        },
         itemCount: {
             type: Number,
             default: 0
@@ -19,9 +39,22 @@ export default defineComponent({
         height: {
             type: String,
             default: null
+        },
+        scrollDeficit: {
+            type: Number,
+            default: 0
+        },
+        wrapperStyles: {
+            type: Object,
+            default: null
         }
     },
     emits: ['position-update'],
+    setup(props) {
+        watch(props, (val) => {
+            console.log(JSON.parse(JSON.stringify(val)))
+        })
+    },
     data(): {
         isDragging: boolean
         mouseOffsetTop: number
@@ -47,7 +80,7 @@ export default defineComponent({
             const space =
                 this.maxHeight -
                 (this.$refs.scroll as HTMLElement)?.offsetHeight -
-                50
+                this.scrollDeficit
             return top < space ? top : space
         },
         scrollClasses(): string {
@@ -62,7 +95,7 @@ export default defineComponent({
             }
         },
         maxScroll(): number {
-            return (this.$refs as any).wrapper.offsetHeight - 50 || 1
+            return this.$refs.wrapper?.offsetHeight
         }
     },
     mounted() {
@@ -93,7 +126,7 @@ export default defineComponent({
                 marginTop >
                     this.maxHeight -
                         (this.$refs.scroll as HTMLElement).offsetHeight -
-                        50
+                        this.scrollDeficit
             )
                 return
             ;(
@@ -102,32 +135,17 @@ export default defineComponent({
             this.updatePosition(marginTop)
         },
         updatePosition(top: number) {
-            const newMin = Math.trunc((this.itemCount * top) / this.maxScroll)
-            if (newMin !== this.previousMin + 1) {
-                this.$emit('position-update', newMin)
+            const position = Math.trunc((this.itemCount * top) / this.maxScroll)
+            if (position !== this.previousMin + 1) {
+                this.$emit('position-update', { position, top })
             }
         }
     }
 })
 </script>
 
-<template>
-    <div
-        ref="wrapper"
-        class="scroll-bar-wrapper"
-    >
-        <div
-            ref="scroll"
-            :style="scrollStyles"
-            :class="scrollClasses"
-            @mousedown="startDragging"
-        />
-    </div>
-</template>
-
 <style scoped lang="scss">
 .scroll-bar-wrapper {
-    margin-top: 10px;
     width: 1%;
 }
 .scroll-bar {

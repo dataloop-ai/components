@@ -2,6 +2,7 @@
     <dl-confusion-matrix
         :matrix="matrix"
         :labels="labels"
+        :normalized="false"
     />
 </template>
 

@@ -32,7 +32,7 @@ export function getGradationValues(matrix: number[][], step = 5) {
     const gradationValues = []
     let amount = 0
     for (let i = 0; i < step; i++) {
-        gradationValues.push(amount + range)
+        gradationValues.push(Number((amount + range).toFixed(1)))
         amount += range
     }
     return gradationValues.reverse()
