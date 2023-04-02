@@ -100,7 +100,8 @@ export default defineComponent({
             validator: (value: string): boolean =>
                 transformOptions.includes(value)
         },
-        overflow: { type: Boolean, default: false }
+        overflow: { type: Boolean, default: false },
+        fit: { type: Boolean, default: false }
     },
     emits: ['remove'],
     setup() {
@@ -142,7 +143,9 @@ export default defineComponent({
         },
         cssChipVars(): Record<string, string | number> {
             return {
-                '--dl-chip-max-width': setMaxWidth(this.maxWidth),
+                '--dl-chip-max-width': this.fit
+                    ? 'fit-content'
+                    : setMaxWidth(this.maxWidth),
                 '--dl-chip-remove-icon-width': setRemoveIconWidth({
                     hasLabel: this.hasLabel,
                     removable: this.removable,
