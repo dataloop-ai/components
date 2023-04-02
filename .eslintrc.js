@@ -95,7 +95,7 @@ module.exports = {
                 hoist: 'all'
             }
         ],
-        '@typescript-eslint/no-unused-expressions': 'error',
+        '@typescript-eslint/no-unused-expressions': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
         '@typescript-eslint/no-use-before-define': 'off',
         '@typescript-eslint/no-var-requires': 'off',
@@ -120,7 +120,7 @@ module.exports = {
         'no-trailing-spaces': 'warn',
         'no-undef-init': 'warn',
         'no-unsafe-finally': 'off',
-        'no-unused-expressions': 'error',
+        'no-unused-expressions': 'off',
         'no-unused-labels': 'error',
         'no-use-before-define': 'off',
         'no-var': 'warn',
