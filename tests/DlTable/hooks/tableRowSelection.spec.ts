@@ -3,8 +3,12 @@ import { mountComposition } from 'vue-composition-test-utils'
 import {
     useTableRowSelection,
     useTableRowSelectionProps
-} from '../../../src/components/DlTable/hooks/tableRowSelection'
-import { TableProps, TableRow } from '../../../src/components/DlTable/types'
+} from '../../../src/components/compound/DlTable/hooks/tableRowSelection'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {
+    TableProps,
+    TableRow
+} from '../../../src/components/compound/DlTable/types'
 
 describe('useTableRowSelectionProps', () => {
     it('should validate the "selection" prop', () => {
@@ -24,7 +28,7 @@ const props = {
 } as unknown as TableProps
 
 const rows: TableRow[] = [{ key: 'value', test: 'value' }, { test: 'value' }]
-const emitFn = jest.fn()
+const emitFn = vi.fn()
 const getRowKey = () => 'key'
 
 describe('useTableRowSelection', () => {

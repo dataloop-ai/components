@@ -1,5 +1,6 @@
+import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { DlSelect } from '../../src/components/DlSelect'
+import { DlSelect } from '../../src/components'
 
 describe('dl-select methods', () => {
     it('should set the index according to the model value', async () => {

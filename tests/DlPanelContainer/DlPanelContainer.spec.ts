@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlPanelContainer } from '../../src'
+import { DlPanelContainer } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlPanelContainer', () => {
     it('check component props', async () => {

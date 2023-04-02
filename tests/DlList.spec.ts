@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlList } from '../src'
+import { describe, it, expect } from 'vitest'
 
 describe('DlList', () => {
     it('should display list content', async () => {

@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlPanel, DlPanelContainer } from '../../src'
+import { DlPanel, DlPanelContainer } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 // TODO: find how to attach to another component
 describe('DlPanel', () => {

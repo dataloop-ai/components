@@ -126,7 +126,8 @@ interface PositionConfig {
     maxHeight?: string
     maxWidth?: string
     absoluteOffset?: any
-    fit?: boolean // fit the size to the content
+    fitContent?: boolean // fit the size to the content
+    fitContainer?: boolean // fit the size to the container
     cover?: boolean
 }
 
@@ -194,12 +195,20 @@ export function setPosition(cfg: PositionConfig) {
         visibility: 'visible'
     }
 
-    if (cfg.fit === true || cfg.cover === true) {
+    if (
+        cfg.fitContainer === true ||
+        cfg.cover === true ||
+        cfg.fitContent === true
+    ) {
         elStyle.minWidth = cfg.maxWidth || anchorProps.width + 'px'
         elStyle.maxWidth = cfg.maxWidth || anchorProps.width + 'px'
 
         if (cfg.cover === true) {
             elStyle.minHeight = anchorProps.height + 'px'
+        }
+
+        if (cfg.fitContent === true) {
+            elStyle.maxWidth = cfg.el.offsetWidth + 'px'
         }
     }
 

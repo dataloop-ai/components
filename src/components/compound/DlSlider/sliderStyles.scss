@@ -1,0 +1,113 @@
+.slider-bar {
+  position: relative;
+  width: 100%;
+  cursor: grab;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  opacity: 1;
+
+  & .track-container {
+    cursor: grab;
+    outline: 0;
+    width: 100%;
+    padding: 4px 0;
+
+    & .track {
+      height: 2px;
+      width: inherit;
+      position: relative;
+      outline: none;
+      background-color: var(--dl-color-separator);
+
+      & .selection {
+        background: currentColor;
+        border-radius: inherit;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
+
+      & .thumb {
+        z-index: 1;
+        outline: 0;
+        transition: transform 0.18s ease-out, fill 0.18s ease-out,
+          stroke 0.18s ease-out;
+        top: 50%;
+        transform: scale(1) translate(-50%, -50%);
+        position: absolute;
+        user-select: none;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+.slider-content {
+  font-size: var(--dl-font-size-body);
+  line-height: 13px;
+  color: var(--text-color);
+
+  .disabled {
+    color: var(--dl-color-separator);
+    cursor: not-allowed;
+  }
+
+  .readonly {
+    cursor: auto;
+  }
+
+  #slider-input {
+    padding: 3px 5px;
+  }
+}
+
+.slider {
+  display: flex;
+  justify-content: center;
+  width: var(--width);
+
+  & .slider-bar-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  & .text {
+    padding: 0;
+    margin-right: 5px;
+    text-align: left;
+  }
+
+  & .capitalize::first-letter {
+    text-transform: capitalize;
+  }
+}
+
+.editable {
+  align-items: center;
+  flex-direction: row;
+}
+
+.non-editable {
+  flex-direction: column;
+
+  & .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    & .right-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}
+
+// override the button padding
+.dl-button {
+  padding: 0;
+  font-size: var(--dl-font-size-body);
+}

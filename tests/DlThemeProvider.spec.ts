@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
 import { DlThemeProvider } from '../src/components/'
 
 describe('DlThemeProvider', () => {
@@ -11,7 +12,7 @@ describe('DlThemeProvider', () => {
 
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.props().isDark).toBe(false)
-        wrapper.vm.$options.watch.isDark.call(wrapper.vm)
+
         await wrapper.setProps({ isDark: true })
         expect(wrapper.props().isDark).toBe(true)
     })

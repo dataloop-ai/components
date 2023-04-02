@@ -1,7 +1,8 @@
 import {
     createColorSchema,
     updateEditor
-} from '../../src/components/DlSmartSearch/highlightSyntax'
+} from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
+import { describe, expect, it } from 'vitest'
 
 const aliases = [
     {

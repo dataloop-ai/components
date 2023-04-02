@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import DlStepperHeader from '../../src/components/DlStepper/DlStepperHeader.vue'
+import DlStepperHeader from '../../src/components/compound/DlStepper/components/DlStepperHeader.vue'
+import { describe, it, expect } from 'vitest'
 
 describe('DlStepperHeader', () => {
     it('should display the title; should emit the "close" event', async () => {

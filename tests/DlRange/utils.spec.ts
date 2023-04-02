@@ -3,13 +3,17 @@ import {
     getDragging,
     updatePosition,
     onKeydown
-} from '../../src/components/DlRange/utils'
-import { Dragging, dragType } from '../../src/components/DlSlider/useSlider'
+} from '../../src/components/compound/DlRange/utils'
+import {
+    Dragging,
+    dragType
+} from '../../src/components/compound/DlSlider/useSlider'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { KEY_CODE } from '../../src/utils'
 
 describe('DlRange utils', () => {
     describe('updateValue', () => {
-        const emitFn = jest.fn()
+        const emitFn = vi.fn()
 
         beforeEach(() => {
             emitFn.mockReset()
@@ -59,8 +63,8 @@ describe('DlRange utils', () => {
     })
 
     describe('getDragging', () => {
-        const event = jest.fn()
-        const getDraggingRatioFn = jest.fn()
+        const event = vi.fn()
+        const getDraggingRatioFn = vi.fn()
         const boundings = {
             left: 10,
             top: 5,
@@ -143,9 +147,9 @@ describe('DlRange utils', () => {
             ]
         } as unknown as MouseEvent
 
-        const getDraggingRatioFn = jest.fn()
-        const convertRatioToModelFn = jest.fn()
-        const convertModelToRatioFn = jest.fn()
+        const getDraggingRatioFn = vi.fn()
+        const convertRatioToModelFn = vi.fn()
+        const convertModelToRatioFn = vi.fn()
 
         const min = 0
         const max = 10

@@ -1,10 +1,11 @@
 import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
 import { DlTab, DlTabPanels, DlTabs } from '../src'
 import {
     getChildrenFromSlot,
     getSlot
-} from '../src/components/DlTabPanels/utils'
-import TabsWrapper from '../src/components/DlTabs/TabsWrapper.vue'
+} from '../src/components/compound/DlTabPanels/utils'
+import TabsWrapper from '../src/components/compound/DlTabs/components/TabsWrapper.vue'
 
 describe('Tabs and Tab Groups', () => {
     const TAB_ITEMS = [
@@ -108,7 +109,7 @@ describe('Tabs and Tab Groups', () => {
             }
         })
 
-        const unsubscribe = jest.spyOn(wrapper.vm, 'unsubscribeListeners')
+        const unsubscribe = vi.spyOn(wrapper.vm, 'unsubscribeListeners')
         wrapper.unmount()
 
         expect(unsubscribe).toBeCalled()

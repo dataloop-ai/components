@@ -1,12 +1,13 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import DlSmartSearchInput from '../../src/components/DlSmartSearch/DlSmartSearchInput.vue'
+import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
+import { describe, it, expect, vi } from 'vitest'
 
 window.ResizeObserver =
     window.ResizeObserver ||
-    jest.fn().mockImplementation(() => ({
-        disconnect: jest.fn(),
-        observe: jest.fn(),
-        unobserve: jest.fn()
+    vi.fn().mockImplementation(() => ({
+        disconnect: vi.fn(),
+        observe: vi.fn(),
+        unobserve: vi.fn()
     }))
 
 describe('DlSmartSearchInput', () => {
@@ -85,7 +86,7 @@ describe('DlSmartSearchInput', () => {
                 disabled: false
             },
             mounted() {
-                this.$refs.input.scrollTo = jest.fn()
+                this.$refs.input.scrollTo = vi.fn()
             }
         })
         wrapper.vm.focus()
@@ -95,7 +96,7 @@ describe('DlSmartSearchInput', () => {
     it('should handle blur', () => {
         const wrapper = mount(DlSmartSearchInput, {
             mounted() {
-                this.$refs.input.scrollTo = jest.fn()
+                this.$refs.input.scrollTo = vi.fn()
             }
         })
         wrapper.vm.suggestionModal = true
@@ -110,7 +111,7 @@ describe('DlSmartSearchInput', () => {
         const wrapper = shallowMount(DlSmartSearchInput, {
             props: {},
             mounted() {
-                this.$refs.input.scrollTo = jest.fn()
+                this.$refs.input.scrollTo = vi.fn()
             }
         })
 
@@ -132,7 +133,7 @@ describe('DlSmartSearchInput', () => {
     it('should clear the value', () => {
         const wrapper = mount(DlSmartSearchInput, {
             mounted() {
-                this.$refs.input.scrollTo = jest.fn()
+                this.$refs.input.scrollTo = vi.fn()
             }
         })
         wrapper.vm.clearValue()
@@ -145,8 +146,8 @@ describe('DlSmartSearchInput', () => {
                 modelValue: 'model'
             }
         })
-        wrapper.vm.keyPress({ key: 'backspace', preventDefault: jest.fn() })
-        wrapper.vm.keyPress({ key: 'Enter', preventDefault: jest.fn() })
+        wrapper.vm.keyPress({ key: 'backspace', preventDefault: vi.fn() })
+        wrapper.vm.keyPress({ key: 'Enter', preventDefault: vi.fn() })
         expect(wrapper.emitted().search).toEqual([['model']])
     })
 
@@ -159,7 +160,7 @@ describe('DlSmartSearchInput', () => {
     it('should handle screen button click', () => {
         const wrapper = mount(DlSmartSearchInput, {
             mounted() {
-                this.$refs.input.scrollTo = jest.fn()
+                this.$refs.input.scrollTo = vi.fn()
             }
         })
         wrapper.vm.expanded = false
@@ -178,7 +179,7 @@ describe('DlSmartSearchInput', () => {
         const wrapper = shallowMount(DlSmartSearchInput, {
             props: {},
             mounted() {
-                this.$refs.input.scrollTo = jest.fn()
+                this.$refs.input.scrollTo = vi.fn()
             }
         })
 

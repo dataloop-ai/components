@@ -3,6 +3,7 @@ import {
     isKeyCode,
     onKeyDownComposition
 } from '../../src/utils/key-composition'
+import { describe, it, expect } from 'vitest'
 
 const evt = {
     keyCode: 17

@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import {
     leftClick,
     position,
@@ -12,8 +13,8 @@ describe('events utils', () => {
     describe('stopAndPrevent', () => {
         const event: Partial<Event> = {
             cancelable: true,
-            preventDefault: jest.fn().mockImplementation(),
-            stopPropagation: jest.fn().mockImplementation()
+            preventDefault: vi.fn().mockImplementation(),
+            stopPropagation: vi.fn().mockImplementation()
         }
 
         describe('when event is cancelable', () => {
@@ -27,8 +28,8 @@ describe('events utils', () => {
         describe('otherwise', () => {
             const event: Partial<Event> = {
                 cancelable: false,
-                preventDefault: jest.fn().mockImplementation(),
-                stopPropagation: jest.fn().mockImplementation()
+                preventDefault: vi.fn().mockImplementation(),
+                stopPropagation: vi.fn().mockImplementation()
             }
             it('should call only the stopPropagation method', () => {
                 stopAndPrevent(event as Event)
@@ -133,7 +134,7 @@ describe('events utils', () => {
 
     describe('stop', () => {
         const e: Partial<Event> = {
-            stopPropagation: jest.fn().mockImplementation()
+            stopPropagation: vi.fn().mockImplementation()
         }
 
         it('should call the "stopPropagation" method', () => {
@@ -146,7 +147,7 @@ describe('events utils', () => {
         describe('when "cancelable" is true', () => {
             const e: Partial<Event> = {
                 cancelable: true,
-                preventDefault: jest.fn().mockImplementation()
+                preventDefault: vi.fn().mockImplementation()
             }
 
             it('should call the "preventDefault" method', () => {
@@ -158,7 +159,7 @@ describe('events utils', () => {
         describe('otherwise', () => {
             const e: Partial<Event> = {
                 cancelable: false,
-                preventDefault: jest.fn().mockImplementation()
+                preventDefault: vi.fn().mockImplementation()
             }
 
             it('should do nothing', () => {
@@ -171,15 +172,15 @@ describe('events utils', () => {
     describe('addEvt', () => {
         const div = document.createElement('div')
 
-        const spy = jest.spyOn(div, 'addEventListener')
+        const spy = vi.spyOn(div, 'addEventListener')
 
         const evt = [[div, 'mousemove', 'move', 'passiveCapture']]
 
         describe('when the context "name" property is set', () => {
             const ctx = {
                 name: '_dl_test_evt',
-                mousemove: jest.fn().mockImplementation(),
-                move: jest.fn().mockImplementation()
+                mousemove: vi.fn().mockImplementation(),
+                move: vi.fn().mockImplementation()
             }
 
             it('should attach the events to the context', () => {
@@ -190,8 +191,8 @@ describe('events utils', () => {
 
         describe('otherwise', () => {
             const ctx = {
-                mousemove: jest.fn().mockImplementation(),
-                move: jest.fn().mockImplementation()
+                mousemove: vi.fn().mockImplementation(),
+                move: vi.fn().mockImplementation()
             }
             it('should use the event from the params', () => {
                 addEvt(ctx, 'test', evt)
@@ -203,7 +204,7 @@ describe('events utils', () => {
     describe('cleanEvt', () => {
         const div = document.createElement('div')
 
-        const spy = jest.spyOn(div, 'removeEventListener')
+        const spy = vi.spyOn(div, 'removeEventListener')
 
         afterEach(() => {
             spy.mockClear()
@@ -212,13 +213,13 @@ describe('events utils', () => {
         describe('when the context "name" property is set', () => {
             const ctx = {
                 name: '__dl_test_evt',
-                mousemove: jest.fn().mockImplementation(),
-                move: jest.fn().mockImplementation(),
+                mousemove: vi.fn().mockImplementation(),
+                move: vi.fn().mockImplementation(),
                 ['__dl_test_evt']: [
                     [
                         div,
-                        jest.fn().mockImplementation(),
-                        jest.fn().mockImplementation()
+                        vi.fn().mockImplementation(),
+                        vi.fn().mockImplementation()
                     ]
                 ]
             }
@@ -232,8 +233,8 @@ describe('events utils', () => {
 
         describe('otherwise', () => {
             const ctx = {
-                mousemove: jest.fn().mockImplementation(),
-                move: jest.fn().mockImplementation()
+                mousemove: vi.fn().mockImplementation(),
+                move: vi.fn().mockImplementation()
             }
             it('should use the event from the params', () => {
                 cleanEvt(ctx, 'test')

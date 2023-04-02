@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlLink } from '../../src'
+import { DlLink } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlLink', () => {
     it('should display a link  text', () => {

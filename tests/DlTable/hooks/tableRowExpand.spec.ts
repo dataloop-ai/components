@@ -1,7 +1,8 @@
 import { mountComposition } from 'vue-composition-test-utils'
-import { useTableRowExpand } from '../../../src/components/DlTable/hooks/tableRowExpand'
+import { useTableRowExpand } from '../../../src/components/compound/DlTable/hooks/tableRowExpand'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const emitFn = jest.fn()
+const emitFn = vi.fn()
 
 describe('useTableRowExpand', () => {
     const wrapper = mountComposition(() =>

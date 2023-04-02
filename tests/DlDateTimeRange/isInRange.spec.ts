@@ -1,6 +1,7 @@
-import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
-import { isInRange } from '../../src/components/DlDatePicker/isInRange'
-import { DateInterval } from '../../src/components/DlDatePicker/types'
+import { CustomDate } from '../../src/components/compound/DlDateTime/DlDatePicker/models/CustomDate'
+import { isInRange } from '../../src/components/compound/DlDateTime/DlDatePicker/utils'
+import { DateInterval } from '../../src/components/compound/DlDateTime/DlDatePicker/types'
+import { expect, describe, it } from 'vitest'
 
 const range = {
     from: new Date('2023-01-01T12:39:55.854Z'),

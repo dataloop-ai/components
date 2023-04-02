@@ -4,7 +4,8 @@ import {
     useTablePaginationState,
     useTablePagination,
     TablePagination
-} from '../../../src/components/DlTable/hooks/tablePagination'
+} from '../../../src/components/compound/DlTable/hooks/tablePagination'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const pagination = {
     sortBy: 'field',
@@ -15,14 +16,14 @@ const pagination = {
     maxPages: 5
 }
 
-const emitFn = jest.fn()
-const getCellValue = jest.fn()
+const emitFn = vi.fn()
+const getCellValue = vi.fn()
 
 const vm = {
     props: {
         rowsPerPageOptions: [10, 25, 100],
         pagination,
-        'onUpdate:pagination': jest.fn(),
+        'onUpdate:pagination': vi.fn(),
         filter: () => 'value'
     },
     emit: emitFn
@@ -80,6 +81,7 @@ describe('useTablePaginationState', () => {
                     page: 1,
                     rowsNumber: 50,
                     rowsPerPage: 0,
+                    rowsPerPageOptions: [10, 25, 100],
                     sortBy: 'field',
                     withLegend: true,
                     withQuickNavigation: true,
@@ -127,7 +129,7 @@ describe('useTablePagination', () => {
     } as ComputedRef<TablePagination>
 
     const wrapper = mountComposition(() =>
-        useTablePagination(vm, computedPagination, jest.fn(), {
+        useTablePagination(vm, computedPagination, vi.fn(), {
             value: 10
         } as Ref<number>)
     )

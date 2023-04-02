@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlPreview } from '../../src/components/DlColorPicker'
+import { DlPreview } from '../../src/components'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('DlColorPicker DlPreview component', () => {
     it('should mount the component and watch the prop update', async () => {
@@ -11,7 +12,7 @@ describe('DlColorPicker DlPreview component', () => {
 
         expect(wrapper.exists()).toBe(true)
 
-        const watcherSpy = jest.spyOn(wrapper.vm, 'renderColor')
+        const watcherSpy = vi.spyOn(wrapper.vm, 'renderColor')
 
         await wrapper.setProps({ color: '#666666' })
 

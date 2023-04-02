@@ -1,7 +1,6 @@
-// 49,86,99
-
 import { mount } from '@vue/test-utils'
 import { DlTh } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlTh', () => {
     it('should compute right class name', async () => {

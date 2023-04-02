@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlSaturation } from '../../src/components/DlColorPicker'
+import { DlSaturation } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlColorPicker DlSaturation component', () => {
     it('should mount the component', async () => {

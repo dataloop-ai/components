@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlSliderInput } from '../../src/components/DlSlider/components'
+import { DlSliderInput } from '../../src/components/compound/DlSlider/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlSliderInput', () => {
     it('should behave accordingly', async () => {

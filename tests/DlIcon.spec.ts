@@ -1,6 +1,7 @@
 import { DOMWrapper, mount, VueWrapper } from '@vue/test-utils'
 import { DlIcon } from '../src'
 import { isEqual } from 'lodash'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlIcon', () => {
     it('should display icon content', () => {
@@ -26,7 +27,7 @@ describe('DlIcon', () => {
             color: 'dl-color-secondary',
             inline: false,
             svg: true,
-            svgSource: '@dataloop-ai/icons/docs/assets'
+            svgSource: '@dataloop-ai/icons/assets'
         }
         let wrapper: VueWrapper<any>
         let image: DOMWrapper<SVGImageElement>

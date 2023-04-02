@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlBox } from '../../src/components/DlColorPicker'
+import { DlBox } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlColorPicker DlBox component', () => {
     it('should mount the component and trigger the event', async () => {

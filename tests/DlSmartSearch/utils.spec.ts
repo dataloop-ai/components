@@ -2,7 +2,8 @@ import {
     isEndOfString,
     isEndingWithDateIntervalPattern,
     replaceDateInterval
-} from '../../src/components/DlSmartSearch/utils'
+} from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
+import { describe, it, expect } from 'vitest'
 
 describe('isEndOfString', () => {
     it('should retun "false" when the string does not match the pattern', () => {

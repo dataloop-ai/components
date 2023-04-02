@@ -1,4 +1,5 @@
 import { getParentVm } from '../../src/utils/vm'
+import { describe, it, expect } from 'vitest'
 
 describe('vm', () => {
     describe('getParentVm', () => {

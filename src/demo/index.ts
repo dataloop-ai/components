@@ -33,14 +33,21 @@ import DlChipDemo from './DlChipDemo.vue'
 import DlListDemo from './DlListDemo.vue'
 import DlCounterDemo from './DlCounterDemo.vue'
 import DlTextareaDemo from './DlTextAreaDemo.vue'
-import DlTextInputDemo from './DlTextInputDemo.vue'
+import DlInputDemo from './DlInputDemo.vue'
 import DlSearchDemo from './DlSearchDemo.vue'
 import DlBadgeDemo from './DlBadgeDemo.vue'
 import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
 import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlColumnChartDemo from './ColumnChartDemo.vue'
+import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
+import DlToastDemo from './DlToastDemo.vue'
+import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
+import DlLineChartDemo from './DlLineChartDemo.vue'
+import DlSpinner from './DlSpinnerDemo.vue'
+import DlKpiDemo from './DlKpiDemo.vue'
 
 export {
     AvatarDemo,
@@ -78,14 +85,20 @@ export {
     DlListDemo,
     DlCounterDemo,
     DlTextareaDemo,
-    DlTextInputDemo,
+    DlInputDemo,
     DlSearchDemo,
     DlBadgeDemo,
     DlTrendDemo,
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlSwitchDemo
+    DlToastDemo as DlToastMessageDemo,
+    DlColumnChartDemo,
+    DlSwitchDemo,
+    DlChartDoughnutDemo,
+    DlBarChartDemo,
+    DlLineChartDemo,
+    DlSpinner
 }
 
 export const demoState = {
@@ -94,11 +107,15 @@ export const demoState = {
     avatar: AvatarDemo,
     badge: DlBadgeDemo,
     button: DlButtonDemo,
+    column_chart: DlColumnChartDemo,
+    bar_chart: DlBarChartDemo,
+    line_chart: DlLineChartDemo,
     checkbox: DlCheckboxDemo,
     chip: DlChipDemo,
     color_picker: DlColorPickerDemo,
     counter: DlCounterDemo,
     dialog_box: DlDialogBoxDemo,
+    doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
@@ -110,6 +127,7 @@ export const demoState = {
     popup: PopupDemo,
     progress_bar: DlProgressBarDemo,
     progress_chart: DlProgressChartDemo,
+    kpi: DlKpiDemo,
     range: DlRangeDemo,
     search: DlSearchDemo,
     select: DlSelectDemo,
@@ -121,7 +139,7 @@ export const demoState = {
     table_th: DlThDemo,
     table_tr: DlTrDemo,
     tabs: TabsDemo,
-    text_input: DlTextInputDemo,
+    input: DlInputDemo,
     textarea: DlTextareaDemo,
     text_holder: DlTextHolderDemo,
     time_picker: DlDateTimeRangeDemo,
@@ -131,5 +149,7 @@ export const demoState = {
     widget: DlWidgetDemo,
     radio: DlRadioDemo,
     switch: DlSwitchDemo,
-    smart_search: DlSmartSearchDemo
+    smart_search: DlSmartSearchDemo,
+    toast: DlToastDemo,
+    spinner: DlSpinner
 }

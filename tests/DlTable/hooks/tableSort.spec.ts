@@ -1,11 +1,15 @@
 import { ComputedRef, Ref } from 'vue'
 import { mountComposition } from 'vue-composition-test-utils'
-import { TablePagination } from '../../../src/components/DlTable/hooks/tablePagination'
+import { TablePagination } from '../../../src/components/compound/DlTable/hooks/tablePagination'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
     useTableSortProps,
     useTableSort
-} from '../../../src/components/DlTable/hooks/tableSort'
-import { TableColumn, TableProps } from '../../../src/components/DlTable/types'
+} from '../../../src/components/compound/DlTable/hooks/tableSort'
+import {
+    TableColumn,
+    TableProps
+} from '../../../src/components/compound/DlTable/types'
 
 describe('useTableSortProps', () => {
     it('should validate the "columnSortOrder" prop', () => {
@@ -29,7 +33,7 @@ const pagination: TablePagination = {
 
 const colList: TableColumn[] = []
 
-const setPagination = jest.fn()
+const setPagination = vi.fn()
 
 describe('useTableSort', () => {
     beforeEach(() => {

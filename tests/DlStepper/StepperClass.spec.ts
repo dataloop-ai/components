@@ -1,6 +1,7 @@
-import { Stepper as StepperClass } from '../../src/components/DlStepper/Stepper'
-import { Step } from '../../src/components/DlStepper/Step'
-import { StepState } from '../../src/components/DlStepper/interfaces'
+import { Stepper as StepperClass } from '../../src/components/compound/DlStepper/models/Stepper'
+import { Step } from '../../src/components/compound/DlStepper/models/Step'
+import { StepState } from '../../src/components/types'
+import { describe, it, expect } from 'vitest'
 
 // jest.mock('../../src/components/DlStepper/Stepper')
 
@@ -66,11 +67,11 @@ it('Check a method on the class instance', () => {
 
     stepperConsumer.failStep('error')
 
-    expect(stepperConsumer.currentStep.error).toBe('error')
+    expect(stepperConsumer.currentStep!.error).toBe('error')
 
     stepperConsumer.failStep()
 
-    expect(stepperConsumer.currentStep.error).toBe('')
+    expect(stepperConsumer.currentStep!.error).toBe('')
 
     stepperConsumer.resetStep()
 })

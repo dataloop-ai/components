@@ -1,5 +1,6 @@
 import { DlBadge } from '../src/components'
 import { mount } from '@vue/test-utils'
+import { describe, it, expect } from 'vitest'
 
 describe('DlBadge', () => {
     it('should pass the props to the badge styles', async () => {

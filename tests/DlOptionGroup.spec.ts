@@ -1,11 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { DlOptionGroup } from '../src'
-import MenuItemWrapper from '../src/components/DlOptionGroup/MenuItemWrapper.vue'
-import { optionsValidator } from '../src/components/DlOptionGroup/utils'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import MenuItemWrapper from '../src/components/compound/DlOptionGroup/components/MenuItemWrapper.vue'
+import { optionsValidator } from '../src/components/compound/DlOptionGroup/utils'
 
 describe('DlOptionGroup', () => {
     beforeEach(() => {
-        jest.resetModules()
+        vi.resetModules()
     })
 
     it('should validate options if the value and label fields are present', () => {
@@ -26,7 +27,7 @@ describe('DlOptionGroup', () => {
             }
         })
 
-        const itemClick = jest.fn().mockImplementation(() => {})
+        const itemClick = vi.fn().mockImplementation(() => {})
 
         const itemWrapper = wrapper.find('[data-test="item-wrapper"]')
         const item = wrapper.find('[data-test="item-control-element"]')
@@ -37,8 +38,8 @@ describe('DlOptionGroup', () => {
     })
 
     it("should log an error in console if the modelValue isn't of the right type", () => {
-        const error = jest.spyOn(console, 'error').mockImplementation(() => {})
-        const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
         mount(DlOptionGroup, {
             props: {

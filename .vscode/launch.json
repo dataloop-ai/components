@@ -26,13 +26,11 @@
             "name": "Run Test",
             "type": "node",
             "request": "launch",
-            "runtimeArgs": [
-                "--inspect-brk",
-                "${workspaceRoot}/node_modules/.bin/jest",
-                "--runInBand" // SYNCHRONOUS TESTING
-            ],
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/vitest",
+            "cwd": "${workspaceFolder}",
+            "sourceMaps": true,
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "skipFiles": ["<node_internals>/**"]
         }
     ]
 }

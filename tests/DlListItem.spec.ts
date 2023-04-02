@@ -1,10 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { DlListItem } from '../src'
+import { describe, it, expect } from 'vitest'
 import {
     itemBorder,
     itemColor,
     itemCursor
-} from '../src/components/DlListItem/utils'
+} from '../src/components/basic/DlListItem/utils'
 
 describe('DlItemItem', () => {
     it('should display list item content', async () => {

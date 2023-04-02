@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { DlColorPicker } from '../../src/components/DlColorPicker'
+import { DlColorPicker } from '../../src/components'
+import { describe, it, expect } from 'vitest'
 
 describe('DlColorPicker DlColorPicker component', () => {
     it('should mount the component', async () => {

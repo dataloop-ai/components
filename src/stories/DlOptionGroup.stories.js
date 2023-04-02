@@ -101,3 +101,67 @@ export const Preview = Template.bind({})
 Preview.args = {
     maxWidth: '130px'
 }
+
+const InlineTemplate = (args) => ({
+    components: { DlOptionGroup },
+    setup() {
+        return { args }
+    },
+    props: {
+        type: {
+            type: String,
+            default: 'radio'
+        }
+    },
+    data() {
+        return {
+            options: deafultOptions,
+            model: this.args.type === 'radio' ? ref(1) : ref([1])
+        }
+    },
+    template: `<div style="padding: 50px">
+        <DlOptionGroup 
+            inline
+            :options="options" 
+            v-model="model" 
+            v-bind="args" />
+    </div>`
+})
+
+export const Inline = InlineTemplate.bind({})
+Inline.args = {
+    inline: true,
+    maxWidth: '130px'
+}
+
+const DisabledTemplate = (args) => ({
+    components: { DlOptionGroup },
+    setup() {
+        return { args }
+    },
+    props: {
+        type: {
+            type: String,
+            default: 'radio'
+        }
+    },
+    data() {
+        return {
+            options: deafultOptions,
+            model: this.args.type === 'radio' ? ref(1) : ref([1])
+        }
+    },
+    template: `<div style="padding: 50px">
+        <DlOptionGroup 
+            disabled
+            :options="options" 
+            v-model="model" 
+            v-bind="args" />
+    </div>`
+})
+
+export const Disabled = DisabledTemplate.bind({})
+Disabled.args = {
+    disabled: true,
+    maxWidth: '130px'
+}

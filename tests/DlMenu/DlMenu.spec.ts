@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue-demi'
-import { DlMenu } from '../../src'
+import { describe, it, expect, vi } from 'vitest'
+import { DlMenu } from '../../src/components'
 
 const Parent = defineComponent({
     name: 'DlParent',
@@ -8,7 +9,7 @@ const Parent = defineComponent({
 })
 
 describe('DlMenu', () => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
     it('should display menu content', async () => {
         const wrapper = mount(DlMenu, {
             parentComponent: Parent,
@@ -27,7 +28,8 @@ describe('DlMenu', () => {
             contextMenu: false,
             cover: false,
             disabled: false,
-            fit: false,
+            fitContainer: false,
+            fitContent: false,
             maxHeight: null,
             maxWidth: null,
             menuClass: '',
@@ -50,7 +52,7 @@ describe('DlMenu', () => {
         // expect(wrapper.vm.anchorOrigin).toBe('bottom start')
 
         await wrapper.vm.$el.parentNode.dispatchEvent(new MouseEvent('click'))
-        jest.runAllTimers()
+        vi.runAllTimers()
 
         // expect(wrapper.emitted()).not.toHaveProperty('click')
 
