@@ -286,13 +286,18 @@ export default defineComponent({
             }, props.transitionDuration)
         }
 
-        function handleHide(evt: ClickOutsideEvent) {
+        function handleHide(evt?: ClickOutsideEvent) {
             removeTick()
             removeTimeout()
             hidePortal()
 
             anchorCleanup(true)
-            refocusTarget = refocusTargetFn(evt, refocusTarget as HTMLElement)
+            if (evt) {
+                refocusTarget = refocusTargetFn(
+                    evt,
+                    refocusTarget as HTMLElement
+                )
+            }
 
             registerTimeout(() => {
                 hidePortal(true) // done hiding, now destroy
@@ -347,10 +352,28 @@ export default defineComponent({
             hide(evt)
         }
 
-        function updatePosition() {
+        function CheckAnchorElVisiblity(domElement: any) {
+            return new Promise((resolve) => {
+                const o = new IntersectionObserver(([entry]) => {
+                    resolve(entry.intersectionRatio === 1)
+                    o.disconnect()
+                })
+                o.observe(domElement)
+            })
+        }
+
+        async function updatePosition() {
             const el = innerRef.value
 
             if (el === null || anchorEl.value === null) {
+                return
+            }
+
+            const isAnchorElVisible = await CheckAnchorElVisiblity(
+                anchorEl.value
+            )
+            if (!isAnchorElVisible) {
+                handleHide()
                 return
             }
 

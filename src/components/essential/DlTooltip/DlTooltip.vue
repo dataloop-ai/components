@@ -230,7 +230,7 @@ export default defineComponent({
             }, props.transitionDuration)
         }
 
-        function handleHide(evt: ClickOutsideEvent) {
+        function handleHide(evt?: ClickOutsideEvent) {
             removeTick()
             removeTimeout()
             hidePortal()
@@ -258,10 +258,28 @@ export default defineComponent({
             cleanEvt(anchorEvents, 'tooltipTemp')
         }
 
-        function updatePosition() {
+        function CheckAnchorElVisiblity(domElement: any) {
+            return new Promise((resolve) => {
+                const o = new IntersectionObserver(([entry]) => {
+                    resolve(entry.intersectionRatio === 1)
+                    o.disconnect()
+                })
+                o.observe(domElement)
+            })
+        }
+
+        async function updatePosition() {
             const el = innerRef.value
 
             if (anchorEl.value === null || !el) {
+                return
+            }
+
+            const isAnchorElVisible = await CheckAnchorElVisiblity(
+                anchorEl.value
+            )
+            if (!isAnchorElVisible) {
+                handleHide()
                 return
             }
 
