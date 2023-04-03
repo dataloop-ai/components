@@ -32,7 +32,6 @@
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
 import { getColor, loggerFactory } from '../../../utils'
-import { dynamicSvgImport } from '../../../utils/dynamicSvgImport'
 
 export default defineComponent({
     name: 'DlIcon',
@@ -105,12 +104,7 @@ export default defineComponent({
     },
     methods: {
         loadSvg() {
-            return new Promise<void>(async (resolve, reject) => {
-                let dynamicalImagePath = null
-                await dynamicSvgImport(this.icon).then((path: any) => {
-                    dynamicalImagePath = path
-                })
-
+            return new Promise<void>((resolve, reject) => {
                 const svgElement = new Image()
                 svgElement.setAttribute('height', this.size)
                 svgElement.setAttribute('width', this.size)
@@ -134,7 +128,7 @@ export default defineComponent({
                 try {
                     svgElement.src = this.svgSource
                         ? `${this.svgSource}/${this.icon}.svg`
-                        : dynamicalImagePath
+                        : require(`@dataloop-ai/icons/assets/${this.icon}.svg`)
                 } catch (e) {
                     reject(e)
                 }
