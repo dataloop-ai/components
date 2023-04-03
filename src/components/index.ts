@@ -53,6 +53,7 @@ import { DlWidget } from './DlWidget'
 import { DlGrid } from './DlWidget'
 import DlTextHolder from './DlTextHolder.vue'
 import { DlColumnChart, DlLineChart } from './DlChart'
+import DlConfusionMatrix from './DlConfusionMatrix/DlConfusionMatrix.vue'
 import DlSpinner from './DlSpinner.vue'
 
 export {
@@ -117,7 +118,8 @@ export {
     DlTextHolder,
     DlColumnChart,
     DlLineChart,
-    DlSpinner
+    DlSpinner,
+    DlConfusionMatrix
 }
 
 export type { StepState, DateInterval }

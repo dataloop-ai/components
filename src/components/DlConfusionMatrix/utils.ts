@@ -1,5 +1,25 @@
 import { MatrixCell, Label } from './types'
 
+export function getCellWidth() {
+    return document.querySelector('.matrix__cell').getBoundingClientRect().width
+}
+
+export function setZoom(zoom: number, el: HTMLElement) {
+    const transformOrigin = [0, 0];
+        const p = ['webkit', 'moz', 'ms', 'o'];
+        const s = 'scale(' + zoom + ')';
+        const oString =
+            transformOrigin[0] * 100 + '% ' + transformOrigin[1] * 100 + '%'
+
+    for (let i = 0; i < p.length; i++) {
+        el.style[(p[i] + 'Transform') as any] = s
+        el.style[(p[i] + 'TransformOrigin') as any] = oString
+    }
+
+    el.style['transform'] = s
+    el.style['transformOrigin'] = oString
+}
+
 export function validateMatrix(matrix: number[][], labels: string[] | Label[]) {
     let validation = true
     if (matrix.length !== labels.length) return false

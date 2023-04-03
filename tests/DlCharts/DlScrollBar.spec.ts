@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount, shallowMount } from '@vue/test-utils'
-import DlScrollBar from '../../src/components/DlChart/DlScrollBar.vue'
+import DlScrollBar from '../../src/components/DlScrollBar.vue'
 
 describe('DlScrollBar', () => {
     it('should trigger the drag functionality', () => {

@@ -50,11 +50,6 @@ export default defineComponent({
         }
     },
     emits: ['position-update'],
-    setup(props) {
-        watch(props, (val) => {
-            console.log(JSON.parse(JSON.stringify(val)))
-        })
-    },
     data(): {
         isDragging: boolean
         mouseOffsetTop: number
@@ -95,7 +90,7 @@ export default defineComponent({
             }
         },
         maxScroll(): number {
-            return this.$refs.wrapper?.offsetHeight
+            return (this.$refs.wrapper as HTMLElement)?.offsetHeight
         }
     },
     mounted() {

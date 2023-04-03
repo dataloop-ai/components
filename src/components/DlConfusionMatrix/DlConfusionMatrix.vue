@@ -13,30 +13,39 @@
                 {{ leftLabel }}
             </span>
             <div
-                ref="yAxis"
-                class="y-axis"
+                ref="yAxisOuter"
+                class="y-axis-outer"
             >
                 <div
-                    v-for="(row, index) in currentMatrix"
-                    :key="index"
-                    class="y-axis__element"
+                    ref="yAxis"
+                    class="y-axis"
                 >
-                    <img
-                        v-if="labelImages[0]"
-                        class="legend-avatar"
-                        :src="labelImages[index]"
+                    <div
+                        v-for="(label, index) in labels"
+                        :key="index"
+                        class="y-axis__element"
                     >
-                    <span v-else>
-                        {{ labels[index] }}
-                    </span>
-                    <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
+                        <img
+                            v-if="labelImages[0]"
+                            class="legend-avatar"
+                            :src="labelImages[index]"
+                        >
+                        <span v-else>
+                            {{ label }}
+                        </span>
+                        <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
+                    </div>
                 </div>
             </div>
             <div
                 ref="verticalWrapper"
                 class="vertical_wrapper"
             >
-                <div class="matrix-wrapper">
+                <div
+                    ref="matrixWrapper"
+                    class="matrix-wrapper"
+                    @scroll="handleMatrixScroll"
+                >
                     <div
                         ref="matrix"
                         class="matrix"
@@ -50,8 +59,8 @@
                             )}; color: var(--dl-color-text${
                                 cell.value < 0.5 ? '-darker' : ''
                             }-buttons)`"
-                            @mouseenter="showTooltip(this, cell, $event)"
-                            @mouseleave="hideTooltip(this)"
+                            @mouseenter="handleShowTooltip(cell, $event)"
+                            @mouseleave="handleHideTooltip"
                         >
                             {{
                                 cell.value > 0
@@ -62,22 +71,10 @@
                             }}
                         </div>
                     </div>
-                    <dl-scroll-bar
-                        :height="`${$refs.yAxis?.offsetHeight}px`"
-                        :show="currentMatrix.length !== matrix.length"
-                        :item-count="matrix.length"
-                        :items-in-view="currentMatrix.length"
-                        :position="currentScroll"
-                        :wrapper-styles="{
-                            marginLeft: '5px',
-                            width: '8px'
-                        }"
-                        @position-update="(e) => handleScrollUpdate(this, e)"
-                    />
                 </div>
                 <div class="x-axis">
                     <span
-                        v-for="(row, index) in currentMatrix"
+                        v-for="(label, index) in visibleLabels"
                         :key="index"
                         class="x-axis__element"
                         :style="`${
@@ -91,7 +88,7 @@
                                 :src="labelImages[index]"
                             >
                             <span v-else>
-                                {{ labels[index] }}
+                                {{ label }}
                             </span>
                             <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
                         </span>
@@ -159,18 +156,22 @@
 import { defineComponent, PropType } from 'vue-demi'
 import DlBrush from '../DlBrush/DlBrush.vue'
 import DlTooltip from '../DlTooltip.vue'
-import DlScrollBar from '../DlScrollBar.vue'
 import { MatrixCell, Label, BrushState } from './types'
 import { hexToRgbA } from '../../utils/colors'
 import { colorNames } from '../../utils/css-color-names'
 import { useThemeVariables } from '../../hooks/use-theme'
-import { getGradationValues, normalizeMatrix, validateMatrix } from './utils'
+import {
+    getGradationValues,
+    normalizeMatrix,
+    validateMatrix,
+    setZoom,
+    getCellWidth
+} from './utils'
 import { debounce } from 'lodash'
 export default defineComponent({
     components: {
         DlBrush,
-        DlTooltip,
-        DlScrollBar
+        DlTooltip
     },
     props: {
         labels: {
@@ -212,57 +213,53 @@ export default defineComponent({
         return { variables, getCellBackground }
     },
     data(): {
-        currentMatrix: number[][]
         tooltipState: { x: string; y: string } | null
         currentBrushState: { min: number; max: number }
         cellWidth: number
-        timer: number
-        currentScroll: number
     } {
         return {
-            currentMatrix: this.matrix,
             tooltipState: null,
             currentBrushState: { min: 0, max: this.matrix.length },
-            cellWidth: null,
-            timer: null,
-            currentScroll: 0
+            cellWidth: null
         }
     },
     computed: {
+        visibleLabels(): string[] | Label[] {
+            return this.labels.slice(
+                this.currentBrushState.min,
+                this.currentBrushState.max
+            )
+        },
         labelStrings(): string[] | Label[] {
             if (typeof this.labels[0] === 'object')
                 return this.labels.map((label: any) => label.title)
             else return this.labels
         },
         labelImages(): string[] {
-            return this.labels.map((label: any) => label.image)
+            return this.visibleLabels.map((label: any) => label.image)
         },
         isValidMatrix(): boolean {
-            return validateMatrix(this.matrix, this.labelStrings)
+            return validateMatrix(this.matrix, this.labels)
         },
         flattenedMatrix(): MatrixCell[] {
             return normalizeMatrix(
-                this.currentMatrix.flatMap(
-                    (row: number[], rowIndex: number) => {
-                        return row.map(
-                            (cellValue: number, cellIndex: number) => {
-                                return {
-                                    value: cellValue,
-                                    unnormalizedValue: cellValue,
-                                    xLabel: this.labelStrings[rowIndex],
-                                    yLabel: this.labelStrings[cellIndex],
-                                    x: rowIndex,
-                                    y: cellIndex
-                                }
-                            }
-                        )
-                    }
-                )
+                this.matrix.flatMap((row: number[], rowIndex: number) => {
+                    return row.map((cellValue: number, cellIndex: number) => {
+                        return {
+                            value: cellValue,
+                            unnormalizedValue: cellValue,
+                            xLabel: this.labelStrings[rowIndex],
+                            yLabel: this.labelStrings[cellIndex],
+                            x: rowIndex,
+                            y: cellIndex
+                        }
+                    })
+                })
             )
         },
         matrixStyles(): object {
             return {
-                '--matrix-rows': this.currentMatrix.length,
+                '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
                 '--general-color': this.getCellBackground()
             }
@@ -290,17 +287,15 @@ export default defineComponent({
         resizeMatrix() {
             const colorSpectrum = this.$refs.colorSpectrum as HTMLElement
             const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
-            const yAxis = this.$refs.yAxis as HTMLElement
             const labelY = this.$refs.labelY as HTMLElement
+            const yAxisOuter = this.$refs.yAxisOuter as HTMLElement
             const width = verticalWrapper.offsetWidth
 
-            this.cellWidth = width / this.currentMatrix.length
-
+            this.cellWidth = width / this.matrix.length
             colorSpectrum.style.height = `${width}px`
-            yAxis.style.height = `${width}px`
-
             labelY.style.height = `${labelY.offsetWidth}px`
-            labelY.style.marginTop = `${yAxis.offsetHeight / 2}px`
+            labelY.style.marginTop = `${width / 2}px`
+            yAxisOuter.style.height = `${width}px`
         },
         handleBrushUpdate(brush: BrushState) {
             if (
@@ -311,67 +306,45 @@ export default defineComponent({
             this.updateBrush(this, brush)
         },
         updateBrush: debounce((ctx: any, brush: BrushState) => {
-            const matrix: number[][] = []
-            for (let i = brush.min; i < brush.max; i++)
-                matrix.push([...ctx.matrix[i]])
-            const newMatrix: number[][] = []
-            matrix.forEach((row) => {
-                newMatrix.push(row.slice(brush.min, brush.max))
-            })
-            ctx.currentMatrix = newMatrix
-            if (brush.min > ctx.currentBrushState.min) {
-                ctx.currentScroll = brush.min
-            }
-            ctx.currentBrushState = brush
-            ctx.resizeMatrix()
-        }, 30),
-        handleScrollUpdate: debounce((ctx, e) => {
-            const height = ctx.$refs.yAxis.offsetHeight
-            const scroll = Math.trunc(
-                (ctx.matrix.length * Math.ceil((e.top * 100) / height)) / 100
+            setZoom(
+                ctx.matrix.length / (brush.max - brush.min),
+                ctx.$refs.matrix
             )
-
-            if (scroll > ctx.currentScroll) {
-                const newRow = ctx.matrix[
-                    ctx.currentMatrix.length + scroll - 1
-                ].slice(
-                    ctx.currentBrushState.min,
-                    ctx.matrix.length -
-                        (ctx.matrix.length - ctx.currentBrushState.max)
-                )
-                ctx.currentMatrix.shift()
-                ctx.currentMatrix.push(newRow)
-                ctx.currentScroll = scroll
-            } else if (scroll < ctx.currentScroll) {
-                const newRow = ctx.matrix[scroll].slice(
-                    ctx.currentBrushState.min,
-                    ctx.matrix.length -
-                        (ctx.matrix.length - ctx.currentBrushState.max)
-                )
-                ctx.currentMatrix.unshift(newRow)
-                ctx.currentMatrix.pop()
-                ctx.currentScroll = scroll
+            const scroll = brush.min * getCellWidth() + 2
+            const container = ctx.$refs.matrixWrapper
+            container.scroll(scroll, scroll)
+            console.log(brush)
+            ctx.currentBrushState = brush
+            ctx.resizeYAxis()
+        }, 30),
+        resizeYAxis() {
+            (this.$refs.yAxis as HTMLElement).style.height = `${
+                getCellWidth() * this.matrix.length
+            }px`
+        },
+        handleMatrixScroll(e: MouseEvent) {
+            const target = e.target as HTMLElement
+            ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
+        },
+        handleShowTooltip(cell: MatrixCell, e: MouseEvent) {
+            this.showTooltip(this, cell, e)
+        },
+        handleHideTooltip() {
+            this.hideTooltip(this)
+        },
+        showTooltip: debounce((ctx: any, cell: MatrixCell, e: MouseEvent) => {
+            ctx.tooltipState = {
+                value: ctx.normalized ? cell.value : cell.unnormalizedValue,
+                xLabel: cell.xLabel,
+                yLabel: cell.yLabel,
+                x: e.pageX,
+                y: e.pageY,
+                visible: true
             }
-        }, 10),
-        showTooltip: debounce(
-            (
-                ctx: any,
-                { xLabel, yLabel, value, unnormalizedValue },
-                e: MouseEvent
-            ) => {
-                ctx.tooltipState = {
-                    value: ctx.normalized ? value : unnormalizedValue,
-                    xLabel,
-                    yLabel,
-                    x: e.pageX,
-                    y: e.pageY,
-                    visible: true
-                }
-            }
-        ),
+        }, 200),
         hideTooltip: debounce((ctx: any) => {
-            ctx.tooltipState.visible = false
-        })
+            if (ctx?.tooltipState) ctx.tooltipState.visible = false
+        }, 200)
     }
 })
 </script>
@@ -391,16 +364,18 @@ export default defineComponent({
 }
 
 .label-tag {
-    font-size: 14px;
+    font-size: 0.5em;
     color: var(--dl-color-medium);
 }
 .label-tag.y {
     transform: rotate(-90deg);
+    margin-right: 10px;
 }
 .label-tag.x {
     margin-top: 15px;
 }
 .x-axis {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
@@ -408,33 +383,45 @@ export default defineComponent({
     max-height: 100px;
     &__element {
         width: var(--cell-dimensions);
-        text-align: center;
         line-height: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 }
 .y-axis {
-    width: 5%;
     margin-right: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     &__element {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        height: var(--cell-dimensions);
+        text-align: end;
+        line-height: var(--cell-dimensions);
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+}
+.y-axis-outer {
+    overflow: hidden;
 }
 .y-axis,
 .x-axis {
     color: var(--dl-color-darker);
-    font-size: 16px;
+    font-size: 0.7em;
 }
 
 .matrix-wrapper {
     display: flex;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.matrix-wrapper::-webkit-scrollbar {
+    width: 14px;
+}
+.matrix-wrapper::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: var(--dl-color-separator);
 }
 
 .matrix {
@@ -443,7 +430,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 60%;
+        font-size: 80%;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
@@ -468,7 +455,7 @@ export default defineComponent({
     }
     &__gradation {
         width: 60%;
-        font-size: 80%;
+        font-size: 0.8em;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -487,7 +474,7 @@ export default defineComponent({
     position: absolute;
     border: 1px solid var(--dl-color-separator);
     padding: 8px;
-    font-size: 80%;
+    font-size: 0.8em;
     display: flex;
     flex-direction: column;
     background-color: var(--dl-color-shadow);

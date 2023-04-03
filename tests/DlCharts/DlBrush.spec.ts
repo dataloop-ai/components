@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import DlBrush from '../../src/components/DlChart/DlBrush.vue'
+import DlBrush from '../../src/components/DlBrush/DlBrush.vue'
 
 describe('DlBrush', () => {
     it('return computed props', () => {
