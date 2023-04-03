@@ -1,2 +1,2 @@
 import DlItem from './DlItem.vue'
-export default DlItem
+export { DlItem }
