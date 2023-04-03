@@ -88,5 +88,8 @@ export default defineComponent({
     &--small {
         font-size: var(--dl-font-size-small);
     }
+
+    // to deal with quasar conflicts.
+    line-height: initial !important;
 }
 </style>
