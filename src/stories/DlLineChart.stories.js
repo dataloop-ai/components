@@ -1,6 +1,6 @@
-import DlLineChart from '../components/DlChart/DlLineChart.vue'
+import { DlLineChart } from '../components'
 import { ref } from 'vue'
-import orderBy from 'lodash/orderBy'
+import { orderBy } from 'lodash'
 
 function randomIntFromInterval(min, max) {
     return new Array(18)

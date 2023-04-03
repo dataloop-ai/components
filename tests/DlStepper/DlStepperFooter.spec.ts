@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlStepperFooter from '../../src/components/DlStepper/DlStepperFooter.vue'
+import DlStepperFooter from '../../src/components/compound/DlStepper/components/DlStepperFooter.vue'
 import { describe, it, expect } from 'vitest'
 
 describe('DlStepperFooter', () => {

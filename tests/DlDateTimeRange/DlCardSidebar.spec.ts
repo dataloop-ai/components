@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlCardSidebar from '../../src/components/DlDateTimeRange/DlCardSidebar.vue'
+import DlCardSidebar from '../../src/components/compound/DlDateTime/DlDateTimeRange/DlCardSidebar.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const daySidebar = [
@@ -13,7 +13,7 @@ const daySidebar = [
     }
 ]
 
-vi.useFakeTimers('modern')
+vi.useFakeTimers('modern' as any)
 vi.setSystemTime(new Date(1990, 12, 1))
 
 describe('DlCardSidebar', () => {

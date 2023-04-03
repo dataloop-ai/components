@@ -1,7 +1,7 @@
 import {
     getWeekDayNames,
     getMonths
-} from '../../src/components/DlDatePicker/utils'
+} from '../../src/components/compound/DlDateTime/DlDatePicker/utils'
 import { describe, it, expect } from 'vitest'
 
 const months = [

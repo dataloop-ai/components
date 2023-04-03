@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import PaginationLegend from '../../src/components/DlPagination/PaginationLegend.vue'
+import PaginationLegend from '../../src/components/compound/DlPagination/components/PaginationLegend.vue'
 import { describe, it, expect } from 'vitest'
 
 describe('PaginationLegend', () => {

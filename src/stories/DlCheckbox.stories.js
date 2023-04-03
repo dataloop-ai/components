@@ -1,4 +1,3 @@
-import { ref } from 'vue-demi'
 import { DlCheckbox } from '../'
 
 export default {

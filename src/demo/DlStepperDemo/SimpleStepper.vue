@@ -103,15 +103,9 @@ import InstructionStep from './steps/InstructionStep.vue'
 import DataStep from './steps/DataStep.vue'
 import AssignmentsStep from './steps/AssignmentsStep.vue'
 import QualityStep from './steps/QualityStep.vue'
-import {
-    DlStepper,
-    Stepper,
-    Step,
-    StepState,
-    DlTypography,
-    DlChip,
-    DlCounters
-} from '../..'
+import { DlStepper, DlTypography, DlChip, DlCounters } from '../..'
+import { StepState } from '../../types'
+import { Stepper, Step } from '../../components/compound/DlStepper/models'
 
 class CustomStepper extends Stepper {
     constructor(steps: Step[]) {

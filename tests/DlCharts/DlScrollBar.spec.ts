@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { mount, shallowMount } from '@vue/test-utils'
-import DlScrollBar from '../../src/components/DlScrollBar.vue'
+import DlChartsScrollBar from '../../src/components/compound/DlCharts/components/DlChartScrollBar.vue'
 
 describe('DlScrollBar', () => {
     it('should trigger the drag functionality', () => {
-        const wrapper = mount(DlScrollBar, {
+        const wrapper = mount(DlChartsScrollBar, {
             props: {
                 itemCount: 20,
                 itemsInView: 6,
@@ -18,7 +18,7 @@ describe('DlScrollBar', () => {
     })
 
     it('should turn off dragging', () => {
-        const wrapper = mount(DlScrollBar, {
+        const wrapper = mount(DlChartsScrollBar, {
             data() {
                 return {
                     isDragging: true
@@ -33,7 +33,7 @@ describe('DlScrollBar', () => {
     })
 
     it('should move the scrollbar while dragging', async () => {
-        const wrapper = shallowMount(DlScrollBar, {
+        const wrapper = shallowMount(DlChartsScrollBar, {
             props: {
                 itemCount: 20,
                 itemsInView: 6,

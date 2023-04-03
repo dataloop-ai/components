@@ -2,13 +2,14 @@ import {
     DlButton,
     DlDialogBox,
     DlAlert,
-    DlTextInput,
+    DlInput,
     DlTypography,
     DlIcon,
-    DlTooltip
+    DlTooltip,
+    DlDialogBoxHeader,
+    DlDialogBoxFooter
 } from '../'
 import { ref } from 'vue-demi'
-import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components/DlDialogBox'
 
 export default {
     title: 'Library/Components/DlDialogBox',
@@ -154,7 +155,7 @@ const CustomDialogBox = (args) => ({
         DlDialogBoxHeader,
         DlDialogBoxFooter,
         DlAlert,
-        DlTextInput,
+        DlInput,
         DlTypography,
         DlIcon,
         DlTooltip
@@ -190,9 +191,9 @@ const CustomDialogBox = (args) => ({
             <dl-alert type="info">
                 failed to create new driver, failed to initialize a S3integrationstoragedriver. {“config: Accumsan augue vitae morbi arcu est. Nisi, nulla pretium et ultricies facilisis sollicitudin nunc urna.
             </dl-alert>
-            <dl-text-input title="Title" :required="true" />
-            <dl-text-input title="Title" :required="true" />
-            <dl-text-input title="Title" :required="false" placeholder="Type your title" />
+            <dl-input title="Title" :required="true" />
+            <dl-input title="Title" :required="true" />
+            <dl-input title="Title" :required="false" placeholder="Type your title" />
             <dl-typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis dictum massa. Cras in massa in justo sodales consequat quis a metus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis in neque quam. Fusce aliquam finibus efficitur. Proin elementum ipsum massa, at gravida lectus suscipit et. Mauris id imperdiet ex, eget condimentum massa. Duis bibendum diam vitae lobortis semper. Curabitur placerat at enim at iaculis. Ut eget nisl magna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis placerat purus in est sagittis, ac eleifend neque semper.
 
             Phasellus vel risus sit amet libero volutpat tempor. Vestibulum dapibus lectus est, eu molestie elit congue a. Quisque pharetra, nisl sit amet pellentesque accumsan, est ante bibendum nulla, eu vehicula tellus odio quis est. Donec et nulla ante. Integer bibendum augue elit, pellentesque fermentum tellus volutpat dapibus. Maecenas vel molestie turpis, vehicula varius diam. Cras eu lacinia arcu, id convallis metus. Nullam condimentum molestie enim, non fringilla metus posuere at. Etiam venenatis congue mi id pretium. Fusce eget consequat eros. Donec at elit feugiat, tincidunt erat nec, tincidunt orci.</dl-typography>
@@ -221,7 +222,7 @@ const DialogBoxWithCustomHeader = (args) => ({
         DlDialogBoxHeader,
         DlDialogBoxFooter,
         DlAlert,
-        DlTextInput,
+        DlInput,
         DlTypography,
         DlIcon,
         DlTooltip
@@ -258,9 +259,9 @@ const DialogBoxWithCustomHeader = (args) => ({
             <dl-alert type="info">
                 failed to create new driver, failed to initialize a S3integrationstoragedriver. {“config: Accumsan augue vitae morbi arcu est. Nisi, nulla pretium et ultricies facilisis sollicitudin nunc urna.
             </dl-alert>
-            <dl-text-input title="Title" :required="true" />
-            <dl-text-input title="Title" :required="true" />
-            <dl-text-input title="Title" :required="false" placeholder="Type your title" />
+            <dl-input title="Title" :required="true" />
+            <dl-input title="Title" :required="true" />
+            <dl-input title="Title" :required="false" placeholder="Type your title" />
             <dl-typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis dictum massa. Cras in massa in justo sodales consequat quis a metus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis in neque quam. Fusce aliquam finibus efficitur. Proin elementum ipsum massa, at gravida lectus suscipit et. Mauris id imperdiet ex, eget condimentum massa. Duis bibendum diam vitae lobortis semper. Curabitur placerat at enim at iaculis. Ut eget nisl magna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis placerat purus in est sagittis, ac eleifend neque semper.
 
             Phasellus vel risus sit amet libero volutpat tempor. Vestibulum dapibus lectus est, eu molestie elit congue a. Quisque pharetra, nisl sit amet pellentesque accumsan, est ante bibendum nulla, eu vehicula tellus odio quis est. Donec et nulla ante. Integer bibendum augue elit, pellentesque fermentum tellus volutpat dapibus. Maecenas vel molestie turpis, vehicula varius diam. Cras eu lacinia arcu, id convallis metus. Nullam condimentum molestie enim, non fringilla metus posuere at. Etiam venenatis congue mi id pretium. Fusce eget consequat eros. Donec at elit feugiat, tincidunt erat nec, tincidunt orci.</dl-typography>
@@ -291,7 +292,7 @@ const DialogBoxInsideDialogBox = (args) => ({
         DlDialogBoxHeader,
         DlDialogBoxFooter,
         DlAlert,
-        DlTextInput,
+        DlInput,
         DlTypography,
         DlIcon,
         DlTooltip

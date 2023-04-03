@@ -1,10 +1,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlConfusionMatrix from '../components/DlConfusionMatrix/DlConfusionMatrix.vue'
-import DlBarChart from '../components/DlChart/DlBarChart.vue'
-import DlGrid from '../components/DlWidget/DlGrid.vue'
-import DlGridRow from '../components/DlWidget/DlGridRow.vue'
-import DlWidget from '../components/DlWidget/DlWidget.vue'
+import {
+    DlWidget,
+    DlGridRow,
+    DlGrid,
+    DlBarChart,
+    DlConfusionMatrix
+} from '../components'
 
 const labelsFn = () => {
     const a = []
