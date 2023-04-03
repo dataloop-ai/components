@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlScrollBar',
