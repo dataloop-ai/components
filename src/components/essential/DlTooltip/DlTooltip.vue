@@ -230,7 +230,7 @@ export default defineComponent({
             }, props.transitionDuration)
         }
 
-        function handleHide(evt?: ClickOutsideEvent) {
+        function handleHide(evt: ClickOutsideEvent) {
             removeTick()
             removeTimeout()
             hidePortal()
@@ -279,7 +279,7 @@ export default defineComponent({
                 anchorEl.value
             )
             if (!isAnchorElVisible) {
-                handleHide()
+                hide()
                 return
             }
 

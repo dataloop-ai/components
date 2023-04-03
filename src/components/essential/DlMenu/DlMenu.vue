@@ -286,18 +286,13 @@ export default defineComponent({
             }, props.transitionDuration)
         }
 
-        function handleHide(evt?: ClickOutsideEvent) {
+        function handleHide(evt: ClickOutsideEvent) {
             removeTick()
             removeTimeout()
             hidePortal()
 
             anchorCleanup(true)
-            if (evt) {
-                refocusTarget = refocusTargetFn(
-                    evt,
-                    refocusTarget as HTMLElement
-                )
-            }
+            refocusTarget = refocusTargetFn(evt, refocusTarget as HTMLElement)
 
             registerTimeout(() => {
                 hidePortal(true) // done hiding, now destroy
@@ -373,7 +368,7 @@ export default defineComponent({
                 anchorEl.value
             )
             if (!isAnchorElVisible) {
-                handleHide()
+                hide()
                 return
             }
 
