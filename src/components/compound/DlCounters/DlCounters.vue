@@ -61,10 +61,6 @@ export default defineComponent({
             validator(value: CounterItem[]): boolean {
                 return value.length <= 8
             }
-        },
-        abbreviateNumbers: {
-            type: Boolean,
-            default: true
         }
     },
     data() {

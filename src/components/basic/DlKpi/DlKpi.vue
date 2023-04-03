@@ -38,7 +38,7 @@
             </div>
         </div>
         <div
-            v-if="withProgressBar"
+            v-if="progress"
             class="kpi_box__progress_bar"
         >
             <dl-progress-bar
@@ -107,14 +107,9 @@ export default defineComponent({
         },
         progress: {
             type: Object as PropType<DlKpiProgressType>,
-            default: () => ({} as DlKpiProgressType)
+            default: null
         },
-        withBorder: {
-            type: Boolean,
-            default: false,
-            required: false
-        },
-        withProgressBar: {
+        bordered: {
             type: Boolean,
             default: false,
             required: false
@@ -127,6 +122,9 @@ export default defineComponent({
     },
     setup(props) {
         const progressValue = (progress: DlKpiProgressType) => {
+            if (!progress) {
+                return null
+            }
             return progress?.value ? progress.value / 100 : null
         }
 
@@ -136,7 +134,7 @@ export default defineComponent({
 
         const cssVars = computed(() => {
             return {
-                '--dl-kpi-border': props.withBorder ? '1px solid #e4e4e4' : '',
+                '--dl-kpi-border': props.bordered ? '1px solid #e4e4e4' : '',
                 '--dl-kpi-title-max-width': isSingleWord(props.title)
                     ? '100%'
                     : '90%', // todo: caused a bug with single words
