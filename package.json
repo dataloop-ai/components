@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.16.0",
+  "version": "0.16.8",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -17,11 +17,12 @@
     "lint:fix": "eslint ./src --ext .ts,.vue --fix",
     "format": "prettier --write ./src",
     "lint-staged": "lint-staged",
-    "test": "vitest run --coverage",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
   },
   "dependencies": {
-    "@dataloop-ai/icons": "^2.0.13",
+    "@dataloop-ai/icons": "^3.0.6",
     "@types/lodash": "^4.14.184",
     "chart.js": "^3.9.1",
     "lodash": "^4.17.21",

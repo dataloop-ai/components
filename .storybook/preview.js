@@ -1,4 +1,4 @@
-import '@dataloop-ai/icons/docs/style.css'
+import '@dataloop-ai/icons/style.css'
 import { themes } from '@storybook/theming'
 
 export const parameters = {

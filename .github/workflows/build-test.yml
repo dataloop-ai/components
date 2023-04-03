@@ -24,4 +24,4 @@ jobs:
     - name: Check only
       run: npm run check-only
     - name: Test
-      run: npm test
+      run: npm run test:coverage
