@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import DlDoughnutChart from '../../src/components/DlChart/Doughnut/DlDoughnutChart.vue'
+import { DlDoughnutChart } from '../../src/components'
 import {
     doughnutLessData,
     doughnutEmptyObject,

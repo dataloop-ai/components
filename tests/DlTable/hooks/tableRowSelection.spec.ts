@@ -3,9 +3,12 @@ import { mountComposition } from 'vue-composition-test-utils'
 import {
     useTableRowSelection,
     useTableRowSelectionProps
-} from '../../../src/components/DlTable/hooks/tableRowSelection'
+} from '../../../src/components/compound/DlTable/hooks/tableRowSelection'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { TableProps, TableRow } from '../../../src/components/DlTable/types'
+import {
+    TableProps,
+    TableRow
+} from '../../../src/components/compound/DlTable/types'
 
 describe('useTableRowSelectionProps', () => {
     it('should validate the "selection" prop', () => {

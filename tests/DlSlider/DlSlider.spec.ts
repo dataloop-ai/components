@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import { DlSlider } from '../../src'
+import { DlSlider } from '../../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlSlider', () => {

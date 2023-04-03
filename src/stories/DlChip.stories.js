@@ -127,6 +127,13 @@ export default {
                 type: { summary: transformOptions },
                 defaultValue: { summary: 'lowercase' }
             }
+        },
+        fit: {
+            name: 'fit',
+            defaultValue: false,
+            description:
+                'Allows the chip to match at least the full width of its content',
+            control: 'boolean'
         }
     }
 }
@@ -194,4 +201,10 @@ PreviewWithTooltip.args = {
     iconColor: 'yellow',
     maxWidth: '100px',
     overflow: true
+}
+
+export const PreviewWithFit = Template.bind({})
+PreviewWithFit.args = {
+    label: 'Lorem ipsum dolor imun ls',
+    fit: true
 }

@@ -58,7 +58,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlSmartSearch, DlCheckbox } from '../../components'
-import { Query } from '../../components/DlSmartSearch/types'
+import { Query } from '../../components/types'
 import { aliases, schema } from './schema'
 
 export default defineComponent({

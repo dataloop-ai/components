@@ -3,8 +3,11 @@ import {
     getDragging,
     updatePosition,
     onKeydown
-} from '../../src/components/DlRange/utils'
-import { Dragging, dragType } from '../../src/components/DlSlider/useSlider'
+} from '../../src/components/compound/DlRange/utils'
+import {
+    Dragging,
+    dragType
+} from '../../src/components/compound/DlSlider/useSlider'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { KEY_CODE } from '../../src/utils'
 
