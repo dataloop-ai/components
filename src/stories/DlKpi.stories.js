@@ -142,11 +142,11 @@ export default {
                 type: 'boolean'
             }
         },
-        isSmall: {
-            name: 'isSmall',
+        small: {
+            name: 'small',
             type: { name: 'boolean', required: false },
             defaultValue: false,
-            description: 'isSmall',
+            description: 'small',
             table: {
                 type: { summary: 'boolean' },
                 defaultValue: { summary: false }
