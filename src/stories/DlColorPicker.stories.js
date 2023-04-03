@@ -1,7 +1,7 @@
 import { DlColorPicker } from '../components'
 import { ref } from 'vue-demi'
 import { action } from '@storybook/addon-actions'
-import { defaultColors } from '../components/DlColorPicker/constants'
+import { defaultColors } from '../components/essential/DlColorPicker/constants'
 
 export default {
     title: 'Library/Components/DlColorPicker',

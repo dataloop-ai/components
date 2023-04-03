@@ -21,7 +21,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlTabs, DlTabPanel, DlTabPanels } from '../components'
-import { TabDetails } from '../components/DlTabs/types'
+import { DlTabDetails } from '../components/types'
 
 export default defineComponent({
     components: {
@@ -46,7 +46,7 @@ export default defineComponent({
                 { label: 'Six', name: 'six' },
                 { label: 'Seven', name: 'seven' },
                 { label: 'Eight', name: 'eight' }
-            ] as TabDetails[]
+            ] as DlTabDetails[]
         }
     },
     methods: {

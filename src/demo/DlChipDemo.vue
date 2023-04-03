@@ -165,6 +165,16 @@
                 overflow
             />
         </div>
+        <h4>Chips with Fit</h4>
+        <div
+            class="col"
+            style="margin-bottom: 30px"
+        >
+            <DlChip
+                label="Long Chip Label With Alot Of Text"
+                fit
+            />
+        </div>
     </div>
 </template>
 

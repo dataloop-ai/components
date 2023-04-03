@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils'
-import { CalendarDate } from '../../src/components/DlDatePicker/classes/CalendarDate'
-import { CustomDate } from '../../src/components/DlDatePicker/classes/CustomDate'
-import DlCalendar from '../../src/components/DlDatePicker/DlCalendar.vue'
+import {
+    CustomDate,
+    CalendarDate
+} from '../../src/components/compound/DlDateTime/DlDatePicker/models'
+import DlCalendar from '../../src/components/compound/DlDateTime/DlDatePicker/components/DlCalendar.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const month = 11
@@ -19,7 +21,7 @@ for (let i = 1; i <= lastDayOfTheMonth; i++) {
     calendarDates.push(new CalendarDate(new Date(year, month, i)))
 }
 
-vi.useFakeTimers('modern')
+vi.useFakeTimers('modern' as any)
 vi.setSystemTime(new Date(year, month, 10))
 
 const date = new Date(year, month, 5)
@@ -166,6 +168,7 @@ describe('DlCalendar', () => {
         })
 
         expect(wrapper.vm.getDayStyle(endOfWeek)).toEqual({
+            background: 'var(--dl-date-picker-selected-strip)',
             borderBottomRightRadius: '11px',
             borderTopRightRadius: '11px'
         })

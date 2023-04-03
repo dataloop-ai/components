@@ -1,4 +1,4 @@
-import { Step } from '../../src/components/DlStepper/Step'
+import { Step } from '../../src/components/compound/DlStepper/models/Step'
 import { describe, it, expect } from 'vitest'
 
 describe('Step', () => {

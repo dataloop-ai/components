@@ -1,8 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { DlOptionGroup } from '../src'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import MenuItemWrapper from '../src/components/DlOptionGroup/MenuItemWrapper.vue'
-import { optionsValidator } from '../src/components/DlOptionGroup/utils'
+import MenuItemWrapper from '../src/components/compound/DlOptionGroup/components/MenuItemWrapper.vue'
+import { optionsValidator } from '../src/components/compound/DlOptionGroup/utils'
 
 describe('DlOptionGroup', () => {
     beforeEach(() => {
