@@ -237,7 +237,7 @@ export default defineComponent({
         outlined: Boolean,
         padding: { type: String, default: '5px' },
         fitContent: Boolean,
-        noWrap: Boolean,
+        noWrap: { type: Boolean, default: false, required: false },
         overflow: { type: Boolean, default: false, required: false },
         tooltip: { type: String, default: null, required: false }
     },

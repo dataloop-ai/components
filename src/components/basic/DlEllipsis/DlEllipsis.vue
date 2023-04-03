@@ -12,7 +12,7 @@
         >
             {{ rightText }}
         </span>
-        <dl-tooltip v-if="hasEllipsis && hasTooltip">
+        <dl-tooltip v-if="hasEllipsis && tooltip">
             {{ fullText }}
         </dl-tooltip>
     </div>
@@ -20,8 +20,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue-demi'
-import DlTooltip from '../components/essential/DlTooltip/DlTooltip.vue'
-import { useSizeObserver } from '../hooks/use-size-observer'
+import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
+import { useSizeObserver } from '../../../hooks/use-size-observer'
 
 export default defineComponent({
     name: 'DlEllipsis',
@@ -31,15 +31,14 @@ export default defineComponent({
     props: {
         text: {
             type: String,
-            default: '',
             required: true
         },
-        hasEllipsisInMiddle: {
+        middleEllipsis: {
             type: Boolean,
             default: false,
             required: false
         },
-        hasTooltip: {
+        tooltip: {
             type: Boolean,
             default: true,
             required: false
@@ -52,7 +51,7 @@ export default defineComponent({
         const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
 
         const splitIndex = computed(() =>
-            props.hasEllipsisInMiddle
+            props.middleEllipsis
                 ? Math.round(props.text.length * 0.75)
                 : props.text.length
         )
@@ -78,14 +77,12 @@ export default defineComponent({
     overflow: hidden;
 
     &__left {
-        // The left side CANNOT GROW, it can ONLY SHRINK (and add an ellipsis at the end).
         flex: 0 1 auto;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     &__right {
-        // The right side can grow, but NOT SHRINK.
         flex: 1 0 auto;
         overflow: hidden;
     }

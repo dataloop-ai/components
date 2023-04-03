@@ -251,7 +251,7 @@
                         <dl-item-section :no-wrap="true">
                             <dl-ellipsis
                                 text="Very very very very long long long long text text text"
-                                :has-ellipsis-in-middle="true"
+                                :middle-ellipsis="true"
                             />
                         </dl-item-section>
                     </dl-list-item>
@@ -284,9 +284,9 @@ import {
     DlListItem,
     DlItemSection,
     DlList,
-    DlDropdownButton
+    DlDropdownButton,
+    DlEllipsis
 } from '../components'
-import DlEllipsis from '../components/DlEllipsis.vue'
 
 export default defineComponent({
     name: 'DlDropdownButtonDemo',
