@@ -106,7 +106,7 @@ export default defineComponent({
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
         tooltip: { type: String, default: null, required: false },
-        styles: { type: Object, default: null }
+        styles: { type: [Object, String, Array], default: null }
     },
     emits: ['click', 'mousedown'],
     setup() {

@@ -20,14 +20,14 @@ describe('DlToggleButton', () => {
         expect(clickEvent).toHaveLength(1)
         const listButtons = wrapper.findAll('[data-test="button"]')
         expect(listButtons.length).toBe(2)
-        expect(wrapper.vm.getStyles(true)).toEqual({
+        expect(wrapper.vm.getStyles(true, false)).toEqual({
             padding: '7px 10px',
             height: '28px',
             fontSize: 'var(--dl-font-size-body)',
             borderRadius: '0',
             color: 'var(--dl-color-secondary)',
             borderColor: 'var(--dl-color-secondary)',
-            background: 'var(--dl-color-secondary-opacity)'
+            background: 'var(--dl-color-secondary-opaque)'
         })
     })
 })

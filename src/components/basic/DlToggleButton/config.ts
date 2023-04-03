@@ -16,7 +16,7 @@ export const ButtonsStyles = Object.freeze({
         ...generalStyles,
         color: 'var(--dl-color-secondary)',
         borderColor: 'var(--dl-color-secondary)',
-        background: 'var(--dl-color-secondary-opacity)'
+        background: 'var(--dl-color-secondary-opaque)'
     },
     hoverStyles: {
         ...generalStyles,

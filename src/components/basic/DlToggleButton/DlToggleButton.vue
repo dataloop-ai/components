@@ -33,7 +33,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { OptionItem } from './types'
-import DlButton from '../DlButton/DlButton.vue'
+import { DlButton } from '../DlButton'
 import { ButtonsStyles } from './config'
 
 export default defineComponent({
