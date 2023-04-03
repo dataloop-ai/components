@@ -18,6 +18,14 @@ class MutationObserver {
 
 window.MutationObserver = MutationObserver
 
+class IntersectionObserver {
+    disconnect() {}
+    unobserve() {}
+    observe() {}
+}
+
+window.IntersectionObserver = IntersectionObserver
+
 Element.prototype.scrollTo = () => {}
 
 if (typeof String.prototype.replaceAll === 'undefined') {
