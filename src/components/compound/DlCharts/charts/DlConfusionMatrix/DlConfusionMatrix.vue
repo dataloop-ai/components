@@ -313,7 +313,6 @@ export default defineComponent({
             const scroll = brush.min * getCellWidth() + 2
             const container = ctx.$refs.matrixWrapper
             container.scroll(scroll, scroll)
-            console.log(brush)
             ctx.currentBrushState = brush
             ctx.resizeYAxis()
         }, 30),

@@ -62,11 +62,11 @@ import useSlider, {
     useSliderEmits,
     dragType,
     Dragging
-} from '../../DlSlider/useSlider'
+} from '../../components/compound/DlSlider/useSlider'
 
-import { between, isMobileOrTablet, getColor } from '../../../../utils'
-import BrushThumb from '../shared/BrushThumb.vue'
-import touchPanDirective from '../../../../directives/TouchPan'
+import { between, isMobileOrTablet, getColor } from '../../utils'
+import BrushThumb from './BrushThumb.vue'
+import touchPanDirective from '../../directives/TouchPan'
 
 export default defineComponent({
     name: 'DlBrushBar',

@@ -15,8 +15,8 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue-demi'
-import { getColor } from '../../../../utils'
-import { DlIcon } from '../../../essential'
+import { getColor } from '../../utils'
+import { DlIcon } from '../essential/DlIcon'
 
 export default defineComponent({
     name: 'BrushThumb',
