@@ -167,48 +167,31 @@ export default defineComponent({
                 '--dl-spinner-size': this.size,
                 '--dl-spinner-icon-size': this.iconSize,
                 '--dl-spinner-border-color': this.borderColor,
-                '--dl-spinner-roation-speed': this.rotationSpeed
+                '--dl-spinner-roation-speed': this.rotationSpeed,
+                '--icon-top': this.iconSize
             }
-        }
-    },
-    mounted() {
-        window.onresize = this.resizeSpinner
-        this.resizeSpinner()
-    },
-    methods: {
-        resizeSpinner() {
-            const spinColor = this.$refs.spinColor
-            const spinBg = this.$refs.spinBg
-            const icon = this.$refs.dlIcon
-
-            const info = spinBg.getBoundingClientRect()
-            const x = info.x + window.scrollX
-            const y = info.y + window.scrollY
-
-            spinColor.style.left = `${x}px`
-            spinColor.style.top = `${y}px`
-            icon.style.top = `${
-                y +
-                spinBg.offsetHeight -
-                spinBg.offsetHeight / 2 -
-                icon.offsetHeight / 2.3
-            }px`
-            icon.style.left = `${
-                x +
-                spinBg.offsetWidth -
-                spinBg.offsetWidth / 2 -
-                icon.offsetWidth / 2.3
-            }px`
         }
     }
 })
 </script>
 
 <style scoped lang="scss">
+.wrapper {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.spinner {
+    position: relative;
+}
+
 .spin-loader,
 .spin-bg {
     width: var(--dl-spinner-size);
     height: var(--dl-spinner-size);
+    top: 0;
+    left: 0;
 }
 
 .spin-loader {
@@ -217,6 +200,8 @@ export default defineComponent({
 }
 
 .dl-icon {
+    top: var(--icon-top);
+    left: calc(var(--icon-top) - 4px);
     position: absolute;
     width: var(--dl-spinner-icon-size);
     height: var(--dl-spinner-icon-size);

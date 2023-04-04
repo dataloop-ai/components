@@ -1,2 +1,4 @@
 import DlSpinner from './DlSpinner.vue'
-export { DlSpinner }
+import DlSpinnerSemicircle from './DlSpinnerSemicircle.vue'
+import DlSpinnerGrid from './DlSpinnerGrid.vue'
+export { DlSpinner, DlSpinnerSemicircle, DlSpinnerGrid }
