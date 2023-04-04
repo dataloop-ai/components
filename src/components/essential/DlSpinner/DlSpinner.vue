@@ -1,5 +1,8 @@
 <template>
-    <div class="wrapper">
+    <div
+        ref="wrapper"
+        class="wrapper"
+    >
         <div
             class="spinner"
             :style="spinnerStyles"
