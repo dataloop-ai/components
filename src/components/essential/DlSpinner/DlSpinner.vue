@@ -1,16 +1,10 @@
 <template>
-    <div
-        ref="wrapper"
-        class="wrapper"
-    >
+    <div class="wrapper">
         <div
             class="spinner"
             :style="spinnerStyles"
         >
-            <div
-                ref="spinBg"
-                class="spin-bg"
-            >
+            <div class="spin-bg">
                 <svg
                     id="Layer_2"
                     data-name="Layer 2"
@@ -27,10 +21,7 @@
                     </g>
                 </svg>
             </div>
-            <div
-                ref="spinColor"
-                class="spin-loader"
-            >
+            <div class="spin-loader">
                 <svg
                     id="Layer_2"
                     data-name="Layer 2"
@@ -88,10 +79,7 @@
                     </g>
                 </svg>
             </div>
-            <div
-                ref="dlIcon"
-                class="dl-icon"
-            >
+            <div class="dl-icon">
                 <svg
                     viewBox="0 0 51 45"
                     fill="none"
