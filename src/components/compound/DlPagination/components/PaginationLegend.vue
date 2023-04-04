@@ -36,6 +36,7 @@ export default defineComponent({
     justify-content: flex-end;
     display: flex;
     color: var(--dl-color-lighter);
-    margin-left: 16px;
+    padding-left: 16px;
+    margin-left: auto;
 }
 </style>

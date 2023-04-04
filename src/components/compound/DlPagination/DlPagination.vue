@@ -5,13 +5,16 @@
     >
         <div class="dl-pagination--container">
             <rows-selector
-                v-if="withRowsPerPage"
+                v-if="withRowsPerPage && rowsPerPageState"
                 v-model="rowsPerPageState"
                 :options="rowsPerPageOptions"
                 :items-name="itemsName"
                 :disabled="disabled"
             />
-            <div class="dl-pagination--navigation">
+            <div
+                v-if="rowsPerPageState"
+                class="dl-pagination--navigation"
+            >
                 <page-navigation
                     :model-value="value"
                     :min="min"
@@ -135,10 +138,17 @@ export default defineComponent({
         },
         rowTo(): number {
             const to = this.rowsPerPageState * this.value
+
+            if (to === 0) {
+                return this.totalItems
+            }
+
             return to > this.totalItems ? this.totalItems : to
         },
         max(): number {
-            return Math.ceil(this.totalItems / this.rowsPerPageState)
+            return this.rowsPerPageState === 0
+                ? 1
+                : Math.ceil(this.totalItems / this.rowsPerPageState)
         }
     },
     watch: {
