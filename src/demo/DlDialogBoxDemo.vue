@@ -1,11 +1,16 @@
 <template>
     <div>
-        <button @click="openModal">
+        <dl-switch
+            v-model="draggable"
+            left-label="Draggable"
+        />
+        <dl-button @click="openModal">
             Open modal
-        </button>
+        </dl-button>
         <dl-dialog-box
             ref="modalOne"
             v-model="isOpenedFirstModal"
+            :draggable="draggable"
         >
             <template #header>
                 <dl-dialog-box-header
@@ -112,12 +117,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlDialogBox, DlButton } from '../components'
-import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components/DlDialogBox'
+import { DlButton, DlDialogBox, DlSwitch } from '../components'
+import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components'
 
 export default defineComponent({
     name: 'DlDialogBoxDemo',
     components: {
+        DlSwitch,
         DlButton,
         DlDialogBox,
         DlDialogBoxHeader,
@@ -126,7 +132,7 @@ export default defineComponent({
     setup() {
         const modalOne = ref<any>(null)
         const modalTwo = ref<any>(null)
-
+        const draggable = ref(true)
         const isOpenedFirstModal = ref(false)
 
         const openModal = () => {
@@ -168,7 +174,8 @@ export default defineComponent({
             closeSecondModal,
             modalOne,
             modalTwo,
-            isOpenedFirstModal
+            isOpenedFirstModal,
+            draggable
         }
     }
 })

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { DlSliderBase } from '../../src/components/DlSlider/components'
+import { DlSliderBase } from '../../src/components/compound/DlSlider/components'
 import touchPanDirective from '../../src/directives/TouchPan'
 import { describe, it, expect } from 'vitest'
 

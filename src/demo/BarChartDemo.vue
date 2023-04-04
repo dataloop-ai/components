@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlBarChart from '../components/DlChart/DlBarChart.vue'
+import { DlBarChart } from '../components'
 
 const labelsFn = () => {
     const a = []

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import QuickNavigation from '../../src/components/DlPagination/QuickNavigation.vue'
+import QuickNavigation from '../../src/components/compound/DlPagination/components/QuickNavigation.vue'
 import { describe, it, expect } from 'vitest'
 
 describe('QuickNavigation', () => {

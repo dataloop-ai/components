@@ -1,9 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlBarChart from '../components/DlChart/DlBarChart.vue'
-import DlGrid from '../components/DlWidget/DlGrid.vue'
-import DlGridRow from '../components/DlWidget/DlGridRow.vue'
-import DlWidget from '../components/DlWidget/DlWidget.vue'
+import { DlWidget, DlGridRow, DlGrid, DlBarChart } from '../components'
 
 const labelsFn = () => {
     const a = []

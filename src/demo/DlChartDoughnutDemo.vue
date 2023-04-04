@@ -66,9 +66,9 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlDoughnutChart from '../components/DlChart/Doughnut/DlDoughnutChart.vue'
 import { DoughnutControllerChartOptions } from 'chart.js'
-import { TDoughnutChartData } from '../components/DlChart/Doughnut/types/TDoughnutChartData'
+import { DlDoughnutChart } from '../components'
+import { TDoughnutChartData } from '../components/compound/DlCharts/charts/DlDoughnutChart/types'
 
 export default defineComponent({
     name: 'DlChartDoughnutDemo',

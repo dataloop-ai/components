@@ -1,6 +1,5 @@
-import DlColumnChart from '../components/DlChart/DlColumnChart.vue'
+import { DlColumnChart, DlAvatar } from '../components'
 import { ref } from 'vue'
-import DlAvatar from '../components/DlAvatar.vue'
 import { orderBy } from 'lodash'
 
 import {

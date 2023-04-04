@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { DlAlert } from '../src/'
+import { DlAlert } from '../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlAlert', () => {
@@ -44,7 +44,7 @@ describe('DlAlert', () => {
             })
 
             await wrapper.setProps({ fluid: true })
-
+            await wrapper.vm.$nextTick()
             expect(
                 (wrapper.get(_root).element as HTMLElement).style.width
             ).toEqual('100%')
