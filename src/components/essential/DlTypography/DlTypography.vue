@@ -50,18 +50,28 @@ export default defineComponent({
                 fontWeight: this.bold ? 'bold' : 400
             }
 
-            if (!this.size) {
-                if (sizes.includes(this.variant)) {
-                    styles.fontSize = this.variant as string
-                }
-            } else {
+            if (this.size && !sizes.includes(this.size)) {
                 styles.fontSize = this.size as string
             }
 
             return styles
         },
         classes(): string[] {
-            return [`dl-typography dl-typography--${this.size}`]
+            const classes = [`dl-typography`]
+
+            if (this.size) {
+                if (sizes.includes(this.size)) {
+                    classes.push(`dl-typography--${this.size}`)
+                }
+            } else {
+                if (sizes.includes(this.variant)) {
+                    classes.push(`dl-typography--${this.size}`)
+                } else {
+                    classes.push(`dl-typography--body`)
+                }
+            }
+
+            return classes
         }
     }
 })
