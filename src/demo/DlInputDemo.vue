@@ -25,7 +25,8 @@
             v-model="saveInputValue"
             style="width: 220px"
             placeholder="Input with icon"
-            size="m"
+            size="l"
+            has-append
         >
             <template #append>
                 <dl-icon
