@@ -2,12 +2,14 @@
     <dl-confusion-matrix
         :matrix="matrix"
         :labels="labels"
+        :get-link="getLink"
     />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import DlConfusionMatrix from '../components/compound/DlCharts/charts/DlConfusionMatrix/DlConfusionMatrix.vue'
+import { MatrixCell } from '../components/compound/DlCharts/charts/DlConfusionMatrix/types'
 export default defineComponent({
     components: {
         DlConfusionMatrix
@@ -39,7 +41,11 @@ export default defineComponent({
             labels.push(items[Math.floor(Math.random() * items.length)])
         }
 
-        return { matrix, labels }
+        const getLink = (cell: MatrixCell) => {
+            return `www.confusion-matrix.com/cell-${cell.xLabel}-${cell.yLabel}-${cell.value}`
+        }
+
+        return { matrix, labels, getLink }
     }
 })
 </script>

@@ -61,6 +61,7 @@
                             }-buttons)`"
                             @mouseenter="handleShowTooltip(cell, $event)"
                             @mouseleave="handleHideTooltip"
+                            @mousedown="openLink(cell)"
                         >
                             {{
                                 cell.value > 0
@@ -199,6 +200,10 @@ export default defineComponent({
         leftLabel: {
             type: String,
             default: 'True Label'
+        },
+        getLink: {
+            type: Function,
+            default: null
         }
     },
     setup(props) {
@@ -343,7 +348,11 @@ export default defineComponent({
         }, 200),
         hideTooltip: debounce((ctx: any) => {
             if (ctx?.tooltipState) ctx.tooltipState.visible = false
-        }, 200)
+        }, 200),
+        openLink(cell: MatrixCell) {
+            const link = this.getLink(cell)
+            window.open(link, '_blank')
+        }
     }
 })
 </script>
