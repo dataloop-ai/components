@@ -620,12 +620,7 @@ export default defineComponent({
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed(() => props.virtualScroll === true)
 
-        const {
-            hasClickEvent,
-            hasDblClickEvent,
-            hasContextMenuEvent,
-            hasAnyAction
-        } = useTableActions(props)
+        const { hasAnyAction } = useTableActions(props) // todo: does not work
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
@@ -1110,9 +1105,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasClickEvent.value) {
-                emit('row-click', evt, row, pageIndex)
-            }
+            emit('row-click', evt, row, pageIndex)
         }
 
         const onTrDblClick = (
@@ -1120,9 +1113,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasDblClickEvent.value) {
-                emit('row-dblclick', evt, row, pageIndex)
-            }
+            emit('row-dblclick', evt, row, pageIndex)
         }
 
         const onTrContextMenu = (
@@ -1130,9 +1121,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasContextMenuEvent.value) {
-                emit('row-contextmenu', evt, row, pageIndex)
-            }
+            emit('row-contextmenu', evt, row, pageIndex)
         }
 
         function injectBodyCommonScope(data: Record<string, any>) {
