@@ -1,4 +1,4 @@
-import { DlInput } from '../components'
+import { DlInput, DlIcon } from '../components'
 import { action } from '@storybook/addon-actions'
 import { ref } from 'vue-demi'
 
@@ -420,6 +420,69 @@ WarningPreview.args = {
     infoMessage: 'Use only alphanumeric characters.',
     warningMessage: 'This username already exists.',
     warning: true,
+    disabled: false,
+    maxLength: 16,
+    showCounter: true,
+    disableClearBtn: false,
+    counterReverse: false,
+    suggestMenuWidth: 'auto'
+}
+
+const TemplateWithIcon = (args) => ({
+    components: { DlInput, DlIcon },
+    setup() {
+        return { args }
+    },
+    data() {
+        return {
+            model: ref('')
+        }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlInput
+            v-model="model"
+            v-bind="args"
+            style="width: 300px; padding: 0px 5px"
+            @focus="focus"
+            @blur="blur"
+            @input="input"
+            @clear="clear"
+            @enter="enter"
+        >
+          <template #append>
+           <dl-icon
+            style="margin-bottom: 5px"
+            icon="icon-dl-save"
+            size="12px"
+           />
+          </template>
+          </dl-input>
+        </DlInput>
+    </div>
+  `,
+    methods: {
+        focus: action('focus'),
+        blur: action('blur'),
+        input: action('input'),
+        clear: action('clear'),
+        enter: action('enter')
+    }
+})
+
+export const IconPreview = TemplateWithIcon.bind({})
+Preview.args = {
+    size: 'l',
+    placeholder: 'Type here...',
+    title: 'Username',
+    required: true,
+    tooltip: 'Your login username',
+    type: 'text',
+    topMessage: 'This will be the username that you will use to log in.',
+    redAsterisk: true,
+    infoMessage: 'Use only alphanumeric characters.',
+    errorMessage: 'This username already exists.',
+    error: false,
     disabled: false,
     maxLength: 16,
     showCounter: true,
