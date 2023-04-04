@@ -294,7 +294,7 @@ export default defineComponent({
             const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
             const labelY = this.$refs.labelY as HTMLElement
             const yAxisOuter = this.$refs.yAxisOuter as HTMLElement
-            const width = verticalWrapper.offsetWidth
+            const width = verticalWrapper?.offsetWidth
 
             this.cellWidth = width / this.matrix.length
             colorSpectrum.style.height = `${width}px`
