@@ -113,7 +113,7 @@ export default function ({
         }
     }
 
-    function hide(evt: AnchorEvent) {
+    function hide(evt?: AnchorEvent) {
         if (props.disabled === true) {
             return
         }
@@ -138,7 +138,7 @@ export default function ({
         }
     }
 
-    function processHide(evt: AnchorEvent) {
+    function processHide(evt?: AnchorEvent) {
         if (!showing.value) {
             return
         }
