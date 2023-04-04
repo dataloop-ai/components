@@ -350,6 +350,7 @@ export default defineComponent({
             if (ctx?.tooltipState) ctx.tooltipState.visible = false
         }, 200),
         openLink(cell: MatrixCell) {
+            if (!this.getLink) return
             const link = this.getLink(cell)
             window.open(link, '_blank')
         }
