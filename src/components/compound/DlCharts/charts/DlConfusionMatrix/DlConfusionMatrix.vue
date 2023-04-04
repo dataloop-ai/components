@@ -363,7 +363,7 @@ export default defineComponent({
 }
 
 .label-tag {
-    font-size: 0.5em;
+    font-size: 0.8em;
     color: var(--dl-color-medium);
 }
 .label-tag.y {
