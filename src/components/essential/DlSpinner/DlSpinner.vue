@@ -168,7 +168,11 @@ export default defineComponent({
                 '--dl-spinner-icon-size': this.iconSize,
                 '--dl-spinner-border-color': this.borderColor,
                 '--dl-spinner-roation-speed': this.rotationSpeed,
-                '--icon-top': this.iconSize
+                '--icon-top': `${
+                    parseInt(this.size) / 2 -
+                    parseInt(this.iconSize) / 2 +
+                    parseInt(this.iconSize) / 25
+                }px`
             }
         }
     }
@@ -201,7 +205,7 @@ export default defineComponent({
 
 .dl-icon {
     top: var(--icon-top);
-    left: calc(var(--icon-top) - 4px);
+    left: var(--icon-top);
     position: absolute;
     width: var(--dl-spinner-icon-size);
     height: var(--dl-spinner-icon-size);

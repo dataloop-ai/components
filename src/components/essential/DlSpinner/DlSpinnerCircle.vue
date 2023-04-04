@@ -37,31 +37,11 @@ export default defineComponent({
             type: String,
             default: '5px'
         }
-    },
-    computed: {
-        svgStyles() {
-            return {
-                width: this.size,
-                height: this.size,
-                viewBox: '25 25 50 50'
-            }
-        },
-        circleStyles() {
-            return {
-                cy: '50',
-                cx: '50',
-                r: '20',
-                fill: 'none',
-                stroke: this.color,
-                strokeWidth: this.thickness,
-                strokeMiterlimit: '10'
-            }
-        }
     }
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .wrapper {
     padding: 5px;
     display: flex;
