@@ -54,7 +54,7 @@ export default {
                 defaultValue: { summary: false }
             },
             control: {
-                type: 'text'
+                type: 'boolean'
             }
         },
         label: {
@@ -155,7 +155,7 @@ const Template = (args) => ({
                             <p :style="{ margin: 0, color }">{{ args.label }}</p>
                         </dl-item-section>
                     </dl-list-item>
-                    <dl-list-item :disabled="args.disabled" :startIconColor="args.startIconColor" :endIconColor="args.endIconColor" :clickable="clickable" :start-icon="args.startIcon" :end-icon="args.endIcon">
+                    <dl-list-item :separator="args.separator" :disabled="args.disabled" :startIconColor="args.startIconColor" :endIconColor="args.endIconColor" :clickable="clickable" :start-icon="args.startIcon" :end-icon="args.endIcon">
                         <dl-item-section no-wrap>
                             <p :style="{ margin: 0, color }">{{ args.label }}</p>
                         </dl-item-section>
@@ -167,4 +167,11 @@ const Template = (args) => ({
 })
 
 export const Preview = Template.bind({})
-Preview.args = {}
+Preview.args = {
+    disabled: false,
+    color: 'var(--dl-color-medium)',
+    startIcon: 'icon-dl-save',
+    endIcon: 'icon-dl-delete',
+    label: 'List Item',
+    bordered: true
+}
