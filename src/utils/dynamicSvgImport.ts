@@ -8,3 +8,11 @@ export function dynamicSvgImport(iconName: string) {
     }node_modules/@dataloop-ai/icons/assets/${iconName}.svg`
     return import(path).then((d) => d.default)
 }
+
+/** Another way */
+/**
+export function dynamicSvgImport(iconName: string) {
+    import.meta.glob(`/node_modules/@dataloop-ai/icons/assets/*.svg`)
+    const path  = `/node_modules/@dataloop-ai/icons/assets/${iconName}.svg`
+    return import(path).then((d) => d.default)
+}*/

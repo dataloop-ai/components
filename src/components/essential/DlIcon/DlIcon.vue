@@ -107,9 +107,14 @@ export default defineComponent({
         loadSvg() {
             return new Promise<void>(async (resolve, reject) => {
                 let dynamicalImagePath = null
-                await dynamicSvgImport(this.icon).then((path: any) => {
-                    dynamicalImagePath = path
-                })
+                if (import.meta.env.MODE) {
+                    /** the project is running via Vite */
+                    await dynamicSvgImport(this.icon).then((path: any) => {
+                        dynamicalImagePath = path
+                    })
+                } else {
+                    dynamicalImagePath = require(`@dataloop-ai/icons/assets/${this.icon}.svg`)
+                }
 
                 const svgElement = new Image()
                 svgElement.setAttribute('height', this.size)
