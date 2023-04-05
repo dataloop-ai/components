@@ -299,6 +299,12 @@ const rows = [
     }))
 ]
 
+type Rows = (typeof rows)[0]
+
+interface RowsWithIndex extends Rows {
+    index?: number
+}
+
 export default defineComponent({
     components: {
         DlTable,
@@ -329,7 +335,7 @@ export default defineComponent({
 
         const nextPage = ref(2)
 
-        let allRows = []
+        let allRows: RowsWithIndex[] = []
         for (let i = 0; i < 100; i++) {
             allRows = allRows.concat(
                 cloneDeep(rows)
@@ -348,7 +354,7 @@ export default defineComponent({
             allRows.slice(0, pageSize * (nextPage.value - 1))
         )
 
-        const onScroll = ({ to, ref }) => {
+        const onScroll = ({ to, ref }: { to: number; ref: any }) => {
             const lastIndex = computedRows.value.length - 1
 
             if (
