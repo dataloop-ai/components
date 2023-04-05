@@ -158,7 +158,7 @@ const Template = (args) => ({
         DlCounters
     },
     setup() {
-        const isOpen = ref(false)
+        const isOpen = ref(true)
         const stepper = ref(null)
 
         const counters = ref([{ value: 3, text: 'Assigmments' }])
