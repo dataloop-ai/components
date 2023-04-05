@@ -402,7 +402,7 @@ export default defineComponent({
             return Math.ceil(rows.length / pagination.value.rowsPerPage)
         })
 
-        function fixPagination(p) {
+        function fixPagination(p: typeof pagination.value) {
             if (p.page < 1) {
                 p.page = 1
             }
@@ -417,7 +417,7 @@ export default defineComponent({
             return page * rowsPerPage
         })
 
-        const setPagination = (val) => {
+        const setPagination = (val: Partial<typeof pagination.value>) => {
             pagination.value = fixPagination({
                 ...pagination.value,
                 ...val
