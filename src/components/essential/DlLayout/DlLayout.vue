@@ -3,36 +3,15 @@
         <div class="dl-layout__navbar">
             <DlLayoutNavbar @toggle="toggleLeftSideBar" />
         </div>
-        <div class="dl-layout__content">
+        <div class="dl-layout__body">
             <div>
-                <DlLayoutLeftSide :is-expanded="isExpandedLeftSide" />
+                <DlLayoutLeftSide
+                    :is-expanded="isExpandedLeftSide"
+                    :items="leftItems"
+                />
             </div>
-            <div>
-                <div style="padding: 1px 16px; height: 1000px">
-                    <h2>Fixed Full-height Side Nav</h2>
-                    <h3>
-                        Try to scroll this area, and see how the sidenav sticks
-                        to the page
-                    </h3>
-                    <p>
-                        Notice that this div element has a left margin of 25%.
-                        This is because the side navigation is set to 25% width.
-                        If you remove the margin, the sidenav will overlay/sit
-                        on top of this div.
-                    </p>
-                    <p>
-                        Also notice that we have set overflow:auto to sidenav.
-                        This will add a scrollbar when the sidenav is too long
-                        (for example if it has over 50 links inside of it).
-                    </p>
-                    <p>Some text..</p>
-                    <p>Some text..</p>
-                    <p>Some text..</p>
-                    <p>Some text..</p>
-                    <p>Some text..</p>
-                    <p>Some text..</p>
-                    <p>Some text..</p>
-                </div>
+            <div class="dl-layout__body__content">
+                <slot />
             </div>
             <div>
                 <DlLayoutRightSide />
@@ -41,11 +20,12 @@
     </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue-demi'
+<script lang="ts">
+import { defineComponent, PropType, ref } from 'vue-demi'
 import DlLayoutNavbar from './components/DlLayoutNavbar.vue'
 import DlLayoutLeftSide from './components/DlLayoutLeftSide.vue'
 import DlLayoutRightSide from './components/DlLayoutRightSide.vue'
+import { LayoutVerticalItems } from './types/VerticalItems'
 
 export default defineComponent({
     name: 'DlLayout',
@@ -54,11 +34,18 @@ export default defineComponent({
         DlLayoutLeftSide,
         DlLayoutRightSide
     },
+    props: {
+        leftItems: {
+            type: Array as PropType<LayoutVerticalItems[]>,
+            default: () => [] as LayoutVerticalItems[]
+        }
+    },
     setup() {
         const isExpandedLeftSide = ref(true)
-        const toggleLeftSideBar = (event) => {
+        const toggleLeftSideBar = (event: boolean) => {
             isExpandedLeftSide.value = event
         }
+
         return {
             isExpandedLeftSide,
             toggleLeftSideBar
@@ -70,9 +57,18 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-layout {
     width: 100%;
+    height: 100%;
 
-    &__content {
+    &__body {
         display: flex;
+        height: 100%;
+        background-color: var(--dl-color-bg);
+        color: var(--dl-color-darker);
+
+        &__content {
+            padding: 1px 16px;
+            height: 100%;
+        }
     }
 }
 </style>

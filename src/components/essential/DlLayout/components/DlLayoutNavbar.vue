@@ -42,13 +42,14 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-layout-navbar {
     width: 100%;
+    box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.08);
 }
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: var(--dl-color-bg);
 }
 
 li {
@@ -57,17 +58,17 @@ li {
 
 li a {
     display: block;
-    color: white;
+    color: var(--dl-color-darker);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
 }
 
 li a:hover:not(.active) {
-    background-color: #111;
+    background-color: var(--dl-color-fill);
 }
 
 .active {
-    background-color: #04aa6d;
+    background-color: var(--dl-color-fill);
 }
 </style>
