@@ -3,9 +3,11 @@
         <component
             :is="spinnerType"
             :size="size"
-            :icon-size="iconSize"
             :color="color"
             :thickness="thickness"
+            :border-color="borderColor"
+            :icon-size="iconSize"
+            :icon-color="iconColor"
         />
         <div
             v-if="text"
