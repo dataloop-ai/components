@@ -115,13 +115,119 @@
                 @row-click="log"
                 @update:selected="updateSeleted"
             />
+
+            <div style="margin-top: 100px">
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="columns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :pagination="pagination"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    hide-bottom
+                    @row-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #pagination="scope">
+                        <dl-button
+                            v-if="scope.pagesNumber > 2"
+                            icon="icon-dl-first-page"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isFirstPage"
+                            @click="scope.firstPage"
+                        />
+
+                        <dl-button
+                            icon="icon-dl-left-chevron"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isFirstPage"
+                            @click="scope.prevPage"
+                        />
+
+                        <dl-button
+                            icon="icon-dl-right-chevron"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isLastPage"
+                            @click="scope.nextPage"
+                        />
+
+                        <dl-button
+                            v-if="scope.pagesNumber > 2"
+                            icon="icon-dl-last-page"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isLastPage"
+                            @click="scope.lastPage"
+                        />
+                    </template>
+                </DlTable>
+
+                <div>
+                    <p>Custom pagination outside pagination slot</p>
+                    <dl-button
+                        v-if="pagesNumber > 2"
+                        icon="icon-dl-first-page"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isFirstPage"
+                        @click="firstPage"
+                    />
+
+                    <dl-button
+                        icon="icon-dl-left-chevron"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isFirstPage"
+                        @click="prevPage"
+                    />
+
+                    <dl-button
+                        icon="icon-dl-right-chevron"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isLastPage"
+                        @click="nextPage"
+                    />
+
+                    <dl-button
+                        v-if="pagesNumber > 2"
+                        icon="icon-dl-last-page"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isLastPage"
+                        @click="lastPage"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DlTable, DlOptionGroup, DlSwitch, DlInput } from '../components'
-import { defineComponent } from 'vue-demi'
+import {
+    DlTable,
+    DlOptionGroup,
+    DlSwitch,
+    DlInput,
+    DlButton
+} from '../components'
+import { defineComponent, ref, computed, watch } from 'vue-demi'
 import { times } from 'lodash'
 
 const columns = [
@@ -280,7 +386,89 @@ export default defineComponent({
         DlTable,
         DlSwitch,
         DlOptionGroup,
-        DlInput
+        DlInput,
+        DlButton
+    },
+    setup() {
+        const pagination = ref({
+            sortBy: 'desc',
+            descending: false,
+            page: 2,
+            rowsPerPage: 3
+            // rowsNumber: xx if getting data from a server
+        })
+
+        const pagesNumber = computed(() => {
+            return Math.ceil(rows.length / pagination.value.rowsPerPage)
+        })
+
+        function fixPagination(p) {
+            if (p.page < 1) {
+                p.page = 1
+            }
+            if (p.rowsPerPage !== void 0 && p.rowsPerPage < 1) {
+                p.rowsPerPage = 0
+            }
+            return p
+        }
+
+        const lastRowIndex = computed(() => {
+            const { page, rowsPerPage } = pagination.value
+            return page * rowsPerPage
+        })
+
+        const setPagination = (val) => {
+            pagination.value = fixPagination({
+                ...pagination.value,
+                ...val
+            })
+        }
+
+        function firstPage() {
+            setPagination({ page: 1 })
+        }
+
+        function prevPage() {
+            const { page } = pagination.value
+            if (page > 1) {
+                setPagination({ page: page - 1 })
+            }
+        }
+
+        const tableRows = ref(rows)
+
+        function nextPage() {
+            const { page, rowsPerPage } = pagination.value
+
+            if (
+                lastRowIndex.value > 0 &&
+                page * rowsPerPage < tableRows.value.length
+            ) {
+                setPagination({ page: page + 1 })
+            }
+        }
+
+        const isLastPage = computed(
+            () => pagination.value.page >= pagesNumber.value
+        )
+
+        const isFirstPage = computed(() => pagination.value.page === 1)
+
+        function lastPage() {
+            setPagination({ page: pagesNumber.value })
+        }
+
+        return {
+            pagination,
+            pagesNumber,
+            tableRows,
+            firstPage,
+            lastPage,
+            nextPage,
+            prevPage,
+            isLastPage,
+            isFirstPage
+        }
     },
     data() {
         return {
