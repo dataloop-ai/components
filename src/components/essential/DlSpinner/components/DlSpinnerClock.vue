@@ -76,4 +76,4 @@ export default defineComponent({
 })
 </script>
 
-<style src="./spinnerStyles.scss" />
+<style src="../styles/spinnerStyles.scss" />

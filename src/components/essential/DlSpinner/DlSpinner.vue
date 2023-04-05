@@ -20,14 +20,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
-import {
-    DlSpinnerGrid,
-    DlSpinnerCircle,
-    DlSpinnerClock,
-    DlSpinnerDots,
-    DlSpinnerLogo
-} from './index'
+import { defineComponent, PropType } from 'vue-demi'
+import DlSpinnerGrid from './components/DlSpinnerGrid.vue'
+import DlSpinnerCircle from './components/DlSpinnerCircle.vue'
+import DlSpinnerClock from './components/DlSpinnerClock.vue'
+import DlSpinnerDots from './components/DlSpinnerDots.vue'
+import DlSpinnerLogo from './components/DlSpinnerLogo.vue'
+import { DlSpinnerTypes } from './types'
 
 export default defineComponent({
     components: {
@@ -47,7 +46,7 @@ export default defineComponent({
             default: null
         },
         type: {
-            type: String,
+            type: String as PropType<DlSpinnerTypes>,
             default: 'default'
         },
         size: {
@@ -78,14 +77,15 @@ export default defineComponent({
     computed: {
         spinnerType() {
             switch (this.type.toLowerCase()) {
-                case 'grid':
+                case DlSpinnerTypes.GRID:
                     return 'DlSpinnerGrid'
-                case 'circle':
+                case DlSpinnerTypes.CIRCLE:
                     return 'DlSpinnerCircle'
-                case 'dots':
+                case DlSpinnerTypes.DOTS:
                     return 'DlSpinnerDots'
-                case 'clock':
+                case DlSpinnerTypes.CLOCK:
                     return 'DlSpinnerClock'
+                case DlSpinnerTypes.LOGO:
                 default:
                     return 'DlSpinnerLogo'
             }
