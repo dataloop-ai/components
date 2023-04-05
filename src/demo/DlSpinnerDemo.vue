@@ -1,56 +1,47 @@
 <template>
     <div class="spinner-dl">
-        <span>Dl Spinner</span>
-        <dl-spinner
-            size="100px"
-            icon-size="30px"
-            text="Loading data, please wait..."
-            :text-styles="{
-                marginLeft: '10px',
-                marginTop: '10px',
-                color: 'var(--dl-color-tooltip-background)'
-            }"
-        />
+        <div class="spinner-container">
+            <span class="spinner-title">Dl Spinner</span>
+            <dl-spinner
+                type="default"
+                text="Loading..."
+                :text-styles="{
+                    fontSize: '1em',
+                    marginTop: '15px',
+                    marginLeft: '10px'
+                }"
+            />
+        </div>
 
         <div class="spinner-container">
             <span class="spinner-title">Circle Spinner</span>
-            <dl-spinner-circle size="60px" />
+            <dl-spinner type="circle" />
         </div>
 
         <div class="spinner-container">
             <span class="spinner-title">Grid Spinner</span>
-            <dl-spinner-grid size="60px" />
+            <dl-spinner type="grid" />
         </div>
 
         <div class="spinner-container">
             <span class="spinner-title">Dots Spinner</span>
-            <dl-spinner-dots />
+            <dl-spinner type="dots" />
         </div>
 
         <div class="spinner-container">
             <span class="spinner-title">Clock Spinner</span>
-            <dl-spinner-clock />
+            <dl-spinner type="clock" />
         </div>
     </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue-demi'
-import {
-    DlSpinner,
-    DlSpinnerCircle,
-    DlSpinnerGrid,
-    DlSpinnerDots,
-    DlSpinnerClock
-} from '../components'
+import { DlSpinner } from '../components'
 
 export default defineComponent({
     components: {
-        DlSpinner,
-        DlSpinnerCircle,
-        DlSpinnerGrid,
-        DlSpinnerDots,
-        DlSpinnerClock
+        DlSpinner
     }
 })
 </script>
