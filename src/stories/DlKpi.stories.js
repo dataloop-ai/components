@@ -116,11 +116,11 @@ export default {
                 defaultValue: { summary: progressData }
             }
         },
-        withBorder: {
-            name: 'withBorder',
+        bordered: {
+            name: 'bordered',
             type: { name: 'boolean', required: false },
             defaultValue: false,
-            description: 'withBorder',
+            description: 'bordered',
             table: {
                 type: { summary: 'boolean' },
                 defaultValue: { summary: false }
@@ -129,24 +129,11 @@ export default {
                 type: 'boolean'
             }
         },
-        withProgressBar: {
-            name: 'withProgressBar',
+        small: {
+            name: 'small',
             type: { name: 'boolean', required: false },
             defaultValue: false,
-            description: 'withProgressBar',
-            table: {
-                type: { summary: 'boolean' },
-                defaultValue: { summary: false }
-            },
-            control: {
-                type: 'boolean'
-            }
-        },
-        isSmall: {
-            name: 'isSmall',
-            type: { name: 'boolean', required: false },
-            defaultValue: false,
-            description: 'isSmall',
+            description: 'small',
             table: {
                 type: { summary: 'boolean' },
                 defaultValue: { summary: false }

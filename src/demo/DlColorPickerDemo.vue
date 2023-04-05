@@ -7,7 +7,10 @@
             @changeColor="onColorChange"
             @updateColor="onColorUpdate"
         />
-        <h1 :style="{ color: colorPickerValue }">
+        <h1
+            class="textShadow"
+            :style="{ color: colorPickerValue }"
+        >
             The chosen color is {{ colorPickerValue }}
         </h1>
     </div>
@@ -38,6 +41,18 @@ export default defineComponent({
                 ...colorsHistory.value
             ].slice(0, 7)
         }
+
+        return {
+            colorPickerValue,
+            colorsHistory,
+            onColorChange,
+            onColorUpdate
+        }
     }
 })
 </script>
+<style lang="scss">
+.textShadow {
+    text-shadow: 1px 1px 2px var(--dl-color-darker);
+}
+</style>

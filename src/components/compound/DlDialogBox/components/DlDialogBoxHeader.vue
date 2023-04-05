@@ -3,6 +3,7 @@
         <div>
             <dl-button
                 v-if="hasBackButton"
+                dense
                 label="Back"
                 icon="icon-dl-arrow-left"
                 flat

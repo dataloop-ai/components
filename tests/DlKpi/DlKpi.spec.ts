@@ -30,8 +30,7 @@ describe('DlKpi', () => {
         const wrapper = mount(DlKpi, {
             props: {
                 counter: counterData,
-                progress: progressData,
-                withProgressBar: true
+                progress: progressData
             }
         })
 
@@ -55,8 +54,7 @@ describe('DlKpi', () => {
         const wrapper = mount(DlKpi, {
             props: {
                 counter: counterData,
-                progress: progressData,
-                withProgressBar: true
+                progress: progressData
             }
         })
 
@@ -79,8 +77,7 @@ describe('DlKpi', () => {
         const wrapper = mount(DlKpi, {
             props: {
                 counter: counterDataEmpty,
-                progress: progressDataEmpty,
-                withProgressBar: true
+                progress: progressDataEmpty
             }
         })
 

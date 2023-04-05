@@ -128,7 +128,7 @@ export default defineComponent({
                 try {
                     svgElement.src = this.svgSource
                         ? `${this.svgSource}/${this.icon}.svg`
-                        : require(`@dataloop-ai/icons/docs/assets/${this.icon}.svg`)
+                        : require(`@dataloop-ai/icons/assets/${this.icon}.svg`)
                 } catch (e) {
                     reject(e)
                 }

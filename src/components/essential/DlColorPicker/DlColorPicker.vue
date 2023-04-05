@@ -287,8 +287,9 @@ export default defineComponent({
 .hu-color-picker {
     width: 180px;
     padding: 10px;
-    background: var(--dl-color-shadow);
+    background: var(--dl-color-panel-background);
     border-radius: 2px;
+    border: 1px solid var(--dl-color-separator);
     box-shadow: 0px 3px 6px 0px rgba(16, 30, 115, 0.15);
     z-index: 1;
     text-align: left;
@@ -301,6 +302,8 @@ export default defineComponent({
     .color-show {
         margin-top: 11px;
         display: flex;
+        border: 1px solid var(--dl-color-separator);
+        overflow: hidden;
     }
 }
 </style>

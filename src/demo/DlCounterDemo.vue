@@ -23,7 +23,7 @@
             small
             :items="[
                 {
-                    text: 'lorem ipsum'
+                    text: 'lorem'
                 },
                 {
                     value: null,
