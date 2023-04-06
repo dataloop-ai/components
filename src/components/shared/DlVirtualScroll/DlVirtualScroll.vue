@@ -7,7 +7,10 @@
         class="dl-table__middle"
         :class="classes"
     >
-        <table class="dl-table">
+        <table
+            class="dl-table"
+            :class="draggableClasses"
+        >
             <slot
                 v-if="hasBeforeSlot"
                 name="before"
@@ -25,6 +28,7 @@
                 </tr>
             </tbody>
             <tbody
+                id="draggable"
                 key="content"
                 ref="contentRef"
                 class="dl-virtual-scroll__content"
@@ -81,6 +85,11 @@ export default defineComponent({
         items: {
             type: Array,
             default: () => [] as Record<string, any>[]
+        },
+
+        draggableClasses: {
+            type: [String, Array, Object],
+            default: null
         },
 
         itemsFn: { type: Function, default: void 0 },

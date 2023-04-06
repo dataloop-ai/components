@@ -58,6 +58,7 @@
             v-if="hasVirtScroll"
             ref="virtScrollRef"
             :class="tableClass"
+            :draggable-classes="additionalClasses"
             :style="tableStyle"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
@@ -303,7 +304,7 @@
                         </tr>
                     </slot>
                 </thead>
-                <tbody>
+                <tbody id="draggable">
                     <slot
                         name="top-row"
                         :cols="computedCols"
@@ -717,7 +718,7 @@ export default defineComponent({
 
         onMounted(() => {
             tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                '.dl-table'
+                'table.dl-table'
             ) as HTMLTableElement
             resizableManager = new ResizableManager()
 
@@ -747,7 +748,7 @@ export default defineComponent({
             hasVirtScroll,
             () => {
                 tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                    '.dl-table'
+                    'table.dl-table'
                 ) as HTMLTableElement
 
                 if (props.resizable) {
