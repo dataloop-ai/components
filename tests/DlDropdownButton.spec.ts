@@ -42,7 +42,10 @@ describe('DlDropdownButton', () => {
             stretch: false,
             textColor: '',
             uppercase: false,
-            fitContent: false
+            fitContent: false,
+            noWrap: false,
+            overflow: false,
+            tooltip: null
         })
 
         expect(wrapper.vm.btnCSSStyles).toStrictEqual({
