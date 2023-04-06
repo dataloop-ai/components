@@ -56,7 +56,7 @@ export default defineComponent({
     data() {
         return {
             currentImage: this.images[0],
-            currentImages: this.images
+            currentImages: this.images.slice(0, 6)
         }
     },
     computed: {
@@ -68,7 +68,7 @@ export default defineComponent({
     },
     methods: {
         navigateForward() {
-            const firstElement = this.images[0]
+            const firstElement = this.currentImages[0]
             this.currentImages.shift()
             this.currentImages.push(firstElement)
         },
