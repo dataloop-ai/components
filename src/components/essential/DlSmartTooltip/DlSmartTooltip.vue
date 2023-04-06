@@ -4,9 +4,13 @@
         :delay="200"
         background-color="dl-color-panel-background"
         color="dl-color-darker"
+        :anchor="anchor"
+        :offset="offset"
+        :self="self"
         :style="{
             border: '1px solid var(--dl-color-separator)',
-            padding: 0
+            padding: 0,
+            boxShadow: '0px 0px 28px -20px var(--dl-color-shadow)'
         }"
     >
         <div class="smart-tooltip">
@@ -44,7 +48,24 @@
                     <span>{{ text }}</span>
                 </div>
                 <div class="smart-tooltip--links">
-                    links
+                    <div
+                        v-for="(link, idx) in links"
+                        :key="idx"
+                        class="smart-tooltip--links_link"
+                    >
+                        <dl-icon
+                            v-if="link.icon"
+                            :icon="link.icon"
+                            size="12px"
+                        />
+                        <dl-link
+                            :external="!!link.external"
+                            :href="link.href"
+                            :newtab="!!link.newtab"
+                        >
+                            {{ link.title }}
+                        </dl-link>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,25 +73,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { DlTooltip } from '../DlTooltip'
-import DlIcon from '../DlIcon/DlIcon.vue'
+import { DlIcon } from '../DlIcon'
+import { DlLink } from '../DlLink'
+import { IconItem, ImageItem, LinkItem } from './types'
+import {
+    validateOffset,
+    validatePosition
+} from '../../../utils/position-engine'
 
 export default defineComponent({
     name: 'DlSmartTooltip',
-    components: { DlIcon, DlTooltip },
+    components: { DlLink, DlIcon, DlTooltip },
     props: {
         image: {
-            type: Object,
+            type: Object as PropType<ImageItem>,
             default: null
         },
         icon: {
-            type: Object,
+            type: Object as PropType<IconItem>,
             default: null
         },
-        position: {
+        anchor: {
             type: String,
-            default: ''
+            default: 'bottom middle',
+            validator: validatePosition
+        },
+        self: {
+            type: String,
+            default: 'top middle',
+            validator: validatePosition
+        },
+        offset: {
+            type: Array,
+            default: () => [9, 9],
+            validator: validateOffset
         },
         title: {
             type: String,
@@ -87,21 +125,29 @@ export default defineComponent({
         delay: {
             type: Number,
             default: 2000
+        },
+        links: {
+            type: Array as PropType<LinkItem[]>,
+            default: () => Array as PropType<LinkItem[]>
         }
     }
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .smart-tooltip {
     width: 200px;
+    pointer-events: auto;
+
     &--content {
         padding: 16px 10px;
     }
+
     &--header {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
+
         &_title {
             color: var(--dl-color-darker);
             font-size: 14px;
@@ -123,6 +169,26 @@ export default defineComponent({
     }
     &--links {
         margin-top: 16px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        &_link {
+            margin-right: 15px;
+            color: var(--dl-color-secondary);
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+
+            i {
+                margin-right: 7px;
+                vertical-align: middle;
+            }
+
+            a {
+                vertical-align: middle;
+            }
+        }
     }
     &--image {
         width: 200px;

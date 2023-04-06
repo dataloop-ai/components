@@ -1,5 +1,5 @@
 <template>
-    <span>
+    <div>
         Show smart tooltip
         <dl-smart-tooltip
             :image="image"
@@ -7,13 +7,15 @@
             :text="text"
             :title="title"
             :keyboard-shortcut="keyboardShortcut"
+            :links="links"
         />
-    </span>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import DlSmartTooltip from '../components/essential/DlSmartTooltip/DlSmartTooltip.vue'
+
 export default defineComponent({
     name: 'DlSmartTooltipDemo',
     components: { DlSmartTooltip },
@@ -28,7 +30,20 @@ export default defineComponent({
         delay: 200000,
         title: 'lorem ipsum',
         keyboardShortcut: 'Shift + E',
-        links: []
+        links: [
+            {
+                icon: 'icon-dl-list-view',
+                href: 'https://www.google.md/?hl=ru',
+                title: 'Lorem',
+                newtab: true,
+                external: true
+            },
+            {
+                href: '#test',
+                title: 'Developers',
+                icon: 'icon-dl-code'
+            }
+        ]
     })
 })
 </script>
