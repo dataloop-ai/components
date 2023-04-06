@@ -274,7 +274,11 @@ export default defineComponent({
             this.$emit('search-query', this.activeQuery)
         },
         emitSearchQuery() {
-            console.log(this.inputModel)
+            this.activeQuery = {
+                name: '',
+                query: this.inputModel
+            }
+            this.$emit('search-query', this.activeQuery)
         },
         emitRemoveQuery() {
             if (!this.activeQuery) return
