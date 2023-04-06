@@ -49,6 +49,7 @@ import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
+import DlEllipsisDemo from './DlEllipsisDemo.vue'
 
 export {
     AvatarDemo,
@@ -100,7 +101,8 @@ export {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
-    DlConfusionMatrix
+    DlConfusionMatrix,
+    DlEllipsisDemo
 }
 
 export const demoState = {
@@ -120,6 +122,7 @@ export const demoState = {
     doughnut_chart: DlChartDoughnutDemo,
     confusion_matrix: DlConfusionMatrix,
     dropdown_button: DropdownButtonDemo,
+    ellipsis: DlEllipsisDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
     list: DlListDemo,
