@@ -21,9 +21,11 @@
   }
 
   /* this is when the loading indicator appears */
-  &.dl-table--loading thead tr:last-child th {
-    /* height of all previous header rows */
-    top: 40px;
+  &--loading {
+    thead tr:last-child th {
+      /* height of all previous header rows */
+      top: 38px;
+    }
   }
 
   th:first-child,
@@ -371,6 +373,7 @@
  */
 
 .dl-table--dense {
+
   .dl-table__top {
     position: relative;
     padding: 5px 16px;
@@ -384,6 +387,8 @@
     // font-size: 110%;
     font-size: 80%;
   }
+
+
 
   .dl-table {
 
@@ -420,6 +425,13 @@
     .dl-field__marginal {
       height: 24px;
     }
+  }
+}
+
+.dl-table--dense.dl-table--loading {
+  thead tr:last-child th {
+    /* height of all previous header rows */
+    top: 32px;
   }
 }
 
