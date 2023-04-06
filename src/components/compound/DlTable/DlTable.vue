@@ -408,7 +408,17 @@
         </div>
 
         <div
-            v-if="!hideBottom || hideNoData"
+            v-if="hasPaginationSlot"
+            class="dl-table__control"
+        >
+            <slot
+                v-bind="marginalsScope"
+                name="pagination"
+            />
+        </div>
+
+        <div
+            v-else-if="!hideBottom || hideNoData"
             :class="bottomClasses"
         >
             <div class="dl-table__control">
@@ -620,12 +630,7 @@ export default defineComponent({
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed(() => props.virtualScroll === true)
 
-        const {
-            hasClickEvent,
-            hasDblClickEvent,
-            hasContextMenuEvent,
-            hasAnyAction
-        } = useTableActions(props)
+        const { hasAnyAction } = useTableActions(props) // todo: does not work
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
@@ -635,6 +640,8 @@ export default defineComponent({
 
         // table slots
         const hasSlotByName = (name: string) => !!slots[name]
+
+        const hasPaginationSlot = computed(() => hasSlotByName('pagination'))
 
         const hasTopSlots = computed(
             () =>
@@ -999,7 +1006,11 @@ export default defineComponent({
             isFirstPage,
             isLastPage,
             pagesNumber,
-            computedRowsNumber
+            computedRowsNumber,
+            firstPage,
+            prevPage,
+            nextPage,
+            lastPage
         } = useTablePagination(
             vm,
             computedPagination,
@@ -1048,7 +1059,11 @@ export default defineComponent({
             pagination: paginationState.value,
             pagesNumber: pagesNumber.value,
             isFirstPage: isFirstPage.value,
-            isLastPage: isLastPage.value
+            isLastPage: isLastPage.value,
+            firstPage,
+            prevPage,
+            nextPage,
+            lastPage
         }))
 
         function getCellValue(
@@ -1110,9 +1125,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasClickEvent.value) {
-                emit('row-click', evt, row, pageIndex)
-            }
+            emit('row-click', evt, row, pageIndex)
         }
 
         const onTrDblClick = (
@@ -1120,9 +1133,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasDblClickEvent.value) {
-                emit('row-dblclick', evt, row, pageIndex)
-            }
+            emit('row-dblclick', evt, row, pageIndex)
         }
 
         const onTrContextMenu = (
@@ -1130,9 +1141,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasContextMenuEvent.value) {
-                emit('row-contextmenu', evt, row, pageIndex)
-            }
+            emit('row-contextmenu', evt, row, pageIndex)
         }
 
         function injectBodyCommonScope(data: Record<string, any>) {
@@ -1210,7 +1219,11 @@ export default defineComponent({
             resetVirtualScroll,
             scrollTo,
             setExpanded,
-            sort
+            sort,
+            firstPage,
+            prevPage,
+            nextPage,
+            lastPage
         })
 
         return {
@@ -1258,7 +1271,8 @@ export default defineComponent({
             displayPagination,
             onTrClick,
             onTrDblClick,
-            onTrContextMenu
+            onTrContextMenu,
+            hasPaginationSlot
         }
     }
 })

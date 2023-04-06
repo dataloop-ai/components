@@ -80,6 +80,14 @@ export function useTablePaginationState(
         )
     )
 
+    watch(
+        () => props.pagination,
+        (pag) => {
+            innerPagination.value = Object.assign(innerPagination.value, pag)
+        },
+        { deep: true }
+    )
+
     const computedPagination = computed(() => {
         const pag =
             props['onUpdate:pagination'] !== void 0
@@ -175,6 +183,31 @@ export function useTablePagination(
             : computedPagination.value.page >= pagesNumber.value
     )
 
+    function firstPage() {
+        setPagination({ page: 1 })
+    }
+
+    function prevPage() {
+        const { page } = computedPagination.value
+        if (page > 1) {
+            setPagination({ page: page - 1 })
+        }
+    }
+
+    function nextPage() {
+        const { page, rowsPerPage } = computedPagination.value
+        if (
+            lastRowIndex.value > 0 &&
+            page * rowsPerPage < computedRowsNumber.value
+        ) {
+            setPagination({ page: page + 1 })
+        }
+    }
+
+    function lastPage() {
+        setPagination({ page: pagesNumber.value })
+    }
+
     watch(pagesNumber, (lastPage, oldLastPage) => {
         if (lastPage === oldLastPage) {
             return
@@ -198,6 +231,10 @@ export function useTablePagination(
         isFirstPage,
         isLastPage,
         pagesNumber,
-        computedRowsNumber
+        computedRowsNumber,
+        firstPage,
+        prevPage,
+        nextPage,
+        lastPage
     }
 }

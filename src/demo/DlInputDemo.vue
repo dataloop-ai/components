@@ -20,6 +20,23 @@
             show-counter
             :max-length="20"
         />
+
+        <dl-input
+            v-model="saveInputValue"
+            style="width: 220px"
+            placeholder="Input with icon"
+            size="l"
+            has-append
+        >
+            <template #append>
+                <dl-icon
+                    style="margin-bottom: 5px"
+                    icon="icon-dl-save"
+                    size="12px"
+                />
+            </template>
+        </dl-input>
+
         <dl-input
             v-model="passFieldValue"
             title="Password"
@@ -66,23 +83,26 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlInput } from '../components'
+import { DlInput, DlIcon } from '../components'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
-        DlInput
+        DlInput,
+        DlIcon
     },
     setup() {
         const textInputValue = ref<string>('')
         const passFieldValue = ref<string>('')
         const warningFieldValue = ref<string>('')
         const errorFieldValue = ref<string>('')
+        const saveInputValue = ref<string>('')
 
         return {
             textInputValue,
             passFieldValue,
             warningFieldValue,
-            errorFieldValue
+            errorFieldValue,
+            saveInputValue
         }
     }
 })
