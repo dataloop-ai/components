@@ -123,7 +123,6 @@
             :options="searchOptions"
             size="m"
             multiselect
-            style="background-color: beige"
             placeholder="contributors"
             search
         />

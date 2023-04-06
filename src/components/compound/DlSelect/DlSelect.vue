@@ -46,6 +46,7 @@
         </div>
         <div
             class="select-wrapper"
+            tabindex="0"
             :style="placeholderStyles"
         >
             <div
@@ -182,7 +183,7 @@
                         </template>
                     </dl-select-option>
                     <dl-select-option
-                        v-for="option in options"
+                        v-for="(option, index) in options"
                         :key="getKeyForOption(option)"
                         clickable
                         :multiselect="multiselect"
@@ -190,6 +191,11 @@
                             selected:
                                 option === selectedOption && highlightSelected
                         }"
+                        :style="
+                            index === highlightIndex
+                                ? 'background-color: var(--dl-color-fill)'
+                                : ''
+                        "
                         :with-wave="withWave"
                         :model-value="modelValue"
                         :value="getOptionValue(option)"
@@ -340,6 +346,7 @@ export default defineComponent({
             uuid: `dl-select-${v4()}`,
             isExpanded: false,
             selectedIndex: -1,
+            highlightIndex: -1,
             isEmpty: true
         }
     },
@@ -551,6 +558,7 @@ export default defineComponent({
                     })
                 }
             }
+            newVal ? this.addKeyEvent() : this.removeKeyEvent()
         },
         modelValue() {
             this.setSelectedIndex()
@@ -560,6 +568,26 @@ export default defineComponent({
         this.setSelectedIndex()
     },
     methods: {
+        addKeyEvent() {
+            document.addEventListener('keydown', this.navigateList)
+        },
+        removeKeyEvent() {
+            document.removeEventListener('keydown', this.navigateList)
+        },
+        navigateList(e: KeyboardEvent) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                if (this.highlightIndex + 1 < this.options.length)
+                    this.highlightIndex++
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault()
+                if (this.highlightIndex - 1 >= 0) this.highlightIndex--
+            } else if (e.key === 'Enter') {
+                e.preventDefault()
+                this.selectedIndex = this.highlightIndex
+                this.highlightIndex = -1
+            }
+        },
         isPrimitiveValue(option: any): boolean {
             return (
                 typeof option === 'string' ||
