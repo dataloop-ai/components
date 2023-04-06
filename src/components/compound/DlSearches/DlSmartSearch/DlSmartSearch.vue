@@ -27,7 +27,7 @@
                     icon="icon-dl-search"
                     size="m"
                     :disabled="disabled"
-                    @click="$emit('search-query', activeQuery)"
+                    @click="emitSearchQuery"
                 />
             </div>
             <!-- <div class="dl-smart-search__filters-btn-wrapper">
@@ -193,8 +193,6 @@ export default defineComponent({
             findSuggestions(inputModel.value)
         }
 
-        const log = console.dir
-
         return {
             uuid: `dl-smart-search-${v4()}`,
             inputModel,
@@ -209,8 +207,7 @@ export default defineComponent({
             isFocused,
             handleInputModel,
             setFocused,
-            findSuggestions,
-            log
+            findSuggestions
         }
     },
     computed: {
@@ -275,6 +272,9 @@ export default defineComponent({
             this.filtersModel = false
             this.activeQuery = query
             this.$emit('search-query', this.activeQuery)
+        },
+        emitSearchQuery() {
+            console.log(this.inputModel)
         },
         emitRemoveQuery() {
             if (!this.activeQuery) return
