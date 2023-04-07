@@ -1,50 +1,95 @@
 <template>
-    <ul>
-        <li>
-            <a
-                class="active"
-                href="#home"
-            >Home</a>
-        </li>
-        <li><a href="#news">News</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#about">About</a></li>
-    </ul>
+    <div
+        class="dl-layout-right-side"
+        :style="cssVars"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
+    >
+        <DlLayoutVerticalList
+            :items="items"
+            :is-visible="isVisible"
+        />
+        <div>
+            <slot />
+        </div>
+    </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue-demi'
+<script lang="ts">
+import {
+    defineComponent,
+    ref,
+    computed,
+    onMounted,
+    watch,
+    PropType
+} from 'vue-demi'
+import { LayoutVerticalItems } from '../types/VerticalItems'
+import DlLayoutVerticalList from './DlLayoutVerticalList.vue'
 
 export default defineComponent({
-    name: 'DlLayoutRightSide'
+    name: 'DlLayoutRightSide',
+    components: {
+        DlLayoutVerticalList
+    },
+    props: {
+        isExpanded: {
+            type: Boolean,
+            default: true
+        },
+        items: {
+            type: Array as PropType<LayoutVerticalItems[]>,
+            default: () => [] as LayoutVerticalItems[]
+        }
+    },
+    setup(props) {
+        const isVisible = ref(true)
+        const leftSideWidth = ref('')
+        const largeWidth = '206px'
+        const smallWidth = '44px'
+
+        const onMouseEnter = () => {
+            if (isExpandedProp.value) return
+            leftSideWidth.value = largeWidth
+            isVisible.value = true
+        }
+        const onMouseLeave = () => {
+            if (isExpandedProp.value) return
+            leftSideWidth.value = smallWidth
+            isVisible.value = false
+        }
+        const isExpandedProp = computed(() => props.isExpanded)
+
+        onMounted(() => {
+            leftSideWidth.value = largeWidth
+        })
+        watch(isExpandedProp, (value) => {
+            isVisible.value = value
+            leftSideWidth.value = value ? largeWidth : smallWidth
+        })
+        const cssVars = computed(() => {
+            return {
+                '--dl-layout-left-side-width': leftSideWidth.value
+            }
+        })
+        return {
+            cssVars,
+            onMouseEnter,
+            leftSideWidth,
+            onMouseLeave,
+            isVisible
+        }
+    }
 })
 </script>
 
 <style scoped lang="scss">
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    width: 300px;
+.dl-layout-right-side {
+    margin-right: 0;
+    width: var(--dl-layout-left-side-width);
     height: 100%;
     overflow: auto;
     background-color: var(--dl-color-side-panel);
-}
-
-li a {
-    display: block;
-    color: var(--dl-color-text-buttons);
-    padding: 8px 16px;
-    text-decoration: none;
-}
-
-li a.active {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-}
-
-li a:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
+    transition: all 300ms;
 }
 </style>

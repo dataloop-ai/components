@@ -7,12 +7,12 @@
             <a
                 :class="{ active: item.id === activeItem }"
                 :href="item.link"
-                @click="activeItem = item.id"
+                @click="triggerItem(item.id)"
             >
                 <span>
                     <dl-icon
                         :icon="item.icon"
-                        color="var(&#45;&#45;dl-color-text-buttons)"
+                        color="var(--dl-color-text-buttons)"
                         size="20px"
                     />
                 </span>
@@ -33,12 +33,18 @@
                         {{ item.subtitle }}
                     </dl-typography>
                 </div>
-                <div>
-                    {{ childrenCount(item) }}
+                <div v-if="childrenCount(item)">
+                    <dl-icon
+                        class="expand-icon"
+                        :class="{ expanded: expandedItem === item.id }"
+                        icon="icon-dl-down-chevron"
+                        color="var(--dl-color-text-buttons)"
+                        size="20px"
+                    />
                 </div>
             </a>
             <div
-                v-if="isVisible"
+                v-show="isVisible && expandedItem === item.id"
                 style="padding-left: 10px"
             >
                 <DlLayoutVerticalList :items="item.data" />
@@ -52,11 +58,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import { LayoutVerticalItems } from '../types/VerticalItems'
-// import { DlIcon } from "../../DlIcon";
-// import { DlTypography } from "../../DlTypography";
-import { DlIcon, DlTypography } from '/src/components/'
+import { DlIcon } from '../../DlIcon'
+import { DlTypography } from '../../DlTypography'
 
 export default defineComponent({
     name: 'DlLayoutVerticalList',
@@ -70,14 +75,25 @@ export default defineComponent({
             default: () => [] as LayoutVerticalItems[]
         },
         isVisible: {
-            type: Boolean
+            type: Boolean,
+            default: true
         }
     },
     setup() {
         const childrenCount = (item: LayoutVerticalItems) => item?.data?.length
+        const activeItem = ref<number | null>(null)
+        const expandedItem = ref<number | null>(null)
+
+        const triggerItem = (id: number) => {
+            activeItem.value = id
+            expandedItem.value = expandedItem.value === id ? null : id
+        }
 
         return {
-            childrenCount
+            childrenCount,
+            activeItem,
+            expandedItem,
+            triggerItem
         }
     }
 })
@@ -88,34 +104,46 @@ ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-}
+    transition: all 300ms;
 
-li {
-    display: flex;
-    flex-direction: column;
-}
+    li {
+        display: flex;
+        flex-direction: column;
 
-li a {
-    display: flex;
-    align-items: center;
-    color: var(--dl-color-text-buttons);
-    padding: 8px 16px;
-    text-decoration: none;
-    gap: 10px;
-}
+        a {
+            display: flex;
+            align-items: center;
+            color: var(--dl-color-text-buttons);
+            padding: 8px 12px;
+            text-decoration: none;
+            gap: 10px;
 
-li a.active {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-}
+            .expand-icon {
+                display: flex !important;
+                transition-property: transform, -webkit-transform;
+                transition-duration: 0.28s, 0.28s;
+                transition-timing-function: ease, ease;
+                transition-delay: 0s, 0s;
+                &.expanded {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+        a.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
 
-li a:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-}
-.horizontal-separator {
-    width: 90%;
-    border: thin solid grey;
-    margin: 0 auto;
+        a:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        .horizontal-separator {
+            width: 90%;
+            border: thin solid grey;
+            margin: 0 auto;
+        }
+    }
 }
 </style>

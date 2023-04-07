@@ -9,6 +9,9 @@
             :items="items"
             :is-visible="isVisible"
         />
+        <div>
+            <slot />
+        </div>
     </div>
 </template>
 
@@ -35,8 +38,8 @@ export default defineComponent({
             default: true
         },
         items: {
-            type: Object as PropType<LayoutVerticalItems>,
-            default: () => ({} as LayoutVerticalItems)
+            type: Array as PropType<LayoutVerticalItems[]>,
+            default: () => [] as LayoutVerticalItems[]
         }
     },
     setup(props) {
@@ -44,7 +47,6 @@ export default defineComponent({
         const leftSideWidth = ref('')
         const largeWidth = '206px'
         const smallWidth = '44px'
-        const activeItem = ref<number | null>(null)
 
         const onMouseEnter = () => {
             if (isExpandedProp.value) return
@@ -75,8 +77,7 @@ export default defineComponent({
             onMouseEnter,
             leftSideWidth,
             onMouseLeave,
-            isVisible,
-            activeItem
+            isVisible
         }
     }
 })
@@ -88,5 +89,6 @@ export default defineComponent({
     height: 100%;
     overflow: auto;
     background-color: var(--dl-color-side-panel);
+    transition: all 300ms;
 }
 </style>

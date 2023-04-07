@@ -486,6 +486,9 @@ export default defineComponent({
             if (this.withoutBorders) {
                 classes.push('dl_select__select--without-border')
             }
+            if (this.withoutBorders && this.hasPrepend) {
+                classes.push('dl_select__select--without-border__with-prepend')
+            }
             if (this.hasPrepend || this.search) {
                 classes.push('dl_select__select--prepend')
                 classes.push('dl_select__select--both-adornments')
@@ -877,6 +880,13 @@ export default defineComponent({
                 height: 100%;
             }
             height: auto;
+
+            &__with-prepend {
+                padding-left: 30px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                width: calc(80% - var(--dl-select-expand-icon-width));
+            }
         }
 
         &::placeholder {
