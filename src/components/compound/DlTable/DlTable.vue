@@ -58,12 +58,13 @@
             v-if="hasVirtScroll"
             ref="virtScrollRef"
             :class="tableClass"
+            :draggable-classes="additionalClasses"
             :style="tableStyle"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
-            :on-virtual-scroll="onVScroll"
             :table-colspan="computedColspan"
             v-bind="virtProps"
+            @virtual-scroll="onVScroll"
         >
             <template #before>
                 <thead>
@@ -144,16 +145,18 @@
                 <DlTr
                     :key="getRowKey(props.item)"
                     :class="
-                        isRowSelected(getRowKey(row))
+                        isRowSelected(getRowKey(props.item))
                             ? 'selected'
                             : hasAnyAction
                                 ? ' cursor-pointer'
                                 : ''
                     "
                     :no-hover="noHover"
-                    @click="onTrClick($event, row, pageIndex)"
-                    @dblclick="onTrDblClick($event, row, pageIndex)"
-                    @contextmenu="onTrContextMenu($event, row, pageIndex)"
+                    @click="onTrClick($event, props.item, pageIndex)"
+                    @dblclick="onTrDblClick($event, props.item, pageIndex)"
+                    @contextmenu="
+                        onTrContextMenu($event, props.item, pageIndex)
+                    "
                 >
                     <td v-if="hasDraggableRows">
                         <dl-icon
@@ -301,7 +304,7 @@
                         </tr>
                     </slot>
                 </thead>
-                <tbody>
+                <tbody id="draggable">
                     <slot
                         name="top-row"
                         :cols="computedCols"
@@ -620,12 +623,7 @@ export default defineComponent({
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed(() => props.virtualScroll === true)
 
-        const {
-            hasClickEvent,
-            hasDblClickEvent,
-            hasContextMenuEvent,
-            hasAnyAction
-        } = useTableActions(props)
+        const { hasAnyAction } = useTableActions(props) // todo: does not work
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
@@ -715,7 +713,7 @@ export default defineComponent({
 
         onMounted(() => {
             tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                '.dl-table'
+                'table.dl-table'
             ) as HTMLTableElement
             resizableManager = new ResizableManager()
 
@@ -745,7 +743,7 @@ export default defineComponent({
             hasVirtScroll,
             () => {
                 tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                    '.dl-table'
+                    'table.dl-table'
                 ) as HTMLTableElement
 
                 if (props.resizable) {
@@ -1037,8 +1035,8 @@ export default defineComponent({
                 acc[p] = (props as Record<string, any>)[p]
             })
 
-            if (acc.virtualScrollItemSize === void 0) {
-                acc.virtualScrollItemSize = props.dense === true ? 28 : 48
+            if (!acc.virtualScrollItemSize) {
+                acc.virtualScrollItemSize = props.dense === true ? 30 : 40
             }
 
             return acc
@@ -1110,9 +1108,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasClickEvent.value) {
-                emit('row-click', evt, row, pageIndex)
-            }
+            emit('row-click', evt, row, pageIndex)
         }
 
         const onTrDblClick = (
@@ -1120,9 +1116,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasDblClickEvent.value) {
-                emit('row-dblclick', evt, row, pageIndex)
-            }
+            emit('row-dblclick', evt, row, pageIndex)
         }
 
         const onTrContextMenu = (
@@ -1130,9 +1124,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
-            if (hasContextMenuEvent.value) {
-                emit('row-contextmenu', evt, row, pageIndex)
-            }
+            emit('row-contextmenu', evt, row, pageIndex)
         }
 
         function injectBodyCommonScope(data: Record<string, any>) {

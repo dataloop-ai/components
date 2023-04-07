@@ -48,6 +48,7 @@ import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
+import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSmartTooltipDemo from './DlSmartTooltipDemo.vue'
 
 export {
@@ -100,6 +101,7 @@ export {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
+    DlEllipsisDemo,
     DlSmartTooltipDemo
 }
 
@@ -119,6 +121,7 @@ export const demoState = {
     dialog_box: DlDialogBoxDemo,
     doughnut_chart: DlChartDoughnutDemo,
     dropdown_button: DropdownButtonDemo,
+    ellipsis: DlEllipsisDemo,
     icon: DlIconDemo,
     link: DlLinkDemo,
     list: DlListDemo,

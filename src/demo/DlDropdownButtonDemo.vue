@@ -84,8 +84,9 @@
                         clickable
                         @click="() => onClose('Videos and long text')"
                     >
-                        <dl-item-section>
-                            Videos and long text
+                        <dl-item-section :no-wrap="true">
+                            Videos and long text ideos and long text ideos and
+                            long text ideos and long text ideos and long text
                         </dl-item-section>
                     </dl-list-item>
 
@@ -204,7 +205,64 @@
                         @click="() => onClose('Videos and long text')"
                     >
                         <dl-item-section>
-                            Videos and long text Videos and long text
+                            Videos and long text
+                        </dl-item-section>
+                    </dl-list-item>
+                    <dl-list-item
+                        clickable
+                        @click="() => onClose('Movies and long text')"
+                    >
+                        <dl-item-section>
+                            Movies and long text
+                        </dl-item-section>
+                    </dl-list-item>
+
+                    <dl-list-item
+                        clickable
+                        @click="() => onClose('Articles')"
+                    >
+                        <dl-item-section> Articles </dl-item-section>
+                    </dl-list-item>
+                </dl-list>
+            </dl-dropdown-button>
+
+            <dl-dropdown-button
+                auto-close
+                :model-value="showing"
+                label="Ellipsis for very long text"
+                main-btn-style="width: 150px;"
+                :overflow="true"
+                :no-wrap="true"
+                tooltip="Tooltip message"
+                @show="onOpen"
+            >
+                <dl-list>
+                    <dl-list-item
+                        clickable
+                        @click="() => onClose('Photos')"
+                    >
+                        <dl-item-section> Photos </dl-item-section>
+                    </dl-list-item>
+
+                    <dl-list-item
+                        clickable
+                        @click="() => onClose('Videos and long text')"
+                    >
+                        <dl-item-section :no-wrap="true">
+                            <dl-ellipsis
+                                text="Very very very very long long long long text text text"
+                                :middle-ellipsis="true"
+                            />
+                        </dl-item-section>
+                    </dl-list-item>
+                    <dl-list-item
+                        clickable
+                        @click="() => onClose('Movies and long text')"
+                    >
+                        <dl-item-section :no-wrap="true">
+                            <dl-ellipsis
+                                text="Very very very very long long long long text text text"
+                            />
                         </dl-item-section>
                     </dl-list-item>
 
@@ -226,7 +284,8 @@ import {
     DlListItem,
     DlItemSection,
     DlList,
-    DlDropdownButton
+    DlDropdownButton,
+    DlEllipsis
 } from '../components'
 
 export default defineComponent({
@@ -235,7 +294,8 @@ export default defineComponent({
         DlListItem,
         DlItemSection,
         DlList,
-        DlDropdownButton
+        DlDropdownButton,
+        DlEllipsis
     },
     data() {
         return {
