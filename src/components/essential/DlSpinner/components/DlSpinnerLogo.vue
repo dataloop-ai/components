@@ -79,7 +79,7 @@
                     </g>
                 </svg>
             </div>
-            <div class="dl-icon">
+            <div class="dl-spinner-icon">
                 <svg
                     viewBox="0 0 51 45"
                     fill="none"
