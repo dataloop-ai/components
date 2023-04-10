@@ -203,7 +203,7 @@ export const commonVirtScrollProps = {
 
     virtualScrollItemSize: {
         type: [Number, String],
-        default: 24
+        default: 0
     },
 
     virtualScrollStickySizeStart: {
@@ -756,15 +756,13 @@ export function useVirtualScroll({
 
     function emitScroll(index: number) {
         if (prevToIndex !== index) {
-            if (props.onVirtualScroll !== void 0) {
-                emit('virtual-scroll', {
-                    index,
-                    from: virtualScrollSliceRange.value.from,
-                    to: virtualScrollSliceRange.value.to - 1,
-                    direction: index < prevToIndex ? 'decrease' : 'increase',
-                    ref: proxy
-                })
-            }
+            emit('virtual-scroll', {
+                index,
+                from: virtualScrollSliceRange.value.from,
+                to: virtualScrollSliceRange.value.to - 1,
+                direction: index < prevToIndex ? 'decrease' : 'increase',
+                ref: proxy
+            })
 
             prevToIndex = index
         }
