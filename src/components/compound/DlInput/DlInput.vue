@@ -412,7 +412,6 @@ export default defineComponent({
         },
         showClearBtn(): boolean {
             return (
-                !this.$slots.append &&
                 !this.disableClearBtn &&
                 this.type !== 'password' &&
                 !this.disabled &&
@@ -486,6 +485,7 @@ export default defineComponent({
 
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.value = ''
+            inputRef.focus()
         },
         onPassShowClick(): void {
             this.showPass = !this.showPass
