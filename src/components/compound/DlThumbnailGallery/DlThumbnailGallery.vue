@@ -4,38 +4,61 @@
             :style="imageContainerStyles"
             class="image-container"
         >
-            <div class="slider">
+            <div
+                v-if="showGallery"
+                class="slider"
+            >
                 <div class="slider__arrow">
                     <dl-icon
+                        v-if="currentList.first !== 0"
                         size="l"
                         icon="icon-dl-left-chevron"
                         @mousedown.native="navigateBackward"
                     />
                 </div>
 
-                <div class="slider__images">
+                <div
+                    ref="images"
+                    class="slider__images"
+                >
                     <div
                         v-for="image in currentImages"
                         :key="image"
                         class="slider__images--image"
+                        :style="getBorderRadius(image)"
+                        @mousedown.native="selectImage(image)"
                     >
-                        <img
-                            :src="image"
-                            @mousedown="currentImage = image"
-                        >
+                        <img :src="image">
                     </div>
                 </div>
 
                 <div class="slider__arrow">
-                    <dl-icon
-                        size="l"
-                        icon="icon-dl-right-chevron"
-                        @mousedown.native="navigateForward"
-                    />
+                    <div class="slider__arrow--icon">
+                        <dl-icon
+                            v-if="currentList.last <= images.length"
+                            size="l"
+                            icon="icon-dl-right-chevron"
+                            :inline="false"
+                            @mousedown.native="navigateForward"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="menu" />
+        <div class="menu">
+            <div class="menu__pagination">
+                {{ selectedIndex }} / {{ images.length }} Items
+            </div>
+            <div
+                class="menu__thumbnail-icon"
+                @mousedown.native="showGallery = !showGallery"
+            >
+                <dl-icon
+                    icon="icon-dl-thumbnail"
+                    size="l"
+                />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -48,34 +71,63 @@ export default defineComponent({
         DlIcon
     },
     props: {
+        modelValue: {
+            type: String,
+            default: ''
+        },
         images: {
             type: Array as PropType<string[]>,
             default: () => []
+        },
+        visibleThumbnails: {
+            type: Number,
+            default: 10
         }
     },
     data() {
         return {
-            currentImage: this.images[0],
-            currentImages: this.images.slice(0, 6)
+            showGallery: true,
+            currentList: { first: 0, last: this.visibleThumbnails },
+            selectedIndex: 0
         }
     },
     computed: {
         imageContainerStyles(): object {
             return {
-                backgroundImage: `url(${this.currentImage})`
+                backgroundImage: `url(${this.modelValue || this.images[0]})`,
+                '--thumbnail-size': `${100 / this.visibleThumbnails}%`
             }
+        },
+        currentImages() {
+            return this.images.slice(
+                this.currentList.first,
+                this.currentList.last
+            )
         }
     },
     methods: {
+        selectImage(image: string) {
+            this.selectedIndex =
+                this.images.findIndex((element: string) => element === image) +
+                1
+            this.$emit('update:modelValue', image)
+        },
         navigateForward() {
-            const firstElement = this.currentImages[0]
-            this.currentImages.shift()
-            this.currentImages.push(firstElement)
+            this.currentList.first += this.visibleThumbnails
+            this.currentList.last += this.visibleThumbnails
         },
         navigateBackward() {
-            const lastElement = this.currentImages.at(-1)
-            this.currentImages.pop()
-            this.currentImages.unshift(lastElement)
+            this.currentList.first -= this.visibleThumbnails
+            this.currentList.last -= this.visibleThumbnails
+        },
+        getBorderRadius(image: string) {
+            const isCurrent = image === this.modelValue
+            return {
+                border: isCurrent
+                    ? '3px solid var(--dl-color-secondary)'
+                    : '1px solid var(--dl-color-separator)',
+                opacity: isCurrent ? '1' : '0.8'
+            }
         }
     }
 })
@@ -84,9 +136,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .gallery-wrapper {
     width: 100%;
-    height: 700px;
+    height: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
 }
 
 .image-container {
@@ -105,6 +157,9 @@ export default defineComponent({
     position: absolute;
     bottom: 0;
     display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 65px;
     &__arrow {
         cursor: pointer;
         display: flex;
@@ -112,16 +167,46 @@ export default defineComponent({
     }
     &__images {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+        width: 80%;
+        height: 100%;
         padding: 0px 10px;
         &--image {
-            padding: 0px 15px;
+            position: relative;
+            border-radius: 3px;
+            margin: 0px 5px;
+            width: var(--thumbnail-size);
+            max-width: 60px;
+            max-height: 60px;
+            transition: 0.1s;
+            &:hover {
+                transform: scale(1.1);
+            }
             cursor: pointer;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
         &--image img {
-            width: 100px;
-            height: 100px;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
         }
+    }
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    margin-top: 10px;
+    &__pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--dl-color-medium);
+        font-size: 0.7em;
+        margin: 0px 10px;
     }
 }
 </style>
