@@ -1,11 +1,14 @@
 <template>
-    <div>
-        <dl-thumbnail-gallery :images="images" />
+    <div style="height: 700px">
+        <dl-thumbnail-gallery
+            v-model="selectedImage"
+            :images="images"
+        />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 import { DlThumbnailGallery } from '../../components'
 import images from './images'
 
@@ -14,7 +17,8 @@ export default defineComponent({
         DlThumbnailGallery
     },
     setup() {
-        return { images }
+        const selectedImage = ref('')
+        return { images, selectedImage }
     }
 })
 </script>
