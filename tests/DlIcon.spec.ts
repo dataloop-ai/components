@@ -27,7 +27,7 @@ describe('DlIcon', () => {
             color: 'dl-color-secondary',
             inline: false,
             svg: true,
-            svgSource: '@dataloop-ai/icons/docs/assets'
+            svgSource: '@dataloop-ai/icons/assets'
         }
         let wrapper: VueWrapper<any>
         let image: DOMWrapper<SVGImageElement>

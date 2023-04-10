@@ -1,6 +1,1 @@
-export * from './components/DlOptionGroup/OptionGroup.types'
-export * from './components/DlStepper/interfaces'
-export * from './components/DlTable/types'
-export * from './components/DlTabs/types'
-export * from './components/DlTimePicker/types'
-export * from './components/DlWidget/types'
+export * from './components/types'

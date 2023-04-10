@@ -1,10 +1,12 @@
 import { mount } from '@vue/test-utils'
-import useSlider, { Dragging } from '../../src/components/DlSlider/useSlider'
+import useSlider, {
+    Dragging
+} from '../../src/components/compound/DlSlider/useSlider'
 import { DlRange } from '../../src'
-import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach, vi, Mock } from 'vitest'
 
 vi.mock('vue-demi', async () => {
-    const original = await vi.importActual('vue-demi')
+    const original = (await vi.importActual('vue-demi')) as any
 
     return {
         ...original,
@@ -36,7 +38,7 @@ const dragging: Dragging = {
 }
 
 function mockCurrentInstance(props: Record<string, any>, emitFn: any) {
-    (getCurrentInstance as unknown as vi.Mock).mockImplementation(() => ({
+    (getCurrentInstance as unknown as Mock).mockImplementation(() => ({
         props,
         emit: emitFn
     }))
@@ -513,9 +515,7 @@ describe('useSlider', () => {
 
     describe('onBeforeUnmount', () => {
         it('should remove the event listener onBeforeUnmount', () => {
-            (onBeforeUnmount as unknown as vi.Mock).mockImplementation(
-                () => ({})
-            )
+            (onBeforeUnmount as unknown as Mock).mockImplementation(() => ({}))
 
             mockCurrentInstance(
                 {
