@@ -1,18 +1,18 @@
-export interface MatrixCell {
+export interface DlConfusionMatrixCell {
     value: number
     unnormalizedValue: number
-    xLabel: string | Label
-    yLabel: string | Label
+    xLabel: string | DlConfusionMatrixCellLabel
+    yLabel: string | DlConfusionMatrixCellLabel
     x: number
     y: number
 }
 
-export interface Label {
+export interface DlConfusionMatrixCellLabel {
     title: string
     image: string
 }
 
-export interface BrushState {
+export interface DlConfusionMatrixBrushState {
     min: number
     max: number
 }

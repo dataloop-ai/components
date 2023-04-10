@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="confusion-matrix-container">
         <div
             v-if="isValidMatrix"
             ref="wrapper"
@@ -157,7 +157,11 @@
 import { defineComponent, PropType } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
-import { MatrixCell, Label, BrushState } from './types'
+import {
+    DlConfusionMatrixCell,
+    DlConfusionMatrixCellLabel,
+    DlConfusionMatrixBrushState
+} from './types'
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
@@ -177,7 +181,7 @@ export default defineComponent({
     props: {
         labels: {
             required: true,
-            type: Array as PropType<string[] | Label[]>,
+            type: Array as PropType<string[] | DlConfusionMatrixCellLabel[]>,
             default: (): [] => []
         },
         matrix: {
@@ -229,13 +233,13 @@ export default defineComponent({
         }
     },
     computed: {
-        visibleLabels(): string[] | Label[] {
+        visibleLabels(): string[] | DlConfusionMatrixCellLabel[] {
             return this.labels.slice(
                 this.currentBrushState.min,
                 this.currentBrushState.max
             )
         },
-        labelStrings(): string[] | Label[] {
+        labelStrings(): string[] | DlConfusionMatrixCellLabel[] {
             if (typeof this.labels[0] === 'object')
                 return this.labels.map((label: any) => label.title)
             else return this.labels
@@ -246,7 +250,7 @@ export default defineComponent({
         isValidMatrix(): boolean {
             return validateMatrix(this.matrix, this.labels)
         },
-        flattenedMatrix(): MatrixCell[] {
+        flattenedMatrix(): DlConfusionMatrixCell[] {
             return normalizeMatrix(
                 this.matrix.flatMap((row: number[], rowIndex: number) => {
                     return row.map((cellValue: number, cellIndex: number) => {
@@ -302,7 +306,7 @@ export default defineComponent({
             labelY.style.marginTop = `${width / 2}px`
             yAxisOuter.style.height = `${width}px`
         },
-        handleBrushUpdate(brush: BrushState) {
+        handleBrushUpdate(brush: DlConfusionMatrixBrushState) {
             if (
                 brush.min === this.currentBrushState.min &&
                 brush.max === this.currentBrushState.max
@@ -310,17 +314,20 @@ export default defineComponent({
                 return
             this.updateBrush(this, brush)
         },
-        updateBrush: debounce((ctx: any, brush: BrushState) => {
-            setZoom(
-                ctx.matrix.length / (brush.max - brush.min),
-                ctx.$refs.matrix
-            )
-            const scroll = brush.min * getCellWidth() + 2
-            const container = ctx.$refs.matrixWrapper
-            container.scroll(scroll, scroll)
-            ctx.currentBrushState = brush
-            ctx.resizeYAxis()
-        }, 30),
+        updateBrush: debounce(
+            (ctx: any, brush: DlConfusionMatrixBrushState) => {
+                setZoom(
+                    ctx.matrix.length / (brush.max - brush.min),
+                    ctx.$refs.matrix
+                )
+                const scroll = brush.min * getCellWidth() + 2
+                const container = ctx.$refs.matrixWrapper
+                container.scroll(scroll, scroll)
+                ctx.currentBrushState = brush
+                ctx.resizeYAxis()
+            },
+            30
+        ),
         resizeYAxis() {
             (this.$refs.yAxis as HTMLElement).style.height = `${
                 getCellWidth() * this.matrix.length
@@ -330,26 +337,29 @@ export default defineComponent({
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },
-        handleShowTooltip(cell: MatrixCell, e: MouseEvent) {
+        handleShowTooltip(cell: DlConfusionMatrixCell, e: MouseEvent) {
             this.showTooltip(this, cell, e)
         },
         handleHideTooltip() {
             this.hideTooltip(this)
         },
-        showTooltip: debounce((ctx: any, cell: MatrixCell, e: MouseEvent) => {
-            ctx.tooltipState = {
-                value: ctx.normalized ? cell.value : cell.unnormalizedValue,
-                xLabel: cell.xLabel,
-                yLabel: cell.yLabel,
-                x: e.pageX,
-                y: e.pageY,
-                visible: true
-            }
-        }, 200),
+        showTooltip: debounce(
+            (ctx: any, cell: DlConfusionMatrixCell, e: MouseEvent) => {
+                ctx.tooltipState = {
+                    value: ctx.normalized ? cell.value : cell.unnormalizedValue,
+                    xLabel: cell.xLabel,
+                    yLabel: cell.yLabel,
+                    x: e.pageX,
+                    y: e.pageY,
+                    visible: true
+                }
+            },
+            200
+        ),
         hideTooltip: debounce((ctx: any) => {
             if (ctx?.tooltipState) ctx.tooltipState.visible = false
         }, 200),
-        openLink(cell: MatrixCell) {
+        openLink(cell: DlConfusionMatrixCell) {
             if (!this.getLink) return
             const link = this.getLink(cell)
             window.open(link, '_blank')

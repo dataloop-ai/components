@@ -1,4 +1,4 @@
-import { MatrixCell, Label } from './types'
+import { DlConfusionMatrixCell, DlConfusionMatrixCellLabel } from './types'
 
 export function getCellWidth() {
     return document.querySelector('.matrix__cell').getBoundingClientRect().width
@@ -20,7 +20,10 @@ export function setZoom(zoom: number, el: HTMLElement) {
     el.style['transformOrigin'] = oString
 }
 
-export function validateMatrix(matrix: number[][], labels: string[] | Label[]) {
+export function validateMatrix(
+    matrix: number[][],
+    labels: string[] | DlConfusionMatrixCellLabel[]
+) {
     let validation = true
     if (matrix.length !== labels.length) return false
     for (let i = 0; i < matrix.length; i++) {
@@ -29,7 +32,7 @@ export function validateMatrix(matrix: number[][], labels: string[] | Label[]) {
     return validation
 }
 
-export function normalizeMatrix(flatMatrix: MatrixCell[]) {
+export function normalizeMatrix(flatMatrix: DlConfusionMatrixCell[]) {
     const values = flatMatrix.map((cell) => cell.value)
     const largest = Math.max(...values)
     flatMatrix.forEach((cell) => {
