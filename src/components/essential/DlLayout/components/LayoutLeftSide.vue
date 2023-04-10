@@ -1,6 +1,6 @@
 <template>
     <div
-        class="dl-layout-right-side"
+        class="dl-layout-left-side"
         :style="cssVars"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
@@ -25,10 +25,10 @@ import {
     PropType
 } from 'vue-demi'
 import { LayoutVerticalItems } from '../types/VerticalItems'
-import DlLayoutVerticalList from './DlLayoutVerticalList.vue'
+import DlLayoutVerticalList from './LayoutVerticalList.vue'
 
 export default defineComponent({
-    name: 'DlLayoutRightSide',
+    name: 'DlLayoutLeftSide',
     components: {
         DlLayoutVerticalList
     },
@@ -84,8 +84,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.dl-layout-right-side {
-    margin-right: 0;
+.dl-layout-left-side {
     width: var(--dl-layout-left-side-width);
     height: 100%;
     overflow: auto;

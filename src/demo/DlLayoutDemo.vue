@@ -1,16 +1,34 @@
 <template>
     <div style="width: 90%; height: 100%">
         <DlLayout
-            :navbar-left-items="navbarLeftItems"
             :left-items="leftItems"
             :right-items="rightItems"
+            :has-navbar-toggle="true"
         >
-            <template #navbar-center-content>
-                <div style="display: flex; align-items: center">
+            <template #navbar-content>
+                <div class="navbar-demo-content">
+                    <div style="width: 120px">
+                        <dl-select
+                            without-borders
+                            has-prepend
+                            size="l"
+                            placeholder="Placeholder"
+                            :options="['One', 'Two', 'Three']"
+                        >
+                            <template #prepend>
+                                <dl-icon
+                                    size="12px"
+                                    icon="icon-dl-organization"
+                                />
+                            </template>
+                        </dl-select>
+                    </div>
                     <div
                         style="
                             background-color: var(--dl-color-fill-secondary);
                             border-radius: 2px;
+                            display: flex;
+                            justify-content: center;
                         "
                     >
                         <dl-button flat>
@@ -58,48 +76,59 @@
                             icon="icon-dl-pdf"
                         />
                     </div>
-                </div>
-            </template>
-            <template #navbar-right-content>
-                <div style="display: flex; align-items: center">
-                    <dl-button flat>
-                        <dl-icon
-                            size="16px"
-                            icon="icon-dl-light-theme"
-                            color="dl-color-warning"
-                        />
-                    </dl-button>
-                    <dl-button flat>
-                        <dl-icon
-                            size="16px"
-                            icon="icon-dl-dark-theme"
-                            color="dl-color-warning"
-                        />
-                    </dl-button>
-                    <dl-button
-                        flat
-                        color="secondary"
-                        icon="icon-dl-question"
-                    />
-                    <dl-button
-                        flat
-                        color="secondary"
+                    <div
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: end;
+                            padding-right: 10px;
+                        "
                     >
-                        <dl-icon
-                            size="16px"
-                            icon="icon-dl-notification"
+                        <dl-button flat>
+                            <dl-icon
+                                size="16px"
+                                icon="icon-dl-light-theme"
+                                color="dl-color-warning"
+                            />
+                        </dl-button>
+                        <dl-button flat>
+                            <dl-icon
+                                size="16px"
+                                icon="icon-dl-dark-theme"
+                                color="dl-color-warning"
+                            />
+                        </dl-button>
+                        <dl-button
+                            flat
+                            color="secondary"
+                            icon="icon-dl-question"
                         />
-                    </dl-button>
-                    <dl-button
-                        flat
-                        color="secondary"
-                        icon="icon-dl-cloud-server"
-                    />
-                    <dl-button
-                        flat
-                        color="secondary"
-                        icon="icon-dl-magic"
-                    />
+                        <dl-button
+                            flat
+                            color="secondary"
+                        >
+                            <dl-icon
+                                size="16px"
+                                icon="icon-dl-notification"
+                            />
+                        </dl-button>
+                        <dl-button
+                            flat
+                            color="secondary"
+                            icon="icon-dl-cloud-server"
+                        />
+                        <dl-button
+                            flat
+                            color="secondary"
+                            icon="icon-dl-magic"
+                        />
+                        <dl-avatar
+                            tooltip="popcat@gmail.com"
+                            size="25px"
+                        >
+                            <img src="https://popcat.click/twitter-card.jpg">
+                        </dl-avatar>
+                    </div>
                 </div>
             </template>
             <template #left-side>
@@ -160,7 +189,7 @@
                     </ul>
                 </div>
             </template>
-            <template #layout-footer>
+            <template #footer>
                 <div
                     class="grid grid-cols-3"
                     style="width: 100%; height: 100%"
@@ -236,6 +265,8 @@ import DlLayout from '../components/essential/DlLayout/DlLayout.vue'
 import { LayoutVerticalItems } from '../components/essential/DlLayout/types/VerticalItems'
 import DlButton from '../components/basic/DlButton/DlButton.vue'
 import DlIcon from '../components/essential/DlIcon/DlIcon.vue'
+import DlAvatar from '../components/basic/DlAvatar/DlAvatar.vue'
+import DlSelect from '../components/compound/DlSelect/DlSelect.vue'
 import { HorizontalItems } from '../components/essential/DlLayout/types/HorizontalItems'
 
 export default defineComponent({
@@ -243,65 +274,11 @@ export default defineComponent({
     components: {
         DlLayout,
         DlButton,
-        DlIcon
+        DlIcon,
+        DlAvatar,
+        DlSelect
     },
     setup() {
-        const navbarLeftItems = ref<HorizontalItems[]>([
-            {
-                title: 'Dataloop Ai',
-                icon: 'icon-dl-organization',
-                options: [
-                    {
-                        label: 'Organization',
-                        value: 'comp'
-                    },
-                    {
-                        label: 'Structure',
-                        value: 'struct'
-                    },
-                    {
-                        label: 'Components',
-                        value: 'comp'
-                    }
-                ]
-            },
-            {
-                title: 'Project Name',
-                icon: 'icon-dl-project-filled',
-                options: [
-                    {
-                        label: 'Organization',
-                        value: 'comp'
-                    },
-                    {
-                        label: 'Structure',
-                        value: 'struct'
-                    },
-                    {
-                        label: 'Components',
-                        value: 'comp'
-                    }
-                ]
-            },
-            {
-                title: 'Task',
-                icon: 'icon-dl-task',
-                options: [
-                    {
-                        label: 'Organization',
-                        value: 'comp'
-                    },
-                    {
-                        label: 'Structure',
-                        value: 'struct'
-                    },
-                    {
-                        label: 'Components',
-                        value: 'comp'
-                    }
-                ]
-            }
-        ])
         const rightItems = ref<LayoutVerticalItems[]>([
             {
                 id: 1,
@@ -517,11 +494,18 @@ export default defineComponent({
 
         return {
             leftItems,
-            rightItems,
-            navbarLeftItems
+            rightItems
         }
     }
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.navbar-demo-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+</style>

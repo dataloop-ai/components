@@ -1,65 +1,65 @@
 <template>
     <div class="dl-layout">
         <div class="dl-layout__navbar">
-            <DlLayoutNavbar
+            <LayoutNavbar
                 :left-items="navbarLeftItems"
+                :has-toggle="hasNavbarToggle"
                 @toggle="toggleLeftSideBar"
             >
-                <template #center-content>
-                    <slot name="navbar-center-content" />
+                <template #default>
+                    <slot name="navbar-content" />
                 </template>
-                <template #right-content>
-                    <slot name="navbar-right-content" />
-                </template>
-            </DlLayoutNavbar>
+            </LayoutNavbar>
         </div>
         <div class="dl-layout__body">
-            <div>
-                <DlLayoutLeftSide
+            <div v-if="hasLeftSideSlot">
+                <LayoutLeftSide
                     :is-expanded="isExpandedLeftSide"
                     :items="leftItems"
                 >
                     <template #default>
                         <slot name="left-side" />
                     </template>
-                </DlLayoutLeftSide>
+                </LayoutLeftSide>
             </div>
             <div class="dl-layout__body__content">
                 <slot />
-                <div class="dl-layout__body__content__footer">
-                    <slot name="layout-footer" />
+                <div
+                    v-if="hasFooterSlot"
+                    class="dl-layout__body__content__footer"
+                >
+                    <slot name="footer" />
                 </div>
             </div>
-            <div>
-                <DlLayoutRightSide :items="rightItems">
+            <div v-if="hasRightSideSlot">
+                <LayoutRightSide :items="rightItems">
                     <template #default>
                         <slot name="right-side" />
                     </template>
-                </DlLayoutRightSide>
+                </LayoutRightSide>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { LayoutVerticalItems } from './types/VerticalItems'
-import { HorizontalItems } from './types/HorizontalItems'
-import DlLayoutNavbar from './components/DlLayoutNavbar.vue'
-import DlLayoutLeftSide from './components/DlLayoutLeftSide.vue'
-import DlLayoutRightSide from './components/DlLayoutRightSide.vue'
+import LayoutNavbar from './components/LayoutNavbar.vue'
+import LayoutLeftSide from './components/LayoutLeftSide.vue'
+import LayoutRightSide from './components/LayoutRightSide.vue'
 
 export default defineComponent({
     name: 'DlLayout',
     components: {
-        DlLayoutNavbar,
-        DlLayoutLeftSide,
-        DlLayoutRightSide
+        LayoutNavbar,
+        LayoutLeftSide,
+        LayoutRightSide
     },
     props: {
-        navbarLeftItems: {
-            type: Array as PropType<HorizontalItems[]>,
-            default: () => [] as HorizontalItems[]
+        hasNavbarToggle: {
+            type: Boolean,
+            default: true
         },
         leftItems: {
             type: Array as PropType<LayoutVerticalItems[]>,
@@ -70,15 +70,23 @@ export default defineComponent({
             default: () => [] as LayoutVerticalItems[]
         }
     },
-    setup() {
+    setup(props, { attrs, slots }) {
         const isExpandedLeftSide = ref(true)
         const toggleLeftSideBar = (event: boolean) => {
             isExpandedLeftSide.value = event
         }
+        const hasFooterSlot = computed(() => slots.footer !== undefined)
+        const hasLeftSideSlot = computed(() => slots['left-side'] !== undefined)
+        const hasRightSideSlot = computed(
+            () => slots['right-side'] !== undefined
+        )
 
         return {
             isExpandedLeftSide,
-            toggleLeftSideBar
+            toggleLeftSideBar,
+            hasFooterSlot,
+            hasLeftSideSlot,
+            hasRightSideSlot
         }
     }
 })
@@ -100,7 +108,7 @@ export default defineComponent({
             height: 100%;
             width: 100%;
             margin-bottom: 50px;
-            overflow: hidden;
+            overflow: scroll;
 
             &__footer {
                 position: absolute;
