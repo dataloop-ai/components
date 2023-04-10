@@ -78,10 +78,14 @@ export default defineComponent({
         closable: {
             type: Boolean,
             default: true
+        },
+        collapseCount: {
+            type: Number,
+            default: 0
         }
     },
     setup(props: any) {
-        const { position, duration, message } = props
+        const { position, duration, message, collapseCount } = props
         const root = ref(null)
         let parentTop: HTMLElement = null
         let parentBottom: HTMLElement = null
@@ -161,6 +165,9 @@ export default defineComponent({
                     closeToastMessage()
                 }, duration * 1000)
             }
+            if (collapseCount && collapseCount < parent.childNodes.length) {
+                setTimeout(() => removeElement(parent.lastElementChild), 200)
+            }
         }
         function closeToast(val: boolean) {
             if (!val) removeElement(root.value)
@@ -188,6 +195,9 @@ export default defineComponent({
     overflow: hidden;
     z-index: 1052;
     pointer-events: none;
+    .root {
+        width: 100% !important;
+    }
     &__item {
         display: inline-flex;
         align-items: center;
