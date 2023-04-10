@@ -12,10 +12,15 @@
                     title="Duration seconds"
                 />
                 <dl-input
+                    v-model="collapseCount"
+                    type="number"
+                    title="Collapse count"
+                />
+                <dl-input
                     v-model="classItem"
                     title="Custom class for toast item"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="width"
                     title="Custom width for toast item"
                 />
@@ -121,6 +126,7 @@ export default defineComponent({
         const closable = ref(true)
         const classItem = ref('demo-toast')
         const width = ref('auto')
+        const collapseCount = ref(null)
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
@@ -129,7 +135,8 @@ export default defineComponent({
                 duration: duration.value,
                 classItem: classItem.value,
                 closable: closable.value,
-                width: width.value
+                width: width.value,
+                collapseCount: collapseCount.value
             })
         }
         return {
@@ -140,7 +147,8 @@ export default defineComponent({
             position,
             classItem,
             closable,
-            width
+            width,
+            collapseCount
         }
     }
 })

@@ -38,7 +38,7 @@
             </div>
         </div>
         <div
-            v-if="withProgressBar"
+            v-if="progress"
             class="kpi_box__progress_bar"
         >
             <dl-progress-bar
@@ -72,8 +72,8 @@ export default defineComponent({
     },
     props: {
         counter: {
-            type: Object as PropType<DlKpiCounterType | number>,
-            default: () => ({})
+            type: Object as PropType<DlKpiCounterType>,
+            default: () => ({} as DlKpiCounterType)
         },
         counterFontSize: {
             type: String,
@@ -107,19 +107,14 @@ export default defineComponent({
         },
         progress: {
             type: Object as PropType<DlKpiProgressType>,
-            default: () => ({})
+            default: null
         },
-        withBorder: {
+        bordered: {
             type: Boolean,
             default: false,
             required: false
         },
-        withProgressBar: {
-            type: Boolean,
-            default: false,
-            required: false
-        },
-        isSmall: {
+        small: {
             type: Boolean,
             default: false,
             required: false
@@ -127,22 +122,33 @@ export default defineComponent({
     },
     setup(props) {
         const progressValue = (progress: DlKpiProgressType) => {
+            if (!progress) {
+                return null
+            }
             return progress?.value ? progress.value / 100 : null
         }
 
         const emptyString = '---'
 
+        const isSingleWord = (text: string) => text.split(' ').length === 1
+
         const cssVars = computed(() => {
             return {
-                '--dl-kpi-border': props.withBorder ? '1px solid #e4e4e4' : ''
+                '--dl-kpi-border': props.bordered ? '1px solid #e4e4e4' : '',
+                '--dl-kpi-title-max-width': isSingleWord(props.title)
+                    ? '100%'
+                    : '90%', // todo: caused a bug with single words
+                '--dl-kpi-sub-title-max-width': isSingleWord(props.subtitle)
+                    ? '100%'
+                    : '90%'
             }
         })
 
         const counterFontSizeComputed = computed(() =>
-            props.isSmall ? '20px' : props.counterFontSize
+            props.small ? '20px' : props.counterFontSize
         )
         const titleFontSizeComputed = computed(() =>
-            props.isSmall ? '14px' : props.titleFontSize
+            props.small ? '14px' : props.titleFontSize
         )
 
         const formatCounter = (counter: DlKpiCounterType) => {
@@ -243,7 +249,7 @@ export default defineComponent({
         &__text {
             display: flex;
             flex-direction: row;
-            max-width: 90%;
+            max-width: var(--dl-kpi-title-max-width);
             max-height: 40px;
             font-style: normal;
             font-weight: 400;
@@ -255,7 +261,7 @@ export default defineComponent({
             gap: 10px;
         }
         &__subtext {
-            max-width: 90%;
+            max-width: var(--dl-kpi-sub-title-max-width);
             max-height: 40px;
             font-style: normal;
             font-weight: 400;
