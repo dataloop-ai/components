@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="spinner-wrapper">
         <div
             class="spinner"
             :style="spinnerStyles"
@@ -79,7 +79,7 @@
                     </g>
                 </svg>
             </div>
-            <div class="dl-icon">
+            <div class="dl-spinner-icon">
                 <svg
                     viewBox="0 0 51 45"
                     fill="none"

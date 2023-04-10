@@ -58,7 +58,7 @@ function isIntersecting(
 }
 
 function getRows(table: HTMLTableElement) {
-    return table.querySelectorAll('tbody tr')
+    return table.querySelectorAll('tbody#draggable tr')
 }
 
 export function applyDraggableRows(
@@ -66,7 +66,7 @@ export function applyDraggableRows(
     vm?: any,
     root?: HTMLDivElement
 ) {
-    const tbody = table.querySelector('tbody')!
+    const tbody = table.querySelector('tbody#draggable')!
 
     let currRow: any = null
     let dragElem: any = null
