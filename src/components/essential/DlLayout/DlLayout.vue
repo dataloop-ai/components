@@ -12,7 +12,10 @@
             </LayoutNavbar>
         </div>
         <div class="dl-layout__body">
-            <div v-if="hasLeftSideSlot">
+            <div
+                v-if="hasLeftSideSlot"
+                class="dl-layout__body__left-content"
+            >
                 <LayoutLeftSide
                     :is-expanded="isExpandedLeftSide"
                     :items="leftItems"
@@ -31,7 +34,10 @@
                     <slot name="footer" />
                 </div>
             </div>
-            <div v-if="hasRightSideSlot">
+            <div
+                v-if="hasRightSideSlot"
+                class="dl-layout__body__right-content"
+            >
                 <LayoutRightSide :items="rightItems">
                     <template #default>
                         <slot name="right-side" />
