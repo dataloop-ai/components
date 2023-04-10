@@ -22,7 +22,7 @@
                     class="selection"
                     :style="selectionBarStyle"
                 />
-                <dl-brush-thumb
+                <brush-thumb
                     key="tmin"
                     ref="minThumbRef"
                     class="thumb"
@@ -33,7 +33,7 @@
                     data-test="min-thumb"
                 />
 
-                <dl-brush-thumb
+                <brush-thumb
                     key="tmax"
                     ref="maxThumbRef"
                     class="thumb"
@@ -65,7 +65,7 @@ import useSlider, {
 } from '../../../compound/DlSlider/useSlider'
 
 import { between, isMobileOrTablet, getColor } from '../../../../utils'
-import DlBrushThumb from '../shared/BrushThumb.vue'
+import BrushThumb from '../shared/BrushThumb.vue'
 import touchPanDirective from '../../../../directives/TouchPan'
 
 export default defineComponent({
@@ -74,7 +74,7 @@ export default defineComponent({
         touchPan: touchPanDirective as any // force any type cause of the vue version
     },
     components: {
-        DlBrushThumb
+        BrushThumb
     },
     model: {
         prop: 'modelValue',
