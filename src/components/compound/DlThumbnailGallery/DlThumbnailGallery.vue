@@ -1,61 +1,42 @@
 <template>
-    <div class="gallery-wrapper">
+    <div
+        v-if="showGallery"
+        :style="imageContainerStyles"
+        class="slider"
+    >
+        <div class="slider__arrow">
+            <dl-icon
+                v-if="currentList.first !== 0"
+                size="l"
+                icon="icon-dl-left-chevron"
+                @mousedown.native="navigateBackward"
+            />
+        </div>
+
         <div
-            :style="imageContainerStyles"
-            class="image-container"
+            ref="images"
+            class="slider__images"
         >
             <div
-                v-if="showGallery"
-                class="slider"
+                v-for="image in currentImages"
+                :key="image"
+                class="slider__images--image"
+                :style="getBorderRadius(image)"
+                @mousedown.native="$emit('update:modelValue', image)"
             >
-                <div class="slider__arrow">
-                    <dl-icon
-                        v-if="currentList.first !== 0"
-                        size="l"
-                        icon="icon-dl-left-chevron"
-                        @mousedown.native="navigateBackward"
-                    />
-                </div>
-
-                <div
-                    ref="images"
-                    class="slider__images"
-                >
-                    <div
-                        v-for="image in currentImages"
-                        :key="image"
-                        class="slider__images--image"
-                        :style="getBorderRadius(image)"
-                        @mousedown.native="selectImage(image)"
-                    >
-                        <img :src="image">
-                    </div>
-                </div>
-
-                <div class="slider__arrow">
-                    <div class="slider__arrow--icon">
-                        <dl-icon
-                            v-if="currentList.last <= images.length"
-                            size="l"
-                            icon="icon-dl-right-chevron"
-                            :inline="false"
-                            @mousedown.native="navigateForward"
-                        />
-                    </div>
-                </div>
+                <img :src="image">
             </div>
         </div>
-        <div class="menu">
-            <div class="menu__pagination">
-                {{ selectedIndex }} / {{ images.length }} Items
-            </div>
-            <div
-                class="menu__thumbnail-icon"
-                @mousedown.native="showGallery = !showGallery"
-            >
+
+        <div class="slider__arrow">
+            <div class="slider__arrow--icon">
+                <dl-button />
                 <dl-icon
-                    icon="icon-dl-thumbnail"
+                    v-if="currentList.last <= images.length"
                     size="l"
+                    icon="icon-dl-right-chevron"
+                    :inline="false"
+                    @mousedown.native="navigateForward"
                 />
             </div>
         </div>
@@ -65,10 +46,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
+import { DlButton } from '../../basic'
 
 export default defineComponent({
     components: {
-        DlIcon
+        DlIcon,
+        DlButton
     },
     props: {
         modelValue: {
@@ -87,14 +70,12 @@ export default defineComponent({
     data() {
         return {
             showGallery: true,
-            currentList: { first: 0, last: this.visibleThumbnails },
-            selectedIndex: 0
+            currentList: { first: 0, last: this.visibleThumbnails }
         }
     },
     computed: {
         imageContainerStyles(): object {
             return {
-                backgroundImage: `url(${this.modelValue || this.images[0]})`,
                 '--thumbnail-size': `${100 / this.visibleThumbnails}%`
             }
         },
@@ -106,12 +87,6 @@ export default defineComponent({
         }
     },
     methods: {
-        selectImage(image: string) {
-            this.selectedIndex =
-                this.images.findIndex((element: string) => element === image) +
-                1
-            this.$emit('update:modelValue', image)
-        },
         navigateForward() {
             this.currentList.first += this.visibleThumbnails
             this.currentList.last += this.visibleThumbnails
@@ -134,25 +109,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.gallery-wrapper {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.image-container {
-    user-select: none;
-    height: 100%;
-    width: 100%;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
 .slider {
     position: absolute;
     bottom: 0;
@@ -192,21 +148,6 @@ export default defineComponent({
             width: 100%;
             height: 100%;
         }
-    }
-}
-
-.menu {
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
-    margin-top: 10px;
-    &__pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--dl-color-medium);
-        font-size: 0.7em;
-        margin: 0px 10px;
     }
 }
 </style>
