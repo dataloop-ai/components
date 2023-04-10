@@ -2,7 +2,6 @@
     <div class="dl-layout">
         <div class="dl-layout__navbar">
             <LayoutNavbar
-                :left-items="navbarLeftItems"
                 :has-toggle="hasNavbarToggle"
                 @toggle="toggleLeftSideBar"
             >
