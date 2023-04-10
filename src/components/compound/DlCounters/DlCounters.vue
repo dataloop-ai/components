@@ -12,7 +12,7 @@
             >
                 <div :class="computeClass('item-content')">
                     <dl-kpi
-                        :counter="item.value"
+                        :counter="kpiValue(item.value)"
                         counter-font-size="30px"
                         :title="capitalize(item.text)"
                         title-font-size="16px"
@@ -20,7 +20,7 @@
                         subtitle-font-size="12px"
                         :info-message="null"
                         :progress="null"
-                        :is-small="small"
+                        :small="small"
                     />
                 </div>
                 <div class="divider" />
@@ -33,6 +33,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { DlKpi } from '../../basic'
+import { DlKpiCounterFormat } from '../../types'
 
 interface CounterItem {
     value?: number
@@ -60,10 +61,6 @@ export default defineComponent({
             validator(value: CounterItem[]): boolean {
                 return value.length <= 8
             }
-        },
-        abbreviateNumbers: {
-            type: Boolean,
-            default: true
         }
     },
     data() {
@@ -84,6 +81,12 @@ export default defineComponent({
         },
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]
+        },
+        kpiValue(value: string | number) {
+            return {
+                value: value ?? 0,
+                format: DlKpiCounterFormat.long
+            }
         }
     }
 })

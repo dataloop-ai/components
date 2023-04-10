@@ -108,5 +108,5 @@ PreviewSVG.args = {
     size: '50px',
     color: 'dl-color-secondary',
     svg: true,
-    svgSource: '@dataloop-ai/icons/docs/assets'
+    svgSource: '@dataloop-ai/icons/assets'
 }

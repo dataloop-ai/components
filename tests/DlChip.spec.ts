@@ -1,6 +1,6 @@
-import { mount } from '@vue/test-utils'
+import { DOMWrapper, VueWrapper, mount } from '@vue/test-utils'
 import { DlChip } from '../src/'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlChip', () => {
     it('testing DlChip functionality', async () => {
@@ -27,7 +27,8 @@ describe('DlChip', () => {
             icon: '',
             textColor: '',
             transform: 'lowercase',
-            overflow: false
+            overflow: false,
+            fit: false
         })
 
         expect(wrapper.vm.hasIcon).toBe(false)
@@ -67,5 +68,30 @@ describe('DlChip', () => {
         expect(
             await wrapper.find('span').classes('dl-chip-remove-icon-container')
         ).toBe(true)
+    })
+    describe('When passing a dl-chip with fit property', () => {
+        let chip: DOMWrapper<HTMLDivElement>
+
+        beforeAll(async () => {
+            const wrapper = mount(DlChip, {
+                props: {
+                    filled: true,
+                    label: 'Filled chip',
+                    disabled: false,
+                    removable: true,
+                    fit: true
+                }
+            })
+
+            chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+        })
+
+        it('will have max-width of "fit-content"', () => {
+            expect(
+                chip
+                    .attributes('style')
+                    ?.includes('--dl-chip-max-width: fit-content')
+            ).to.be.true
+        })
     })
 })
