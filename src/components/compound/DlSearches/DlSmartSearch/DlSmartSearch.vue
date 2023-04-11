@@ -96,7 +96,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, getCurrentInstance, PropType, ref } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
 import { DlJsonEditor } from '../../DlJsonEditor'
 import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
@@ -165,10 +165,7 @@ export default defineComponent({
         }
     },
     emits: ['save-query', 'remove-query', 'search-query'],
-    setup(props, { emit }) {
-        const vm = getCurrentInstance()
-        const proxy = vm!.proxy!
-
+    setup(props) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
 

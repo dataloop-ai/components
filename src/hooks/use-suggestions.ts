@@ -77,6 +77,8 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
     const findSuggestions = (input: string) => {
         localSuggestions = initialSuggestions
 
+        input = formatInput(input)
+
         const words = splitByQuotes(input, space)
         const expressions = mapWordsToExpressions(words)
 
@@ -177,6 +179,14 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
     }
 
     return { suggestions, findSuggestions, error }
+}
+
+const formatInput = (input: string) => {
+    return input
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replace(/\s\s+/g, ' ')
+        .trimStart()
 }
 
 const errors = {
