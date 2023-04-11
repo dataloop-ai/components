@@ -1,5 +1,5 @@
 <template>
-    <div :style="style" />
+    <div :style="styles" />
 </template>
 
 <script lang="ts">
@@ -27,37 +27,36 @@ export default defineComponent({
             type: String,
             default: null
         },
-        margin: {
+        indent: {
             type: String,
             default: '10px'
         }
     },
-    setup(props) {
-        const { type, width, height, margin, color } = props
-        let style
-
-        switch (type) {
-            case 'horizontal':
-                style = {
-                    backgroundColor: color,
-                    width: width || '300px',
-                    height: height || '1px',
-                    marginTop: margin,
-                    marginBottom: margin
-                }
-                break
-            case 'vertical':
-                style = {
-                    backgroundColor: color,
-                    width: width || '1px',
-                    height: height || '300px',
-                    marginLeft: margin,
-                    marginRight: margin
-                }
-                break
+    computed: {
+        styles() {
+            let styles
+            switch (this.type) {
+                case 'horizontal':
+                    styles = {
+                        backgroundColor: this.color,
+                        width: this.width || '300px',
+                        height: this.height || '1px',
+                        marginTop: this.indent,
+                        marginBottom: this.indent
+                    }
+                    break
+                case 'vertical':
+                    styles = {
+                        backgroundColor: this.color,
+                        width: this.width || '1px',
+                        height: this.height || '300px',
+                        marginLeft: this.indent,
+                        marginRight: this.indent
+                    }
+                    break
+            }
+            return styles
         }
-
-        return { style }
     }
 })
 </script>
