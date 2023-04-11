@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="spinner-wrapper">
         <svg
             class="dl-spinner dl-spinner-mat"
             :width="size"
@@ -7,7 +7,7 @@
             viewBox="25 25 50 50"
         >
             <circle
-                class="path"
+                class="spinner-path"
                 cx="50"
                 cy="50"
                 r="20"
