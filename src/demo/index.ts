@@ -49,6 +49,7 @@ import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
+import DlSeparatorDemo from './DlSeparatorDemo.vue'
 
 export {
     AvatarDemo,
@@ -154,5 +155,6 @@ export const demoState = {
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
     toast: DlToastDemo,
-    spinner: DlSpinner
+    spinner: DlSpinner,
+    separator: DlSeparatorDemo
 }
