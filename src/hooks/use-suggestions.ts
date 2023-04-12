@@ -183,8 +183,8 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
 
 const formatInput = (input: string) => {
     return input
-        .replaceAll('(', '')
-        .replaceAll(')', '')
+        .replaceAll('[', '')
+        .replaceAll(']', '')
         .replace(/\s\s+/g, ' ')
         .trimStart()
 }
