@@ -14,6 +14,10 @@ import { leastCommonMultiple, getGridTemplate } from './utils'
 
 export default defineComponent({
     props: {
+        order: {
+            type: Array as PropType<number[]>,
+            default: null
+        },
         layout: {
             type: Array as PropType<number[]>,
             default: null
@@ -47,6 +51,9 @@ export default defineComponent({
             immediate: true
         }
     },
+    mounted() {
+        Array.from(this.$refs.grid.children).forEach((element) => {})
+    },
     methods: {
         applyGridElementStyles() {
             if (!this.layout) return
@@ -56,8 +63,9 @@ export default defineComponent({
             const gridTemplate = getGridTemplate(this.layout)
             if (gridElements.length !== gridTemplate.length) return
 
-            gridElements.forEach((element, index) => {
-                (element as HTMLElement).style.gridColumn = gridTemplate[index]
+            gridElements.forEach((element: HTMLElement, index: number) => {
+                element.style.order = this.order[index]
+                element.style.gridColumn = gridTemplate[this.order[index] - 1]
             })
         }
     }

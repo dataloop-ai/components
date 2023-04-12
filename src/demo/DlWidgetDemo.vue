@@ -50,7 +50,10 @@ export default defineComponent({
 
 <template>
     <div>
-        <dl-grid :layout="[3, 2]">
+        <dl-grid
+            :layout="[3, 2]"
+            :order="[5, 4, 3, 2, 1]"
+        >
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>
@@ -103,7 +106,7 @@ export default defineComponent({
 
             <dl-widget>
                 <template #header>
-                    <span>Widget 1</span>
+                    <span>Widget 4</span>
                     <span style="font-size: 12px; color: gray">Subtitle</span>
                 </template>
                 <template #content>
@@ -125,7 +128,7 @@ export default defineComponent({
 
             <dl-widget>
                 <template #header>
-                    <span>Widget 2</span>
+                    <span>Widget 5</span>
                 </template>
                 <template #content>
                     <dl-bar-chart
