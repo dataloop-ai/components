@@ -130,14 +130,15 @@ export default defineComponent({
 
         const emptyString = '---'
 
-        const isSingleWord = (text: string) => text.split(' ').length === 1
+        const isSingleWord = (text: string): boolean =>
+            text?.length ? text.split(' ').length === 1 : true
 
         const cssVars = computed(() => {
             return {
                 '--dl-kpi-border': props.bordered ? '1px solid #e4e4e4' : '',
                 '--dl-kpi-title-max-width': isSingleWord(props.title)
                     ? '100%'
-                    : '90%', // todo: caused a bug with single words
+                    : '90%', // todo: caused a bug with single words | fixed
                 '--dl-kpi-sub-title-max-width': isSingleWord(props.subtitle)
                     ? '100%'
                     : '90%'
