@@ -51,9 +51,6 @@ export default defineComponent({
             immediate: true
         }
     },
-    mounted() {
-        Array.from(this.$refs.grid.children).forEach((element) => {})
-    },
     methods: {
         applyGridElementStyles() {
             if (!this.layout) return
@@ -66,8 +63,12 @@ export default defineComponent({
             gridElements.forEach((element: HTMLElement, index: number) => {
                 element.style.order = this.order[index]
                 element.style.gridColumn = gridTemplate[this.order[index] - 1]
+                element.addEventListener('swap', this.updateLayout)
             })
         }
+    },
+    updateLayout(e) {
+        console.log(e)
     }
 })
 </script>

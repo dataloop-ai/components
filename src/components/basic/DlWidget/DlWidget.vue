@@ -125,6 +125,11 @@ export default defineComponent({
                     source: this.draggedWidget,
                     target
                 })
+                const event = new CustomEvent('swap', {
+                    detail: this.draggedWidget as HTMLElement
+                })
+                console.log(this.$refs.wrapper)
+                this.$refs.wrapper.dispatchEvent(event)
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)

@@ -45,8 +45,7 @@ const Template = (args) => ({
     components: {
         DlGrid,
         DlWidget,
-        DlBarChart,
-        DlGridRow
+        DlBarChart
     },
     setup() {
         const stateData = ref(data)
