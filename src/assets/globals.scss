@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import 'constants';
 
 body {
     font-family: 'Roboto', sans-serif;
@@ -99,6 +100,14 @@ body {
     align-items: center;
 }
 
+.items-top {
+    align-items: start;
+}
+
+.items-bottom {
+    align-items: end;
+}
+
 .col {
     flex: 10000 1 0%;
 }
@@ -106,6 +115,7 @@ body {
 .full-width {
     width: 100%;
 }
+
 
 :root {
     // common
@@ -165,39 +175,6 @@ body {
 
     --dl-date-picker-shadow: 0px 3px 6px #101e7326;
     --dl-date-picker-selected-strip: rgb(52, 82, 255, 0.2);
-
-    // chart
-    --dl-color-chart-1: #4DB1D3;
-    --dl-color-chart-2: #FF2F7A;
-    --dl-color-chart-3: #D4E3FF;
-    --dl-color-chart-4: #BECB5D;
-    --dl-color-chart-5: #839E30;
-    --dl-color-chart-6: #6B5935;
-    --dl-color-chart-7: #752B86;
-    --dl-color-chart-8: #BB96A3;
-    --dl-color-chart-9: #870F49;
-    --dl-color-chart-10: #CC566C;
-    --dl-color-chart-11: #F0A18C;
-    --dl-color-chart-12: #EDAB55;
-    --dl-color-chart-13: #FF5934;
-    --dl-color-chart-14: #9CD2E3;
-    --dl-color-chart-15: #928F80;
-    --dl-color-chart-16: #575567;
-    --dl-color-chart-17: #979797;
-    --dl-color-chart-18: #D9D9D9;
-    //
-
-    // z-index
-    --dl-z-index-panel: 3000; // panel & panel contaiener content
-    --dl-z-index-panel-elements: 3010; // separator + glutter
-    --dl-z-index-panel-header-footer: 3020;
-    --dl-z-index-panel-container-overlay: 3025;
-    --dl-z-index-panel-container-elements: 3030; // collapse icon + separator
-
-    --dl-z-index-overlay: 5000;
-
-    --dl-z-index-menu: 6000;
-    --dl-z-index-tooltip: 9000;
 }
 
 /* Define styles for the root window with dark - mode preference */
