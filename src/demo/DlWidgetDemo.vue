@@ -1,80 +1,3 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
-import { DlWidget, DlGrid, DlBarChart } from '../components'
-
-const labelsFn = () => {
-    const a = []
-    for (let i = 0; i < 20; i++) {
-        a.push(`${i}`)
-    }
-    return a
-}
-
-const dataFn = () => {
-    const a = []
-    for (let i = 1; i <= 20; i++) {
-        a.push(i)
-    }
-    return a
-}
-
-const data = {
-    labels: labelsFn(),
-    datasets: [
-        {
-            label: 'Data One',
-            backgroundColor: '--dl-color-secondary',
-            borderRadius: 4,
-            data: dataFn()
-        },
-        {
-            label: 'Data Two',
-            backgroundColor: '--dl-color-warning',
-            borderRadius: 4,
-            data: dataFn()
-        }
-    ]
-}
-
-interface DlGridLayout {
-    name: string
-    value: number[][]
-}
-
-export default defineComponent({
-    components: {
-        DlGrid,
-        DlWidget,
-        DlBarChart
-    },
-    setup() {
-        const layout = ref({
-            name: 'Layout 1',
-            value: [
-                [1, 5, 2],
-                [3, 4]
-            ]
-        })
-
-        const layouts = ref<DlGridLayout[]>([])
-
-        const saveLayout = () => {
-            layouts.value.push({
-                name: `Layout ${layouts.value.length + 1}`,
-                value: layout.value.value
-            })
-        }
-
-        const selectLayout = (e) => {
-            const index = parseInt(e.target.value)
-            layout.value = layouts.value[index]
-        }
-
-        return { data, layout, layouts, saveLayout, selectLayout }
-    }
-})
-</script>
-
 <template>
     <div>
         <div class="select-layout">
@@ -180,3 +103,75 @@ export default defineComponent({
         </dl-grid>
     </div>
 </template>
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue-demi'
+import { DlWidget, DlGrid, DlBarChart, DlGridLayout } from '../components'
+
+const labelsFn = () => {
+    const a = []
+    for (let i = 0; i < 20; i++) {
+        a.push(`${i}`)
+    }
+    return a
+}
+
+const dataFn = () => {
+    const a = []
+    for (let i = 1; i <= 20; i++) {
+        a.push(i)
+    }
+    return a
+}
+
+const data = {
+    labels: labelsFn(),
+    datasets: [
+        {
+            label: 'Data One',
+            backgroundColor: '--dl-color-secondary',
+            borderRadius: 4,
+            data: dataFn()
+        },
+        {
+            label: 'Data Two',
+            backgroundColor: '--dl-color-warning',
+            borderRadius: 4,
+            data: dataFn()
+        }
+    ]
+}
+
+export default defineComponent({
+    components: {
+        DlGrid,
+        DlWidget,
+        DlBarChart
+    },
+    setup() {
+        const layout = ref({
+            name: 'Layout 1',
+            value: [
+                [1, 5, 2],
+                [3, 4]
+            ]
+        })
+
+        const layouts = ref<DlGridLayout[]>([])
+
+        const saveLayout = () => {
+            layouts.value.push({
+                name: `Layout ${layouts.value.length + 1}`,
+                value: layout.value.value
+            })
+        }
+
+        const selectLayout = (e: InputEvent) => {
+            const index = parseInt((e.target as HTMLInputElement).value)
+            layout.value = layouts.value[index]
+        }
+
+        return { data, layout, layouts, saveLayout, selectLayout }
+    }
+})
+</script>

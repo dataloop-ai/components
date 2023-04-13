@@ -1,4 +1,4 @@
-import { DlBarChart, DlGrid, DlGridRow, DlWidget } from '../components'
+import { DlBarChart, DlGrid, DlWidget } from '../components'
 import { ref } from 'vue'
 
 const labelsFn = () => {
@@ -49,16 +49,56 @@ const Template = (args) => ({
     },
     setup() {
         const stateData = ref(data)
-        console.log(stateData)
+
+        const layout = ref({
+            name: 'Layout 1',
+            value: [
+                [1, 5, 2],
+                [3, 4]
+            ]
+        })
+
+        const layouts = ref([])
+
+        const saveLayout = () => {
+            layouts.value.push({
+                name: `Layout ${layouts.value.length + 1}`,
+                value: layout.value.value
+            })
+        }
+
+        const selectLayout = (e) => {
+            const index = parseInt(e.target.value)
+            layout.value = layouts.value[index]
+        }
+
         return {
+            data,
+            layout,
+            layouts,
+            saveLayout,
+            selectLayout,
             args,
             stateData
         }
     },
     template: `
-    <div style="width: 1000px">
-    <dl-grid gap="20px">
-        <dl-grid-row>
+    <div>
+        <div class="select-layout">
+            <select @change="selectLayout">
+                <option
+                    v-for="(layout, index) in layouts"
+                    :key="index"
+                    :value="index"
+                >
+                    {{ layout.name }}
+                </option>
+            </select>
+            <button @mousedown="saveLayout">
+                Save
+            </button>
+        </div>
+        <dl-grid v-model="layout.value">
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>
@@ -67,7 +107,7 @@ const Template = (args) => ({
                 <template #content>
                     <dl-bar-chart
                         :legend-props="legendProps"
-                        :data="stateData"
+                        :data="data"
                         :options="options"
                         :items-in-view="8"
                     />
@@ -76,13 +116,11 @@ const Template = (args) => ({
                     <span>Lorem ipsum dolor sit amet consectetur adipisicing
                         elit. Libero eligendi dolore, similique possimus
                         veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate
-                        modi dicta eveniet veritatis?</span>
+                        autem. Doloremque tenetur repudiandae a cupiditate modi
+                        dicta eveniet veritatis?</span>
                 </template>
             </dl-widget>
-        </dl-grid-row>
 
-        <dl-grid-row gap="20px">
             <dl-widget>
                 <template #header>
                     <span>Widget 2</span>
@@ -90,7 +128,7 @@ const Template = (args) => ({
                 <template #content>
                     <dl-bar-chart
                         :legend-props="legendProps"
-                        :data="stateData"
+                        :data="data"
                         :options="options"
                         :items-in-view="6"
                     />
@@ -104,15 +142,50 @@ const Template = (args) => ({
                 <template #content>
                     <dl-bar-chart
                         :legend-props="legendProps"
-                        :data="stateData"
+                        :data="data"
                         :options="options"
                         :items-in-view="6"
                     />
                 </template>
             </dl-widget>
-        </dl-grid-row>
-    </dl-grid>
-</div>
+
+            <dl-widget>
+                <template #header>
+                    <span>Widget 4</span>
+                    <span style="font-size: 12px; color: gray">Subtitle</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="8"
+                    />
+                </template>
+                <template #description>
+                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
+                        elit. Libero eligendi dolore, similique possimus
+                        veritatis in vitae quia praesentium fuga quibusdam
+                        autem. Doloremque tenetur repudiandae a cupiditate modi
+                        dicta eveniet veritatis?</span>
+                </template>
+            </dl-widget>
+
+            <dl-widget>
+                <template #header>
+                    <span>Widget 5</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+        </dl-grid>
+    </div>
   `
 })
 

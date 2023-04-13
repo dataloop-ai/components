@@ -15,13 +15,14 @@ import {
     getGridTemplate,
     getElementAbove,
     findIndexInMatrix,
-    swapElemensInMatrix
+    swapElemensInMatrix,
+    isCustomEvent
 } from './utils'
 
 export default defineComponent({
     props: {
         modelValue: {
-            type: Array as PropType<number[]>,
+            type: Array as PropType<number[][]>,
             default: null
         },
         rowGap: {
@@ -31,18 +32,19 @@ export default defineComponent({
         columnGap: {
             type: String,
             default: '10px'
+        },
+        maxElementsPerRow: {
+            type: Number,
+            default: 3
         }
     },
     emits: ['update:modelValue'],
     computed: {
-        order() {
-            return this.modelValue.flatMap((val: number) => val)
-        },
-        gridStyles() {
+        gridStyles(): object {
             return {
                 '--grid-rows': this.modelValue?.length,
                 '--grid-columns': leastCommonMultiple(
-                    this.modelValue?.map((el) => el.length)
+                    this.modelValue?.map((el: number[]) => el.length)
                 ),
                 '--row-gap': this.rowGap,
                 '--column-gap': this.columnGap
@@ -60,9 +62,9 @@ export default defineComponent({
         }
     },
     mounted() {
-        Array.from(this.$refs.grid.children).forEach(
-            (element: HTMLElement, index) => {
-                element.dataset.index = `${index}`
+        Array.from((this.$refs.grid as HTMLElement).children).forEach(
+            (element: Element, index: number) => {
+                (element as HTMLElement).dataset.index = `${index}`
             }
         )
     },
@@ -75,17 +77,23 @@ export default defineComponent({
             const gridTemplate = getGridTemplate(this.modelValue)
             if (gridElements.length !== gridTemplate.length) return
 
-            gridElements.forEach((element: HTMLElement, index: number) => {
+            const order = this.modelValue.flat()
+            gridElements.forEach((element: Element, index: number) => {
                 const orderIndex =
-                    this.order.findIndex((nr) => nr === index + 1) + 1
-                element.style.order = orderIndex
-                element.style.gridColumn = gridTemplate[orderIndex - 1]
-                element.addEventListener('change-position', this.changePosition)
+                    order.findIndex((nr: number) => nr === index + 1) + 1
+                const htmlElement = element as HTMLElement
+                htmlElement.style.order = `${orderIndex}`
+                htmlElement.style.gridColumn = gridTemplate[orderIndex - 1]
+                htmlElement.addEventListener('change-position', (e) => {
+                    if (!isCustomEvent(e)) return
+                    this.changePosition(e)
+                })
             })
         },
         changePosition(e: CustomEvent) {
             const side = e.detail.side
-            const className = this.$refs.grid.children[0].classList[0]
+            const className = (this.$refs.grid as HTMLElement).children[0]
+                .classList[0]
             const sourceIndex =
                 parseInt(
                     getElementAbove(e.detail.source, className).dataset.index
@@ -107,7 +115,8 @@ export default defineComponent({
                 this.modelValue,
                 sourceMatrixIndex,
                 targetMatrixIndex,
-                side
+                side,
+                this.maxElementsPerRow
             )
             this.$emit('update:modelValue', newLayout)
         }

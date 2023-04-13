@@ -47,12 +47,7 @@
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
 import { DlIcon } from '../../essential'
-import {
-    getElementAbove,
-    addMouseEnter,
-    removeMouseEnter,
-    insertAfter
-} from './utils'
+import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
 
 export default defineComponent({
     name: 'DlWidget',
@@ -110,8 +105,8 @@ export default defineComponent({
         moveClone(e: MouseEvent) {
             if (!this.isDragging) return
             const clone = this.$refs.clone as HTMLElement
-            clone.style.left = `${e.pageX - clone.offsetWidth / 2 - 5}px`
-            clone.style.top = `${e.pageY + 10}px`
+            clone.style.left = `${e.clientX - clone.offsetWidth / 2 - 5}px`
+            clone.style.top = `${e.clientY + 10}px`
         },
         stopDragging(e: MouseEvent) {
             this.isDragging = false
@@ -127,7 +122,7 @@ export default defineComponent({
                 const event = new CustomEvent('change-position', {
                     detail: change
                 })
-                this.$refs.wrapper.dispatchEvent(event)
+                ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)
@@ -165,7 +160,7 @@ export default defineComponent({
                     side: this.isLeftSide ? 'left' : 'right'
                 }
             })
-            this.$refs.wrapper.dispatchEvent(event)
+            ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
             window.clearTimeout(this.timer)
             this.hoveredWidget.removeEventListener(
                 'mousemove',

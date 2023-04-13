@@ -49,10 +49,6 @@ export function removeMouseEnter(
     })
 }
 
-export function insertAfter(newNode: HTMLElement, existingNode: HTMLElement) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling)
-}
-
 export function findIndexInMatrix(matrix: number[][], nr: number) {
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[i].length; j++) {
@@ -65,7 +61,8 @@ export function swapElemensInMatrix(
     layout: number[][],
     sourceIndex: any,
     targetIndex: any,
-    side: string
+    side: string,
+    maxElements: number
 ) {
     const newLayout = cloneDeep(layout)
 
@@ -85,5 +82,16 @@ export function swapElemensInMatrix(
             newLayout[targetIndex.row][targetIndex.column]
         newLayout[targetIndex.row][targetIndex.column] = temp
     }
-    return newLayout
+
+    return isTooLarge(newLayout, maxElements) ? layout : newLayout
+}
+
+function isTooLarge(layout: number[][], max: number) {
+    const lengths = layout.map((row) => row.length)
+    const highest = Math.max(...lengths)
+    return highest > max
+}
+
+export function isCustomEvent(event: Event): event is CustomEvent {
+    return 'detail' in event
 }
