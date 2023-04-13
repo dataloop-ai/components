@@ -101,6 +101,7 @@ import {
 import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { unionBy, orderBy, merge, isEqual } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
+import { getMaxDatasetValue } from '../../utils'
 
 ChartJS.register(
     Title,
@@ -365,7 +366,17 @@ export default defineComponent({
         const chartOptions = reactive(
             updateKey(
                 merge(
-                    { onResize, onHover },
+                    {
+                        onResize,
+                        onHover,
+                        scales: {
+                            y: {
+                                suggestedMax: getMaxDatasetValue(
+                                    chartData.value.datasets
+                                )
+                            }
+                        }
+                    },
                     defaultColumnChartProps.options,
                     props.options
                 ),
