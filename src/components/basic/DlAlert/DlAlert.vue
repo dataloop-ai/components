@@ -220,7 +220,7 @@ export default defineComponent({
     .close-btn {
         padding-right: 16px;
         padding-left: 10px;
-        align-items: start;
+        align-items: var(--dl-alert-align-button, start);
     }
 
     .icon-dl-close:hover {

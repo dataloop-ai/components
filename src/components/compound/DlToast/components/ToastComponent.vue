@@ -314,11 +314,6 @@ export default defineComponent({
     --dl-color-info: var(--dl-color-alert-info);
     --dl-color-info-background: var(--dl-color-alert-info-background);
     --dl-color-darker: var(--dl-color-alert-text);
-
-    .alert {
-        .close-btn {
-            align-items: center !important;
-        }
-    }
+    --dl-alert-align-button: center;
 }
 </style>
