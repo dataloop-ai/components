@@ -36,6 +36,11 @@ const data = {
     ]
 }
 
+interface DlGridLayout {
+    name: string
+    value: number[][]
+}
+
 export default defineComponent({
     components: {
         DlGrid,
@@ -43,22 +48,50 @@ export default defineComponent({
         DlBarChart
     },
     setup() {
-        const layout = ref([
-            [1, 2],
-            [3, 4, 5]
-        ])
+        const layout = ref({
+            name: 'Layout 1',
+            value: [
+                [1, 5, 2],
+                [3, 4]
+            ]
+        })
 
-        return { data, layout }
+        const layouts = ref<DlGridLayout[]>([])
+
+        const saveLayout = () => {
+            layouts.value.push({
+                name: `Layout ${layouts.value.length + 1}`,
+                value: layout.value.value
+            })
+        }
+
+        const selectLayout = (e) => {
+            const index = parseInt(e.target.value)
+            layout.value = layouts.value[index]
+        }
+
+        return { data, layout, layouts, saveLayout, selectLayout }
     }
 })
 </script>
 
 <template>
     <div>
-        <dl-grid
-            :layout="layout"
-            @update-layout="(newLayout) => (layout = newLayout)"
-        >
+        <div class="select-layout">
+            <select @change="selectLayout">
+                <option
+                    v-for="(layout, index) in layouts"
+                    :key="index"
+                    :value="index"
+                >
+                    {{ layout.name }}
+                </option>
+            </select>
+            <button @mousedown="saveLayout">
+                Save
+            </button>
+        </div>
+        <dl-grid v-model="layout.value">
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>

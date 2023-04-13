@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash'
+
 export function leastCommonMultiple(arr: number[]) {
     if (!arr) return
     const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b)
@@ -62,13 +64,26 @@ export function findIndexInMatrix(matrix: number[][], nr: number) {
 export function swapElemensInMatrix(
     layout: number[][],
     sourceIndex: any,
-    targetIndex: any
+    targetIndex: any,
+    side: string
 ) {
-    const newLayout = [...layout]
-    const temp = newLayout[sourceIndex.row][sourceIndex.column]
-    newLayout[sourceIndex.row][sourceIndex.column] =
-        newLayout[targetIndex.row][targetIndex.column]
-    newLayout[targetIndex.row][targetIndex.column] = temp
+    const newLayout = cloneDeep(layout)
 
+    if (side) {
+        const removedElement = newLayout[sourceIndex.row].splice(
+            sourceIndex.column,
+            1
+        )
+        newLayout[targetIndex.row].splice(
+            side === 'right' ? targetIndex.column + 1 : targetIndex.column,
+            0,
+            removedElement[0]
+        )
+    } else {
+        const temp = newLayout[sourceIndex.row][sourceIndex.column]
+        newLayout[sourceIndex.row][sourceIndex.column] =
+            newLayout[targetIndex.row][targetIndex.column]
+        newLayout[targetIndex.row][targetIndex.column] = temp
+    }
     return newLayout
 }

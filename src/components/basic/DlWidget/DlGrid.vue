@@ -20,7 +20,7 @@ import {
 
 export default defineComponent({
     props: {
-        layout: {
+        modelValue: {
             type: Array as PropType<number[]>,
             default: null
         },
@@ -33,22 +33,24 @@ export default defineComponent({
             default: '10px'
         }
     },
-    emits: ['update-layout'],
+    emits: ['update:modelValue'],
     computed: {
         order() {
-            return this.layout.flatMap((val: number) => val)
+            return this.modelValue.flatMap((val: number) => val)
         },
         gridStyles() {
             return {
-                '--grid-rows': this.layout?.length,
-                '--grid-columns': leastCommonMultiple(this.layout),
+                '--grid-rows': this.modelValue?.length,
+                '--grid-columns': leastCommonMultiple(
+                    this.modelValue?.map((el) => el.length)
+                ),
                 '--row-gap': this.rowGap,
                 '--column-gap': this.columnGap
             }
         }
     },
     watch: {
-        layout: {
+        modelValue: {
             handler() {
                 this.$nextTick(() => {
                     this.applyGridElementStyles()
@@ -57,49 +59,57 @@ export default defineComponent({
             immediate: true
         }
     },
+    mounted() {
+        Array.from(this.$refs.grid.children).forEach(
+            (element: HTMLElement, index) => {
+                element.dataset.index = `${index}`
+            }
+        )
+    },
     methods: {
         applyGridElementStyles() {
-            if (!this.layout) return
+            if (!this.modelValue) return
             const gridElements = Array.from(
                 (this.$refs.grid as HTMLElement).children
             )
-            const gridTemplate = getGridTemplate(this.layout)
+            const gridTemplate = getGridTemplate(this.modelValue)
             if (gridElements.length !== gridTemplate.length) return
 
             gridElements.forEach((element: HTMLElement, index: number) => {
-                element.style.order = this.order[index]
-                element.style.gridColumn = gridTemplate[this.order[index] - 1]
+                const orderIndex =
+                    this.order.findIndex((nr) => nr === index + 1) + 1
+                element.style.order = orderIndex
+                element.style.gridColumn = gridTemplate[orderIndex - 1]
                 element.addEventListener('change-position', this.changePosition)
             })
         },
         changePosition(e: CustomEvent) {
             const side = e.detail.side
             const className = this.$refs.grid.children[0].classList[0]
-            const sourceIndex = parseInt(
-                getElementAbove(e.detail.source, className).style.order
-            )
-            const targetIndex = parseInt(
-                getElementAbove(e.detail.target, className).style.order
-            )
+            const sourceIndex =
+                parseInt(
+                    getElementAbove(e.detail.source, className).dataset.index
+                ) + 1
+            const targetIndex =
+                parseInt(
+                    getElementAbove(e.detail.target, className).dataset.index
+                ) + 1
             const sourceMatrixIndex = findIndexInMatrix(
-                this.layout,
+                this.modelValue,
                 sourceIndex
             )
             const targetMatrixIndex = findIndexInMatrix(
-                this.layout,
+                this.modelValue,
                 targetIndex
             )
 
-            if (side === 'left') {
-            } else if (side === 'right') {
-            } else {
-                const newLayout = swapElemensInMatrix(
-                    this.layout,
-                    sourceMatrixIndex,
-                    targetMatrixIndex
-                )
-                this.$emit('update-layout', newLayout)
-            }
+            const newLayout = swapElemensInMatrix(
+                this.modelValue,
+                sourceMatrixIndex,
+                targetMatrixIndex,
+                side
+            )
+            this.$emit('update:modelValue', newLayout)
         }
     }
 })
