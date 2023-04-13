@@ -2,7 +2,6 @@
     <dl-confusion-matrix
         :matrix="matrix"
         :labels="labels"
-        :get-link="getLink"
     />
 </template>
 
@@ -19,10 +18,18 @@ export default defineComponent({
         const labels = []
         const size = 10
 
+        const getLink = (number: number) => {
+            return `www.confusion-matrix.com/cell-${number}`
+        }
+
         for (let i = 0; i < size; i++) {
             const row = []
             for (let j = 0; j < size; j++) {
-                row.push(Math.floor(Math.random() * 10))
+                const value = Math.floor(Math.random() * 10)
+                row.push({
+                    value,
+                    link: getLink(value)
+                })
             }
             matrix.push(row)
         }
@@ -39,10 +46,6 @@ export default defineComponent({
 
         for (let i = 0; i < size; i++) {
             labels.push(items[Math.floor(Math.random() * items.length)])
-        }
-
-        const getLink = (cell: DlConfusionMatrixCell) => {
-            return `www.confusion-matrix.com/cell-${cell.xLabel}-${cell.yLabel}-${cell.value}`
         }
 
         return { matrix, labels, getLink }

@@ -1,13 +1,14 @@
 export interface DlConfusionMatrixCell {
     value: number
     unnormalizedValue: number
-    xLabel: string | DlConfusionMatrixCellLabel
-    yLabel: string | DlConfusionMatrixCellLabel
+    xLabel: string | DlConfusionMatrixLabel
+    yLabel: string | DlConfusionMatrixLabel
     x: number
     y: number
+    link: string
 }
 
-export interface DlConfusionMatrixCellLabel {
+export interface DlConfusionMatrixLabel {
     title: string
     image: string
 }

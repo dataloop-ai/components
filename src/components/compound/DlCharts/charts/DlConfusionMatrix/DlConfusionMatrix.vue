@@ -159,7 +159,7 @@ import DlBrush from '../../components/DlBrush.vue'
 import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
 import {
     DlConfusionMatrixCell,
-    DlConfusionMatrixCellLabel,
+    DlConfusionMatrixLabel,
     DlConfusionMatrixBrushState
 } from './types'
 import { hexToRgbA } from '../../../../../utils/colors'
@@ -170,7 +170,8 @@ import {
     normalizeMatrix,
     validateMatrix,
     setZoom,
-    getCellWidth
+    getCellWidth,
+    flattenConfusionMatrix
 } from './utils'
 import { debounce } from 'lodash'
 export default defineComponent({
@@ -181,13 +182,13 @@ export default defineComponent({
     props: {
         labels: {
             required: true,
-            type: Array as PropType<string[] | DlConfusionMatrixCellLabel[]>,
-            default: (): [] => []
+            type: Array as PropType<string[] | DlConfusionMatrixLabel[]>,
+            default: (): string[] | DlConfusionMatrixLabel[] => []
         },
         matrix: {
             required: true,
-            type: Array as PropType<number[][]>,
-            default: (): [] => []
+            type: Array as PropType<number[][] | DlConfusionMatrixCell[][]>,
+            default: (): number[][] | DlConfusionMatrixCell[][] => []
         },
         normalized: {
             type: Boolean,
@@ -204,10 +205,6 @@ export default defineComponent({
         leftLabel: {
             type: String,
             default: 'True Label'
-        },
-        getLink: {
-            type: Function,
-            default: null
         }
     },
     setup(props) {
@@ -233,13 +230,13 @@ export default defineComponent({
         }
     },
     computed: {
-        visibleLabels(): string[] | DlConfusionMatrixCellLabel[] {
+        visibleLabels(): string[] | DlConfusionMatrixLabel[] {
             return this.labels.slice(
                 this.currentBrushState.min,
                 this.currentBrushState.max
             )
         },
-        labelStrings(): string[] | DlConfusionMatrixCellLabel[] {
+        labelStrings(): string[] | DlConfusionMatrixLabel[] {
             if (typeof this.labels[0] === 'object')
                 return this.labels.map((label: any) => label.title)
             else return this.labels
@@ -251,20 +248,7 @@ export default defineComponent({
             return validateMatrix(this.matrix, this.labels)
         },
         flattenedMatrix(): DlConfusionMatrixCell[] {
-            return normalizeMatrix(
-                this.matrix.flatMap((row: number[], rowIndex: number) => {
-                    return row.map((cellValue: number, cellIndex: number) => {
-                        return {
-                            value: cellValue,
-                            unnormalizedValue: cellValue,
-                            xLabel: this.labelStrings[rowIndex],
-                            yLabel: this.labelStrings[cellIndex],
-                            x: rowIndex,
-                            y: cellIndex
-                        }
-                    })
-                })
-            )
+            return flattenConfusionMatrix(this.matrix, this.labelStrings)
         },
         matrixStyles(): object {
             return {
@@ -302,6 +286,7 @@ export default defineComponent({
 
             this.cellWidth = width / this.matrix.length
             colorSpectrum.style.height = `${width}px`
+            labelY.style.width = `${this.cellWidth * 2}px`
             labelY.style.height = `${labelY.offsetWidth}px`
             labelY.style.marginTop = `${width / 2}px`
             yAxisOuter.style.height = `${width}px`
@@ -360,9 +345,8 @@ export default defineComponent({
             if (ctx?.tooltipState) ctx.tooltipState.visible = false
         }, 200),
         openLink(cell: DlConfusionMatrixCell) {
-            if (!this.getLink) return
-            const link = this.getLink(cell)
-            window.open(link, '_blank')
+            if (!cell.link) return
+            window.open(cell.link, '_blank')
         }
     }
 })

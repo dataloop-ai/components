@@ -1,4 +1,4 @@
-import { DlConfusionMatrixCell, DlConfusionMatrixCellLabel } from './types'
+import { DlConfusionMatrixCell, DlConfusionMatrixLabel } from './types'
 
 export function getCellWidth() {
     return document.querySelector('.matrix__cell').getBoundingClientRect().width
@@ -21,8 +21,8 @@ export function setZoom(zoom: number, el: HTMLElement) {
 }
 
 export function validateMatrix(
-    matrix: number[][],
-    labels: string[] | DlConfusionMatrixCellLabel[]
+    matrix: number[][] | DlConfusionMatrixCell[][],
+    labels: string[] | DlConfusionMatrixLabel[]
 ) {
     let validation = true
     if (matrix.length !== labels.length) return false
@@ -42,13 +42,17 @@ export function normalizeMatrix(flatMatrix: DlConfusionMatrixCell[]) {
     return flatMatrix
 }
 
-export function getGradationValues(matrix: number[][], step = 5) {
+export function getGradationValues(
+    matrix: number[][] | DlConfusionMatrixCell[][],
+    step = 5
+) {
     let max = Number.MIN_VALUE
     let min = Number.MAX_VALUE
     matrix.forEach((row) => {
         row.forEach((cell) => {
-            if (cell > max) max = cell
-            if (cell < min) min = cell
+            const cellValue = typeof cell === 'object' ? cell.value : cell
+            if (cellValue > max) max = cellValue
+            if (cellValue < min) min = cellValue
         })
     })
     const range = (max - min) / step
@@ -59,4 +63,34 @@ export function getGradationValues(matrix: number[][], step = 5) {
         amount += range
     }
     return gradationValues.reverse()
+}
+
+export function flattenConfusionMatrix(
+    matrix: number[][] | DlConfusionMatrixCell[][],
+    labelStrings: string[]
+) {
+    return normalizeMatrix(
+        matrix.flatMap(
+            (row: number[] | DlConfusionMatrixCell[], rowIndex: number) => {
+                return row.map(
+                    (
+                        cell: number | DlConfusionMatrixCell,
+                        cellIndex: number
+                    ) => {
+                        const isObject = typeof cell === 'object'
+                        const value = isObject ? cell.value : cell
+                        return {
+                            value,
+                            unnormalizedValue: value,
+                            xLabel: labelStrings[rowIndex],
+                            yLabel: labelStrings[cellIndex],
+                            x: rowIndex,
+                            y: cellIndex,
+                            link: isObject ? cell.link : ''
+                        }
+                    }
+                )
+            }
+        )
+    )
 }
