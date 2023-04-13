@@ -1,5 +1,8 @@
 <template>
-    <div :class="chartWrapperClasses">
+    <div
+        :style="cssVars"
+        :class="chartWrapperClasses"
+    >
         <DlLine
             :id="id"
             ref="lineChart"
@@ -153,9 +156,10 @@ export default defineComponent({
             size: { height: number; width: number }
         ) => {
             if (chart?.scales?.x?.width) {
-                chartWidth.value = `${parseInt(
-                    chart.scales.x.width as unknown as string
-                )}px`
+                chartWidth.value = `${
+                    parseInt(chart.scales.x.width as unknown as string) -
+                    parseInt(brushProperties.value.thumbSize) / 4
+                }px`
             }
         }
 
@@ -266,6 +270,13 @@ export default defineComponent({
 
         const legendProperties = computed(() => {
             return merge(defaultLineChartProps.legendProps, props.legendProps)
+        })
+
+        const cssVars = computed(() => {
+            return {
+                '--dl-brush-thumb-size':
+                    parseInt(brushProperties.value.thumbSize) / 4 + 'px'
+            }
         })
 
         const replaceDataColors = (data: ChartData) =>
@@ -450,7 +461,10 @@ export default defineComponent({
             () => chart.value?.scales?.x?.width,
             (val: string) => {
                 if (val) {
-                    chartWidth.value = `${parseInt(val as unknown as string)}px`
+                    chartWidth.value = `${
+                        parseInt(val as unknown as string) -
+                        parseInt(brushProperties.value.thumbSize) / 4
+                    }px`
                 }
             },
             { deep: true }
@@ -619,7 +633,8 @@ export default defineComponent({
             onLeaveLegend,
             onChartLeave,
             chart,
-            labelStyles
+            labelStyles,
+            cssVars
         }
     }
 })
@@ -644,5 +659,6 @@ export default defineComponent({
 .dl-brush,
 .dl-legend {
     align-self: flex-end;
+    margin-right: var(--dl-brush-thumb-size);
 }
 </style>
