@@ -11,7 +11,7 @@ describe('DlToastMessage component', () => {
         })
         const toast = document.body.querySelectorAll('.toast-item')
         expect(
-            toast[0].querySelector('[data-test="message-text"]').textContent
+            toast[0].querySelector('[data-test="message-text"]')?.textContent
         ).toContain('Test message')
         expect(toast.length).toEqual(1)
     })
