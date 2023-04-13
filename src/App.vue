@@ -49,7 +49,7 @@
                     outlined
                 >
                     <span style="text-transform: capitalize">
-                        Selected: {{ activeDemo.name }}
+                        Selected: {{ computeDemoName(activeDemo.name) }}
                     </span>
                 </dl-button>
                 <dl-list
@@ -75,7 +75,7 @@
                             style="text-transform: capitalize"
                             @click="setActiveDemo(demo)"
                         >
-                            {{ demo.name.split('Demo')[0] }}
+                            {{ computeDemoName(demo.name) }}
                         </dl-list-item>
                     </template>
                 </dl-list>
@@ -89,7 +89,7 @@
                     >
                         {{
                             activeDemo
-                                ? activeDemo.name.split('Demo')[0]
+                                ? computeDemoName(activeDemo.name)
                                 : 'No selected'
                         }}
                         component
@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue-demi'
+import { defineComponent, ref, computed, shallowRef } from 'vue-demi'
 import {
     DlThemeProvider,
     DlButton,
@@ -159,7 +159,7 @@ export default defineComponent({
             })
         })
 
-        const activeDemo = ref(
+        const activeDemo = shallowRef(
             window.localStorage.getItem('dl-active-demo')
                 ? demos.find(
                       (d) =>
@@ -175,12 +175,19 @@ export default defineComponent({
             window.localStorage.setItem('dl-active-demo', demo.name)
         }
 
+        const computeDemoName = (name: string) => {
+            return name.includes('Dl')
+                ? name.split('Demo')[0]
+                : 'Dl' + name.split('Demo')[0]
+        }
+
         return {
             darkMode,
             activeDemo,
             setActiveDemo,
             filterTerm,
-            filteredDemos
+            filteredDemos,
+            computeDemoName
         }
     }
 })
