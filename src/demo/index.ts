@@ -50,6 +50,7 @@ import DlSpinner from './DlSpinnerDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
+import DlSeparatorDemo from './DlSeparatorDemo.vue'
 
 export {
     AvatarDemo,
@@ -157,5 +158,6 @@ export const demoState = {
     smart_search: DlSmartSearchDemo,
     toast: DlToastDemo,
     spinner: DlSpinner,
-    toggle_button: DlToggleButtonDemo
+    toggle_button: DlToggleButtonDemo,
+    separator: DlSeparatorDemo
 }
