@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper">
+    <div class="spinner-wrapper">
         <div
             class="spinner"
             :style="spinnerStyles"
