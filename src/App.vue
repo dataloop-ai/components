@@ -5,11 +5,18 @@
         >
             <dl-typography
                 color="dl-color-medium"
-                size="h1"
-                variant="h1"
+                variant="p"
                 style="margin: 10px 0px 20px 0px; width: 90%"
             >
-                Dataloop AI UI Library
+                <div
+                    style="
+                        background-image: url(https://dataloop.ai/wp-content/uploads/2020/03/logo.svg);
+                        width: 160px;
+                        height: 28px;
+                        display: inline-block;
+                    "
+                />
+                Components library
             </dl-typography>
             <dl-switch
                 v-model="darkMode"
