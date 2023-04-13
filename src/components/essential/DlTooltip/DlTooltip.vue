@@ -414,7 +414,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .dl-tooltip {
     z-index: var(--dl-z-index-tooltip);
     position: fixed !important;

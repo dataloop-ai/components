@@ -5,16 +5,18 @@
     >
         <div
             v-show="isActive"
+            id="DlToastContainer"
             ref="root"
-            class="v-toast__item"
+            class="toast-item"
             :class="[
-                `v-toast__item--${type}`,
-                `v-toast__item--${position}`,
+                `toast-item--${type}`,
+                `toast-item--${position}`,
                 classItem
             ]"
             :style="{ width }"
         >
             <dl-alert
+                class="alert"
                 :type="type"
                 :closable="closable"
                 :dark-mode="false"
@@ -22,7 +24,7 @@
                 @update:model-value="closeToast"
             >
                 <span
-                    class="v-toast__text"
+                    class="toast-message"
                     data-test="message-text"
                 />
             </dl-alert>
@@ -83,7 +85,7 @@ export default defineComponent({
         },
         collapseCount: {
             type: Number,
-            default: 0
+            default: 5
         }
     },
     setup(props: any) {
@@ -101,16 +103,16 @@ export default defineComponent({
             setupContainer()
         })
         function setupContainer(): void {
-            parentTop = document.querySelector('.v-toast.v-toast--top')
-            parentBottom = document.querySelector('.v-toast.v-toast--bottom')
+            parentTop = document.getElementById('DlToastContainerTop')
+            parentBottom = document.getElementById('DlToastContainerBottom')
             if (parentTop && parentBottom) return
             if (!parentTop) {
                 parentTop = document.createElement('div')
-                parentTop.className = 'v-toast v-toast--top'
+                parentTop.id = 'DlToastContainerTop'
             }
             if (!parentBottom) {
                 parentBottom = document.createElement('div')
-                parentBottom.className = 'v-toast v-toast--bottom'
+                parentBottom.id = 'DlToastContainerBottom'
             }
             const container = document.body
             container.appendChild(parentTop)
@@ -138,15 +140,15 @@ export default defineComponent({
                 case Positions.top_right:
                 case Positions.top_left:
                     return {
-                        enter: 'v-toast--fade-in-down',
-                        leave: 'v-toast--fade-out'
+                        enter: 'dl-toast--fade-in-down',
+                        leave: 'dl-toast--fade-out'
                     }
                 case Positions.bottom:
                 case Positions.bottom_right:
                 case Positions.bottom_left:
                     return {
-                        enter: 'v-toast--fade-in-up',
-                        leave: 'v-toast--fade-out'
+                        enter: 'dl-toast--fade-in-up',
+                        leave: 'dl-toast--fade-out'
                     }
             }
         })
@@ -157,8 +159,8 @@ export default defineComponent({
 
         function showNotice(): void {
             const parent = correctParent.value
-            const container = root.value.closest('.v-toast--pending')
-            root.value.querySelector('.v-toast__text').innerHTML = message
+            const container = root.value.closest('.dl-toast-container--pending')
+            root.value.querySelector('.toast-message').innerHTML = message
             parent.insertAdjacentElement('afterbegin', root.value)
             container?.remove()
             isActive.value = true
@@ -186,54 +188,34 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.v-toast {
-    position: fixed;
-    display: flex;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    z-index: 1052;
-    pointer-events: none;
-    .root {
-        width: 100% !important;
-    }
-    &__item {
-        display: inline-flex;
-        align-items: center;
-        pointer-events: auto;
-        min-width: 400px;
-        max-width: 900px;
-        margin: 5px;
-        cursor: pointer;
-        animation-duration: 150ms;
+<style lang="scss" scoped>
+.toast-item {
+    display: inline-flex;
+    align-items: center;
+    pointer-events: auto;
+    min-width: 400px;
+    max-width: 900px;
+    margin: 5px;
+    cursor: pointer;
+    animation-duration: 150ms;
 
-        &.v-toast__item--top,
-        &.v-toast__item--bottom {
-            align-self: center;
-        }
-
-        &.v-toast__item--top-right,
-        &.v-toast__item--bottom-right {
-            align-self: flex-end;
-        }
-
-        &.v-toast__item--top-left,
-        &.v-toast__item--bottom-left {
-            align-self: flex-start;
-        }
+    &.toast-item--top,
+    &.toast-item--bottom {
+        align-self: center;
     }
 
-    &.v-toast--top {
-        flex-direction: column;
+    &.toast-item--top-right,
+    &.toast-item--bottom-right {
+        align-self: flex-end;
     }
 
-    &.v-toast--bottom {
-        flex-direction: column-reverse;
+    &.toast-item--top-left,
+    &.toast-item--bottom-left {
+        align-self: flex-start;
     }
 }
+
+// using unique class to identify the changes
 
 @keyframes fadeOut {
     from {
@@ -244,7 +226,7 @@ export default defineComponent({
     }
 }
 
-.v-toast--fade-out {
+.dl-toast--fade-out {
     animation-name: fadeOut;
 }
 
@@ -259,7 +241,7 @@ export default defineComponent({
     }
 }
 
-.v-toast--fade-in-down {
+.dl-toast--fade-in-down {
     animation-name: fadeInDown;
 }
 
@@ -274,14 +256,11 @@ export default defineComponent({
     }
 }
 
-.v-toast--fade-in-up {
+.dl-toast--fade-in-up {
     animation-name: fadeInUp;
 }
 
-/**
- * Vue Transitions
- */
-
+// animations
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 150ms ease-out;
@@ -290,5 +269,56 @@ export default defineComponent({
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
+}
+</style>
+
+<style lang="scss">
+#DlToastContainerTop {
+    position: fixed;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: var(--dl-z-index-toast);
+    pointer-events: none;
+    flex-direction: column;
+    .root {
+        width: 100% !important;
+    }
+}
+#DlToastContainerBottom {
+    position: fixed;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: var(--dl-z-index-toast);
+    pointer-events: none;
+    flex-direction: column-reverse;
+    .root {
+        width: 100% !important;
+    }
+}
+
+#DlToastContainer {
+    --dl-color-negative: var(--dl-color-alert-error);
+    --dl-color-negative-background: var(--dl-color-alert-error-background);
+    --dl-color-warning: var(--dl-color-alert-warn);
+    --dl-color-warning-background: var(--dl-color-alert-warn-background);
+    --dl-color-positive: var(--dl-color-alert-success);
+    --dl-color-positive-background: var(--dl-color-alert-success-background);
+    --dl-color-info: var(--dl-color-alert-info);
+    --dl-color-info-background: var(--dl-color-alert-info-background);
+    --dl-color-darker: var(--dl-color-alert-text);
+
+    .alert {
+        .close-btn {
+            align-items: center !important;
+        }
+    }
 }
 </style>
