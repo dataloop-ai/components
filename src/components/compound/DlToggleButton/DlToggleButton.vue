@@ -32,8 +32,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { OptionItem } from './types'
-import { DlButton } from '../DlButton'
+import { DlToggleButtonOption } from './types'
+import { DlButton } from '../../basic'
 import { ButtonsStyles } from './config'
 
 export default defineComponent({
@@ -53,7 +53,7 @@ export default defineComponent({
             default: null
         },
         options: {
-            type: Array as () => OptionItem[],
+            type: Array as () => DlToggleButtonOption[],
             required: true
         }
     },

@@ -1,4 +1,4 @@
-export interface OptionItem {
+export interface DlToggleButtonOption {
     label: string
     value: string | number
 }
