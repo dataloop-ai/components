@@ -53,7 +53,6 @@ import {
     removeMouseEnter,
     insertAfter
 } from './utils'
-import { swapNodes } from '../../../utils/swapNodes'
 
 export default defineComponent({
     name: 'DlWidget',
@@ -120,15 +119,14 @@ export default defineComponent({
             clone.style.visibility = 'hidden'
             clone.innerHTML = ''
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
+            const change = {
+                source: this.draggedWidget,
+                target
+            }
             if (target && this.draggedWidget) {
-                swapNodes({
-                    source: this.draggedWidget,
-                    target
+                const event = new CustomEvent('change-position', {
+                    detail: change
                 })
-                const event = new CustomEvent('swap', {
-                    detail: this.draggedWidget as HTMLElement
-                })
-                console.log(this.$refs.wrapper)
                 this.$refs.wrapper.dispatchEvent(event)
             }
             window.removeEventListener('mousemove', this.moveClone)
@@ -160,18 +158,15 @@ export default defineComponent({
                 this.hoveredWidget,
                 'widget-wrapper'
             )
-            const targetRow = getElementAbove(this.hoveredWidget, 'dl-grid-row')
-            if (this.isLeftSide) {
-                // targetRow.insertBefore(
-                //     this.$refs.wrapper as HTMLElement,
-                //     targetWidget
-                // )
-            } else {
-                // insertAfter(
-                //     this.$refs.wrapper as unknown as HTMLElement,
-                //     targetWidget
-                // )
-            }
+            const event = new CustomEvent('change-position', {
+                detail: {
+                    source: this.$refs.wrapper,
+                    target: targetWidget,
+                    side: this.isLeftSide ? 'left' : 'right'
+                }
+            })
+            this.$refs.wrapper.dispatchEvent(event)
+            window.clearTimeout(this.timer)
             this.hoveredWidget.removeEventListener(
                 'mousemove',
                 this.handleMouseInsideWidget
@@ -240,6 +235,5 @@ export default defineComponent({
 .widget-wrapper {
     flex-basis: var(--widget-flex-basis);
     margin: var(--row-gap) var(--column-gap);
-    transition: 0.1s;
 }
 </style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 import { DlWidget, DlGrid, DlBarChart } from '../components'
 
 const labelsFn = () => {
@@ -43,7 +43,12 @@ export default defineComponent({
         DlBarChart
     },
     setup() {
-        return { data }
+        const layout = ref([
+            [1, 2],
+            [3, 4, 5]
+        ])
+
+        return { data, layout }
     }
 })
 </script>
@@ -51,8 +56,8 @@ export default defineComponent({
 <template>
     <div>
         <dl-grid
-            :layout="[3, 2]"
-            :order="[5, 4, 3, 2, 1]"
+            :layout="layout"
+            @update-layout="(newLayout) => (layout = newLayout)"
         >
             <dl-widget>
                 <template #header>

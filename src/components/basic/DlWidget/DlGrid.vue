@@ -10,14 +10,16 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { leastCommonMultiple, getGridTemplate } from './utils'
+import {
+    leastCommonMultiple,
+    getGridTemplate,
+    getElementAbove,
+    findIndexInMatrix,
+    swapElemensInMatrix
+} from './utils'
 
 export default defineComponent({
     props: {
-        order: {
-            type: Array as PropType<number[]>,
-            default: null
-        },
         layout: {
             type: Array as PropType<number[]>,
             default: null
@@ -31,7 +33,11 @@ export default defineComponent({
             default: '10px'
         }
     },
+    emits: ['update-layout'],
     computed: {
+        order() {
+            return this.layout.flatMap((val: number) => val)
+        },
         gridStyles() {
             return {
                 '--grid-rows': this.layout?.length,
@@ -63,12 +69,38 @@ export default defineComponent({
             gridElements.forEach((element: HTMLElement, index: number) => {
                 element.style.order = this.order[index]
                 element.style.gridColumn = gridTemplate[this.order[index] - 1]
-                element.addEventListener('swap', this.updateLayout)
+                element.addEventListener('change-position', this.changePosition)
             })
+        },
+        changePosition(e: CustomEvent) {
+            const side = e.detail.side
+            const className = this.$refs.grid.children[0].classList[0]
+            const sourceIndex = parseInt(
+                getElementAbove(e.detail.source, className).style.order
+            )
+            const targetIndex = parseInt(
+                getElementAbove(e.detail.target, className).style.order
+            )
+            const sourceMatrixIndex = findIndexInMatrix(
+                this.layout,
+                sourceIndex
+            )
+            const targetMatrixIndex = findIndexInMatrix(
+                this.layout,
+                targetIndex
+            )
+
+            if (side === 'left') {
+            } else if (side === 'right') {
+            } else {
+                const newLayout = swapElemensInMatrix(
+                    this.layout,
+                    sourceMatrixIndex,
+                    targetMatrixIndex
+                )
+                this.$emit('update-layout', newLayout)
+            }
         }
-    },
-    updateLayout(e) {
-        console.log(e)
     }
 })
 </script>

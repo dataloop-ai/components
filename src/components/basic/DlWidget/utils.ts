@@ -5,12 +5,13 @@ export function leastCommonMultiple(arr: number[]) {
     return arr.reduce(lcm)
 }
 
-export function getGridTemplate(layout: number[]) {
+export function getGridTemplate(layout: number[][]) {
     if (!layout) return
+    const flatLayout = layout.map((el) => el.length)
     const template = []
-    const lcm = leastCommonMultiple(layout)
-    for (let i = 0; i < layout.length; i++) {
-        const columns = layout[i]
+    const lcm = leastCommonMultiple(flatLayout)
+    for (let i = 0; i < flatLayout.length; i++) {
+        const columns = flatLayout[i]
         let columnTrack = 1
         for (let j = 0; j < columns; j++) {
             let gridSpan = lcm / columns
@@ -48,4 +49,26 @@ export function removeMouseEnter(
 
 export function insertAfter(newNode: HTMLElement, existingNode: HTMLElement) {
     existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling)
+}
+
+export function findIndexInMatrix(matrix: number[][], nr: number) {
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[i].length; j++) {
+            if (matrix[i][j] === nr) return { row: i, column: j }
+        }
+    }
+}
+
+export function swapElemensInMatrix(
+    layout: number[][],
+    sourceIndex: any,
+    targetIndex: any
+) {
+    const newLayout = [...layout]
+    const temp = newLayout[sourceIndex.row][sourceIndex.column]
+    newLayout[sourceIndex.row][sourceIndex.column] =
+        newLayout[targetIndex.row][targetIndex.column]
+    newLayout[targetIndex.row][targetIndex.column] = temp
+
+    return newLayout
 }
