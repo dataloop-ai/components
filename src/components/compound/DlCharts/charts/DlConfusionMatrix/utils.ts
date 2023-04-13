@@ -67,7 +67,7 @@ export function getGradationValues(
 
 export function flattenConfusionMatrix(
     matrix: number[][] | DlConfusionMatrixCell[][],
-    labelStrings: string[]
+    labelStrings: string[] | DlConfusionMatrixLabel[]
 ) {
     return normalizeMatrix(
         matrix.flatMap(
