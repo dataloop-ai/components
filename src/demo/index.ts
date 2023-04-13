@@ -47,6 +47,7 @@ import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
@@ -101,6 +102,7 @@ export {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
+    DlToggleButtonDemo,
     DlEllipsisDemo
 }
 
@@ -156,5 +158,6 @@ export const demoState = {
     smart_search: DlSmartSearchDemo,
     toast: DlToastDemo,
     spinner: DlSpinner,
+    toggle_button: DlToggleButtonDemo,
     separator: DlSeparatorDemo
 }
