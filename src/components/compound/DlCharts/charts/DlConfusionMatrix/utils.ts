@@ -1,4 +1,4 @@
-import { DlConfusionMatrixCell, DlConfusionMatrixLabel } from './types'
+import { DlConfusionMatrixCell, DlConfusionMatrixLabel } from '../../types'
 
 export function getCellWidth() {
     return document.querySelector('.matrix__cell').getBoundingClientRect().width
