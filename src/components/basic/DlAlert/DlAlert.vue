@@ -93,7 +93,7 @@ export default defineComponent({
         },
         type: {
             type: String,
-            default: 'success',
+            required: true,
             validator: (value: string) =>
                 includes(['info', 'success', 'warning', 'error'], value)
         },
