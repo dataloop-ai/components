@@ -111,6 +111,7 @@ import {
 import { Filter, Query, ColorSchema, SearchStatus } from './types'
 import { createColorSchema } from './utils/highlightSyntax'
 import { v4 } from 'uuid'
+import { parseSmartQuery } from '../../../../utils'
 
 export default defineComponent({
     components: {
@@ -178,6 +179,7 @@ export default defineComponent({
         const saveQueryDialogBoxModel = ref(false)
         const newQueryName = ref('')
         const isFocused = ref(false)
+        const jsonQuery = ref({})
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -188,9 +190,17 @@ export default defineComponent({
             inputModel.value = value
         }
 
+        const toJSON = (value: string) => {
+            jsonQuery.value = parseSmartQuery(value ?? inputModel.value)
+            return jsonQuery.value
+        }
+
         const setFocused = (value: boolean) => {
             isFocused.value = value
             findSuggestions(inputModel.value)
+            if (!value && !error) {
+                toJSON(inputModel.value)
+            }
         }
 
         return {
@@ -207,7 +217,8 @@ export default defineComponent({
             isFocused,
             handleInputModel,
             setFocused,
-            findSuggestions
+            findSuggestions,
+            toJSON
         }
     },
     computed: {
