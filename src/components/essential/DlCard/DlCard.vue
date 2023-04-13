@@ -1,63 +1,53 @@
 <template>
-    <dl-tooltip
-        :hide-delay="delay"
-        :delay="200"
-        background-color="dl-color-panel-background"
-        color="dl-color-darker"
-        :anchor="anchor"
-        :offset="offset"
-        :self="self"
-        :style="{
-            border: '1px solid var(--dl-color-separator)',
-            padding: 0,
-            boxShadow: '0px 0px 28px -20px var(--dl-color-shadow)'
-        }"
+    <div
+        class="card"
+        :style="{ width, height }"
     >
-        <div class="smart-tooltip">
-            <div
-                v-if="icon"
-                class="smart-tooltip--icon"
+        <div
+            v-if="icon"
+            class="card--icon"
+        >
+            <dl-icon
+                :icon="icon.src"
+                :styles="icon?.styles"
+                :size="icon?.size || '50px'"
+                :color="icon?.color || 'var(--dl-color-darker)'"
+            />
+        </div>
+        <div
+            v-else-if="image"
+            class="card--image"
+        >
+            <img
+                :src="image.src"
+                :style="image?.styles"
+                :alt="image?.alt"
             >
-                <dl-icon
-                    :icon="icon.src"
-                    :styles="icon?.styles"
-                    :size="icon?.size || '50px'"
-                    :color="icon?.color || 'var(--dl-color-darker)'"
-                />
-            </div>
-            <div
-                v-else
-                class="smart-tooltip--image"
-            >
-                <img
-                    :src="image.src"
-                    :style="image?.styles"
-                    :alt="image?.alt"
-                >
-            </div>
-            <div class="smart-tooltip--content">
-                <div>
-                    <div class="smart-tooltip--header">
-                        <span class="smart-tooltip--header_title">{{
-                            title
-                        }}</span>
-                        <span class="smart-tooltip--header_shortcut">{{
-                            keyboardShortcut
-                        }}</span>
-                    </div>
-                    <span>{{ text }}</span>
+        </div>
+        <div class="card--content">
+            <div>
+                <div class="card--header">
+                    <span class="card--header_title">{{ title }}</span>
+                    <span class="card--header_shortcut">{{
+                        keyboardShortcut
+                    }}</span>
                 </div>
-                <div class="smart-tooltip--links">
-                    <div
-                        v-for="(link, idx) in links"
-                        :key="idx"
-                        class="smart-tooltip--links_link"
-                    >
+                <span>{{ text }}</span>
+            </div>
+            <div class="card--links">
+                <div
+                    v-for="(link, idx) in links"
+                    :key="idx"
+                    class="card--links_linkItem"
+                >
+                    <div class="card--links_linkItem_icon">
                         <dl-icon
                             v-if="link.icon"
                             :icon="link.icon"
                             size="12px"
                         />
+                    </div>
+                    <div class="card--links_linkItem_link">
                         <dl-link
                             :external="!!link.external"
                             :href="link.href"
@@ -69,23 +59,18 @@
                 </div>
             </div>
         </div>
-    </dl-tooltip>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlTooltip } from '../DlTooltip'
 import { DlIcon } from '../DlIcon'
 import { DlLink } from '../DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
-import {
-    validateOffset,
-    validatePosition
-} from '../../../utils/position-engine'
 
 export default defineComponent({
-    name: 'DlSmartTooltip',
-    components: { DlLink, DlIcon, DlTooltip },
+    name: 'DlCard',
+    components: { DlLink, DlIcon },
     props: {
         image: {
             type: Object as PropType<ImageItem>,
@@ -94,21 +79,6 @@ export default defineComponent({
         icon: {
             type: Object as PropType<IconItem>,
             default: null
-        },
-        anchor: {
-            type: String,
-            default: 'bottom middle',
-            validator: validatePosition
-        },
-        self: {
-            type: String,
-            default: 'top middle',
-            validator: validatePosition
-        },
-        offset: {
-            type: Array,
-            default: () => [9, 9],
-            validator: validateOffset
         },
         title: {
             type: String,
@@ -122,21 +92,28 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        delay: {
-            type: Number,
-            default: 2000
-        },
         links: {
             type: Array as PropType<LinkItem[]>,
             default: () => Array as PropType<LinkItem[]>
+        },
+        height: {
+            type: String,
+            default: 'auto'
+        },
+        width: {
+            type: String,
+            default: '200px'
         }
     }
 })
 </script>
 
-<style lang="scss">
-.smart-tooltip {
-    width: 200px;
+<style lang="scss" scoped>
+.card {
+    color: var(--dl-color-darker);
+    background-color: var(--dl-color-panel-background);
+    border: 1px solid var(--dl-color-separator);
+    border-radius: 2px;
     pointer-events: auto;
 
     &--content {
@@ -173,19 +150,19 @@ export default defineComponent({
         align-items: center;
         flex-wrap: wrap;
 
-        &_link {
+        &_linkItem {
             margin-right: 15px;
             color: var(--dl-color-secondary);
             font-size: 10px;
             display: flex;
             align-items: center;
 
-            i {
+            &_icon {
                 margin-right: 7px;
                 vertical-align: middle;
             }
 
-            a {
+            &_link {
                 vertical-align: middle;
             }
         }

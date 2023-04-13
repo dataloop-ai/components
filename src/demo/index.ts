@@ -49,7 +49,6 @@ import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
-import DlSmartTooltipDemo from './DlSmartTooltipDemo.vue'
 
 export {
     AvatarDemo,
@@ -101,8 +100,7 @@ export {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
-    DlEllipsisDemo,
-    DlSmartTooltipDemo
+    DlEllipsisDemo
 }
 
 export const demoState = {
@@ -156,6 +154,5 @@ export const demoState = {
     switch: DlSwitchDemo,
     smart_search: DlSmartSearchDemo,
     toast: DlToastDemo,
-    spinner: DlSpinner,
-    smart_tooltip: DlSmartTooltipDemo
+    spinner: DlSpinner
 }

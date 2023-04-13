@@ -1,4 +1,4 @@
-import { DlTooltip, DlLink } from '../'
+import { DlTooltip, DlLink, DlCard } from '../'
 import { colors } from '../assets/globalsKeys'
 import { positions } from './DlMenu.stories'
 
@@ -250,4 +250,60 @@ const TopSelfTemplate = (args) => ({
 export const TopSelf = TopSelfTemplate.bind({})
 TopSelf.args = {
     self: 'top middle'
+}
+
+const SmartTemplate = (args) => ({
+    components: { DlTooltip, DlCard },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px">
+        <div
+            style="
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            justify-content: center;
+            "
+        >
+            <div style="border: 1px solid black">
+                <dl-tooltip
+                    :hide-delay="10000"
+                    style="padding: 0; border-radius: 2px"
+                >
+                    <dl-card
+                        v-bind="args"
+                    />
+                </dl-tooltip>
+               Show smart tooltip
+            </div>
+        </div>
+    </div>
+   `
+})
+
+export const SmartTooltip = SmartTemplate.bind({})
+SmartTooltip.args = {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
+    image: {
+        src: 'https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&ssl=1'
+    },
+    delay: 10000,
+    title: 'Lorem ipsum',
+    keyboardShortcut: 'Shift + E',
+    links: [
+        {
+            icon: 'icon-dl-list-view',
+            href: 'https://www.google.md/?hl=ru',
+            title: 'Lorem',
+            newtab: true,
+            external: true
+        },
+        {
+            href: '#test',
+            title: 'Developers',
+            icon: 'icon-dl-code'
+        }
+    ]
 }
