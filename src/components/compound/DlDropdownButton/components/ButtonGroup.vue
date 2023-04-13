@@ -44,7 +44,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .dl-btn-group {
     border-radius: 2px;
     vertical-align: middle;
