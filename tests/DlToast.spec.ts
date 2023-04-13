@@ -9,7 +9,7 @@ describe('DlToastMessage component', () => {
                 message: 'Test message'
             }
         })
-        const toast = document.body.querySelectorAll('.v-dl-toast__item')
+        const toast = document.body.querySelectorAll('.toast-item')
         expect(
             toast[0].querySelector('[data-test="message-text"]').textContent
         ).toContain('Test message')
@@ -23,11 +23,9 @@ describe('DlToastMessage component', () => {
             }
         })
         expect(wrapper.vm.transition).toEqual({
-            enter: 'v-dl-toast--fade-in-up',
-            leave: 'v-dl-toast--fade-out'
+            enter: 'dl-toast--fade-in-up',
+            leave: 'dl-toast--fade-out'
         })
-        expect(
-            wrapper.vm.correctParent.classList.contains('v-dl-toast--bottom')
-        ).toBe(true)
+        expect(wrapper.vm.correctParent.id).toEqual('DlToastContainerBottom')
     })
 })
