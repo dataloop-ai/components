@@ -49,7 +49,7 @@
                     outlined
                 >
                     <span style="text-transform: capitalize">
-                        Selected: {{ activeDemo.name }}
+                        Selected: {{ activeDemo.name.split('Demo')[0] }}
                     </span>
                 </dl-button>
                 <dl-list
