@@ -1,52 +1,62 @@
 <template>
-    <DlThemeProvider :is-dark="isDarkMode">
-        <div style="display: flex">
+    <DlThemeProvider :is-dark="darkMode">
+        <div
+            style="display: flex; width: 100%; align-items: center; align-content; center;"
+        >
             <dl-typography
                 color="dl-color-medium"
                 size="h1"
                 variant="h1"
+                style="margin: 10px 0px 20px 0px; width: 90%"
             >
                 Dataloop AI UI Library
             </dl-typography>
-            <dl-button
-                v-if="!hasProps"
+            <dl-switch
+                v-model="darkMode"
+                left-label="Light"
+                right-label="Dark"
                 style="margin: 0 20px"
-                @click="toggleColorMode"
-            >
-                {{ (isDarkMode ? 'Light' : 'Dark') + ' theme' }}
-            </dl-button>
+            />
         </div>
         <div class="layout-wrapper">
             <div class="sidebar">
                 <dl-search
-                    v-model="activeDemo"
+                    v-model="filterTerm"
                     style="margin-bottom: 5px"
                 />
+
+                <dl-button
+                    v-if="activeDemo"
+                    outlined
+                >
+                    <span style="text-transform: capitalize">
+                        Selected: {{ activeDemo.name }}
+                    </span>
+                </dl-button>
                 <dl-list
                     bordered
                     clickable
                     style="
+                        margin-top: 15px;
                         min-width: 200px;
                         height: 100%;
-                        height: calc(100vh - 60px);
+                        height: calc(100vh - 18vh);
                         overflow: auto;
                     "
                 >
                     <template #default="{ clickable }">
                         <dl-list-item
-                            v-for="(componentName, index) in Object.keys(
-                                demoState
-                            )"
-                            :key="componentName"
+                            v-for="(demo, index) in filteredDemos"
+                            :key="demo.name"
                             :bordered="index !== 0"
                             :clickable="clickable"
                             :class="
-                                componentName === activeDemo ? 'selected' : ''
+                                demo.name === activeDemo?.name ? 'selected' : ''
                             "
                             style="text-transform: capitalize"
-                            @click="setActiveDemo(componentName)"
+                            @click="setActiveDemo(demo)"
                         >
-                            {{ parseName(componentName) }}
+                            {{ demo.name.split('Demo')[0] }}
                         </dl-list-item>
                     </template>
                 </dl-list>
@@ -58,11 +68,17 @@
                         variant="h2"
                         style="text-transform: capitalize"
                     >
-                        {{ parseName(activeDemo) }} component
+                        {{
+                            activeDemo
+                                ? activeDemo.name.split('Demo')[0]
+                                : 'No selected'
+                        }}
+                        component
                     </dl-typography>
                 </div>
                 <component
-                    :is="demoState[activeDemo]"
+                    :is="activeDemo.component"
+                    v-if="activeDemo"
                     class="data-container"
                 />
             </div>
@@ -78,10 +94,10 @@ import {
     DlListItem,
     DlList,
     DlTypography,
-    DlSearch
+    DlSearch,
+    DlSwitch
 } from './components'
-import { demoState } from './demo'
-import { parseName } from './utils'
+import Demos from './demos'
 
 export default defineComponent({
     name: 'DlComponentsDemo',
@@ -91,44 +107,59 @@ export default defineComponent({
         DlListItem,
         DlList,
         DlTypography,
-        DlSearch
+        DlSearch,
+        DlSwitch
     },
     props: {
-        isDark: { required: false, default: null, type: Boolean }
+        isDark: { required: false, default: false, type: Boolean }
     },
     setup(props) {
-        const hasProps = computed(() => props.isDark !== null)
-        const darkMode = ref(false)
-        const demos = Object.keys(demoState)
-        const activeDemo = ref(
-            window.localStorage.getItem('dl-active-demo') ?? demos[0] ?? ''
-        )
-        const setActiveDemo = (demo: string) => {
-            activeDemo.value = demo
+        const darkMode = ref(props.isDark)
+        const filterTerm = ref('')
+        const names = Object.keys(Demos)
+        const demos: {
+            name: string
+            component: any
+        }[] = names.map((n: string) => ({
+            name: n,
+            // @ts-ignore
+            component: Demos[n]
+        }))
 
-            if (demos.includes(demo)) {
-                window.localStorage.setItem('dl-active-demo', demo)
+        const filteredDemos = computed(() => {
+            if (!filterTerm.value || !filterTerm.value.length) {
+                return demos
             }
-        }
-        const toggleColorMode = () => {
-            darkMode.value = !darkMode.value
-        }
 
-        const isDarkMode = computed(() => {
-            if (hasProps.value) {
-                return props.isDark
-            }
-            return darkMode.value
+            return demos.filter((demo: { name: string; component: any }) => {
+                return demo.name
+                    .toLowerCase()
+                    .includes(filterTerm.value.toLowerCase())
+            })
         })
 
+        const activeDemo = ref(
+            window.localStorage.getItem('dl-active-demo')
+                ? demos.find(
+                      (d) =>
+                          d.name ===
+                          window.localStorage.getItem('dl-active-demo')
+                  ) ?? null
+                : null
+        )
+
+        const setActiveDemo = (demo: { name: string; component: any }) => {
+            activeDemo.value = demo
+            filterTerm.value = ''
+            window.localStorage.setItem('dl-active-demo', demo.name)
+        }
+
         return {
-            hasProps,
-            isDarkMode,
+            darkMode,
             activeDemo,
             setActiveDemo,
-            toggleColorMode,
-            demoState,
-            parseName
+            filterTerm,
+            filteredDemos
         }
     }
 })
