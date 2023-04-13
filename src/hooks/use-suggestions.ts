@@ -80,94 +80,89 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
         const words = splitByQuotes(input, space)
         const expressions = mapWordsToExpressions(words)
 
-        expressions.forEach(
-            ({ field, operator, value, keyword }: Expression) => {
-                let matchedField: Suggestion | null = null
-                let matchedOperator: Suggestion | null = null
-                let matchedKeyword: Suggestion | null = null
+        for (const { field, operator, value, keyword } of expressions) {
+            let matchedField: Suggestion | null = null
+            let matchedOperator: Suggestion | null = null
+            let matchedKeyword: Suggestion | null = null
 
-                if (!field) return
+            if (!field) return
 
-                localSuggestions = getMatches(localSuggestions, field)
-                matchedField = getMatch(localSuggestions, field)
+            localSuggestions = getMatches(localSuggestions, field)
+            matchedField = getMatch(localSuggestions, field)
 
-                if (!matchedField && isNextCharSpace(input, field)) {
-                    localSuggestions = []
-                    return
-                }
-
-                if (!matchedField || !isNextCharSpace(input, matchedField)) {
-                    return
-                }
-
-                const alias = getAliasObjByAlias(aliases, matchedField)
-                if (!alias) return
-                const dataType = getDataTypeByAliasKey(schema, alias.key)
-                if (!dataType) {
-                    localSuggestions = []
-                    return
-                }
-
-                const ops: string[] = Array.isArray(dataType)
-                    ? getGenericOperators()
-                    : getOperatorByDataType(dataType)
-
-                localSuggestions = getOperators(ops)
-
-                if (!operator) return
-
-                localSuggestions = getMatches(localSuggestions, operator)
-                matchedOperator = getMatch(localSuggestions, operator)
-
-                if (!matchedOperator && isNextCharSpace(input, operator)) {
-                    localSuggestions = []
-                    return
-                }
-
-                if (
-                    !matchedOperator ||
-                    !isNextCharSpace(input, matchedOperator)
-                ) {
-                    return
-                }
-
-                if (Array.isArray(dataType)) {
-                    localSuggestions = dataType
-
-                    if (!value) return
-
-                    localSuggestions = getMatches(localSuggestions, value)
-                } else if (
-                    dataType === 'datetime' ||
-                    dataType === 'date' ||
-                    dataType === 'time'
-                ) {
-                    localSuggestions = [dateIntervalSuggestionString]
-
-                    if (!value) return
-
-                    localSuggestions = getMatches(localSuggestions, value)
-                } else {
-                    localSuggestions = []
-                }
-
-                if (!value || !isNextCharSpace(input, value)) {
-                    return
-                }
-
-                localSuggestions = [Logical.AND, Logical.OR]
-
-                if (!keyword) return
-
-                localSuggestions = getMatches(localSuggestions, keyword)
-                matchedKeyword = getMatch(localSuggestions, keyword)
-
-                if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
-                    return
-
-                localSuggestions = initialSuggestions
+            if (!matchedField && isNextCharSpace(input, field)) {
+                localSuggestions = []
+                return
             }
-        )
+
+            if (!matchedField || !isNextCharSpace(input, matchedField)) {
+                return
+            }
+
+            const alias = getAliasObjByAlias(aliases, matchedField)
+            if (!alias) return
+            const dataType = getDataTypeByAliasKey(schema, alias.key)
+            if (!dataType) {
+                localSuggestions = []
+                return
+            }
+
+            const ops: string[] = Array.isArray(dataType)
+                ? getGenericOperators()
+                : getOperatorByDataType(dataType)
+
+            localSuggestions = getOperators(ops)
+
+            if (!operator) return
+
+            localSuggestions = getMatches(localSuggestions, operator)
+            matchedOperator = getMatch(localSuggestions, operator)
+
+            if (!matchedOperator && isNextCharSpace(input, operator)) {
+                localSuggestions = []
+                return
+            }
+
+            if (!matchedOperator || !isNextCharSpace(input, matchedOperator)) {
+                return
+            }
+
+            if (Array.isArray(dataType)) {
+                localSuggestions = dataType
+
+                if (!value) return
+
+                localSuggestions = getMatches(localSuggestions, value)
+            } else if (
+                dataType === 'datetime' ||
+                dataType === 'date' ||
+                dataType === 'time'
+            ) {
+                localSuggestions = [dateIntervalSuggestionString]
+
+                if (!value) return
+
+                localSuggestions = getMatches(localSuggestions, value)
+            } else {
+                localSuggestions = []
+            }
+
+            if (!value || !isNextCharSpace(input, value)) {
+                return
+            }
+
+            localSuggestions = [Logical.AND, Logical.OR]
+
+            if (!keyword) return
+
+            localSuggestions = getMatches(localSuggestions, keyword)
+            matchedKeyword = getMatch(localSuggestions, keyword)
+
+            if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
+                return
+
+            localSuggestions = initialSuggestions
+        }
 
         error.value = input.length
             ? getError(schema, aliases, expressions)
@@ -309,7 +304,7 @@ const getGenericOperators = () => {
     )
 }
 
-const mapWordsToExpressions = (words: string[]): Expression[] => {
+export const mapWordsToExpressions = (words: string[]): Expression[] => {
     const _words = words.slice()
     const expressions = [mapWordsToExpression(_words.splice(0, 4))]
 
