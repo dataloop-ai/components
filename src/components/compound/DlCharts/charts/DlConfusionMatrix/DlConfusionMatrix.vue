@@ -161,13 +161,12 @@ import {
     DlConfusionMatrixCell,
     DlConfusionMatrixLabel,
     DlConfusionMatrixBrushState
-} from './types'
+} from '../../types'
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import {
     getGradationValues,
-    normalizeMatrix,
     validateMatrix,
     setZoom,
     getCellWidth,

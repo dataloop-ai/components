@@ -7,8 +7,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlConfusionMatrix from '../components/compound/DlCharts/charts/DlConfusionMatrix/DlConfusionMatrix.vue'
-import { DlConfusionMatrixCell } from '../components/compound/DlCharts/charts/DlConfusionMatrix/types'
+import { DlConfusionMatrix } from '../components'
 export default defineComponent({
     components: {
         DlConfusionMatrix
