@@ -20,6 +20,10 @@ import {
 } from './utils'
 
 export default defineComponent({
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
+    },
     props: {
         modelValue: {
             type: Array as PropType<number[][]>,

@@ -14,7 +14,7 @@
                 Save
             </button>
         </div>
-        <dl-grid v-model="layout.value">
+        <dl-grid v-model="layout">
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>
@@ -149,26 +149,23 @@ export default defineComponent({
         DlBarChart
     },
     setup() {
-        const layout = ref({
-            name: 'Layout 1',
-            value: [
-                [1, 5, 2],
-                [3, 4]
-            ]
-        })
+        const layout = ref([
+            [1, 5, 2],
+            [3, 4]
+        ])
 
         const layouts = ref<DlGridLayout[]>([])
 
         const saveLayout = () => {
             layouts.value.push({
                 name: `Layout ${layouts.value.length + 1}`,
-                value: layout.value.value
+                value: layout.value
             })
         }
 
         const selectLayout = (e: InputEvent) => {
             const index = parseInt((e.target as HTMLInputElement).value)
-            layout.value = layouts.value[index]
+            layout.value = layouts.value[index].value
         }
 
         return { data, layout, layouts, saveLayout, selectLayout }

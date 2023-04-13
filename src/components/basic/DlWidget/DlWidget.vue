@@ -105,8 +105,8 @@ export default defineComponent({
         moveClone(e: MouseEvent) {
             if (!this.isDragging) return
             const clone = this.$refs.clone as HTMLElement
-            clone.style.left = `${e.clientX - clone.offsetWidth / 2 - 5}px`
-            clone.style.top = `${e.clientY + 10}px`
+            clone.style.left = `${e.pageX - clone.offsetWidth / 2 - 5}px`
+            clone.style.top = `${e.pageY + 10}px`
         },
         stopDragging(e: MouseEvent) {
             this.isDragging = false
