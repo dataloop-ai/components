@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue-demi'
+import { defineComponent, ref, computed, shallowRef } from 'vue-demi'
 import {
     DlThemeProvider,
     DlButton,
@@ -159,7 +159,7 @@ export default defineComponent({
             })
         })
 
-        const activeDemo = ref(
+        const activeDemo = shallowRef(
             window.localStorage.getItem('dl-active-demo')
                 ? demos.find(
                       (d) =>
