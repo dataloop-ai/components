@@ -18,12 +18,24 @@
                 />
                 Components library
             </dl-typography>
-            <dl-switch
-                v-model="darkMode"
-                left-label="Light"
-                right-label="Dark"
-                style="margin: 0 20px"
-            />
+            <div style="display: flex; align-items: center">
+                <dl-icon
+                    icon="icon-dl-light-theme"
+                    size="24px"
+                    :color="
+                        !darkMode ? 'dl-color-secondary' : 'dl-color-darker'
+                    "
+                />
+                <dl-switch
+                    v-model="darkMode"
+                    style="margin: 0 20px"
+                />
+                <dl-icon
+                    icon="icon-dl-dark-theme"
+                    size="20px"
+                    :color="darkMode ? 'dl-color-secondary' : 'dl-color-darker'"
+                />
+            </div>
         </div>
         <div class="layout-wrapper">
             <div class="sidebar">
@@ -102,7 +114,8 @@ import {
     DlList,
     DlTypography,
     DlSearch,
-    DlSwitch
+    DlSwitch,
+    DlIcon
 } from './components'
 import Demos from './demos'
 
@@ -115,7 +128,8 @@ export default defineComponent({
         DlList,
         DlTypography,
         DlSearch,
-        DlSwitch
+        DlSwitch,
+        DlIcon
     },
     props: {
         isDark: { required: false, default: false, type: Boolean }
