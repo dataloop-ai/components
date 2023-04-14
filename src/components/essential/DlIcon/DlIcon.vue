@@ -85,7 +85,7 @@ export default defineComponent({
             }
         },
         inlineStyles(): string {
-            return this.inline ? 'display: inline' : ''
+            return this.inline ? 'display: inline' : 'display: flex'
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {

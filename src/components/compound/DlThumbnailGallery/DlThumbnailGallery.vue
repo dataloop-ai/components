@@ -8,12 +8,13 @@
             <div
                 v-if="currentList.first !== 0"
                 class="slider__arrow--icon"
-                @mousedown.native="navigateBackward"
+                @mousedown="navigateBackward"
             >
                 <dl-icon
-                    color="black"
-                    size="l"
+                    color="--dl-color-darker"
+                    size="24px"
                     icon="icon-dl-left-chevron"
+                    :inline="false"
                 />
             </div>
         </div>
@@ -24,13 +25,20 @@
         >
             <div
                 v-for="image in currentImages"
-                :key="image"
+                :key="image.src"
                 class="slider__images--image"
                 :style="getBorderRadius(image)"
-                @mousedown.native="$emit('update:modelValue', image)"
+                @mousedown="$emit('update:modelValue', image)"
             >
+                <div class="slider__images--status">
+                    <dl-icon
+                        v-if="image.status"
+                        size="16px"
+                        color="dl-color-darker"
+                        :icon="getStatusIcon(image.status)"
+                    />
+                </div>
                 <img
-                    :style="imageStyles"
                     :src="image.src"
                     @error="handleImageError"
                 >
@@ -42,11 +50,12 @@
             <div
                 v-if="currentList.last <= images.length"
                 class="slider__arrow--icon"
-                @mousedown.native="navigateForward"
+                @mousedown="navigateForward"
             >
                 <dl-icon
-                    size="l"
+                    size="24px"
                     icon="icon-dl-right-chevron"
+                    :inline="false"
                 />
             </div>
         </div>
@@ -56,12 +65,17 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon, DlTooltip } from '../../essential'
-import { DlThumbnail } from './types'
+import { DlButton } from '../../basic'
+import { DlThumbnail, statusColors } from './types'
 
 export default defineComponent({
     components: {
         DlIcon,
         DlTooltip
+    },
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
     },
     props: {
         modelValue: {
@@ -131,6 +145,9 @@ export default defineComponent({
         },
         handleImageError(e: ErrorEvent) {
             (e.target as HTMLImageElement).src = this.invalidImage
+        },
+        getStatusIcon(status: string) {
+            return statusColors[status]
         }
     }
 })
@@ -179,6 +196,11 @@ export default defineComponent({
             width: 100%;
             height: 100%;
             object-fit: var(--img-object-fit);
+        }
+        &--status {
+            position: absolute;
+            top: 0;
+            right: 4px;
         }
     }
 }

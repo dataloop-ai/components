@@ -16,7 +16,7 @@
             </div>
             <div
                 class="menu__thumbnail-icon"
-                @mousedown.native="showGallery = !showGallery"
+                @mousedown="showGallery = !showGallery"
             >
                 <dl-icon
                     icon="icon-dl-thumbnail"
