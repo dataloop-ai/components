@@ -6,8 +6,8 @@
         >
             <dl-thumbnail-gallery
                 v-model="selectedImage"
-                :visible-thumbnails="4"
                 :images="images"
+                invalid-image="/src/demo/DlThumbnailGallery/images/error.png"
             />
         </div>
         <div class="menu">
@@ -29,24 +29,36 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue-demi'
-import { DlThumbnailGallery } from '../../components'
-import images from './images'
+import { DlThumbnailGallery, DlThumbnail } from '../../components'
+import imagesSources from './images'
+
+const images = imagesSources.map((src, index) => {
+    return {
+        name: `Image ${index}`,
+        src,
+        status: ''
+    }
+})
 
 export default defineComponent({
     components: {
         DlThumbnailGallery
     },
     setup() {
-        const selectedImage = ref('')
+        const selectedImage = ref()
         const selectedIndex = ref(0)
         const imageContainerStyles = computed(() => {
             return {
-                backgroundImage: `url(${selectedImage.value || images[0]})`
+                backgroundImage: `url(${
+                    selectedImage.value?.src || images[0].src
+                })`
             }
         })
         watch(selectedImage, (val) => {
             selectedIndex.value =
-                images.findIndex((element: string) => element === val) + 1
+                images.findIndex(
+                    (element: DlThumbnail) => element.src === val.src
+                ) + 1
         })
 
         return { images, selectedImage, imageContainerStyles, selectedIndex }

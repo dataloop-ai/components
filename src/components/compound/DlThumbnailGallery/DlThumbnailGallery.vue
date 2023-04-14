@@ -5,12 +5,17 @@
         class="slider"
     >
         <div class="slider__arrow">
-            <dl-icon
+            <div
                 v-if="currentList.first !== 0"
-                size="l"
-                icon="icon-dl-left-chevron"
+                class="slider__arrow--icon"
                 @mousedown.native="navigateBackward"
-            />
+            >
+                <dl-icon
+                    color="black"
+                    size="l"
+                    icon="icon-dl-left-chevron"
+                />
+            </div>
         </div>
 
         <div
@@ -24,19 +29,24 @@
                 :style="getBorderRadius(image)"
                 @mousedown.native="$emit('update:modelValue', image)"
             >
-                <img :src="image">
+                <img
+                    :style="imageStyles"
+                    :src="image.src"
+                    @error="handleImageError"
+                >
+                <dl-tooltip>{{ image.name }}</dl-tooltip>
             </div>
         </div>
 
         <div class="slider__arrow">
-            <div class="slider__arrow--icon">
-                <dl-button />
+            <div
+                v-if="currentList.last <= images.length"
+                class="slider__arrow--icon"
+                @mousedown.native="navigateForward"
+            >
                 <dl-icon
-                    v-if="currentList.last <= images.length"
                     size="l"
                     icon="icon-dl-right-chevron"
-                    :inline="false"
-                    @mousedown.native="navigateForward"
                 />
             </div>
         </div>
@@ -45,26 +55,34 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlIcon } from '../../essential'
-import { DlButton } from '../../basic'
+import { DlIcon, DlTooltip } from '../../essential'
+import { DlThumbnail } from './types'
 
 export default defineComponent({
     components: {
         DlIcon,
-        DlButton
+        DlTooltip
     },
     props: {
         modelValue: {
-            type: String,
-            default: ''
+            type: Object as PropType<DlThumbnail>,
+            default: null
         },
         images: {
-            type: Array as PropType<string[]>,
+            type: Array as PropType<DlThumbnail[]>,
             default: () => []
         },
         visibleThumbnails: {
             type: Number,
             default: 10
+        },
+        invalidImage: {
+            type: String,
+            default: ''
+        },
+        aspectRatio: {
+            type: String,
+            default: 'default'
         }
     },
     data() {
@@ -76,7 +94,14 @@ export default defineComponent({
     computed: {
         imageContainerStyles(): object {
             return {
-                '--thumbnail-size': `${100 / this.visibleThumbnails}%`
+                '--thumbnail-size': `${100 / this.visibleThumbnails}%`,
+                '--img-object-fit':
+                    this.aspectRatio === 'full' ||
+                    this.aspectRatio === 'full-with-padding'
+                        ? 'contain'
+                        : '',
+                '--img-padding':
+                    this.aspectRatio === 'full-with-padding' ? '5px' : ''
             }
         },
         currentImages() {
@@ -103,6 +128,9 @@ export default defineComponent({
                     : '1px solid var(--dl-color-separator)',
                 opacity: isCurrent ? '1' : '0.8'
             }
+        },
+        handleImageError(e: ErrorEvent) {
+            (e.target as HTMLImageElement).src = this.invalidImage
         }
     }
 })
@@ -120,6 +148,10 @@ export default defineComponent({
         cursor: pointer;
         display: flex;
         align-items: center;
+        &--icon {
+            background-color: var(--dl-color-text-buttons);
+            border-radius: 50%;
+        }
     }
     &__images {
         display: flex;
@@ -139,14 +171,14 @@ export default defineComponent({
                 transform: scale(1.1);
             }
             cursor: pointer;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            background-color: var(--dl-color-text-buttons);
+            padding: var(--img-padding);
         }
         &--image img {
             pointer-events: none;
             width: 100%;
             height: 100%;
+            object-fit: var(--img-object-fit);
         }
     }
 }
