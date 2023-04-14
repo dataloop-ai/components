@@ -32,7 +32,7 @@
                         keyboardShortcut
                     }}</span>
                 </div>
-                <span>{{ text }}</span>
+                <span class="card--content_text">{{ text }}</span>
             </div>
             <div class="card--links">
                 <div
@@ -118,6 +118,10 @@ export default defineComponent({
 
     &--content {
         padding: 16px 10px;
+        &_text {
+            font-size: 12px;
+            color: var(--dl-color-medium);
+        }
     }
 
     &--header {
