@@ -453,7 +453,7 @@ export default defineComponent({
             return `${chars}/${this.maxLength}`
         },
         wrapperClasses(): string {
-            let classes = 'flex'
+            let classes = 'flex items-center'
 
             if (this.isSmall) {
                 classes += ' no-wrap'
