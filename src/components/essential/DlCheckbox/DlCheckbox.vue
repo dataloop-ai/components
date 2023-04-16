@@ -71,7 +71,7 @@
             :style="subLabelStyle"
             class="sub-text"
         >
-            <slot name="subLabel">
+            <slot name="sub-label">
                 <span>{{ subLabel }}</span>
             </slot>
         </div>
@@ -162,7 +162,7 @@ export default defineComponent({
             return !!this.label || !!this.$slots.default
         },
         hasSubLabel(): boolean {
-            return !!this.subLabel || !!this.$slots.subLabel
+            return !!this.subLabel || !!this.$slots['sub-label']
         },
         subLabelStyle(): Record<string, string> {
             return {
