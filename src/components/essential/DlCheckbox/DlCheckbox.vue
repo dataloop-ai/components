@@ -67,11 +67,13 @@
             </span>
         </label>
         <div
-            v-if="subLabel"
+            v-if="hasSubLabel"
             :style="subLabelStyle"
             class="sub-text"
         >
-            <span>{{ subLabel }}</span>
+            <slot name="subLabel">
+                <span>{{ subLabel }}</span>
+            </slot>
         </div>
     </div>
 </template>
@@ -158,6 +160,9 @@ export default defineComponent({
         },
         hasLabel(): boolean {
             return !!this.label || !!this.$slots.default
+        },
+        hasSubLabel(): boolean {
+            return !!this.subLabel || !!this.$slots.subLabel
         },
         subLabelStyle(): Record<string, string> {
             return {
