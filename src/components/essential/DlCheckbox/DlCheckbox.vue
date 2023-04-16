@@ -98,7 +98,7 @@ export default defineComponent({
         id: { type: [String, Number], default: null },
         modelValue: { type: ValueTypes, required: false, default: null },
         label: { default: null, type: String },
-        subLabel: { type: String, default: '' },
+        subLabel: { type: String, default: null },
         toggleIndeterminate: { type: Boolean, default: false },
         indeterminateValue: { type: ValueTypes, default: null },
         value: { type: ValueTypes, default: null },
