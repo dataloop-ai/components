@@ -129,7 +129,7 @@ export default defineComponent({
 
         const emptyString = '---'
 
-        const isSingleWord = (text: string) => text.split(' ').length === 1
+        const isSingleWord = (text: string) => text?.split(' ').length === 1
 
         const cssVars = computed(() => {
             return {
