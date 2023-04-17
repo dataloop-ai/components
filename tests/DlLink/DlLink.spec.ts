@@ -39,6 +39,6 @@ describe('DlLink', () => {
             slots: { default: message }
         })
         const a = wrapper.find('a')
-        expect(a.element.target).to.be.null
+        expect(a.element.target).toEqual('')
     })
 })
