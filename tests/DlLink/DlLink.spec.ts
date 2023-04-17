@@ -30,4 +30,15 @@ describe('DlLink', () => {
         expect(prop).toBeTruthy()
         expect(prop).toEqual(color)
     })
+
+    it('can set external to true without change target', () => {
+        const href = 'javascript:void(0)'
+        const message = 'click me'
+        const wrapper = mount(DlLink, {
+            props: { href, external: true },
+            slots: { default: message }
+        })
+        const a = wrapper.find('a')
+        expect(a.element.target).to.be.null
+    })
 })
