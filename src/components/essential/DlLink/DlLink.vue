@@ -45,7 +45,7 @@ export default defineComponent({
             return this.color ?? 'dl-color-studio-secondary'
         },
         target(): string | null {
-            return getLinkTarget(this.external || this.newtab)
+            return getLinkTarget(this.newtab)
         },
         rel(): string | null {
             return getLinkRel(this.external)
