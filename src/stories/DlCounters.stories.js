@@ -38,10 +38,66 @@ export default {
             name: 'small',
             control: 'boolean',
             defaultValue: false,
-            description: 'The counters will be smaller',
+            description: 'The counters will be smaller.',
             table: {
                 type: { summary: Boolean },
                 defaultValue: { summary: false }
+            }
+        },
+        spacing: {
+            name: 'spacing',
+            type: { name: 'string', required: false },
+            defaultValue: '30px',
+            description: "The spacing between the kpi's.",
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '30px' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        titleFontSize: {
+            name: 'titleFontSize',
+            type: { name: 'string', required: false },
+            defaultValue: '16px',
+            description: 'The kpi title font size',
+            table: {
+                type: {
+                    name: 'string',
+                    required: false,
+                    default: '16px'
+                },
+                defaultValue: { summary: '16px' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        counterFontSize: {
+            name: 'counterFontSize',
+            type: { name: 'string', required: false },
+            defaultValue: '30px',
+            description: 'The kpi counter font size',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '30px' }
+            },
+            control: {
+                type: 'text'
+            }
+        },
+        subtitleFontSize: {
+            name: 'subtitleFontSize',
+            type: { name: 'string', required: false },
+            defaultValue: '12px',
+            description: 'The kpi subtitle font size',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '12px' }
+            },
+            control: {
+                type: 'text'
             }
         }
     }
