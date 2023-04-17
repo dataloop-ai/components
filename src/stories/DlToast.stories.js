@@ -48,6 +48,11 @@ export default {
             control: 'boolean',
             description: 'specifies if the close icon should be displayed',
             defaultValue: true
+        },
+        collapseCount: {
+            control: 'number',
+            description:
+                'N toasts to collapse and delete the old one and keep new ones'
         }
     }
 }
