@@ -183,11 +183,17 @@ describe('DlCalendar', () => {
         })
 
         expect(wrapper.vm.getDayStyle(endOfWeek)).toEqual({
+            background:
+                'linear-gradient(to right, var(--dl-date-picker-selected-strip) 50%, transparent 50%)',
             borderBottomRightRadius: '11px',
             borderTopRightRadius: '11px'
         })
 
-        expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({})
+        expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({
+            backgroundColor: 'var(--dl-color-secondary)',
+            borderRadius: '11px',
+            color: 'var(--dl-color-text-buttons)'
+        })
     })
 
     afterAll(() => {
