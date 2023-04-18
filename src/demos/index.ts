@@ -47,11 +47,14 @@ import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
+import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGallery/DlThumbnailGalleryDemo.vue'
+import DlSeparatorDemo from './DlSeparatorDemo.vue'
 
-export {
+export default {
     AvatarDemo,
     DlAlertDemo,
     DlProgressChartDemo,
@@ -94,7 +97,7 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlToastDemo as DlToastMessageDemo,
+    DlToastDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
     DlChartDoughnutDemo,
@@ -157,5 +160,10 @@ export const demoState = {
     smart_search: DlSmartSearchDemo,
     toast: DlToastDemo,
     spinner: DlSpinner,
-    thumbnail_gallery: DlThumbnailGallery
+    thumbnail_gallery: DlThumbnailGallery,
+    DlConfusionMatrix,
+    DlToggleButtonDemo,
+    DlEllipsisDemo,
+    DlSeparatorDemo,
+    DlKpiDemo
 }

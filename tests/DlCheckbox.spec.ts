@@ -83,4 +83,45 @@ describe('DlCheckbox', () => {
 
         expect(wrapper.vm.isIndeterminate).toBe(true)
     })
+
+    describe('When having a sublabel', () => {
+        describe('When passing sublabel as a prop', () => {
+            it('should render the sublabel', () => {
+                const wrapper = mount(DlCheckbox, {
+                    props: {
+                        modelValue: false,
+                        subLabel: 'sublabel'
+                    }
+                })
+
+                const parent = wrapper.find('.sub-text')
+                const span = parent.find('span')
+                const text = span.text()
+
+                expect(parent.exists()).toBe(true)
+                expect(span.exists()).toBe(true)
+                expect(text).toBe('sublabel')
+            })
+        })
+        describe('When passing sublabel as a slot', () => {
+            it('should render the sublabel', () => {
+                const wrapper = mount(DlCheckbox, {
+                    props: {
+                        modelValue: false
+                    },
+                    slots: {
+                        'sub-label': '<span>sublabel</span>'
+                    }
+                })
+
+                const parent = wrapper.find('.sub-text')
+                const span = parent.find('span')
+                const text = span.text()
+
+                expect(parent.exists()).toBe(true)
+                expect(span.exists()).toBe(true)
+                expect(text).toBe('sublabel')
+            })
+        })
+    })
 })

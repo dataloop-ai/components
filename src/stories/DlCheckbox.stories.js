@@ -29,7 +29,7 @@ export default {
             }
         },
         label: {
-            name: 'subLabel',
+            name: 'label',
             type: { name: 'string', required: false },
             description: 'The text displayed next to the checkbox',
             defaultValue: '',

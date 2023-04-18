@@ -147,12 +147,18 @@ export default defineComponent({
                 {
                     title: 'today',
                     key: DAY_SIDEBAR_OPTION.today,
-                    value: { from: today, to: today }
+                    value: {
+                        from: today,
+                        to: new CustomDate(today).endOf('day').toDate()
+                    }
                 },
                 {
                     title: 'yesterday',
                     key: DAY_SIDEBAR_OPTION.yesterday,
-                    value: { from: yesterday, to: yesterday }
+                    value: {
+                        from: yesterday,
+                        to: new CustomDate(yesterday).endOf('day').toDate()
+                    }
                 },
                 {
                     title: 'last 7 days',

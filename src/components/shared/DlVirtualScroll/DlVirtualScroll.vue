@@ -3,10 +3,14 @@
     <div
         :id="uuid"
         ref="rootRef"
+        :style="cssVars"
         class="dl-table__middle"
         :class="classes"
     >
-        <table class="dl-table">
+        <table
+            class="dl-table"
+            :class="draggableClasses"
+        >
             <slot
                 v-if="hasBeforeSlot"
                 name="before"
@@ -18,16 +22,13 @@
             >
                 <tr>
                     <td
-                        :style="{
-                            height: virtualScrollPaddingBefore + 'px',
-                            '--dl-virtual-scroll-item-height':
-                                virtualScrollItemSize + 'px'
-                        }"
+                        class="dl-virtual-scroll__before"
                         :colspan="colspanAttr"
                     />
                 </tr>
             </tbody>
             <tbody
+                id="draggable"
                 key="content"
                 ref="contentRef"
                 class="dl-virtual-scroll__content"
@@ -45,11 +46,7 @@
             >
                 <tr>
                     <td
-                        :style="{
-                            height: virtualScrollPaddingAfter + 'px',
-                            '--dl-virtual-scroll-item-height':
-                                virtualScrollItemSize + 'px'
-                        }"
+                        class="dl-virtual-scroll__after"
                         :colspan="colspanAttr"
                     />
                 </tr>
@@ -81,12 +78,18 @@ import { getScrollTarget } from '../../../utils/scroll'
 import { useVirtualScroll, useVirtualScrollProps } from './useVirtualScroll'
 
 export default defineComponent({
+    name: 'DlVirtualScroll',
     props: {
         ...useVirtualScrollProps,
 
         items: {
             type: Array,
             default: () => [] as Record<string, any>[]
+        },
+
+        draggableClasses: {
+            type: [String, Array, Object],
+            default: null
         },
 
         itemsFn: { type: Function, default: void 0 },
@@ -98,6 +101,7 @@ export default defineComponent({
     },
     setup(props, { slots, attrs }) {
         const vm = getCurrentInstance()
+
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
 
@@ -156,6 +160,15 @@ export default defineComponent({
                 'dl-virtual-scroll dl-virtual-scroll--vertical' +
                 (props.scrollTarget !== void 0 ? '' : ' scroll')
         )
+
+        const cssVars = computed(() => {
+            return {
+                '--item-height-before': virtualScrollPaddingBefore.value + 'px',
+                '--item-height-after': virtualScrollPaddingAfter.value + 'px',
+                '--dl-virtual-scroll-item-height':
+                    props.virtualScrollItemSize + 'px'
+            }
+        })
 
         const attributes = computed(() =>
             props.scrollTarget !== void 0 ? {} : { tabindex: 0 }
@@ -243,7 +256,8 @@ export default defineComponent({
             classes,
             hasBeforeSlot,
             hasAfterSlot,
-            colspanAttr
+            colspanAttr,
+            cssVars
         }
     }
 })
@@ -265,17 +279,18 @@ export default defineComponent({
             overflow-anchor: auto;
         }
     }
+    &__before {
+        height: var(--item-height-before);
+    }
+
+    &__after {
+        height: var(--item-height-after);
+    }
     &__padding {
-        background: linear-gradient(
-            rgba(255, 255, 255, 0),
-            rgba(255, 255, 255, 0) 20%,
-            rgba(128, 128, 128, 0.03) 20%,
-            rgba(128, 128, 128, 0.08) 50%,
-            rgba(128, 128, 128, 0.03) 80%,
-            rgba(255, 255, 255, 0) 80%,
-            rgba(255, 255, 255, 0)
+        background: repeating-linear-gradient(
+            rgba(128, 128, 128, 0.03),
+            rgba(128, 128, 128, 0.08) var(--dl-virtual-scroll-item-height, 50px)
         );
-        background-size: 100%, var(--dl-virtual-scroll-item-height, 50px);
 
         .dl-table & {
             tr {
