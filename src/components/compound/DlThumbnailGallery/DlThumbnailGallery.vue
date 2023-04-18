@@ -145,8 +145,7 @@ export default defineComponent({
             }
         },
         handleImageError(e: ErrorEvent) {
-            console.log(this.invalidImage)
-            ;(e.target as HTMLImageElement).src = this.invalidImage
+            (e.target as HTMLImageElement).src = this.invalidImage
         },
         getStatusIcon(status: string) {
             return statusColors[status as keyof typeof statusColors]
