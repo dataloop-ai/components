@@ -30,15 +30,15 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue-demi'
 import { DlThumbnailGallery, DlThumbnail } from '../../components'
-import imagesSources from './images'
 
-const images = imagesSources.map((src, index) => {
-    return {
-        name: `Image ${index}`,
-        src,
+const images: DlThumbnail[] = []
+for (let i = 1; i < 20; i++) {
+    images.push({
+        name: `Image ${i}`,
+        src: `https://picsum.photos/1000/800?random=${i}`,
         status: ''
-    }
-})
+    })
+}
 
 export default defineComponent({
     components: {
@@ -78,7 +78,6 @@ export default defineComponent({
     user-select: none;
     height: 100%;
     width: 100%;
-    position: relative;
     display: flex;
     justify-content: center;
     background-size: contain;

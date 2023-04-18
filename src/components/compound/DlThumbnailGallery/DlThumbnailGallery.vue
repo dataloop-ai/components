@@ -1,62 +1,64 @@
 <template>
-    <div
-        v-if="showGallery"
-        :style="imageContainerStyles"
-        class="slider"
-    >
-        <div class="slider__arrow">
-            <div
-                v-if="currentList.first !== 0"
-                class="slider__arrow--icon"
-                @mousedown="navigateBackward"
-            >
-                <dl-icon
-                    color="--dl-color-darker"
-                    size="24px"
-                    icon="icon-dl-left-chevron"
-                    :inline="false"
-                />
-            </div>
-        </div>
-
+    <div class="slider-wrapper">
         <div
-            ref="images"
-            class="slider__images"
+            v-if="showGallery"
+            :style="imageContainerStyles"
+            class="slider"
         >
-            <div
-                v-for="image in currentImages"
-                :key="image.src"
-                class="slider__images--image"
-                :style="getBorderRadius(image)"
-                @mousedown="$emit('update:modelValue', image)"
-            >
-                <div class="slider__images--status">
+            <div class="slider__arrow">
+                <div
+                    v-if="currentList.first > 0"
+                    class="slider__arrow--icon"
+                    @mousedown="navigateBackward"
+                >
                     <dl-icon
-                        v-if="image.status"
-                        size="16px"
-                        color="dl-color-darker"
-                        :icon="getStatusIcon(image.status)"
+                        color="--dl-color-darker"
+                        size="24px"
+                        icon="icon-dl-left-chevron"
+                        :inline="false"
                     />
                 </div>
-                <img
-                    :src="image.src"
-                    @error="handleImageError"
-                >
-                <dl-tooltip>{{ image.name }}</dl-tooltip>
             </div>
-        </div>
 
-        <div class="slider__arrow">
             <div
-                v-if="currentList.last <= images.length"
-                class="slider__arrow--icon"
-                @mousedown="navigateForward"
+                ref="images"
+                class="slider__images"
             >
-                <dl-icon
-                    size="24px"
-                    icon="icon-dl-right-chevron"
-                    :inline="false"
-                />
+                <div
+                    v-for="image in currentImages"
+                    :key="image.src"
+                    class="slider__images--image"
+                    :style="getBorderRadius(image.src)"
+                    @mousedown="$emit('update:modelValue', image)"
+                >
+                    <div class="slider__images--status">
+                        <dl-icon
+                            v-if="image.status"
+                            size="16px"
+                            color="dl-color-darker"
+                            :icon="getStatusIcon(image.status)"
+                        />
+                    </div>
+                    <img
+                        :src="image.src"
+                        @error="handleImageError"
+                    >
+                    <dl-tooltip>{{ image.name }}</dl-tooltip>
+                </div>
+            </div>
+
+            <div class="slider__arrow">
+                <div
+                    v-if="currentList.last <= images.length"
+                    class="slider__arrow--icon"
+                    @mousedown="navigateForward"
+                >
+                    <dl-icon
+                        size="24px"
+                        icon="icon-dl-right-chevron"
+                        :inline="false"
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -65,7 +67,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon, DlTooltip } from '../../essential'
-import { DlButton } from '../../basic'
 import { DlThumbnail, statusColors } from './types'
 
 export default defineComponent({
@@ -92,7 +93,7 @@ export default defineComponent({
         },
         invalidImage: {
             type: String,
-            default: ''
+            default: null
         },
         aspectRatio: {
             type: String,
@@ -135,7 +136,7 @@ export default defineComponent({
             this.currentList.last -= this.visibleThumbnails
         },
         getBorderRadius(image: string) {
-            const isCurrent = image === this.modelValue
+            const isCurrent = image === this.modelValue?.src
             return {
                 border: isCurrent
                     ? '3px solid var(--dl-color-secondary)'
@@ -144,7 +145,8 @@ export default defineComponent({
             }
         },
         handleImageError(e: ErrorEvent) {
-            (e.target as HTMLImageElement).src = this.invalidImage
+            console.log(this.invalidImage)
+            ;(e.target as HTMLImageElement).src = this.invalidImage
         },
         getStatusIcon(status: string) {
             return statusColors[status]
@@ -154,9 +156,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+}
 .slider {
-    position: absolute;
-    bottom: 0;
     display: flex;
     justify-content: center;
     width: 100%;
