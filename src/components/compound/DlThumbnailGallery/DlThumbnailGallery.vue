@@ -1,7 +1,6 @@
 <template>
     <div class="slider-wrapper">
         <div
-            v-if="showGallery"
             :style="imageContainerStyles"
             class="slider"
         >
@@ -102,7 +101,6 @@ export default defineComponent({
     },
     data() {
         return {
-            showGallery: true,
             currentList: { first: 0, last: this.visibleThumbnails }
         }
     },
