@@ -117,35 +117,141 @@
             />
 
             <div style="margin-top: 100px">
-                <p>Infinite scrolling</p>
                 <DlTable
                     :selected="selected"
                     :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
                     :draggable="draggable"
+                    :pagination="pagination"
+                    :dense="dense"
                     class="sticky-header"
                     :filter="filter"
                     :selection="selection"
-                    :dense="dense"
-                    title="Treats"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
                     color="dl-color-secondary"
-                    :loading="infiniteLoading"
-                    :rows="computedRows"
-                    :columns="tableColumns"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
                     style="height: 500px"
-                    row-key="index"
-                    :pagination="{ rowsPerPage: 0 }"
-                    virtual-scroll
-                    :rows-per-page-options="[0]"
-                    @virtual-scroll="onScroll"
-                />
+                    :rows-per-page-options="rowsPerPageOptions"
+                    hide-bottom
+                    @row-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #pagination="scope">
+                        <dl-button
+                            v-if="scope.pagesNumber > 2"
+                            icon="icon-dl-first-page"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isFirstPage"
+                            @click="scope.firstPage"
+                        />
+
+                        <dl-button
+                            icon="icon-dl-left-chevron"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isFirstPage"
+                            @click="scope.prevPage"
+                        />
+
+                        <dl-button
+                            icon="icon-dl-right-chevron"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isLastPage"
+                            @click="scope.nextPage"
+                        />
+
+                        <dl-button
+                            v-if="scope.pagesNumber > 2"
+                            icon="icon-dl-last-page"
+                            color="dl-color-secondary"
+                            flat
+                            :disabled="scope.isLastPage"
+                            @click="scope.lastPage"
+                        />
+                    </template>
+                </DlTable>
+
+                <div>
+                    <p>Custom pagination outside pagination slot</p>
+                    <dl-button
+                        v-if="pagesNumber > 2"
+                        icon="icon-dl-first-page"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isFirstPage"
+                        @click="firstPage"
+                    />
+
+                    <dl-button
+                        icon="icon-dl-left-chevron"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isFirstPage"
+                        @click="prevPage"
+                    />
+
+                    <dl-button
+                        icon="icon-dl-right-chevron"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isLastPage"
+                        @click="nextPage"
+                    />
+
+                    <dl-button
+                        v-if="pagesNumber > 2"
+                        icon="icon-dl-last-page"
+                        color="dl-color-secondary"
+                        flat
+                        :disabled="isLastPage"
+                        @click="lastPage"
+                    />
+                </div>
+
+                <div style="margin-top: 100px">
+                    <p>Infinite scrolling</p>
+                    <DlTable
+                        :selected="selected"
+                        :separator="separator"
+                        :draggable="draggable"
+                        class="sticky-header"
+                        :filter="filter"
+                        :selection="selection"
+                        :dense="dense"
+                        title="Treats"
+                        color="dl-color-secondary"
+                        :loading="infiniteLoading"
+                        :rows="computedRows"
+                        :columns="tableColumns"
+                        style="height: 500px"
+                        row-key="index"
+                        :pagination="{ rowsPerPage: 0 }"
+                        virtual-scroll
+                        :rows-per-page-options="[0]"
+                        @virtual-scroll="onScroll"
+                    />
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DlTable, DlOptionGroup, DlSwitch, DlInput } from '../components'
-import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
+import {
+    DlTable,
+    DlOptionGroup,
+    DlSwitch,
+    DlInput,
+    DlButton
+} from '../components'
+import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
 
 const columns = [
@@ -310,7 +416,8 @@ export default defineComponent({
         DlTable,
         DlSwitch,
         DlOptionGroup,
-        DlInput
+        DlInput,
+        DlButton
     },
     setup() {
         const filter = ref('')
@@ -333,7 +440,7 @@ export default defineComponent({
 
         const infiniteLoading = ref(false)
 
-        const nextPage = ref(2)
+        const nextPageNumber = ref(2)
 
         let allRows: RowsWithIndex[] = []
         for (let i = 0; i < 100; i++) {
@@ -348,10 +455,10 @@ export default defineComponent({
         })
 
         const pageSize = 50
-        const lastPage = Math.ceil(allRows.length / pageSize)
+        const lastPageNumber = Math.ceil(allRows.length / pageSize)
 
         const computedRows = computed(() =>
-            allRows.slice(0, pageSize * (nextPage.value - 1))
+            allRows.slice(0, pageSize * (nextPageNumber.value - 1))
         )
 
         const onScroll = ({ to, ref }: { to: number; ref: any }) => {
@@ -359,19 +466,85 @@ export default defineComponent({
 
             if (
                 infiniteLoading.value !== true &&
-                nextPage.value < lastPage &&
+                nextPageNumber.value < lastPageNumber &&
                 to === lastIndex
             ) {
                 infiniteLoading.value = true
 
                 setTimeout(() => {
-                    nextPage.value++
+                    nextPageNumber.value++
                     nextTick(() => {
                         ref.refresh()
                         infiniteLoading.value = false
                     })
                 }, 500)
             }
+        }
+
+        const pagination = ref({
+            sortBy: 'desc',
+            descending: false,
+            page: 2,
+            rowsPerPage: 3
+            // rowsNumber: xx if getting data from a server
+        })
+
+        const pagesNumber = computed(() => {
+            return Math.ceil(rows.length / pagination.value.rowsPerPage)
+        })
+
+        function fixPagination(p: typeof pagination.value) {
+            if (p.page < 1) {
+                p.page = 1
+            }
+            if (p.rowsPerPage !== void 0 && p.rowsPerPage < 1) {
+                p.rowsPerPage = 0
+            }
+            return p
+        }
+
+        const lastRowIndex = computed(() => {
+            const { page, rowsPerPage } = pagination.value
+            return page * rowsPerPage
+        })
+
+        const setPagination = (val: Partial<typeof pagination.value>) => {
+            pagination.value = fixPagination({
+                ...pagination.value,
+                ...val
+            })
+        }
+
+        function firstPage() {
+            setPagination({ page: 1 })
+        }
+
+        function prevPage() {
+            const { page } = pagination.value
+            if (page > 1) {
+                setPagination({ page: page - 1 })
+            }
+        }
+
+        function nextPage() {
+            const { page, rowsPerPage } = pagination.value
+
+            if (
+                lastRowIndex.value > 0 &&
+                page * rowsPerPage < tableRows.value.length
+            ) {
+                setPagination({ page: page + 1 })
+            }
+        }
+
+        const isLastPage = computed(
+            () => pagination.value.page >= pagesNumber.value
+        )
+
+        const isFirstPage = computed(() => pagination.value.page === 1)
+
+        function lastPage() {
+            setPagination({ page: pagesNumber.value })
         }
 
         return {
@@ -394,7 +567,15 @@ export default defineComponent({
             rowsPerPageOptions,
             onScroll,
             computedRows,
-            infiniteLoading
+            infiniteLoading,
+            pagination,
+            pagesNumber,
+            firstPage,
+            lastPage,
+            nextPage,
+            prevPage,
+            isLastPage,
+            isFirstPage
         }
     },
 

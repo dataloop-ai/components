@@ -122,7 +122,8 @@ export default {
             name: 'transform',
             defaultValue: 'lowercase',
             description: 'The text transform options for the chip',
-            control: { type: 'radio', options: transformOptions },
+            options: transformOptions,
+            control: { type: 'radio' },
             table: {
                 type: { summary: transformOptions },
                 defaultValue: { summary: 'lowercase' }

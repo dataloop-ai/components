@@ -224,29 +224,29 @@ const data = {
     datasets: [
         {
             label: 'Discarded',
-            backgroundColor: '--dl-color-secondary',
-            borderColor: '--dl-color-secondary',
+            backgroundColor: '--dl-color-chart-7',
+            borderColor: '--dl-color-chart-7',
             pointRadius: 4,
             data: randomIntFromInterval(0, 4)
         },
         {
             label: 'Undiscarded',
-            backgroundColor: '--dl-color-warning',
-            borderColor: '--dl-color-warning',
+            backgroundColor: '--dl-color-chart-1',
+            borderColor: '--dl-color-chart-1',
             pointRadius: 4,
             data: randomIntFromInterval(2, 6)
         },
         {
             label: 'Completed',
-            backgroundColor: '--dl-color-positive',
-            borderColor: '--dl-color-positive',
+            backgroundColor: '--dl-color-chart-14',
+            borderColor: '--dl-color-chart-14',
             pointRadius: 4,
             data: randomIntFromInterval(1, 5)
         },
         {
             label: 'Uncompleted',
-            backgroundColor: '--dl-color-negative',
-            borderColor: '--dl-color-negative',
+            backgroundColor: '--dl-color-secondary',
+            borderColor: '--dl-color-secondary',
             pointRadius: 4,
             data: randomIntFromInterval(0, 5)
         }

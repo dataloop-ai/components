@@ -13,11 +13,11 @@
                 <div :class="computeClass('item-content')">
                     <dl-kpi
                         :counter="kpiValue(item.value)"
-                        counter-font-size="30px"
+                        :counter-font-size="counterFontSize"
                         :title="capitalize(item.text)"
-                        title-font-size="16px"
+                        :title-font-size="titleFontSize"
                         :subtitle="item.subtext && capitalize(item.subtext)"
-                        subtitle-font-size="12px"
+                        :subtitle-font-size="subtitleFontSize"
                         :info-message="null"
                         :progress="null"
                         :small="small"
@@ -51,16 +51,28 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        spacing: {
-            type: String,
-            default: '30px'
-        },
         items: {
             type: Array as PropType<CounterItem[]>,
             default: (): CounterItem[] => [],
             validator(value: CounterItem[]): boolean {
                 return value.length <= 8
             }
+        },
+        spacing: {
+            type: String,
+            default: '30px'
+        },
+        counterFontSize: {
+            type: String,
+            default: '30px'
+        },
+        titleFontSize: {
+            type: String,
+            default: '16px'
+        },
+        subtitleFontSize: {
+            type: String,
+            default: '12px'
         }
     },
     data() {
@@ -188,5 +200,11 @@ ul {
             }
         }
     }
+}
+</style>
+
+<style lang="scss">
+.dl-counters-container {
+    --dl-kpi-padding: '0px';
 }
 </style>

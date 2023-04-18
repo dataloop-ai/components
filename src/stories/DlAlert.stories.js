@@ -6,15 +6,13 @@ export default {
     argTypes: {
         type: {
             name: 'type',
-            defaultValue: 'success',
             description: 'Alert type',
+            options: ['success', 'info', 'warning', 'error'],
             control: {
-                type: 'radio',
-                options: ['success', 'info', 'warning', 'error']
+                type: 'radio'
             },
             table: {
-                type: { summary: ['success', 'info', 'warning', 'error'] },
-                defaultValue: { summary: 'success' }
+                type: { summary: ['success', 'info', 'warning', 'error'] }
             }
         },
         textColor: {
@@ -92,7 +90,8 @@ const Template = (args) => ({
 
 export const Preview = Template.bind({})
 Preview.args = {
-    text: 'Alert text'
+    text: 'Alert text',
+    type: 'info'
 }
 
 const FluidTemplate = (args) => ({
@@ -118,7 +117,8 @@ const FluidTemplate = (args) => ({
 export const Fluid = FluidTemplate.bind({})
 Fluid.args = {
     text: 'Alert text',
-    fluid: true
+    fluid: true,
+    type: 'info'
 }
 
 const ClosableTemplate = (args) => ({
@@ -144,5 +144,6 @@ const ClosableTemplate = (args) => ({
 export const Closable = ClosableTemplate.bind({})
 Closable.args = {
     text: 'Alert text',
-    closable: true
+    closable: true,
+    type: 'info'
 }

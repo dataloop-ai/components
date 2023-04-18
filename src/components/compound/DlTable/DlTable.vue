@@ -411,7 +411,17 @@
         </div>
 
         <div
-            v-if="!hideBottom || hideNoData"
+            v-if="hasPaginationSlot"
+            class="dl-table__control"
+        >
+            <slot
+                v-bind="marginalsScope"
+                name="pagination"
+            />
+        </div>
+
+        <div
+            v-else-if="!hideBottom || hideNoData"
             :class="bottomClasses"
         >
             <div class="dl-table__control">
@@ -633,6 +643,8 @@ export default defineComponent({
 
         // table slots
         const hasSlotByName = (name: string) => !!slots[name]
+
+        const hasPaginationSlot = computed(() => hasSlotByName('pagination'))
 
         const hasTopSlots = computed(
             () =>
@@ -997,7 +1009,11 @@ export default defineComponent({
             isFirstPage,
             isLastPage,
             pagesNumber,
-            computedRowsNumber
+            computedRowsNumber,
+            firstPage,
+            prevPage,
+            nextPage,
+            lastPage
         } = useTablePagination(
             vm,
             computedPagination,
@@ -1046,7 +1062,11 @@ export default defineComponent({
             pagination: paginationState.value,
             pagesNumber: pagesNumber.value,
             isFirstPage: isFirstPage.value,
-            isLastPage: isLastPage.value
+            isLastPage: isLastPage.value,
+            firstPage,
+            prevPage,
+            nextPage,
+            lastPage
         }))
 
         function getCellValue(
@@ -1202,7 +1222,11 @@ export default defineComponent({
             resetVirtualScroll,
             scrollTo,
             setExpanded,
-            sort
+            sort,
+            firstPage,
+            prevPage,
+            nextPage,
+            lastPage
         })
 
         return {
@@ -1250,7 +1274,8 @@ export default defineComponent({
             displayPagination,
             onTrClick,
             onTrDblClick,
-            onTrContextMenu
+            onTrContextMenu,
+            hasPaginationSlot
         }
     }
 })

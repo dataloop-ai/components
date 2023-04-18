@@ -64,8 +64,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlIcon } from '../DlIcon'
-import { DlLink } from '../DlLink'
+import { DlIcon } from '../../essential/DlIcon'
+import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
 
 export default defineComponent({

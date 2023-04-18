@@ -4,7 +4,7 @@ export const hexToRgbA = (hex: string, opacity = 1) => {
         const g = parseInt(hex.slice(3, 5), 16)
         const b = parseInt(hex.slice(5, 7), 16)
 
-        if (opacity) {
+        if (opacity || opacity === 0) {
             return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')'
         } else {
             return 'rgb(' + r + ', ' + g + ', ' + b + ')'

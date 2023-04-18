@@ -2,7 +2,7 @@
     <div style="width: 950px; padding-top: 20px">
         <div class="flex">
             <div>
-                <dl-area
+                <dl-text-area
                     v-model="message"
                     title="Message"
                 />
@@ -12,10 +12,15 @@
                     title="Duration seconds"
                 />
                 <dl-input
+                    v-model="collapseCount"
+                    type="number"
+                    title="Collapse count"
+                />
+                <dl-input
                     v-model="classItem"
                     title="Custom class for toast item"
                 />
-                <dl-text-input
+                <dl-input
                     v-model="width"
                     title="Custom width for toast item"
                 />
@@ -93,11 +98,19 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlButton, DlToast, DlInput, DlRadio, DlSwitch } from '../components'
+import {
+    DlButton,
+    DlInput,
+    DlRadio,
+    DlSwitch,
+    DlTextArea,
+    DlToast
+} from '../components'
 
 export default defineComponent({
     name: 'DlToast',
     components: {
+        DlTextArea,
         DlSwitch,
         DlRadio,
         DlInput,
@@ -113,6 +126,7 @@ export default defineComponent({
         const closable = ref(true)
         const classItem = ref('demo-toast')
         const width = ref('auto')
+        const collapseCount = ref(null)
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
@@ -121,7 +135,8 @@ export default defineComponent({
                 duration: duration.value,
                 classItem: classItem.value,
                 closable: closable.value,
-                width: width.value
+                width: width.value,
+                collapseCount: collapseCount.value
             })
         }
         return {
@@ -132,7 +147,8 @@ export default defineComponent({
             position,
             classItem,
             closable,
-            width
+            width,
+            collapseCount
         }
     }
 })
