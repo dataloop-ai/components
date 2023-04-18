@@ -85,7 +85,7 @@ export default defineComponent({
         },
         images: {
             type: Array as PropType<DlThumbnail[]>,
-            default: () => []
+            default: (): DlThumbnail[] => []
         },
         visibleThumbnails: {
             type: Number,
@@ -149,7 +149,7 @@ export default defineComponent({
             ;(e.target as HTMLImageElement).src = this.invalidImage
         },
         getStatusIcon(status: string) {
-            return statusColors[status]
+            return statusColors[status as keyof typeof statusColors]
         }
     }
 })
