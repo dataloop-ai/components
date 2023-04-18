@@ -78,11 +78,10 @@ export default defineComponent({
         counterFontSize: {
             type: String,
             default: '1.88em',
-            required: true
+            required: false
         },
         title: {
             type: String,
-            default: '---',
             required: true
         },
         titleFontSize: {
@@ -130,15 +129,14 @@ export default defineComponent({
 
         const emptyString = '---'
 
-        const isSingleWord = (text: string): boolean =>
-            text?.length ? text.split(' ').length === 1 : true
+        const isSingleWord = (text: string) => text?.split(' ').length === 1
 
         const cssVars = computed(() => {
             return {
                 '--dl-kpi-border': props.bordered ? '1px solid #e4e4e4' : '',
                 '--dl-kpi-title-max-width': isSingleWord(props.title)
                     ? '100%'
-                    : '90%', // todo: caused a bug with single words | fixed
+                    : '90%', // todo: caused a bug with single words
                 '--dl-kpi-sub-title-max-width': isSingleWord(props.subtitle)
                     ? '100%'
                     : '90%'
@@ -228,7 +226,7 @@ export default defineComponent({
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    padding: 20px 6px;
+    padding: var(--dl-kpi-padding, 20px 6px);
     border-radius: 2px;
     overflow: hidden;
     border: var(--dl-kpi-border);
@@ -250,7 +248,7 @@ export default defineComponent({
         &__text {
             display: flex;
             flex-direction: row;
-            max-width: var(--dl-kpi-title-max-width);
+            max-width: var(--dl-kpi-max-width, var(--dl-kpi-title-max-width));
             max-height: 40px;
             font-style: normal;
             font-weight: 400;
@@ -262,7 +260,10 @@ export default defineComponent({
             gap: 10px;
         }
         &__subtext {
-            max-width: var(--dl-kpi-sub-title-max-width);
+            max-width: var(
+                --dl-kpi-max-width,
+                var(--dl-kpi-sub-title-max-width)
+            );
             max-height: 40px;
             font-style: normal;
             font-weight: 400;
