@@ -27,7 +27,7 @@ export function useArrowNavigation(items: any, isOpen: any) {
         highlightedIndex.value = -1
     }
     const navigateList = (event: KeyboardEvent) => {
-        if (!isOpen.value) {
+        if (!items.value?.length || !isOpen.value) {
             return
         }
         switch (event.key) {

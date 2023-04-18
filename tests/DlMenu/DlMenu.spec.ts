@@ -44,7 +44,8 @@ describe('DlMenu', () => {
             square: false,
             target: true,
             touchPosition: false,
-            transitionDuration: 300
+            transitionDuration: 300,
+            arrowNavItems: []
         })
 
         expect(wrapper.vm.showing).toBe(false)
