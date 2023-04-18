@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue-demi'
-import { DlThumbnailGallery, DlThumbnail } from '../../components'
+import { DlThumbnailGallery, DlThumbnail } from '../components'
 
 const images: DlThumbnail[] = []
 for (let i = 1; i < 20; i++) {

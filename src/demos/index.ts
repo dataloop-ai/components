@@ -51,7 +51,7 @@ import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
-import DlThumbnailGallery from './DlThumbnailGallery/DlThumbnailGalleryDemo.vue'
+import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 
 export default {
