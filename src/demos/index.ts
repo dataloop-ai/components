@@ -51,12 +51,8 @@ import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
-<<<<<<< HEAD
-=======
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
->>>>>>> 3b09d44 (fixed folder)
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
-import DlThumbnailGallery from './DlThumbnailGallery/DlThumbnailGalleryDemo.vue'
 
 export default {
     AvatarDemo,
