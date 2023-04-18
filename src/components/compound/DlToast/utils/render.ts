@@ -14,7 +14,7 @@ if (VueDemi.isVue3) {
     ) {
         const vNode = VueDemi.h(component, props, slots)
         const container = document.createElement('div')
-        container.classList.add('v-toast--pending')
+        container.classList.add('dl-toast-container--pending')
         parentContainer.appendChild(container)
         VueDemi.render(vNode, container)
 
@@ -28,9 +28,13 @@ if (VueDemi.isVue3) {
         slots = {}
     ) {
         const container = document.createElement('div')
-        container.classList.add('v-toast--pending')
+        container.classList.add('dl-toast-container--pending')
         parentContainer.appendChild(container)
-        renderVue2Component(ToastComponent, props, '.v-toast--pending')
+        renderVue2Component(
+            ToastComponent,
+            props,
+            '.dl-toast-container--pending'
+        )
     }
 }
 

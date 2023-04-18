@@ -77,6 +77,8 @@
             title="Min"
             required
             size="s"
+            error
+            error-message="Error message is the strongest."
         />
     </div>
 </template>

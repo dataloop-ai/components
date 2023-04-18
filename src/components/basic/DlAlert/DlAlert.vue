@@ -32,6 +32,7 @@
                 class="close-btn-icon"
                 data-test="close-btn-icon"
                 icon="icon-dl-close"
+                color="dl-color-darker"
                 size="12px"
                 @click="handleClose"
             />
@@ -92,7 +93,7 @@ export default defineComponent({
         },
         type: {
             type: String,
-            default: 'success',
+            required: true,
             validator: (value: string) =>
                 includes(['info', 'success', 'warning', 'error'], value)
         },
@@ -219,6 +220,7 @@ export default defineComponent({
     .close-btn {
         padding-right: 16px;
         padding-left: 10px;
+        align-items: var(--dl-alert-align-button, start);
     }
 
     .icon-dl-close:hover {

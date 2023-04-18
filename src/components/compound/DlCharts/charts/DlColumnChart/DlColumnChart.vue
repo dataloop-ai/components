@@ -1,5 +1,8 @@
 <template>
-    <div :class="chartWrapperClasses">
+    <div
+        :style="cssVars"
+        :class="chartWrapperClasses"
+    >
         <Bar
             :id="id"
             ref="columnChart"
@@ -101,6 +104,7 @@ import {
 import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { unionBy, orderBy, merge, isEqual } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
+import { getMaxDatasetValue } from '../../utils'
 
 ChartJS.register(
     Title,
@@ -143,9 +147,10 @@ export default defineComponent({
             size: { height: number; width: number }
         ) => {
             if (chart?.scales?.x?.width) {
-                chartWidth.value = `${parseInt(
-                    chart.scales.x.width as unknown as string
-                )}px`
+                chartWidth.value = `${
+                    parseInt(chart.scales.x.width as unknown as string) -
+                    parseInt(brushProperties.value.thumbSize) / 4
+                }px`
             }
         }
 
@@ -365,7 +370,17 @@ export default defineComponent({
         const chartOptions = reactive(
             updateKey(
                 merge(
-                    { onResize, onHover },
+                    {
+                        onResize,
+                        onHover,
+                        scales: {
+                            y: {
+                                suggestedMax: getMaxDatasetValue(
+                                    chartData.value.datasets
+                                )
+                            }
+                        }
+                    },
                     defaultColumnChartProps.options,
                     props.options
                 ),
@@ -378,7 +393,10 @@ export default defineComponent({
             () => chart.value?.scales?.x?.width,
             (val: string) => {
                 if (val) {
-                    chartWidth.value = `${parseInt(val as unknown as string)}px`
+                    chartWidth.value = `${
+                        parseInt(val as unknown as string) -
+                        parseInt(brushProperties.value.thumbSize) / 4
+                    }px`
                 }
             },
             { deep: true }
@@ -421,6 +439,13 @@ export default defineComponent({
             }
             chart.value.update()
         }
+
+        const cssVars = computed(() => {
+            return {
+                '--dl-brush-thumb-size':
+                    parseInt(brushProperties.value.thumbSize) / 4 + 'px'
+            }
+        })
 
         const onLeaveLegend = (
             item: BarControllerDatasetOptions,
@@ -521,7 +546,8 @@ export default defineComponent({
             onLeaveLegend,
             onChartLeave,
             chart,
-            labelStyles
+            labelStyles,
+            cssVars
         }
     },
     data() {
@@ -549,5 +575,6 @@ export default defineComponent({
 .dl-brush,
 .dl-legend {
     align-self: flex-end;
+    margin-right: var(--dl-brush-thumb-size);
 }
 </style>
