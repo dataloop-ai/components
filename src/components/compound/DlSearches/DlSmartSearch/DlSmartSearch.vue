@@ -30,8 +30,11 @@
                     @click="emitSearchQuery"
                 />
             </div>
-            <!-- <div class="dl-smart-search__filters-btn-wrapper">
-                <dl-filters
+            <div class="dl-smart-search__filters-btn-wrapper">
+                <button @click="filtersModel = true">
+                    filters
+                </button>
+                <smart-search-filters
                     v-model="filtersModel"
                     :filters="filters"
                     :disabled="disabled"
@@ -39,7 +42,7 @@
                     @remove="handleQueryRemove"
                     @setActive="handleSetActiveQuery"
                 />
-            </div> -->
+            </div>
         </div>
         <dl-json-editor
             :model-value="jsonEditorModel"
@@ -111,9 +114,11 @@ import {
 import { Filter, Query, ColorSchema, SearchStatus } from './types'
 import { createColorSchema } from './utils/highlightSyntax'
 import { v4 } from 'uuid'
+import SmartSearchFilters from './components/SmartSearchFilters.vue'
 
 export default defineComponent({
     components: {
+        SmartSearchFilters,
         DlSmartSearchInput,
         DlDialogBox,
         DlDialogBoxHeader,

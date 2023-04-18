@@ -3,6 +3,7 @@
         <div
             v-if="show"
             :id="uuid"
+            v-click-outside="closeModal"
             :style="cssVars"
             class="root-wrapper"
         >
@@ -64,9 +65,13 @@ import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import DlIcon from '../../essential/DlIcon/DlIcon.vue'
 import { throttle } from 'lodash'
+import clickOutsideDirective from '../../../directives/ClickOutside'
 
 export default defineComponent({
     name: 'DlDialogBox',
+    directives: {
+        clickOutside: clickOutsideDirective as any
+    },
     components: { DlIcon },
     model: {
         prop: 'modelValue',
@@ -164,6 +169,7 @@ export default defineComponent({
             this.draggableOptions.draggableCursor = 'pointer'
         },
         closeModal() {
+            console.log('dffdf')
             if ((this.$el as HTMLElement)?.blur) {
                 (this.$el as HTMLElement).blur()
             }
