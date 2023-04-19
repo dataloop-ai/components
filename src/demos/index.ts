@@ -52,6 +52,7 @@ import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
+import DlCardDemo from './DlCardDemo.vue'
 
 export default {
     AvatarDemo,
@@ -107,5 +108,6 @@ export default {
     DlToggleButtonDemo,
     DlEllipsisDemo,
     DlSeparatorDemo,
-    DlKpiDemo
+    DlKpiDemo,
+    DlCardDemo
 }
