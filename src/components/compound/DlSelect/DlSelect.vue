@@ -361,12 +361,8 @@ export default defineComponent({
                 (option: string | Record<string, string | number> | number) =>
                     isEqual(option as any, value)
             )
-            const option =
-                typeof value === 'string'
-                    ? value
-                    : (value as Record<string, any>)?.label
 
-            handleModelValueUpdate(option)
+            handleModelValueUpdate(value)
         }
 
         return {
