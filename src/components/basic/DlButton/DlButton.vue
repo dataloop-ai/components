@@ -3,13 +3,13 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
+        :style="cssButtonVars"
     >
         <button
             v-if="hasContent || hasIcon"
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
-            :style="cssButtonVars"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"
@@ -232,6 +232,7 @@ export default defineComponent({
             }
 
             return {
+                '--dl-btn-container-width': this.fluid ? '100%' : 'auto',
                 '--dl-button-padding': this.dense
                     ? '0'
                     : this.padding
@@ -351,5 +352,6 @@ export default defineComponent({
 
 .dl-button-container {
     display: inline-block;
+    width: var(--dl-btn-container-width);
 }
 </style>
