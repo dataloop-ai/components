@@ -5,41 +5,29 @@
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
-        <DlLayoutVerticalList
-            :items="items"
-            :is-visible="isVisible"
-        />
         <div>
+            <div class="dl-layout-left-side__expand-icon">
+                <dl-icon icon="icon-dl-expand" />
+            </div>
             <slot />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {
-    defineComponent,
-    ref,
-    computed,
-    onMounted,
-    watch,
-    PropType
-} from 'vue-demi'
-import { LayoutVerticalItems } from '../types/VerticalItems'
-import DlLayoutVerticalList from './LayoutVerticalList.vue'
+import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
+
+import { defineComponent, ref, computed, onMounted, watch } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlLayoutLeftSide',
     components: {
-        DlLayoutVerticalList
+        DlIcon
     },
     props: {
         isExpanded: {
             type: Boolean,
             default: true
-        },
-        items: {
-            type: Array as PropType<LayoutVerticalItems[]>,
-            default: () => [] as LayoutVerticalItems[]
         }
     },
     setup(props) {
@@ -85,10 +73,20 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-layout-left-side {
+    position: relative;
     width: var(--dl-layout-left-side-width);
     height: 100%;
     overflow: auto;
     background-color: var(--dl-color-side-panel);
     transition: all 300ms;
+
+    &__expand-icon {
+        position: absolute;
+        right: 0;
+        cursor: pointer;
+        color: var(--dl-color-lighter);
+        text-align: right;
+        margin-top: 8px;
+    }
 }
 </style>

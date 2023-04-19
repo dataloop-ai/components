@@ -1,10 +1,7 @@
 <template>
     <div class="dl-layout">
         <div class="dl-layout__navbar">
-            <LayoutNavbar
-                :has-toggle="hasNavbarToggle"
-                @toggle="toggleLeftSideBar"
-            >
+            <LayoutNavbar>
                 <template #default>
                     <slot name="navbar-content" />
                 </template>
@@ -15,14 +12,14 @@
                 v-if="hasLeftSideSlot"
                 class="dl-layout__body__left-content"
             >
-                <LayoutLeftSide
-                    :is-expanded="isExpandedLeftSide"
-                    :items="leftItems"
+                <LayoutVerticalSidebar
+                    position="left"
+                    @expand="handleExpanded"
                 >
                     <template #default>
                         <slot name="left-side" />
                     </template>
-                </LayoutLeftSide>
+                </LayoutVerticalSidebar>
             </div>
             <div class="dl-layout__body__content">
                 <slot />
@@ -37,61 +34,53 @@
                 v-if="hasRightSideSlot"
                 class="dl-layout__body__right-content"
             >
-                <LayoutRightSide :items="rightItems">
+                <LayoutVerticalSidebar
+                    position="right"
+                    :is-expanded="isExpandedLeftSide"
+                >
                     <template #default>
                         <slot name="right-side" />
                     </template>
-                </LayoutRightSide>
+                </LayoutVerticalSidebar>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue-demi'
-import { LayoutVerticalItems } from './types/VerticalItems'
+import { computed, defineComponent, ref } from 'vue-demi'
 import LayoutNavbar from './components/LayoutNavbar.vue'
-import LayoutLeftSide from './components/LayoutLeftSide.vue'
-import LayoutRightSide from './components/LayoutRightSide.vue'
+import LayoutVerticalSidebar from './components/LayoutVerticalSidebar.vue'
 
 export default defineComponent({
     name: 'DlLayout',
     components: {
         LayoutNavbar,
-        LayoutLeftSide,
-        LayoutRightSide
+        LayoutVerticalSidebar
     },
     props: {
         hasNavbarToggle: {
             type: Boolean,
             default: true
-        },
-        leftItems: {
-            type: Array as PropType<LayoutVerticalItems[]>,
-            default: () => [] as LayoutVerticalItems[]
-        },
-        rightItems: {
-            type: Array as PropType<LayoutVerticalItems[]>,
-            default: () => [] as LayoutVerticalItems[]
         }
     },
-    setup(props, { attrs, slots }) {
+    setup(props, context) {
         const isExpandedLeftSide = ref(true)
-        const toggleLeftSideBar = (event: boolean) => {
-            isExpandedLeftSide.value = event
-        }
-        const hasFooterSlot = computed(() => slots.footer !== undefined)
-        const hasLeftSideSlot = computed(() => slots['left-side'] !== undefined)
-        const hasRightSideSlot = computed(
-            () => slots['right-side'] !== undefined
+        const hasFooterSlot = computed(() => context.slots.footer !== undefined)
+        const hasLeftSideSlot = computed(
+            () => context.slots['left-side'] !== undefined
         )
+        const hasRightSideSlot = computed(
+            () => context.slots['right-side'] !== undefined
+        )
+        const handleExpanded = (value: boolean) => {}
 
         return {
             isExpandedLeftSide,
-            toggleLeftSideBar,
             hasFooterSlot,
             hasLeftSideSlot,
-            hasRightSideSlot
+            hasRightSideSlot,
+            handleExpanded
         }
     }
 })
@@ -101,6 +90,11 @@ export default defineComponent({
 .dl-layout {
     width: 100%;
     height: 100%;
+
+    &__navbar {
+        border: 1px solid var(--dl-color-fill);
+        box-shadow: 1px 1px 9px rgba(0, 0, 0, 0.08);
+    }
 
     &__body {
         display: flex;
@@ -118,7 +112,6 @@ export default defineComponent({
             &__footer {
                 position: absolute;
                 height: 50px;
-                background-color: var(--dl-color-panel-background);
                 box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.08);
                 bottom: 0px;
                 left: 0px;

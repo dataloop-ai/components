@@ -5,10 +5,6 @@
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
-        <DlLayoutVerticalList
-            :items="items"
-            :is-visible="isVisible"
-        />
         <div>
             <slot />
         </div>
@@ -16,30 +12,15 @@
 </template>
 
 <script lang="ts">
-import {
-    defineComponent,
-    ref,
-    computed,
-    onMounted,
-    watch,
-    PropType
-} from 'vue-demi'
-import { LayoutVerticalItems } from '../types/VerticalItems'
-import DlLayoutVerticalList from './LayoutVerticalList.vue'
+import { defineComponent, ref, computed, onMounted, watch } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlLayoutRightSide',
-    components: {
-        DlLayoutVerticalList
-    },
+    components: {},
     props: {
         isExpanded: {
             type: Boolean,
             default: true
-        },
-        items: {
-            type: Array as PropType<LayoutVerticalItems[]>,
-            default: () => [] as LayoutVerticalItems[]
         }
     },
     setup(props) {
