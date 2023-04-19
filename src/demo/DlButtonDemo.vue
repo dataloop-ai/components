@@ -57,6 +57,7 @@
             style="
                 display: flex;
                 gap: 10px;
+                width: 100%;
                 justify-content: center;
                 margin-top: 50px;
             "
@@ -155,6 +156,7 @@
             style="
                 display: flex;
                 gap: 10px;
+                width: 100%;
                 justify-content: center;
                 margin-top: 50px;
             "
