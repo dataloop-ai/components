@@ -121,17 +121,21 @@
                     :offset="[0, 3]"
                     fit-container
                     :fit-content="fitContent"
+                    :arrow-nav-items="suggestItems"
                     @click="onMenuShow"
+                    @highlightedIndex="setHighlightedIndex"
+                    @handleSelectedItem="handleSelectedItem"
                 >
                     <dl-list
                         bordered
                         :style="{ maxWidth: suggestMenuWidth }"
                     >
                         <dl-list-item
-                            v-for="item in suggestItems"
+                            v-for="(item, suggestIndex) in suggestItems"
                             :key="item"
                             clickable
                             style="font-size: 12px"
+                            :is-highlighted="suggestIndex === highlightedIndex"
                             @click="onClick($event, item)"
                         >
                             <span
