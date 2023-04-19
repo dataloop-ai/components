@@ -85,26 +85,26 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             let matchedOperator: Suggestion | null = null
             let matchedKeyword: Suggestion | null = null
 
-            if (!field) return
+            if (!field) continue
 
             localSuggestions = getMatches(localSuggestions, field)
             matchedField = getMatch(localSuggestions, field)
 
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions = []
-                return
+                continue
             }
 
             if (!matchedField || !isNextCharSpace(input, matchedField)) {
-                return
+                continue
             }
 
             const alias = getAliasObjByAlias(aliases, matchedField)
-            if (!alias) return
+            if (!alias) continue
             const dataType = getDataTypeByAliasKey(schema, alias.key)
             if (!dataType) {
                 localSuggestions = []
-                return
+                continue
             }
 
             const ops: string[] = Array.isArray(dataType)
@@ -113,24 +113,24 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
 
             localSuggestions = getOperators(ops)
 
-            if (!operator) return
+            if (!operator) continue
 
             localSuggestions = getMatches(localSuggestions, operator)
             matchedOperator = getMatch(localSuggestions, operator)
 
             if (!matchedOperator && isNextCharSpace(input, operator)) {
                 localSuggestions = []
-                return
+                continue
             }
 
             if (!matchedOperator || !isNextCharSpace(input, matchedOperator)) {
-                return
+                continue
             }
 
             if (Array.isArray(dataType)) {
                 localSuggestions = dataType
 
-                if (!value) return
+                if (!value) continue
 
                 localSuggestions = getMatches(localSuggestions, value)
             } else if (
@@ -140,7 +140,7 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             ) {
                 localSuggestions = [dateIntervalSuggestionString]
 
-                if (!value) return
+                if (!value) continue
 
                 localSuggestions = getMatches(localSuggestions, value)
             } else {
@@ -148,18 +148,18 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             }
 
             if (!value || !isNextCharSpace(input, value)) {
-                return
+                continue
             }
 
             localSuggestions = [Logical.AND, Logical.OR]
 
-            if (!keyword) return
+            if (!keyword) continue
 
             localSuggestions = getMatches(localSuggestions, keyword)
             matchedKeyword = getMatch(localSuggestions, keyword)
 
             if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
-                return
+                continue
 
             localSuggestions = initialSuggestions
         }
@@ -198,12 +198,11 @@ const getError = (
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
+            const aliasObj = getAliasObjByAlias(aliases, field)
+            if (!aliasObj) return 'warning'
             const valid = isValidByDataType(
                 value,
-                getDataTypeByAliasKey(
-                    schema,
-                    getAliasObjByAlias(aliases, field)!.key
-                ),
+                getDataTypeByAliasKey(schema, aliasObj!.key),
                 operator
             )
 

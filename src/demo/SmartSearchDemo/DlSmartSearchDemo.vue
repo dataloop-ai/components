@@ -93,7 +93,7 @@ export default defineComponent({
                         },
                         {
                             name: 'Query 3',
-                            query: ''
+                            query: '{"query3": "query3"}'
                         },
                         {
                             name: 'Query 4',

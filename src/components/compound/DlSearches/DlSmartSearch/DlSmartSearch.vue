@@ -30,20 +30,10 @@
                     @click="emitSearchQuery"
                 />
             </div>
-            <!-- <div class="dl-smart-search__filters-btn-wrapper">
-                <dl-filters
-                    v-model="filtersModel"
-                    :filters="filters"
-                    :disabled="disabled"
-                    @save="handleQueryEdit"
-                    @remove="handleQueryRemove"
-                    @setActive="handleSetActiveQuery"
-                />
-            </div> -->
         </div>
         <dl-json-editor
             :model-value="jsonEditorModel"
-            :query="activeQuery"
+            :query="jsonQuery"
             :queries="savedQueries"
             @update:modelValue="jsonEditorModel = $event"
             @save="handleQuerySaveEditor"
@@ -88,15 +78,23 @@
                 />
             </template>
             <template #footer>
-                <dl-button @click="emitSaveQuery">
-                    Save
-                </dl-button>
+                <div class="dl-smart-search__buttons--save">
+                    <dl-button @click="handleSaveQuery">
+                        Save
+                    </dl-button>
+                    <dl-button
+                        padding="10px"
+                        @click="handleSaveQuery(true)"
+                    >
+                        Save and Search
+                    </dl-button>
+                </div>
             </template>
         </dl-dialog-box>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, getCurrentInstance, PropType, ref } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
 import { DlJsonEditor } from '../../DlJsonEditor'
 import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
@@ -166,10 +164,7 @@ export default defineComponent({
         }
     },
     emits: ['save-query', 'remove-query', 'search-query'],
-    setup(props, { emit }) {
-        const vm = getCurrentInstance()
-        const proxy = vm!.proxy!
-
+    setup(props) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
 
@@ -245,6 +240,11 @@ export default defineComponent({
         computedStatus(): SearchStatus {
             if (!this.error) {
                 return this.status
+            } else if (this.error === 'warning') {
+                return {
+                    type: 'warning',
+                    message: 'Keyword is not in the schema'
+                }
             }
 
             return {
@@ -264,14 +264,25 @@ export default defineComponent({
         }
     },
     methods: {
-        handleQueryEdit(query: Query) {
-            this.activeQuery = query
+        handleQueryEdit() {
+            const jsonQuery = this.toJSON(this.inputModel)
+            const newQuery = {
+                name: 'New Query',
+                query: Object.keys(jsonQuery).length
+                    ? JSON.stringify(jsonQuery)
+                    : '{}'
+            }
+            this.jsonQuery = newQuery
+            this.activeQuery = newQuery
             this.jsonEditorModel = true
         },
-        handleQuerySaveEditor(query: Query) {
+        handleQuerySaveEditor() {
             this.filtersModel = false
-            this.activeQuery = query
-            this.newQueryName = query.name
+            this.activeQuery = {
+                name: this.newQueryName,
+                query: this.toJSON(this.inputModel)
+            }
+            this.newQueryName = ''
             this.saveQueryDialogBoxModel = true
         },
         handleQueryRemove(query: Query) {
@@ -284,9 +295,18 @@ export default defineComponent({
             this.activeQuery = query
             this.$emit('search-query', this.activeQuery)
         },
+        handleSaveQuery(performSearch: boolean) {
+            if (performSearch) {
+                this.emitSaveQuery()
+                this.emitSearchQuery()
+                this.jsonEditorModel = false
+            } else {
+                this.emitSaveQuery()
+            }
+        },
         emitSearchQuery() {
             this.activeQuery = {
-                name: '',
+                name: this.activeQuery.name || '',
                 query: this.inputModel
             }
             this.$emit('search-query', this.activeQuery)
@@ -300,14 +320,12 @@ export default defineComponent({
             if (!this.activeQuery) return
             if (this.newQueryName !== '')
                 this.activeQuery.name = this.newQueryName
-            this.$emit('save-query', this.activeQuery)
+            this.$emit('save-query', {
+                name: this.activeQuery.name,
+                query: JSON.stringify(this.activeQuery.query)
+            })
             this.saveQueryDialogBoxModel = false
             this.newQueryName = ''
-        },
-        handleSetActiveQuery(query: Query) {
-            this.filtersModel = false
-            this.activeQuery = query
-            this.inputModel = `Query "${query.name}"`
         }
     }
 })
@@ -327,6 +345,12 @@ export default defineComponent({
         display: flex;
         margin: 0px 5px;
         align-items: flex-start;
+
+        &--save {
+            display: flex;
+            width: 100%;
+            justify-content: space-evenly;
+        }
     }
 
     &__search-btn-wrapper {

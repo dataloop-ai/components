@@ -34,13 +34,6 @@
                         ref="jsonEditorRef"
                         class="json-editor"
                     />
-                    <dl-typography
-                        style="margin-top: 5px"
-                        variant="p"
-                        color="red"
-                    >
-                        {{ message }}
-                    </dl-typography>
                 </div>
             </template>
             <template #footer>
@@ -57,15 +50,13 @@
                     </div>
                     <div class="footer-save">
                         <dl-button
-                            :disabled="message !== ''"
                             outlined
                             label="Save As"
                             @click="save"
                         />
                         <dl-button
-                            :disabled="message !== ''"
                             label="Search"
-                            @click="$emit('search', activeQuery)"
+                            @click="handleSearchButton"
                         />
                     </div>
                 </div>
@@ -82,7 +73,6 @@ import { Query } from './types'
 import { DlSelect } from '../DlSelect'
 import { DlButton } from '../../basic'
 import { DlDialogBox, DlDialogBoxHeader } from '../DlDialogBox'
-import { DlTypography } from '../../essential'
 
 interface JSONContent {
     json: JSONValue
@@ -94,8 +84,7 @@ export default defineComponent({
         DlDialogBox,
         DlDialogBoxHeader,
         DlSelect,
-        DlButton,
-        DlTypography
+        DlButton
     },
     props: {
         modelValue: { type: Boolean, default: false },
@@ -122,8 +111,7 @@ export default defineComponent({
             selectedOption: {
                 label: this.query?.name,
                 value: this.query?.query
-            },
-            message: ''
+            }
         }
     },
     computed: {
@@ -158,26 +146,18 @@ export default defineComponent({
         },
         query(val) {
             this.$nextTick(() => {
-                if (val.name === 'New Query') return
                 this.selectedOption = {
                     label: val.name,
                     value: val.query
                 }
                 if (val.query && this.jsonEditor.set) {
-                    this.jsonEditor.set({
-                        text: val.query
-                    })
+                    this.activeQuery = {
+                        name: '',
+                        query: val.query
+                    }
                 }
                 this.alignText()
             })
-        },
-        activeQuery(val) {
-            try {
-                if (val.query) JSON.parse(val.query)
-                this.message = ''
-            } catch {
-                this.message = 'Invalid Query.'
-            }
         }
     },
     mounted() {
@@ -268,6 +248,10 @@ export default defineComponent({
                           query: (this.jsonEditor?.get() as any).text || ''
                       }
             )
+        },
+        handleSearchButton() {
+            this.$emit('search', this.activeQuery)
+            this.$emit('update:modelValue', false)
         }
     }
 })
