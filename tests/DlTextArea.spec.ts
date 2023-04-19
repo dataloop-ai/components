@@ -35,8 +35,8 @@ describe('DlTextArea component', () => {
         const wrapper = mount(DlTextArea, {
             props: { width: '400px' }
         })
-        expect(wrapper.vm.cssVars['--dl-textarea-width']).toEqual('400px')
+        expect(wrapper.vm.cssVars['--dl-textarea-max-width']).toEqual('400px')
         await wrapper.setProps({ width: null })
-        expect(wrapper.vm.cssVars['--dl-textarea-width']).toEqual('auto')
+        expect(wrapper.vm.cssVars['--dl-textarea-max-width']).toEqual('auto')
     })
 })
