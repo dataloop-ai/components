@@ -226,7 +226,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     z-index: var(--dl-z-index-menu);
-    max-height: 90%;
+    max-height: 90vh;
 
     &--fullscreen {
         margin: 0;
