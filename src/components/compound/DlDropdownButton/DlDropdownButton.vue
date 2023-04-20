@@ -466,3 +466,10 @@ export default defineComponent({
     flex-grow: 1;
 }
 </style>
+<style lang="scss">
+.dl-btn-dropdown {
+    .dl-btn-content {
+        line-height: unset;
+    }
+}
+</style>
