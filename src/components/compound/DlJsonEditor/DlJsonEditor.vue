@@ -52,7 +52,7 @@
                         <dl-button
                             outlined
                             label="Save As"
-                            @click="save"
+                            @click="handleSaveButton"
                         />
                         <dl-button
                             label="Search"
@@ -238,7 +238,7 @@ export default defineComponent({
             })
             this.alignText()
         },
-        save() {
+        handleSaveButton() {
             this.$emit(
                 'save',
                 this.activeQuery

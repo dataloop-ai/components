@@ -60,12 +60,12 @@ type Expression = {
 }
 
 const space = ' '
-const dateIntervalSuggestionString = '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
+const dateIntervalSuggestionString = 'From dd/mm/yyyy To dd/mm/yyyy'
 
 let localSuggestions: Suggestion[] = []
 
 export const dateIntervalPattern = new RegExp(
-    /\((from\s?\(\d{2}\/\d{2}\/\d{4}\)\s?to\s?\(\d{2}\/\d{2}\/\d{4}\))\)|\((from\s?\(dd\/mm\/yyyy\)\s?to\s?\(dd\/mm\/yyyy\))\)/,
+    /(from\s?\d{2}\/\d{2}\/\d{4}\s?to\s?\d{2}\/\d{2}\/\d{4})|(from\s?dd\/mm\/yyyy\s?to\s?dd\/mm\/yyyy)/,
     'gi'
 )
 
@@ -75,6 +75,7 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
     const error: Ref<string | null> = ref(null)
 
     const findSuggestions = (input: string) => {
+        input = input.replace(/\s+/g, ' ').trimStart()
         localSuggestions = initialSuggestions
 
         const words = splitByQuotes(input, space)
@@ -201,7 +202,7 @@ const getError = (
             const aliasObj = getAliasObjByAlias(aliases, field)
             if (!aliasObj) return 'warning'
             const valid = isValidByDataType(
-                value,
+                validateBracketValues(value),
                 getDataTypeByAliasKey(schema, aliasObj!.key),
                 operator
             )
@@ -236,6 +237,12 @@ const isValidByDataType = (
         case 'time':
             return isValidDateIntervalPattern(str)
     }
+}
+
+const validateBracketValues = (value: string) => {
+    value = removeBrackets(value)
+    value = value.split(',')[0]
+    return value
 }
 
 const isValidDateIntervalPattern = (str: string) => {
@@ -347,3 +354,7 @@ const isNextCharSpace = (input: string, str: string) => {
 
 const matchStringEnd = (input: string, str: string) =>
     input.lastIndexOf(str + '" ') > -1 || input.lastIndexOf(str + "' ") > -1
+
+export const removeBrackets = (str: string) => {
+    return str.replaceAll('(', '').replaceAll(')', '')
+}

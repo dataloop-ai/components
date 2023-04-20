@@ -15,7 +15,7 @@
                 :model-value="inputModel"
                 :expanded-input-height="expandedInputHeight"
                 :suggestions="suggestions"
-                @save="handleQueryEdit"
+                @save="jsonEditorModel = true"
                 @focus="setFocused"
                 @update:modelValue="handleInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
@@ -33,10 +33,10 @@
         </div>
         <dl-json-editor
             :model-value="jsonEditorModel"
-            :query="jsonQuery"
+            :query="activeQuery"
             :queries="savedQueries"
             @update:modelValue="jsonEditorModel = $event"
-            @save="handleQuerySaveEditor"
+            @save="saveQueryDialogBoxModel = true"
             @remove="handleQueryRemove"
             @search="handleQuerySearchEditor"
         />
@@ -104,10 +104,11 @@ import { DlButton } from '../../../basic'
 import {
     useSuggestions,
     Schema,
-    Alias
+    Alias,
+    removeBrackets
 } from '../../../../hooks/use-suggestions'
 import { Filter, Query, ColorSchema, SearchStatus } from './types'
-import { createColorSchema } from './utils/highlightSyntax'
+import { replaceAliases, createColorSchema } from './utils/utils'
 import { v4 } from 'uuid'
 import { parseSmartQuery } from '../../../../utils'
 
@@ -168,13 +169,15 @@ export default defineComponent({
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
 
-        const activeQuery = ref(null)
+        const activeQuery = ref({
+            name: 'New Query',
+            query: ''
+        })
         const filtersModel = ref(false)
         const removeQueryDialogBoxModel = ref(false)
         const saveQueryDialogBoxModel = ref(false)
         const newQueryName = ref('')
         const isFocused = ref(false)
-        const jsonQuery = ref({})
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -183,11 +186,13 @@ export default defineComponent({
 
         const handleInputModel = (value: string) => {
             inputModel.value = value
+            const json = JSON.stringify(toJSON(removeBrackets(value)))
+            activeQuery.value.query = replaceAliases(json, props.aliases)
+            findSuggestions(value)
         }
 
         const toJSON = (value: string) => {
-            jsonQuery.value = parseSmartQuery(value ?? inputModel.value)
-            return jsonQuery.value
+            return parseSmartQuery(value ?? inputModel.value)
         }
 
         const setFocused = (value: boolean) => {
@@ -238,15 +243,19 @@ export default defineComponent({
             return createColorSchema(this.colorSchema, this.aliases)
         },
         computedStatus(): SearchStatus {
-            if (!this.error) {
-                return this.status
+            if (!this.error && this.inputModel !== '') {
+                return {
+                    type: 'success',
+                    message: ''
+                }
             } else if (this.error === 'warning') {
                 return {
                     type: 'warning',
-                    message: 'Keyword is not in the schema'
+                    message: 'The query is not supported technically.'
                 }
+            } else if (this.inputModel === '') {
+                return this.status
             }
-
             return {
                 type: 'error',
                 message: this.error
@@ -258,33 +267,9 @@ export default defineComponent({
             this.inputModel = `Query "${this.activeQuery.name}" ${
                 val ? 'is running' : ''
             }`
-        },
-        inputModel(val) {
-            this.findSuggestions(val)
         }
     },
     methods: {
-        handleQueryEdit() {
-            const jsonQuery = this.toJSON(this.inputModel)
-            const newQuery = {
-                name: 'New Query',
-                query: Object.keys(jsonQuery).length
-                    ? JSON.stringify(jsonQuery)
-                    : '{}'
-            }
-            this.jsonQuery = newQuery
-            this.activeQuery = newQuery
-            this.jsonEditorModel = true
-        },
-        handleQuerySaveEditor() {
-            this.filtersModel = false
-            this.activeQuery = {
-                name: this.newQueryName,
-                query: this.toJSON(this.inputModel)
-            }
-            this.newQueryName = ''
-            this.saveQueryDialogBoxModel = true
-        },
         handleQueryRemove(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
@@ -305,10 +290,6 @@ export default defineComponent({
             }
         },
         emitSearchQuery() {
-            this.activeQuery = {
-                name: this.activeQuery.name || '',
-                query: this.inputModel
-            }
             this.$emit('search-query', this.activeQuery)
         },
         emitRemoveQuery() {
@@ -320,10 +301,7 @@ export default defineComponent({
             if (!this.activeQuery) return
             if (this.newQueryName !== '')
                 this.activeQuery.name = this.newQueryName
-            this.$emit('save-query', {
-                name: this.activeQuery.name,
-                query: JSON.stringify(this.activeQuery.query)
-            })
+            this.$emit('save-query', this.activeQuery)
             this.saveQueryDialogBoxModel = false
             this.newQueryName = ''
         }
@@ -349,7 +327,11 @@ export default defineComponent({
         &--save {
             display: flex;
             width: 100%;
-            justify-content: space-evenly;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        &--save > * {
+            margin: 0px 10px;
         }
     }
 

@@ -29,9 +29,9 @@ export const replaceDateInterval = (
 }
 
 const formatDate = (date: Date): string => {
-    return `(${addZero(date.getDate())}/${addZero(
+    return `${addZero(date.getDate())}/${addZero(
         date.getMonth() + 1
-    )}/${date.getFullYear()})`
+    )}/${date.getFullYear()}`
 }
 
 const addZero = (value: number): string => {

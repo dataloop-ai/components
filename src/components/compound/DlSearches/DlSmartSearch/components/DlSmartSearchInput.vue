@@ -65,7 +65,7 @@
                             icon="icon-dl-save"
                             size="16px"
                             flat
-                            :disabled="disabled"
+                            :disabled="saveStatus"
                             @click="save"
                         >
                             <dl-tooltip> Save Query </dl-tooltip>
@@ -75,7 +75,7 @@
                             size="16px"
                             flat
                             text-color="dl-color-darker"
-                            :disabled="disabled"
+                            :disabled="saveStatus"
                             uppercase
                             label="dql"
                             @click="edit"
@@ -131,10 +131,10 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
-    isEligibleToChange,
     setCaret,
     updateEditor
 } from '../utils'
+import { isEligibleToChange } from '../utils/utils'
 
 export default defineComponent({
     components: {
@@ -355,6 +355,13 @@ export default defineComponent({
                     this.expandedInputHeight,
                 '--dl-smart-search-input-height': this.inputHeight
             }
+        },
+        saveStatus() {
+            return (
+                this.disabled ||
+                !this.modelValue ||
+                this.status.type === 'error'
+            )
         }
     },
     watch: {
