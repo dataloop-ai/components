@@ -110,5 +110,6 @@ export default {
     DlEllipsisDemo,
     DlSeparatorDemo,
     DlKpiDemo,
-    DlCardDemo
+    DlCardDemo,
+    DlLayoutDemo
 }

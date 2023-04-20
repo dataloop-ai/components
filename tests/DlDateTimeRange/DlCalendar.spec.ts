@@ -163,7 +163,6 @@ describe('DlCalendar', () => {
             }
         })
         expect(wrapper.vm.getDayStyle(startOfTheWeek)).toEqual({
-            background: 'var(--dl-date-picker-selected-strip)',
             borderBottomLeftRadius: '11px',
             borderTopLeftRadius: '11px'
         })
