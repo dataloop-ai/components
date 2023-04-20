@@ -30,9 +30,9 @@ export default {
             name: 'mode',
             defaultValue: 'single',
             description: 'Date & Time Range mode',
+            options: ['single', 'multi'],
             control: {
-                type: 'radio',
-                options: ['single', 'multi']
+                type: 'radio'
             },
             table: {
                 type: { summary: ['single', 'multi'] },
@@ -43,9 +43,9 @@ export default {
             name: 'type',
             defaultValue: 'single',
             description: 'Date & Time Range type',
+            options: ['day', 'month'],
             control: {
-                type: 'radio',
-                options: ['day', 'month']
+                type: 'radio'
             },
             table: {
                 type: { summary: ['day', 'month'] },

@@ -47,11 +47,15 @@ import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
+import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlLayoutDemo from './DlLayoutDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
+import DlSeparatorDemo from './DlSeparatorDemo.vue'
+import DlCardDemo from './DlCardDemo.vue'
 
-export {
+export default {
     AvatarDemo,
     DlAlertDemo,
     DlProgressChartDemo,
@@ -94,67 +98,17 @@ export {
     DlWidgetDemo,
     DlRadioDemo,
     DlTextHolderDemo,
-    DlToastDemo as DlToastMessageDemo,
+    DlToastDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
     DlChartDoughnutDemo,
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
-    DlEllipsisDemo
-}
-
-export const demoState = {
-    accordion: AccordionDemo,
-    alert: DlAlertDemo,
-    avatar: AvatarDemo,
-    badge: DlBadgeDemo,
-    button: DlButtonDemo,
-    column_chart: DlColumnChartDemo,
-    bar_chart: DlBarChartDemo,
-    line_chart: DlLineChartDemo,
-    checkbox: DlCheckboxDemo,
-    chip: DlChipDemo,
-    color_picker: DlColorPickerDemo,
-    counter: DlCounterDemo,
-    dialog_box: DlDialogBoxDemo,
-    doughnut_chart: DlChartDoughnutDemo,
-    dropdown_button: DropdownButtonDemo,
-    ellipsis: DlEllipsisDemo,
-    icon: DlIconDemo,
-    link: DlLinkDemo,
-    list: DlListDemo,
-    layout: DlLayoutDemo,
-    menu: DlMenuDemo,
-    option_group: DlOptionGroupDemo,
-    pagination: DlPaginationDemo,
-    panel_container: DlPanelContainerDemo,
-    popup: PopupDemo,
-    progress_bar: DlProgressBarDemo,
-    progress_chart: DlProgressChartDemo,
-    kpi: DlKpiDemo,
-    range: DlRangeDemo,
-    search: DlSearchDemo,
-    select: DlSelectDemo,
-    skeleton: DlSkeletonDemo,
-    slider: DlSliderDemo,
-    stepper: DlStepperDemo,
-    table: DlTableDemo,
-    table_td: DlTdDemo,
-    table_th: DlThDemo,
-    table_tr: DlTrDemo,
-    tabs: TabsDemo,
-    input: DlInputDemo,
-    textarea: DlTextareaDemo,
-    text_holder: DlTextHolderDemo,
-    time_picker: DlDateTimeRangeDemo,
-    tooltip: DlTooltipDemo,
-    trend: DlTrendDemo,
-    typography: DlTypographyDemo,
-    widget: DlWidgetDemo,
-    radio: DlRadioDemo,
-    switch: DlSwitchDemo,
-    smart_search: DlSmartSearchDemo,
-    toast: DlToastDemo,
-    spinner: DlSpinner
+    DlConfusionMatrix,
+    DlToggleButtonDemo,
+    DlEllipsisDemo,
+    DlSeparatorDemo,
+    DlKpiDemo,
+    DlCardDemo
 }

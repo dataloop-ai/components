@@ -2,7 +2,7 @@
     <div
         v-if="!svg"
         :id="uuid"
-        :style="inlineStyles"
+        :style="[inlineStyles, styles]"
         @click="$emit('click', $event)"
     >
         <i
@@ -48,6 +48,10 @@ export default defineComponent({
             type: String,
             default: '12px'
         },
+        styles: {
+            type: [Array, String, Object],
+            default: null
+        },
         svg: {
             type: Boolean,
             default: false
@@ -85,7 +89,7 @@ export default defineComponent({
             }
         },
         inlineStyles(): string {
-            return this.inline ? 'display: inline' : ''
+            return this.inline ? 'display: inline' : 'display: flex;'
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {

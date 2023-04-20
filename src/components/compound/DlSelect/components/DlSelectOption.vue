@@ -252,8 +252,7 @@ export default defineComponent({
 .capitalized {
     text-transform: capitalize !important;
 }
-</style>
-<style lang="scss">
+
 .capitalized .checkbox-label {
     text-transform: capitalize !important;
 }
