@@ -6,11 +6,13 @@
         @mouseleave="onMouseLeave"
     >
         <div style="height: 100%">
-            <div class="dl-layout-vertical-sidebar__expand-icon">
+            <div class="dl-layout-vertical-sidebar__wrapper">
                 <dl-icon
                     :icon="expandIcon"
                     size="20px"
-                    @click="expandSidebar"
+                    class="dl-layout-vertical-sidebar__wrapper__expand-icon"
+                    :class="{ expanded: !isExpanded }"
+                    @click="toggleExpandSidebar"
                 />
             </div>
             <slot />
@@ -32,6 +34,9 @@ export default defineComponent({
             type: String,
             default: 'left',
             validator: (val: string) => ['left', 'right'].includes(val)
+        },
+        expandSidebar: {
+            type: Boolean
         }
     },
     emits: ['expand'],
@@ -55,7 +60,7 @@ export default defineComponent({
         const expandIcon = computed(() =>
             props.position === 'left' ? 'icon-dl-expand' : 'icon-dl-collapse'
         )
-        const expandSidebar = () => {
+        const toggleExpandSidebar = () => {
             isExpanded.value = !isExpanded.value
             context.emit('expand', isExpanded.value)
         }
@@ -67,6 +72,13 @@ export default defineComponent({
             isVisible.value = value
             sideWidth.value = value ? largeWidth : smallWidth
         })
+
+        const propsExpandSidebar = computed(() => props.expandSidebar)
+
+        watch(propsExpandSidebar, (value) => {
+            isExpanded.value = value
+        })
+
         const cssVars = computed(() => {
             return {
                 '--dl-layout-vertical-side-width': sideWidth.value
@@ -80,7 +92,7 @@ export default defineComponent({
             isVisible,
             expandIcon,
             isExpanded,
-            expandSidebar
+            toggleExpandSidebar
         }
     }
 })
@@ -96,13 +108,22 @@ export default defineComponent({
     border: 1px solid var(--dl-color-fill);
     box-shadow: 1px 1px 9px rgba(0, 0, 0, 0.08);
 
-    &__expand-icon {
+    &__wrapper {
         position: absolute;
         right: 5px;
         cursor: pointer;
         color: var(--dl-color-lighter);
         text-align: right;
         margin-top: 8px;
+
+        &__expand-icon {
+            display: flex !important;
+            transition: all 300ms;
+
+            &.expanded {
+                transform: rotate(180deg);
+            }
+        }
     }
 }
 </style>

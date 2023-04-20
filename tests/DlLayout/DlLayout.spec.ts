@@ -8,16 +8,12 @@ describe('DlLayout', () => {
         expect(wrapper).toBeDefined()
 
         await wrapper.setProps({
-            hasNavbarToggle: true
+            expandLeftSidebar: false,
+            expandRightSidebar: false
         })
 
-        expect(wrapper.vm.hasNavbarToggle).toBe(true)
-
-        await wrapper.setProps({
-            hasNavbarToggle: false
-        })
-
-        expect(wrapper.vm.hasNavbarToggle).toBe(false)
+        expect(wrapper.vm.expandLeftSidebar).toBe(false)
+        expect(wrapper.vm.expandRightSidebar).toBe(false)
     })
 
     it('check component slots', async () => {
@@ -38,8 +34,8 @@ describe('DlLayout', () => {
         })
 
         const navbar = wrapper.find('.dl-layout-navbar')
-        const leftSide = wrapper.find('.dl-layout-left-side')
-        const rightSide = wrapper.find('.dl-layout-right-side')
+        const leftSide = wrapper.find('.dl-layout__body__left-content')
+        const rightSide = wrapper.find('.dl-layout__body__right-content')
         const defaultContent = wrapper.find('.dl-layout__body__content')
         const footer = wrapper.find('.dl-layout__body__content__footer')
 

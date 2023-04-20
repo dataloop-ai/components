@@ -1,9 +1,32 @@
 <template>
     <div style="width: 90%; height: 100%">
-        <DlLayout :has-navbar-toggle="true">
+        <DlLayout
+            :expand-left-sidebar="expandLeftSidebar"
+            :expand-right-sidebar="expandRightSidebar"
+            @expandedLeftSidebar="expandLeftSidebar = $event"
+            @expandedRightSidebar="expandRightSidebar = $event"
+        >
             <template #navbar-content>
-                <div style="background-color: #999999; height: 100%">
-                    Navbar content slot
+                <div
+                    style="
+                        display: flex;
+                        background-color: #999999;
+                        height: 100%;
+                    "
+                >
+                    <div>Navbar content slot</div>
+                    <div>
+                        <button @click="expandLeftSidebar = !expandLeftSidebar">
+                            toggle left
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            @click="expandRightSidebar = !expandRightSidebar"
+                        >
+                            toggle right
+                        </button>
+                    </div>
                 </div>
             </template>
             <template #left-side>
@@ -14,7 +37,9 @@
                         height: 100%;
                     "
                 >
-                    Left side content slot
+                    <div style="padding-top: 30px">
+                        Left side content slot
+                    </div>
                 </div>
             </template>
             <template #right-side>
@@ -24,7 +49,9 @@
                         background-color: white;
                     "
                 >
-                    Right side content slot
+                    <div style="padding-top: 30px">
+                        Right side content slot
+                    </div>
                 </div>
             </template>
             <template #default>
@@ -81,6 +108,15 @@ export default defineComponent({
     name: 'DlKpiDemo',
     components: {
         DlLayout
+    },
+    setup() {
+        const expandLeftSidebar = ref(true)
+        const expandRightSidebar = ref(true)
+
+        return {
+            expandLeftSidebar,
+            expandRightSidebar
+        }
     }
 })
 </script>

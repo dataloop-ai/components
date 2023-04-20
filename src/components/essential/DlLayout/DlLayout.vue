@@ -14,7 +14,8 @@
             >
                 <LayoutVerticalSidebar
                     position="left"
-                    @expand="handleExpanded"
+                    :expand-sidebar="isExpandedLeftSide"
+                    @expand="expandedLeftSide"
                 >
                     <template #default>
                         <slot name="left-side" />
@@ -36,7 +37,8 @@
             >
                 <LayoutVerticalSidebar
                     position="right"
-                    :is-expanded="isExpandedLeftSide"
+                    :expand-sidebar="isExpandedRightSide"
+                    @expand="expandedRightSide"
                 >
                     <template #default>
                         <slot name="right-side" />
@@ -48,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref, watch } from 'vue-demi'
 import LayoutNavbar from './components/LayoutNavbar.vue'
 import LayoutVerticalSidebar from './components/LayoutVerticalSidebar.vue'
 
@@ -59,13 +61,19 @@ export default defineComponent({
         LayoutVerticalSidebar
     },
     props: {
-        hasNavbarToggle: {
+        expandLeftSidebar: {
             type: Boolean,
-            default: true
+            default: false
+        },
+        expandRightSidebar: {
+            type: Boolean,
+            default: false
         }
     },
+    emits: ['expandedLeftSidebar', 'expandedRightSidebar'],
     setup(props, context) {
         const isExpandedLeftSide = ref(true)
+        const isExpandedRightSide = ref(true)
         const hasFooterSlot = computed(() => context.slots.footer !== undefined)
         const hasLeftSideSlot = computed(
             () => context.slots['left-side'] !== undefined
@@ -73,14 +81,29 @@ export default defineComponent({
         const hasRightSideSlot = computed(
             () => context.slots['right-side'] !== undefined
         )
-        const handleExpanded = (value: boolean) => {}
+        const expandedLeftSide = (value: boolean) => {
+            context.emit('expandedLeftSidebar', value)
+        }
+        const expandedRightSide = (value: boolean) => {
+            context.emit('expandedRightSidebar', value)
+        }
+        const propsExpandLeftSidebar = computed(() => props.expandLeftSidebar)
+        watch(propsExpandLeftSidebar, (value) => {
+            isExpandedLeftSide.value = value
+        })
+        const propsExpandRightSidebar = computed(() => props.expandRightSidebar)
+        watch(propsExpandRightSidebar, (value) => {
+            isExpandedRightSide.value = value
+        })
 
         return {
             isExpandedLeftSide,
+            isExpandedRightSide,
             hasFooterSlot,
             hasLeftSideSlot,
             hasRightSideSlot,
-            handleExpanded
+            expandedLeftSide,
+            expandedRightSide
         }
     }
 })
