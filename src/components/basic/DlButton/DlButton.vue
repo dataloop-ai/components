@@ -340,7 +340,6 @@ export default defineComponent({
     padding: 0;
     flex: 10000 1 0%;
     flex-wrap: nowrap;
-    line-height: 1;
     z-index: 0;
     user-select: none !important;
     min-width: 1.5em;
