@@ -29,6 +29,10 @@
                 @click="handleTabClick"
             />
         </div>
+        <slot
+            name="top-right"
+            :styles="topRightSlotStyles"
+        />
     </tabs-wrapper>
 </template>
 
@@ -67,10 +71,14 @@ export default defineComponent({
             isAtEnd: false,
             children: [] as HTMLElement[],
             invisibleLeftIndex: 0,
-            invisibleRightIndex: 0
+            invisibleRightIndex: 0,
+            height: 'auto'
         }
     },
     computed: {
+        topRightSlotStyles(): string {
+            return `border-bottom: 1px solid var(--dl-color-separator); height: ${this.height}`
+        },
         // @ts-ignore
         resizeObserver(): ResizeObserver | undefined {
             // @ts-ignore
@@ -116,6 +124,7 @@ export default defineComponent({
         },
         initTabs() {
             const element = this.$refs.dlTabsRef as HTMLElement
+            this.height = element.offsetHeight - 1 + 'px'
 
             Array.from(element.children).forEach((children: Element) => {
                 this.children.push(children as HTMLElement)
@@ -139,6 +148,7 @@ export default defineComponent({
         },
         updatePosition() {
             const element = this.$refs.dlTabsRef as HTMLElement
+            this.height = element.offsetHeight - 1 + 'px'
 
             const lastLeft = this.children.findIndex((child, index) => {
                 return child.offsetLeft >= element.scrollLeft

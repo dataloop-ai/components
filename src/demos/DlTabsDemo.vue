@@ -16,18 +16,61 @@
                 <h1>{{ item.label }}</h1>
             </dl-tab-panel>
         </dl-tab-panels>
+
+        <dl-tabs
+            v-model="selectedTab"
+            :items="tabItems"
+            style="margin-top: 100px"
+            @update:model-value="handleModelValueUpdate"
+        >
+            <template #top-right="props">
+                <div
+                    :style="props.styles"
+                    style="
+                        width: 200px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                    "
+                >
+                    <dl-button
+                        flat
+                        size="s"
+                        icon="icon-dl-refresh"
+                        label="Refresh"
+                    />
+                    <dl-button
+                        size="s"
+                        icon="icon-dl-pause"
+                        label="Pause"
+                    />
+                </div>
+            </template>
+        </dl-tabs>
+        <div style="height: 4px" />
+        <dl-tab-panels v-model="selectedTab">
+            <dl-tab-panel
+                v-for="item in tabItems"
+                :key="item.name"
+                class="tabpanel"
+                :name="item.name"
+            >
+                <h1>{{ item.label }}</h1>
+            </dl-tab-panel>
+        </dl-tab-panels>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlTabs, DlTabPanel, DlTabPanels } from '../components'
+import { DlTabs, DlTabPanel, DlTabPanels, DlButton } from '../components'
 import { DlTabDetails } from '../components/types'
 
 export default defineComponent({
     components: {
         DlTabs,
         DlTabPanel,
-        DlTabPanels
+        DlTabPanels,
+        DlButton
     },
     data() {
         return {
