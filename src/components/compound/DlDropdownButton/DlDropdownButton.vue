@@ -60,6 +60,7 @@
                 }`"
             />
             <dl-icon
+                class="expand-icon"
                 :class="iconClass"
                 :icon="dropdownIcon"
                 :size="iconSize"
@@ -446,8 +447,29 @@ export default defineComponent({
             }
         }
     }
+
+    .expand-icon {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center;
+        color: var(--dl-color-medium);
+        transition-property: transform, -webkit-transform;
+        transition-duration: 0.28s, 0.28s;
+        transition-timing-function: ease, ease;
+        transition-delay: 0s, 0s;
+        &.expanded {
+            transform: rotate(180deg);
+        }
+    }
 }
 ::v-deep .dl-button-no-wrap {
     flex-grow: 1;
+}
+</style>
+<style lang="scss">
+.dl-btn-dropdown {
+    .dl-btn-content {
+        line-height: unset;
+    }
 }
 </style>

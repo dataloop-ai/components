@@ -7,6 +7,8 @@
                 show-counter
                 :max-length="20"
                 enable-resize
+                error
+                error-message="Something went wrong!"
                 @keydown="log"
                 @focus="textAreaFocused = true"
                 @blur="textAreaFocused = false"
