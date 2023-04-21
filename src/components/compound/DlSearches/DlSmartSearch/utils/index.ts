@@ -1,4 +1,5 @@
 export * from './highlightSyntax'
+export * from './utils'
 
 import { dateIntervalPattern } from '../../../../../hooks/use-suggestions'
 import { DateInterval } from '../../../DlDateTime/types'
