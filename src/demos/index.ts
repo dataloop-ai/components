@@ -53,6 +53,7 @@ import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
+import DlCardDemo from './DlCardDemo.vue'
 
 export default {
     AvatarDemo,

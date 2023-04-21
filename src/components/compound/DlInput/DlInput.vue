@@ -297,10 +297,7 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        withoutRootPadding: {
-            type: Boolean,
-            default: false
-        },
+        dense: Boolean,
         disableClearBtn: {
             type: Boolean,
             default: false
@@ -350,8 +347,8 @@ export default defineComponent({
             if (this.isSmall) {
                 classes.push('dl-text-input--s')
             }
-            if (this.withoutRootPadding) {
-                classes.push('dl-text-input--without-root-padding')
+            if (this.dense) {
+                classes.push('dl-text-input--dense')
             }
             return classes
         },
@@ -608,7 +605,7 @@ export default defineComponent({
         -moz-appearance: textfield;
     }
 
-    &--without-root-padding {
+    &--dense {
         padding: 0;
     }
 
