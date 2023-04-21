@@ -301,7 +301,7 @@ export default defineComponent({
             if (!this.activeQuery) return
             if (this.newQueryName !== '')
                 this.activeQuery.name = this.newQueryName
-            this.$emit('save-query', this.activeQuery)
+            this.$emit('save-query', { ...this.activeQuery })
             this.saveQueryDialogBoxModel = false
             this.newQueryName = ''
         }
