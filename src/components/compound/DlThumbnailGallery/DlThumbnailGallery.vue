@@ -6,8 +6,7 @@
         >
             <div class="slider__arrow">
                 <div
-                    v-if="currentList.first > 0"
-                    class="slider__arrow--icon"
+                    :class="getChevronClass('left')"
                     @mousedown="navigateBackward"
                 >
                     <dl-icon
@@ -26,8 +25,8 @@
                 <div
                     v-for="image in currentImages"
                     :key="image.src"
-                    class="slider__images--image"
-                    :style="getBorderRadius(image.src)"
+                    :class="getImageClass(image.src)"
+                    :style="getImageOutline(image.src)"
                     @mousedown="$emit('update:modelValue', image)"
                 >
                     <div class="slider__images--status">
@@ -48,8 +47,7 @@
 
             <div class="slider__arrow">
                 <div
-                    v-if="currentList.last <= images.length"
-                    class="slider__arrow--icon"
+                    :class="getChevronClass('right')"
                     @mousedown="navigateForward"
                 >
                     <dl-icon
@@ -97,6 +95,10 @@ export default defineComponent({
         aspectRatio: {
             type: String,
             default: 'default'
+        },
+        overlayOpacity: {
+            type: Number,
+            default: 0.5
         }
     },
     data() {
@@ -114,10 +116,12 @@ export default defineComponent({
                         ? 'contain'
                         : '',
                 '--img-padding':
-                    this.aspectRatio === 'full-with-padding' ? '5px' : ''
+                    this.aspectRatio === 'full-with-padding' ? '5px' : '',
+                '--images-min-width': `${this.currentImages.length * 70}px`,
+                '--overlay-opacity': this.overlayOpacity
             }
         },
-        currentImages() {
+        currentImages(): DlThumbnail[] {
             return this.images.slice(
                 this.currentList.first,
                 this.currentList.last
@@ -133,20 +137,33 @@ export default defineComponent({
             this.currentList.first -= this.visibleThumbnails
             this.currentList.last -= this.visibleThumbnails
         },
-        getBorderRadius(image: string) {
-            const isCurrent = image === this.modelValue?.src
-            return {
-                border: isCurrent
-                    ? '3px solid var(--dl-color-secondary)'
-                    : '1px solid var(--dl-color-separator)',
-                opacity: isCurrent ? '1' : '0.8'
-            }
-        },
         handleImageError(e: ErrorEvent) {
             (e.target as HTMLImageElement).src = this.invalidImage
         },
+        getImageOutline(image: string) {
+            return {
+                outline:
+                    image === this.modelValue?.src
+                        ? '3px solid var(--dl-color-secondary)'
+                        : '1px solid var(--dl-color-separator)'
+            }
+        },
+        getImageClass(image: string) {
+            return `slider__images--image ${
+                image !== this.modelValue?.src ? 'greyed-out' : ''
+            }`
+        },
         getStatusIcon(status: string) {
             return statusColors[status as keyof typeof statusColors]
+        },
+        getChevronClass(side: string) {
+            const isVisible =
+                side === 'left'
+                    ? this.currentList.first > 0
+                    : this.currentList.last <= this.images.length
+            return isVisible
+                ? 'slider__arrow--icon'
+                : 'slider__arrow--icon--invisible'
         }
     }
 })
@@ -165,18 +182,22 @@ export default defineComponent({
     width: 100%;
     height: 65px;
     &__arrow {
-        cursor: pointer;
         display: flex;
         align-items: center;
         &--icon {
+            cursor: pointer;
             background-color: var(--dl-color-text-buttons);
             border-radius: 50%;
+            &--invisible {
+                visibility: hidden;
+                cursor: default;
+            }
         }
     }
     &__images {
         display: flex;
         justify-content: center;
-        width: 80%;
+        min-width: var(--images-min-width);
         height: 100%;
         padding: 0px 10px;
         &--image {
@@ -206,5 +227,15 @@ export default defineComponent({
             right: 4px;
         }
     }
+}
+.greyed-out::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    opacity: var(--overlay-opacity);
 }
 </style>
