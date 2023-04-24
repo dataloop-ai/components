@@ -613,9 +613,9 @@ export default defineComponent({
     }
 
     &--s {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+        //display: flex;
+        //flex-wrap: wrap;
+        //align-items: center;
     }
 
     &__title-container {
