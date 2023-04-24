@@ -7,7 +7,7 @@
             <div :class="searchBarClasses">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="withSearchIcon || status"
+                        v-if="withSearchIcon || (!focused && status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="18px"
@@ -86,6 +86,7 @@
                 </div>
             </div>
             <label
+                v-if="!focused"
                 v-show="status.message"
                 ref="label"
                 class="dl-smart-search-input__search-label"
@@ -281,6 +282,10 @@ export default defineComponent({
     },
     computed: {
         statusIcon(): string {
+            if (this.focused) {
+                return ''
+            }
+
             switch (this.status.type) {
                 case 'success':
                     return 'icon-dl-approve-filled'
@@ -312,13 +317,13 @@ export default defineComponent({
         searchBarClasses(): string {
             let classes = 'dl-smart-search-input__search-bar'
 
-            if (this.status.type === 'error') {
-                classes += ' dl-smart-search-input__search-bar--error'
-            } else if (this.status.type === 'warning') {
-                classes += ' dl-smart-search-input__search-bar--warning'
+            if (this.focused) {
+                classes += ' dl-smart-search-input__search-bar--focused'
             } else {
-                if (this.focused) {
-                    classes += ' dl-smart-search-input__search-bar--focused'
+                if (this.status.type === 'error') {
+                    classes += ' dl-smart-search-input__search-bar--error'
+                } else if (this.status.type === 'warning') {
+                    classes += ' dl-smart-search-input__search-bar--warning'
                 }
             }
 
