@@ -3,7 +3,7 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
-        :style="containerStyles"
+        :style="[cssButtonVars, containerStyles]"
     >
         <button
             v-if="hasContent || hasIcon"
@@ -237,6 +237,7 @@ export default defineComponent({
             }
 
             return {
+                '--dl-btn-container-width': this.fluid ? '100%' : 'auto',
                 '--dl-button-padding': this.dense
                     ? '0'
                     : this.padding
@@ -356,5 +357,6 @@ export default defineComponent({
 
 .dl-button-container {
     display: inline-block;
+    width: var(--dl-btn-container-width);
 }
 </style>
