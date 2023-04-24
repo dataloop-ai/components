@@ -80,6 +80,15 @@
             error
             error-message="Error message is the strongest."
         />
+
+        <dl-input
+            style="width: 440px"
+            placeholder="Select option"
+            title="Min"
+            size="s"
+            error
+            error-message="Error message is the strongest."
+        />
     </div>
 </template>
 
