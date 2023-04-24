@@ -612,12 +612,6 @@ export default defineComponent({
         padding: 0;
     }
 
-    &--s {
-        //display: flex;
-        //flex-wrap: wrap;
-        //align-items: center;
-    }
-
     &__title-container {
         margin-bottom: 6px;
         display: flex;
