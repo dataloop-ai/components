@@ -269,7 +269,7 @@
 
                             <slot
                                 v-for="col in computedCols"
-                                v-bind="getHeaderScope({ col })"
+                                v-bind="getHeaderScope({ col, onThClick })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
                                         ? `header-cell-${col.name}`
@@ -279,6 +279,7 @@
                                 <DlTh
                                     :key="col.name"
                                     :props="getHeaderScope({ col })"
+                                    @click="onThClick($event, col.name)"
                                 >
                                     {{ col.label }}
                                 </DlTh>
@@ -618,6 +619,7 @@ export default defineComponent({
         'row-reorder',
         'col-reorder',
         'row-click',
+        'th-click',
         'row-dblclick',
         'row-contextmenu',
         ...useTableRowExpandEmits,
@@ -1120,6 +1122,10 @@ export default defineComponent({
         }
         //
 
+        const onThClick = (evt: MouseEvent, name: string) => {
+            emit('th-click', evt, computedRows.value, name)
+        }
+
         const onTrClick = (
             evt: MouseEvent,
             row: DlTableRow,
@@ -1271,6 +1277,7 @@ export default defineComponent({
             displayPagination,
             onTrClick,
             onTrDblClick,
+            onThClick,
             onTrContextMenu,
             hasPaginationSlot
         }
