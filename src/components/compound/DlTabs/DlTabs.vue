@@ -1,39 +1,47 @@
 <template>
-    <tabs-wrapper
-        :id="uuid"
-        :is-scrollable="isOverflowing"
-        :is-at-end="isAtEnd"
-        :is-at-start="isAtStart"
-        :is-vertical="vertical"
-        @left-arrow-click="handleLeft"
-        @right-arrow-click="handleRight"
+    <div
+        class="dl-tabs-wrapper"
+        :class="{ 'full-width': fullWidth }"
+        :style="cssVars"
     >
-        <div
-            ref="dlTabsRef"
-            class="dl-tabs-container"
-            :class="{ 'full-width': fullWidth }"
-            role="tablist"
+        <tabs-wrapper
+            :id="uuid"
+            :is-scrollable="isOverflowing"
+            :is-at-end="isAtEnd"
+            :is-at-start="isAtStart"
+            class="dl-tabs-root"
+            :is-vertical="vertical"
+            @left-arrow-click="handleLeft"
+            @right-arrow-click="handleRight"
         >
-            <dl-tab
-                v-for="(item, index) in items"
-                :key="index"
-                :name="item.name"
-                :vertical="vertical"
-                :label="item.label"
-                :show-tooltip="item.showTooltip"
-                :tooltip="item.tooltip"
-                :disabled="disabled || item.disabled"
-                :no-caps="item.noCaps"
-                :is-active="modelValue === item.name"
-                :font-size="fontSize"
-                @click="handleTabClick"
-            />
-        </div>
+            <div
+                ref="dlTabsRef"
+                class="dl-tabs-container"
+                :class="{ 'full-width': fullWidth }"
+                role="tablist"
+            >
+                <dl-tab
+                    v-for="(item, index) in items"
+                    :key="index"
+                    :name="item.name"
+                    :vertical="vertical"
+                    :label="item.label"
+                    :show-tooltip="item.showTooltip"
+                    :tooltip="item.tooltip"
+                    :disabled="disabled || item.disabled"
+                    :no-caps="item.noCaps"
+                    :is-active="modelValue === item.name"
+                    :font-size="fontSize"
+                    @click="handleTabClick"
+                />
+            </div>
+        </tabs-wrapper>
+        <div class="empty-space" />
         <slot
             name="top-right"
             :styles="topRightSlotStyles"
         />
-    </tabs-wrapper>
+    </div>
 </template>
 
 <script lang="ts">
@@ -72,12 +80,24 @@ export default defineComponent({
             children: [] as HTMLElement[],
             invisibleLeftIndex: 0,
             invisibleRightIndex: 0,
-            height: 'auto'
+            topRightSlotWidth: 0
         }
     },
     computed: {
         topRightSlotStyles(): string {
-            return `border-bottom: 1px solid var(--dl-color-separator); height: ${this.height}`
+            return `border-bottom: ${
+                this.vertical
+                    ? 'inherit'
+                    : '1px solid var(--dl-color-separator)'
+            }`
+        },
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-tabs-top-right-slot-width': this.topRightSlotWidth + 'px',
+                '--dl-empty-space-border': this.vertical
+                    ? 'inherit'
+                    : '1px solid var(--dl-color-separator)'
+            }
         },
         // @ts-ignore
         resizeObserver(): ResizeObserver | undefined {
@@ -104,6 +124,9 @@ export default defineComponent({
         const element = this.$refs.dlTabsRef as HTMLElement
         this.resizeObserver?.observe(element)
         element?.addEventListener('scroll', this.updatePosition)
+        this.topRightSlotWidth =
+            this.$refs.dlTabsRef?.parentNode?.parentNode?.children?.[2]
+                ?.clientWidth || 0
     },
     unmounted() {
         this.unsubscribeListeners()
@@ -124,7 +147,6 @@ export default defineComponent({
         },
         initTabs() {
             const element = this.$refs.dlTabsRef as HTMLElement
-            this.height = element.offsetHeight - 1 + 'px'
 
             Array.from(element.children).forEach((children: Element) => {
                 this.children.push(children as HTMLElement)
@@ -148,7 +170,6 @@ export default defineComponent({
         },
         updatePosition() {
             const element = this.$refs.dlTabsRef as HTMLElement
-            this.height = element.offsetHeight - 1 + 'px'
 
             const lastLeft = this.children.findIndex((child, index) => {
                 return child.offsetLeft >= element.scrollLeft
@@ -182,6 +203,24 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.dl-tabs-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    max-width: 100%;
+}
+
+.dl-tabs-root {
+    max-width: calc(100% - var(--dl-tabs-top-right-slot-width));
+}
+
+.empty-space {
+    display: flex;
+    flex-grow: 1;
+    border-bottom: var(--dl-empty-space-border);
+    max-height: calc(100% - 1px);
+}
+
 .dl-tabs-container {
     position: relative;
     text-align: center;

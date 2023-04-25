@@ -25,7 +25,7 @@
             flat
             padding="0"
             :disabled="isAtEnd"
-            class="arrow-button"
+            :class="rightArrowClass"
             @click="handleRightArrowClick"
         >
             <dl-icon
@@ -55,6 +55,15 @@ export default defineComponent({
     computed: {
         buttonSize(): string {
             return this.isVertical ? 's' : 'm'
+        },
+        hasTopRightSlot(): boolean {
+            return !!this.$parent.$slots['top-right']
+        },
+        rightArrowClass(): string {
+            if (this.hasTopRightSlot && !this.isVertical) {
+                return 'arrow-button--right'
+            }
+            return 'arrow-button'
         }
     },
     methods: {
@@ -76,6 +85,14 @@ export default defineComponent({
     max-width: 100%;
     display: flex;
     align-items: center;
+}
+
+.arrow-button {
+    &--right {
+        border-bottom: 1px solid var(--dl-color-separator);
+        height: calc(100% - 1px);
+        display: flex;
+    }
 }
 
 .tabs {
