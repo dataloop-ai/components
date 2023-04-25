@@ -1,3 +1,4 @@
+/* eslint-disable vue/one-component-per-file */
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue-demi'
 import { describe, it, expect, beforeAll } from 'vitest'
@@ -29,7 +30,7 @@ describe('DlMenu', () => {
         })
     })
 
-    it('should build component correctly', async () => {
+    it('should build component correctly', () => {
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.props()).toStrictEqual({
             anchor: 'bottom left',
@@ -55,7 +56,6 @@ describe('DlMenu', () => {
             touchPosition: false,
             transitionDuration: 300
         })
-
         expect(wrapper.vm.showing).toBe(false)
     })
 
