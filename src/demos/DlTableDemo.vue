@@ -113,6 +113,7 @@
                 style="height: 500px"
                 :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
+                @th-click="log"
                 @update:selected="updateSeleted"
             />
 

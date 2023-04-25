@@ -280,9 +280,12 @@ export default defineComponent({
                 })
             }
 
-            registerTick(() => {
-                updatePosition()
-            })
+            registerTick(
+                () => {
+                    updatePosition()
+                },
+                { continuous: true }
+            )
 
             registerTimeout(() => {
                 // required in order to avoid the "double-tap needed" issue
@@ -370,7 +373,7 @@ export default defineComponent({
             })
         }
 
-        async function updatePosition() {
+        const updatePosition = async () => {
             const el = innerRef.value
 
             if (el === null || anchorEl.value === null) {
@@ -380,6 +383,7 @@ export default defineComponent({
             const isAnchorElVisible = await CheckAnchorElVisiblity(
                 anchorEl.value
             )
+
             if (!isAnchorElVisible) {
                 hide()
                 return

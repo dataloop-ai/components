@@ -1,26 +1,36 @@
+/* eslint-disable vue/one-component-per-file */
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue-demi'
-import { describe, it, expect, vi } from 'vitest'
-import { DlMenu } from '../../src/components'
-
-const Parent = defineComponent({
-    name: 'DlParent',
-    template: '<div id="parent"><slot></slot></div>'
-})
+import { describe, it, expect, beforeAll } from 'vitest'
+import { DlButton, DlMenu } from '../../src/components'
 
 describe('DlMenu', () => {
-    vi.useFakeTimers()
-    it('should display menu content', async () => {
-        const wrapper = mount(DlMenu, {
-            parentComponent: Parent,
+    const parent = defineComponent({
+        name: 'ParentComponent',
+        template: '<div id="parent"><slot></slot></div>'
+    })
+    const slot = defineComponent({
+        name: 'MenuSlot',
+        template: '<div id="innerSlot" >TestMe</div>'
+    })
+    let wrapper: any
+
+    beforeAll(() => {
+        wrapper = mount(DlMenu, {
+            parentComponent: parent,
             data() {
                 return {
                     showing: false
                 }
             },
-            props: {}
+            props: {},
+            slots: {
+                default: slot
+            }
         })
+    })
 
+    it('should build component correctly', () => {
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.props()).toStrictEqual({
             anchor: 'bottom left',
@@ -47,22 +57,29 @@ describe('DlMenu', () => {
             transitionDuration: 300,
             arrowNavItems: []
         })
-
         expect(wrapper.vm.showing).toBe(false)
+    })
 
-        // expect(wrapper.vm.anchorOrigin).toBe('bottom start')
+    describe('when clicking the parent div', () => {
+        let slot: HTMLDivElement
 
-        await wrapper.vm.$el.parentNode.dispatchEvent(new MouseEvent('click'))
-        vi.runAllTimers()
+        beforeAll(async () => {
+            await wrapper.vm.$el.parentNode.dispatchEvent(
+                new MouseEvent('click')
+            )
 
-        // expect(wrapper.emitted()).not.toHaveProperty('click')
+            await new Promise<void>((resolve, reject) => {
+                requestAnimationFrame(() => resolve())
+            })
 
-        // await wrapper.setProps({ clickable: true })
+            await wrapper.vm.$nextTick()
 
-        // expect(wrapper.vm.isClickable).toBe(true)
-
-        // await wrapper.find('div').trigger('click')
-
-        // expect(wrapper.emitted()).toHaveProperty('click')
+            slot = document.querySelector('#innerSlot') as HTMLDivElement
+        })
+        it('should show the menu', () => {
+            expect(wrapper.vm.showing).toBe(true)
+            expect(slot).to.exist
+            expect(slot.innerHTML).to.equal('TestMe')
+        })
     })
 })
