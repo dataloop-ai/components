@@ -9,11 +9,7 @@ export default function () {
     let animationFrameId: number | undefined
 
     onBeforeUnmount(() => {
-        tickFn = null
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId)
-        }
-        animationFrameId = null
+        removeTick()
     })
 
     const registerTick = (
@@ -43,6 +39,10 @@ export default function () {
 
     const removeTick = () => {
         tickFn = null
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId)
+        }
+        animationFrameId = null
     }
 
     return {
