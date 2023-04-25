@@ -347,7 +347,7 @@ export default defineComponent({
 }
 
 .dl-button-icon {
-    margin: var(--dl-button-icon-margin, '0px 7px 0px 0px');
+    margin: var(--dl-button-icon-margin, 0px 7px 0px 0px);
 }
 
 .dl-button-container {
