@@ -160,10 +160,13 @@
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
+            :arrow-nav-items="arrowNavItems"
             @before-show="onBeforeShow"
             @show="onShow"
             @before-hide="onBeforeHide"
             @hide="onHide"
+            @highlightedIndex="setHighlightedIndex"
+            @handleSelectedItem="handleSelectedItem"
         >
             <slot />
         </dl-menu>
@@ -240,7 +243,11 @@ export default defineComponent({
         fitContent: Boolean,
         noWrap: { type: Boolean, default: false, required: false },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        arrowNavItems: {
+            type: [String, Array, Object],
+            default: () => [] as any[]
+        }
     },
     emits: [
         'update:model-value',
@@ -249,7 +256,9 @@ export default defineComponent({
         'before-show',
         'show',
         'before-hide',
-        'hide'
+        'hide',
+        'highlightedIndex',
+        'handleSelectedItem'
     ],
 
     setup(props, { emit }) {
@@ -361,6 +370,12 @@ export default defineComponent({
                 (menuRef.value as Record<string, Function>).hide(evt)
             }
         }
+        const setHighlightedIndex = (value: any) => {
+            emit('highlightedIndex', value)
+        }
+        const handleSelectedItem = (value: any) => {
+            emit('handleSelectedItem', value)
+        }
 
         onMounted(() => {
             if (props.modelValue) {
@@ -393,7 +408,9 @@ export default defineComponent({
             show,
             hide,
             menuModel,
-            props
+            props,
+            setHighlightedIndex,
+            handleSelectedItem
         }
     }
 })
