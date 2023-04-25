@@ -5,8 +5,8 @@ import { nextTick, onBeforeUnmount } from 'vue-demi'
  * @returns {Object} registerTick, removeTick
  */
 export default function () {
-    let tickFn: Function | undefined
-    let animationFrameId: number | undefined
+    let tickFn: Function | null = null
+    let animationFrameId: number | null = null
 
     onBeforeUnmount(() => {
         removeTick()
