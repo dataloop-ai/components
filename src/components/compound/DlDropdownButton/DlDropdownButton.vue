@@ -65,6 +65,7 @@
                 }`"
             />
             <dl-icon
+                class="expand-icon"
                 :class="iconClass"
                 :icon="dropdownIcon"
                 :size="iconSize"
@@ -159,10 +160,13 @@
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
+            :arrow-nav-items="arrowNavItems"
             @before-show="onBeforeShow"
             @show="onShow"
             @before-hide="onBeforeHide"
             @hide="onHide"
+            @highlightedIndex="setHighlightedIndex"
+            @handleSelectedItem="handleSelectedItem"
         >
             <slot />
         </dl-menu>
@@ -239,7 +243,11 @@ export default defineComponent({
         fitContent: Boolean,
         noWrap: { type: Boolean, default: false, required: false },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        arrowNavItems: {
+            type: [String, Array, Object],
+            default: () => [] as any[]
+        }
     },
     emits: [
         'update:model-value',
@@ -248,7 +256,9 @@ export default defineComponent({
         'before-show',
         'show',
         'before-hide',
-        'hide'
+        'hide',
+        'highlightedIndex',
+        'handleSelectedItem'
     ],
 
     setup(props, { emit }) {
@@ -360,6 +370,12 @@ export default defineComponent({
                 (menuRef.value as Record<string, Function>).hide(evt)
             }
         }
+        const setHighlightedIndex = (value: any) => {
+            emit('highlightedIndex', value)
+        }
+        const handleSelectedItem = (value: any) => {
+            emit('handleSelectedItem', value)
+        }
 
         onMounted(() => {
             if (props.modelValue) {
@@ -392,7 +408,9 @@ export default defineComponent({
             show,
             hide,
             menuModel,
-            props
+            props,
+            setHighlightedIndex,
+            handleSelectedItem
         }
     }
 })
@@ -475,8 +493,29 @@ export default defineComponent({
             }
         }
     }
+
+    .expand-icon {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center;
+        color: var(--dl-color-medium);
+        transition-property: transform, -webkit-transform;
+        transition-duration: 0.28s, 0.28s;
+        transition-timing-function: ease, ease;
+        transition-delay: 0s, 0s;
+        &.expanded {
+            transform: rotate(180deg);
+        }
+    }
 }
 ::v-deep .dl-button-no-wrap {
     flex-grow: 1;
+}
+</style>
+<style lang="scss">
+.dl-btn-dropdown {
+    .dl-btn-content {
+        line-height: unset;
+    }
 }
 </style>

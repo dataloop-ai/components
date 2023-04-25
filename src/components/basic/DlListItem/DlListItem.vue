@@ -100,7 +100,10 @@ export default defineComponent({
             default: '12px'
         },
         height: { type: String, default: null, required: false },
-        padding: { type: String, default: null, required: false }
+        padding: { type: String, default: null, required: false },
+        isHighlighted: {
+            type: Boolean
+        }
     },
     emits: ['click'],
     data() {
@@ -123,7 +126,10 @@ export default defineComponent({
                 '--dl-list-item-border': itemBorder(this.bordered),
                 '--dl-list-item-color': itemColor(this.disabled),
                 '--dl-list-item-height': this.height ?? '28px',
-                '--dl-list-item-padding': this.padding ?? '0px 10px'
+                '--dl-list-item-padding': this.padding ?? '0px 10px',
+                '--dl-list-item-bg-color': this.isHighlighted
+                    ? 'var(--dl-color-fill-hover)'
+                    : 'transparent'
             }
         }
     },
@@ -144,7 +150,7 @@ export default defineComponent({
 
 .dl-list-item {
     -webkit-tap-highlight-color: transparent;
-    background-color: transparent;
+    background-color: var(--dl-list-item-bg-color);
     outline: 0px;
     border: 0px;
     margin: 0px;
