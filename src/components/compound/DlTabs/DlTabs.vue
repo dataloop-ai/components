@@ -125,8 +125,8 @@ export default defineComponent({
         this.resizeObserver?.observe(element)
         element?.addEventListener('scroll', this.updatePosition)
         this.topRightSlotWidth =
-            this.$refs.dlTabsRef?.parentNode?.parentNode?.children?.[2]
-                ?.clientWidth || 0
+            (this.$refs.dlTabsRef as HTMLElement)?.parentNode?.parentNode
+                ?.children?.[2]?.clientWidth || 0
     },
     unmounted() {
         this.unsubscribeListeners()
