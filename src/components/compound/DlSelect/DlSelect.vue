@@ -172,6 +172,7 @@
                         :highlight-selected="highlightSelected"
                         total-items
                         @update:model-value="selectAll"
+                        @depth-change="handleDepthChange"
                     >
                         <slot
                             v-if="hasAllItemsSlot"
@@ -201,6 +202,7 @@
                         @click="selectOption(option)"
                         @selected="handleSelected"
                         @deselected="handleDeselected"
+                        @depth-change="handleDepthChange"
                     >
                         <slot
                             v-if="hasOptionSlot"
@@ -560,6 +562,15 @@ export default defineComponent({
         this.setSelectedIndex()
     },
     methods: {
+        handleDepthChange() {
+            // todo: remove this hack
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    // @ts-ignore
+                    this.$refs.menu?.updatePosition()
+                })
+            }, 100)
+        },
         isPrimitiveValue(option: any): boolean {
             return (
                 typeof option === 'string' ||
