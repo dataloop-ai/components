@@ -157,40 +157,40 @@
                         </dl-list-item>
                     </dl-list>
                 </dl-menu>
+                <div
+                    v-if="bottomMessage"
+                    class="dl-text-input__bottom-message-container"
+                >
+                    <dl-info-error-message
+                        v-if="!!infoMessage.length && !error && !warning"
+                        position="below"
+                        :value="infoMessage"
+                    />
+                    <dl-info-error-message
+                        v-if="error && !!errorMessage && !!errorMessage.length"
+                        position="below"
+                        error
+                        :value="errorMessage"
+                    />
+                    <dl-info-error-message
+                        v-if="
+                            warning &&
+                                !!warningMessage &&
+                                !!warningMessage.length &&
+                                !error
+                        "
+                        position="below"
+                        warning
+                        :value="warningMessage"
+                    />
+                    <span
+                        v-if="showCounter && maxLength && maxLength > 0"
+                        class="dl-text-input__counter"
+                    >
+                        {{ characterCounter }}
+                    </span>
+                </div>
             </div>
-        </div>
-        <div
-            v-if="bottomMessage"
-            class="dl-text-input__bottom-message-container"
-        >
-            <dl-info-error-message
-                v-if="!!infoMessage.length && !error && !warning"
-                position="below"
-                :value="infoMessage"
-            />
-            <dl-info-error-message
-                v-if="error && !!errorMessage && !!errorMessage.length"
-                position="below"
-                error
-                :value="errorMessage"
-            />
-            <dl-info-error-message
-                v-if="
-                    warning &&
-                        !!warningMessage &&
-                        !!warningMessage.length &&
-                        !error
-                "
-                position="below"
-                warning
-                :value="warningMessage"
-            />
-            <span
-                v-if="showCounter && maxLength && maxLength > 0"
-                class="dl-text-input__counter"
-            >
-                {{ characterCounter }}
-            </span>
         </div>
     </div>
 </template>
@@ -610,12 +610,6 @@ export default defineComponent({
 
     &--without-root-padding {
         padding: 0;
-    }
-
-    &--s {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
     }
 
     &__title-container {
