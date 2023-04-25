@@ -34,6 +34,7 @@
         <dl-button
             v-show="withSearchBtn"
             padding="9px 16px"
+            style="width: 20%; min-width: fit-content"
             :size="size"
             :class="buttonClasses"
             fluid
