@@ -90,6 +90,7 @@
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect"
                     @deselected="handleSingleDeselect"
+                    @depth-change="$emit('depth-change')"
                 />
             </div>
         </div>
@@ -135,7 +136,13 @@ export default defineComponent({
         label: { type: String, default: null },
         capitalized: { type: Boolean, default: false }
     },
-    emits: ['update:model-value', 'click', 'selected', 'deselected'],
+    emits: [
+        'update:model-value',
+        'click',
+        'selected',
+        'deselected',
+        'depth-change'
+    ],
     data() {
         return {
             showChildren: false,
@@ -190,6 +197,7 @@ export default defineComponent({
         },
         chevronClick(e: Event) {
             e.stopPropagation()
+            this.$emit('depth-change')
             this.handleChildren(e)
         },
         toggleChildren() {

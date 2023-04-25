@@ -102,184 +102,221 @@
 
         <div style="display: flex; gap: 20px; flex-direction: column">
             <h2>One Button</h2>
-            <dl-dropdown-button
-                auto-close
-                outlined
-                label="Dropdown Button Outlined"
+            <div
+                class="grid grid-cols-3"
+                style="column-gap: 10px"
             >
-                <dl-list>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
+                <dl-dropdown-button
+                    auto-close
+                    outlined
+                    label="Dropdown Button Outlined"
+                >
+                    <dl-list>
+                        <dl-list-item clickable>
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
+                        <dl-list-item clickable>
+                            <dl-item-section> Videos </dl-item-section>
+                        </dl-list-item>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                </dl-list>
-            </dl-dropdown-button>
+                        <dl-list-item clickable>
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
 
-            <dl-dropdown-button
-                disabled
-                auto-close
-                outlined
-                label="Dropdown Button Outlined"
+                <dl-dropdown-button
+                    disabled
+                    auto-close
+                    outlined
+                    label="Dropdown Button Outlined"
+                >
+                    <dl-list>
+                        <dl-list-item clickable>
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Videos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
+
+                <dl-dropdown-button
+                    auto-close
+                    label="Dropdown Button Contained"
+                    max-height="210px"
+                >
+                    <dl-list>
+                        <dl-list-item clickable>
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Videos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                        <dl-list-item clickable>
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Videos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                        <dl-list-item clickable>
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Videos </dl-item-section>
+                        </dl-list-item>
+
+                        <dl-list-item clickable>
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
+            </div>
+
+            <div
+                class="grid grid-cols-3"
+                style="column-gap: 10px"
             >
-                <dl-list>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
+                <dl-dropdown-button
+                    auto-close
+                    :model-value="showing"
+                    :label="name"
+                    main-btn-style="width: 150px;"
+                    @show="onOpen"
+                >
+                    <dl-list>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Photos')"
+                        >
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Videos and long text')"
+                        >
+                            <dl-item-section>
+                                Videos and long text
+                            </dl-item-section>
+                        </dl-list-item>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Movies and long text')"
+                        >
+                            <dl-item-section>
+                                Movies and long text
+                            </dl-item-section>
+                        </dl-list-item>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                </dl-list>
-            </dl-dropdown-button>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Articles')"
+                        >
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
 
-            <dl-dropdown-button
-                auto-close
-                label="Dropdown Button Contained"
-                max-height="210px"
-            >
-                <dl-list>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
+                <dl-dropdown-button
+                    auto-close
+                    :model-value="showing"
+                    label="Ellipsis for very long text"
+                    main-btn-style="width: 150px;"
+                    :overflow="true"
+                    :no-wrap="true"
+                    tooltip="Tooltip message"
+                    @show="onOpen"
+                >
+                    <dl-list>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Photos')"
+                        >
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Videos and long text')"
+                        >
+                            <dl-item-section :no-wrap="true">
+                                <dl-ellipsis
+                                    text="Very very very very long long long long text text text"
+                                    :middle-ellipsis="true"
+                                />
+                            </dl-item-section>
+                        </dl-list-item>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Movies and long text')"
+                        >
+                            <dl-item-section :no-wrap="true">
+                                <dl-ellipsis
+                                    text="Very very very very long long long long text text text"
+                                />
+                            </dl-item-section>
+                        </dl-list-item>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
+                        <dl-list-item
+                            clickable
+                            @click="() => onClose('Articles')"
+                        >
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
 
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                </dl-list>
-            </dl-dropdown-button>
-
-            <dl-dropdown-button
-                auto-close
-                :model-value="showing"
-                :label="name"
-                main-btn-style="width: 150px;"
-                @show="onOpen"
-            >
-                <dl-list>
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Photos')"
-                    >
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Videos and long text')"
-                    >
-                        <dl-item-section>
-                            Videos and long text
-                        </dl-item-section>
-                    </dl-list-item>
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Movies and long text')"
-                    >
-                        <dl-item-section>
-                            Movies and long text
-                        </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Articles')"
-                    >
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                </dl-list>
-            </dl-dropdown-button>
-
-            <dl-dropdown-button
-                auto-close
-                :model-value="showing"
-                label="Ellipsis for very long text"
-                main-btn-style="width: 150px;"
-                :overflow="true"
-                :no-wrap="true"
-                tooltip="Tooltip message"
-                @show="onOpen"
-            >
-                <dl-list>
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Photos')"
-                    >
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Videos and long text')"
-                    >
-                        <dl-item-section :no-wrap="true">
-                            <dl-ellipsis
-                                text="Very very very very long long long long text text text"
-                                :middle-ellipsis="true"
-                            />
-                        </dl-item-section>
-                    </dl-list-item>
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Movies and long text')"
-                    >
-                        <dl-item-section :no-wrap="true">
-                            <dl-ellipsis
-                                text="Very very very very long long long long text text text"
-                            />
-                        </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Articles')"
-                    >
-                        <dl-item-section> Articles </dl-item-section>
-                    </dl-list-item>
-                </dl-list>
-            </dl-dropdown-button>
+                <dl-dropdown-button
+                    auto-close
+                    :model-value="showing"
+                    :label="arrowNavigationLabel"
+                    main-btn-style="width: 150px;"
+                    :overflow="true"
+                    :no-wrap="true"
+                    tooltip="Tooltip message"
+                    :arrow-nav-items="listItems"
+                    @show="onOpen"
+                    @highlightedIndex="setHighlightedIndex"
+                    @handleSelectedItem="handleSelectedItem"
+                >
+                    <dl-list>
+                        <dl-list-item
+                            v-for="(item, index) in listItems"
+                            :key="index"
+                            clickable
+                            :is-highlighted="index === highlightedIndex"
+                        >
+                            <dl-item-section>
+                                {{ item }}
+                            </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 import {
     DlListItem,
     DlItemSection,
@@ -297,23 +334,52 @@ export default defineComponent({
         DlDropdownButton,
         DlEllipsis
     },
-    data() {
-        return {
-            name: 'Dropdown Button Controlled',
-            showing: false
+    setup() {
+        const highlightedIndex = ref(-1)
+        const name = ref('Dropdown Button Controlled')
+        const showing = ref(false)
+        const arrowNavigationLabel = ref('Arrow Navigation Label')
+
+        const listItems = ref([
+            'New tab',
+            'New incognito tab',
+            'Recent tabs',
+            'History',
+            'Downloads',
+            'Settings',
+            'Help & Feedback'
+        ])
+
+        const handleSelectedItem = (value: any) => {
+            arrowNavigationLabel.value = value
+            showing.value = false
         }
-    },
-    methods: {
-        onClose(name: string) {
-            this.name = name
-            this.showing = false
-            alert(this.name)
-        },
-        onOpen() {
-            this.showing = true
-        },
-        onClick() {
-            alert(this.name)
+        const onClose = (newName: string) => {
+            name.value = newName
+            showing.value = false
+            alert(name.value)
+        }
+        const onOpen = () => {
+            showing.value = true
+        }
+        const onClick = () => {
+            alert(name.value)
+        }
+        const setHighlightedIndex = (value: number) => {
+            highlightedIndex.value = value
+        }
+
+        return {
+            listItems,
+            onClose,
+            onOpen,
+            onClick,
+            name,
+            showing,
+            setHighlightedIndex,
+            handleSelectedItem,
+            highlightedIndex,
+            arrowNavigationLabel
         }
     }
 })

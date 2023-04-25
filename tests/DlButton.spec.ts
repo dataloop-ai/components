@@ -90,7 +90,7 @@ describe('DlButton', () => {
             textColor: ''
         })
 
-        const button = wrapper.find('button')
+        const button = wrapper.find('.dl-button-container')
 
         expect(
             button.element.style.getPropertyValue('--dl-button-border-radius')

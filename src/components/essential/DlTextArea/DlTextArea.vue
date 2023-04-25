@@ -7,29 +7,60 @@
         <textarea
             ref="textarea"
             :value="modelValue"
-            class="textarea"
+            :class="textareaClasses"
             :placeholder="placeholder"
             :maxlength="maxLength"
             :disabled="disabled"
-            :class="!enableResize ? 'textarea-disable-resize' : ''"
             @input="onChange"
             @keydown="onKeydown"
             @focus="onFocus"
             @blur="onBlur"
         />
-        <span v-show="showCounter">
-            {{ modelValue.length
-            }}{{ maxLength && maxLength > 0 ? `/${maxLength}` : null }}
-        </span>
+        <div
+            v-if="bottomMessage || showCounter"
+            class="dl-textarea--bottom-container"
+        >
+            <dl-info-error-message
+                v-if="!!infoMessage.length && !error && !warning"
+                position="below"
+                :value="infoMessage"
+            />
+            <dl-info-error-message
+                v-if="error && !!errorMessage && !!errorMessage.length"
+                position="below"
+                error
+                :value="errorMessage"
+            />
+            <dl-info-error-message
+                v-if="
+                    warning &&
+                        !!warningMessage &&
+                        !!warningMessage.length &&
+                        !error
+                "
+                position="below"
+                warning
+                :value="warningMessage"
+            />
+            <span v-show="showCounter">
+                {{ modelValue.length
+                }}{{ maxLength && maxLength > 0 ? `/${maxLength}` : null }}
+            </span>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { DlInfoErrorMessage } from '../../shared'
+import { defineComponent, computed, ref } from 'vue-demi'
+import { useSizeObserver } from '../../../hooks/use-size-observer'
 
 export default defineComponent({
     name: 'DlTextArea',
+    components: {
+        DlInfoErrorMessage
+    },
     model: {
         prop: 'modelValue',
         event: 'update:model-value'
@@ -62,19 +93,72 @@ export default defineComponent({
         enableResize: {
             type: Boolean,
             default: false
+        },
+        infoMessage: {
+            type: String,
+            default: ''
+        },
+        errorMessage: {
+            type: String,
+            default: ''
+        },
+        error: {
+            type: Boolean,
+            default: false
+        },
+        warningMessage: {
+            type: String,
+            default: ''
+        },
+        warning: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['input', 'focus', 'blur', 'update:model-value', 'keydown'],
-    data() {
-        return {
-            uuid: `dl-text-area-${v4()}`
-        }
-    },
-    computed: {
-        cssVars(): Record<string, string> {
+    setup(props) {
+        const uuid = ref(`dl-text-area-${v4()}`)
+        const textarea = ref(null)
+
+        const { borderBoxSize } = useSizeObserver(textarea)
+
+        const cssVars = computed(() => {
             return {
-                '--dl-textarea-width': this.width || 'auto'
+                '--dl-textarea-max-width': props.width || 'auto',
+                '--dl-textarea-width':
+                    borderBoxSize.value?.[0].inlineSize + 'px' || '100%'
             }
+        })
+
+        const bottomMessage = computed(() => {
+            return (
+                !!props.infoMessage?.length ||
+                !!props.errorMessage?.length ||
+                !!props.warningMessage?.length
+            )
+        })
+
+        const textareaClasses = computed(() => {
+            const classes = ['dl-textarea']
+            if (props.error) {
+                classes.push('dl-textarea--error')
+            } else if (props.warning) {
+                classes.push('dl-textarea--warning')
+            }
+
+            if (!props.enableResize) {
+                classes.push('dl-textarea--disable-resize')
+            }
+
+            return classes
+        })
+
+        return {
+            uuid,
+            cssVars,
+            bottomMessage,
+            textareaClasses,
+            textarea
         }
     },
     methods: {
@@ -109,10 +193,10 @@ export default defineComponent({
     flex-direction: column;
     align-items: flex-end;
     width: 100%;
-    max-width: var(--dl-textarea-width);
+    max-width: var(--dl-textarea-max-width);
 }
 
-.textarea {
+.dl-textarea {
     background: none;
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
@@ -152,8 +236,29 @@ export default defineComponent({
         color: rgba(0, 0, 0, 0);
     }
 
-    &-disable-resize {
+    &--disable-resize {
         resize: none;
+    }
+
+    &--error {
+        border-color: var(--dl-color-negative);
+        &:hover {
+            border-color: var(--dl-color-separator) !important;
+        }
+    }
+
+    &--warning {
+        border-color: var(--dl-color-warning);
+        &:hover {
+            border-color: var(--dl-color-separator) !important;
+        }
+    }
+
+    &--bottom-container {
+        display: flex;
+        justify-content: space-between;
+        text-align: left;
+        width: var(--dl-textarea-width);
     }
 }
 
