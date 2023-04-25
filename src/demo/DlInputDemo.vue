@@ -89,17 +89,34 @@
             error
             error-message="Error message is the strongest."
         />
+        <p>input in a row with button</p>
+        <div class="row">
+            <dl-input
+                class="input-parts"
+                style="width: 440px"
+                placeholder="Select option"
+                title="Min"
+                without-root-padding
+                size="s"
+            />
+            <dl-button
+                dense
+                flat
+                icon="icon-dl-add"
+                size="m"
+            />
+        </div>
     </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlInput, DlIcon } from '../components'
+import { DlInput, DlIcon, DlButton } from '../components'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
         DlInput,
-        DlIcon
+        DlIcon,
+        DlButton
     },
     setup() {
         const textInputValue = ref<string>('')
@@ -118,3 +135,4 @@ export default defineComponent({
     }
 })
 </script>
+<style></style>
