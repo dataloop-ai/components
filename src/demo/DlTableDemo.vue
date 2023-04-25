@@ -215,6 +215,37 @@
                     />
                 </div>
             </div>
+            <div>
+                <p>#no-data & #pagination declare together</p>
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="columns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 200px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #pagination>
+                        pagination slot, no-data slot should be visible too
+                    </template>
+                    <template #no-data>
+                        no-data slot, pagination slot should be visible too
+                    </template>
+                </DlTable>
+            </div>
         </div>
     </div>
 </template>

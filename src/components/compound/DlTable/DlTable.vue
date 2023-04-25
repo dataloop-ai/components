@@ -408,19 +408,17 @@
         </div>
 
         <div
-            v-if="hasPaginationSlot"
-            class="dl-table__control"
-        >
-            <slot
-                v-bind="marginalsScope"
-                name="pagination"
-            />
-        </div>
-
-        <div
-            v-else-if="!hideBottom || hideNoData"
+            v-if="!hideBottom"
             :class="bottomClasses"
         >
+            <div class="dl-table__control">
+                <slot
+                    v-if="nothingToDisplay && !hideNoData"
+                    name="no-data"
+                >
+                    {{ bottomMessage }}
+                </slot>
+            </div>
             <div class="dl-table__control">
                 <slot
                     name="bottom"
@@ -434,20 +432,21 @@
                             {{ selectedRowsLabel(rowsSelectedNumber) }}
                         </div>
                     </div>
-                    <dl-pagination
-                        v-if="displayPagination"
-                        v-bind="marginalsScope.pagination"
-                        @update:rowsPerPage="
-                            (v) => setPagination({ rowsPerPage: v })
-                        "
-                        @update:modelValue="(v) => setPagination({ page: v })"
-                    />
 
                     <slot
-                        v-if="nothingToDisplay && !hideNoData"
-                        name="no-data"
+                        v-bind="marginalsScope"
+                        name="pagination"
                     >
-                        {{ bottomMessage }}
+                        <dl-pagination
+                            v-if="displayPagination"
+                            v-bind="marginalsScope.pagination"
+                            @update:rowsPerPage="
+                                (v) => setPagination({ rowsPerPage: v })
+                            "
+                            @update:modelValue="
+                                (v) => setPagination({ page: v })
+                            "
+                        />
                     </slot>
                 </slot>
             </div>
@@ -1118,6 +1117,7 @@ export default defineComponent({
         function onVScroll(info: ScrollDetails) {
             emit('virtual-scroll', info)
         }
+
         //
 
         const onTrClick = (
