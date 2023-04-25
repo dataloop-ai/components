@@ -60,10 +60,20 @@ type Expression = {
 }
 
 const space = ' '
-const dateIntervalSuggestionString = 'From dd/mm/yyyy To dd/mm/yyyy'
+const dateStartSuggestionString = '(From dd/mm/yyyy)'
+const dateEndSuggestionString = '(To dd/mm/yyyy)'
+const dateIntervalSuggestionString = '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
 
 let localSuggestions: Suggestion[] = []
 
+export const startDatePattern = new RegExp(
+    /(from\s?\d{2}\/\d{2}\/\d{4}\s?|from\s?dd\/mm\/yyyy\s?)/,
+    'gi'
+)
+export const endDatePattern = new RegExp(
+    /(to\s?\d{2}\/\d{2}\/\d{4}\s?|to\s?dd\/mm\/yyyy\s?)/,
+    'gi'
+)
 export const dateIntervalPattern = new RegExp(
     /(from\s?\d{2}\/\d{2}\/\d{4}\s?to\s?\d{2}\/\d{2}\/\d{4})|(from\s?dd\/mm\/yyyy\s?to\s?dd\/mm\/yyyy)/,
     'gi'
@@ -139,7 +149,11 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
                 dataType === 'date' ||
                 dataType === 'time'
             ) {
-                localSuggestions = [dateIntervalSuggestionString]
+                localSuggestions = [
+                    dateIntervalSuggestionString,
+                    dateStartSuggestionString,
+                    dateEndSuggestionString
+                ]
 
                 if (!value) continue
 
@@ -246,7 +260,11 @@ const validateBracketValues = (value: string) => {
 }
 
 const isValidDateIntervalPattern = (str: string) => {
-    return !!str.match(dateIntervalPattern)
+    return (
+        !!str.match(dateIntervalPattern) ||
+        !!str.match(startDatePattern) ||
+        !!str.match(endDatePattern)
+    )
 }
 
 const isValidNumber = (str: string) => {

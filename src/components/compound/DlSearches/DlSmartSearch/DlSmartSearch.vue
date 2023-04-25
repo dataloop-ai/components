@@ -108,7 +108,11 @@ import {
     removeBrackets
 } from '../../../../hooks/use-suggestions'
 import { Filter, Query, ColorSchema, SearchStatus } from './types'
-import { replaceAliases, createColorSchema } from './utils/utils'
+import {
+    replaceAliases,
+    replaceWithJsDates,
+    createColorSchema
+} from './utils/utils'
 import { v4 } from 'uuid'
 import { parseSmartQuery } from '../../../../utils'
 
@@ -178,6 +182,9 @@ export default defineComponent({
         const saveQueryDialogBoxModel = ref(false)
         const newQueryName = ref('')
         const isFocused = ref(false)
+        const isQuerying = ref(false)
+
+        let oldInputQuery = ''
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -189,15 +196,24 @@ export default defineComponent({
             const json = JSON.stringify(toJSON(removeBrackets(value)))
             activeQuery.value.query = replaceAliases(json, props.aliases)
             findSuggestions(value)
+            isQuerying.value = false
+            oldInputQuery = value
         }
 
         const toJSON = (value: string) => {
-            return parseSmartQuery(value ?? inputModel.value)
+            return parseSmartQuery(
+                replaceWithJsDates(value) ?? inputModel.value
+            )
         }
 
         const setFocused = (value: boolean) => {
             isFocused.value = value
             findSuggestions(inputModel.value)
+
+            if (value) {
+                inputModel.value = oldInputQuery
+                isQuerying.value = false
+            }
             if (!value && !error) {
                 toJSON(inputModel.value)
             }
@@ -215,6 +231,7 @@ export default defineComponent({
             error,
             newQueryName,
             isFocused,
+            isQuerying,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -243,6 +260,7 @@ export default defineComponent({
             return createColorSchema(this.colorSchema, this.aliases)
         },
         computedStatus(): SearchStatus {
+            if (this.isQuerying) return
             if (!this.error && this.inputModel !== '') {
                 return {
                     type: 'success',
@@ -267,6 +285,7 @@ export default defineComponent({
             this.inputModel = `Query "${this.activeQuery.name}" ${
                 val ? 'is running' : ''
             }`
+            this.isQuerying = true
         }
     },
     methods: {

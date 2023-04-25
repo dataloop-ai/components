@@ -46,7 +46,7 @@ describe('replaceDateInterval', () => {
                 }
             )
         ).toEqual(
-            'field = (From (12/12/22) To (22/12/22)) AND field = (From (dd/mm/yyyy) To (dd/mm/yyyy))'
+            'field = (From (12/12/22) To (22/12/22)) AND field = (From (02/12/2022) To (22/12/2022))'
         )
     })
 

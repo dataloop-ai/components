@@ -1,5 +1,49 @@
 import { ColorSchema, SyntaxColorSchema } from '../types'
-import { operators, Alias } from '../../../../../hooks/use-suggestions'
+import {
+    operators,
+    Alias,
+    startDatePattern,
+    endDatePattern,
+    dateIntervalPattern
+} from '../../../../../hooks/use-suggestions'
+
+export function replaceWithJsDates(str: string) {
+    const intervals = str.match(dateIntervalPattern)
+    const starts = str.match(startDatePattern)
+    const ends = str.match(endDatePattern)
+
+    intervals?.forEach((interval) => {
+        str = str.replaceAll(interval, formatToDateObj(interval))
+    })
+    starts?.forEach((start) => {
+        str = str.replaceAll(start, formatToDateObj(start))
+    })
+    ends?.forEach((end) => {
+        str = str.replaceAll(end, formatToDateObj(end))
+    })
+    return str
+}
+
+function formatToDateObj(str: string) {
+    const [day, month, year] = str.split(' ')[1].split('/')
+    const date = new Date(parseInt(year), parseInt(month), parseInt(day))
+    if (!isValidDate(date)) return str
+    const [toDay, toMonth, toYear] = str.split(' ')[3]?.split('/') || []
+    const toDate = new Date(
+        parseInt(toYear),
+        parseInt(toMonth),
+        parseInt(toDay)
+    )
+    if (!isValidDate(toDate)) return date.toISOString()
+    return JSON.stringify({
+        from: date.toISOString(),
+        to: toDate.toISOString()
+    })
+}
+
+function isValidDate(d: Date) {
+    return d instanceof Date && !isNaN(d as any)
+}
 
 export function replaceAliases(json: string, aliases: Alias[]) {
     let newJson = json
