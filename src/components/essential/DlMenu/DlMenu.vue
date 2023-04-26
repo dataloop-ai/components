@@ -79,6 +79,7 @@ import {
 } from './utils'
 import { isMobileOrTablet } from '../../../utils'
 import { v4 } from 'uuid'
+import { useArrowNavigation } from '../../../hooks/use-arrow-navigation'
 
 export default defineComponent({
     name: 'DlMenu',
@@ -140,10 +141,20 @@ export default defineComponent({
         menuClass: {
             type: String,
             default: ''
+        },
+        arrowNavItems: {
+            type: [String, Array, Object],
+            default: () => [] as any[]
         }
     },
 
-    emits: [...useModelToggleEmits, 'click', 'escape-key'],
+    emits: [
+        ...useModelToggleEmits,
+        'click',
+        'escape-key',
+        'highlightedIndex',
+        'handleSelectedItem'
+    ],
 
     setup(props, { attrs }) {
         const vm = getCurrentInstance()
@@ -242,6 +253,7 @@ export default defineComponent({
         const isMobile = computed(() => isMobileOrTablet())
 
         function handleShow(evt: MouseEvent | TouchEvent) {
+            isMenuOpen.value = true
             removeTick()
             removeTimeout()
 
@@ -268,9 +280,12 @@ export default defineComponent({
                 })
             }
 
-            registerTick(() => {
-                updatePosition()
-            })
+            registerTick(
+                () => {
+                    updatePosition()
+                },
+                { continuous: true }
+            )
 
             registerTimeout(() => {
                 // required in order to avoid the "double-tap needed" issue
@@ -287,6 +302,7 @@ export default defineComponent({
         }
 
         function handleHide(evt: ClickOutsideEvent) {
+            isMenuOpen.value = false
             removeTick()
             removeTimeout()
             hidePortal()
@@ -357,7 +373,7 @@ export default defineComponent({
             })
         }
 
-        async function updatePosition() {
+        const updatePosition = async () => {
             const el = innerRef.value
 
             if (el === null || anchorEl.value === null) {
@@ -367,6 +383,7 @@ export default defineComponent({
             const isAnchorElVisible = await CheckAnchorElVisiblity(
                 anchorEl.value
             )
+
             if (!isAnchorElVisible) {
                 hide()
                 return
@@ -392,6 +409,19 @@ export default defineComponent({
         // expose public methods
         Object.assign(proxy, { focus, updatePosition })
 
+        const isMenuOpen = ref(false)
+        const navItems = computed(() => props.arrowNavItems)
+        const { selectedItem, highlightedIndex } = useArrowNavigation(
+            navItems,
+            isMenuOpen
+        )
+        watch(selectedItem, (value: any) => {
+            emit('handleSelectedItem', value)
+        })
+        watch(highlightedIndex, (value: any) => {
+            emit('highlightedIndex', value)
+        })
+
         return {
             uuid: `dl-menu-${v4()}`,
             onClick,
@@ -402,7 +432,9 @@ export default defineComponent({
             portalEl: isVue2 ? '[data-test-id="portal"]' : portalEl,
             portalIsActive,
             classes: 'dl-menu dl-position-engine scroll' + classes.value,
-            styles: [attrs.style, transitionStyle.value] as any
+            styles: [attrs.style, transitionStyle.value] as any,
+            selectedItem,
+            highlightedIndex
         }
     }
 })
