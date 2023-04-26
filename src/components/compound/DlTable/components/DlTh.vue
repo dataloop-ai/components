@@ -49,8 +49,8 @@ export default defineComponent({
 
         const { hasEllipsis } = useSizeObserver(tableTh)
 
-        const onClickFn = (event: Event) => {
-            emit('click', event)
+        const onClickFn = (event: Event, name: string) => {
+            emit('click', event, name)
         }
 
         const hasOptionalProps = computed(() => {
@@ -98,7 +98,7 @@ export default defineComponent({
                 const sort = props.props?.sort as Function
                 sort(column.value)
             }
-            onClickFn(evt)
+            onClickFn(evt, column.value.name)
         }
 
         const onClick = !hasOptionalProps.value ? onClickFn : handleClick

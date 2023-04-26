@@ -30,6 +30,7 @@ describe('DlIcon', () => {
             icon: 'mastercard',
             size: '50px',
             color: 'dl-color-secondary',
+            styles: '',
             inline: false,
             svg: true,
             svgSource: '@dataloop-ai/icons/assets'
