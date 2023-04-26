@@ -178,7 +178,8 @@ export default defineComponent({
 
             if (value.isDisabled) return style
 
-            const disabledOpacity = 0.6
+            const disabledOpacity = 1
+            const BACKGROUND_COLOR = '#8FA0FF'
             const isToday = value.isSame(
                 new CalendarDate().startOf('day'),
                 'day'
@@ -200,7 +201,7 @@ export default defineComponent({
                 }
             } else if (this.modelValue !== null) {
                 const selectedStyle = {
-                    backgroundColor: 'var(--dl-color-secondary)',
+                    backgroundColor: BACKGROUND_COLOR,
                     color: 'var(--dl-color-text-buttons)',
                     borderRadius: '11px'
                 }

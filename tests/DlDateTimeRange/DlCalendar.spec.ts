@@ -25,6 +25,8 @@ const endOfWeek = new CustomDate()
     .date(15)
     .endOf('week')
 
+const BACKGROUND_COLOR = '#8FA0FF'
+
 for (let i = 1; i <= lastDayOfTheMonth; i++) {
     calendarDates.push(new CalendarDate(new Date(year, month, i)))
 }
@@ -145,7 +147,7 @@ describe('DlCalendar', () => {
         })
 
         expect(wrapper.vm.getInnerDayStyle(new CalendarDate(date))).toEqual({
-            backgroundColor: 'var(--dl-color-secondary)',
+            backgroundColor: BACKGROUND_COLOR,
             color: 'var(--dl-color-text-buttons)',
             borderRadius: '11px'
         })
@@ -190,7 +192,7 @@ describe('DlCalendar', () => {
         })
 
         expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({
-            backgroundColor: 'var(--dl-color-secondary)',
+            backgroundColor: BACKGROUND_COLOR,
             borderRadius: '11px',
             color: 'var(--dl-color-text-buttons)'
         })
