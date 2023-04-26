@@ -93,11 +93,11 @@ export default defineComponent({
         },
         startIconSize: {
             type: String,
-            default: '12px'
+            default: '16px'
         },
         endIconSize: {
             type: String,
-            default: '12px'
+            default: '16px'
         },
         height: { type: String, default: null, required: false },
         padding: { type: String, default: null, required: false },
