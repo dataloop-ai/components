@@ -1,7 +1,7 @@
 <template>
     <div
         class="card"
-        :style="{ width, height }"
+        :style="[{ width, height }, styles]"
     >
         <div
             v-if="icon"
@@ -26,15 +26,36 @@
         </div>
         <div class="card--content">
             <div>
-                <div class="card--header">
+                <slot
+                    v-if="!!$slots.header"
+                    name="header"
+                />
+                <div
+                    v-else
+                    class="card--header"
+                >
                     <span class="card--header_title">{{ title }}</span>
                     <span class="card--header_shortcut">{{
                         keyboardShortcut
                     }}</span>
                 </div>
-                <span class="card--content_text">{{ text }}</span>
+                <slot
+                    v-if="!!$slots.content"
+                    name="content"
+                />
+                <span
+                    v-else
+                    class="card--content_text"
+                >{{ text }}</span>
             </div>
-            <div class="card--links">
+            <slot
+                v-if="!!$slots.footer"
+                name="footer"
+            />
+            <div
+                v-else
+                class="card--links"
+            >
                 <div
                     v-for="(link, idx) in links"
                     :key="idx"
@@ -103,6 +124,10 @@ export default defineComponent({
         width: {
             type: String,
             default: '200px'
+        },
+        styles: {
+            type: [Object, String, Array],
+            default: null
         }
     }
 })
@@ -115,6 +140,7 @@ export default defineComponent({
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
     pointer-events: auto;
+    box-shadow: 0px 5px 15px 0px var(--dl-color-shadow);
 
     &--content {
         padding: 16px 10px;
