@@ -796,6 +796,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .root-container {
+    padding: 20px 20px 20px 0px;
     width: var(--dl-select-width);
     &--s {
         display: flex;

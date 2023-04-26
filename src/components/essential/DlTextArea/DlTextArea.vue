@@ -189,6 +189,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .container {
+    padding: 20px 20px 20px 0px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;

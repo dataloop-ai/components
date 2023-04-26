@@ -140,6 +140,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .root-wrapper {
+    padding: 20px 20px 20px 0px;
     display: flex;
     align-items: center;
     width: 100%;
