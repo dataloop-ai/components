@@ -359,6 +359,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.confusion-matrix-container {
+    margin: auto;
+}
 .wrapper {
     display: flex;
     width: 100%;
