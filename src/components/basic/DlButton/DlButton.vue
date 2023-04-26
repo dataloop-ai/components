@@ -11,7 +11,7 @@
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
             style="pointer-events: auto"
-            class="dl-button"
+            :class="buttonClass"
             @click="onClick"
             @mousedown="onMouseDown"
         >
@@ -104,7 +104,8 @@ export default defineComponent({
         noWrap: Boolean,
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        active: { type: Boolean, default: false, required: false }
     },
     emits: ['click', 'mousedown'],
     setup() {
@@ -136,6 +137,9 @@ export default defineComponent({
         },
         buttonLabel(): string {
             return textTransform(this.label)
+        },
+        buttonClass() {
+            return this.active ? 'dl-button active-class' : 'dl-button'
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
@@ -353,5 +357,15 @@ export default defineComponent({
 .dl-button-container {
     display: inline-block;
     width: var(--dl-button-container-width);
+}
+
+.active-class {
+    color: var(--dl-button-text-color-hover);
+    background-color: var(--dl-button-bg-hover);
+    border-color: var(--dl-button-border-hover);
+    & .dl-button-label {
+        transition: all ease-in 0.15s;
+        color: var(--dl-button-color-hover);
+    }
 }
 </style>

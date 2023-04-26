@@ -1,6 +1,7 @@
 // Button.stories.js|jsx|ts|tsx
 
-import { DlButton, DlBadge, DlIcon } from '..'
+import { DlButton, DlBadge, DlIcon, DlMenu } from '..'
+import { ref } from 'vue-demi'
 
 export default {
     title: 'Library/Components/DlButton',
@@ -410,3 +411,41 @@ export const WithLabelAndSlot = WithLabelAndSlotTemplate.bind({})
 WithLabelAndSlot.args = {
     label: 'Hello'
 }
+
+const KeepingActiveStateTemplate = (args) => ({
+    components: { DlButton, DlMenu },
+    setup() {
+        const activeButtonState = ref(false)
+
+        return { args, activeButtonState }
+    },
+    template: `
+    <div
+    style="
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    "
+    >
+    <h3>Button keeping its active state with menu</h3>
+    <dl-button
+        :active="activeButtonState"
+        @click="activeButtonState = !activeButtonState"
+        >{{ activeButtonState ? 'Close' : 'Open' }}
+        <dl-menu
+            :offset="[0, 5]"
+            anchor="bottom middle"
+            self="top middle"
+        >
+            <div
+                style="width: 100px; height: 100px; text-align: center"
+            >
+                Menu
+            </div>
+        </dl-menu>
+    </dl-button>
+   </div>
+    `
+})
+export const KeepingActiveState = KeepingActiveStateTemplate.bind({})
+KeepingActiveState.args = {}
