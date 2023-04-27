@@ -27,6 +27,7 @@ describe('DlListItem', () => {
                 disabled: false,
                 clickable: false,
                 bordered: false,
+                isHighlighted: false,
                 as: 'div',
                 startIcon: '',
                 endIcon: '',
@@ -46,7 +47,7 @@ describe('DlListItem', () => {
             expect(wrapper.vm.isClickable).toBe(false)
         })
     })
-    describe('when clicking the list item', () => {
+    describe('When clicking the list item without clickable prop', () => {
         let wrapper: any
         beforeAll(async () => {
             wrapper = mount(DlListItem, {
@@ -55,50 +56,46 @@ describe('DlListItem', () => {
                     default: 'content'
                 }
             })
-            await wrapper
-                .find('.dl-list-item')
-                .dispatchEvent(new MouseEvent('click'))
+            await wrapper.find('.dl-list-item').trigger('click')
             await wrapper.vm.$nextTick()
         })
-        it('should vcv', function () {
+        it('should not clickable item', function () {
             expect(wrapper.emitted()).not.toHaveProperty('click')
         })
     })
-    // it('should display list item content', async () => {
-    //     const wrapper = mount(DlListItem, {
-    //         props: {},
-    //         slots: {
-    //             default: 'content'
-    //         }
-    //     })
-    //     await wrapper.find('.dl-list-item').trigger('click')
-    //
-    //     expect(wrapper.emitted()).not.toHaveProperty('click')
-    //
-    //     await wrapper.setProps({ clickable: true })
-    //
-    //     expect(wrapper.vm.isClickable).toBe(true)
-    //
-    //     await wrapper.find('.dl-list-item').trigger('click')
-    //
-    //     expect(wrapper.emitted()).toHaveProperty('click')
-    // })
-    //
-    // it('should return the proper color', () => {
-    //     const colorDisabled = itemColor(true)
-    //     const colorEnabled = itemColor(false)
-    //
-    //     const cursorActionable = itemCursor(true, false)
-    //     const cursorDisabled = itemCursor(false, true)
-    //
-    //     const borderedItem = itemBorder(true)
-    //
-    //     expect(colorDisabled).toEqual('var(--dl-color-disabled)')
-    //     expect(colorEnabled).toEqual('var(--dl-color-darker)')
-    //
-    //     expect(cursorActionable).toEqual('pointer')
-    //     expect(cursorDisabled).toEqual('not-allowed')
-    //
-    //     expect(borderedItem).toEqual('1px solid var(--dl-color-separator)')
-    // })
+    describe('When clicking the list item with clickable prop', () => {
+        let wrapper: any
+        beforeAll(async () => {
+            wrapper = mount(DlListItem, {
+                props: {},
+                slots: {
+                    default: 'content'
+                }
+            })
+            await wrapper.setProps({ clickable: true })
+            await wrapper.find('.dl-list-item').trigger('click')
+            await wrapper.vm.$nextTick()
+        })
+        it('should clickable item', function () {
+            expect(wrapper.emitted()).toHaveProperty('click')
+        })
+    })
+
+    it('should return the proper color', () => {
+        const colorDisabled = itemColor(true)
+        const colorEnabled = itemColor(false)
+
+        const cursorActionable = itemCursor(true, false)
+        const cursorDisabled = itemCursor(false, true)
+
+        const borderedItem = itemBorder(true)
+
+        expect(colorDisabled).toEqual('var(--dl-color-disabled)')
+        expect(colorEnabled).toEqual('var(--dl-color-darker)')
+
+        expect(cursorActionable).toEqual('pointer')
+        expect(cursorDisabled).toEqual('not-allowed')
+
+        expect(borderedItem).toEqual('1px solid var(--dl-color-separator)')
+    })
 })
