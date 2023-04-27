@@ -95,6 +95,7 @@ export default defineComponent({
         },
         iconColor: { type: String!, default: '' },
         padding: { type: String, default: '' },
+        margin: { type: String, default: '0px 0px 20px 0px' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
         filled: { type: Boolean, default: true },
         round: { type: Boolean, default: false },
@@ -245,6 +246,7 @@ export default defineComponent({
                     : this.hasIcon && !this.hasContent
                     ? setIconPadding(this.size)
                     : setPadding(this.size),
+                '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
                 '--dl-button-text-transform': this.uppercase
                     ? 'uppercase'
@@ -300,6 +302,7 @@ export default defineComponent({
 }
 .dl-button {
     padding: var(--dl-button-padding);
+    margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
     text-transform: var(--dl-button-text-transform);
     font-family: 'Roboto', sans-serif;
