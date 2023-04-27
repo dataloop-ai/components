@@ -86,8 +86,7 @@
                 </div>
             </div>
             <label
-                v-if="!focused"
-                v-show="status.message"
+                v-if="status.message !== 'info'"
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 for="search-input"
@@ -282,10 +281,6 @@ export default defineComponent({
     },
     computed: {
         statusIcon(): string {
-            if (this.focused) {
-                return ''
-            }
-
             switch (this.status.type) {
                 case 'success':
                     return 'icon-dl-approve-filled'
@@ -317,7 +312,7 @@ export default defineComponent({
         searchBarClasses(): string {
             let classes = 'dl-smart-search-input__search-bar'
 
-            if (this.focused) {
+            if (this.focused && this.status.type === 'info') {
                 classes += ' dl-smart-search-input__search-bar--focused'
             } else {
                 if (this.status.type === 'error') {
