@@ -1,5 +1,8 @@
 <template>
-    <div class="confusion-matrix-container">
+    <div
+        :style="`max-width: ${maxWidth}`"
+        class="confusion-matrix-container"
+    >
         <div
             v-if="isValidMatrix"
             ref="wrapper"
@@ -33,7 +36,9 @@
                         <span v-else>
                             {{ label }}
                         </span>
-                        <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
+                        <dl-tooltip :offset="[0, 0]">
+                            {{ labelStrings[index] }}
+                        </dl-tooltip>
                     </div>
                 </div>
             </div>
@@ -204,6 +209,10 @@ export default defineComponent({
         leftLabel: {
             type: String,
             default: 'True Label'
+        },
+        maxWidth: {
+            type: String,
+            default: '800px'
         }
     },
     setup(props) {
@@ -283,11 +292,9 @@ export default defineComponent({
             const yAxisOuter = this.$refs.yAxisOuter as HTMLElement
             const width = verticalWrapper?.offsetWidth
 
+            labelY.style.marginTop = `-${this.leftLabel.length * 16}px`
             this.cellWidth = width / this.matrix.length
             colorSpectrum.style.height = `${width}px`
-            labelY.style.width = `${this.cellWidth * 2}px`
-            labelY.style.height = `${labelY.offsetWidth}px`
-            labelY.style.marginTop = `${width / 2}px`
             yAxisOuter.style.height = `${width}px`
         },
         handleBrushUpdate(brush: DlConfusionMatrixBrushState) {
@@ -352,6 +359,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.confusion-matrix-container {
+    margin: auto;
+}
 .wrapper {
     display: flex;
     width: 100%;
@@ -370,7 +380,9 @@ export default defineComponent({
     color: var(--dl-color-medium);
 }
 .label-tag.y {
-    transform: rotate(-90deg);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
     margin-right: 10px;
 }
 .label-tag.x {
@@ -396,7 +408,7 @@ export default defineComponent({
     flex-direction: column;
     justify-content: space-between;
     &__element {
-        text-align: end;
+        text-align: center;
         line-height: var(--cell-dimensions);
         overflow: hidden;
         text-overflow: ellipsis;
@@ -404,6 +416,7 @@ export default defineComponent({
 }
 .y-axis-outer {
     overflow: hidden;
+    width: 200px;
 }
 .y-axis,
 .x-axis {
