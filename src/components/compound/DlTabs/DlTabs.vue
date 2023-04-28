@@ -68,7 +68,8 @@ export default defineComponent({
         fullWidth: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
-        fontSize: { type: String, default: '12px' }
+        fontSize: { type: String, default: '12px' },
+        gap: { type: String, default: '40px' }
     },
     emits: ['update:model-value'],
     data() {
@@ -89,7 +90,9 @@ export default defineComponent({
                 this.vertical
                     ? 'inherit'
                     : '1px solid var(--dl-color-separator)'
-            }`
+            };
+            padding-left: ${this.topRightSlotWidth ? this.gap : '0px'};
+            `
         },
         cssVars(): Record<string, string> {
             return {
