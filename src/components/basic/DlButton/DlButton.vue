@@ -33,7 +33,10 @@
                     v-if="hasLabel"
                     ref="buttonLabelRef"
                     class="dl-button-label"
-                    :class="{ 'dl-button-no-wrap': noWrap }"
+                    :class="{
+                        'dl-button-no-wrap': noWrap,
+                        'dl-button-label--icon-sibling': hasIcon
+                    }"
                 >
                     {{ buttonLabel }}
                 </span>
@@ -346,8 +349,8 @@ export default defineComponent({
     min-width: 1.5em;
 }
 
-.dl-button-icon {
-    margin: var(--dl-button-icon-margin, 0px 7px 0px 0px);
+.dl-button-label--icon-sibling {
+    margin: var(--dl-button-icon-margin, 0px 0px 0px 7px);
 }
 
 .dl-button-container {
