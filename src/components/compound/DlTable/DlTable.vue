@@ -412,15 +412,18 @@
             v-if="!hideBottom"
             :class="bottomClasses"
         >
-            <div class="dl-table__control">
-                <slot
-                    v-if="nothingToDisplay && !hideNoData"
-                    name="no-data"
-                >
-                    {{ bottomMessage }}
+            <div
+                v-if="nothingToDisplay && !hideNoData"
+                class="dl-table__control"
+            >
+                <slot name="no-data">
+                    {{ noDataMessage }}
                 </slot>
             </div>
-            <div class="dl-table__control">
+            <div
+                v-else
+                class="dl-table__control"
+            >
                 <slot
                     name="bottom"
                     v-bind="marginalsScope"
@@ -435,12 +438,13 @@
                     </div>
 
                     <slot
-                        v-bind="marginalsScope"
                         name="pagination"
+                        v-bind="marginalsScope"
                     >
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
+                            total-items="rows.length"
                             @update:rowsPerPage="
                                 (v) => setPagination({ rowsPerPage: v })
                             "
@@ -696,7 +700,7 @@ export default defineComponent({
         })
         //
 
-        const bottomMessage = computed(() => {
+        const noDataMessage = computed(() => {
             if (props.loading) {
                 return props.loadingLabel
             }
@@ -1254,7 +1258,7 @@ export default defineComponent({
             bottomClasses,
             hasTopSlots,
             nothingToDisplay,
-            bottomMessage,
+            noDataMessage,
             paginationState,
             hasTopSelectionMode,
             hasBotomSelectionBanner,
