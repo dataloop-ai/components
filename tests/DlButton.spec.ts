@@ -21,6 +21,7 @@ describe('DlButton', () => {
             disabled: false,
             round: false,
             padding: '',
+            margin: '0px 0px 20px 0px',
             flat: false,
             styles: null,
             fluid: false,
