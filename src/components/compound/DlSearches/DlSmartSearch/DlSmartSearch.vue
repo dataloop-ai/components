@@ -15,7 +15,7 @@
                 :model-value="inputModel"
                 :expanded-input-height="expandedInputHeight"
                 :suggestions="suggestions"
-                @save="jsonEditorModel = true"
+                @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
                 @update:modelValue="handleInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
@@ -33,14 +33,16 @@
         </div>
         <dl-dialog-box
             v-model="filtersModel"
+            volatile
             :width="500"
         >
             <template #body>
                 <dl-smart-search-filters
                     v-model="filtersModel"
                     :filters="filters"
-                    @filters-save="emitFiltersDelete"
-                    @filters-delete="emitFiltersSave"
+                    @filters-search="emitFiltersSearch"
+                    @filters-save="emitFiltersSave"
+                    @filters-delete="emitFiltersDelete"
                 />
             </template>
         </dl-dialog-box>
@@ -201,6 +203,7 @@ export default defineComponent({
         const newQueryName = ref('')
         const isFocused = ref(false)
         const isQuerying = ref(false)
+        const currentTab = ref('saved')
 
         let oldInputQuery = ''
 
@@ -250,6 +253,7 @@ export default defineComponent({
             newQueryName,
             isFocused,
             isQuerying,
+            currentTab,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -298,9 +302,6 @@ export default defineComponent({
         }
     },
     methods: {
-        log(e) {
-            console.log(e)
-        },
         handleQueryRemove(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
@@ -309,7 +310,7 @@ export default defineComponent({
         handleQuerySearchEditor(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
-            this.$emit('search-query', this.activeQuery)
+            this.$emit('search-query', this.activeQuery, this.inputModel)
         },
         handleSaveQuery(performSearch: boolean) {
             if (performSearch) {
@@ -321,26 +322,38 @@ export default defineComponent({
             }
         },
         emitFiltersSave(currentTab: string, query: Query) {
-            this.activeQuery = query.query
-            this.$emit('save-query', { ...this.activeQuery }, currentTab)
+            this.activeQuery = query
+            this.currentTab = currentTab
+            this.saveQueryDialogBoxModel = true
         },
         emitFiltersDelete(currentTab: string, query: Query) {
-            this.activeQuery = query.query
-            this.$emit('remove-query', this.activeQuery, currentTab)
+            this.activeQuery = query
+            this.currentTab = currentTab
+            this.removeQueryDialogBoxModel = true
+        },
+        emitFiltersSearch(currentTab: string, query: Query) {
+            this.activeQuery = query
+            this.currentTab = currentTab
+            this.emitSearchQuery()
         },
         emitSearchQuery() {
-            this.$emit('search-query', this.activeQuery)
+            this.$emit('search-query', this.activeQuery, this.inputModel)
         },
         emitRemoveQuery() {
             if (!this.activeQuery) return
-            this.$emit('remove-query', this.activeQuery)
+            this.$emit(
+                'remove-query',
+                this.activeQuery,
+                this.currentTab,
+                this.inputModel
+            )
             this.removeQueryDialogBoxModel = false
         },
         emitSaveQuery() {
             if (!this.activeQuery) return
             if (this.newQueryName !== '')
                 this.activeQuery.name = this.newQueryName
-            this.$emit('save-query', { ...this.activeQuery })
+            this.$emit('save-query', { ...this.activeQuery }, this.currentTab)
             this.saveQueryDialogBoxModel = false
             this.newQueryName = ''
         }

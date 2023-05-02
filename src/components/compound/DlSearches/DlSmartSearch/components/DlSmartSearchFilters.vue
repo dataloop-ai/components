@@ -22,6 +22,7 @@
                             :key="index"
                             :type="currentTab"
                             :name="query.name"
+                            @search="$emit('filters-search', currentTab, query)"
                             @save="$emit('filters-save', currentTab, query)"
                             @delete="$emit('filters-delete', currentTab, query)"
                         />
@@ -57,7 +58,7 @@ export default defineComponent({
             default: (): Filters[] => []
         }
     },
-    emits: ['filters-save', 'filters-delete'],
+    emits: ['filters-save', 'filters-delete', 'filters-search'],
     data() {
         return {
             currentTab: 'saved'
@@ -66,11 +67,6 @@ export default defineComponent({
     computed: {
         tabItems() {
             return getTabItems(this.filters)
-        }
-    },
-    methods: {
-        log(e) {
-            console.log(e)
         }
     }
 })

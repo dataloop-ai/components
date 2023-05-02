@@ -70,60 +70,40 @@ export default defineComponent({
                         })
                     }
                 ],
-                recent: [
-                    {
-                        name: 'Query 4',
-                        query: ''
-                    },
-                    {
-                        name: 'Query 5',
-                        query: ''
-                    },
-                    {
-                        name: 'Query 6',
-                        query: ''
-                    }
-                ],
-                suggested: [
-                    {
-                        name: 'Query 7',
-                        query: ''
-                    },
-                    {
-                        name: 'Query 8',
-                        query: ''
-                    },
-                    {
-                        name: 'Query 9',
-                        query: ''
-                    }
-                ]
+                recent: [],
+                suggested: []
             }
         }
     },
     methods: {
-        handleSearchQuery({ query }: { query: string }) {
+        handleSearchQuery(query: Query, queryString: string) {
             this.isLoading = true
-            console.log(`Searching for: ${query}...`)
+            console.log(`Searching for: ${query.query}...`)
             const search = setTimeout(() => {
-                console.log(`Results: ${query}`)
+                console.log(`Results: ${query.query}`)
                 this.isLoading = false
             }, 2000)
+
+            if (this.filters.recent.at(-1)?.name !== queryString) {
+                this.filters.recent.push({
+                    name: queryString || query.name,
+                    query: query.query
+                })
+            }
         },
-        handleSaveQuery(query: Query) {
-            const saveQueryIndex = this.filters.saved.findIndex(
+        handleSaveQuery(query: Query, type: string) {
+            const saveQueryIndex = this.filters[type].findIndex(
                 (q: Query) => q.name === query.name || q.query === query.query
             )
             if (saveQueryIndex !== -1) {
-                this.filters.saved[saveQueryIndex] = query
+                this.filters[type][saveQueryIndex] = query
             } else {
-                this.filters.saved.push(query)
+                this.filters[type].push(query)
             }
         },
 
         handleRemoveQuery(query: Query, type: string) {
-            console.log(query, type)
-            this.filters[type] = this.filters.save.filter(
+            this.filters[type] = this.filters[type].filter(
                 (q: Query) => q.name !== query.name
             )
         }

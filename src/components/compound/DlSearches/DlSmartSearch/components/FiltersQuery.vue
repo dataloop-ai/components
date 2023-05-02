@@ -4,7 +4,10 @@
         @mouseenter="actionsVisible = true"
         @mouseleave="actionsVisible = false"
     >
-        <div class="query__header">
+        <div
+            class="query__header"
+            @mousedown="$emit('search')"
+        >
             <dl-icon
                 :inline="false"
                 :icon="icon"
@@ -19,7 +22,7 @@
         >
             <div
                 class="query__actions--icon"
-                @mousedown="$emit('delete')"
+                @mousedown="$emit('save')"
             >
                 <dl-icon
                     :inline="false"
@@ -82,8 +85,8 @@ export default defineComponent({
     border-radius: 3px;
     display: flex;
     justify-content: space-between;
-    cursor: pointer;
     &__header {
+        cursor: pointer;
         display: flex;
         align-items: center;
         &--title {
