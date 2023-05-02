@@ -234,18 +234,15 @@ describe('dl-select computed', () => {
         await wrapper.setProps({
             options: ['option1']
         })
-        await wrapper.setData({
-            selectedIndex: 0
-        })
+
+        wrapper.vm.selectedIndex = 0
         expect(wrapper.vm.selectedOption).toMatch('option1')
     })
 
     it('should return a list of classes according to the props', async () => {
         const wrapper = mount(DlSelect)
+        wrapper.vm.selectedIndex = 0
 
-        await wrapper.setData({
-            selectedIndex: 0
-        })
         expect(wrapper.vm.selectClasses).toContain(
             'dl_select__select--has-selection'
         )
@@ -281,9 +278,7 @@ describe('dl-select computed', () => {
             'dl_select__select--disabled'
         )
 
-        wrapper.setData({
-            isExpanded: true
-        })
+        wrapper.vm.isExpanded = true
         expect(wrapper.vm.selectClasses).toContain('dl_select__select--focused')
 
         await wrapper.setProps({

@@ -3,13 +3,14 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
+        :style="[cssButtonVars, containerStyles]"
     >
         <button
             v-if="hasContent || hasIcon"
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
-            :style="cssButtonVars"
+            :style="[cssButtonVars, styles]"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"
@@ -18,24 +19,24 @@
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
             >
-                {{ btnLabel }}
+                {{ buttonLabel }}
             </dl-tooltip>
-            <span class="dl-btn-content dl-anchor--skip">
+            <span class="dl-button-content dl-anchor--skip">
                 <dl-icon
                     v-if="hasIcon"
                     :size="iconSizePX"
                     :color="iconColor || textColor"
-                    :class="{ 'dl-btn-icon': hasContent }"
+                    :class="{ 'dl-button-icon': hasContent }"
                     :icon="icon"
                     :style="cssButtonVars"
                 />
                 <span
                     v-if="hasLabel"
-                    ref="btnLabelRef"
-                    class="dl-btn-label"
+                    ref="buttonLabelRef"
+                    class="dl-button-label"
                     :class="{ 'dl-button-no-wrap': noWrap }"
                 >
-                    {{ btnLabel }}
+                    {{ buttonLabel }}
                 </span>
                 <slot />
             </span>
@@ -94,6 +95,7 @@ export default defineComponent({
         },
         iconColor: { type: String!, default: '' },
         padding: { type: String, default: '' },
+        margin: { type: String, default: '0px 0px 20px 0px' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
         filled: { type: Boolean, default: true },
         round: { type: Boolean, default: false },
@@ -104,16 +106,17 @@ export default defineComponent({
         noWrap: Boolean,
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        styles: { type: [Object, String, Array], default: null }
     },
     emits: ['click', 'mousedown'],
     setup() {
-        const btnLabelRef = ref(null)
-        const { hasEllipsis } = useSizeObserver(btnLabelRef)
+        const buttonLabelRef = ref(null)
+        const { hasEllipsis } = useSizeObserver(buttonLabelRef)
 
         return {
             uuid: `dl-button-${v4()}`,
-            btnLabelRef,
+            buttonLabelRef,
             isOverflowing: hasEllipsis
         }
     },
@@ -134,11 +137,14 @@ export default defineComponent({
                 this.label !== ''
             )
         },
-        btnLabel(): string {
+        buttonLabel(): string {
             return textTransform(this.label)
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
+        },
+        containerStyles(): object {
+            return this.fluid ? { width: '100%' } : {}
         },
         hasContent(): boolean {
             return !!this.$slots.default || this.hasLabel
@@ -232,6 +238,7 @@ export default defineComponent({
             }
 
             return {
+                '--dl-button-container-width': this.fluid ? '100%' : 'auto',
                 '--dl-button-padding': this.dense
                     ? '0'
                     : this.padding
@@ -239,6 +246,7 @@ export default defineComponent({
                     : this.hasIcon && !this.hasContent
                     ? setIconPadding(this.size)
                     : setPadding(this.size),
+                '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
                 '--dl-button-text-transform': this.uppercase
                     ? 'uppercase'
@@ -294,6 +302,7 @@ export default defineComponent({
 }
 .dl-button {
     padding: var(--dl-button-padding);
+    margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
     text-transform: var(--dl-button-text-transform);
     font-family: 'Roboto', sans-serif;
@@ -325,13 +334,13 @@ export default defineComponent({
         color: var(--dl-button-text-color-hover);
         background-color: var(--dl-button-bg-hover);
         border-color: var(--dl-button-border-hover);
-        & .dl-btn-label {
+        & .dl-button-label {
             transition: all ease-in 0.15s;
             color: var(--dl-button-color-hover);
         }
     }
 }
-.dl-btn-content {
+.dl-button-content {
     display: flex;
     text-align: center;
     align-items: center;
@@ -345,11 +354,12 @@ export default defineComponent({
     min-width: 1.5em;
 }
 
-.dl-btn-icon {
-    margin-right: 7px;
+.dl-button-icon {
+    margin: var(--dl-button-icon-margin, 0px 7px 0px 0px);
 }
 
 .dl-button-container {
     display: inline-block;
+    width: var(--dl-button-container-width);
 }
 </style>

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlButton } from '../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 describe('DlButton', () => {
     it('testing setup functionality', async () => {
@@ -21,7 +21,9 @@ describe('DlButton', () => {
             disabled: false,
             round: false,
             padding: '',
+            margin: '0px 0px 20px 0px',
             flat: false,
+            styles: null,
             fluid: false,
             uppercase: false,
             icon: '',
@@ -89,7 +91,7 @@ describe('DlButton', () => {
             textColor: ''
         })
 
-        const button = wrapper.find('button')
+        const button = wrapper.find('.dl-button-container')
 
         expect(
             button.element.style.getPropertyValue('--dl-button-border-radius')

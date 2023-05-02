@@ -125,6 +125,7 @@ export const defaultColumnChartProps = {
         },
         scales: {
             y: {
+                suggestedMin: 0,
                 title: {
                     color: '--dl-color-medium',
                     display: true,

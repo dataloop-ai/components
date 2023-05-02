@@ -455,7 +455,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss" scoped>
 .dl-popup {
     z-index: calc(var(--dl-z-index-menu) - 1);
     position: fixed !important;

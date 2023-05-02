@@ -142,6 +142,24 @@ const data = {
     ]
 }
 
+const matrix: number[][] = []
+const labels: string[] = []
+const size: number = 10
+
+for (let i = 0; i < size; i++) {
+    const row = []
+    for (let j = 0; j < size; j++) {
+        row.push(Math.floor(Math.random() * 10))
+    }
+    matrix.push(row)
+}
+
+const items = ['Van', 'Truck', 'Motorcycle', 'Car', 'Bus']
+
+for (let i = 0; i < size; i++) {
+    labels.push(items[Math.floor(Math.random() * items.length)])
+}
+
 export default defineComponent({
     components: {
         DlGrid,

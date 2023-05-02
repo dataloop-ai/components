@@ -214,8 +214,8 @@ export default defineComponent({
                 ? {
                       'justify-content': 'end',
                       width: getPixelsFromPercents(
-                          doughnutChartWidgetWidth.value,
-                          sizePercents,
+                          doughnutChartWidgetHeight.value,
+                          sizePercents / 1.8,
                           'px'
                       ),
                       height: getPixelsFromPercents(
