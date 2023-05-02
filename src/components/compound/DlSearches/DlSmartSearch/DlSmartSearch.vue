@@ -31,10 +31,26 @@
                 />
             </div>
         </div>
+        <dl-dialog-box
+            v-model="filtersModel"
+            :width="500"
+        >
+            <template #body>
+                <dl-smart-search-filters
+                    v-model="filtersModel"
+                    :filters="filters"
+                    @filters-save="emitFiltersDelete"
+                    @filters-delete="emitFiltersSave"
+                />
+            </template>
+        </dl-dialog-box>
+        <button @mousedown="filtersModel = !filtersModel">
+            Open filters
+        </button>
         <dl-json-editor
             :model-value="jsonEditorModel"
             :query="activeQuery"
-            :queries="savedQueries"
+            :queries="filters.saved"
             @update:modelValue="jsonEditorModel = $event"
             @save="saveQueryDialogBoxModel = true"
             @remove="handleQueryRemove"
@@ -96,6 +112,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue-demi'
 import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
+import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
 import { DlJsonEditor } from '../../DlJsonEditor'
 import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
 import { DlInput } from '../../DlInput'
@@ -107,7 +124,7 @@ import {
     Alias,
     removeBrackets
 } from '../../../../hooks/use-suggestions'
-import { Filter, Query, ColorSchema, SearchStatus } from './types'
+import { Filters, Query, ColorSchema, SearchStatus } from './types'
 import {
     replaceAliases,
     replaceWithJsDates,
@@ -124,7 +141,8 @@ export default defineComponent({
         DlJsonEditor,
         DlButton,
         DlTypography,
-        DlInput
+        DlInput,
+        DlSmartSearchFilters
     },
     props: {
         status: {
@@ -160,8 +178,8 @@ export default defineComponent({
             default: 'saved'
         },
         filters: {
-            type: Array as PropType<Filter[]>,
-            default: () => [] as Filter[]
+            type: Array as PropType<Filters[]>,
+            default: () => [] as Filters[]
         },
         disabled: {
             type: Boolean,
@@ -242,15 +260,6 @@ export default defineComponent({
         identifierClass(): string {
             return `dl-smart-search`
         },
-        savedQueries(): Query[] {
-            return (
-                this.filters.find(
-                    (filter: Filter) => filter.name === this.savedFilterKey
-                ) || {
-                    queries: []
-                }
-            ).queries
-        },
         cssVars(): Record<string, string> {
             return {
                 '--dl-search-max-width': this.isFocused ? '100%' : '450px'
@@ -289,6 +298,9 @@ export default defineComponent({
         }
     },
     methods: {
+        log(e) {
+            console.log(e)
+        },
         handleQueryRemove(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
@@ -307,6 +319,14 @@ export default defineComponent({
             } else {
                 this.emitSaveQuery()
             }
+        },
+        emitFiltersSave(currentTab: string, query: Query) {
+            this.activeQuery = query.query
+            this.$emit('save-query', { ...this.activeQuery }, currentTab)
+        },
+        emitFiltersDelete(currentTab: string, query: Query) {
+            this.activeQuery = query.query
+            this.$emit('remove-query', this.activeQuery, currentTab)
         },
         emitSearchQuery() {
             this.$emit('search-query', this.activeQuery)

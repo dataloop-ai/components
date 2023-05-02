@@ -48,69 +48,57 @@ export default defineComponent({
         return {
             switchState: false,
             isLoading: false,
-            filters: [
-                {
-                    label: 'Saved DQL Queries',
-                    name: 'saved',
-                    queries: [
-                        {
-                            name: 'Query 1',
-                            query: '{"q": 1}'
-                        },
-                        {
-                            name: 'Query 2',
-                            query: '{"query2": "query2"}'
-                        },
-                        {
-                            name: 'Query 3',
-                            query: '{"query3": "query3"}'
-                        },
-                        {
-                            name: 'Query 4',
-                            query: JSON.stringify({
-                                aa: 'bb',
-                                no: [{ as: 'sa' }, { zz: 'ss' }]
-                            })
-                        }
-                    ]
-                },
-                {
-                    label: 'Recent Searches',
-                    name: 'recent',
-                    queries: [
-                        {
-                            name: 'Query 4',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 5',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 6',
-                            query: ''
-                        }
-                    ]
-                },
-                {
-                    label: 'Suggested Searches',
-                    name: 'suggested',
-                    queries: [
-                        {
-                            name: 'Query 7',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 8',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 9',
-                            query: ''
-                        }
-                    ]
-                }
-            ]
+            filters: {
+                saved: [
+                    {
+                        name: 'Query 1',
+                        query: '{"q": 1}'
+                    },
+                    {
+                        name: 'Query 2',
+                        query: '{"query2": "query2"}'
+                    },
+                    {
+                        name: 'Query 3',
+                        query: '{"query3": "query3"}'
+                    },
+                    {
+                        name: 'Query 4',
+                        query: JSON.stringify({
+                            aa: 'bb',
+                            no: [{ as: 'sa' }, { zz: 'ss' }]
+                        })
+                    }
+                ],
+                recent: [
+                    {
+                        name: 'Query 4',
+                        query: ''
+                    },
+                    {
+                        name: 'Query 5',
+                        query: ''
+                    },
+                    {
+                        name: 'Query 6',
+                        query: ''
+                    }
+                ],
+                suggested: [
+                    {
+                        name: 'Query 7',
+                        query: ''
+                    },
+                    {
+                        name: 'Query 8',
+                        query: ''
+                    },
+                    {
+                        name: 'Query 9',
+                        query: ''
+                    }
+                ]
+            }
         }
     },
     methods: {
@@ -123,18 +111,19 @@ export default defineComponent({
             }, 2000)
         },
         handleSaveQuery(query: Query) {
-            const saveQueryIndex = this.filters[0].queries.findIndex(
+            const saveQueryIndex = this.filters.saved.findIndex(
                 (q: Query) => q.name === query.name || q.query === query.query
             )
             if (saveQueryIndex !== -1) {
-                this.filters[0].queries[saveQueryIndex] = query
+                this.filters.saved[saveQueryIndex] = query
             } else {
-                this.filters[0].queries.push(query)
+                this.filters.saved.push(query)
             }
         },
 
-        handleRemoveQuery(query: Query) {
-            this.filters[0].queries = this.filters[0].queries.filter(
+        handleRemoveQuery(query: Query, type: string) {
+            console.log(query, type)
+            this.filters[type] = this.filters.save.filter(
                 (q: Query) => q.name !== query.name
             )
         }
