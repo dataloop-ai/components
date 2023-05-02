@@ -25,7 +25,6 @@
                     v-if="hasIcon"
                     :size="iconSizePX"
                     :color="iconColor || textColor"
-                    :class="{ 'dl-button-icon': hasContent }"
                     :icon="icon"
                     :style="cssButtonVars"
                 />
@@ -34,13 +33,16 @@
                     ref="buttonLabelRef"
                     class="dl-button-label"
                     :class="{
-                        'dl-button-no-wrap': noWrap,
-                        'dl-button-label--icon-sibling': hasIcon
+                        'dl-button-no-wrap': noWrap
                     }"
                 >
                     {{ buttonLabel }}
                 </span>
-                <slot />
+                <slot
+                    :class="{
+                        'dl-button-label--icon-sibling': hasIcon
+                    }"
+                />
             </span>
         </button>
         <dl-tooltip
@@ -296,6 +298,7 @@ export default defineComponent({
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .dl-button {
     padding: var(--dl-button-padding);
     border-radius: var(--dl-button-border-radius);
@@ -316,25 +319,30 @@ export default defineComponent({
     vertical-align: middle;
     transition: all ease-in 0.15s;
     justify-content: center;
+
     &:active {
         transition: all ease-in 0.15s;
         color: var(--dl-button-text-color-pressed) !important;
         background-color: var(--dl-button-bg-pressed) !important;
         border-color: var(--dl-button-border-pressed) !important;
+
         & > span > i {
             transition: all ease-in 0.15s;
         }
     }
+
     &:hover:enabled:not(:active) {
         color: var(--dl-button-text-color-hover);
         background-color: var(--dl-button-bg-hover);
         border-color: var(--dl-button-border-hover);
+
         & .dl-button-label {
             transition: all ease-in 0.15s;
             color: var(--dl-button-color-hover);
         }
     }
 }
+
 .dl-button-content {
     display: flex;
     text-align: center;
@@ -347,11 +355,12 @@ export default defineComponent({
     z-index: 0;
     user-select: none !important;
     min-width: 1.5em;
+    gap: var(--dl-button-gap, 7px);
 }
 
-.dl-button-label--icon-sibling {
-    margin: var(--dl-button-icon-margin, 0px 0px 0px 7px);
-}
+//.dl-button-label--icon-sibling {
+//  margin: var(--dl-button-icon-margin, 0px 0px 0px 7px);
+//}
 
 .dl-button-container {
     display: inline-block;
