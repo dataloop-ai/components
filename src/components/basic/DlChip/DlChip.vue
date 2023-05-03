@@ -228,6 +228,7 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        padding: 3px 5px 3px 5px;
     }
 }
 

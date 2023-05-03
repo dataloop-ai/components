@@ -9,6 +9,7 @@ describe('DlAlert', () => {
     it('should render the given text prop', () => {
         const wrapper = mount(DlAlert, {
             props: {
+                type: 'success',
                 text: 'Alert'
             }
         })
@@ -19,6 +20,7 @@ describe('DlAlert', () => {
     it('should render the close icon', () => {
         const wrapper = mount(DlAlert, {
             props: {
+                type: 'success',
                 text: 'Alert',
                 closable: true
             }
@@ -39,6 +41,7 @@ describe('DlAlert', () => {
         it('should adapt the styling accordingly', async () => {
             const wrapper = mount(DlAlert, {
                 props: {
+                    type: 'success',
                     text: 'Alert'
                 }
             })
@@ -56,6 +59,7 @@ describe('DlAlert', () => {
             const wrapper = mount(DlAlert, {
                 props: {
                     text: 'Alert',
+                    type: 'success',
                     closable: true
                 }
             })

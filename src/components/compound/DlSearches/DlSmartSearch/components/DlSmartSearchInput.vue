@@ -7,7 +7,7 @@
             <div :class="searchBarClasses">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="withSearchIcon || status"
+                        v-if="withSearchIcon || (!focused && status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="18px"
@@ -65,7 +65,7 @@
                             icon="icon-dl-save"
                             size="16px"
                             flat
-                            :disabled="disabled"
+                            :disabled="saveStatus"
                             @click="save"
                         >
                             <dl-tooltip> Save Query </dl-tooltip>
@@ -74,10 +74,10 @@
                             icon="icon-dl-loop"
                             size="16px"
                             flat
+                            transform="none"
                             text-color="dl-color-darker"
-                            :disabled="disabled"
-                            uppercase
-                            label="dql"
+                            :disabled="saveStatus"
+                            label="switch to DQL"
                             @click="edit"
                         >
                             <dl-tooltip> Switch to DQL </dl-tooltip>
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <label
-                v-show="status.message"
+                v-if="status.message !== 'info'"
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 for="search-input"
@@ -131,10 +131,10 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
-    isEligibleToChange,
     setCaret,
     updateEditor
 } from '../utils'
+import { isEligibleToChange } from '../utils/utils'
 
 export default defineComponent({
     components: {
@@ -312,13 +312,13 @@ export default defineComponent({
         searchBarClasses(): string {
             let classes = 'dl-smart-search-input__search-bar'
 
-            if (this.status.type === 'error') {
-                classes += ' dl-smart-search-input__search-bar--error'
-            } else if (this.status.type === 'warning') {
-                classes += ' dl-smart-search-input__search-bar--warning'
+            if (this.focused && this.status.type === 'info') {
+                classes += ' dl-smart-search-input__search-bar--focused'
             } else {
-                if (this.focused) {
-                    classes += ' dl-smart-search-input__search-bar--focused'
+                if (this.status.type === 'error') {
+                    classes += ' dl-smart-search-input__search-bar--error'
+                } else if (this.status.type === 'warning') {
+                    classes += ' dl-smart-search-input__search-bar--warning'
                 }
             }
 
@@ -355,6 +355,13 @@ export default defineComponent({
                     this.expandedInputHeight,
                 '--dl-smart-search-input-height': this.inputHeight
             }
+        },
+        saveStatus() {
+            return (
+                this.disabled ||
+                !this.modelValue ||
+                this.status.type === 'error'
+            )
         }
     },
     watch: {

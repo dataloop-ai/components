@@ -259,6 +259,20 @@ export const defaultLineChartProps = {
         alignItems: 'center'
     },
     options: {
+        clip: {
+            left: 4.5,
+            right: 5,
+            bottom: 5,
+            top: 0
+        },
+        layout: {
+            padding: {
+                left: 0,
+                right: 4,
+                top: 0,
+                bottom: 0
+            }
+        },
         responsive: true,
         maintainAspectRatio: false,
         animation: {

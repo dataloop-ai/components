@@ -13,7 +13,7 @@
                 />
                 <div
                     :style="{ background: `${item}` }"
-                    :class="getColorClasses(`${item}`)"
+                    class="color"
                 />
             </li>
         </ul>
@@ -33,7 +33,7 @@
                 />
                 <div
                     :style="{ background: `${item}` }"
-                    :class="getColorClasses(`${item}`)"
+                    class="color"
                 />
             </li>
         </ul>
@@ -125,11 +125,7 @@ export default defineComponent({
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
             border-radius: 3px;
-        }
-        .color-white {
             border: 1px solid var(--dl-color-separator);
             width: calc(100% - 2px);
             height: calc(100% - 2px);
