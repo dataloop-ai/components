@@ -10,7 +10,7 @@
                     <DlButton
                         :size="buttonSize"
                         color="dl-color-negative"
-                        label="COntained text filled"
+                        label="Contained text filled"
                         @click="log"
                     />
                     <DlButton
@@ -230,6 +230,18 @@
                 />
             </dl-button>
         </div>
+        <div>
+            <h3>Button with icon no label and menu</h3>
+            <p>should not have extra margin in right</p>
+            <dl-button icon="icon-dl-search">
+                <dl-menu>
+                    <dl-list>
+                        <dl-list-item>item 1</dl-list-item>
+                        <dl-list-item> item 2</dl-list-item>
+                    </dl-list>
+                </dl-menu>
+            </dl-button>
+        </div>
     </div>
 </template>
 
@@ -237,9 +249,16 @@
 import { defineComponent, reactive } from 'vue-demi'
 import { DlButton, DlBadge, DlIcon } from '../components'
 import { ButtonSizes } from '../components/basic/DlButton/utils'
+import DlMenu from '../components/essential/DlMenu/DlMenu.vue'
+import DlList from '../components/essential/DlList/DlList.vue'
+import DlListItem from '../components/basic/DlListItem/DlListItem.vue'
+
 export default defineComponent({
     name: 'DlButtonDemo',
     components: {
+        DlListItem,
+        DlList,
+        DlMenu,
         DlButton,
         DlBadge,
         DlIcon
@@ -260,6 +279,7 @@ export default defineComponent({
     flex-wrap: wrap;
     min-width: 0;
     max-width: 100%;
+
     & > button,
     & > div.dl-chip {
         margin: 0 0 0 8px;
