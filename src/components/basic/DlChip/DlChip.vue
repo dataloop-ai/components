@@ -217,13 +217,6 @@ export default defineComponent({
     background-color: var(--dl-chip-bg-color);
     border: var(--dl-chip-border);
 
-    .first-letter-capitalized {
-        &::first-letter,
-        & > *::first-letter {
-            text-transform: capitalize;
-        }
-    }
-
     &--content {
         cursor: default;
         width: auto;
@@ -238,6 +231,14 @@ export default defineComponent({
         padding: 3px 5px 3px 5px;
     }
 }
+
+.dl-chip.first-letter-capitalized {
+    &::first-letter,
+    & > *::first-letter {
+        text-transform: capitalize;
+    }
+}
+
 .dl-chip-remove-icon-container {
     cursor: var(--dl-chip-left-icon-cursor);
     position: absolute;
