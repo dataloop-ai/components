@@ -21,7 +21,7 @@
             >
                 {{ buttonLabel }}
             </dl-tooltip>
-            <span class="dl-button-content dl-anchor--skip">
+            <div class="dl-button-content dl-anchor--skip">
                 <dl-icon
                     v-if="hasIcon"
                     :size="iconSizePX"
@@ -39,12 +39,8 @@
                 >
                     {{ buttonLabel }}
                 </span>
-                <slot
-                    :class="{
-                        'dl-button-label--icon-sibling': hasIcon
-                    }"
-                />
-            </span>
+                <slot />
+            </div>
         </button>
         <dl-tooltip
             v-if="tooltip"
@@ -100,7 +96,7 @@ export default defineComponent({
         },
         iconColor: { type: String!, default: '' },
         padding: { type: String, default: '' },
-        margin: { type: String, default: '0px 0px 20px 0px' },
+        margin: { type: String, default: '0 auto' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
         filled: { type: Boolean, default: true },
         round: { type: Boolean, default: false },
@@ -365,10 +361,6 @@ export default defineComponent({
     min-width: 1.5em;
     gap: var(--dl-button-gap, 7px);
 }
-
-//.dl-button-label--icon-sibling {
-//  margin: var(--dl-button-icon-margin, 0px 0px 0px 7px);
-//}
 
 .dl-button-container {
     display: inline-block;
