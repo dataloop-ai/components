@@ -66,22 +66,15 @@ export function swapElemensInMatrix(
 ) {
     const newLayout = cloneDeep(layout)
 
-    if (side) {
-        const removedElement = newLayout[sourceIndex.row].splice(
-            sourceIndex.column,
-            1
-        )
-        newLayout[targetIndex.row].splice(
-            side === 'right' ? targetIndex.column + 1 : targetIndex.column,
-            0,
-            removedElement[0]
-        )
-    } else {
-        const temp = newLayout[sourceIndex.row][sourceIndex.column]
-        newLayout[sourceIndex.row][sourceIndex.column] =
-            newLayout[targetIndex.row][targetIndex.column]
-        newLayout[targetIndex.row][targetIndex.column] = temp
-    }
+    const removedElement = newLayout[sourceIndex.row].splice(
+        sourceIndex.column,
+        1
+    )
+    newLayout[targetIndex.row].splice(
+        side === 'right' ? targetIndex.column + 1 : targetIndex.column,
+        0,
+        removedElement[0]
+    )
 
     return isTooLarge(newLayout, maxElements) ? layout : newLayout
 }

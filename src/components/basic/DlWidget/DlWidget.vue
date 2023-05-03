@@ -146,7 +146,7 @@ export default defineComponent({
                     this.handleMouseInsideWidget
                 )
             })
-            this.timer = setTimeout(this.insertWidget, 1000)
+            this.timer = setTimeout(this.insertWidget, 200)
         },
         insertWidget() {
             const targetWidget = getElementAbove(
