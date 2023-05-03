@@ -15,7 +15,7 @@
                 :model-value="inputModel"
                 :expanded-input-height="expandedInputHeight"
                 :suggestions="suggestions"
-                @save="jsonEditorModel = true"
+                @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
                 @update:modelValue="handleInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
@@ -260,6 +260,7 @@ export default defineComponent({
             return createColorSchema(this.colorSchema, this.aliases)
         },
         computedStatus(): SearchStatus {
+            if (this.isFocused) return
             if (this.isQuerying) return
             if (!this.error && this.inputModel !== '') {
                 return {

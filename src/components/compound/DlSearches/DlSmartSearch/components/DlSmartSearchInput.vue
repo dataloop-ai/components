@@ -74,10 +74,10 @@
                             icon="icon-dl-loop"
                             size="16px"
                             flat
+                            transform="none"
                             text-color="dl-color-darker"
                             :disabled="saveStatus"
-                            uppercase
-                            label="dql"
+                            label="switch to DQL"
                             @click="edit"
                         >
                             <dl-tooltip> Switch to DQL </dl-tooltip>
