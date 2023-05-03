@@ -637,17 +637,17 @@ export default defineComponent({
 }
 
 .sticky-header {
-    :deep.dl-table__top,
-    :deep.dl-table__bottom,
-    :deepthead tr:first-child th {
+    ::v-deep .dl-table__top,
+    ::v-deep .dl-table__bottom,
+    ::v-deep thead tr:first-child th {
         /* bg color is important for th; just specify one */
         background-color: var(--dl-color-panel-background);
     }
-    :deepthead tr th {
+    ::v-deep thead tr th {
         position: sticky !important;
         z-index: 1;
     }
-    :deepthead tr:first-child th {
+    ::v-deep thead tr:first-child th {
         top: 0;
     }
     /* this is when the loading indicator appears */
