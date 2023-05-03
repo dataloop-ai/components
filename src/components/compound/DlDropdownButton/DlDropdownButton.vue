@@ -19,7 +19,7 @@
             :max-width="maxWidth"
             :color="color"
             :icon="icon"
-            :uppercase="uppercase"
+            :transform="transform"
             :text-color="textColor"
             no-wrap
             :aria-expanded="showing === true ? 'true' : 'false'"
@@ -188,6 +188,7 @@ import {
     Ref
 } from 'vue-demi'
 import { v4 } from 'uuid'
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -237,7 +238,12 @@ export default defineComponent({
         icon: { type: String, required: false, default: '' },
         iconSize: { type: String, required: false, default: '20px' },
         flat: Boolean,
-        uppercase: Boolean,
+        transform: {
+            type: String,
+            default: 'default',
+            validator: (value: string): boolean =>
+                transformOptions.includes(value)
+        },
         outlined: Boolean,
         padding: { type: String, default: '5px' },
         fitContent: Boolean,

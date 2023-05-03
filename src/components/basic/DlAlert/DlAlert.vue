@@ -118,6 +118,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const show = ref(props.modelValue)
         const type = props.type as AlertType
+        const typeIcon = typeToIconMap[type]
         const icon = computed(() => typeToIconMap[type])
         const iconColor = computed(() => typeToIconColorMap[type])
         const textStyle = computed(() => ({
@@ -209,8 +210,6 @@ export default defineComponent({
     }
 
     .text {
-        display: flex;
-        text-align: left;
         padding-left: 10px;
         font-size: var(--dl-font-size-body);
         align-self: center;
