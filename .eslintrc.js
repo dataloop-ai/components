@@ -7,7 +7,8 @@ module.exports = {
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:vue/recommended',
-        '@vue/typescript'
+        '@vue/typescript',
+        'plugin:storybook/recommended'
     ],
     plugins: ['eslint-plugin-member-order'],
     rules: {
@@ -130,7 +131,6 @@ module.exports = {
         'use-isnan': 'warn',
         'valid-typeof': 'off',
         'no-useless-escape': 'off',
-
         // New Rules
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',

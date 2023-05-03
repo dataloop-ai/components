@@ -3,13 +3,14 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
-        :style="cssButtonVars"
+        :style="[cssButtonVars, containerStyles]"
     >
         <button
             v-if="hasContent || hasIcon"
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
+            :style="[cssButtonVars, styles]"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"
@@ -25,7 +26,6 @@
                     v-if="hasIcon"
                     :size="iconSizePX"
                     :color="iconColor || textColor"
-                    :class="{ 'dl-button-icon': hasContent }"
                     :icon="icon"
                     :style="cssButtonVars"
                 />
@@ -33,11 +33,17 @@
                     v-if="hasLabel"
                     ref="buttonLabelRef"
                     class="dl-button-label"
-                    :class="{ 'dl-button-no-wrap': noWrap }"
+                    :class="{
+                        'dl-button-no-wrap': noWrap
+                    }"
                 >
                     {{ buttonLabel }}
                 </span>
-                <slot />
+                <slot
+                    :class="{
+                        'dl-button-label--icon-sibling': hasIcon
+                    }"
+                />
             </span>
         </button>
         <dl-tooltip
@@ -94,6 +100,7 @@ export default defineComponent({
         },
         iconColor: { type: String!, default: '' },
         padding: { type: String, default: '' },
+        margin: { type: String, default: '0px 0px 20px 0px' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
         filled: { type: Boolean, default: true },
         round: { type: Boolean, default: false },
@@ -104,7 +111,8 @@ export default defineComponent({
         noWrap: Boolean,
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        styles: { type: [Object, String, Array], default: null }
     },
     emits: ['click', 'mousedown'],
     setup() {
@@ -139,6 +147,9 @@ export default defineComponent({
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
+        },
+        containerStyles(): object {
+            return this.fluid ? { width: '100%' } : {}
         },
         hasContent(): boolean {
             return !!this.$slots.default || this.hasLabel
@@ -240,6 +251,7 @@ export default defineComponent({
                     : this.hasIcon && !this.hasContent
                     ? setIconPadding(this.size)
                     : setPadding(this.size),
+                '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
                 '--dl-button-text-transform': this.uppercase
                     ? 'uppercase'
@@ -293,8 +305,10 @@ export default defineComponent({
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .dl-button {
     padding: var(--dl-button-padding);
+    margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
     text-transform: var(--dl-button-text-transform);
     font-family: 'Roboto', sans-serif;
@@ -313,25 +327,30 @@ export default defineComponent({
     vertical-align: middle;
     transition: all ease-in 0.15s;
     justify-content: center;
+
     &:active {
         transition: all ease-in 0.15s;
         color: var(--dl-button-text-color-pressed) !important;
         background-color: var(--dl-button-bg-pressed) !important;
         border-color: var(--dl-button-border-pressed) !important;
+
         & > span > i {
             transition: all ease-in 0.15s;
         }
     }
+
     &:hover:enabled:not(:active) {
         color: var(--dl-button-text-color-hover);
         background-color: var(--dl-button-bg-hover);
         border-color: var(--dl-button-border-hover);
+
         & .dl-button-label {
             transition: all ease-in 0.15s;
             color: var(--dl-button-color-hover);
         }
     }
 }
+
 .dl-button-content {
     display: flex;
     text-align: center;
@@ -344,11 +363,12 @@ export default defineComponent({
     z-index: 0;
     user-select: none !important;
     min-width: 1.5em;
+    gap: var(--dl-button-gap, 7px);
 }
 
-.dl-button-icon {
-    margin: var(--dl-button-icon-margin, 0px 7px 0px 0px);
-}
+//.dl-button-label--icon-sibling {
+//  margin: var(--dl-button-icon-margin, 0px 0px 0px 7px);
+//}
 
 .dl-button-container {
     display: inline-block;

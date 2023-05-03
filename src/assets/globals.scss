@@ -140,6 +140,7 @@ body {
     --dl-color-tooltip-background: #171723d9;
     --dl-color-text-darker-buttons: #171723;
     --dl-color-secondary: #3452FF;
+    --dl-color-secondary-opaque: #3452FF10;
     --dl-color-text-buttons: #FFFFFF;
     --dl-color-darker: #171723;
     --dl-color-medium: #767676;
@@ -174,6 +175,7 @@ body {
 
     --dl-date-picker-shadow: 0px 3px 6px #101e7326;
     --dl-date-picker-selected-strip: rgb(52, 82, 255, 0.2);
+    --dl-date-picker-selected-date: #8FA0FF;
 }
 
 /* Define styles for the root window with dark - mode preference */
@@ -188,6 +190,7 @@ body {
     --dl-color-tooltip-background: #ffffffd9;
     --dl-color-text-darker-buttons: #171723;
     --dl-color-secondary: #7C8CFF;
+    --dl-color-secondary-opaque: #7C8CFF10;
     --dl-color-text-buttons: #FFFFFF;
     --dl-color-darker: #ffffffcc;
     --dl-color-medium: #ffffff99;
@@ -222,6 +225,7 @@ body {
 
     --dl-date-picker-shadow: 0px 3px 6px #292e3580;
     --dl-date-picker-selected-strip: rgb(124, 140, 255, 0.2);
+    --dl-date-picker-selected-date: #535E96;
 }
 
 // scrollbar

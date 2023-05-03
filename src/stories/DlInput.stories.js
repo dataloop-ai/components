@@ -160,6 +160,17 @@ export default {
                 defaultValue: { summary: false }
             }
         },
+        dense: {
+            name: 'dense',
+            type: { name: 'boolean', required: false },
+            description: 'Remove container padding',
+            control: 'boolean',
+            defaultValue: false,
+            table: {
+                type: { summary: Boolean },
+                defaultValue: { summary: false }
+            }
+        },
         error: {
             name: 'error',
             type: { name: 'boolean', required: false },

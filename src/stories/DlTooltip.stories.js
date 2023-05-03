@@ -1,4 +1,4 @@
-import { DlTooltip, DlLink } from '../'
+import { DlTooltip, DlLink, DlCard } from '../'
 import { colors } from '../assets/globalsKeys'
 import { positions } from './DlMenu.stories'
 
@@ -150,12 +150,11 @@ export default {
     }
 }
 
-const Template = (args) => ({
-    components: { DlTooltip, DlLink },
-    setup() {
-        return { args }
-    },
-    template: `
+export const Preview = {
+    render: (args, { argTypes }) => ({
+        components: { DlTooltip, DlLink },
+        props: Object.keys(argTypes),
+        template: `
     <div style="padding: 50px">
         <div
             style="
@@ -171,27 +170,25 @@ const Template = (args) => ({
             </div>
             <dl-link href="https://console.dataloop.ai" open-in-new-tab>
                 dl-link as parent
-                <dl-tooltip v-bind="args"> dl-link </dl-tooltip>
+                <dl-tooltip v-bind="$props"> dl-link </dl-tooltip>
             </dl-link>
             <div>
                 <button>
                     button as parent
-                    <dl-tooltip v-bind="args"> button </dl-tooltip>
+                    <dl-tooltip v-bind="$props"> button </dl-tooltip>
                 </button>
             </div>
         </div>
     </div>
    `
-})
-export const Preview = Template.bind({})
-Preview.args = {}
+    })
+}
 
-const TopTemplate = (args) => ({
-    components: { DlTooltip, DlLink },
-    setup() {
-        return { args }
-    },
-    template: `
+export const TopTemplate = {
+    render: (args, { argTypes }) => ({
+        components: { DlTooltip, DlLink },
+        props: Object.keys(argTypes),
+        template: `
     <div style="padding: 50px">
         <div
             style="
@@ -204,7 +201,7 @@ const TopTemplate = (args) => ({
             <div style="border: 1px solid black">
                 <dl-tooltip
                     anchor="top middle"
-                    v-bind="args"
+                    v-bind="$props"
                 >
                     Top Middle
                 </dl-tooltip>
@@ -213,18 +210,17 @@ const TopTemplate = (args) => ({
         </div>
     </div>
    `
-})
-export const TopAnchor = TopTemplate.bind({})
-TopAnchor.args = {
-    anchor: 'top middle'
+    }),
+    args: {
+        anchor: 'top middle'
+    }
 }
 
-const TopSelfTemplate = (args) => ({
-    components: { DlTooltip, DlLink },
-    setup() {
-        return { args }
-    },
-    template: `
+export const TopSelfTemplate = {
+    render: (args, { argTypes }) => ({
+        components: { DlTooltip, DlLink },
+        props: Object.keys(argTypes),
+        template: `
     <div style="padding: 50px">
         <div
             style="
@@ -237,7 +233,7 @@ const TopSelfTemplate = (args) => ({
             <div style="border: 1px solid black">
                 <dl-tooltip
                     self="top middle"
-                    v-bind="args"
+                    v-bind="$props"
                 >
                     Top Middle
                 </dl-tooltip>
@@ -246,8 +242,62 @@ const TopSelfTemplate = (args) => ({
         </div>
     </div>
    `
-})
-export const TopSelf = TopSelfTemplate.bind({})
-TopSelf.args = {
-    self: 'top middle'
+    }),
+    args: {
+        self: 'top middle'
+    }
+}
+
+export const SmartTooltip = {
+    render: (args, { argTypes }) => ({
+        components: { DlTooltip, DlCard },
+        props: Object.keys(argTypes),
+        template: `
+            <div style="padding: 50px">
+                <div
+                    style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1em;
+                    justify-content: center;
+                    "
+                >
+                    <div style="border: 1px solid black">
+                        <dl-tooltip
+                            :hide-delay="10000"
+                            style="padding: 0; border-radius: 2px"
+                        >
+                            <dl-card
+                                v-bind="$props"
+                            />
+                        </dl-tooltip>
+                       Show smart tooltip
+                    </div>
+                </div>
+            </div>
+           `
+    }),
+    args: {
+        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
+        image: {
+            src: 'https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&ssl=1'
+        },
+        delay: 10000,
+        title: 'Lorem ipsum',
+        keyboardShortcut: 'Shift + E',
+        links: [
+            {
+                icon: 'icon-dl-list-view',
+                href: 'https://www.google.md/?hl=ru',
+                title: 'Lorem',
+                newtab: true,
+                external: true
+            },
+            {
+                href: '#test',
+                title: 'Developers',
+                icon: 'icon-dl-code'
+            }
+        ]
+    }
 }

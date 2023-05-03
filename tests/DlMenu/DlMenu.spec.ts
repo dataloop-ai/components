@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue-demi'
 import { describe, it, expect, beforeAll } from 'vitest'
 import { DlButton, DlMenu } from '../../src/components'
+import { waitNextFrame } from '../TestingUtils'
 
 describe('DlMenu', () => {
     const parent = defineComponent({
@@ -54,7 +55,8 @@ describe('DlMenu', () => {
             square: false,
             target: true,
             touchPosition: false,
-            transitionDuration: 300
+            transitionDuration: 300,
+            arrowNavItems: []
         })
         expect(wrapper.vm.showing).toBe(false)
     })
@@ -67,10 +69,7 @@ describe('DlMenu', () => {
                 new MouseEvent('click')
             )
 
-            await new Promise<void>((resolve, reject) => {
-                requestAnimationFrame(() => resolve())
-            })
-
+            await waitNextFrame()
             await wrapper.vm.$nextTick()
 
             slot = document.querySelector('#innerSlot') as HTMLDivElement

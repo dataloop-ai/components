@@ -6,13 +6,7 @@ const transformOptions = [
     'capitalize',
     'uppercase',
     'lowercase',
-    'full-width',
-    'full-size-kana',
-    'inherit',
-    'initial',
-    'revert',
-    'revert-layer',
-    'unset'
+    'first-letter-capitalized'
 ]
 
 export default {
@@ -122,7 +116,8 @@ export default {
             name: 'transform',
             defaultValue: 'lowercase',
             description: 'The text transform options for the chip',
-            control: { type: 'radio', options: transformOptions },
+            options: transformOptions,
+            control: { type: 'radio' },
             table: {
                 type: { summary: transformOptions },
                 defaultValue: { summary: 'lowercase' }
