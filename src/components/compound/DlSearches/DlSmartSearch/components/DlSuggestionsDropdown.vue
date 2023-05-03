@@ -9,14 +9,20 @@
             :disabled="disabled"
             fit-container
             :model-value="modelValue"
-            @update:modelValue="$emit('update:modelValue', $event)"
+            :arrow-nav-items="suggestions"
+            @update:modelValue="emitModelValue($event)"
+            @show="onShow"
+            @hide="onHide"
+            @highlightedIndex="setHighlightedIndex"
+            @handleSelectedItem="handleSelectedItem"
         >
             <dl-list>
                 <dl-list-item
-                    v-for="item in suggestions"
+                    v-for="(item, suggestionIndex) in suggestions"
                     :key="item"
                     :clickable="true"
-                    @click="$emit('set-input-value', item)"
+                    :is-highlighted="suggestionIndex === highlightedIndex"
+                    @click="handleOption(item)"
                 >
                     {{ item }}
                 </dl-list-item>
@@ -25,7 +31,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import { DlMenu, DlList } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
 
@@ -62,6 +68,39 @@ export default defineComponent({
         }
     },
     emits: ['set-input-value', 'update:modelValue'],
+    setup(props, { emit }) {
+        const isMenuOpen = ref(false)
+        const highlightedIndex = ref(-1)
+        const onShow = (value: any) => {
+            isMenuOpen.value = !!value
+        }
+        const onHide = (value: any) => {
+            isMenuOpen.value = !value
+        }
+
+        const setHighlightedIndex = (value: any) => {
+            highlightedIndex.value = value
+        }
+        const handleSelectedItem = (value: any) => {
+            handleOption(value)
+        }
+        const emitModelValue = (event: any) => {
+            emit('update:modelValue', event)
+        }
+        const handleOption = (item: any) => {
+            emit('set-input-value', item)
+        }
+
+        return {
+            setHighlightedIndex,
+            handleSelectedItem,
+            highlightedIndex,
+            onShow,
+            onHide,
+            emitModelValue,
+            handleOption
+        }
+    },
     computed: {
         defaultTarget() {
             return '.dl-smart-search-input__textarea'

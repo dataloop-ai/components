@@ -121,17 +121,21 @@
                     :offset="[0, 3]"
                     fit-container
                     :fit-content="fitContent"
+                    :arrow-nav-items="suggestItems"
                     @click="onMenuShow"
+                    @highlightedIndex="setHighlightedIndex"
+                    @handleSelectedItem="handleSelectedItem"
                 >
                     <dl-list
                         bordered
                         :style="{ maxWidth: suggestMenuWidth }"
                     >
                         <dl-list-item
-                            v-for="item in suggestItems"
+                            v-for="(item, suggestIndex) in suggestItems"
                             :key="item"
                             clickable
                             style="font-size: 12px"
+                            :is-highlighted="suggestIndex === highlightedIndex"
                             @click="onClick($event, item)"
                         >
                             <span
@@ -197,7 +201,7 @@
 
 <script lang="ts">
 import { debounce } from 'lodash'
-import { defineComponent, PropType } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlInfoErrorMessage } from '../../shared'
 import { DlListItem } from '../../basic'
 import { DlMenu, DlIcon, DlList, DlTooltip } from '../../essential'
@@ -297,10 +301,7 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        withoutRootPadding: {
-            type: Boolean,
-            default: false
-        },
+        dense: Boolean,
         disableClearBtn: {
             type: Boolean,
             default: false
@@ -328,12 +329,45 @@ export default defineComponent({
         fitContent: Boolean
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
+    setup(props, { emit }) {
+        const highlightedIndex = ref(-1)
+        const isMenuOpen = ref(false)
+        const suggestItems = computed<string[]>(() => {
+            return props.autoSuggestItems.filter((item) =>
+                item.includes(`${props.modelValue}`)
+            )
+        })
+
+        const setHighlightedIndex = (value: any) => {
+            highlightedIndex.value = value
+        }
+        const handleSelectedItem = (value: any) => {
+            onAutoSuggestClick(null, value)
+        }
+        const inputRef = ref<HTMLInputElement>(null)
+        const onAutoSuggestClick = (
+            e: Event,
+            item: string | HTMLInputElement
+        ): void => {
+            emit('input', item, e)
+            emit('update:model-value', item)
+            inputRef.value = item as HTMLInputElement
+        }
+
+        return {
+            suggestItems,
+            highlightedIndex,
+            onAutoSuggestClick,
+            isMenuOpen,
+            setHighlightedIndex,
+            handleSelectedItem
+        }
+    },
     data() {
         return {
             uuid: `dl-text-input-${v4()}`,
             showPass: false,
-            focused: false,
-            isMenuOpen: false
+            focused: false
         }
     },
     computed: {
@@ -350,8 +384,8 @@ export default defineComponent({
             if (this.isSmall) {
                 classes.push('dl-text-input--s')
             }
-            if (this.withoutRootPadding) {
-                classes.push('dl-text-input--without-root-padding')
+            if (this.dense) {
+                classes.push('dl-text-input--dense')
             }
             return classes
         },
@@ -429,11 +463,6 @@ export default defineComponent({
         showSuggestItems(): boolean {
             return !!this.suggestItems.length && !!this.modelValue
         },
-        suggestItems(): string[] {
-            return this.autoSuggestItems.filter((item) =>
-                item.includes(`${this.modelValue}`)
-            )
-        },
         debouncedBlur(): any {
             const debounced = debounce(this.onBlur.bind(this), 50)
             return debounced
@@ -501,13 +530,6 @@ export default defineComponent({
         },
         onPassShowClick(): void {
             this.showPass = !this.showPass
-        },
-        onAutoSuggestClick(e: Event, item: string): void {
-            this.$emit('input', item, e)
-            this.$emit('update:model-value', item)
-
-            const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.value = item
         },
         onMenuShow(): void {
             this.focus()
@@ -608,7 +630,7 @@ export default defineComponent({
         -moz-appearance: textfield;
     }
 
-    &--without-root-padding {
+    &--dense {
         padding: 0;
     }
 

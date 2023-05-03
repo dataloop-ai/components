@@ -1,6 +1,6 @@
 import {
-    createColorSchema,
-    updateEditor
+    updateEditor,
+    createColorSchema
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { describe, expect, it } from 'vitest'
 

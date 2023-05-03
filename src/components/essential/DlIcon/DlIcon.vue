@@ -2,7 +2,7 @@
     <div
         v-if="!svg"
         :id="uuid"
-        :style="inlineStyles"
+        :style="[inlineStyles, styles]"
         @click="$emit('click', $event)"
     >
         <i
@@ -47,6 +47,10 @@ export default defineComponent({
         size: {
             type: String,
             default: '12px'
+        },
+        styles: {
+            type: [Array, String, Object],
+            default: null
         },
         svg: {
             type: Boolean,
