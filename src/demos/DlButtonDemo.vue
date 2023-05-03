@@ -242,6 +242,21 @@
                 </dl-menu>
             </dl-button>
         </div>
+        <div>
+            <h3>Button with icon no label and menu</h3>
+            <p>should have</p>
+            <dl-button icon="icon-dl-search">
+                <div>
+                    test
+                    <dl-menu>
+                        <dl-list>
+                            <dl-list-item>item 1</dl-list-item>
+                            <dl-list-item> item 2</dl-list-item>
+                        </dl-list>
+                    </dl-menu>
+                </div>
+            </dl-button>
+        </div>
     </div>
 </template>
 
