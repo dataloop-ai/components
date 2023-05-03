@@ -85,13 +85,12 @@
                     </div>
                 </div>
             </div>
-            <label
-                v-if="status.message !== 'info'"
+            <!-- <span
                 ref="label"
                 class="dl-smart-search-input__search-label"
-                for="search-input"
                 :style="labelStyles"
-            >{{ status.message }}</label>
+                >{{ status.message }}</span
+            > -->
         </div>
         <div :class="messageClasses">
             {{ message }}
@@ -332,11 +331,6 @@ export default defineComponent({
 
             return classes
         },
-        labelStyles(): Record<string, any> {
-            return {
-                color: this.status.type === 'error' ? 'red' : 'gray'
-            }
-        },
         messageClasses(): string {
             let classes = 'dl-smart-search-input__message'
 
@@ -520,6 +514,7 @@ export default defineComponent({
 .dl-smart-search-input {
     display: flex;
     text-align: left;
+    height: 100%;
 
     &__char {
         ::selection {
@@ -537,7 +532,7 @@ export default defineComponent({
     &__search-bar {
         display: flex;
         flex-grow: 1;
-        height: auto;
+        height: 100%;
         padding: 0 10px;
         overflow-y: auto;
         background-color: var(--dl-color-panel-background);
@@ -579,14 +574,14 @@ export default defineComponent({
 
     &__status-icon-wrapper {
         display: flex;
+        line-height: 20px;
         align-items: center;
-        height: var(--dl-smart-search-input-height);
         margin-right: 5px;
     }
 
     &__input {
         font-size: 12px;
-        line-height: 14px;
+        line-height: 20px;
         font-weight: 400;
         font-family: 'Roboto', sans-serif;
         width: 100%;
@@ -627,7 +622,7 @@ export default defineComponent({
 
     &__textarea {
         font-size: 12px;
-        line-height: 14px;
+        line-height: 20px;
         font-weight: 400;
         font-family: 'Roboto', sans-serif;
         width: 100%;
@@ -676,7 +671,8 @@ export default defineComponent({
 
     &__toolbar {
         display: flex;
-        height: var(--dl-smart-search-input-height);
+        align-items: center;
+        height: 100%;
     }
 
     &__clear-btn-wrapper {

@@ -1,6 +1,5 @@
 <template>
     <div
-        v-if="modelValue"
         :id="uuid"
         class="dl-filters-wrapper"
     >
@@ -49,10 +48,6 @@ export default defineComponent({
         FiltersQuery
     },
     props: {
-        modelValue: {
-            type: Boolean,
-            default: false
-        },
         filters: {
             type: Array as PropType<Filters[]>,
             default: (): Filters[] => []

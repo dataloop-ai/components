@@ -26,7 +26,7 @@
             >
                 <dl-icon
                     :inline="false"
-                    size="m"
+                    size="16px"
                     icon="icon-dl-save"
                 />
                 <dl-tooltip>Save</dl-tooltip>
@@ -37,7 +37,7 @@
             >
                 <dl-icon
                     :inline="false"
-                    size="m"
+                    size="16px"
                     icon="icon-dl-delete"
                 />
                 <dl-tooltip>Delete</dl-tooltip>
@@ -80,8 +80,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .query {
-    height: 40px;
-    padding: 5px;
+    height: 30px;
+    padding: 10px;
     border-radius: 3px;
     display: flex;
     justify-content: space-between;
@@ -99,6 +99,7 @@ export default defineComponent({
         display: flex;
         align-items: center;
         &--icon {
+            cursor: pointer;
             margin: 0px 5px;
         }
     }

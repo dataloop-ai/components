@@ -4,51 +4,57 @@
         class="dl-smart-search"
         :style="cssVars"
     >
-        <div class="dl-smart-search__input-wrapper">
-            <dl-smart-search-input
-                :status="computedStatus"
-                :style-model="defineStyleModel"
-                :with-save-button="true"
-                :with-search-icon="true"
-                :with-screen-button="true"
-                :disabled="disabled"
-                :model-value="inputModel"
-                :expanded-input-height="expandedInputHeight"
-                :suggestions="suggestions"
-                @save="saveQueryDialogBoxModel = true"
-                @focus="setFocused"
-                @update:modelValue="handleInputModel"
-                @dql-edit="jsonEditorModel = !jsonEditorModel"
-            />
-        </div>
-        <div class="dl-smart-search__buttons">
-            <div class="dl-smart-search__search-btn-wrapper">
-                <dl-button
-                    icon="icon-dl-search"
-                    size="m"
+        <div class="dl-smart-search__inner">
+            <div class="dl-smart-search__input-wrapper">
+                <dl-smart-search-input
+                    :status="computedStatus"
+                    :style-model="defineStyleModel"
+                    :with-save-button="true"
+                    :with-search-icon="true"
+                    :with-screen-button="true"
                     :disabled="disabled"
-                    @click="emitSearchQuery"
+                    :model-value="inputModel"
+                    :expanded-input-height="expandedInputHeight"
+                    :suggestions="suggestions"
+                    @save="saveQueryDialogBoxModel = true"
+                    @focus="setFocused"
+                    @update:modelValue="handleInputModel"
+                    @dql-edit="jsonEditorModel = !jsonEditorModel"
                 />
             </div>
-        </div>
-        <dl-dialog-box
-            v-model="filtersModel"
-            volatile
-            :width="500"
-        >
-            <template #body>
-                <dl-smart-search-filters
+            <div class="dl-smart-search__buttons">
+                <div class="dl-smart-search__search-btn-wrapper">
+                    <dl-button
+                        icon="icon-dl-search"
+                        size="l"
+                        :disabled="disabled"
+                        @click="emitSearchQuery"
+                    />
+                </div>
+            </div>
+            <dl-button
+                class="dl-smart-search__buttons--filters"
+                text-color="dl-color-secondary"
+                flat
+                size="s"
+                padding="0px 10px"
+            >
+                Saved Filters
+                <dl-menu
                     v-model="filtersModel"
-                    :filters="filters"
-                    @filters-search="emitFiltersSearch"
-                    @filters-save="emitFiltersSave"
-                    @filters-delete="emitFiltersDelete"
-                />
-            </template>
-        </dl-dialog-box>
-        <button @mousedown="filtersModel = !filtersModel">
-            Open filters
-        </button>
+                    :offset="[0, 5]"
+                    anchor="bottom middle"
+                    self="top middle"
+                >
+                    <dl-smart-search-filters
+                        :filters="filters"
+                        @filters-search="emitFiltersSearch"
+                        @filters-save="emitFiltersSave"
+                        @filters-delete="emitFiltersDelete"
+                    />
+                </dl-menu>
+            </dl-button>
+        </div>
         <dl-json-editor
             :model-value="jsonEditorModel"
             :query="activeQuery"
@@ -109,6 +115,11 @@
                 </div>
             </template>
         </dl-dialog-box>
+        <span
+            ref="label"
+            class="dl-smart-search__search-label"
+            :style="labelStyles"
+        >{{ computedStatus?.message }}</span>
     </div>
 </template>
 <script lang="ts">
@@ -118,7 +129,7 @@ import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
 import { DlJsonEditor } from '../../DlJsonEditor'
 import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
 import { DlInput } from '../../DlInput'
-import { DlTypography } from '../../../essential'
+import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
 import {
     useSuggestions,
@@ -144,7 +155,8 @@ export default defineComponent({
         DlButton,
         DlTypography,
         DlInput,
-        DlSmartSearchFilters
+        DlSmartSearchFilters,
+        DlMenu
     },
     props: {
         status: {
@@ -272,6 +284,11 @@ export default defineComponent({
         defineStyleModel(): object {
             return createColorSchema(this.colorSchema, this.aliases)
         },
+        labelStyles(): Record<string, any> {
+            return {
+                color: this.computedStatus?.type === 'error' ? 'red' : 'gray'
+            }
+        },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
             if (!this.error && this.inputModel !== '') {
@@ -291,6 +308,11 @@ export default defineComponent({
                 type: 'error',
                 message: this.error
             }
+        },
+        stringQuery() {
+            return this.isQuerying || this.inputModel === ''
+                ? this.activeQuery.name
+                : this.inputModel
         }
     },
     watch: {
@@ -310,7 +332,7 @@ export default defineComponent({
         handleQuerySearchEditor(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
-            this.$emit('search-query', this.activeQuery, this.inputModel)
+            this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleSaveQuery(performSearch: boolean) {
             if (performSearch) {
@@ -325,19 +347,23 @@ export default defineComponent({
             this.activeQuery = query
             this.currentTab = currentTab
             this.saveQueryDialogBoxModel = true
+            this.filtersModel = false
         },
         emitFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
             this.currentTab = currentTab
             this.removeQueryDialogBoxModel = true
+            this.filtersModel = false
         },
         emitFiltersSearch(currentTab: string, query: Query) {
+            console.log('dsn')
             this.activeQuery = query
             this.currentTab = currentTab
             this.emitSearchQuery()
+            this.filtersModel = false
         },
         emitSearchQuery() {
-            this.$emit('search-query', this.activeQuery, this.inputModel)
+            this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         emitRemoveQuery() {
             if (!this.activeQuery) return
@@ -363,19 +389,30 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-smart-search {
     display: flex;
+    flex-direction: column;
     width: 100%;
 
+    &__inner {
+        display: flex;
+    }
+
     &__input-wrapper {
+        flex-grow: 1;
         width: 100%;
         max-width: var(--dl-search-max-width);
         transition: max-width 0.3s ease-out;
     }
 
     &__buttons {
-        display: flex;
         margin: 0px 5px;
-        align-items: flex-start;
-
+        display: flex;
+        &--filters {
+            min-width: fit-content;
+            border: 1px solid var(--dl-color-secondary);
+            border-radius: 3px;
+            box-sizing: border-box;
+            display: flex;
+        }
         &--save {
             display: flex;
             width: 100%;
@@ -405,6 +442,15 @@ export default defineComponent({
             font-size: 12px;
             width: 110px;
         }
+    }
+
+    &__search-label {
+        font-size: 10px;
+        margin-left: 4px;
+        margin-top: 4px;
+        color: gray;
+        position: relative;
+        word-break: break-all;
     }
 }
 </style>
