@@ -53,6 +53,7 @@ import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
+import DlTreeTableDemo from './DlTreeTableDemo.vue'
 
 export default {
     AvatarDemo,
@@ -75,6 +76,7 @@ export default {
     DlThDemo,
     DlTdDemo,
     DlTableDemo,
+    DlTreeTableDemo,
     DlPaginationDemo,
     DlDateTimeRangeDemo,
     DlSmartSearchDemo,
