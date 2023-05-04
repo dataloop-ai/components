@@ -394,6 +394,7 @@ export default defineComponent({
 
     &__inner {
         display: flex;
+        height: 28px;
     }
 
     &__input-wrapper {

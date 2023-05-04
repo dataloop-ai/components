@@ -10,7 +10,7 @@
                         v-if="withSearchIcon || (!focused && status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
-                        size="18px"
+                        size="16px"
                         :inline="false"
                     />
                 </div>
@@ -85,12 +85,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <span
-                ref="label"
-                class="dl-smart-search-input__search-label"
-                :style="labelStyles"
-                >{{ status.message }}</span
-            > -->
         </div>
         <div :class="messageClasses">
             {{ message }}
@@ -574,14 +568,14 @@ export default defineComponent({
 
     &__status-icon-wrapper {
         display: flex;
-        line-height: 20px;
+        line-height: 15px;
         align-items: center;
         margin-right: 5px;
     }
 
     &__input {
         font-size: 12px;
-        line-height: 20px;
+        line-height: 10px;
         font-weight: 400;
         font-family: 'Roboto', sans-serif;
         width: 100%;
@@ -622,7 +616,7 @@ export default defineComponent({
 
     &__textarea {
         font-size: 12px;
-        line-height: 20px;
+        line-height: 14px;
         font-weight: 400;
         font-family: 'Roboto', sans-serif;
         width: 100%;
