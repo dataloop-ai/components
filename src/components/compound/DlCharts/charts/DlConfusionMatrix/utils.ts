@@ -1,3 +1,4 @@
+import { isObject } from 'lodash'
 import { DlConfusionMatrixCell, DlConfusionMatrixLabel } from '../../types'
 
 export function getCellWidth() {
@@ -35,10 +36,10 @@ export function validateMatrix(
 export function normalizeMatrix(flatMatrix: DlConfusionMatrixCell[]) {
     const values = flatMatrix.map((cell) => cell.value)
     const largest = Math.max(...values)
-    flatMatrix.forEach((cell) => {
+    for (const cell of flatMatrix) {
         cell.unnormalizedValue = cell.value
         cell.value = Number((cell.value / largest).toFixed(1))
-    })
+    }
     return flatMatrix
 }
 
@@ -48,13 +49,17 @@ export function getGradationValues(
 ) {
     let max = Number.MIN_VALUE
     let min = Number.MAX_VALUE
-    matrix.forEach((row) => {
-        row.forEach((cell) => {
-            const cellValue = typeof cell === 'object' ? cell.value : cell
+
+    for (const row of matrix) {
+        for (const cell of row) {
+            const cellValue = isObject(cell)
+                ? (cell as DlConfusionMatrixCell).value
+                : cell
             if (cellValue > max) max = cellValue
             if (cellValue < min) min = cellValue
-        })
-    })
+        }
+    }
+
     const range = (max - min) / step
     const gradationValues = []
     let amount = 0
@@ -69,28 +74,23 @@ export function flattenConfusionMatrix(
     matrix: number[][] | DlConfusionMatrixCell[][],
     labelStrings: string[] | DlConfusionMatrixLabel[]
 ) {
-    return normalizeMatrix(
-        matrix.flatMap(
-            (row: number[] | DlConfusionMatrixCell[], rowIndex: number) => {
-                return row.map(
-                    (
-                        cell: number | DlConfusionMatrixCell,
-                        cellIndex: number
-                    ) => {
-                        const isObject = typeof cell === 'object'
-                        const value = isObject ? cell.value : cell
-                        return {
-                            value,
-                            unnormalizedValue: value,
-                            xLabel: labelStrings[rowIndex],
-                            yLabel: labelStrings[cellIndex],
-                            x: rowIndex,
-                            y: cellIndex,
-                            link: isObject ? cell.link : ''
-                        }
-                    }
-                )
-            }
-        )
-    )
+    const toNormalize: DlConfusionMatrixCell[] = []
+
+    for (const [rowIndex, row] of matrix.entries()) {
+        for (const [cellIndex, cell] of row.entries()) {
+            const value = isObject(cell)
+                ? (cell as DlConfusionMatrixCell).value
+                : cell
+            toNormalize.push({
+                value,
+                unnormalizedValue: value,
+                xLabel: labelStrings[rowIndex],
+                yLabel: labelStrings[cellIndex],
+                x: rowIndex,
+                y: cellIndex,
+                link: isObject ? (cell as DlConfusionMatrixCell).link : ''
+            })
+        }
+    }
+    return normalizeMatrix(toNormalize)
 }
