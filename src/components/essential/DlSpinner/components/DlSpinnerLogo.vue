@@ -149,4 +149,116 @@ export default defineComponent({
 })
 </script>
 
-<style src="../styles/spinnerStyles.scss" />
+<style lang="scss">
+.spinner-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dl-spinner {
+    vertical-align: middle;
+}
+
+.dl-spinner-mat {
+    animation: spinCircle 2s linear infinite;
+    transform-origin: center center;
+}
+.spinner-path {
+    stroke-dasharray: 1, 200 #{'/* rtl:ignore */'};
+    stroke-dashoffset: 0 #{'/* rtl:ignore */'};
+    animation: dash 1.5s ease-in-out infinite;
+}
+
+.spinner {
+    position: relative;
+}
+
+.spin-loader,
+.spin-bg {
+    width: var(--dl-spinner-size);
+    height: var(--dl-spinner-size);
+    top: 0;
+    left: 0;
+}
+
+.spin-loader {
+    position: absolute;
+    animation: spin 2s linear infinite;
+}
+
+.dl-spinner-icon {
+    top: var(--icon-top);
+    left: var(--icon-top);
+    position: absolute;
+    width: var(--dl-spinner-icon-size);
+    height: var(--dl-spinner-icon-size);
+    opacity: 1;
+    animation: pulse 2s infinite;
+}
+
+.dl-svg {
+    fill: var(--dl-spinner-border-color);
+}
+
+.spinner-color-bg {
+    fill: none;
+}
+
+.spinner-color {
+    fill: url(#linear-gradient);
+}
+
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+    }
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+    }
+}
+
+@keyframes spinCircle {
+    0% {
+        transform: rotate3d(0, 0, 1, 0deg) #{'/* rtl:ignore */'};
+    }
+    25% {
+        transform: rotate3d(0, 0, 1, 90deg) #{'/* rtl:ignore */'};
+    }
+    50% {
+        transform: rotate3d(0, 0, 1, 180deg) #{'/* rtl:ignore */'};
+    }
+    75% {
+        transform: rotate3d(0, 0, 1, 270deg) #{'/* rtl:ignore */'};
+    }
+    100% {
+        transform: rotate3d(0, 0, 1, 359deg) #{'/* rtl:ignore */'};
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+</style>

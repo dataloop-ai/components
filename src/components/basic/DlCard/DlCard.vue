@@ -9,9 +9,9 @@
         >
             <dl-icon
                 :icon="icon.src"
-                :styles="icon?.styles"
-                :size="icon?.size || '50px'"
-                :color="icon?.color || 'var(--dl-color-darker)'"
+                :styles="iconStyles"
+                :size="iconSize"
+                :color="iconColor"
             />
         </div>
         <div
@@ -20,8 +20,8 @@
         >
             <img
                 :src="image.src"
-                :style="image?.styles"
-                :alt="image?.alt"
+                :style="imageStyles"
+                :alt="imageAlt"
             >
         </div>
         <div class="card--content">
@@ -128,6 +128,23 @@ export default defineComponent({
         styles: {
             type: [Object, String, Array],
             default: null
+        }
+    },
+    computed: {
+        iconStyles(): string {
+            return this.icon?.styles ?? ''
+        },
+        iconSize(): string {
+            return this.icon?.size ?? '50px'
+        },
+        iconColor(): string {
+            return this.icon?.color ?? 'var(--dl-color-darker)'
+        },
+        imageStyles(): string {
+            return this.image?.styles ?? ''
+        },
+        imageAlt(): string {
+            return this.image?.alt ?? ''
         }
     }
 })
