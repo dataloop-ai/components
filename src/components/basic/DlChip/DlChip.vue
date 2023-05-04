@@ -4,6 +4,7 @@
         :id="uuid"
         :tabindex="tabIndex"
         class="dl-chip"
+        :class="chipClass"
         :style="cssChipVars"
     >
         <slot name="prefix" />
@@ -61,20 +62,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-
-const transformOptions: string[] = [
-    'none',
-    'capitalize',
-    'uppercase',
-    'lowercase',
-    'full-width',
-    'full-size-kana',
-    'inherit',
-    'initial',
-    'revert',
-    'revert-layer',
-    'unset'
-]
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -96,7 +84,7 @@ export default defineComponent({
         tabIndex: { type: [String, Number], default: '' },
         transform: {
             type: String,
-            default: 'lowercase',
+            default: 'default',
             validator: (value: string): boolean =>
                 transformOptions.includes(value)
         },
@@ -141,6 +129,12 @@ export default defineComponent({
 
             return this.iconColor
         },
+        chipClass(): string {
+            if (this.transform === 'default') {
+                return 'first-letter-capitalized'
+            }
+            return null
+        },
         cssChipVars(): Record<string, string | number> {
             return {
                 '--dl-chip-max-width': this.fit
@@ -180,7 +174,9 @@ export default defineComponent({
                 '--dl-chip-left-icon-cursor': this.disabled
                     ? 'not-allowed'
                     : 'pointer',
-                '--dl-chip-text-transform': this.transform
+                '--dl-chip-text-transform': this.chipClass
+                    ? null
+                    : this.transform
             }
         }
     },
@@ -213,10 +209,6 @@ export default defineComponent({
     color: var(--dl-chip-text-color);
     background-color: var(--dl-chip-bg-color);
     border: var(--dl-chip-border);
-    &::first-letter,
-    & > *::first-letter {
-        text-transform: capitalize;
-    }
 
     &--content {
         cursor: default;
@@ -229,8 +221,17 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        padding: 3px 5px 3px 5px;
     }
 }
+
+.dl-chip.first-letter-capitalized {
+    &::first-letter,
+    & > *::first-letter {
+        text-transform: capitalize;
+    }
+}
+
 .dl-chip-remove-icon-container {
     cursor: var(--dl-chip-left-icon-cursor);
     position: absolute;
