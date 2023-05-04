@@ -96,7 +96,7 @@
             <DlTable
                 :selected="selected"
                 :separator="separator"
-                :columns="columns"
+                :columns="tableColumns"
                 :bordered="bordered"
                 :draggable="draggable"
                 :dense="dense"
@@ -104,7 +104,7 @@
                 :filter="filter"
                 :selection="selection"
                 :loading="loading"
-                :rows="rows"
+                :rows="tableRows"
                 :resizable="resizable"
                 row-key="name"
                 color="dl-color-secondary"
@@ -121,7 +121,7 @@
                 <DlTable
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :pagination="pagination"
@@ -215,6 +215,30 @@
                         @click="lastPage"
                     />
                 </div>
+
+                <div style="margin-top: 100px">
+                    <p>Infinite scrolling</p>
+                    <DlTable
+                        :selected="selected"
+                        :separator="separator"
+                        :draggable="draggable"
+                        class="sticky-header"
+                        :filter="filter"
+                        :selection="selection"
+                        :dense="dense"
+                        title="Treats"
+                        color="dl-color-secondary"
+                        :loading="infiniteLoading"
+                        :rows="computedRows"
+                        :columns="tableColumns"
+                        style="height: 500px"
+                        row-key="index"
+                        :pagination="{ rowsPerPage: 0 }"
+                        virtual-scroll
+                        :rows-per-page-options="[0]"
+                        @virtual-scroll="onScroll"
+                    />
+                </div>
             </div>
             <div>
                 <p>#no-data & #pagination declare together</p>
@@ -259,8 +283,8 @@ import {
     DlInput,
     DlButton
 } from '../components'
-import { defineComponent, ref, computed, watch } from 'vue-demi'
-import { times } from 'lodash'
+import { defineComponent, ref, computed, nextTick } from 'vue-demi'
+import { times, cloneDeep } from 'lodash'
 
 const columns = [
     {
@@ -413,6 +437,12 @@ const rows = [
     }))
 ]
 
+type Rows = (typeof rows)[0]
+
+interface RowsWithIndex extends Rows {
+    index?: number
+}
+
 export default defineComponent({
     components: {
         DlTable,
@@ -422,6 +452,67 @@ export default defineComponent({
         DlButton
     },
     setup() {
+        const filter = ref('')
+        const selected = ref([])
+        const selection = ref('none')
+        const separator = ref('horizontal')
+        const bordered = ref(false)
+        const loading = ref(false)
+        const dense = ref(false)
+        const vScroll = ref(false)
+        const resizable = ref(false)
+        const borderState = ref([])
+        const denseState = ref([])
+        const virtualScroll = ref([])
+        const resizableState = ref([])
+        const tableRows = ref(cloneDeep(rows))
+        const draggable = ref('both')
+        const tableColumns = ref(columns)
+        const rowsPerPageOptions = ref([10, 12, 14, 16])
+
+        const infiniteLoading = ref(false)
+
+        const nextPageNumber = ref(2)
+
+        let allRows: RowsWithIndex[] = []
+        for (let i = 0; i < 100; i++) {
+            allRows = allRows.concat(
+                cloneDeep(rows)
+                    .slice(0)
+                    .map((r) => ({ ...r }))
+            )
+        }
+        allRows.forEach((row, index) => {
+            row.index = index
+        })
+
+        const pageSize = 50
+        const lastPageNumber = Math.ceil(allRows.length / pageSize)
+
+        const computedRows = computed(() =>
+            allRows.slice(0, pageSize * (nextPageNumber.value - 1))
+        )
+
+        const onScroll = ({ to, ref }: { to: number; ref: any }) => {
+            const lastIndex = computedRows.value.length - 1
+
+            if (
+                infiniteLoading.value !== true &&
+                nextPageNumber.value < lastPageNumber &&
+                to === lastIndex
+            ) {
+                infiniteLoading.value = true
+
+                setTimeout(() => {
+                    nextPageNumber.value++
+                    nextTick(() => {
+                        ref.refresh()
+                        infiniteLoading.value = false
+                    })
+                }, 500)
+            }
+        }
+
         const pagination = ref({
             sortBy: 'desc',
             descending: false,
@@ -467,8 +558,6 @@ export default defineComponent({
             }
         }
 
-        const tableRows = ref(rows)
-
         function nextPage() {
             const { page, rowsPerPage } = pagination.value
 
@@ -491,9 +580,28 @@ export default defineComponent({
         }
 
         return {
+            filter,
+            selected,
+            selection,
+            separator,
+            bordered,
+            loading,
+            dense,
+            vScroll,
+            resizable,
+            denseState,
+            borderState,
+            virtualScroll,
+            resizableState,
+            tableRows,
+            draggable,
+            tableColumns,
+            rowsPerPageOptions,
+            onScroll,
+            computedRows,
+            infiniteLoading,
             pagination,
             pagesNumber,
-            tableRows,
             firstPage,
             lastPage,
             nextPage,
@@ -502,27 +610,7 @@ export default defineComponent({
             isFirstPage
         }
     },
-    data() {
-        return {
-            filter: '',
-            selected: [],
-            selection: 'none',
-            separator: 'horizontal',
-            bordered: false,
-            loading: false,
-            dense: false,
-            vScroll: false,
-            resizable: false,
-            borderState: [] as boolean[],
-            denseState: [] as boolean[],
-            virtualScroll: [] as boolean[],
-            resizableState: [] as boolean[],
-            rows,
-            draggable: 'both',
-            columns,
-            rowsPerPageOptions: [10, 12, 14, 16]
-        }
-    },
+
     methods: {
         addRowPerPage() {
             this.rowsPerPageOptions.push(

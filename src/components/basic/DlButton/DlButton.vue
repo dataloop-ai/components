@@ -3,13 +3,14 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
-        :style="cssButtonVars"
+        :style="[cssButtonVars, containerStyles]"
     >
         <button
             v-if="hasContent || hasIcon"
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
+            :style="[cssButtonVars, styles]"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"
@@ -104,7 +105,8 @@ export default defineComponent({
         noWrap: Boolean,
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        styles: { type: [Object, String, Array], default: null }
     },
     emits: ['click', 'mousedown'],
     setup() {
@@ -139,6 +141,9 @@ export default defineComponent({
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
+        },
+        containerStyles(): object {
+            return this.fluid ? { width: '100%' } : {}
         },
         hasContent(): boolean {
             return !!this.$slots.default || this.hasLabel

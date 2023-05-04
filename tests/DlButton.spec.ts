@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlButton } from '../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 describe('DlButton', () => {
     it('testing setup functionality', async () => {
@@ -22,6 +22,7 @@ describe('DlButton', () => {
             round: false,
             padding: '',
             flat: false,
+            styles: null,
             fluid: false,
             uppercase: false,
             icon: '',

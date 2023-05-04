@@ -46,6 +46,7 @@
         </div>
         <div
             class="select-wrapper"
+            tabindex="0"
             :style="placeholderStyles"
         >
             <div
@@ -142,8 +143,11 @@
                 :offset="[0, 3]"
                 style="border-radius: 0"
                 :disabled="disabled || readonly"
+                :arrow-nav-items="options"
                 @show="onMenuOpen"
                 @hide="closeMenu"
+                @highlightedIndex="setHighlightedIndex"
+                @handleSelectedItem="handleSelectedItem"
             >
                 <dl-list
                     class="select-list"
@@ -183,7 +187,7 @@
                         </template>
                     </dl-select-option>
                     <dl-select-option
-                        v-for="option in options"
+                        v-for="(option, optionIndex) in options"
                         :key="getKeyForOption(option)"
                         clickable
                         :multiselect="multiselect"
@@ -191,6 +195,11 @@
                             selected:
                                 option === selectedOption && highlightSelected
                         }"
+                        :style="
+                            optionIndex === highlightedIndex
+                                ? 'background-color: var(--dl-color-fill)'
+                                : ''
+                        "
                         :with-wave="withWave"
                         :model-value="modelValue"
                         :value="getOptionValue(option)"
@@ -251,7 +260,7 @@ import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { DlListItem } from '../../basic'
 import { DlTooltip, DlList, DlIcon, DlMenu } from '../../essential'
 import { DlInfoErrorMessage, DlItemSection } from '../../shared'
-import { defineComponent, isVue2, PropType } from 'vue-demi'
+import { defineComponent, isVue2, PropType, ref } from 'vue-demi'
 import {
     getLabel,
     getIconSize,
@@ -337,11 +346,39 @@ export default defineComponent({
         'selected',
         'deselected'
     ],
+    setup(props, { emit }) {
+        const isExpanded = ref(false)
+        const selectedIndex = ref(-1)
+        const highlightedIndex = ref(-1)
+
+        const setHighlightedIndex = (value: any) => {
+            highlightedIndex.value = value
+        }
+        const handleModelValueUpdate = (val: any) => {
+            emit('update:model-value', val)
+            emit('change', val)
+        }
+        const handleSelectedItem = (value: any) => {
+            selectedIndex.value = props.options.findIndex(
+                (option: string | Record<string, string | number> | number) =>
+                    isEqual(option as any, value)
+            )
+
+            handleModelValueUpdate(value)
+        }
+
+        return {
+            isExpanded,
+            highlightedIndex,
+            selectedIndex,
+            setHighlightedIndex,
+            handleSelectedItem,
+            handleModelValueUpdate
+        }
+    },
     data() {
         return {
             uuid: `dl-select-${v4()}`,
-            isExpanded: false,
-            selectedIndex: -1,
             isEmpty: true
         }
     },
@@ -665,10 +702,6 @@ export default defineComponent({
         clearSelection(): void {
             this.selectedIndex = -1
             this.closeMenu()
-        },
-        handleModelValueUpdate(val: any) {
-            this.$emit('update:model-value', val)
-            this.$emit('change', val)
         },
         selectOption(selected: any) {
             if (this.multiselect) {

@@ -130,7 +130,8 @@ export default {
             name: 'size',
             defaultValue: 'm',
             description: 'The size of the button, it can be s,m,l or xl',
-            control: { type: 'radio', options: ['s', 'm', 'l', 'xl'] },
+            options: ['s', 'm', 'l', 'xl'],
+            control: { type: 'radio' },
             table: {
                 type: { summary: ['s', 'm', 'l', 'xl'] },
                 defaultValue: { summary: 'm' }
