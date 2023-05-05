@@ -4,40 +4,43 @@
         class="dl-smart-search"
         :style="cssVars"
     >
-        <div class="dl-smart-search__inner">
-            <div class="dl-smart-search__input-wrapper">
-                <dl-smart-search-input
-                    :status="computedStatus"
-                    :style-model="defineStyleModel"
-                    :with-save-button="true"
-                    :with-search-icon="true"
-                    :with-screen-button="true"
+        <div
+            ref="inputWrapper"
+            class="dl-smart-search__input-wrapper"
+        >
+            <dl-smart-search-input
+                :status="computedStatus"
+                :style-model="defineStyleModel"
+                :with-save-button="true"
+                :with-search-icon="true"
+                :with-screen-button="true"
+                :disabled="disabled"
+                :model-value="inputModel"
+                :expanded-input-height="expandedInputHeight"
+                :suggestions="suggestions"
+                :search-bar-width="searchBarWidth"
+                :default-width="width"
+                @save="saveQueryDialogBoxModel = true"
+                @focus="setFocused"
+                @update:modelValue="handleInputModel"
+                @dql-edit="jsonEditorModel = !jsonEditorModel"
+            />
+        </div>
+        <div class="dl-smart-search__buttons">
+            <div class="dl-smart-search__search-btn-wrapper">
+                <dl-button
+                    icon="icon-dl-search"
+                    size="l"
                     :disabled="disabled"
-                    :model-value="inputModel"
-                    :expanded-input-height="expandedInputHeight"
-                    :suggestions="suggestions"
-                    @save="saveQueryDialogBoxModel = true"
-                    @focus="setFocused"
-                    @update:modelValue="handleInputModel"
-                    @dql-edit="jsonEditorModel = !jsonEditorModel"
+                    @click="emitSearchQuery"
                 />
             </div>
-            <div class="dl-smart-search__buttons">
-                <div class="dl-smart-search__search-btn-wrapper">
-                    <dl-button
-                        icon="icon-dl-search"
-                        size="l"
-                        :disabled="disabled"
-                        @click="emitSearchQuery"
-                    />
-                </div>
-            </div>
+
             <dl-button
                 class="dl-smart-search__buttons--filters"
                 text-color="dl-color-secondary"
                 flat
                 size="s"
-                padding="0px 10px"
             >
                 Saved Filters
                 <dl-menu
@@ -115,11 +118,6 @@
                 </div>
             </template>
         </dl-dialog-box>
-        <span
-            ref="label"
-            class="dl-smart-search__search-label"
-            :style="labelStyles"
-        >{{ computedStatus?.message }}</span>
     </div>
 </template>
 <script lang="ts">
@@ -198,12 +196,17 @@ export default defineComponent({
         disabled: {
             type: Boolean,
             default: false
+        },
+        width: {
+            type: String,
+            default: '450px'
         }
     },
     emits: ['save-query', 'remove-query', 'search-query'],
     setup(props) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
+        const searchBarWidth = ref('100%')
 
         const activeQuery = ref({
             name: 'New Query',
@@ -266,6 +269,7 @@ export default defineComponent({
             isFocused,
             isQuerying,
             currentTab,
+            searchBarWidth,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -278,16 +282,11 @@ export default defineComponent({
         },
         cssVars(): Record<string, string> {
             return {
-                '--dl-search-max-width': this.isFocused ? '100%' : '450px'
+                '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
         defineStyleModel(): object {
             return createColorSchema(this.colorSchema, this.aliases)
-        },
-        labelStyles(): Record<string, any> {
-            return {
-                color: this.computedStatus?.type === 'error' ? 'red' : 'gray'
-            }
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
@@ -322,6 +321,12 @@ export default defineComponent({
             }`
             this.isQuerying = true
         }
+    },
+    mounted() {
+        const observer = new ResizeObserver((entries) => {
+            this.searchBarWidth = `${entries[0].contentRect.width}px`
+        })
+        observer.observe(this.$refs.inputWrapper)
     },
     methods: {
         handleQueryRemove(query: Query) {
@@ -389,7 +394,6 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-smart-search {
     display: flex;
-    flex-direction: column;
     width: 100%;
 
     &__inner {
@@ -407,12 +411,14 @@ export default defineComponent({
     &__buttons {
         margin: 0px 5px;
         display: flex;
+        align-items: center;
         &--filters {
             min-width: fit-content;
             border: 1px solid var(--dl-color-secondary);
             border-radius: 3px;
             box-sizing: border-box;
             display: flex;
+            margin: 0px 5px;
         }
         &--save {
             display: flex;

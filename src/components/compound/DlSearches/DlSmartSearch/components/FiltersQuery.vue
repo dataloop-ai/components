@@ -85,6 +85,7 @@ export default defineComponent({
     border-radius: 3px;
     display: flex;
     justify-content: space-between;
+    color: var(--dl-color-darker);
     &__header {
         cursor: pointer;
         display: flex;

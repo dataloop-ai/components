@@ -4,7 +4,10 @@
         :style="cssVars"
     >
         <div class="dl-smart-search-input__search-bar-wrapper">
-            <div :class="searchBarClasses">
+            <div
+                ref="searchBar"
+                :class="searchBarClasses"
+            >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
                         v-if="withSearchIcon || (!focused && status)"
@@ -18,7 +21,7 @@
                     <div
                         id="editor"
                         ref="input"
-                        class="dl-smart-search-input__textarea"
+                        :class="inputClass"
                         style="-webkit-appearance: textfield"
                         :placeholder="placeholder"
                         :contenteditable="!disabled"
@@ -77,7 +80,7 @@
                             text-color="dl-color-darker"
                             :disabled="saveStatus"
                             uppercase
-                            label="dql"
+                            label="DQL"
                             @click="edit"
                         >
                             <dl-tooltip> Switch to DQL </dl-tooltip>
@@ -85,6 +88,11 @@
                     </div>
                 </div>
             </div>
+            <span
+                ref="label"
+                class="dl-smart-search-input__search-label"
+                :style="labelStyles"
+            >{{ status?.message }}</span>
         </div>
         <div :class="messageClasses">
             {{ message }}
@@ -194,6 +202,13 @@ export default defineComponent({
         disabled: {
             type: Boolean,
             default: false
+        },
+        searchBarWidth: {
+            type: String
+        },
+        defaultWidth: {
+            type: String,
+            default: '450px'
         }
     },
     emits: [
@@ -325,6 +340,11 @@ export default defineComponent({
 
             return classes
         },
+        inputClass() {
+            return `dl-smart-search-input__textarea${
+                this.focused ? ' focus' : ''
+            }`
+        },
         messageClasses(): string {
             let classes = 'dl-smart-search-input__message'
 
@@ -341,7 +361,8 @@ export default defineComponent({
             return {
                 '--dl-smart-search-bar-wrapper-height':
                     this.expandedInputHeight,
-                '--dl-smart-search-input-height': this.inputHeight
+                '--dl-smart-search-input-height': this.inputHeight,
+                '--search-bar-width': this.searchBarWidth
             }
         },
         saveStatus() {
@@ -350,6 +371,11 @@ export default defineComponent({
                 !this.modelValue ||
                 this.status.type === 'error'
             )
+        },
+        labelStyles(): Record<string, any> {
+            return {
+                color: this.status?.type === 'error' ? 'red' : 'gray'
+            }
         }
     },
     watch: {
@@ -397,6 +423,14 @@ export default defineComponent({
 
                 this.focus()
             })
+        },
+        focused(value) {
+            this.$refs.searchBar.style.maxHeight = `${
+                value ? parseInt(this.searchBarWidth) : 28
+            }px`
+            if (!value) {
+                this.$refs.input.parentElement.style.width = '1px'
+            }
         },
         isDatePickerVisible(val: boolean) {
             if (!val) {
@@ -508,7 +542,8 @@ export default defineComponent({
 .dl-smart-search-input {
     display: flex;
     text-align: left;
-    height: 100%;
+    position: absolute;
+    width: var(--search-bar-width);
 
     &__char {
         ::selection {
@@ -537,7 +572,7 @@ export default defineComponent({
         border: 1px solid var(--dl-color-separator);
         border-radius: 2px;
 
-        max-height: 40px;
+        max-height: var(--dl-smart-search-bar-wrapper-height);
 
         &--error {
             border-color: var(--dl-color-negative);
@@ -569,44 +604,11 @@ export default defineComponent({
     &__status-icon-wrapper {
         display: flex;
         line-height: 15px;
-        align-items: center;
+        align-items: flex-start;
+        padding-top: 7px;
         margin-right: 5px;
     }
 
-    &__input {
-        font-size: 12px;
-        line-height: 10px;
-        font-weight: 400;
-        font-family: 'Roboto', sans-serif;
-        width: 100%;
-        border: none;
-        outline: none;
-
-        position: absolute;
-        width: 100%;
-        font-size: inherit;
-        font-family: inherit;
-
-        height: 14px;
-        overflow-y: hidden;
-        overflow-x: auto;
-        white-space: nowrap;
-        user-select: none;
-
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-        &::-webkit-scrollbar {
-            display: none;
-        }
-        &:not(:focus) {
-            width: 100%;
-            text-overflow: ellipsis;
-        }
-
-        caret-color: var(--dl-color-tooltip-background);
-    }
-
-    &__input,
     &__text,
     &__textarea {
         width: 100%;
@@ -624,13 +626,13 @@ export default defineComponent({
         outline: none;
         resize: none;
 
+        white-space: nowrap;
+
         height: auto;
         min-height: 14px;
         max-height: 100%;
-        overflow-y: auto;
-
-        word-break: break-all;
-        flex-wrap: wrap;
+        display: block;
+        overflow: hidden;
     }
 
     &__input,
@@ -652,7 +654,7 @@ export default defineComponent({
         position: relative;
         display: flex;
         flex-grow: 1;
-        padding: 6px 10px 6px 0;
+        padding: 7px 10px 6px 0;
         position: relative;
 
         align-items: flex-start;
@@ -665,8 +667,8 @@ export default defineComponent({
 
     &__toolbar {
         display: flex;
-        align-items: center;
-        height: 100%;
+        align-items: flex-start;
+        padding-top: 5px;
     }
 
     &__clear-btn-wrapper {
@@ -683,7 +685,7 @@ export default defineComponent({
     &__screen-btn-wrapper {
         display: flex;
         align-items: center;
-        padding: 0 10px;
+        padding: 0 5px;
         ::v-deep .dl-icon {
             font-size: 16px;
             color: var(--dl-color-darker);
@@ -738,5 +740,10 @@ export default defineComponent({
     &__date-picker-wrapper {
         width: 562px;
     }
+}
+.focus {
+    word-break: break-all;
+    flex-wrap: wrap;
+    white-space: pre-wrap;
 }
 </style>
