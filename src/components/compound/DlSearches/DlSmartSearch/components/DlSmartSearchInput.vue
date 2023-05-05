@@ -89,11 +89,11 @@
                     </div>
                 </div>
             </div>
-            <span
+            <label
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :style="labelStyles"
-            >{{ status?.message }}</span>
+            >{{ status?.message }}</label>
         </div>
         <div :class="messageClasses">
             {{ message }}
@@ -520,11 +520,12 @@ export default defineComponent({
             })
         },
         focused(value) {
-            this.$refs.searchBar.style.maxHeight = `${
+            (this.$refs.searchBar as HTMLElement).style.maxHeight = `${
                 value ? parseInt(this.searchBarWidth) : 28
             }px`
             if (!value) {
-                this.$refs.input.parentElement.style.width = '1px'
+                (this.$refs.input as HTMLElement).parentElement.style.width =
+                    '1px'
             }
         },
         isDatePickerVisible(val: boolean) {

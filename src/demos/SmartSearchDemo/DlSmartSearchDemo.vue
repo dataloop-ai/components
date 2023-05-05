@@ -92,20 +92,24 @@ export default defineComponent({
             }
         },
         handleSaveQuery(query: Query, type: string) {
-            const saveQueryIndex = this.filters[type].findIndex(
+            const saveQueryIndex = this.filters[
+                type as keyof typeof this.filters
+            ].findIndex(
                 (q: Query) => q.name === query.name || q.query === query.query
             )
             if (saveQueryIndex !== -1) {
-                this.filters[type][saveQueryIndex] = query
+                this.filters[type as keyof typeof this.filters][
+                    saveQueryIndex
+                ] = query
             } else {
-                this.filters[type].push(query)
+                this.filters[type as keyof typeof this.filters].push(query)
             }
         },
 
         handleRemoveQuery(query: Query, type: string) {
-            this.filters[type] = this.filters[type].filter(
-                (q: Query) => q.name !== query.name
-            )
+            this.filters[type as keyof typeof this.filters] = this.filters[
+                type as keyof typeof this.filters
+            ].filter((q: Query) => q.name !== query.name)
         }
     }
 })

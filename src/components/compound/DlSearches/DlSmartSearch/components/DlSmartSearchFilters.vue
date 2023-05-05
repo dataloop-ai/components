@@ -49,8 +49,8 @@ export default defineComponent({
     },
     props: {
         filters: {
-            type: Array as PropType<Filters[]>,
-            default: (): Filters[] => []
+            type: Object as PropType<Filters>,
+            default: (): Filters => ({ saved: [], recent: [], suggested: [] })
         }
     },
     emits: ['filters-save', 'filters-delete', 'filters-search'],
@@ -64,7 +64,7 @@ export default defineComponent({
         }
     },
     computed: {
-        tabItems() {
+        tabItems(): { label: string; name: string }[] {
             return getTabItems(this.filters)
         }
     }

@@ -326,7 +326,7 @@ export default defineComponent({
         const observer = new ResizeObserver((entries) => {
             this.searchBarWidth = `${entries[0].contentRect.width}px`
         })
-        observer.observe(this.$refs.inputWrapper)
+        observer.observe(this.$refs.inputWrapper as HTMLElement)
     },
     methods: {
         handleQueryRemove(query: Query) {
