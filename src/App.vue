@@ -69,9 +69,7 @@
                             :key="demo.name"
                             :bordered="index !== 0"
                             :clickable="clickable"
-                            :class="
-                                demo.name === activeDemo?.name ? 'selected' : ''
-                            "
+                            :class="isSelectedDemo(demo) ? 'selected' : ''"
                             style="text-transform: capitalize"
                             @click="setActiveDemo(demo)"
                         >
@@ -181,13 +179,18 @@ export default defineComponent({
                 : 'Dl' + name.split('Demo')[0]
         }
 
+        const isSelectedDemo = (demo: { name: string; component: any }) => {
+            return activeDemo.value?.name === demo.name
+        }
+
         return {
             darkMode,
             activeDemo,
             setActiveDemo,
             filterTerm,
             filteredDemos,
-            computeDemoName
+            computeDemoName,
+            isSelectedDemo
         }
     }
 })
