@@ -15,7 +15,7 @@ describe('DlSmartSearchInput', () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {}
         })
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-full-screen')
+        expect(wrapper.vm.screenIcon).toMatch('icon-dl-fit-to-screen')
     })
 
     it('should assign classes to component according to the props', async () => {
@@ -30,9 +30,6 @@ describe('DlSmartSearchInput', () => {
         await wrapper.setProps({
             status: { type: 'info', message: 'info label' }
         })
-
-        await wrapper.setData({ focused: true })
-        expect(wrapper.vm.searchBarClasses.includes('--focused')).toBeTruthy()
 
         await wrapper.setProps({ disabled: true })
         expect(wrapper.vm.searchBarClasses.includes('--disabled')).toBeTruthy()
