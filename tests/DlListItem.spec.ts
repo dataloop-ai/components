@@ -30,6 +30,7 @@ describe('DlItemItem', () => {
             endIconSize: '12px',
             withWave: false,
             height: null,
+            isHighlighted: false,
             padding: null,
             borderLeft: ''
         })

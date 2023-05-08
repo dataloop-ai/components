@@ -6,7 +6,7 @@
             with-search-btn
             highlight-matches
             placeholder="Search here"
-            :auto-suggest-items="['foo', 'bar']"
+            :auto-suggest-items="suggestItems"
         />
     </div>
 </template>
@@ -21,7 +21,8 @@ export default defineComponent({
     },
     setup() {
         const searchValue = ref<string>('')
-        return { searchValue }
+        const suggestItems = ['foo', 'foo bar', 'bar', 'bar foo']
+        return { searchValue, suggestItems }
     }
 })
 </script>

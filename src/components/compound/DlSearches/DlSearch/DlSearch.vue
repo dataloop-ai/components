@@ -34,6 +34,7 @@
         <dl-button
             v-show="withSearchBtn"
             padding="9px 16px"
+            style="width: 20%; min-width: fit-content"
             :size="size"
             :class="buttonClasses"
             fluid
@@ -90,7 +91,7 @@ export default defineComponent({
         'blur',
         'clear',
         'enter',
-        'search-btn',
+        'search',
         'update:model-value'
     ],
     data() {
@@ -131,7 +132,7 @@ export default defineComponent({
             this.$emit('clear', value)
         },
         onSearchButtonPress(): void {
-            this.$emit('search-btn', this.modelValue)
+            this.$emit('search', this.modelValue)
         }
     }
 })

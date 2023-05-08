@@ -486,6 +486,27 @@
                         </dl-list>
                     </dl-menu>
                 </dl-button>
+
+                <h4>Arrow navigation</h4>
+                <dl-button :label="arrowNavigationLabel">
+                    <dl-menu
+                        @show="onShow"
+                        @hide="onHide"
+                    >
+                        <dl-list style="min-width: 100px">
+                            <dl-list-item
+                                v-for="(item, index) in listItems"
+                                :key="index"
+                                clickable
+                                :is-highlighted="index === highlightedIndex"
+                            >
+                                <dl-item-section>
+                                    {{ item }}
+                                </dl-item-section>
+                            </dl-list-item>
+                        </dl-list>
+                    </dl-menu>
+                </dl-button>
             </div>
         </div>
     </div>
@@ -500,7 +521,8 @@ import {
     DlList,
     DlMenu
 } from '../components'
-import { defineComponent, onMounted, ref } from 'vue-demi'
+import { defineComponent, onMounted, ref, watch } from 'vue-demi'
+import { useArrowNavigation } from '../hooks/use-arrow-navigation'
 
 export default defineComponent({
     name: 'DlMenuDemo',
@@ -514,11 +536,48 @@ export default defineComponent({
     },
     setup() {
         const showing = ref(false)
+        const isMenuOpen = ref(false)
+        const arrowNavigationLabel = ref('Arrow Navigation Label')
+
+        const listItems = ref([
+            'New tab',
+            'New incognito tab',
+            'Recent tabs',
+            'History',
+            'Downloads',
+            'Settings',
+            'Help & Feedback'
+        ])
+
+        const onShow = (value: any) => {
+            isMenuOpen.value = !!value
+        }
+        const onHide = (value: any) => {
+            isMenuOpen.value = !value
+        }
+        const { selectedItem, highlightedIndex } = useArrowNavigation(
+            listItems,
+            isMenuOpen
+        )
+
+        watch(selectedItem, (value: string) => {
+            arrowNavigationLabel.value = value
+        })
+
         onMounted(() => {
             // @ts-ignore
             window.menuDemo = { showing }
         })
-        return { showing }
+        return {
+            showing,
+            listItems,
+            onShow,
+            onHide,
+            isMenuOpen,
+            selectedItem,
+            highlightedIndex,
+            arrowNavigationLabel
+        }
     }
 })
 </script>
