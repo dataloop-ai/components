@@ -64,7 +64,7 @@ export default defineComponent({
     }),
     computed: {
         value: {
-            get() {
+            get(): string | number | null {
                 return this.modelValue
             },
             set(value: string | number) {
@@ -79,7 +79,7 @@ export default defineComponent({
                 this.$emit('update:modelValue', buttonValue)
             }
         },
-        toggleButtons() {
+        toggleButtons(): DlToggleButtonOption[] {
             return this.options.slice(0, 3)
         }
     },
