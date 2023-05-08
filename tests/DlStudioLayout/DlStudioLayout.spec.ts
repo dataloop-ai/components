@@ -1,54 +1,54 @@
 import { mount } from '@vue/test-utils'
-import { DlLayout } from '../../src/components'
+import { DlStudioLayout } from '../../src/components'
 import { describe, it, expect } from 'vitest'
 
-describe('DlLayout', () => {
+describe('DlStudioLayout', () => {
     it('check component props', async () => {
-        const wrapper = mount(DlLayout, {})
+        const wrapper = mount(DlStudioLayout, {})
         expect(wrapper).toBeDefined()
 
         await wrapper.setProps({
-            expandLeftSidebar: false,
-            expandRightSidebar: false
+            expandLeftDrawer: false,
+            expandRightDrawer: false
         })
 
-        expect(wrapper.vm.expandLeftSidebar).toBe(false)
-        expect(wrapper.vm.expandRightSidebar).toBe(false)
+        expect(wrapper.vm.expandLeftDrawer).toBe(false)
+        expect(wrapper.vm.expandRightDrawer).toBe(false)
     })
 
     it('check component slots', async () => {
         const navbarMsg = 'navbar'
-        const leftSideMsg = 'left side'
-        const rightSideMsg = 'right side'
+        const leftDrawerMsg = 'left Drawer'
+        const rightDrawerMsg = 'right Drawer'
         const defaultMsg = 'default'
         const footerMsg = 'footer'
 
-        const wrapper = mount(DlLayout, {
+        const wrapper = mount(DlStudioLayout, {
             slots: {
                 'navbar-content': navbarMsg,
-                'left-menu': leftSideMsg,
-                'left-side': leftSideMsg,
-                'right-side': rightSideMsg,
+                'left-menu': leftDrawerMsg,
+                'left-drawer': leftDrawerMsg,
+                'right-drawer': rightDrawerMsg,
                 default: defaultMsg,
                 footer: footerMsg
             }
         })
 
         const navbar = wrapper.find('.dl-layout-navbar')
-        const leftSide = wrapper.find('.dl-layout__body__left-side')
-        const rightSide = wrapper.find('.dl-layout__body__right-side')
+        const leftDrawer = wrapper.find('.dl-layout__body__left-drawer')
+        const rightDrawer = wrapper.find('.dl-layout__body__right-drawer')
         const defaultContent = wrapper.find('.dl-layout__body__content')
         const footer = wrapper.find('.dl-layout__body__content__footer')
 
         expect(navbar.exists()).toBe(true)
-        expect(leftSide.exists()).toBe(true)
-        expect(rightSide.exists()).toBe(true)
+        expect(leftDrawer.exists()).toBe(true)
+        expect(rightDrawer.exists()).toBe(true)
         expect(defaultContent.exists()).toBe(true)
         expect(footer.exists()).toBe(true)
 
         expect(navbar.text()).toBe(navbarMsg)
-        expect(leftSide.text()).toBe(leftSideMsg)
-        expect(rightSide.text()).toBe(rightSideMsg)
+        expect(leftDrawer.text()).toBe(leftDrawerMsg)
+        expect(rightDrawer.text()).toBe(rightDrawerMsg)
         expect(defaultContent.text()).toBe(`${defaultMsg}${footerMsg}`)
         expect(footer.text()).toBe(footerMsg)
 

@@ -10,6 +10,7 @@
                 :border-left="inputBorderLeft"
                 @clear="clearAutocomplete"
                 @update:model-value="onChange"
+                @focus="onActiveInput"
             >
                 <template #prepend>
                     <dl-icon
@@ -34,6 +35,7 @@
                         :style="`background-color: ${activeBackground(
                             item.name
                         )}`"
+                        :is-highlighted="itemIndex === highlightedIndex"
                         @click="handleOption(item)"
                     >
                         <dl-item-section no-wrap>
@@ -64,6 +66,7 @@ import DlListItem from '../../../basic/DlListItem/DlListItem.vue'
 import DlInput from '../../../compound/DlInput/DlInput.vue'
 import DlIcon from '../../DlIcon/DlIcon.vue'
 import DlEllipsis from '../../../basic/DlEllipsis/DlEllipsis.vue'
+import { useArrowNavigation } from '../../../../hooks/use-arrow-navigation'
 
 type TListAutocomplete = {
     name: string
@@ -89,9 +92,16 @@ export default defineComponent({
     emit: ['selectedOption'],
     setup(props, ctx) {
         const inputValue = ref('')
+        const isInputActive = ref(false)
         const inputBorderLeft = ref('')
         const results = ref(null)
-
+        const { selectedItem, highlightedIndex } = useArrowNavigation(
+            results,
+            isInputActive
+        )
+        watch(selectedItem, (value: any) => {
+            handleOption(value)
+        })
         const filterResults = () => {
             results.value = props.items.filter((item: any) => {
                 return (
@@ -120,6 +130,9 @@ export default defineComponent({
             inputBorderLeft.value = ''
             ctx.emit('selectedOption', null)
         }
+        const onActiveInput = () => {
+            isInputActive.value = true
+        }
 
         return {
             handleOption,
@@ -129,7 +142,10 @@ export default defineComponent({
             results,
             onChange,
             inputBorderLeft,
-            activeBackground
+            activeBackground,
+            onActiveInput,
+            selectedItem,
+            highlightedIndex
         }
     }
 })

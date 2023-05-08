@@ -56,7 +56,7 @@ export default defineComponent({
     }
 })
 </script>
-<style>
+<style scoped>
 .tabpanel {
     margin: 0 auto;
     padding: 1rem;

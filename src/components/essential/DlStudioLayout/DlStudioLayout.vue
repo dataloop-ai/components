@@ -8,23 +8,23 @@
             </LayoutNavbar>
         </div>
         <div class="dl-layout__body">
-            <div
-                v-if="hasLeftSideSlot"
-                class="dl-layout__body__left-menu"
-            >
-                <LayoutVerticalSidebar
+            <div class="dl-layout__body__left-menu">
+                <NavigationDrawer
                     position="absolute"
-                    side="left"
-                    :expand-sidebar="isExpandedLeftSide"
-                    @expand="expandedLeftSide"
+                    location="left"
+                    :expand-drawer="isExpandedLeftDrawer"
+                    @expand="expandedLeftDrawer"
                 >
                     <template #default>
                         <slot name="left-menu" />
                     </template>
-                </LayoutVerticalSidebar>
+                </NavigationDrawer>
             </div>
-            <div class="dl-layout__body__left-side">
-                <slot name="left-side" />
+            <div
+                v-if="hasLeftDrawerSlot"
+                class="dl-layout__body__left-drawer"
+            >
+                <slot name="left-drawer" />
             </div>
             <div class="dl-layout__body__content">
                 <slot />
@@ -36,19 +36,19 @@
                 </div>
             </div>
             <div
-                v-if="hasRightSideSlot"
-                class="dl-layout__body__right-side"
+                v-if="hasRightDrawerSlot"
+                class="dl-layout__body__right-drawer"
             >
-                <LayoutVerticalSidebar
-                    side="right"
+                <NavigationDrawer
+                    location="right"
                     position="relative"
-                    :expand-sidebar="isExpandedRightSide"
-                    @expand="expandedRightSide"
+                    :expand-drawer="isExpandedRightDrawer"
+                    @expand="expandedRightDrawer"
                 >
                     <template #default>
-                        <slot name="right-side" />
+                        <slot name="right-drawer" />
                     </template>
-                </LayoutVerticalSidebar>
+                </NavigationDrawer>
             </div>
         </div>
     </div>
@@ -57,60 +57,64 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue-demi'
 import LayoutNavbar from './components/LayoutNavbar.vue'
-import LayoutVerticalSidebar from './components/LayoutVerticalSidebar.vue'
+import NavigationDrawer from './components/NavigationDrawer.vue'
 
 export default defineComponent({
     name: 'DlLayout',
     components: {
         LayoutNavbar,
-        LayoutVerticalSidebar
+        NavigationDrawer
     },
     props: {
-        expandLeftSidebar: {
+        expandLeftDrawer: {
             type: Boolean,
             default: false
         },
-        expandRightSidebar: {
+        expandRightDrawer: {
             type: Boolean,
             default: false
         }
     },
-    emits: ['expandedLeftSidebar', 'expandedRightSidebar'],
+    emits: ['expandedLeftDrawer', 'expandedRightDrawer'],
     setup(props, context) {
-        const propsExpandLeftSidebar = computed(() => props.expandLeftSidebar)
-        const isExpandedLeftSide = ref(propsExpandLeftSidebar.value)
-        const propsExpandRightSidebar = computed(() => props.expandRightSidebar)
-        const isExpandedRightSide = ref(propsExpandRightSidebar.value)
+        const propsExpandLeftDrawer = computed(() => props.expandLeftDrawer)
+        const isExpandedLeftDrawer = ref(propsExpandLeftDrawer.value)
+        const propsExpandRightDrawer = computed(() => props.expandRightDrawer)
+        const isExpandedRightDrawer = ref(propsExpandRightDrawer.value)
         const hasFooterSlot = computed(() => context.slots.footer !== undefined)
-        const hasLeftSideSlot = computed(
+        const hasLeftMenuSlot = computed(
             () => context.slots['left-menu'] !== undefined
         )
-        const hasRightSideSlot = computed(
-            () => context.slots['right-side'] !== undefined
+        const hasLeftDrawerSlot = computed(
+            () => context.slots['left-drawer'] !== undefined
         )
-        const expandedLeftSide = (value: boolean) => {
-            context.emit('expandedLeftSidebar', value)
+        const hasRightDrawerSlot = computed(
+            () => context.slots['right-drawer'] !== undefined
+        )
+        const expandedLeftDrawer = (value: boolean) => {
+            context.emit('expandedLeftDrawer', value)
         }
-        const expandedRightSide = (value: boolean) => {
-            context.emit('expandedRightSidebar', value)
+        const expandedRightDrawer = (value: boolean) => {
+            context.emit('expandedRightDrawer', value)
         }
 
-        watch(propsExpandLeftSidebar, (value) => {
-            isExpandedLeftSide.value = value
+        watch(propsExpandLeftDrawer, (value) => {
+            isExpandedLeftDrawer.value = value
         })
 
-        watch(propsExpandRightSidebar, (value) => {
-            isExpandedRightSide.value = value
+        watch(propsExpandRightDrawer, (value) => {
+            isExpandedRightDrawer.value = value
         })
 
         return {
-            isExpandedLeftSide,
-            isExpandedRightSide,
+            isExpandedLeftDrawer,
+            isExpandedRightDrawer,
             hasFooterSlot,
-            hasLeftSideSlot,
-            hasRightSideSlot,
-            expandedLeftSide,
-            expandedRightSide
+            hasLeftMenuSlot,
+            hasLeftDrawerSlot,
+            hasRightDrawerSlot,
+            expandedLeftDrawer,
+            expandedRightDrawer
         }
     }
 })
@@ -138,11 +142,11 @@ export default defineComponent({
             position: relative;
         }
 
-        &__left-side {
+        &__left-drawer {
             width: 210px;
             padding: 10px;
         }
-        &__right-side {
+        &__right-drawer {
             position: relative;
             background-color: transparent;
         }
