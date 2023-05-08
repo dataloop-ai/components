@@ -225,6 +225,9 @@ export default defineComponent({
             if (event.type !== 'mousemove') {
                 return
             }
+            const hover = !!document.querySelector('.drag-clone')
+            chartJS.options.plugins.tooltip.enabled = !hover
+            if (hover) return
             if (
                 items.length === 0 ||
                 chartJS.getElementsAtEventForMode(

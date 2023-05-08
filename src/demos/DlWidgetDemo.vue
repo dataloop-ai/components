@@ -1,20 +1,40 @@
 <template>
     <div>
-        <div class="select-layout">
-            <select @change="selectLayout">
-                <option
-                    v-for="(layout, index) in layouts"
-                    :key="index"
-                    :value="index"
+        <div class="options">
+            <div class="select-layout">
+                <select
+                    class="select-layout__input"
+                    @change="selectLayout"
                 >
-                    {{ layout.name }}
-                </option>
-            </select>
-            <button @mousedown="saveLayout">
-                Save
-            </button>
+                    <option
+                        v-for="(layout, index) in layouts"
+                        :key="index"
+                        :value="index"
+                    >
+                        {{ layout.name }}
+                    </option>
+                </select>
+                <button
+                    class="select-layout__button"
+                    @mousedown="saveLayout"
+                >
+                    Save
+                </button>
+                <span class="select-layout__info">{{ hasBeenSaved }}</span>
+            </div>
+            <div class="widgets-per-row">
+                <span class="widgets-per-row__label"> Widgets per row: </span>
+                <input
+                    v-model="widgetsPerRow"
+                    class="widgets-per-row__input"
+                    type="number"
+                >
+            </div>
         </div>
-        <dl-grid v-model="layout">
+        <dl-grid
+            v-model="layout"
+            :max-elements-per-row="widgetsPerRow"
+        >
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>
@@ -172,13 +192,26 @@ export default defineComponent({
             [3, 4]
         ])
 
-        const layouts = ref<DlGridLayout[]>([])
+        const layouts = ref<DlGridLayout[]>([
+            {
+                name: 'Layout 1',
+                value: layout.value
+            }
+        ])
+
+        const widgetsPerRow = ref(3)
+        const hasBeenSaved = ref('')
 
         const saveLayout = () => {
-            layouts.value.push({
+            const newLayout = {
                 name: `Layout ${layouts.value.length + 1}`,
                 value: layout.value
-            })
+            }
+            layouts.value.push(newLayout)
+            hasBeenSaved.value = `${newLayout.name} has been saved.`
+            setTimeout(() => {
+                hasBeenSaved.value = ''
+            }, 2000)
         }
 
         const selectLayout = (e: InputEvent) => {
@@ -186,7 +219,42 @@ export default defineComponent({
             layout.value = layouts.value[index].value
         }
 
-        return { data, layout, layouts, saveLayout, selectLayout }
+        return {
+            data,
+            layout,
+            layouts,
+            widgetsPerRow,
+            hasBeenSaved,
+            saveLayout,
+            selectLayout
+        }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.options {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.widgets-per-row {
+    &__input {
+        padding: 5px;
+        border-radius: 5px;
+        width: 50px;
+    }
+}
+.select-layout {
+    &__input,
+    &__button {
+        padding: 5px;
+        border-radius: 5px;
+        margin: 0px 2px;
+    }
+    &__info {
+        font-size: 0.8em;
+        margin-left: 10px;
+    }
+}
+</style>
