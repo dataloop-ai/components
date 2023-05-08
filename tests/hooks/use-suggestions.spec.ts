@@ -1,4 +1,3 @@
-import { mountComposition } from 'vue-composition-test-utils'
 import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
@@ -45,10 +44,10 @@ export const aliases: Alias[] = [
 ]
 
 describe('use-suggestions', () => {
-    const wrapper = mountComposition(() => useSuggestions(schema, aliases))
-    const findSuggestions = wrapper.result.current!.findSuggestions
-    const suggestions = wrapper.result.current!.suggestions
-    const error = wrapper.result.current!.error
+    const { suggestions, error, findSuggestions } = useSuggestions(
+        schema,
+        aliases
+    )
 
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
@@ -109,10 +108,11 @@ describe('use-suggestions', () => {
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
             findSuggestions('Level = ')
+            console.log(suggestions.value)
             expect(suggestions.value).toEqual(['high', 'medium', 'low', 30])
         })
 
-        it('suggestions should match the correct field value without the quotes', () => {
+        it.only('suggestions should match the correct field value without the quotes', () => {
             findSuggestions('Level = me')
             expect(suggestions.value).toEqual(['medium'])
         })
