@@ -112,7 +112,7 @@ describe('use-suggestions', () => {
             expect(suggestions.value).toEqual(['high', 'medium', 'low', 30])
         })
 
-        it.only('suggestions should match the correct field value without the quotes', () => {
+        it('suggestions should match the correct field value without the quotes', () => {
             findSuggestions('Level = me')
             expect(suggestions.value).toEqual(['medium'])
         })
