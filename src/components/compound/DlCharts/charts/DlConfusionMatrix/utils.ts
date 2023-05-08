@@ -78,18 +78,21 @@ export function flattenConfusionMatrix(
 
     for (const [rowIndex, row] of matrix.entries()) {
         for (const [cellIndex, cell] of row.entries()) {
-            const value = isObject(cell)
+            const cellIsObject = isObject(cell)
+            const value = cellIsObject
                 ? (cell as DlConfusionMatrixCell).value
                 : cell
-            toNormalize.push({
+
+            const object: DlConfusionMatrixCell = {
                 value,
                 unnormalizedValue: value,
                 xLabel: labelStrings[rowIndex],
                 yLabel: labelStrings[cellIndex],
                 x: rowIndex,
                 y: cellIndex,
-                link: isObject ? (cell as DlConfusionMatrixCell).link : ''
-            })
+                link: cellIsObject ? (cell as DlConfusionMatrixCell).link : ''
+            }
+            toNormalize.push(object)
         }
     }
     return normalizeMatrix(toNormalize)
