@@ -2,7 +2,7 @@
     <div
         v-if="!svg"
         :id="uuid"
-        :style="[inlineStyles, styles]"
+        :style="[inlineStyles, computedStyles]"
         @click="$emit('click', $event)"
         @mousedown="$emit('mousedown', $event)"
         @mouseup="$emit('mouseup', $event)"
@@ -35,9 +35,10 @@
 </template>
 
 <script lang="ts">
+import { isString } from 'lodash'
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
-import { getColor, loggerFactory } from '../../../utils'
+import { getColor, loggerFactory, stringStyleToRecord } from '../../../utils'
 
 export default defineComponent({
     name: 'DlIcon',
@@ -55,7 +56,7 @@ export default defineComponent({
             default: '12px'
         },
         styles: {
-            type: [Array, String, Object],
+            type: [String, Object],
             default: null
         },
         svg: {
@@ -80,6 +81,11 @@ export default defineComponent({
         }
     },
     computed: {
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
+        },
         cssIconVars(): Record<string, string> {
             return {
                 '--dl-icon-font-size': `${this.size}`,
@@ -94,8 +100,8 @@ export default defineComponent({
                     : 'inherit'
             }
         },
-        inlineStyles(): string {
-            return this.inline ? 'display: inline' : 'display: flex;'
+        inlineStyles(): Record<string, string> {
+            return { display: this.inline ? 'inline' : 'flex;' }
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {

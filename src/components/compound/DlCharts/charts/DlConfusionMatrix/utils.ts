@@ -79,9 +79,9 @@ export function flattenConfusionMatrix(
     for (const [rowIndex, row] of matrix.entries()) {
         for (const [cellIndex, cell] of row.entries()) {
             const cellIsObject = isObject(cell)
-            const value = cellIsObject
+            const value: number = cellIsObject
                 ? (cell as DlConfusionMatrixCell).value
-                : cell
+                : (cell as number)
 
             const object: DlConfusionMatrixCell = {
                 value,

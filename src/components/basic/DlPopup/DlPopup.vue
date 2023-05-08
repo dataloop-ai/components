@@ -112,6 +112,8 @@ import {
 import DraggableUpper from './components/DraggableUpper.vue'
 import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
+import { isString } from 'lodash'
+import { stringStyleToRecord } from '../../../utils'
 
 export default defineComponent({
     name: 'DlPopup',
@@ -446,7 +448,9 @@ export default defineComponent({
             portalIsActive,
             classes: 'dl-popup dl-position-engine scroll',
             styles: [
-                attrs.style,
+                isString(attrs.style)
+                    ? stringStyleToRecord(attrs.style)
+                    : attrs.style,
                 transitionStyle.value,
                 stylesFromProps.value
             ] as any
