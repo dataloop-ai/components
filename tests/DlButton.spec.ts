@@ -25,7 +25,7 @@ describe('DlButton', () => {
             flat: false,
             styles: null,
             fluid: false,
-            uppercase: false,
+            transform: 'default',
             icon: '',
             noWrap: false,
             outlined: false,
