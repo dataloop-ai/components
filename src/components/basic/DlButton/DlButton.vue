@@ -3,7 +3,7 @@
         :id="uuid"
         class="dl-button-container"
         style="pointer-events: none"
-        :style="[cssButtonVars, containerStyles]"
+        :style="[cssButtonVars, containerStyles, capitalizeFirst]"
     >
         <button
             v-if="hasContent || hasIcon"
@@ -19,14 +19,13 @@
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
             >
-                {{ buttonLabel }}
+                {{ label }}
             </dl-tooltip>
-            <span class="dl-button-content dl-anchor--skip">
+            <div class="dl-button-content dl-anchor--skip">
                 <dl-icon
                     v-if="hasIcon"
                     :size="iconSizePX"
                     :color="iconColor || textColor"
-                    :class="{ 'dl-button-icon': hasContent }"
                     :icon="icon"
                     :style="cssButtonVars"
                 />
@@ -34,12 +33,14 @@
                     v-if="hasLabel"
                     ref="buttonLabelRef"
                     class="dl-button-label"
-                    :class="{ 'dl-button-no-wrap': noWrap }"
+                    :class="{
+                        'dl-button-no-wrap': noWrap
+                    }"
                 >
-                    {{ buttonLabel }}
+                    {{ label }}
                 </span>
                 <slot />
-            </span>
+            </div>
         </button>
         <dl-tooltip
             v-if="tooltip"
@@ -66,12 +67,12 @@ import {
     setMaxHeight
 } from './utils'
 import type { ButtonSizes } from './utils'
-import { textTransform } from '../../../utils/string'
 import { defineComponent, PropType, ref } from 'vue-demi'
 import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlButton',
@@ -95,12 +96,18 @@ export default defineComponent({
         },
         iconColor: { type: String!, default: '' },
         padding: { type: String, default: '' },
+        margin: { type: String, default: '0 auto' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
         filled: { type: Boolean, default: true },
         round: { type: Boolean, default: false },
         fluid: Boolean,
         flat: Boolean,
-        uppercase: Boolean,
+        transform: {
+            type: String,
+            default: 'default',
+            validator: (value: string): boolean =>
+                transformOptions.includes(value)
+        },
         outlined: Boolean,
         noWrap: Boolean,
         icon: { type: String, default: '' },
@@ -120,6 +127,12 @@ export default defineComponent({
         }
     },
     computed: {
+        capitalizeFirst(): string {
+            if (this.transform === 'default') {
+                return 'first-letter-capitalized'
+            }
+            return null
+        },
         isActionable(): boolean {
             return this.disabled !== true
         },
@@ -135,9 +148,6 @@ export default defineComponent({
                 this.label !== null &&
                 this.label !== ''
             )
-        },
-        buttonLabel(): string {
-            return textTransform(this.label)
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
@@ -245,10 +255,11 @@ export default defineComponent({
                     : this.hasIcon && !this.hasContent
                     ? setIconPadding(this.size)
                     : setPadding(this.size),
+                '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
-                '--dl-button-text-transform': this.uppercase
-                    ? 'uppercase'
-                    : 'none',
+                '--dl-button-text-transform': this.capitalizeFirst
+                    ? null
+                    : this.transform,
                 '--dl-button-cursor': this.isActionable
                     ? 'pointer'
                     : 'not-allowed',
@@ -298,8 +309,10 @@ export default defineComponent({
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .dl-button {
     padding: var(--dl-button-padding);
+    margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
     text-transform: var(--dl-button-text-transform);
     font-family: 'Roboto', sans-serif;
@@ -318,25 +331,30 @@ export default defineComponent({
     vertical-align: middle;
     transition: all ease-in 0.15s;
     justify-content: center;
+
     &:active {
         transition: all ease-in 0.15s;
         color: var(--dl-button-text-color-pressed) !important;
         background-color: var(--dl-button-bg-pressed) !important;
         border-color: var(--dl-button-border-pressed) !important;
+
         & > span > i {
             transition: all ease-in 0.15s;
         }
     }
+
     &:hover:enabled:not(:active) {
         color: var(--dl-button-text-color-hover);
         background-color: var(--dl-button-bg-hover);
         border-color: var(--dl-button-border-hover);
+
         & .dl-button-label {
             transition: all ease-in 0.15s;
             color: var(--dl-button-color-hover);
         }
     }
 }
+
 .dl-button-content {
     display: flex;
     text-align: center;
@@ -349,10 +367,14 @@ export default defineComponent({
     z-index: 0;
     user-select: none !important;
     min-width: 1.5em;
+    gap: var(--dl-button-gap, 7px);
 }
 
-.dl-button-icon {
-    margin: var(--dl-button-icon-margin, '0px 7px 0px 0px');
+.dl-chip.first-letter-capitalized {
+    &::first-letter,
+    & > *::first-letter {
+        text-transform: capitalize;
+    }
 }
 
 .dl-button-container {

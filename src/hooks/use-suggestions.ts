@@ -60,12 +60,22 @@ type Expression = {
 }
 
 const space = ' '
+const dateStartSuggestionString = '(From dd/mm/yyyy)'
+const dateEndSuggestionString = '(To dd/mm/yyyy)'
 const dateIntervalSuggestionString = '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
 
 let localSuggestions: Suggestion[] = []
 
+export const startDatePattern = new RegExp(
+    /(from\s?\d{2}\/\d{2}\/\d{4}\s?|from\s?dd\/mm\/yyyy\s?)/,
+    'gi'
+)
+export const endDatePattern = new RegExp(
+    /(to\s?\d{2}\/\d{2}\/\d{4}\s?|to\s?dd\/mm\/yyyy\s?)/,
+    'gi'
+)
 export const dateIntervalPattern = new RegExp(
-    /\((from\s?\(\d{2}\/\d{2}\/\d{4}\)\s?to\s?\(\d{2}\/\d{2}\/\d{4}\))\)|\((from\s?\(dd\/mm\/yyyy\)\s?to\s?\(dd\/mm\/yyyy\))\)/,
+    /(from\s?\d{2}\/\d{2}\/\d{4}\s?to\s?\d{2}\/\d{2}\/\d{4})|(from\s?dd\/mm\/yyyy\s?to\s?dd\/mm\/yyyy)/,
     'gi'
 )
 
@@ -75,99 +85,99 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
     const error: Ref<string | null> = ref(null)
 
     const findSuggestions = (input: string) => {
+        input = input.replace(/\s+/g, ' ').trimStart()
         localSuggestions = initialSuggestions
 
         const words = splitByQuotes(input, space)
         const expressions = mapWordsToExpressions(words)
 
-        expressions.forEach(
-            ({ field, operator, value, keyword }: Expression) => {
-                let matchedField: Suggestion | null = null
-                let matchedOperator: Suggestion | null = null
-                let matchedKeyword: Suggestion | null = null
+        for (const { field, operator, value, keyword } of expressions) {
+            let matchedField: Suggestion | null = null
+            let matchedOperator: Suggestion | null = null
+            let matchedKeyword: Suggestion | null = null
 
-                if (!field) return
+            if (!field) continue
 
-                localSuggestions = getMatches(localSuggestions, field)
-                matchedField = getMatch(localSuggestions, field)
+            localSuggestions = getMatches(localSuggestions, field)
+            matchedField = getMatch(localSuggestions, field)
 
-                if (!matchedField && isNextCharSpace(input, field)) {
-                    localSuggestions = []
-                    return
-                }
-
-                if (!matchedField || !isNextCharSpace(input, matchedField)) {
-                    return
-                }
-
-                const alias = getAliasObjByAlias(aliases, matchedField)
-                if (!alias) return
-                const dataType = getDataTypeByAliasKey(schema, alias.key)
-                if (!dataType) {
-                    localSuggestions = []
-                    return
-                }
-
-                const ops: string[] = Array.isArray(dataType)
-                    ? getGenericOperators()
-                    : getOperatorByDataType(dataType)
-
-                localSuggestions = getOperators(ops)
-
-                if (!operator) return
-
-                localSuggestions = getMatches(localSuggestions, operator)
-                matchedOperator = getMatch(localSuggestions, operator)
-
-                if (!matchedOperator && isNextCharSpace(input, operator)) {
-                    localSuggestions = []
-                    return
-                }
-
-                if (
-                    !matchedOperator ||
-                    !isNextCharSpace(input, matchedOperator)
-                ) {
-                    return
-                }
-
-                if (Array.isArray(dataType)) {
-                    localSuggestions = dataType
-
-                    if (!value) return
-
-                    localSuggestions = getMatches(localSuggestions, value)
-                } else if (
-                    dataType === 'datetime' ||
-                    dataType === 'date' ||
-                    dataType === 'time'
-                ) {
-                    localSuggestions = [dateIntervalSuggestionString]
-
-                    if (!value) return
-
-                    localSuggestions = getMatches(localSuggestions, value)
-                } else {
-                    localSuggestions = []
-                }
-
-                if (!value || !isNextCharSpace(input, value)) {
-                    return
-                }
-
-                localSuggestions = [Logical.AND, Logical.OR]
-
-                if (!keyword) return
-
-                localSuggestions = getMatches(localSuggestions, keyword)
-                matchedKeyword = getMatch(localSuggestions, keyword)
-
-                if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
-                    return
-
-                localSuggestions = initialSuggestions
+            if (!matchedField && isNextCharSpace(input, field)) {
+                localSuggestions = []
+                continue
             }
-        )
+
+            if (!matchedField || !isNextCharSpace(input, matchedField)) {
+                continue
+            }
+
+            const alias = getAliasObjByAlias(aliases, matchedField)
+            if (!alias) continue
+            const dataType = getDataTypeByAliasKey(schema, alias.key)
+            if (!dataType) {
+                localSuggestions = []
+                continue
+            }
+
+            const ops: string[] = Array.isArray(dataType)
+                ? getGenericOperators()
+                : getOperatorByDataType(dataType)
+
+            localSuggestions = getOperators(ops)
+
+            if (!operator) continue
+
+            localSuggestions = getMatches(localSuggestions, operator)
+            matchedOperator = getMatch(localSuggestions, operator)
+
+            if (!matchedOperator && isNextCharSpace(input, operator)) {
+                localSuggestions = []
+                continue
+            }
+
+            if (!matchedOperator || !isNextCharSpace(input, matchedOperator)) {
+                continue
+            }
+
+            if (Array.isArray(dataType)) {
+                localSuggestions = dataType
+
+                if (!value) continue
+
+                localSuggestions = getMatches(localSuggestions, value)
+            } else if (
+                dataType === 'datetime' ||
+                dataType === 'date' ||
+                dataType === 'time'
+            ) {
+                localSuggestions = [
+                    dateIntervalSuggestionString,
+                    dateStartSuggestionString,
+                    dateEndSuggestionString
+                ]
+
+                if (!value) continue
+
+                localSuggestions = getMatches(localSuggestions, value)
+            } else {
+                localSuggestions = []
+            }
+
+            if (!value || !isNextCharSpace(input, value)) {
+                continue
+            }
+
+            localSuggestions = [Logical.AND, Logical.OR]
+
+            if (!keyword) continue
+
+            localSuggestions = getMatches(localSuggestions, keyword)
+            matchedKeyword = getMatch(localSuggestions, keyword)
+
+            if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
+                continue
+
+            localSuggestions = initialSuggestions
+        }
 
         error.value = input.length
             ? getError(schema, aliases, expressions)
@@ -203,12 +213,11 @@ const getError = (
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
+            const aliasObj = getAliasObjByAlias(aliases, field)
+            if (!aliasObj) return 'warning'
             const valid = isValidByDataType(
-                value,
-                getDataTypeByAliasKey(
-                    schema,
-                    getAliasObjByAlias(aliases, field)!.key
-                ),
+                validateBracketValues(value),
+                getDataTypeByAliasKey(schema, aliasObj!.key),
                 operator
             )
 
@@ -244,8 +253,18 @@ const isValidByDataType = (
     }
 }
 
+const validateBracketValues = (value: string) => {
+    value = removeBrackets(value)
+    value = value.split(',')[0]
+    return value
+}
+
 const isValidDateIntervalPattern = (str: string) => {
-    return !!str.match(dateIntervalPattern)
+    return (
+        !!str.match(dateIntervalPattern) ||
+        !!str.match(startDatePattern) ||
+        !!str.match(endDatePattern)
+    )
 }
 
 const isValidNumber = (str: string) => {
@@ -309,7 +328,7 @@ const getGenericOperators = () => {
     )
 }
 
-const mapWordsToExpressions = (words: string[]): Expression[] => {
+export const mapWordsToExpressions = (words: string[]): Expression[] => {
     const _words = words.slice()
     const expressions = [mapWordsToExpression(_words.splice(0, 4))]
 
@@ -353,3 +372,7 @@ const isNextCharSpace = (input: string, str: string) => {
 
 const matchStringEnd = (input: string, str: string) =>
     input.lastIndexOf(str + '" ') > -1 || input.lastIndexOf(str + "' ") > -1
+
+export const removeBrackets = (str: string) => {
+    return str.replace(/\(/g, '').replace(/\)/g, '')
+}

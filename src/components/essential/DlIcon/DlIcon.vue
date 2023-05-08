@@ -4,6 +4,9 @@
         :id="uuid"
         :style="[inlineStyles, styles]"
         @click="$emit('click', $event)"
+        @mousedown="$emit('mousedown', $event)"
+        @mouseup="$emit('mouseup', $event)"
+        @mousemove="$emit('mousemove', $event)"
     >
         <i
             class="dl-icon"
@@ -21,6 +24,9 @@
         :id="uuid"
         style="display: inline"
         @click="$emit('click', $event)"
+        @mousedown="$emit('mousedown', $event)"
+        @mouseup="$emit('mouseup', $event)"
+        @mousemove="$emit('mousemove', $event)"
     >
         <div ref="svgIcon">
             <div ref="childToReplace" />
@@ -65,7 +71,7 @@ export default defineComponent({
             default: null
         }
     },
-    emits: ['click'],
+    emits: ['click', 'mousemove', 'mouseup', 'mousedown'],
     data() {
         return {
             uuid: `dl-icon-${v4()}`,

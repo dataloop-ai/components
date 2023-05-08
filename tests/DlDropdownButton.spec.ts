@@ -41,7 +41,7 @@ describe('DlDropdownButton', () => {
             split: false,
             stretch: false,
             textColor: '',
-            uppercase: false,
+            transform: 'default',
             fitContent: false,
             noWrap: false,
             overflow: false,

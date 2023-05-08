@@ -21,10 +21,11 @@ describe('DlButton', () => {
             disabled: false,
             round: false,
             padding: '',
+            margin: '0 auto',
             flat: false,
             styles: null,
             fluid: false,
-            uppercase: false,
+            transform: 'default',
             icon: '',
             noWrap: false,
             outlined: false,
@@ -93,7 +94,9 @@ describe('DlButton', () => {
         const button = wrapper.find('.dl-button-container')
 
         expect(
-            button.element.style.getPropertyValue('--dl-button-border-radius')
+            (button.element as HTMLElement).style.getPropertyValue(
+                '--dl-button-border-radius'
+            )
         ).toBe('2px')
     })
 })

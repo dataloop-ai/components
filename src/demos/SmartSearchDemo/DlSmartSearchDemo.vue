@@ -10,34 +10,8 @@
         <div
             style="width: 100px"
             class="props"
-        >
-            <select
-                id="status_select"
-                class="prop"
-                placeholder="Status type"
-                @input="updateStatusType"
-            >
-                <option value="info">
-                    Info
-                </option>
-                <option value="warning">
-                    Warning
-                </option>
-                <option value="error">
-                    Error
-                </option>
-                <option value="success">
-                    Success
-                </option>
-            </select>
-            <input
-                class="prop"
-                placeholder="Status Messaee"
-                @input="updateStatusMessage"
-            >
-        </div>
+        />
         <dl-smart-search
-            :status="status"
             :aliases="aliases"
             :schema="schema"
             :color-schema="{
@@ -74,10 +48,6 @@ export default defineComponent({
         return {
             switchState: false,
             isLoading: false,
-            status: {
-                type: 'info',
-                message: ''
-            },
             filters: [
                 {
                     label: 'Saved DQL Queries',
@@ -93,7 +63,7 @@ export default defineComponent({
                         },
                         {
                             name: 'Query 3',
-                            query: ''
+                            query: '{"query3": "query3"}'
                         },
                         {
                             name: 'Query 4',
@@ -143,8 +113,6 @@ export default defineComponent({
             ]
         }
     },
-
-    mounted() {},
     methods: {
         handleSearchQuery({ query }: { query: string }) {
             this.isLoading = true
@@ -154,22 +122,6 @@ export default defineComponent({
                 this.isLoading = false
             }, 2000)
         },
-
-        updateStatusType(e: Event) {
-            const newType = (e.target as HTMLInputElement).value
-            this.status = {
-                type: newType,
-                message: this.status.message
-            }
-        },
-        updateStatusMessage(e: Event) {
-            const newMessage = (e.target as HTMLInputElement).value
-            this.status = {
-                type: this.status.type,
-                message: newMessage
-            }
-        },
-
         handleSaveQuery(query: Query) {
             const saveQueryIndex = this.filters[0].queries.findIndex(
                 (q: Query) => q.name === query.name || q.query === query.query

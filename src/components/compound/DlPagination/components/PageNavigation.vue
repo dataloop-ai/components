@@ -1,10 +1,12 @@
 <template>
-    <div class="dl-pagination--page_navigation">
+    <div
+        class="dl-pagination--page_navigation"
+        :style="cssVars"
+    >
         <button
             v-if="boundaryLinks"
             class="dl-pagination--nav_btn"
             :disabled="disabled || isFirstPage"
-            :style="cssVars"
             @click="setPage(min)"
         >
             <dl-icon
@@ -16,7 +18,6 @@
             v-if="directionLinks"
             class="dl-pagination--nav_btn"
             :disabled="disabled || isFirstPage"
-            :style="cssVars"
             @click="setPage(value - 1)"
         >
             <dl-icon
@@ -28,7 +29,7 @@
             <button
                 v-if="boundaryNumbers"
                 class="dl-pagination--page_btn"
-                :style="isActivePage(min) ? activePageCssVars : cssVars"
+                :class="{ 'dl-pagination--active': isActivePage(min) }"
                 :disabled="disabled"
                 @click="setPage(min)"
             >
@@ -37,7 +38,6 @@
             <button
                 v-if="ellipsesStart"
                 class="dl-pagination--page_btn"
-                :style="cssVars"
                 :disabled="disabled"
                 @click="setPage(pgFrom - 1)"
             >
@@ -48,8 +48,10 @@
                     v-for="page in pages"
                     :key="page"
                     class="dl-pagination--page_btn"
-                    :class="{ active: isActivePage(page) }"
-                    :style="isActivePage(page) ? activePageCssVars : cssVars"
+                    :class="{
+                        'dl-pagination--active': isActivePage(page),
+                        active: isActivePage(page)
+                    }"
                     :disabled="disabled"
                     @click="setPage(page)"
                 >
@@ -59,7 +61,6 @@
             <button
                 v-if="ellipsesEnd"
                 class="dl-pagination--page_btn"
-                :style="cssVars"
                 :disabled="disabled"
                 @click="setPage(pgTo + 1)"
             >
@@ -68,7 +69,7 @@
             <button
                 v-if="boundaryNumbers && min !== max"
                 class="dl-pagination--page_btn"
-                :style="isActivePage(max) ? activePageCssVars : cssVars"
+                :class="{ 'dl-pagination--active': isActivePage(max) }"
                 :disabled="disabled"
                 @click="setPage(max)"
             >
@@ -79,7 +80,6 @@
             v-if="directionLinks"
             class="dl-pagination--nav_btn"
             :disabled="disabled || isLastPage"
-            :style="cssVars"
             @click="setPage(value + 1)"
         >
             <dl-icon
@@ -91,7 +91,6 @@
             v-if="boundaryLinks"
             class="dl-pagination--nav_btn"
             :disabled="disabled || isLastPage"
-            :style="cssVars"
             @click="setPage(max)"
         >
             <dl-icon
@@ -141,7 +140,7 @@ export default defineComponent({
         directionLinks: Boolean,
         color: {
             type: String,
-            default: 'dl-color-bg'
+            default: 'dl-color-transparent'
         },
         textColor: {
             type: String,
@@ -178,21 +177,16 @@ export default defineComponent({
         },
         cssVars(): Record<string, any> {
             return {
-                '--dl-page-bg-color': getColor(this.color, 'dl-color-bg'),
-                '--dl-page-text-color': getColor(
-                    this.textColor,
-                    'dl-color-darker'
+                '--dl-btn-bg-color': getColor(
+                    this.color,
+                    'dl-color-transparent'
                 ),
-                '--dl-btn-min-width': this.btnMinWidth
-            }
-        },
-        activePageCssVars(): Record<string, any> {
-            return {
-                '--dl-page-bg-color': getColor(
+                '--dl-active-btn-bg-color': getColor(
                     this.activeColor,
                     'dl-color-secondary'
                 ),
-                '--dl-page-text-color': getColor(
+                '--dl-text-color': getColor(this.textColor, 'dl-color-darker'),
+                '--dl-active-text-color': getColor(
                     this.activeTextColor,
                     'dl-color-text-buttons'
                 ),
@@ -309,6 +303,11 @@ export default defineComponent({
         text-overflow: ellipsis;
     }
 
+    &--active {
+        color: var(--dl-active-text-color) !important;
+        background-color: var(--dl-active-btn-bg-color) !important;
+    }
+
     &--page_btn,
     &--nav_btn {
         min-width: var(--dl-btn-min-width);
@@ -316,8 +315,8 @@ export default defineComponent({
         cursor: pointer;
         border: none;
         border-radius: 2px;
-        color: var(--dl-page-text-color);
-        background-color: var(--dl-page-bg-color);
+        color: var(--dl-text-color);
+        background-color: var(--dl-btn-bg-color);
 
         &:active:not(:disabled) {
             background-color: var(--dl-color-secondary);
