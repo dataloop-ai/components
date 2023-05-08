@@ -104,7 +104,7 @@ describe('DlTable', () => {
             }
         })
 
-        expect(wrapper.vm.bottomMessage).toBe(LOADING_LABEL)
+        expect(wrapper.vm.noDataMessage).toBe(LOADING_LABEL)
 
         await wrapper.setProps({
             loading: false,
@@ -112,7 +112,7 @@ describe('DlTable', () => {
             noResultsLabel: NO_RESULTS_LABEL
         })
 
-        expect(wrapper.vm.bottomMessage).toBe(NO_RESULTS_LABEL)
+        expect(wrapper.vm.noDataMessage).toBe(NO_RESULTS_LABEL)
     })
 
     it('should emit virtual scroll event', async () => {
