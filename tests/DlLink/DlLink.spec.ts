@@ -1,44 +1,42 @@
 import { mount } from '@vue/test-utils'
 import { DlLink } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlLink', () => {
-    it('should display a link  text', () => {
-        const href = 'https://conosle.dataloop.ai/'
-        const message = 'click me'
-        const wrapper = mount(DlLink, {
-            props: { href, external: true },
-            slots: { default: message }
+    const href = 'https://conosle.dataloop.ai/'
+    const message = 'click me'
+    const color = 'color-secondary'
+
+    describe('When mounting', () => {
+        let wrapper: any
+        let a: any
+        let prop: any
+
+        beforeAll(() => {
+            wrapper = mount(DlLink, {
+                props: { href, external: true, color },
+                slots: { default: message }
+            })
+            a = wrapper.find('a')
+            prop = wrapper.props('color')
         })
-
-        const a = wrapper.find('a')
-        expect(a).not.toBe(undefined)
-        expect(a.text()).toEqual(message)
-        expect(a.element.href).toEqual(href)
-    })
-
-    it('can access global css variables for color', () => {
-        const href = 'https://conosle.dataloop.ai/'
-        const message = 'click me'
-        const color = 'color-secondary'
-        const wrapper = mount(DlLink, {
-            props: { href, color },
-            slots: { default: message }
+        it('should mount the link', function () {
+            expect(a).not.toBe(undefined)
         })
-
-        const prop = wrapper.props('color')
-        expect(prop).toBeTruthy()
-        expect(prop).toEqual(color)
-    })
-
-    it('can set external to true without change target', () => {
-        const href = 'javascript:void(0)'
-        const message = 'click me'
-        const wrapper = mount(DlLink, {
-            props: { href, external: true },
-            slots: { default: message }
+        it('should have the right message', function () {
+            expect(a.text()).toEqual(message)
         })
-        const a = wrapper.find('a')
-        expect(a.element.target).toEqual('')
+        it('should have the right href', function () {
+            expect(a.element.href).toEqual(href)
+        })
+        it('should have the right color prop', function () {
+            expect(prop).toEqual(color)
+        })
+        it('should have prop', function () {
+            expect(prop).toBeTruthy()
+        })
+        it('should have the right target', function () {
+            expect(a.element.target).toEqual('')
+        })
     })
 })
