@@ -13,6 +13,7 @@ export * from './component-name-parser'
 export * from './colors'
 export * from './teleport'
 export * from './parse-smart-query'
+export * from './stringStyleToRecord'
 
 export const isMobileOrTablet = () => {
     let check = false

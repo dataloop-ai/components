@@ -1,6 +1,7 @@
 <template>
     <div>
         <DlAlert
+            type="info"
             :closable="true"
             fluid
         >

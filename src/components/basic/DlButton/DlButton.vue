@@ -10,7 +10,7 @@
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
-            :style="[cssButtonVars, styles]"
+            :style="[cssButtonVars, computedStyles]"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"
@@ -73,6 +73,8 @@ import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
+import { stringStyleToRecord } from '../../../utils'
+import { isString } from 'lodash'
 
 export default defineComponent({
     name: 'DlButton',
@@ -108,7 +110,7 @@ export default defineComponent({
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
         tooltip: { type: String, default: null, required: false },
-        styles: { type: [Object, String, Array], default: null }
+        styles: { type: [Object, String], default: null }
     },
     emits: ['click', 'mousedown'],
     setup() {
@@ -122,6 +124,11 @@ export default defineComponent({
         }
     },
     computed: {
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
+        },
         isActionable(): boolean {
             return this.disabled !== true
         },
