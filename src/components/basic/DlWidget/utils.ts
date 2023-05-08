@@ -64,6 +64,8 @@ export function swapElemensInMatrix(
     side: string,
     maxElements: number
 ) {
+    if (targetIndex.column === sourceIndex.column + 1 && side === 'left')
+        return layout
     const newLayout = cloneDeep(layout)
 
     const removedElement = newLayout[sourceIndex.row].splice(
