@@ -26,6 +26,7 @@ describe('DlLayout', () => {
         const wrapper = mount(DlLayout, {
             slots: {
                 'navbar-content': navbarMsg,
+                'left-menu': leftSideMsg,
                 'left-side': leftSideMsg,
                 'right-side': rightSideMsg,
                 default: defaultMsg,
@@ -34,8 +35,8 @@ describe('DlLayout', () => {
         })
 
         const navbar = wrapper.find('.dl-layout-navbar')
-        const leftSide = wrapper.find('.dl-layout__body__left-content')
-        const rightSide = wrapper.find('.dl-layout__body__right-content')
+        const leftSide = wrapper.find('.dl-layout__body__left-side')
+        const rightSide = wrapper.find('.dl-layout__body__right-side')
         const defaultContent = wrapper.find('.dl-layout__body__content')
         const footer = wrapper.find('.dl-layout__body__content__footer')
 

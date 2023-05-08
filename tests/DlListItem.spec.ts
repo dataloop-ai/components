@@ -30,7 +30,8 @@ describe('DlItemItem', () => {
             endIconSize: '12px',
             withWave: false,
             height: null,
-            padding: null
+            padding: null,
+            borderLeft: ''
         })
 
         expect(wrapper.classes()).toStrictEqual(['list-item-wrapper'])

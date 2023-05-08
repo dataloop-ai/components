@@ -10,17 +10,21 @@
         <div class="dl-layout__body">
             <div
                 v-if="hasLeftSideSlot"
-                class="dl-layout__body__left-content"
+                class="dl-layout__body__left-menu"
             >
                 <LayoutVerticalSidebar
-                    position="left"
+                    position="absolute"
+                    side="left"
                     :expand-sidebar="isExpandedLeftSide"
                     @expand="expandedLeftSide"
                 >
                     <template #default>
-                        <slot name="left-side" />
+                        <slot name="left-menu" />
                     </template>
                 </LayoutVerticalSidebar>
+            </div>
+            <div class="dl-layout__body__left-side">
+                <slot name="left-side" />
             </div>
             <div class="dl-layout__body__content">
                 <slot />
@@ -33,10 +37,11 @@
             </div>
             <div
                 v-if="hasRightSideSlot"
-                class="dl-layout__body__right-content"
+                class="dl-layout__body__right-side"
             >
                 <LayoutVerticalSidebar
-                    position="right"
+                    side="right"
+                    position="relative"
                     :expand-sidebar="isExpandedRightSide"
                     @expand="expandedRightSide"
                 >
@@ -72,11 +77,13 @@ export default defineComponent({
     },
     emits: ['expandedLeftSidebar', 'expandedRightSidebar'],
     setup(props, context) {
-        const isExpandedLeftSide = ref(true)
-        const isExpandedRightSide = ref(true)
+        const propsExpandLeftSidebar = computed(() => props.expandLeftSidebar)
+        const isExpandedLeftSide = ref(propsExpandLeftSidebar.value)
+        const propsExpandRightSidebar = computed(() => props.expandRightSidebar)
+        const isExpandedRightSide = ref(propsExpandRightSidebar.value)
         const hasFooterSlot = computed(() => context.slots.footer !== undefined)
         const hasLeftSideSlot = computed(
-            () => context.slots['left-side'] !== undefined
+            () => context.slots['left-menu'] !== undefined
         )
         const hasRightSideSlot = computed(
             () => context.slots['right-side'] !== undefined
@@ -87,11 +94,11 @@ export default defineComponent({
         const expandedRightSide = (value: boolean) => {
             context.emit('expandedRightSidebar', value)
         }
-        const propsExpandLeftSidebar = computed(() => props.expandLeftSidebar)
+
         watch(propsExpandLeftSidebar, (value) => {
             isExpandedLeftSide.value = value
         })
-        const propsExpandRightSidebar = computed(() => props.expandRightSidebar)
+
         watch(propsExpandRightSidebar, (value) => {
             isExpandedRightSide.value = value
         })
@@ -112,7 +119,9 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-layout {
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     &__navbar {
         border: 1px solid var(--dl-color-fill);
@@ -124,6 +133,19 @@ export default defineComponent({
         height: 100%;
         background-color: var(--dl-color-bg);
         color: var(--dl-color-darker);
+
+        &__left-menu {
+            position: relative;
+        }
+
+        &__left-side {
+            width: 210px;
+            padding: 10px;
+        }
+        &__right-side {
+            position: relative;
+            background-color: transparent;
+        }
 
         &__content {
             position: relative;

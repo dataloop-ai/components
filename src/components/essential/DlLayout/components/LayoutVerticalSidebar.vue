@@ -5,11 +5,14 @@
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
-        <div style="height: 100%">
-            <div class="dl-layout-vertical-sidebar__wrapper">
+        <div style="height: 100%; position: relative">
+            <div
+                v-if="side === 'right'"
+                class="dl-layout-vertical-sidebar__wrapper"
+            >
                 <dl-icon
                     :icon="expandIcon"
-                    size="20px"
+                    size="25px"
                     class="dl-layout-vertical-sidebar__wrapper__expand-icon"
                     :class="{ expanded: !isExpanded }"
                     @click="toggleExpandSidebar"
@@ -32,6 +35,11 @@ export default defineComponent({
     props: {
         position: {
             type: String,
+            default: 'relative',
+            validator: (val: string) => ['relative', 'absolute'].includes(val)
+        },
+        side: {
+            type: String,
             default: 'left',
             validator: (val: string) => ['left', 'right'].includes(val)
         },
@@ -42,23 +50,26 @@ export default defineComponent({
     emits: ['expand'],
     setup(props, context) {
         const isVisible = ref(true)
-        const isExpanded = ref(true)
+        const propsExpandSidebar = computed(() => props.expandSidebar)
+        const isExpanded = ref(propsExpandSidebar.value)
         const sideWidth = ref('')
-        const largeWidth = '206px'
-        const smallWidth = '44px'
+        const LARGE_WIDTH = '250px'
+        const SMALL_WIDTH = '0px'
 
         const onMouseEnter = () => {
             if (isExpanded.value) return
-            sideWidth.value = largeWidth
+            sideWidth.value = LARGE_WIDTH
             isVisible.value = true
         }
         const onMouseLeave = () => {
             if (isExpanded.value) return
-            sideWidth.value = smallWidth
+            sideWidth.value = SMALL_WIDTH
             isVisible.value = false
         }
         const expandIcon = computed(() =>
-            props.position === 'left' ? 'icon-dl-expand' : 'icon-dl-collapse'
+            props.side === 'left'
+                ? 'icon-dl-left-chevron'
+                : 'icon-dl-right-chevron'
         )
         const toggleExpandSidebar = () => {
             isExpanded.value = !isExpanded.value
@@ -66,14 +77,12 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            sideWidth.value = largeWidth
+            sideWidth.value = SMALL_WIDTH
         })
         watch(isExpanded, (value) => {
             isVisible.value = value
-            sideWidth.value = value ? largeWidth : smallWidth
+            sideWidth.value = value ? LARGE_WIDTH : SMALL_WIDTH
         })
-
-        const propsExpandSidebar = computed(() => props.expandSidebar)
 
         watch(propsExpandSidebar, (value) => {
             isExpanded.value = value
@@ -81,7 +90,12 @@ export default defineComponent({
 
         const cssVars = computed(() => {
             return {
-                '--dl-layout-vertical-side-width': sideWidth.value
+                '--dl-layout-vertical-side-width': isExpanded.value
+                    ? LARGE_WIDTH
+                    : SMALL_WIDTH,
+                '--dl-layout-position': props.position,
+                '--dl-layout-vertical-side-overflow':
+                    props.position === 'absolute' ? 'hidden' : null
             }
         })
         return {
@@ -100,21 +114,25 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-layout-vertical-sidebar {
-    position: relative;
+    position: var(--dl-layout-position);
+    z-index: 1;
     width: var(--dl-layout-vertical-side-width);
     height: 100%;
-    overflow: auto;
+    overflow: var(--dl-layout-vertical-side-overflow);
     transition: all 300ms;
-    border: 1px solid var(--dl-color-fill);
     box-shadow: 1px 1px 9px rgba(0, 0, 0, 0.08);
+    background-color: transparent;
 
     &__wrapper {
         position: absolute;
-        right: 5px;
+        top: 70px;
+        left: -18px;
         cursor: pointer;
         color: var(--dl-color-lighter);
         text-align: right;
         margin-top: 8px;
+        background-color: var(--dl-color-bg);
+        border-radius: 50px;
 
         &__expand-icon {
             display: flex !important;

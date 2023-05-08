@@ -312,7 +312,7 @@ const Template = (args) => ({
                     <div style="display: flex; justify-content: end">Login</div>
                 </div>
             </template>
-            <template #left-side>
+            <template #left-menu>
                 <div
                         style="
                         display: flex;

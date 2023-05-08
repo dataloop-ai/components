@@ -1,6 +1,7 @@
 <template>
     <div
         :id="uuid"
+        :style="cssVars"
         :class="rootContainerClasses"
     >
         <div :class="wrapperClasses">
@@ -322,7 +323,15 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        fitContent: Boolean
+        fitContent: Boolean,
+        borderLeft: {
+            type: String,
+            default: ''
+        },
+        paddingProp: {
+            type: String,
+            default: '20px 20px 20px 0px'
+        }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     data() {
@@ -334,6 +343,14 @@ export default defineComponent({
         }
     },
     computed: {
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-input-border-left': this.borderLeft
+                    ? this.borderLeft
+                    : '1px solid var(--dl-color-separator)',
+                '--dl-input-padding': this.paddingProp
+            }
+        },
         bottomMessage(): boolean {
             return (
                 !!this.infoMessage?.length ||
@@ -591,7 +608,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-text-input {
-    padding: 20px 20px 20px 0px;
+    padding: var(--dl-input-padding);
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
@@ -661,6 +678,7 @@ export default defineComponent({
 
     &__input {
         border: 1px solid var(--dl-color-separator);
+        border-left: var(--dl-input-border-left);
         border-radius: 2px;
         color: var(--dl-color-darker);
         width: calc(100% - 20px);

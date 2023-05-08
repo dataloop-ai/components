@@ -2,6 +2,7 @@
     <component
         :is="as"
         :id="uuid"
+        :style="cssVars"
         class="list-item-wrapper"
     >
         <hr
@@ -100,7 +101,11 @@ export default defineComponent({
             default: '12px'
         },
         height: { type: String, default: null, required: false },
-        padding: { type: String, default: null, required: false }
+        padding: { type: String, default: null, required: false },
+        borderLeft: {
+            type: String,
+            default: ''
+        }
     },
     emits: ['click'],
     data() {
@@ -111,6 +116,13 @@ export default defineComponent({
     computed: {
         isClickable(): boolean {
             return this.clickable && !this.disabled
+        },
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-list-item-border-left': this.borderLeft
+                    ? this.borderLeft
+                    : ''
+            }
         },
         cssItemVars(): Record<string, string> {
             return {
@@ -140,6 +152,8 @@ export default defineComponent({
 <style scoped lang="scss">
 .list-item-wrapper {
     width: 100%;
+    border-left: var(--dl-list-item-border-left);
+    margin-bottom: 4px;
 }
 
 .dl-list-item {
