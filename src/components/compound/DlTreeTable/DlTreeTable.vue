@@ -70,6 +70,7 @@
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
                             />
+
                             <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-with"
@@ -149,7 +150,8 @@
                         "
                         name="body"
                     >
-                        <DlTr
+                        <DlTrTree
+                            v-show="row.isExpandedParent || !row.level"
                             :key="getRowKey(row)"
                             :class="
                                 isRowSelected(getRowKey(row))
@@ -204,7 +206,7 @@
                                 </slot>
                             </td>
                             <slot
-                                v-for="col in computedCols"
+                                v-for="(col, colIndex) in computedCols"
                                 v-bind="
                                     getBodyCellScope({
                                         key: getRowKey(row),
@@ -219,14 +221,34 @@
                                         : 'body-cell'
                                 "
                             >
-                                <DlTd
+                                <DlTdTree
                                     :class="col.tdClass(row)"
-                                    :style="col.tdStyle(row)"
+                                    :style="
+                                        col.tdStyle(row) +
+                                            getTdStyles(row, colIndex)
+                                    "
                                 >
+                                    <template #icon="{}">
+                                        <DlIcon
+                                            v-if="
+                                                (row.children || []).length >
+                                                    0 && colIndex === 0
+                                            "
+                                            :icon="`icon-dl-${
+                                                row.expanded ? 'down' : 'right'
+                                            }-chevron`"
+                                            @click="
+                                                updateExpandedRow(
+                                                    !row.expanded,
+                                                    getRowKey(row)
+                                                )
+                                            "
+                                        />
+                                    </template>
                                     {{ getCellValue(col, row) }}
-                                </DlTd>
+                                </DlTdTree>
                             </slot>
-                        </DlTr>
+                        </DlTrTree>
                     </slot>
                     <slot
                         name="bottom-row"
@@ -305,7 +327,8 @@ import {
 } from '../DlTable/hooks/tablePagination'
 import DlTr from '../DlTable/components/DlTr.vue'
 import DlTh from '../DlTable/components/DlTh.vue'
-import DlTd from '../DlTable/components/DlTd.vue'
+import DlTrTree from './components/DlTrTree.vue'
+import DlTdTree from './components/DlTdTree.vue'
 import {
     commonVirtPropsList,
     commonVirtScrollProps,
@@ -338,6 +361,8 @@ import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from '../DlTable/types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
+import { flatTreeData } from './utils/flatTreeData'
+import { setTrSpacing } from './utils/trSpacing'
 import { v4 } from 'uuid'
 
 export default defineComponent({
@@ -345,11 +370,12 @@ export default defineComponent({
     components: {
         DlTr,
         DlTh,
-        DlTd,
         DlPagination,
         DlProgressBar,
         DlIcon,
-        DlCheckbox
+        DlCheckbox,
+        DlTrTree,
+        DlTdTree
     },
     props: {
         columns: { type: Array, default: () => [] as Record<string, any>[] },
@@ -534,6 +560,21 @@ export default defineComponent({
             return props.noDataLabel
         })
 
+        const getTdStyles = (row, colIndex) => {
+            let styles = ''
+            if (colIndex === 0) {
+                styles = 'max-width: 100px; box-sizing: border-box;'
+                styles =
+                    styles +
+                    setTrSpacing({
+                        ...row,
+                        colIndex
+                    })
+            }
+
+            return styles
+        }
+
         const hasDraggableRows = computed(() =>
             ['rows', 'both'].includes(props.draggable)
         )
@@ -549,10 +590,12 @@ export default defineComponent({
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
-        const filteredSortedRows = computed(() => {
-            let rows = props.rows as DlTableRow[]
+        const tableRows = ref(props.rows)
 
-            if (rows.length === 0) {
+        const filteredSortedRows = computed(() => {
+            let rows = tableRows.value as DlTableRow[]
+
+            if (tableRows.value.length === 0) {
                 return rows
             }
 
@@ -569,7 +612,7 @@ export default defineComponent({
 
             if (columnToSort.value !== null) {
                 rows = computedSortMethod.value(
-                    props.rows === rows ? rows.slice() : rows,
+                    tableRows.value === rows ? rows.slice() : rows,
                     sortBy,
                     descending
                 )
@@ -578,6 +621,37 @@ export default defineComponent({
             return rows
         })
 
+        const updateExpandedRow = (
+            isExpanded,
+            name,
+            rowsArr = tableRows.value
+        ) => {
+            (rowsArr as DlTableRow[]).some((o) => {
+                if (o.name === name) {
+                    o.expanded = isExpanded
+                    updateNestedRows(o, isExpanded)
+                } else {
+                    if ((o.children || []).length > 0) {
+                        console.log('eb')
+                        updateExpandedRow(isExpanded, name, o.children)
+                    }
+                }
+            })
+        }
+
+        const updateNestedRows = (row, isExpanded) => {
+            if ((row.children || []).length > 0) {
+                row.children.forEach((r) => {
+                    r.isExpandedParent = isExpanded
+
+                    if (!isExpanded) {
+                        r.expanded = isExpanded
+                        updateNestedRows(r, isExpanded)
+                    }
+                })
+            }
+        }
+
         const filteredSortedRowsNumber = computed(
             () => filteredSortedRows.value.length
         )
@@ -585,10 +659,12 @@ export default defineComponent({
         const computedRows = computed(() => {
             let rows = filteredSortedRows.value
 
+            console.log(rows)
+
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && props.rows !== rows) {
+                if (firstRowIndex.value === 0 && tableRows.value !== rows) {
                     if (rows.length > lastRowIndex.value) {
                         rows = rows.slice(0, lastRowIndex.value)
                     }
@@ -596,6 +672,10 @@ export default defineComponent({
                     rows = rows.slice(firstRowIndex.value, lastRowIndex.value)
                 }
             }
+
+            rows = flatTreeData(rows)
+
+            console.log(rows)
 
             return rows
         })
@@ -659,7 +739,7 @@ export default defineComponent({
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < props.rows.length
+                computedRows.value.length < tableRows.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
@@ -966,7 +1046,10 @@ export default defineComponent({
             onTrDblClick,
             onThClick,
             onTrContextMenu,
-            hasPaginationSlot
+            hasPaginationSlot,
+            setTrSpacing,
+            updateExpandedRow,
+            getTdStyles
         }
     }
 })

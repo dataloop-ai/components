@@ -266,6 +266,146 @@ const rows = [
     }))
 ]
 
+const rows2 = [
+    {
+        name: 'Frozen Yogurt',
+        calories: 159,
+        fat: 6,
+        carbs: 24,
+        protein: 4,
+        sodium: 87,
+        calcium: '14%',
+        iron: '1%',
+        children: [
+            {
+                name: 'Eclair1',
+                calories: 262,
+                fat: 16,
+                carbs: 23,
+                protein: 6,
+                sodium: 337,
+                calcium: '6%',
+                iron: '7%'
+            }
+        ]
+    },
+    {
+        name: 'Eclair2',
+        calories: 262,
+        fat: 16,
+        carbs: 23,
+        protein: 6,
+        sodium: 337,
+        calcium: '6%',
+        iron: '7%',
+        level: 2
+    },
+    {
+        name: 'Ice cream sandwich',
+        calories: 237,
+        fat: 9,
+        carbs: 37,
+        protein: 4.3,
+        sodium: 129,
+        calcium: '8%',
+        iron: '1%',
+        children: [
+            {
+                name: 'Eclair3',
+                calories: 262,
+                fat: 16,
+                carbs: 23,
+                protein: 6,
+                sodium: 337,
+                calcium: '6%',
+                iron: '7%',
+                children: [
+                    {
+                        name: 'Eclair4',
+                        calories: 262,
+                        fat: 16,
+                        carbs: 23,
+                        protein: 6,
+                        sodium: 337,
+                        calcium: '6%',
+                        iron: '7%',
+                        children: [
+                            {
+                                name: 'Eclair5',
+                                calories: 262,
+                                fat: 16,
+                                carbs: 23,
+                                protein: 6,
+                                sodium: 337,
+                                calcium: '6%',
+                                iron: '7%',
+                                children: [
+                                    {
+                                        name: 'Eclair6',
+                                        calories: 262,
+                                        fat: 16,
+                                        carbs: 23,
+                                        protein: 6,
+                                        sodium: 337,
+                                        calcium: '6%',
+                                        iron: '7%',
+                                        children: [
+                                            {
+                                                name: 'EclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclair',
+                                                calories: 262,
+                                                fat: 16,
+                                                carbs: 23,
+                                                protein: 6,
+                                                sodium: 337,
+                                                calcium: '6%',
+                                                iron: '7%'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        name: 'Eclair7',
+        calories: 262,
+        fat: 16,
+        carbs: 23,
+        protein: 6,
+        sodium: 337,
+        calcium: '6%',
+        iron: '7%',
+        children: [
+            {
+                name: 'Eclair8',
+                calories: 262,
+                fat: 16,
+                carbs: 23,
+                protein: 6,
+                sodium: 337,
+                calcium: '6%',
+                iron: '7%'
+            }
+        ],
+        level: 2
+    },
+    {
+        name: 'Eclair9',
+        calories: 262,
+        fat: 16,
+        carbs: 23,
+        protein: 6,
+        sodium: 337,
+        calcium: '6%',
+        iron: '7%',
+        level: 3
+    }
+]
+
 type Rows = (typeof rows)[0]
 
 interface RowsWithIndex extends Rows {
@@ -293,7 +433,7 @@ export default defineComponent({
         const denseState = ref([])
         const virtualScroll = ref([])
         const resizableState = ref([])
-        const tableRows = ref(cloneDeep(rows))
+        const tableRows = ref(cloneDeep(rows2))
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const rowsPerPageOptions = ref([10, 12, 14, 16])
