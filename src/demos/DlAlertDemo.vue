@@ -1,9 +1,9 @@
 <template>
     <div>
         <DlAlert
+            type="info"
             :closable="true"
             fluid
-            type="info"
         >
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas eos
             amet, nobis unde animi atque itaque? Provident suscipit enim eos

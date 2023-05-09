@@ -24,8 +24,7 @@ describe('DlConfusionMatrix', () => {
             xLabel: 'Label 1',
             yLabel: 'Label 1',
             x: 0,
-            y: 0,
-            link: undefined
+            y: 0
         })
     })
 

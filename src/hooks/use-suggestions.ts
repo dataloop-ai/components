@@ -374,5 +374,5 @@ const matchStringEnd = (input: string, str: string) =>
     input.lastIndexOf(str + '" ') > -1 || input.lastIndexOf(str + "' ") > -1
 
 export const removeBrackets = (str: string) => {
-    return str.replaceAll('(', '').replaceAll(')', '')
+    return str.replace(/\(/g, '').replace(/\)/g, '')
 }
