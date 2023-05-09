@@ -117,7 +117,7 @@ describe('DlSmartSearchInput', () => {
         })
 
         wrapper.vm.handleScreenBtnClick()
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
+        expect(wrapper.vm.screenIcon).toBe('icon-dl-full-screen')
     })
 
     it('should emit save', () => {
