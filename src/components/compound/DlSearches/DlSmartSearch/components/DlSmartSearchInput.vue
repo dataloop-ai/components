@@ -90,6 +90,7 @@
                 </div>
             </div>
             <label
+                v-if="!focused"
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :style="labelStyles"
