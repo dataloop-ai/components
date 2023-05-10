@@ -213,6 +213,7 @@ const getError = (
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
+            if (acc === 'warning') return acc
             const aliasObj = getAliasObjByAlias(aliases, field)
             if (!aliasObj) return 'warning'
             const valid = isValidByDataType(

@@ -323,7 +323,7 @@ export default defineComponent({
                 : 'icon-dl-full-screen'
         },
         textareaStyles() {
-            const overflow = this.scroll && !this.focused ? 'scroll' : 'hidden'
+            const overflow = this.scroll && this.focused ? 'scroll' : 'hidden'
             return {
                 overflow,
                 '-webkit-appearance': 'textfield'
@@ -667,7 +667,7 @@ export default defineComponent({
         position: relative;
         display: flex;
         flex-grow: 1;
-        padding: 10px 10px 6px 0;
+        padding: 9px 10px 6px 0;
         position: relative;
 
         align-items: flex-start;
@@ -681,12 +681,12 @@ export default defineComponent({
     &__toolbar {
         display: flex;
         align-items: flex-start;
-        padding-top: 5px;
+        padding-top: 7px;
     }
 
     &__clear-btn-wrapper {
         border-right: 1px solid var(--dl-color-separator);
-        padding: 0 7px;
+        padding: 1px 7px;
         display: flex;
         align-items: center;
         ::v-deep .dl-button {
