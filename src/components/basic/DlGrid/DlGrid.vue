@@ -46,8 +46,7 @@ export default defineComponent({
         gridStyles(): object {
             return {
                 '--row-gap': this.rowGap,
-                '--column-gap': this.columnGap,
-                '--grid-rows': this.rows
+                '--column-gap': this.columnGap
             }
         },
         gridClass(): string {
