@@ -121,6 +121,7 @@ export default defineComponent({
     },
     props: {
         withWave: Boolean,
+        // todo: clean this up; rename the prop to something better
         defaultStyles: { type: Boolean, default: true },
         multiselect: { type: Boolean, default: false },
         value: { type: ValueTypes, default: null },

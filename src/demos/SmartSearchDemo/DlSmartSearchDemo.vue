@@ -3,7 +3,7 @@
         <div style="margin: 40px 0">
             <dl-checkbox
                 v-model="switchState"
-                without-root-padding
+                dense
                 label="Disabled"
             />
         </div>
@@ -48,95 +48,68 @@ export default defineComponent({
         return {
             switchState: false,
             isLoading: false,
-            filters: [
-                {
-                    label: 'Saved DQL Queries',
-                    name: 'saved',
-                    queries: [
-                        {
-                            name: 'Query 1',
-                            query: '{"q": 1}'
-                        },
-                        {
-                            name: 'Query 2',
-                            query: '{"query2": "query2"}'
-                        },
-                        {
-                            name: 'Query 3',
-                            query: '{"query3": "query3"}'
-                        },
-                        {
-                            name: 'Query 4',
-                            query: JSON.stringify({
-                                aa: 'bb',
-                                no: [{ as: 'sa' }, { zz: 'ss' }]
-                            })
-                        }
-                    ]
-                },
-                {
-                    label: 'Recent Searches',
-                    name: 'recent',
-                    queries: [
-                        {
-                            name: 'Query 4',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 5',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 6',
-                            query: ''
-                        }
-                    ]
-                },
-                {
-                    label: 'Suggested Searches',
-                    name: 'suggested',
-                    queries: [
-                        {
-                            name: 'Query 7',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 8',
-                            query: ''
-                        },
-                        {
-                            name: 'Query 9',
-                            query: ''
-                        }
-                    ]
-                }
-            ]
+            filters: {
+                saved: [
+                    {
+                        name: 'Query 1',
+                        query: '{"q": 1}'
+                    },
+                    {
+                        name: 'Query 2',
+                        query: '{"query2": "query2"}'
+                    },
+                    {
+                        name: 'Query 3',
+                        query: '{"query3": "query3"}'
+                    },
+                    {
+                        name: 'Query 4',
+                        query: JSON.stringify({
+                            aa: 'bb',
+                            no: [{ as: 'sa' }, { zz: 'ss' }]
+                        })
+                    }
+                ],
+                recent: [],
+                suggested: []
+            }
         }
     },
     methods: {
-        handleSearchQuery({ query }: { query: string }) {
+        handleSearchQuery(query: Query, queryString: string) {
             this.isLoading = true
-            console.log(`Searching for: ${query}...`)
+            console.log(`Searching for: ${query.query}...`)
             const search = setTimeout(() => {
-                console.log(`Results: ${query}`)
+                console.log(`Results: ${query.query}`)
                 this.isLoading = false
             }, 2000)
+
+            if (this.filters.recent.at(-1)?.name !== queryString) {
+                this.filters.recent.push({
+                    name: queryString || query.name,
+                    query: query.query
+                })
+            }
         },
-        handleSaveQuery(query: Query) {
-            const saveQueryIndex = this.filters[0].queries.findIndex(
+        handleSaveQuery(query: Query, type: string) {
+            const saveQueryIndex = this.filters[
+                type as keyof typeof this.filters
+            ].findIndex(
                 (q: Query) => q.name === query.name || q.query === query.query
             )
             if (saveQueryIndex !== -1) {
-                this.filters[0].queries[saveQueryIndex] = query
+                this.filters[type as keyof typeof this.filters][
+                    saveQueryIndex
+                ] = query
             } else {
-                this.filters[0].queries.push(query)
+                this.filters[type as keyof typeof this.filters].push(query)
             }
         },
 
-        handleRemoveQuery(query: Query) {
-            this.filters[0].queries = this.filters[0].queries.filter(
-                (q: Query) => q.name !== query.name
-            )
+        handleRemoveQuery(query: Query, type: string) {
+            this.filters[type as keyof typeof this.filters] = this.filters[
+                type as keyof typeof this.filters
+            ].filter((q: Query) => q.name !== query.name)
         }
     }
 })

@@ -1,4 +1,4 @@
-import { ColorSchema, SyntaxColorSchema } from '../types'
+import { ColorSchema, SyntaxColorSchema, Filters } from '../types'
 import {
     operators,
     Alias,
@@ -6,6 +6,23 @@ import {
     endDatePattern,
     dateIntervalPattern
 } from '../../../../../hooks/use-suggestions'
+
+export function getTabItems(filters: Filters) {
+    return [
+        {
+            label: `Saved DQL Queries (${filters.saved.length})`,
+            name: 'saved'
+        },
+        {
+            label: `Recent Searches (${filters.recent.length})`,
+            name: 'recent'
+        },
+        {
+            label: `Suggested Searches (${filters.suggested.length})`,
+            name: 'suggested'
+        }
+    ]
+}
 
 export function replaceWithJsDates(str: string) {
     const intervals = str.match(dateIntervalPattern)

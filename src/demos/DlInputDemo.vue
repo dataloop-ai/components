@@ -96,7 +96,7 @@
                 style="width: 440px"
                 placeholder="Select option"
                 title="Min"
-                without-root-padding
+                dense
                 size="s"
             />
             <dl-button
