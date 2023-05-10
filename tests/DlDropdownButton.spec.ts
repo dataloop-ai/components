@@ -50,7 +50,7 @@ describe('DlDropdownButton', () => {
         })
 
         expect(wrapper.vm.btnCSSStyles).toStrictEqual({
-            '--dl-btn-border-left': 'var(--dl-color-white)'
+            '--dl-button-border-left': 'var(--dl-color-white)'
         })
 
         await wrapper.setProps({ disabled: true })
@@ -58,7 +58,7 @@ describe('DlDropdownButton', () => {
         await wrapper.setProps({ outlined: true })
 
         expect(wrapper.vm.btnCSSStyles).toStrictEqual({
-            '--dl-btn-border-left': 'none'
+            '--dl-button-border-left': 'none'
         })
 
         await wrapper.setProps({ modelValue: true })
