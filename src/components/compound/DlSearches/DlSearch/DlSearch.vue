@@ -14,7 +14,7 @@
             :placeholder="placeholder"
             :auto-suggest-items="autoSuggestItems"
             :highlight-matches="highlightMatches"
-            :without-root-padding="withoutRootPadding"
+            :dense="dense"
             :suggest-menu-width="suggestMenuWidth"
             @input="onChange"
             @focus="onFocus"
@@ -81,7 +81,7 @@ export default defineComponent({
             default: (): string[] => []
         },
         highlightMatches: { type: Boolean, default: false },
-        withoutRootPadding: { type: Boolean, default: false },
+        dense: { type: Boolean, default: false },
         withSearchButton: { type: Boolean, default: false },
         suggestMenuWidth: { type: String, default: 'auto' }
     },
