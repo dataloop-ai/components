@@ -289,4 +289,9 @@ export default defineComponent({
     display: flex;
     justify-content: space-between;
 }
+.footer-save {
+    width: 25%;
+    display: flex;
+    justify-content: space-between;
+}
 </style>
