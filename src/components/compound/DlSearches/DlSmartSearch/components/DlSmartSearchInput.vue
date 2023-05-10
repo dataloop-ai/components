@@ -10,7 +10,7 @@
             >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="!focused && (withSearchIcon || status)"
+                        v-if="withSearchIcon || (!focused && status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="16px"
@@ -22,7 +22,7 @@
                         id="editor"
                         ref="input"
                         :class="inputClass"
-                        style="-webkit-appearance: textfield"
+                        :style="textareaStyles"
                         :placeholder="placeholder"
                         :contenteditable="!disabled"
                         @keypress="keyPress"
@@ -33,8 +33,8 @@
                 </div>
                 <div class="dl-smart-search-input__toolbar">
                     <div
-                        v-if="withClearButton && modelValue"
-                        class="dl-smart-search-input__clear-button-wrapper"
+                        v-if="withClearBtn && modelValue"
+                        class="dl-smart-search-input__clear-btn-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-close"
@@ -47,14 +47,14 @@
                     </div>
                     <div
                         v-if="withScreenButton"
-                        class="dl-smart-search-input__screen-button-wrapper"
+                        class="dl-smart-search-input__screen-btn-wrapper"
                     >
                         <dl-button
                             :icon="screenIcon"
                             size="16px"
                             flat
                             :disabled="disabled"
-                            @mousedown="handleScreenButtonClick"
+                            @mousedown="handleScreenBtnClick"
                         />
                         <dl-tooltip>
                             {{ expanded ? 'Collapse' : 'Expand' }} Smart Search
@@ -62,7 +62,7 @@
                     </div>
                     <div
                         v-if="withSaveButton"
-                        class="dl-smart-search-input__save-button-wrapper"
+                        class="dl-smart-search-input__save-btn-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-save"
@@ -283,11 +283,13 @@ export default defineComponent({
         focused: boolean
         isOverflow: boolean
         isTyping: boolean
+        scroll: boolean
     } {
         return {
             focused: false,
             isOverflow: false,
-            isTyping: false
+            isTyping: false,
+            scroll: false
         }
     },
     computed: {
@@ -319,6 +321,13 @@ export default defineComponent({
             return this.expanded
                 ? 'icon-dl-fit-to-screen'
                 : 'icon-dl-full-screen'
+        },
+        textareaStyles() {
+            const overflow = this.scroll && this.focused ? 'scroll' : 'hidden'
+            return {
+                overflow,
+                '-webkit-appearance': 'textfield'
+            }
         },
         searchBarClasses(): string {
             let classes = 'dl-smart-search-input__search-bar'
@@ -401,6 +410,7 @@ export default defineComponent({
                 this.isDatePickerVisible = true
                 this.suggestionModal = false
             }
+            this.scroll = this.$refs.input.offsetHeight > 40
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
@@ -524,7 +534,7 @@ export default defineComponent({
 
             this.$emit('update:modelValue', text)
         },
-        handleScreenButtonClick() {
+        handleScreenBtnClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
             this.expanded = !this.expanded
             if (!this.focused) {
@@ -636,7 +646,6 @@ export default defineComponent({
         min-height: 14px;
         max-height: 100%;
         display: block;
-        overflow: scroll;
     }
 
     &__input,
@@ -658,7 +667,7 @@ export default defineComponent({
         position: relative;
         display: flex;
         flex-grow: 1;
-        padding: 9px 10px 6px 0;
+        padding: 8px 10px 6px 0;
         position: relative;
 
         align-items: flex-start;
@@ -675,7 +684,7 @@ export default defineComponent({
         padding-top: 5px;
     }
 
-    &__clear-button-wrapper {
+    &__clear-btn-wrapper {
         border-right: 1px solid var(--dl-color-separator);
         padding: 0 7px;
         display: flex;
@@ -686,7 +695,7 @@ export default defineComponent({
         }
     }
 
-    &__screen-button-wrapper {
+    &__screen-btn-wrapper {
         display: flex;
         align-items: center;
         padding: 0 5px;
@@ -696,7 +705,7 @@ export default defineComponent({
         }
     }
 
-    &__save-button-wrapper {
+    &__save-btn-wrapper {
         display: flex;
         align-items: center;
         color: var(--dl-color-darker);
