@@ -10,7 +10,7 @@
             >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="withSearchIcon || (!focused && status)"
+                        v-if="!focused && (withSearchIcon || status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="16px"
@@ -90,6 +90,7 @@
                 </div>
             </div>
             <label
+                v-if="!focused"
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :style="labelStyles"
@@ -227,10 +228,6 @@ export default defineComponent({
         const styledTexarea = ref(null)
         const styledInput = ref(null)
 
-        const focused = ref(false)
-        const isOverflow = ref(false)
-        const isTyping = ref(false)
-
         const { hasEllipsis } = useSizeObserver(input)
 
         const suggestionModal = ref(false)
@@ -265,96 +262,6 @@ export default defineComponent({
 
             emit('update:modelValue', stringValue)
         }
-
-        const saveStatus = computed(() => {
-            return (
-                props.disabled ||
-                !props.modelValue ||
-                props.status?.type === 'error'
-            )
-        })
-
-        const statusIcon = computed(() => {
-            switch (props.status?.type) {
-                case 'success':
-                    return 'icon-dl-approve-filled'
-                case 'error':
-                    return 'icon-dl-discard-filled'
-                case 'warning':
-                    return 'icon-dl-alert-filled'
-                default:
-                    return ''
-            }
-        })
-
-        const statusIconColor = computed(() => {
-            switch (props.status?.type) {
-                case 'success':
-                    return 'dl-color-positive'
-                case 'error':
-                    return 'dl-color-negative'
-                case 'warning':
-                    return 'dl-color-warning'
-                default:
-                    return ''
-            }
-        })
-
-        const screenIcon = computed(() => {
-            return expanded ? 'icon-dl-fit-to-screen' : 'icon-dl-full-screen'
-        })
-
-        const searchBarClasses = computed(() => {
-            let classes = 'dl-smart-search-input__search-bar'
-
-            if (focused && props.status?.type === 'info') {
-                classes += ' dl-smart-search-input__search-bar--focused'
-            } else {
-                if (props.status?.type === 'error') {
-                    classes += ' dl-smart-search-input__search-bar--error'
-                } else if (props.status?.type === 'warning') {
-                    classes += ' dl-smart-search-input__search-bar--warning'
-                }
-            }
-
-            if (expanded) {
-                classes += ' dl-smart-search-input__search-bar--expanded'
-            }
-
-            if (props.disabled) {
-                classes += ' dl-smart-search-input__search-bar--disabled'
-            }
-
-            return classes
-        })
-
-        const labelStyles = computed(() => {
-            return {
-                color: props.status?.type === 'error' ? 'red' : 'gray'
-            }
-        })
-
-        const messageClasses = computed(() => {
-            let classes = 'dl-smart-search-input__message'
-
-            if (props.status) {
-                classes += ` dl-smart-search-input__message--${props.status}`
-            }
-
-            return classes
-        })
-
-        const withClearBtn = computed(() => {
-            return props.modelValue?.length > 0
-        })
-
-        const cssVars = computed(() => {
-            return {
-                '--dl-smart-search-bar-wrapper-height':
-                    props.expandedInputHeight,
-                '--dl-smart-search-input-height': props.inputHeight
-            }
-        })
 
         return {
             input,
@@ -417,7 +324,7 @@ export default defineComponent({
 
             if (this.focused && this.status.type === 'info') {
                 classes += ' dl-smart-search-input__search-bar--focused'
-            } else {
+            } else if (!this.focused) {
                 if (this.status.type === 'error') {
                     classes += ' dl-smart-search-input__search-bar--error'
                 } else if (this.status.type === 'warning') {
