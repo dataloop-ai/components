@@ -167,8 +167,8 @@ export default {
                 defaultValue: { summary: '' }
             }
         },
-        disableMainBtn: {
-            name: 'disableMainBtn',
+        disableMainButton: {
+            name: 'disableMainButton',
             defaultValue: false,
             control: 'boolean',
             description:
@@ -321,7 +321,7 @@ Preview.args = {
     dropdownIcon: 'icon-dl-down-chevron',
     maxHeight: '210px',
     maxWidth: '100%',
-    mainBtnStyle: 'width: 150px;',
+    mainButtonStyle: 'width: 150px;',
     contentClass: '',
     contentStyle: '',
     cover: false,
@@ -331,7 +331,7 @@ Preview.args = {
     menuSelf: 'top end',
     menuAnchor: 'bottom end',
     menuOffset: [0, 0],
-    disableMainBtn: false,
+    disableMainButton: false,
     noIconAnimation: false,
     disabled: false,
     color: '',
@@ -375,7 +375,7 @@ const SplitTemplate = (args) => ({
     <dl-dropdown-button
         split
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         size="m"
         :menuOffset="[0, 0]"
         :model-value="showing"
@@ -406,7 +406,7 @@ Split.args = {
     label: 'Split',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;',
+    mainButtonStyle: 'width: 150px;',
     size: 'm'
 }
 
@@ -440,7 +440,7 @@ const CoverTemplate = (args) => ({
         cover
         label="Covered"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -470,7 +470,7 @@ Cover.args = {
     label: 'Covered',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const PersistentTemplate = (args) => ({
@@ -503,7 +503,7 @@ const PersistentTemplate = (args) => ({
         persistent
         label="Persistent"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -533,7 +533,7 @@ Persistent.args = {
     label: 'Persistent',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const StretchTemplate = (args) => ({
@@ -566,7 +566,7 @@ const StretchTemplate = (args) => ({
         stretch
         label="Stretch"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -596,7 +596,7 @@ Stretch.args = {
     label: 'Stretch',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const AutocloseTemplate = (args) => ({
@@ -629,7 +629,7 @@ const AutocloseTemplate = (args) => ({
         auto-close
         label="Autoclose"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -659,17 +659,17 @@ Autoclose.args = {
     label: 'Autoclose',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
-const DisableMainBtnTemplate = (args) => ({
+const DisableMainButtonTemplate = (args) => ({
     components: { DlDropdownButton, DlListItem, DlItemSection, DlList },
     setup() {
         return { args }
     },
     data() {
         return {
-            label: 'Disable Main Btn',
+            label: 'Disable Main Button',
             showing: false
         }
     },
@@ -690,9 +690,9 @@ const DisableMainBtnTemplate = (args) => ({
     template: `
     <dl-dropdown-button
         disable-main-button
-        label="Disable Main Btn"
+        label="Disable Main Button"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -716,13 +716,13 @@ const DisableMainBtnTemplate = (args) => ({
     `
 })
 
-export const DisableMainBtn = DisableMainBtnTemplate.bind({})
-DisableMainBtn.args = {
-    disableMainBtn: true,
-    label: 'Disable Main Btn',
+export const DisableMainButton = DisableMainButtonTemplate.bind({})
+DisableMainButton.args = {
+    disableMainButton: true,
+    label: 'Disable Main Button',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const NoIconAnimationTemplate = (args) => ({
@@ -755,7 +755,7 @@ const NoIconAnimationTemplate = (args) => ({
         no-icon-animation
         label="No Icon Animation"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -785,7 +785,7 @@ NoIconAnimation.args = {
     label: 'No Icon Animation',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const DisabledTemplate = (args) => ({
@@ -818,7 +818,7 @@ const DisabledTemplate = (args) => ({
         disabled
         label="Disabled"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -848,7 +848,7 @@ Disabled.args = {
     label: 'Disabled',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const FluidTemplate = (args) => ({
@@ -910,7 +910,7 @@ Fluid.args = {
     label: 'Fluid',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0]
-    // mainBtnStyle: 'width: 150px;'
+    // mainButtonStyle: 'width: 150px;'
 }
 
 const FlatTemplate = (args) => ({
@@ -943,7 +943,7 @@ const FlatTemplate = (args) => ({
         flat
         label="Flat"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -973,7 +973,7 @@ Flat.args = {
     label: 'Flat',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const OutlinedTemplate = (args) => ({
@@ -1006,7 +1006,7 @@ const OutlinedTemplate = (args) => ({
         outlined
         label="Outlined"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -1036,7 +1036,7 @@ Outlined.args = {
     label: 'Outlined',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }
 
 const DisableDropdownTemplate = (args) => ({
@@ -1069,7 +1069,7 @@ const DisableDropdownTemplate = (args) => ({
         disable-dropdown
         label="Disable Dropdown"
         dropdownIcon="icon-dl-down-chevron"
-        mainBtnStyle="width: 150px;"
+        mainButtonStyle="width: 150px;"
         :menuOffset="[0, 0]"
         :model-value="showing"
         v-bind="args"
@@ -1099,5 +1099,5 @@ DisableDropdown.args = {
     label: 'Disable Dropdown',
     dropdownIcon: 'icon-dl-down-chevron',
     menuOffset: [0, 0],
-    mainBtnStyle: 'width: 150px;'
+    mainButtonStyle: 'width: 150px;'
 }

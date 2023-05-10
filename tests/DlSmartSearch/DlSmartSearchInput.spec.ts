@@ -116,7 +116,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
 
-        wrapper.vm.handleScreenBtnClick()
+        wrapper.vm.handleScreenButtonClick()
         expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
     })
 
@@ -165,7 +165,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
         wrapper.vm.expanded = false
-        wrapper.vm.handleScreenBtnClick()
+        wrapper.vm.handleScreenButtonClick()
         expect(wrapper.vm.expanded).toBe(true)
     })
 
@@ -184,7 +184,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
 
-        wrapper.vm.handleScreenBtnClick()
+        wrapper.vm.handleScreenButtonClick()
         expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
     })
 })

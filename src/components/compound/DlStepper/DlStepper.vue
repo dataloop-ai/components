@@ -9,7 +9,7 @@
     >
         <dl-stepper-header
             :header-title="headerTitle"
-            :hide-close-button="hideCloseBtn"
+            :hide-close-button="hideCloseButton"
             @close="closeStepper"
         />
         <div class="dl-stepper-content">
@@ -131,7 +131,7 @@ export default defineComponent({
         disabledNextStep: Boolean,
         disabledPrevStep: Boolean,
         isDone: Boolean,
-        hideCloseBtn: Boolean,
+        hideCloseButton: Boolean,
         sidebarNavigation: { type: Boolean, default: true }
     },
     emits: ['update:modelValue', 'done', 'next', 'prev', 'set-step', 'close'],

@@ -8,14 +8,14 @@ describe('DlStepperFooter', () => {
             props: { finished: true }
         })
 
-        const [prevBtn, nextBtn, createButton] = wrapper.findAll('button')
+        const [prevButton, nextButton, createButton] = wrapper.findAll('button')
 
         await wrapper.setProps({
             hasPreviousStep: true
         })
-        // const prevBtn = wrapper.find('button')
-        expect(prevBtn.text()).toEqual('Back')
-        await prevBtn.trigger('click')
+        // const prevButton = wrapper.find('button')
+        expect(prevButton.text()).toEqual('Back')
+        await prevButton.trigger('click')
         expect(wrapper.emitted()['prev'][0]).toBeTruthy()
 
         await wrapper.setProps({
@@ -23,9 +23,9 @@ describe('DlStepperFooter', () => {
             hasNextStep: true
         })
 
-        // const nextBtn = wrapper.findAll('button').at(1)
-        expect(nextBtn.text()).toEqual('Next')
-        await nextBtn.trigger('click')
+        // const nextButton = wrapper.findAll('button').at(1)
+        expect(nextButton.text()).toEqual('Next')
+        await nextButton.trigger('click')
         expect(wrapper.emitted()['next'][0]).toBeTruthy()
 
         await createButton.trigger('click')

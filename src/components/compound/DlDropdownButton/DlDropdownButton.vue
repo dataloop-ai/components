@@ -10,12 +10,12 @@
     >
         <dl-button
             class="dl-button-dropdown--current"
-            :style="mainBtnStyle"
+            :style="mainButtonStyle"
             :label="label"
             :outlined="outlined"
             :size="size"
             :flat="flat"
-            :disabled="disabled === true || disableMainBtn === true"
+            :disabled="disabled === true || disableMainButton === true"
             :max-width="maxWidth"
             :color="color"
             :icon="icon"
@@ -26,7 +26,7 @@
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainBtn === true) ||
+                    (split === false && disableMainButton === true) ||
                     disableDropdown === true
             "
             :overflow="overflow"
@@ -46,7 +46,7 @@
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainBtn === true) ||
+                    (split === false && disableMainButton === true) ||
                     disableDropdown === true
             "
             :no-wrap="noWrap"
@@ -111,11 +111,11 @@
         :aria-haspopup="true"
         :aria-disabled="
             disabled === true ||
-                (split === false && disableMainBtn === true) ||
+                (split === false && disableMainButton === true) ||
                 disableDropdown === true
         "
-        :disabled="disabled === true || disableMainBtn === true"
-        :style="mainBtnStyle"
+        :disabled="disabled === true || disableMainButton === true"
+        :style="mainButtonStyle"
         :no-wrap="props.noWrap"
         :tooltip="tooltip"
         :max-width="maxWidth"
@@ -209,7 +209,7 @@ export default defineComponent({
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },
         contentClass: { type: [Array, String, Object], default: '' },
         contentStyle: { type: [Array, String, Object], default: '' },
-        mainBtnStyle: { type: [Array, String, Object], default: '' },
+        mainButtonStyle: { type: [Array, String, Object], default: '' },
         cover: Boolean,
         maxWidth: { type: String, default: null },
         maxHeight: { type: String, default: null },
@@ -225,7 +225,7 @@ export default defineComponent({
             default: 'top end'
         },
         menuOffset: { type: Array, default: () => [0, 0] },
-        disableMainBtn: Boolean,
+        disableMainButton: Boolean,
         disableDropdown: Boolean,
         noIconAnimation: Boolean,
         disabled: Boolean,
@@ -282,7 +282,7 @@ export default defineComponent({
 
             if (
                 props.disabled === true ||
-                (props.split === false && props.disableMainBtn === true) ||
+                (props.split === false && props.disableMainButton === true) ||
                 props.disableDropdown === true
             ) {
                 acc['aria-disabled'] = 'true'

@@ -3,7 +3,7 @@ import { DlAlert } from '../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlAlert', () => {
-    const _closeBtn = '[data-test="close-button-icon"]'
+    const _closeButton = '[data-test="close-button-icon"]'
     const _root = '[data-test="root"]'
 
     it('should render the given text prop', () => {
@@ -27,7 +27,7 @@ describe('DlAlert', () => {
         })
 
         expect(wrapper.get(_root)).toBeDefined()
-        expect(wrapper.get(_closeBtn)).toBeDefined()
+        expect(wrapper.get(_closeButton)).toBeDefined()
     })
 
     it('should accept only valid "type" properties', () => {
@@ -64,8 +64,8 @@ describe('DlAlert', () => {
                 }
             })
 
-            const closeBtn = await wrapper.find(_closeBtn)
-            closeBtn.trigger('click')
+            const closeButton = await wrapper.find(_closeButton)
+            closeButton.trigger('click')
             await wrapper.vm.$nextTick()
             expect(wrapper.emitted()).toHaveProperty('update:model-value')
             let error: any

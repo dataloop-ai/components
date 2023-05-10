@@ -33,7 +33,7 @@
                 </div>
                 <div class="dl-smart-search-input__toolbar">
                     <div
-                        v-if="withClearBtn && modelValue"
+                        v-if="withClearButton && modelValue"
                         class="dl-smart-search-input__clear-button-wrapper"
                     >
                         <dl-button
@@ -54,7 +54,7 @@
                             size="16px"
                             flat
                             :disabled="disabled"
-                            @mousedown="handleScreenBtnClick"
+                            @mousedown="handleScreenButtonClick"
                         />
                         <dl-tooltip>
                             {{ expanded ? 'Collapse' : 'Expand' }} Smart Search
@@ -356,7 +356,7 @@ export default defineComponent({
 
             return classes
         },
-        withClearBtn(): boolean {
+        withClearButton(): boolean {
             return this.modelValue.length > 0
         },
         cssVars(): Record<string, string> {
@@ -523,7 +523,7 @@ export default defineComponent({
 
             this.$emit('update:modelValue', text)
         },
-        handleScreenBtnClick() {
+        handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
             this.expanded = !this.expanded
             if (!this.focused) {

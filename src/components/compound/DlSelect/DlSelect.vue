@@ -326,7 +326,7 @@ export default defineComponent({
             validator: optionsValidator
         },
         capitalizedOptions: { type: Boolean, default: false },
-        disableClearBtn: { type: Boolean, default: false },
+        disableClearButton: { type: Boolean, default: false },
         disableDropdownIconPadding: { type: Boolean, default: false },
         clearButtonTooltip: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
