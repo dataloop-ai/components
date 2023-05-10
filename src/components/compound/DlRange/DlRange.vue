@@ -13,7 +13,7 @@
                     flat
                     size="m"
                     :disabled="disabled || readonly"
-                    data-test="reset-btn"
+                    data-test="reset-button"
                     @click="handleResetButtonClick"
                 >
                     Reset

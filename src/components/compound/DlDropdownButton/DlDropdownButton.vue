@@ -35,7 +35,7 @@
         />
         <dl-button
             class="dl-button-dropdown__arrow-container"
-            :style="btnCSSStyles"
+            :style="buttonCSSStyles"
             :disabled="disabled === true || disableDropdown === true"
             :outlined="outlined"
             :flat="flat"
@@ -308,7 +308,7 @@ export default defineComponent({
             )
         })
 
-        const btnCSSStyles = computed(() => {
+        const buttonCSSStyles = computed(() => {
             return {
                 '--dl-button-border-left': props.outlined
                     ? 'none'
@@ -402,7 +402,7 @@ export default defineComponent({
             iconClass,
             menuRef,
             attributes,
-            btnCSSStyles,
+            buttonCSSStyles,
             showing,
             onBeforeShow,
             onBeforeHide,

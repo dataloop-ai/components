@@ -4,7 +4,7 @@ import { DlRange } from '../../src/components'
 import touchPanDirective from '../../src/directives/TouchPan'
 import { describe, it, expect, beforeEach } from 'vitest'
 
-const _resetBtn = '[data-test="reset-btn"]'
+const _resetBtn = '[data-test="reset-button"]'
 const _sliderBar = '[data-test="slider-bar"]'
 const _trackContainer = '[data-test="track-container"]'
 const _minThumb = '[data-test="min-thumb"]'
@@ -120,7 +120,7 @@ describe('DlRange', () => {
         })
     })
 
-    describe('when reset btn is pressed', () => {
+    describe('when reset button is pressed', () => {
         describe('when state is editable', () => {
             it('should reset the model value', async () => {
                 await wrapper

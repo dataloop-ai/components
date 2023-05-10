@@ -106,7 +106,7 @@ const Template = (args) => ({
             @input="input"
             @clear="clear"
             @enter="enter"
-            @search-btn="searchBtn"
+            @search-button="searchBtn"
         />
     </div>
   `,

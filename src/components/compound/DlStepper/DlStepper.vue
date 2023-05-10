@@ -9,7 +9,7 @@
     >
         <dl-stepper-header
             :header-title="headerTitle"
-            :hide-close-btn="hideCloseBtn"
+            :hide-close-button="hideCloseBtn"
             @close="closeStepper"
         />
         <div class="dl-stepper-content">

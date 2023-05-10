@@ -689,7 +689,7 @@ const DisableMainBtnTemplate = (args) => ({
     },
     template: `
     <dl-dropdown-button
-        disable-main-btn
+        disable-main-button
         label="Disable Main Btn"
         dropdownIcon="icon-dl-down-chevron"
         mainBtnStyle="width: 150px;"

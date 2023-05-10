@@ -4,26 +4,29 @@
         class="container"
     >
         <dl-button
-            v-for="(btn, idx) in toggleButtons"
+            v-for="(button, idx) in toggleButtons"
             :key="idx"
             :styles="
-                getStyles(btn.value === scopedValue, hoverBtn === btn.value)
+                getStyles(
+                    button.value === scopedValue,
+                    hoverBtn === button.value
+                )
             "
             data-test="button"
             fluid
-            @mouseenter="hoverBtn = btn.value"
+            @mouseenter="hoverBtn = button.value"
             @mouseleave="hoverBtn = null"
-            @click="value = btn.value"
+            @click="value = button.value"
         >
             <span v-if="!$slots.button && !$slots[`button-${idx}`]">
-                {{ btn.label }}
+                {{ button.label }}
             </span>
             <slot
-                :label="btn.label"
+                :label="button.label"
                 :name="`button-${idx}`"
             />
             <slot
-                :label="btn.label"
+                :label="button.label"
                 name="button"
             />
         </dl-button>

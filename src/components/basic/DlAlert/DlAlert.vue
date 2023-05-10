@@ -25,12 +25,12 @@
         </div>
         <div
             v-if="closable"
-            class="close-btn"
-            data-test="close-btn"
+            class="close-button"
+            data-test="close-button"
         >
             <dl-icon
-                class="close-btn-icon"
-                data-test="close-btn-icon"
+                class="close-button-icon"
+                data-test="close-button-icon"
                 icon="icon-dl-close"
                 color="dl-color-darker"
                 size="12px"
@@ -216,7 +216,7 @@ export default defineComponent({
         word-break: break-word;
     }
 
-    .close-btn {
+    .close-button {
         padding-right: 16px;
         padding-left: 10px;
         align-items: var(--dl-alert-align-button, start);
@@ -226,7 +226,7 @@ export default defineComponent({
         cursor: pointer;
     }
 
-    .close-btn-icon:hover {
+    .close-button-icon:hover {
         cursor: pointer;
     }
 }

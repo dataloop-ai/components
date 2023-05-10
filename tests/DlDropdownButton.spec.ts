@@ -49,7 +49,7 @@ describe('DlDropdownButton', () => {
             arrowNavItems: []
         })
 
-        expect(wrapper.vm.btnCSSStyles).toStrictEqual({
+        expect(wrapper.vm.buttonCSSStyles).toStrictEqual({
             '--dl-button-border-left': 'var(--dl-color-white)'
         })
 
@@ -57,7 +57,7 @@ describe('DlDropdownButton', () => {
 
         await wrapper.setProps({ outlined: true })
 
-        expect(wrapper.vm.btnCSSStyles).toStrictEqual({
+        expect(wrapper.vm.buttonCSSStyles).toStrictEqual({
             '--dl-button-border-left': 'none'
         })
 

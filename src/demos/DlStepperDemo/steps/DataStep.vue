@@ -70,7 +70,7 @@
                         style="width: 60px; margin: 0 10px 0 15px"
                         size="m"
                         without-root-padding
-                        disable-clear-btn
+                        disable-clear-button
                     />
                     <dl-typography color="dl-color-medium">Items Limit</dl-typography>
                 </div>

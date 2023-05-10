@@ -34,7 +34,7 @@
                 <div class="dl-smart-search-input__toolbar">
                     <div
                         v-if="withClearBtn && modelValue"
-                        class="dl-smart-search-input__clear-btn-wrapper"
+                        class="dl-smart-search-input__clear-button-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-close"
@@ -47,7 +47,7 @@
                     </div>
                     <div
                         v-if="withScreenButton"
-                        class="dl-smart-search-input__screen-btn-wrapper"
+                        class="dl-smart-search-input__screen-button-wrapper"
                     >
                         <dl-button
                             :icon="screenIcon"
@@ -62,7 +62,7 @@
                     </div>
                     <div
                         v-if="withSaveButton"
-                        class="dl-smart-search-input__save-btn-wrapper"
+                        class="dl-smart-search-input__save-button-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-save"
@@ -674,7 +674,7 @@ export default defineComponent({
         padding-top: 5px;
     }
 
-    &__clear-btn-wrapper {
+    &__clear-button-wrapper {
         border-right: 1px solid var(--dl-color-separator);
         padding: 0 7px;
         display: flex;
@@ -685,7 +685,7 @@ export default defineComponent({
         }
     }
 
-    &__screen-btn-wrapper {
+    &__screen-button-wrapper {
         display: flex;
         align-items: center;
         padding: 0 5px;
@@ -695,7 +695,7 @@ export default defineComponent({
         }
     }
 
-    &__save-btn-wrapper {
+    &__save-button-wrapper {
         display: flex;
         align-items: center;
         color: var(--dl-color-darker);
