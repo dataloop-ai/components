@@ -14,7 +14,7 @@
             :placeholder="placeholder"
             :auto-suggest-items="autoSuggestItems"
             :highlight-matches="highlightMatches"
-            :without-root-padding="withoutRootPadding"
+            :dense="dense"
             :suggest-menu-width="suggestMenuWidth"
             @input="onChange"
             @focus="onFocus"
@@ -32,7 +32,7 @@
             </template>
         </dl-input>
         <dl-button
-            v-show="withSearchBtn"
+            v-show="withSearchButton"
             padding="9px 16px"
             style="width: 20%; min-width: fit-content"
             :size="size"
@@ -81,8 +81,8 @@ export default defineComponent({
             default: (): string[] => []
         },
         highlightMatches: { type: Boolean, default: false },
-        withoutRootPadding: { type: Boolean, default: false },
-        withSearchBtn: { type: Boolean, default: false },
+        dense: { type: Boolean, default: false },
+        withSearchButton: { type: Boolean, default: false },
         suggestMenuWidth: { type: String, default: 'auto' }
     },
     emits: [
@@ -107,7 +107,7 @@ export default defineComponent({
             return [`button--${this.size}`]
         },
         rootVars(): Record<string, any> {
-            return this.withSearchBtn
+            return this.withSearchButton
                 ? {
                       '--dl-search-text-input-margin': '0 20px 0 0'
                   }

@@ -3,7 +3,7 @@
         <dl-search
             v-model="searchValue"
             size="l"
-            with-search-btn
+            with-search-button
             highlight-matches
             placeholder="Search here"
             :auto-suggest-items="suggestItems"
