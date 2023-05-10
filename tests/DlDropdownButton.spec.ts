@@ -18,7 +18,7 @@ describe('DlDropdownButton', () => {
             cover: false,
             disabled: false,
             disableDropdown: false,
-            disableMainBtn: false,
+            disableMainButton: false,
             dropdownIcon: 'icon-dl-down-chevron',
             flat: false,
             fluid: false,
@@ -26,7 +26,7 @@ describe('DlDropdownButton', () => {
             icon: '',
             label: '',
             iconSize: '20px',
-            mainBtnStyle: '',
+            mainButtonStyle: '',
             maxHeight: null,
             maxWidth: null,
             menuAnchor: 'bottom end',
@@ -49,16 +49,16 @@ describe('DlDropdownButton', () => {
             transform: 'default'
         })
 
-        expect(wrapper.vm.btnCSSStyles).toStrictEqual({
-            '--dl-btn-border-left': 'var(--dl-color-white)'
+        expect(wrapper.vm.buttonCSSStyles).toStrictEqual({
+            '--dl-button-border-left': 'var(--dl-color-white)'
         })
 
         await wrapper.setProps({ disabled: true })
 
         await wrapper.setProps({ outlined: true })
 
-        expect(wrapper.vm.btnCSSStyles).toStrictEqual({
-            '--dl-btn-border-left': 'none'
+        expect(wrapper.vm.buttonCSSStyles).toStrictEqual({
+            '--dl-button-border-left': 'none'
         })
 
         await wrapper.setProps({ modelValue: true })

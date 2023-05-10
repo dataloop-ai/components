@@ -4,26 +4,29 @@
         class="container"
     >
         <dl-button
-            v-for="(btn, idx) in toggleButtons"
+            v-for="(button, idx) in toggleButtons"
             :key="idx"
             :styles="
-                getStyles(btn.value === scopedValue, hoverBtn === btn.value)
+                getStyles(
+                    button.value === scopedValue,
+                    hoverButton === button.value
+                )
             "
             data-test="button"
             fluid
-            @mouseenter="hoverBtn = btn.value"
-            @mouseleave="hoverBtn = null"
-            @click="value = btn.value"
+            @mouseenter="hoverButton = button.value"
+            @mouseleave="hoverButton = null"
+            @click="value = button.value"
         >
             <span v-if="!$slots.button && !$slots[`button-${idx}`]">
-                {{ btn.label }}
+                {{ button.label }}
             </span>
             <slot
-                :label="btn.label"
+                :label="button.label"
                 :name="`button-${idx}`"
             />
             <slot
-                :label="btn.label"
+                :label="button.label"
                 name="button"
             />
         </dl-button>
@@ -60,7 +63,7 @@ export default defineComponent({
     emits: ['update:modelValue', 'change'],
     data: () => ({
         scopedValue: null as string | number,
-        hoverBtn: null as string | number
+        hoverButton: null as string | number
     }),
     computed: {
         value: {
@@ -87,8 +90,8 @@ export default defineComponent({
         this.scopedValue = this.value
     },
     methods: {
-        getStyles(activeBtn: boolean, hovered: boolean) {
-            if (activeBtn) {
+        getStyles(activeButton: boolean, hovered: boolean) {
+            if (activeButton) {
                 return ButtonsStyles.activeStyles
             } else if (hovered) {
                 return ButtonsStyles.hoverStyles

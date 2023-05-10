@@ -10,7 +10,7 @@
             >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="withSearchIcon || (!focused && status)"
+                        v-if="!focused && (withSearchIcon || status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="16px"
@@ -33,8 +33,8 @@
                 </div>
                 <div class="dl-smart-search-input__toolbar">
                     <div
-                        v-if="withClearBtn && modelValue"
-                        class="dl-smart-search-input__clear-btn-wrapper"
+                        v-if="withClearButton && modelValue"
+                        class="dl-smart-search-input__clear-button-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-close"
@@ -47,14 +47,14 @@
                     </div>
                     <div
                         v-if="withScreenButton"
-                        class="dl-smart-search-input__screen-btn-wrapper"
+                        class="dl-smart-search-input__screen-button-wrapper"
                     >
                         <dl-button
                             :icon="screenIcon"
                             size="16px"
                             flat
                             :disabled="disabled"
-                            @mousedown="handleScreenBtnClick"
+                            @mousedown="handleScreenButtonClick"
                         />
                         <dl-tooltip>
                             {{ expanded ? 'Collapse' : 'Expand' }} Smart Search
@@ -62,7 +62,7 @@
                     </div>
                     <div
                         v-if="withSaveButton"
-                        class="dl-smart-search-input__save-btn-wrapper"
+                        class="dl-smart-search-input__save-button-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-save"
@@ -522,7 +522,7 @@ export default defineComponent({
 
             this.$emit('update:modelValue', text)
         },
-        handleScreenBtnClick() {
+        handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
             this.expanded = !this.expanded
             if (!this.focused) {
@@ -673,7 +673,7 @@ export default defineComponent({
         padding-top: 5px;
     }
 
-    &__clear-btn-wrapper {
+    &__clear-button-wrapper {
         border-right: 1px solid var(--dl-color-separator);
         padding: 0 7px;
         display: flex;
@@ -684,7 +684,7 @@ export default defineComponent({
         }
     }
 
-    &__screen-btn-wrapper {
+    &__screen-button-wrapper {
         display: flex;
         align-items: center;
         padding: 0 5px;
@@ -694,7 +694,7 @@ export default defineComponent({
         }
     }
 
-    &__save-btn-wrapper {
+    &__save-button-wrapper {
         display: flex;
         align-items: center;
         color: var(--dl-color-darker);
