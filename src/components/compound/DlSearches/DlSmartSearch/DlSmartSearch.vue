@@ -27,7 +27,7 @@
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div class="dl-smart-search__search-button-wrapper">
+            <div class="dl-smart-search__search-btn-wrapper">
                 <dl-button
                     icon="icon-dl-search"
                     size="l"
@@ -431,7 +431,7 @@ export default defineComponent({
         }
     }
 
-    &__search-button-wrapper {
+    &__search-btn-wrapper {
         display: flex;
         align-items: center;
 
@@ -440,7 +440,7 @@ export default defineComponent({
         }
     }
 
-    &__filters-button-wrapper {
+    &__filters-btn-wrapper {
         display: flex;
         align-items: center;
 

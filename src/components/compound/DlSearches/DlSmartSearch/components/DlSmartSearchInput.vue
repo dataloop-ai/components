@@ -90,7 +90,6 @@
                 </div>
             </div>
             <label
-                v-if="!focused"
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :style="labelStyles"
@@ -120,7 +119,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue-demi'
+import { defineComponent, ref, PropType, computed } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
@@ -206,8 +205,7 @@ export default defineComponent({
             default: false
         },
         searchBarWidth: {
-            type: String,
-            default: 'auto'
+            type: String
         },
         defaultWidth: {
             type: String,
@@ -323,7 +321,7 @@ export default defineComponent({
                 : 'icon-dl-full-screen'
         },
         textareaStyles() {
-            const overflow = this.scroll && this.focused ? 'scroll' : 'hidden'
+            const overflow = this.scroll && !this.focused ? 'scroll' : 'hidden'
             return {
                 overflow,
                 '-webkit-appearance': 'textfield'
@@ -334,7 +332,7 @@ export default defineComponent({
 
             if (this.focused && this.status.type === 'info') {
                 classes += ' dl-smart-search-input__search-bar--focused'
-            } else if (!this.focused) {
+            } else {
                 if (this.status.type === 'error') {
                     classes += ' dl-smart-search-input__search-bar--error'
                 } else if (this.status.type === 'warning') {
@@ -366,7 +364,7 @@ export default defineComponent({
 
             return classes
         },
-        withClearButton(): boolean {
+        withClearBtn(): boolean {
             return this.modelValue.length > 0
         },
         cssVars(): Record<string, string> {
@@ -439,7 +437,7 @@ export default defineComponent({
         },
         focused(value) {
             (this.$refs.searchBar as HTMLElement).style.maxHeight = `${
-                value ? parseInt(this.searchBarWidth) : 28
+                value ? parseInt(this.searchBarWidth) : 450
             }px`
             if (!value) {
                 (this.$refs.input as HTMLElement).parentElement.style.width =
@@ -619,7 +617,7 @@ export default defineComponent({
         display: flex;
         line-height: 15px;
         align-items: flex-start;
-        padding-top: 7px;
+        padding-top: 8px;
         margin-right: 5px;
     }
 
@@ -667,7 +665,7 @@ export default defineComponent({
         position: relative;
         display: flex;
         flex-grow: 1;
-        padding: 8px 10px 6px 0;
+        padding: 10px 10px 6px 0;
         position: relative;
 
         align-items: flex-start;
