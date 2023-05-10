@@ -119,7 +119,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from 'vue-demi'
+import { defineComponent, ref, PropType } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
@@ -205,7 +205,8 @@ export default defineComponent({
             default: false
         },
         searchBarWidth: {
-            type: String
+            type: String,
+            default: 'auto'
         },
         defaultWidth: {
             type: String,
@@ -323,7 +324,7 @@ export default defineComponent({
 
             if (this.focused && this.status.type === 'info') {
                 classes += ' dl-smart-search-input__search-bar--focused'
-            } else {
+            } else if (!this.focused) {
                 if (this.status.type === 'error') {
                     classes += ' dl-smart-search-input__search-bar--error'
                 } else if (this.status.type === 'warning') {
@@ -355,7 +356,7 @@ export default defineComponent({
 
             return classes
         },
-        withClearBtn(): boolean {
+        withClearButton(): boolean {
             return this.modelValue.length > 0
         },
         cssVars(): Record<string, string> {
