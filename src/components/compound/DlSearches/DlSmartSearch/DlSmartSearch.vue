@@ -409,7 +409,7 @@ export default defineComponent({
     }
 
     &__buttons {
-        margin: 0px 5px;
+        margin: 2px 5px;
         display: flex;
         align-items: center;
         &--filters {
