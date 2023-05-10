@@ -15,7 +15,7 @@ describe('DlSmartSearchInput', () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {}
         })
-        expect(wrapper.vm.screenIcon).toMatch('icon-dl-fit-to-screen')
+        expect(wrapper.vm.screenIcon).toMatch('icon-dl-full-screen')
     })
 
     it('should assign classes to component according to the props', async () => {
