@@ -10,7 +10,7 @@
             >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="withSearchIcon || (!focused && status)"
+                        v-if="!focused && (withSearchIcon || status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="16px"
@@ -90,6 +90,7 @@
                 </div>
             </div>
             <label
+                v-if="!focused"
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :style="labelStyles"
@@ -205,7 +206,8 @@ export default defineComponent({
             default: false
         },
         searchBarWidth: {
-            type: String
+            type: String,
+            default: 'auto'
         },
         defaultWidth: {
             type: String,
@@ -332,7 +334,7 @@ export default defineComponent({
 
             if (this.focused && this.status.type === 'info') {
                 classes += ' dl-smart-search-input__search-bar--focused'
-            } else {
+            } else if (!this.focused) {
                 if (this.status.type === 'error') {
                     classes += ' dl-smart-search-input__search-bar--error'
                 } else if (this.status.type === 'warning') {
@@ -408,7 +410,7 @@ export default defineComponent({
                 this.isDatePickerVisible = true
                 this.suggestionModal = false
             }
-            this.scroll = this.$refs.input.offsetHeight > 40
+            this.scroll = (this.$refs.input as HTMLDivElement).offsetHeight > 40
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
