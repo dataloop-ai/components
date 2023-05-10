@@ -3,7 +3,7 @@
         <div style="margin: 40px 0">
             <dl-checkbox
                 v-model="switchState"
-                without-root-padding
+                dense
                 label="Disabled"
             />
         </div>

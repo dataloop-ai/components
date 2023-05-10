@@ -302,7 +302,7 @@ export default defineComponent({
             default: false
         },
         dense: Boolean,
-        disableClearButton: {
+        hideClearButton: {
             type: Boolean,
             default: false
         },
@@ -436,7 +436,7 @@ export default defineComponent({
         hasAppend(): boolean {
             return (
                 (!!this.$slots.append ||
-                    !this.disableClearButton ||
+                    !this.hideClearButton ||
                     this.type === 'password') &&
                 !this.isSmall
             )
@@ -449,7 +449,7 @@ export default defineComponent({
         },
         showClearButton(): boolean {
             return (
-                !this.disableClearButton &&
+                !this.hideClearButton &&
                 this.type !== 'password' &&
                 !this.disabled &&
                 !this.readonly &&

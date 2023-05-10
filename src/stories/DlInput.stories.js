@@ -225,10 +225,10 @@ export default {
                 defaultValue: { summary: false }
             }
         },
-        disableClearButton: {
-            name: 'disableClearButton',
+        hideClearButton: {
+            name: 'hideClearButton',
             type: { name: 'boolean', required: false },
-            description: 'The clear button will be disabled',
+            description: 'Hides the clear button will',
             control: 'boolean',
             defaultValue: false,
             table: {
@@ -321,7 +321,7 @@ Preview.args = {
     disabled: false,
     maxLength: 16,
     showCounter: true,
-    disableClearButton: false,
+    hideClearButton: false,
     counterReverse: false,
     suggestMenuWidth: 'auto'
 }
@@ -434,7 +434,7 @@ WarningPreview.args = {
     disabled: false,
     maxLength: 16,
     showCounter: true,
-    disableClearButton: false,
+    hideClearButton: false,
     counterReverse: false,
     suggestMenuWidth: 'auto'
 }
@@ -497,7 +497,7 @@ Preview.args = {
     disabled: false,
     maxLength: 16,
     showCounter: true,
-    disableClearButton: false,
+    hideClearButton: false,
     counterReverse: false,
     suggestMenuWidth: 'auto'
 }
