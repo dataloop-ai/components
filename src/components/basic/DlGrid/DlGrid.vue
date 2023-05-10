@@ -2,7 +2,7 @@
     <div
         ref="grid"
         :style="gridStyles"
-        class="dl-grid-wrapper"
+        :class="gridClass"
     >
         <slot />
     </div>
@@ -11,13 +11,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import {
-    leastCommonMultiple,
     getGridTemplate,
     getElementAbove,
     findIndexInMatrix,
     swapElemensInMatrix,
     isCustomEvent
-} from './utils'
+} from '../DlWidget/utils'
 
 export default defineComponent({
     model: {
@@ -46,20 +45,22 @@ export default defineComponent({
     computed: {
         gridStyles(): object {
             return {
-                '--grid-rows': this.modelValue?.length,
-                '--grid-columns': leastCommonMultiple(
-                    this.modelValue?.map((el: number[]) => el.length)
-                ),
                 '--row-gap': this.rowGap,
-                '--column-gap': this.columnGap
+                '--column-gap': this.columnGap,
+                '--grid-rows': this.rows
             }
+        },
+        gridClass(): string {
+            return this.modelValue
+                ? 'dl-grid-wrapper__grid'
+                : 'dl-grid-wrapper__flex'
         }
     },
     watch: {
         modelValue: {
-            handler() {
+            handler(val) {
                 this.$nextTick(() => {
-                    this.applyGridElementStyles()
+                    if (val) this.applyGridElementStyles()
                 })
             },
             immediate: true
@@ -95,6 +96,7 @@ export default defineComponent({
             })
         },
         changePosition(e: CustomEvent) {
+            if (!this.modelValue) return
             const side = e.detail.side
             const className = (this.$refs.grid as HTMLElement).children[0]
                 .classList[0]
@@ -130,10 +132,14 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dl-grid-wrapper {
-    display: grid;
-    row-gap: var(--row-gap);
-    column-gap: var(--column-gap);
-    grid-template-columns: var(--grid-columns);
-    grid-template-rows: var(--grid-rows);
+    &__grid {
+        display: grid;
+        row-gap: var(--row-gap);
+        column-gap: var(--column-gap);
+    }
+    &__flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
 }
 </style>

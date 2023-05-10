@@ -4,8 +4,3 @@ export interface Widget {
     description?: string
     content: any
 }
-
-export interface DlGridLayout {
-    name: string
-    value: number[][]
-}

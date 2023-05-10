@@ -53,6 +53,7 @@ import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
+import DlGridDemo from './DlGridDemo.vue'
 
 export default {
     AvatarDemo,
@@ -109,5 +110,6 @@ export default {
     DlEllipsisDemo,
     DlSeparatorDemo,
     DlKpiDemo,
-    DlCardDemo
+    DlCardDemo,
+    DlGridDemo
 }
