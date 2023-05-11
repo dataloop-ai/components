@@ -277,9 +277,7 @@ const isValidBoolean = (str: string) => {
 }
 
 const isValidString = (str: string) => {
-    return !!str.match(
-        /^('[A-Za-z0-9._~()'!*:@,;+?-]*')|("[A-Za-z0-9._~()'!*:@,;+?-]*")$/
-    )
+    return !!str.match(/^('*')|("*")$/)
 }
 
 const getOperatorByDataType = (dataType: string) => {

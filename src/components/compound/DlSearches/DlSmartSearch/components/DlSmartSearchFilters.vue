@@ -53,10 +53,6 @@ export default defineComponent({
         }
     },
     emits: ['filters-delete', 'filters-search'],
-    setup() {
-        const log = console.log
-        return { log }
-    },
     data() {
         return {
             currentTab: 'saved'
