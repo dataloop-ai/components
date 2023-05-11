@@ -8,16 +8,13 @@
         data-test="root"
     >
         <div>
-            <div
-                :style="iconStyle"
+            <dl-icon
                 data-test="icon"
-            >
-                <dl-icon
-                    :icon="icon"
-                    :color="iconColor"
-                    size="24px"
-                />
-            </div>
+                :style="iconStyle"
+                :icon="icon"
+                :color="iconColor"
+                size="24px"
+            />
             <span
                 class="text"
                 :style="textStyle"
@@ -27,6 +24,7 @@
             v-if="closable"
             class="close-btn"
             data-test="close-btn"
+            :style="closeButtonStyle"
         >
             <dl-icon
                 class="close-btn-icon"
@@ -127,6 +125,7 @@ export default defineComponent({
         const rootRef = ref(null)
         const rootStyle = ref()
         const iconStyle = ref()
+        const closeButtonStyle = ref()
 
         onMounted(() => {
             normalizeStyles(props.fluid)
@@ -157,7 +156,7 @@ export default defineComponent({
                 const rootS: Record<string, any> = {
                     backgroundColor: getColor(typeToBackgroundMap[type])
                 }
-                if (height > 36) {
+                if (height > 46) {
                     iconS.alignSelf = 'flex-start'
                 } else {
                     iconS.alignSelf = 'center'
@@ -169,6 +168,7 @@ export default defineComponent({
                 }
                 iconStyle.value = iconS
                 rootStyle.value = rootS
+                closeButtonStyle.value = iconS
             })
         }
 
@@ -185,6 +185,7 @@ export default defineComponent({
             iconColor,
             rootStyle,
             iconStyle,
+            closeButtonStyle,
             textStyle,
             handleClose
         }
@@ -218,7 +219,7 @@ export default defineComponent({
     }
 
     .close-btn {
-        padding-right: 16px;
+        padding-right: 10px;
         padding-left: 10px;
         align-items: var(--dl-alert-align-button, start);
     }
