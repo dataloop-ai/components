@@ -153,18 +153,13 @@ export default defineComponent({
                 const iconS: Record<string, any> = {
                     display: 'flex'
                 }
-                const closeBtnS: Record<string, any> = {
-                    display: 'flex'
-                }
                 const rootS: Record<string, any> = {
                     backgroundColor: getColor(typeToBackgroundMap[type])
                 }
                 if (height > 46) {
                     iconS.alignSelf = 'flex-start'
-                    closeBtnS.alignSelf = 'flex-start'
                 } else {
                     iconS.alignSelf = 'center'
-                    closeBtnS.alignSelf = 'center'
                 }
                 if (fluid === true) {
                     rootS.width = '100%'
@@ -173,7 +168,7 @@ export default defineComponent({
                 }
                 iconStyle.value = iconS
                 rootStyle.value = rootS
-                closeButtonStyle.value = closeBtnS
+                closeButtonStyle.value = iconS
             })
         }
 
