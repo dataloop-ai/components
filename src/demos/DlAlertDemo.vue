@@ -35,6 +35,7 @@
         <DlAlert
             type="info"
             text="Text: Lorem ipsum dolor sit amet, consectetur adipisicing elit. "
+            :closable="true"
         >
             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
         </DlAlert>
