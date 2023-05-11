@@ -27,10 +27,15 @@
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div class="dl-smart-search__search-btn-wrapper">
+            <div
+                style="height: 28px"
+                class="dl-smart-search__search-btn-wrapper"
+            >
                 <dl-button
                     icon="icon-dl-search"
-                    size="l"
+                    :styles="{
+                        height: '30px'
+                    }"
                     :disabled="disabled"
                     @click="emitSearchQuery"
                 />
@@ -52,7 +57,6 @@
                     <dl-smart-search-filters
                         :filters="filters"
                         @filters-search="emitFiltersSearch"
-                        @filters-save="emitFiltersSave"
                         @filters-delete="emitFiltersDelete"
                     />
                 </dl-menu>
@@ -409,9 +413,9 @@ export default defineComponent({
     }
 
     &__buttons {
-        margin: 2px 5px;
         display: flex;
         align-items: center;
+        margin-left: 5px;
         &--filters {
             min-width: fit-content;
             border: 1px solid var(--dl-color-secondary);

@@ -9,8 +9,8 @@
             @mousedown="$emit('search')"
         >
             <dl-icon
-                :inline="false"
                 :icon="icon"
+                style="margin-bottom: 2px"
             />
             <span class="query__header--title">
                 {{ name }}
@@ -20,17 +20,6 @@
             v-if="actionsVisible"
             class="query__actions"
         >
-            <div
-                class="query__actions--icon"
-                @mousedown="$emit('save')"
-            >
-                <dl-icon
-                    :inline="false"
-                    size="16px"
-                    icon="icon-dl-save"
-                />
-                <dl-tooltip>Save</dl-tooltip>
-            </div>
             <div
                 class="query__actions--icon"
                 @mousedown="$emit('delete')"
@@ -64,7 +53,7 @@ export default defineComponent({
             default: ''
         }
     },
-    emits: ['save', 'delete'],
+    emits: ['delete'],
     data() {
         return {
             actionsVisible: false
