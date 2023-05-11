@@ -6,6 +6,7 @@
                 align-items: center;
                 margin: 0px 5px 7px 0px;
                 padding: 5px 0px 0px;
+                width: 100%;
             "
         >
             <dl-typography

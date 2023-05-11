@@ -1,11 +1,5 @@
 <template>
-    <div
-        style="
-            color: var(--dl-color-lighter);
-            background-color: var(--dl-color-side-panel);
-            height: 100%;
-        "
-    >
+    <div class="left-side-content">
         <div style="padding-top: 30px">
             Left side content slot
         </div>
@@ -20,4 +14,10 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.left-side-content {
+    height: 100%;
+    color: var(--dl-color-lighter);
+    background-color: var(--dl-color-side-panel);
+}
+</style>

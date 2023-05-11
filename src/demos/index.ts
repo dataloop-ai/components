@@ -51,6 +51,7 @@ import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlStudioLayoutDemo from './DlStudioLayoutDemo.vue'
+import DlDatasetBrowserDemo from './DlDatasetBrowserDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
@@ -111,5 +112,6 @@ export default {
     DlSeparatorDemo,
     DlKpiDemo,
     DlCardDemo,
-    DlStudioLayoutDemo
+    DlStudioLayoutDemo,
+    DlDatasetBrowserDemo
 }

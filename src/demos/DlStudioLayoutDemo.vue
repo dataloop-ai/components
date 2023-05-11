@@ -42,7 +42,7 @@ import DefaultContent from '../components/essential/DlStudioLayout/components/De
 import FooterContent from '../components/essential/DlStudioLayout/components/Demo/FooterContent.vue'
 
 export default defineComponent({
-    name: 'DlKpiDemo',
+    name: 'DlStudioLayoutDemo',
     components: {
         NavbarDemoContent,
         DlStudioLayout,
