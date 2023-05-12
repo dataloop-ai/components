@@ -100,6 +100,9 @@ const Template = (args) => ({
             smartSearch,
             isLoading,
             filters,
+            schema,
+            aliases,
+            colorSchema,
             handleSearchQuery,
             handleSaveQuery,
             handleRemoveQuery
