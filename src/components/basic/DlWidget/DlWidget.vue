@@ -7,12 +7,10 @@
             :id="uuid"
             ref="widget"
             :class="widgetStyles"
+            @mouseenter="handleVisibleDragIcon(true)"
+            @mouseleave="handleVisibleDragIcon(false)"
         >
-            <div
-                class="dl-widget__header"
-                @mouseenter="visibleDragIcon = true"
-                @mouseleave="visibleDragIcon = false"
-            >
+            <div class="dl-widget__header">
                 <div class="dl-widget__header--titles">
                     <slot name="header" />
                 </div>
@@ -74,6 +72,7 @@ export default defineComponent({
     methods: {
         startDragging(e: MouseEvent) {
             this.isDragging = true
+            document.body.style.cursor = 'grabbing'
             this.draggedWidget = getElementAbove(
                 e.target as HTMLElement,
                 'dl-widget'
@@ -110,6 +109,7 @@ export default defineComponent({
         },
         stopDragging(e: MouseEvent) {
             this.isDragging = false
+            document.body.style.cursor = 'default'
             const clone = this.$refs.clone as HTMLElement
             clone.style.visibility = 'hidden'
             clone.innerHTML = ''
@@ -175,6 +175,11 @@ export default defineComponent({
                 clearTimeout(this.timer)
                 this.handleMouseEnter(e)
             }
+        },
+        handleVisibleDragIcon(val: boolean) {
+            if (!document.querySelector('.drag-clone').innerHTML.toString()) {
+                this.visibleDragIcon = val
+            }
         }
     }
 })
@@ -194,7 +199,7 @@ export default defineComponent({
 
         &--drag-icon {
             flex-grow: 1;
-            cursor: pointer;
+            cursor: grab;
 
             &::v-deep .dl-icon {
                 transform: rotate(90deg) !important;
@@ -240,5 +245,6 @@ export default defineComponent({
 .widget-wrapper {
     flex-basis: var(--widget-flex-basis);
     margin: var(--row-gap) var(--column-gap);
+    padding: 15px;
 }
 </style>

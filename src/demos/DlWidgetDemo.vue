@@ -48,6 +48,18 @@
                         :items-in-view="8"
                     />
                 </template>
+                <template #menu>
+                    <div class="menu-icons">
+                        <dl-icon
+                            size="m"
+                            icon="icon-dl-settings"
+                        />
+                        <dl-icon
+                            size="m"
+                            icon="icon-dl-download"
+                        />
+                    </div>
+                </template>
                 <template #description>
                     <span>Lorem ipsum dolor sit amet consectetur adipisicing
                         elit. Libero eligendi dolore, similique possimus
@@ -126,7 +138,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlWidget, DlGrid, DlBarChart, DlGridLayout } from '../components'
+import {
+    DlWidget,
+    DlGrid,
+    DlBarChart,
+    DlGridLayout,
+    DlIcon
+} from '../components'
 
 const labelsFn = () => {
     const a = []
@@ -184,7 +202,8 @@ export default defineComponent({
     components: {
         DlGrid,
         DlWidget,
-        DlBarChart
+        DlBarChart,
+        DlIcon
     },
     setup() {
         const layout = ref([
@@ -255,6 +274,14 @@ export default defineComponent({
     &__info {
         font-size: 0.8em;
         margin-left: 10px;
+    }
+}
+.menu-icons {
+    display: flex;
+    align-items: center;
+    & > * {
+        cursor: pointer;
+        margin: 0px 5px;
     }
 }
 </style>
