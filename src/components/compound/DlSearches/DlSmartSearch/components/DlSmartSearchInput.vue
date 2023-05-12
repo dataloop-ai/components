@@ -55,7 +55,7 @@
                                 size="16px"
                                 flat
                                 :disabled="disabled"
-                                @mousedown="handleScreenBtnClick"
+                                @mousedown="handleScreenButtonClick"
                             />
                             <dl-tooltip>
                                 {{ expanded ? 'Collapse' : 'Expand' }} Smart
@@ -536,7 +536,7 @@ export default defineComponent({
 
             this.$emit('update:modelValue', text)
         },
-        handleScreenBtnClick() {
+        handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
             this.expanded = !this.expanded
             if (!this.focused) {
