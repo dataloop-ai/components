@@ -38,54 +38,56 @@
                     >
                         <dl-button
                             icon="icon-dl-close"
-                            size="10px"
+                            size="12px"
                             flat
                             :disabled="disabled"
                             @mousedown="clearValue"
                         />
                         <dl-tooltip> Clear Query </dl-tooltip>
                     </div>
-                    <div
-                        v-if="withScreenButton"
-                        class="dl-smart-search-input__screen-btn-wrapper"
-                    >
-                        <dl-button
-                            :icon="screenIcon"
-                            size="16px"
-                            flat
-                            :disabled="disabled"
-                            @mousedown="handleScreenBtnClick"
-                        />
-                        <dl-tooltip>
-                            {{ expanded ? 'Collapse' : 'Expand' }} Smart Search
-                        </dl-tooltip>
-                    </div>
-                    <div
-                        v-if="withSaveButton"
-                        class="dl-smart-search-input__save-btn-wrapper"
-                    >
-                        <dl-button
-                            icon="icon-dl-save"
-                            size="16px"
-                            flat
-                            :disabled="saveStatus"
-                            @click="save"
+                    <div class="dl-smart-search-input__toolbar--right">
+                        <div
+                            v-if="withScreenButton"
+                            class="dl-smart-search-input__screen-btn-wrapper"
                         >
-                            <dl-tooltip> Save Query </dl-tooltip>
-                        </dl-button>
-                        <dl-button
-                            icon="icon-dl-edit"
-                            size="16px"
-                            flat
-                            transform="none"
-                            text-color="dl-color-darker"
-                            :disabled="saveStatus"
-                            uppercase
-                            label="DQL"
-                            @click="edit"
+                            <dl-button
+                                :icon="screenIcon"
+                                size="16px"
+                                flat
+                                :disabled="disabled"
+                                @mousedown="handleScreenBtnClick"
+                            />
+                            <dl-tooltip>
+                                {{ expanded ? 'Collapse' : 'Expand' }} Smart
+                                Search
+                            </dl-tooltip>
+                        </div>
+                        <div
+                            v-if="withSaveButton"
+                            class="dl-smart-search-input__save-btn-wrapper"
                         >
-                            <dl-tooltip> Switch to DQL </dl-tooltip>
-                        </dl-button>
+                            <dl-button
+                                icon="icon-dl-save"
+                                size="16px"
+                                flat
+                                :disabled="saveStatus"
+                                @click="save"
+                            >
+                                <dl-tooltip> Save Query </dl-tooltip>
+                            </dl-button>
+                            <dl-button
+                                icon="icon-dl-edit"
+                                size="16px"
+                                flat
+                                transform="none"
+                                text-color="dl-color-darker"
+                                uppercase
+                                label="DQL"
+                                @click="edit"
+                            >
+                                <dl-tooltip> Switch to DQL </dl-tooltip>
+                            </dl-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -370,7 +372,6 @@ export default defineComponent({
             return this.modelValue.length > 0
         },
         cssVars(): Record<string, string> {
-            console.log(this.inputHeight)
             return {
                 '--dl-smart-search-bar-wrapper-height':
                     this.expandedInputHeight,
@@ -619,8 +620,12 @@ export default defineComponent({
     &__status-icon-wrapper {
         display: flex;
         line-height: 15px;
-        margin: 6px 3px 0px 0px;
+        margin: 6px 8px 0px 0px;
         align-items: flex-start;
+        div:first-child {
+            display: flex;
+            align-items: center;
+        }
     }
 
     &__text,
@@ -682,14 +687,21 @@ export default defineComponent({
     &__toolbar {
         display: flex;
         align-items: flex-start;
-        margin-top: 5px;
+        height: 28px;
+        &--right {
+            height: 100%;
+            display: flex;
+        }
     }
 
     &__clear-btn-wrapper {
         border-right: 1px solid var(--dl-color-separator);
-        margin-top: 1px;
+        height: 100%;
         display: flex;
         align-items: center;
+        div:first-child {
+            margin-right: 5px;
+        }
         ::v-deep .dl-button {
             padding: 0px;
             color: var(--dl-color-darker);
@@ -698,6 +710,7 @@ export default defineComponent({
 
     &__screen-btn-wrapper {
         display: flex;
+        margin-right: 14px;
         align-items: center;
         margin-left: 9px;
         ::v-deep .dl-icon {

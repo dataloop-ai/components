@@ -277,7 +277,9 @@ const isValidBoolean = (str: string) => {
 }
 
 const isValidString = (str: string) => {
-    return !!str.match(/^('*')|("*")$/)
+    const match = str.match(/(?<=\")(.*?)(?=\")|(?<=\')(.*?)(?=\')/)
+    if (!match) return false
+    return match[0] === removeQuotes(str)
 }
 
 const getOperatorByDataType = (dataType: string) => {
@@ -374,4 +376,8 @@ const matchStringEnd = (input: string, str: string) =>
 
 export const removeBrackets = (str: string) => {
     return str.replace(/\(/g, '').replace(/\)/g, '')
+}
+
+const removeQuotes = (str: string) => {
+    return str.replaceAll('"', '').replaceAll("'", '')
 }

@@ -223,8 +223,7 @@ export default defineComponent({
         const isFocused = ref(false)
         const isQuerying = ref(false)
         const currentTab = ref('saved')
-
-        let oldInputQuery = ''
+        const oldInputQuery = ref('')
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -237,7 +236,7 @@ export default defineComponent({
             activeQuery.value.query = replaceAliases(json, props.aliases)
             findSuggestions(value)
             isQuerying.value = false
-            oldInputQuery = value
+            oldInputQuery.value = value
         }
 
         const toJSON = (value: string) => {
@@ -251,7 +250,7 @@ export default defineComponent({
             findSuggestions(inputModel.value)
 
             if (value) {
-                inputModel.value = oldInputQuery
+                inputModel.value = oldInputQuery.value
                 isQuerying.value = false
             }
             if (!value && !error) {
@@ -274,6 +273,7 @@ export default defineComponent({
             isQuerying,
             currentTab,
             searchBarWidth,
+            oldInputQuery,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -341,10 +341,11 @@ export default defineComponent({
         handleQuerySearchEditor(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
+            this.oldInputQuery = query.query
             this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleSaveQuery(performSearch: boolean) {
-            if (performSearch) {
+            if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()
                 this.jsonEditorModel = false
@@ -365,8 +366,8 @@ export default defineComponent({
             this.filtersModel = false
         },
         emitFiltersSearch(currentTab: string, query: Query) {
-            console.log('dsn')
             this.activeQuery = query
+            this.oldInputQuery = query.query
             this.currentTab = currentTab
             this.emitSearchQuery()
             this.filtersModel = false
@@ -415,14 +416,14 @@ export default defineComponent({
     &__buttons {
         display: flex;
         align-items: center;
-        margin-left: 5px;
+        margin-left: 8px;
         &--filters {
             min-width: fit-content;
             border: 1px solid var(--dl-color-secondary);
             border-radius: 3px;
             box-sizing: border-box;
             display: flex;
-            margin: 0px 5px;
+            margin: 0px 8px 0px 16px;
         }
         &--save {
             display: flex;
