@@ -30,7 +30,6 @@ describe('parseSmartQuery', () => {
     it('should return the correct query for a "NOT-IN" query', () => {
         const query = 'name NOT-IN "Apple","Google","Microsoft"'
         const result = parseSmartQuery(query)
-        console.log(result)
         expect(result).toEqual({
             name: { $nin: ['Apple', 'Google', 'Microsoft'] }
         })
