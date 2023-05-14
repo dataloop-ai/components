@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { parseSmartQuery } from '../../src/utils/parse-smart-query'
+import {
+    parseSmartQuery,
+    stringifySmartQuery
+} from '../../src/utils/parse-smart-query'
 
 describe('parseSmartQuery', () => {
     it('should return the correct query for a single key-value pair', () => {
@@ -47,5 +50,57 @@ describe('parseSmartQuery', () => {
         expect(result).toEqual({
             $or: [{ age: { $gte: 30 }, name: 'John' }, { city: 'New York' }]
         })
+    })
+})
+
+describe('stringifySmartQuery', () => {
+    it('should return the correct query for a single key-value pair', () => {
+        const query = { name: 'John' }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for multiple key-value pairs joined by "AND"', () => {
+        const query = {
+            name: 'John',
+            age: { $gte: 30 },
+            city: 'New York'
+        }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for multiple key-value pairs joined by "OR"', () => {
+        const query = { $or: [{ name: 'John' }, { name: 'Jane' }] }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for a "NOT-IN" query', () => {
+        const query = {
+            name: { $nin: ['Apple', 'Google', 'Microsoft'] }
+        }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for an "IN" query', () => {
+        const query = { name: { $in: ['Apple', 'Google', 'Microsoft'] } }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for a query with multiple operators', () => {
+        const query = {
+            $or: [{ age: { $gte: 30 }, name: 'John' }, { city: 'New York' }]
+        }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
     })
 })
