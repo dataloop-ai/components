@@ -69,7 +69,7 @@
                         v-model="percentage"
                         style="width: 60px; margin: 0 10px 0 15px"
                         size="m"
-                        without-root-padding
+                        dense
                         disable-clear-btn
                     />
                     <dl-typography color="dl-color-medium">Items Limit</dl-typography>

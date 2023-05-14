@@ -90,13 +90,16 @@
             error-message="Error message is the strongest."
         />
         <p>input in a row with button</p>
-        <div class="row">
+        <div
+            class="row"
+            style="align-items: center"
+        >
             <dl-input
                 class="input-parts"
                 style="width: 440px"
                 placeholder="Select option"
                 title="Min"
-                without-root-padding
+                dense
                 size="s"
             />
             <dl-button
