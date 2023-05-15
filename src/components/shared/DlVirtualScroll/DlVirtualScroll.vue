@@ -202,7 +202,7 @@ export default defineComponent({
         return {
             hasDefaultSlot,
             getVirtualChildren: __getVirtualChildren,
-            tag: comps[props.type],
+            tag: (comps as Record<string, any>)[props.type],
             attrs,
             rootRef,
             classes,

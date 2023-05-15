@@ -520,7 +520,7 @@ import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import { v4 } from 'uuid'
 
-const commonVirtPropsObj = {}
+const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
     commonVirtPropsObj[p] = {}
 })
