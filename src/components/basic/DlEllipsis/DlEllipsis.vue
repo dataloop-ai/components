@@ -38,6 +38,11 @@ export default defineComponent({
             default: false,
             required: false
         },
+        splitLength: {
+            type: Number,
+            required: false,
+            default: 0.75
+        },
         tooltip: {
             type: Boolean,
             default: true,
@@ -45,20 +50,18 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const dlEllipsisRef = ref(null)
-        const leftText = ref('')
-        const rightText = ref('')
-        const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
+        const { text, middleEllipsis, splitLength } = props
 
+        const dlEllipsisRef = ref(null)
         const splitIndex = computed(() =>
-            props.middleEllipsis
-                ? Math.round(props.text.length * 0.75)
-                : props.text.length
+            middleEllipsis ? Math.round(text.length * splitLength) : text.length
         )
 
-        const fullText = computed(() => props.text)
-        leftText.value = props.text.slice(0, splitIndex.value)
-        rightText.value = props.text.slice(splitIndex.value)
+        const leftText = computed(() => text.slice(0, splitIndex.value))
+        const rightText = computed(() => text.slice(splitIndex.value))
+
+        const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
+        const fullText = computed(() => text)
 
         return {
             leftText,
