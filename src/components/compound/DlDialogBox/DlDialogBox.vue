@@ -15,7 +15,8 @@
                 :style="{
                     width: Number(width) ? `${width}px` : width,
                     height: Number(height) ? `${height}px` : height,
-                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`
+                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`,
+                    maxHeight: !fullscreen && !fullHeight ? '90vh' : ''
                 }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
@@ -226,7 +227,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     z-index: var(--dl-z-index-menu);
-    max-height: 90vh;
 
     &--fullscreen {
         margin: 0;
