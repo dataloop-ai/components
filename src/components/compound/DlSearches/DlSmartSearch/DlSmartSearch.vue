@@ -70,6 +70,7 @@
             @save="saveQueryDialogBoxModel = true"
             @remove="handleQueryRemove"
             @search="handleQuerySearchEditor"
+            @update-query="handleEditorQueryUpdate"
         />
         <dl-dialog-box v-model="removeQueryDialogBoxModel">
             <template #header>
@@ -146,7 +147,7 @@ import {
     createColorSchema
 } from './utils/utils'
 import { v4 } from 'uuid'
-import { parseSmartQuery } from '../../../../utils'
+import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
 
 export default defineComponent({
     components: {
@@ -345,12 +346,23 @@ export default defineComponent({
             this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleSaveQuery(performSearch: boolean) {
+            console.log(this.activeQuery)
             if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()
                 this.jsonEditorModel = false
             } else {
                 this.emitSaveQuery()
+            }
+        },
+        handleEditorQueryUpdate(query: Query) {
+            this.activeQuery = query
+            try {
+                const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+                this.inputModel = stringQuery
+                this.oldInputQuery = stringQuery
+            } catch (error) {
+                console.log(error)
             }
         },
         emitFiltersSave(currentTab: string, query: Query) {
@@ -367,7 +379,7 @@ export default defineComponent({
         },
         emitFiltersSearch(currentTab: string, query: Query) {
             this.activeQuery = query
-            this.oldInputQuery = query.query
+            this.oldInputQuery = stringifySmartQuery(JSON.parse(query.query))
             this.currentTab = currentTab
             this.emitSearchQuery()
             this.filtersModel = false
