@@ -132,7 +132,7 @@ export default defineComponent({
                 message: message.value,
                 position: position.value,
                 type: type.value,
-                duration: duration.value,
+                duration: Number(duration.value) || 1000,
                 classItem: classItem.value,
                 closable: closable.value,
                 width: width.value,
