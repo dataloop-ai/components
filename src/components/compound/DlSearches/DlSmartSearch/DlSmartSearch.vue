@@ -34,7 +34,7 @@
                 <dl-button
                     icon="icon-dl-search"
                     :styles="{
-                        height: '30px'
+                        height: '28px'
                     }"
                     :disabled="disabled"
                     @click="emitSearchQuery"
@@ -43,8 +43,23 @@
 
             <dl-button
                 class="dl-smart-search__buttons--filters"
-                text-color="dl-color-secondary"
-                flat
+                :colors-object="{
+                    ACTIVE: {
+                        TEXT: 'var(--dl-color-darker)',
+                        BACKGROUND: 'var(--dl-color-fill)',
+                        BORDER: 'var(--dl-color-fill)'
+                    },
+                    HOVER: {
+                        TEXT: 'var(--dl-color-text-buttons)',
+                        BACKGROUND: 'var(--dl-color-hover)',
+                        BORDER: 'var(--dl-color-hover)'
+                    },
+                    PRESSED: {
+                        TEXT: 'var(--dl-color-text-buttons)',
+                        BACKGROUND: 'var(--dl-color-secondary)',
+                        BORDER: 'var(--dl-color-secondary)'
+                    }
+                }"
                 size="s"
             >
                 Saved Filters
@@ -429,9 +444,9 @@ export default defineComponent({
         display: flex;
         align-items: center;
         margin-left: 8px;
+        margin-top: 1px;
         &--filters {
             min-width: fit-content;
-            border: 1px solid var(--dl-color-secondary);
             border-radius: 3px;
             box-sizing: border-box;
             display: flex;
