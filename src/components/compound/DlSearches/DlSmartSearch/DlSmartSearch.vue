@@ -55,7 +55,7 @@
                 >
                     <dl-smart-search-filters
                         :filters="filters"
-                        @filters-search="emitFiltersSearch"
+                        @filters-select="emitFiltersSelect"
                         @filters-delete="emitFiltersDelete"
                     />
                 </dl-menu>
@@ -318,14 +318,6 @@ export default defineComponent({
                 : this.inputModel
         }
     },
-    watch: {
-        isLoading(val) {
-            this.inputModel = `Query "${this.activeQuery.name}" ${
-                val ? 'is running' : ''
-            }`
-            this.isQuerying = true
-        }
-    },
     mounted() {
         const observer = new ResizeObserver((entries) => {
             this.searchBarWidth = `${entries[0].contentRect.width}px`
@@ -376,11 +368,12 @@ export default defineComponent({
             this.removeQueryDialogBoxModel = true
             this.filtersModel = false
         },
-        emitFiltersSearch(currentTab: string, query: Query) {
+        emitFiltersSelect(currentTab: string, query: Query) {
             this.activeQuery = query
-            this.oldInputQuery = stringifySmartQuery(JSON.parse(query.query))
+            const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+            this.oldInputQuery = stringQuery
+            this.inputModel = stringQuery
             this.currentTab = currentTab
-            this.emitSearchQuery()
             this.filtersModel = false
         },
         emitSearchQuery() {
