@@ -39,6 +39,13 @@
         >
             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
         </DlAlert>
+        <DlAlert
+            type="success"
+            text="Text: Lorem ipsum dolor sit amet, consectetur adipisicing elit. "
+            :closable="true"
+        >
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        </DlAlert>
     </div>
 </template>
 
