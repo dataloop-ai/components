@@ -53,6 +53,12 @@
                 Please
                 <dl-link color="dl-color-link">Contact us</dl-link>.</span>
         </dl-alert>
+        <DlAlert
+            type="success"
+            text="Text: Lorem ipsum dolor sit amet, consectetur adipisicing elit. "
+        >
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        </DlAlert>
     </div>
 </template>
 
