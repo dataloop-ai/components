@@ -337,7 +337,6 @@ export default defineComponent({
             this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleSaveQuery(performSearch: boolean) {
-            console.log(this.activeQuery)
             if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()

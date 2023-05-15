@@ -145,7 +145,6 @@ export default defineComponent({
             this.resetEditor()
         },
         activeQuery(val) {
-            console.log('dsa')
             this.$emit('update-query', val)
             this.jsonEditor?.set({
                 text: val.query
