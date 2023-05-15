@@ -5,9 +5,9 @@
     >
         <div
             v-show="isActive"
-            id="DlToastContainer"
+            :id="`DlToastContainer-${uuid}`"
             ref="root"
-            class="toast-item"
+            class="toast-item DlToastContainer"
             :class="[
                 `toast-item--${type}`,
                 `toast-item--${position}`,
@@ -21,12 +21,35 @@
                 :closable="closable"
                 :dark-mode="false"
                 close-button-position="center"
+                style="position: relative"
                 @update:model-value="closeToast"
             >
                 <span
                     class="toast-message"
                     data-test="message-text"
                 />
+                <dl-badge
+                    v-if="count"
+                    with-border
+                    floating
+                    align="top"
+                    :color="badgeColor"
+                    :text-color="
+                        type === 'warning'
+                            ? 'var(--dl-color-alert-text)'
+                            : 'var(--dl-color-text-buttons)'
+                    "
+                    style="
+                        display: grid;
+                        text-align: center;
+                        width: fit-content;
+                        padding: 3px;
+                        min-width: 1em;
+                        top: -5px;
+                    "
+                >
+                    {{ count + 1 }}
+                </dl-badge>
             </dl-alert>
         </div>
     </transition>
@@ -40,14 +63,15 @@ import {
     onMounted,
     ref
 } from 'vue-demi'
-import { DlAlert } from '../../../basic'
+import { DlAlert, DlBadge } from '../../../'
 import { Positions, Types } from '../utils/config'
 import { removeElement } from '../utils/render'
 import { Animation } from '../types'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     name: 'ToastComponent',
-    components: { DlAlert },
+    components: { DlAlert, DlBadge },
     props: {
         message: {
             type: String,
@@ -88,16 +112,22 @@ export default defineComponent({
             default: 5
         }
     },
-    setup(props: any) {
+    emits: ['removed'],
+    setup(props: any, { emit }) {
+        const uuid = v4()
         const { position, duration, message, collapseCount } = props
         const root = ref(null)
+        const count = ref(0)
         let parentTop: HTMLElement = null
         let parentBottom: HTMLElement = null
         const toastParentPosition = ref(null)
         const isActive = ref(false)
         function closeToastMessage(): void {
             isActive.value = false
-            setTimeout(() => removeElement(root.value), 200)
+            setTimeout(() => {
+                emit('removed')
+                removeElement(root.value)
+            }, 200)
         }
         onBeforeMount(() => {
             setupContainer()
@@ -157,6 +187,19 @@ export default defineComponent({
             showNotice()
         })
 
+        const timeoutId = ref(null)
+
+        const setHideTimeout = () => {
+            if (timeoutId.value) {
+                clearTimeout(timeoutId.value)
+            }
+
+            timeoutId.value = setTimeout(() => {
+                closeToastMessage()
+                timeoutId.value = null
+            }, duration * 1000)
+        }
+
         function showNotice(): void {
             const parent = correctParent.value
             const container = root.value.closest('.dl-toast-container--pending')
@@ -165,24 +208,50 @@ export default defineComponent({
             container?.remove()
             isActive.value = true
             if (duration) {
-                setTimeout(() => {
-                    closeToastMessage()
-                }, duration * 1000)
+                setHideTimeout()
             }
             if (collapseCount && collapseCount < parent.childNodes.length) {
-                setTimeout(() => removeElement(parent.lastElementChild), 200)
+                setTimeout(() => {
+                    emit('removed')
+                    removeElement(parent.lastElementChild)
+                }, 200)
             }
         }
         function closeToast(val: boolean) {
-            if (!val) removeElement(root.value)
+            if (!val) {
+                emit('removed')
+                removeElement(root.value)
+            }
         }
 
+        const updateCount = (val: number) => {
+            count.value = val
+            setHideTimeout()
+        }
+
+        const badgeColor = computed(() => {
+            switch (props.type) {
+                case Types.success:
+                    return 'var(--dl-color-alert-success)'
+                case Types.warning:
+                    return 'var(--dl-color-alert-warn)'
+                case Types.error:
+                    return 'var(--dl-color-alert-error)'
+                case Types.info:
+                    return 'var(--dl-color-alert-info)'
+            }
+        })
+
         return {
+            uuid,
             root,
             transition,
             isActive,
             closeToast,
-            correctParent
+            correctParent,
+            updateCount,
+            count,
+            badgeColor
         }
     }
 })
@@ -304,7 +373,7 @@ export default defineComponent({
     }
 }
 
-#DlToastContainer {
+.DlToastContainer {
     --dl-color-negative: var(--dl-color-alert-error);
     --dl-color-negative-background: var(--dl-color-alert-error-background);
     --dl-color-warning: var(--dl-color-alert-warn);

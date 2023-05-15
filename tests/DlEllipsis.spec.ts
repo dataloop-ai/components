@@ -13,13 +13,19 @@ describe('DlEllipsis', () => {
     it('should have text', async () => {
         const wrapper = mount(DlEllipsis, {
             props: {
-                text
+                text,
+                split: false,
+                splitPosition: 0.75,
+                tooltip: true
             }
         })
 
         expect(wrapper.exists()).toBe(true)
-        expect(wrapper.props()).toMatchObject({
-            text
+        expect(wrapper.props()).toStrictEqual({
+            text,
+            split: false,
+            splitPosition: 0.75,
+            tooltip: true
         })
     })
 
