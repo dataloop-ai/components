@@ -14,8 +14,8 @@ describe('DlEllipsis', () => {
         const wrapper = mount(DlEllipsis, {
             props: {
                 text,
-                middleEllipsis: false,
-                splitLength: 0.75,
+                split: false,
+                splitPosition: 0.75,
                 tooltip: true
             }
         })
@@ -23,8 +23,8 @@ describe('DlEllipsis', () => {
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.props()).toStrictEqual({
             text,
-            middleEllipsis: false,
-            splitLength: 0.75,
+            split: false,
+            splitPosition: 0.75,
             tooltip: true
         })
     })

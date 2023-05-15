@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue-demi'
+import { defineComponent, ref, computed, toRef } from 'vue-demi'
 import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 
@@ -29,20 +29,33 @@ export default defineComponent({
         DlTooltip
     },
     props: {
+        /**
+         * Text to be displayed
+         */
         text: {
             type: String,
             required: true
         },
-        middleEllipsis: {
+        /**
+         * Allows to split the text in two parts
+         */
+        split: {
             type: Boolean,
             default: false,
             required: false
         },
-        splitLength: {
+        /**
+         * Position of the split in the text, % of the text length
+         */
+        splitPosition: {
             type: Number,
             required: false,
-            default: 0.75
+            default: 0.5,
+            validator: (value: number) => value >= 0 && value <= 1
         },
+        /**
+         * Tooltip to be displayed when the text is truncated
+         */
         tooltip: {
             type: Boolean,
             default: true,
@@ -50,11 +63,19 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const { text, middleEllipsis, splitLength } = props
+        const { text, split } = props
+
+        const splitPositionsRef = toRef(props, 'splitPosition')
+        splitPositionsRef.value = Math.min(
+            Math.max(splitPositionsRef.value, 1),
+            0
+        )
 
         const dlEllipsisRef = ref(null)
         const splitIndex = computed(() =>
-            middleEllipsis ? Math.round(text.length * splitLength) : text.length
+            split
+                ? Math.round(text.length * splitPositionsRef.value)
+                : text.length
         )
 
         const leftText = computed(() => text.slice(0, splitIndex.value))
