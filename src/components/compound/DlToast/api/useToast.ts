@@ -1,16 +1,14 @@
-import { reactive } from 'vue'
+import { isVue3 } from 'vue-demi'
 import toastComponent from '../components/ToastComponent.vue'
 import { createComponent } from '../utils/render'
 import { v4 } from 'uuid'
 
-export const useToast = (globalProps = {}) => {
-    const state: { prevToastId: any; toasts: { [key: string]: any } } =
-        reactive({
-            prevMessage: null,
-            prevToastId: null,
-            toasts: {}
-        })
+const state: { prevToastId: any; toasts: { [key: string]: any } } = {
+    prevToastId: null,
+    toasts: {}
+}
 
+export const useToast = (globalProps = {}) => {
     return {
         open(options: Object | string) {
             let message = null
@@ -35,11 +33,18 @@ export const useToast = (globalProps = {}) => {
 
             if (state.prevToastId && state.toasts[state.prevToastId]) {
                 const toast = state.toasts[state.prevToastId]
+                const props = isVue3 ? toast.props : toast.$children[0]
                 const similar =
-                    propsData.message === toast.props.message &&
-                    propsData.type === toast.props.type
+                    propsData.message === props.message &&
+                    propsData.type === props.type
                 if (similar) {
-                    toast.proxy.updateCount(toast.proxy.count + 1)
+                    if (isVue3) {
+                        toast.proxy.updateCount(toast.proxy.count + 1)
+                    } else {
+                        toast.$children[0].updateCount(
+                            toast.$children[0].count + 1
+                        )
+                    }
                     return
                 }
             }
