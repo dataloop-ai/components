@@ -102,6 +102,7 @@ export default defineComponent({
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
         filled: { type: Boolean, default: true },
         round: { type: Boolean, default: false },
+        shaded: { type: Boolean, default: false },
         fluid: Boolean,
         flat: Boolean,
         transform: {
@@ -215,32 +216,38 @@ export default defineComponent({
                         flat: this.flat,
                         color: this.color,
                         filled: this.filled,
+                        shaded: this.shaded,
                         textColor: this.textColor
                     }),
                     '--dl-button-bg': setBgColor({
                         disabled: this.disabled,
                         outlined: this.outlined,
+                        shaded: this.shaded,
                         flat: this.flat,
                         color: this.color
                     }),
                     '--dl-button-border': setBorder({
                         disabled: this.disabled,
                         flat: this.flat,
+                        shaded: this.shaded,
                         color: this.color
                     }),
                     '--dl-button-text-color-hover': setColorOnHover({
                         disabled: this.disabled,
                         outlined: this.outlined,
+                        shaded: this.shaded,
                         flat: this.flat,
                         color: this.textColor
                     }),
                     '--dl-button-border-hover': setBorderOnHover({
                         disabled: this.disabled,
                         flat: this.flat,
+                        shaded: this.shaded,
                         color: this.color
                     }),
                     '--dl-button-bg-hover': setBgOnHover({
                         disabled: this.disabled,
+                        shaded: this.shaded,
                         outlined: this.outlined,
                         flat: this.flat,
                         filled: this.filled,
