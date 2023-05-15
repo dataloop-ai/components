@@ -43,23 +43,7 @@
 
             <dl-button
                 class="dl-smart-search__buttons--filters"
-                :colors-object="{
-                    ACTIVE: {
-                        TEXT: 'var(--dl-color-darker)',
-                        BACKGROUND: 'var(--dl-color-fill)',
-                        BORDER: 'var(--dl-color-fill)'
-                    },
-                    HOVER: {
-                        TEXT: 'var(--dl-color-text-buttons)',
-                        BACKGROUND: 'var(--dl-color-hover)',
-                        BORDER: 'var(--dl-color-hover)'
-                    },
-                    PRESSED: {
-                        TEXT: 'var(--dl-color-text-buttons)',
-                        BACKGROUND: 'var(--dl-color-secondary)',
-                        BORDER: 'var(--dl-color-secondary)'
-                    }
-                }"
+                shaded
                 size="s"
             >
                 Saved Filters
