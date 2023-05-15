@@ -194,8 +194,8 @@ export default defineComponent({
             default: 'saved'
         },
         filters: {
-            type: Array as PropType<Filters[]>,
-            default: () => [] as Filters[]
+            type: Object as PropType<Filters>,
+            default: () => ({} as Filters)
         },
         disabled: {
             type: Boolean,
