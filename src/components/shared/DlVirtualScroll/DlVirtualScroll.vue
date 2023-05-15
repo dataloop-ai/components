@@ -1,65 +1,4 @@
-<template>
-    <!-- Component was created based on Quasar: https://github.com/quasarframework/quasar/blob/dev/ui/src/components/virtual-scroll/QVirtualScroll.js -->
-    <div
-        :id="uuid"
-        ref="rootRef"
-        :style="cssVars"
-        class="dl-table__middle"
-        :class="classes"
-    >
-        <table
-            class="dl-table"
-            :class="draggableClasses"
-        >
-            <slot
-                v-if="hasBeforeSlot"
-                name="before"
-            />
-            <tbody
-                key="before"
-                ref="beforeRef"
-                class="dl-virtual-scroll__padding"
-            >
-                <tr>
-                    <td
-                        class="dl-virtual-scroll__before"
-                        :colspan="colspanAttr"
-                    />
-                </tr>
-            </tbody>
-            <tbody
-                id="draggable"
-                key="content"
-                ref="contentRef"
-                class="dl-virtual-scroll__content"
-                tabindex="-1"
-            >
-                <slot
-                    v-for="scope in virtualScrollScope"
-                    :item="scope.item"
-                />
-            </tbody>
-            <tbody
-                key="after"
-                ref="afterRef"
-                class="dl-virtual-scroll__padding"
-            >
-                <tr>
-                    <td
-                        class="dl-virtual-scroll__after"
-                        :colspan="colspanAttr"
-                    />
-                </tr>
-            </tbody>
-            <slot
-                v-if="hasAfterSlot"
-                name="after"
-            />
-        </table>
-    </div>
-</template>
 <script lang="ts">
-import { v4 } from 'uuid'
 import {
     computed,
     defineComponent,
@@ -71,14 +10,26 @@ import {
     onMounted,
     Ref,
     ref,
-    watch
+    watch,
+    isVue2,
+    h
 } from 'vue-demi'
-import { listenOpts } from '../../../utils'
+import getTableMiddle from '../../compound/DlTable/utils/getTableMiddle'
+import { listenOpts, mergeSlot } from '../../../utils'
 import { getScrollTarget } from '../../../utils/scroll'
+import { DlList } from '../../essential/DlList'
+import { DlMarkupTable } from '../../basic/DlMarkupTable'
 import { useVirtualScroll, useVirtualScrollProps } from './useVirtualScroll'
 
+const comps = {
+    list: DlList,
+    table: DlMarkupTable
+}
+
+const typeOptions = ['list', 'table', '__dltable']
+
 export default defineComponent({
-    name: 'DlVirtualScroll',
+    name: 'DllVirtualScroll',
     props: {
         ...useVirtualScrollProps,
 
@@ -87,9 +38,11 @@ export default defineComponent({
             default: () => [] as Record<string, any>[]
         },
 
-        draggableClasses: {
-            type: [String, Array, Object],
-            default: null
+        type: {
+            type: String,
+            default: 'list',
+            validator: (v: (typeof typeOptions)[number]) =>
+                typeOptions.includes(v)
         },
 
         itemsFn: { type: Function, default: void 0 },
@@ -99,30 +52,26 @@ export default defineComponent({
             default: void 0
         }
     },
+    emits: ['virtual-scroll'],
     setup(props, { slots, attrs }) {
         const vm = getCurrentInstance()
 
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
 
-        const virtualScrollLength = computed(() =>
-            props.itemsSize && props.itemsSize >= 0 && props.itemsFn !== void 0
+        const virtualScrollLength = computed(() => {
+            return props.itemsSize >= 0 && props.itemsFn !== void 0
                 ? parseInt(props.itemsSize as unknown as string, 10)
                 : Array.isArray(props.items)
                 ? props.items.length
                 : 0
-        )
+        })
 
         const {
             virtualScrollSliceRange,
             localResetVirtualScroll,
-            onVirtualScrollEvt,
-            virtualScrollPaddingBefore,
-            virtualScrollPaddingAfter,
-            beforeRef,
-            afterRef,
-            contentRef,
-            colspanAttr
+            padVirtualScroll,
+            onVirtualScrollEvt
         } = useVirtualScroll({
             virtualScrollLength,
             getVirtualScrollTarget,
@@ -139,43 +88,34 @@ export default defineComponent({
                 item
             })
 
-            if (props.itemsFn === void 0) {
-                return props.items
-                    .slice(
-                        virtualScrollSliceRange.value.from,
-                        virtualScrollSliceRange.value.to
-                    )
-                    .map(mapFn)
-            }
-
-            return (props.itemsFn as Function)(
-                virtualScrollSliceRange.value.from,
-                virtualScrollSliceRange.value.to -
-                    virtualScrollSliceRange.value.from
-            ).map(mapFn)
+            return props.itemsFn === void 0
+                ? props.items
+                      .slice(
+                          virtualScrollSliceRange.value.from,
+                          virtualScrollSliceRange.value.to
+                      )
+                      .map(mapFn)
+                : props
+                      .itemsFn(
+                          virtualScrollSliceRange.value.from,
+                          virtualScrollSliceRange.value.to -
+                              virtualScrollSliceRange.value.from
+                      )
+                      .map(mapFn)
         })
 
         const classes = computed(
             () =>
-                'dl-virtual-scroll dl-virtual-scroll--vertical' +
+                `dl-virtual-scroll dl-virtual-scroll` +
+                (props.virtualScrollHorizontal === true
+                    ? '--horizontal'
+                    : '--vertical') +
                 (props.scrollTarget !== void 0 ? '' : ' scroll')
         )
-
-        const cssVars = computed(() => {
-            return {
-                '--item-height-before': virtualScrollPaddingBefore.value + 'px',
-                '--item-height-after': virtualScrollPaddingAfter.value + 'px',
-                '--dl-virtual-scroll-item-height':
-                    props.virtualScrollItemSize + 'px'
-            }
-        })
 
         const attributes = computed(() =>
             props.scrollTarget !== void 0 ? {} : { tabindex: 0 }
         )
-
-        const hasBeforeSlot = computed(() => !!slots['before'])
-        const hasAfterSlot = computed(() => !!slots['after'])
 
         watch(virtualScrollLength, () => {
             localResetVirtualScroll()
@@ -190,9 +130,7 @@ export default defineComponent({
         )
 
         function getVirtualScrollEl() {
-            return (
-                (rootRef.value && (rootRef.value as any).$el) || rootRef.value
-            )
+            return (rootRef.value as any)?.$el || rootRef.value
         }
 
         function getVirtualScrollTarget() {
@@ -223,6 +161,20 @@ export default defineComponent({
             }
         }
 
+        function __getVirtualChildren(create: Function) {
+            let child = padVirtualScroll(
+                props.type === 'list' ? 'div' : 'tbody',
+                virtualScrollScope.value.map(slots.default),
+                create
+            )
+
+            if (slots.before !== void 0) {
+                child = slots.before().concat(child)
+            }
+
+            return mergeSlot(slots.after, child)
+        }
+
         onBeforeMount(() => {
             localResetVirtualScroll()
         })
@@ -243,63 +195,54 @@ export default defineComponent({
             unconfigureScrollTarget()
         })
 
+        const hasDefaultSlot = computed(() => {
+            return !!slots.default
+        })
+
         return {
-            uuid: `dl-virtual-scroll-${v4()}`,
+            hasDefaultSlot,
+            getVirtualChildren: __getVirtualChildren,
+            tag: comps[props.type],
+            attrs,
             rootRef,
-            beforeRef,
-            afterRef,
-            contentRef,
-            virtualScrollScope,
-            virtualScrollPaddingBefore,
-            virtualScrollPaddingAfter,
-            attributes,
             classes,
-            hasBeforeSlot,
-            hasAfterSlot,
-            colspanAttr,
-            cssVars
+            attributes
         }
+    },
+    render(createElement: Function) {
+        const renderFn = isVue2 ? createElement : h
+        const renderSlot = (fn: Function) => (isVue2 ? fn() : () => fn())
+
+        if (!this.hasDefaultSlot) {
+            console.error(
+                'DlVirtualScroll: default scoped slot is required for rendering'
+            )
+            return
+        }
+
+        return this.$props.type === '__dltable'
+            ? getTableMiddle(
+                  {
+                      ref: 'rootRef',
+                      class: 'dl-table__middle ' + this.classes
+                  },
+                  this.getVirtualChildren(renderFn),
+                  renderFn
+              )
+            : renderFn(
+                  this.tag,
+                  {
+                      ...this.attrs,
+                      ref: 'rootRef',
+                      class: [this.attrs.class, this.classes],
+                      ...this.attributes
+                  },
+                  renderSlot(() => this.getVirtualChildren(renderFn))
+              )
     }
 })
 </script>
 <style scoped lang="scss">
+@import './styles/dl-virtual-scroll-styles.scss';
 @import '../../compound/DlTable/styles/dl-table-styles.scss';
-.dl-virtual-scroll {
-    &:focus {
-        outline: 0;
-    }
-    &__content {
-        outline: none;
-        contain: content;
-
-        > * {
-            overflow-anchor: none;
-        }
-        > [data-dl-vs-anchor] {
-            overflow-anchor: auto;
-        }
-    }
-    &__before {
-        height: var(--item-height-before);
-    }
-
-    &__after {
-        height: var(--item-height-after);
-    }
-    &__padding {
-        background: repeating-linear-gradient(
-            rgba(128, 128, 128, 0.03),
-            rgba(128, 128, 128, 0.08) var(--dl-virtual-scroll-item-height, 50px)
-        );
-
-        .dl-table & {
-            tr {
-                height: 0 !important;
-            }
-            td {
-                padding: 0 !important;
-            }
-        }
-    }
-}
 </style>
