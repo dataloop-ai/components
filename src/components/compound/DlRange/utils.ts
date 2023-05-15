@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash'
 import { between, includes, KEY_CODE } from '../../../utils'
 import { Dragging, dragType } from '../DlSlider/useSlider'
 
@@ -12,12 +13,10 @@ export function updateValue(
     emitFn: (...args: any[]) => any,
     change?: boolean
 ) {
-    if (state.min !== props.min || state.max !== props.max) {
-        emitFn('update:model-value', { ...state })
-    }
+    emitFn('update:model-value', cloneDeep(state))
 
     if (change === true) {
-        emitFn('change', { ...state })
+        emitFn('change', cloneDeep(state))
     }
 }
 
