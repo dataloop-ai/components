@@ -22,7 +22,7 @@
                         id="editor"
                         ref="input"
                         :class="inputClass"
-                        style="-webkit-appearance: textfield"
+                        :style="textareaStyles"
                         :placeholder="placeholder"
                         :contenteditable="!disabled"
                         @keypress="keyPress"
@@ -33,59 +33,61 @@
                 </div>
                 <div class="dl-smart-search-input__toolbar">
                     <div
-                        v-if="withClearButton && modelValue"
-                        class="dl-smart-search-input__clear-button-wrapper"
+                        v-if="withClearBtn && modelValue"
+                        class="dl-smart-search-input__clear-btn-wrapper"
                     >
                         <dl-button
                             icon="icon-dl-close"
-                            size="10px"
+                            size="12px"
                             flat
                             :disabled="disabled"
                             @mousedown="clearValue"
                         />
                         <dl-tooltip> Clear Query </dl-tooltip>
                     </div>
-                    <div
-                        v-if="withScreenButton"
-                        class="dl-smart-search-input__screen-button-wrapper"
-                    >
-                        <dl-button
-                            :icon="screenIcon"
-                            size="16px"
-                            flat
-                            :disabled="disabled"
-                            @mousedown="handleScreenButtonClick"
-                        />
-                        <dl-tooltip>
-                            {{ expanded ? 'Collapse' : 'Expand' }} Smart Search
-                        </dl-tooltip>
-                    </div>
-                    <div
-                        v-if="withSaveButton"
-                        class="dl-smart-search-input__save-button-wrapper"
-                    >
-                        <dl-button
-                            icon="icon-dl-save"
-                            size="16px"
-                            flat
-                            :disabled="saveStatus"
-                            @click="save"
+                    <div class="dl-smart-search-input__toolbar--right">
+                        <div
+                            v-if="withScreenButton"
+                            class="dl-smart-search-input__screen-btn-wrapper"
                         >
-                            <dl-tooltip> Save Query </dl-tooltip>
-                        </dl-button>
-                        <dl-button
-                            icon="icon-dl-loop"
-                            size="16px"
-                            flat
-                            transform="none"
-                            text-color="dl-color-darker"
-                            :disabled="saveStatus"
-                            uppercase
-                            label="DQL"
-                            @click="edit"
+                            <dl-button
+                                :icon="screenIcon"
+                                size="16px"
+                                flat
+                                :disabled="disabled"
+                                @mousedown="handleScreenButtonClick"
+                            />
+                            <dl-tooltip>
+                                {{ expanded ? 'Collapse' : 'Expand' }} Smart
+                                Search
+                            </dl-tooltip>
+                        </div>
+                        <div
+                            v-if="withSaveButton"
+                            class="dl-smart-search-input__save-btn-wrapper"
                         >
-                            <dl-tooltip> Switch to DQL </dl-tooltip>
-                        </dl-button>
+                            <dl-button
+                                icon="icon-dl-save"
+                                size="16px"
+                                flat
+                                :disabled="saveStatus"
+                                @click="save"
+                            >
+                                <dl-tooltip> Save Query </dl-tooltip>
+                            </dl-button>
+                            <dl-button
+                                icon="icon-dl-edit"
+                                size="16px"
+                                flat
+                                transform="none"
+                                text-color="dl-color-darker"
+                                uppercase
+                                label="DQL"
+                                @click="edit"
+                            >
+                                <dl-tooltip> Switch to DQL </dl-tooltip>
+                            </dl-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -206,7 +208,8 @@ export default defineComponent({
             default: false
         },
         searchBarWidth: {
-            type: String
+            type: String,
+            default: 'auto'
         },
         defaultWidth: {
             type: String,
@@ -282,11 +285,13 @@ export default defineComponent({
         focused: boolean
         isOverflow: boolean
         isTyping: boolean
+        scroll: boolean
     } {
         return {
             focused: false,
             isOverflow: false,
-            isTyping: false
+            isTyping: false,
+            scroll: false
         }
     },
     computed: {
@@ -319,10 +324,17 @@ export default defineComponent({
                 ? 'icon-dl-fit-to-screen'
                 : 'icon-dl-full-screen'
         },
+        textareaStyles() {
+            const overflow = this.scroll && this.focused ? 'scroll' : 'hidden'
+            return {
+                overflow,
+                '-webkit-appearance': 'textfield'
+            }
+        },
         searchBarClasses(): string {
             let classes = 'dl-smart-search-input__search-bar'
 
-            if (this.focused && this.status.type === 'info') {
+            if (this.focused) {
                 classes += ' dl-smart-search-input__search-bar--focused'
             } else if (!this.focused) {
                 if (this.status.type === 'error') {
@@ -356,7 +368,7 @@ export default defineComponent({
 
             return classes
         },
-        withClearButton(): boolean {
+        withClearBtn(): boolean {
             return this.modelValue.length > 0
         },
         cssVars(): Record<string, string> {
@@ -400,6 +412,7 @@ export default defineComponent({
                 this.isDatePickerVisible = true
                 this.suggestionModal = false
             }
+            this.scroll = (this.$refs.input as HTMLDivElement).offsetHeight > 40
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
@@ -428,7 +441,7 @@ export default defineComponent({
         },
         focused(value) {
             (this.$refs.searchBar as HTMLElement).style.maxHeight = `${
-                value ? parseInt(this.searchBarWidth) : 28
+                value ? parseInt(this.searchBarWidth) : 450
             }px`
             if (!value) {
                 (this.$refs.input as HTMLElement).parentElement.style.width =
@@ -607,9 +620,12 @@ export default defineComponent({
     &__status-icon-wrapper {
         display: flex;
         line-height: 15px;
+        margin: 6px 8px 0px 0px;
         align-items: flex-start;
-        padding-top: 7px;
-        margin-right: 5px;
+        div:first-child {
+            display: flex;
+            align-items: center;
+        }
     }
 
     &__text,
@@ -621,28 +637,28 @@ export default defineComponent({
 
     &__textarea {
         font-size: 12px;
-        line-height: 14px;
         font-weight: 400;
+        line-height: 14px;
         font-family: 'Roboto', sans-serif;
         width: 100%;
         border: none;
         outline: none;
         resize: none;
 
-        white-space: nowrap;
+        white-space: pre;
+        margin-top: 7px;
 
         height: auto;
+
         min-height: 14px;
         max-height: 100%;
         display: block;
-        overflow: hidden;
     }
 
     &__input,
     &__textarea {
         color: var(--dl-color-darker);
         background-color: var(--dl-color-panel-background);
-        padding: 0;
 
         ::placeholder {
             color: var(--dl-color-lighter);
@@ -654,10 +670,10 @@ export default defineComponent({
 
     &__input-wrapper,
     &__textarea-wrapper {
+        min-height: 28px;
         position: relative;
         display: flex;
         flex-grow: 1;
-        padding: 7px 10px 6px 0;
         position: relative;
 
         align-items: flex-start;
@@ -671,31 +687,39 @@ export default defineComponent({
     &__toolbar {
         display: flex;
         align-items: flex-start;
-        padding-top: 5px;
+        height: 28px;
+        &--right {
+            height: 100%;
+            display: flex;
+        }
     }
 
-    &__clear-button-wrapper {
+    &__clear-btn-wrapper {
         border-right: 1px solid var(--dl-color-separator);
-        padding: 0 7px;
+        height: 100%;
         display: flex;
         align-items: center;
+        div:first-child {
+            margin-right: 5px;
+        }
         ::v-deep .dl-button {
             padding: 0px;
             color: var(--dl-color-darker);
         }
     }
 
-    &__screen-button-wrapper {
+    &__screen-btn-wrapper {
         display: flex;
+        margin-right: 14px;
         align-items: center;
-        padding: 0 5px;
+        margin-left: 9px;
         ::v-deep .dl-icon {
             font-size: 16px;
             color: var(--dl-color-darker);
         }
     }
 
-    &__save-button-wrapper {
+    &__save-btn-wrapper {
         display: flex;
         align-items: center;
         color: var(--dl-color-darker);
@@ -732,9 +756,8 @@ export default defineComponent({
     }
 
     &__search-label {
+        margin-top: 3px;
         font-size: 10px;
-        margin-left: 4px;
-        margin-top: 4px;
         color: gray;
         position: relative;
         word-break: break-all;

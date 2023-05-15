@@ -30,7 +30,7 @@ if (VueDemi.isVue3) {
         const container = document.createElement('div')
         container.classList.add('dl-toast-container--pending')
         parentContainer.appendChild(container)
-        renderVue2Component(
+        return renderVue2Component(
             ToastComponent,
             props,
             '.dl-toast-container--pending'
@@ -53,7 +53,7 @@ function renderVue2Component(
     props: Object,
     container: string
 ) {
-    new VueDemi.Vue2({
+    return new VueDemi.Vue2({
         render: (h: (arg0: Object, arg1: { props: Object }) => any) =>
             h(component, { props })
     }).$mount(container)
