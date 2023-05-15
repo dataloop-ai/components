@@ -22,7 +22,6 @@
                             :type="currentTab"
                             :name="query.name"
                             @search="$emit('filters-search', currentTab, query)"
-                            @save="$emit('filters-save', currentTab, query)"
                             @delete="$emit('filters-delete', currentTab, query)"
                         />
                     </div>
@@ -53,11 +52,7 @@ export default defineComponent({
             default: (): Filters => ({ saved: [], recent: [], suggested: [] })
         }
     },
-    emits: ['filters-save', 'filters-delete', 'filters-search'],
-    setup() {
-        const log = console.log
-        return { log }
-    },
+    emits: ['filters-delete', 'filters-search'],
     data() {
         return {
             currentTab: 'saved'

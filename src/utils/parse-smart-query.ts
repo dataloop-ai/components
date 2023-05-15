@@ -1,6 +1,6 @@
 /* eslint-disable no-empty */
 
-import { isFinite } from 'lodash'
+import { isFinite, isObject, isString } from 'lodash'
 
 export const parseSmartQuery = (query: string) => {
     const queryArr = query.split(' OR ')
@@ -84,4 +84,107 @@ export const parseSmartQuery = (query: string) => {
     const builtQuery = orTerms.length > 1 ? { $or: orTerms } : orTerms[0]
 
     return builtQuery
+}
+
+export const stringifySmartQuery = (query: { [key: string]: any }) => {
+    let result = ''
+
+    for (const key in query) {
+        if (query.hasOwnProperty(key)) {
+            const value = query[key]
+
+            if (key === '$or') {
+                if (Array.isArray(value)) {
+                    const subQueries = value.map(
+                        (subQuery: { [key: string]: any }) =>
+                            stringifySmartQuery(subQuery)
+                    )
+                    result += subQueries.join(' OR ')
+                }
+                continue
+            }
+
+            if (result.length) {
+                result += ' AND '
+            }
+
+            if (isObject(value)) {
+                for (const operator in value) {
+                    if (value.hasOwnProperty(operator)) {
+                        let operatorValue = (
+                            value as {
+                                [key: string]:
+                                    | string
+                                    | number
+                                    | string[]
+                                    | number[]
+                            }
+                        )[operator]
+                        switch (operator) {
+                            case '$eq':
+                                result += `${key} = ${
+                                    isString(operatorValue)
+                                        ? `'${operatorValue}'`
+                                        : operatorValue
+                                }`
+                                break
+                            case '$ne':
+                                result += `${key} != ${
+                                    isString(operatorValue)
+                                        ? `'${operatorValue}'`
+                                        : operatorValue
+                                }`
+                                break
+                            case '$gt':
+                                result += `${key} > ${operatorValue}`
+                                break
+                            case '$gte':
+                                result += `${key} >= ${operatorValue}`
+                                break
+                            case '$lt':
+                                result += `${key} < ${operatorValue}`
+                                break
+                            case '$lte':
+                                result += `${key} <= ${operatorValue}`
+                                break
+                            case '$in':
+                                if (!Array.isArray(operatorValue)) {
+                                    operatorValue = [operatorValue] as
+                                        | string[]
+                                        | number[]
+                                }
+                                result += `${key} IN ${(
+                                    operatorValue as string[] | number[]
+                                )
+                                    .map((x: string | number) =>
+                                        isString(x) ? `'${x}'` : x
+                                    )
+                                    .join(', ')}`
+                                break
+                            case '$nin':
+                                if (!Array.isArray(operatorValue)) {
+                                    operatorValue = [operatorValue] as
+                                        | string[]
+                                        | number[]
+                                }
+                                result += `${key} NOT-IN ${(
+                                    operatorValue as string[] | number[]
+                                )
+                                    .map((x: string | number) =>
+                                        isString(x) ? `'${x}'` : x
+                                    )
+                                    .join(', ')}`
+                                break
+                            default:
+                                throw new Error(`Invalid operator: ${operator}`)
+                        }
+                    }
+                }
+            } else {
+                result += `${key} = '${value}'`
+            }
+        }
+    }
+
+    return result
 }

@@ -167,7 +167,7 @@ export default defineComponent({
     box-shadow: 0px 5px 15px 0px var(--dl-color-shadow);
 
     &--content {
-        padding: 16px 10px;
+        padding: 16px;
         &_text {
             font-size: 12px;
             color: var(--dl-color-medium);

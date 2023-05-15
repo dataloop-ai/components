@@ -14,7 +14,17 @@
             </p>
             <dl-ellipsis
                 text="Lorem ipsum dolor sit amet consectetur adipisicing elit. "
-                middle-ellipsis="true"
+                split
+            />
+        </div>
+        <div style="white-space: nowrap; width: 350px">
+            <p style="font-weight: bold">
+                Ellipsis at the 20%
+            </p>
+            <dl-ellipsis
+                text="Lorem ipsum dolor sit amet consectetur adipisicing elit. "
+                split
+                :split-position="0.2"
             />
         </div>
     </div>

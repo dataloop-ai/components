@@ -10,7 +10,7 @@
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
-            :style="[cssButtonVars, computedStyles]"
+            :style="[computedStyles]"
             style="pointer-events: auto"
             class="dl-button"
             @click="onClick"

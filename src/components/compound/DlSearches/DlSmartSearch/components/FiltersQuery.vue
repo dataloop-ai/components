@@ -9,8 +9,8 @@
             @mousedown="$emit('search')"
         >
             <dl-icon
-                :inline="false"
                 :icon="icon"
+                style="margin-bottom: 3px"
             />
             <span class="query__header--title">
                 {{ name }}
@@ -22,22 +22,11 @@
         >
             <div
                 class="query__actions--icon"
-                @mousedown="$emit('save')"
-            >
-                <dl-icon
-                    :inline="false"
-                    size="16px"
-                    icon="icon-dl-save"
-                />
-                <dl-tooltip>Save</dl-tooltip>
-            </div>
-            <div
-                class="query__actions--icon"
                 @mousedown="$emit('delete')"
             >
                 <dl-icon
                     :inline="false"
-                    size="16px"
+                    size="14px"
                     icon="icon-dl-delete"
                 />
                 <dl-tooltip>Delete</dl-tooltip>
@@ -64,7 +53,7 @@ export default defineComponent({
             default: ''
         }
     },
-    emits: ['save', 'delete'],
+    emits: ['delete'],
     data() {
         return {
             actionsVisible: false
@@ -80,8 +69,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .query {
-    height: 30px;
-    padding: 10px;
+    height: 18px;
+    padding: 5px 10px;
     border-radius: 3px;
     display: flex;
     justify-content: space-between;
@@ -91,7 +80,7 @@ export default defineComponent({
         display: flex;
         align-items: center;
         &--title {
-            font-size: 0.7em;
+            font-size: 0.5em;
             margin: 0px 12px;
         }
     }
