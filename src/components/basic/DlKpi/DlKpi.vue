@@ -43,6 +43,7 @@
         >
             <dl-progress-bar
                 color="dl-color-darker"
+                height="5px"
                 :value="progressValue(progress)"
                 :show-value="true"
                 :show-percentage="true"
@@ -151,13 +152,13 @@ export default defineComponent({
         )
 
         const formatCounter = (counter: DlKpiCounterType) => {
-            if (!counter) {
+            if (counter === null) {
                 return emptyString
             }
             if (typeof counter === 'number') {
                 return formatNumberCounter(counter)
             }
-            if (!counter.value) {
+            if (counter.value === null || counter.value === undefined) {
                 return emptyString
             }
             if (typeof counter.value === 'number') {
@@ -197,7 +198,7 @@ export default defineComponent({
         }
 
         const formatNumberCounter = (amount: number, format = '') => {
-            if (!amount) {
+            if (isNaN(amount)) {
                 return emptyString
             }
             if (amount === 0) {
