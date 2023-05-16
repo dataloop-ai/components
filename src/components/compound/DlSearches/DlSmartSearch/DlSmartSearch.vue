@@ -368,7 +368,7 @@ export default defineComponent({
             this.filtersModel = false
         },
         emitFiltersSelect(currentTab: string, query: Query) {
-            this.activeQuery = query
+            this.activeQuery = { ...query }
             const stringQuery = stringifySmartQuery(JSON.parse(query.query))
             this.oldInputQuery = stringQuery
             this.inputModel = stringQuery
