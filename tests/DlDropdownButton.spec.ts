@@ -28,6 +28,7 @@ describe('DlDropdownButton', () => {
                 flat: false,
                 fluid: false,
                 padding: '5px',
+                arrowNavItems: [],
                 icon: '',
                 label: '',
                 iconSize: '20px',
