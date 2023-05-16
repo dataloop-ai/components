@@ -64,10 +64,7 @@ export default defineComponent({
                     },
                     {
                         name: 'Query 4',
-                        query: JSON.stringify({
-                            aa: 'bb',
-                            no: [{ as: 'sa' }, { zz: 'ss' }]
-                        })
+                        query: '{"age": 12, "name": "john"}'
                     }
                 ],
                 recent: [],

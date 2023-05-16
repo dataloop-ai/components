@@ -122,7 +122,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from 'vue-demi'
+import { defineComponent, ref, PropType } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
