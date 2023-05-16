@@ -6,7 +6,7 @@
     >
         <div
             class="query__header"
-            @mousedown="$emit('search')"
+            @mousedown="$emit('select')"
         >
             <dl-icon
                 :icon="icon"
@@ -53,14 +53,14 @@ export default defineComponent({
             default: ''
         }
     },
-    emits: ['delete'],
+    emits: ['delete', 'select'],
     data() {
         return {
             actionsVisible: false
         }
     },
     computed: {
-        icon() {
+        icon(): string {
             return this.type === 'saved' ? 'icon-dl-save' : 'icon-dl-time'
         }
     }
