@@ -88,7 +88,7 @@
                                     v-bind="cardData"
                                     :key="i"
                                     :image="{
-                                        src: `https://picsum.photos/200/300?random=${
+                                        src: `https://picsum.photos/300/150?random=${
                                             i + index
                                         }`
                                     }"
