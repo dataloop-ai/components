@@ -4,13 +4,16 @@
         :style="cssVars"
     >
         <div class="dl-smart-search-input__search-bar-wrapper">
-            <div :class="searchBarClasses">
+            <div
+                ref="searchBar"
+                :class="searchBarClasses"
+            >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="withSearchIcon || (!focused && status)"
+                        v-if="!focused && (withSearchIcon || status)"
                         :icon="statusIcon"
                         :color="statusIconColor"
-                        size="18px"
+                        size="16px"
                         :inline="false"
                     />
                 </div>
@@ -18,8 +21,8 @@
                     <div
                         id="editor"
                         ref="input"
-                        class="dl-smart-search-input__textarea"
-                        style="-webkit-appearance: textfield"
+                        :class="inputClass"
+                        :style="textareaStyles"
                         :placeholder="placeholder"
                         :contenteditable="!disabled"
                         @keypress="keyPress"
@@ -35,63 +38,65 @@
                     >
                         <dl-button
                             icon="icon-dl-close"
-                            size="10px"
+                            size="12px"
                             flat
                             :disabled="disabled"
                             @mousedown="clearValue"
                         />
                         <dl-tooltip> Clear Query </dl-tooltip>
                     </div>
-                    <div
-                        v-if="withScreenButton"
-                        class="dl-smart-search-input__screen-btn-wrapper"
-                    >
-                        <dl-button
-                            :icon="screenIcon"
-                            size="16px"
-                            flat
-                            :disabled="disabled"
-                            @mousedown="handleScreenBtnClick"
-                        />
-                        <dl-tooltip>
-                            {{ expanded ? 'Collapse' : 'Expand' }} Smart Search
-                        </dl-tooltip>
-                    </div>
-                    <div
-                        v-if="withSaveButton"
-                        class="dl-smart-search-input__save-btn-wrapper"
-                    >
-                        <dl-button
-                            icon="icon-dl-save"
-                            size="16px"
-                            flat
-                            :disabled="saveStatus"
-                            @click="save"
+                    <div class="dl-smart-search-input__toolbar--right">
+                        <div
+                            v-if="withScreenButton"
+                            class="dl-smart-search-input__screen-btn-wrapper"
                         >
-                            <dl-tooltip> Save Query </dl-tooltip>
-                        </dl-button>
-                        <dl-button
-                            icon="icon-dl-loop"
-                            size="16px"
-                            flat
-                            transform="none"
-                            text-color="dl-color-darker"
-                            :disabled="saveStatus"
-                            label="switch to DQL"
-                            @click="edit"
+                            <dl-button
+                                :icon="screenIcon"
+                                size="16px"
+                                flat
+                                :disabled="disabled"
+                                @mousedown="handleScreenButtonClick"
+                            />
+                            <dl-tooltip>
+                                {{ expanded ? 'Collapse' : 'Expand' }} Smart
+                                Search
+                            </dl-tooltip>
+                        </div>
+                        <div
+                            v-if="withSaveButton"
+                            class="dl-smart-search-input__save-btn-wrapper"
                         >
-                            <dl-tooltip> Switch to DQL </dl-tooltip>
-                        </dl-button>
+                            <dl-button
+                                icon="icon-dl-save"
+                                size="16px"
+                                flat
+                                :disabled="saveStatus"
+                                @click="save"
+                            >
+                                <dl-tooltip> Save Query </dl-tooltip>
+                            </dl-button>
+                            <dl-button
+                                icon="icon-dl-edit"
+                                size="16px"
+                                flat
+                                transform="none"
+                                text-color="dl-color-darker"
+                                uppercase
+                                label="DQL"
+                                @click="edit"
+                            >
+                                <dl-tooltip> Switch to DQL </dl-tooltip>
+                            </dl-button>
+                        </div>
                     </div>
                 </div>
             </div>
             <label
-                v-if="status.message !== 'info'"
+                v-if="!focused"
                 ref="label"
                 class="dl-smart-search-input__search-label"
-                for="search-input"
                 :style="labelStyles"
-            >{{ status.message }}</label>
+            >{{ status ? status.message : null }}</label>
         </div>
         <div :class="messageClasses">
             {{ message }}
@@ -117,7 +122,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from 'vue-demi'
+import { defineComponent, ref, PropType } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
@@ -201,6 +206,14 @@ export default defineComponent({
         disabled: {
             type: Boolean,
             default: false
+        },
+        searchBarWidth: {
+            type: String,
+            default: 'auto'
+        },
+        defaultWidth: {
+            type: String,
+            default: '450px'
         }
     },
     emits: [
@@ -221,6 +234,7 @@ export default defineComponent({
         const focused = ref(false)
         const isOverflow = ref(false)
         const isTyping = ref(false)
+        const scroll = ref(false)
 
         const { hasEllipsis } = useSizeObserver(input)
 
@@ -257,96 +271,6 @@ export default defineComponent({
             emit('update:modelValue', stringValue)
         }
 
-        const saveStatus = computed(() => {
-            return (
-                props.disabled ||
-                !props.modelValue ||
-                props.status?.type === 'error'
-            )
-        })
-
-        const statusIcon = computed(() => {
-            switch (props.status?.type) {
-                case 'success':
-                    return 'icon-dl-approve-filled'
-                case 'error':
-                    return 'icon-dl-discard-filled'
-                case 'warning':
-                    return 'icon-dl-alert-filled'
-                default:
-                    return ''
-            }
-        })
-
-        const statusIconColor = computed(() => {
-            switch (props.status?.type) {
-                case 'success':
-                    return 'dl-color-positive'
-                case 'error':
-                    return 'dl-color-negative'
-                case 'warning':
-                    return 'dl-color-warning'
-                default:
-                    return ''
-            }
-        })
-
-        const screenIcon = computed(() => {
-            return expanded ? 'icon-dl-fit-to-screen' : 'icon-dl-full-screen'
-        })
-
-        const searchBarClasses = computed(() => {
-            let classes = 'dl-smart-search-input__search-bar'
-
-            if (focused && props.status?.type === 'info') {
-                classes += ' dl-smart-search-input__search-bar--focused'
-            } else {
-                if (props.status?.type === 'error') {
-                    classes += ' dl-smart-search-input__search-bar--error'
-                } else if (props.status?.type === 'warning') {
-                    classes += ' dl-smart-search-input__search-bar--warning'
-                }
-            }
-
-            if (expanded) {
-                classes += ' dl-smart-search-input__search-bar--expanded'
-            }
-
-            if (props.disabled) {
-                classes += ' dl-smart-search-input__search-bar--disabled'
-            }
-
-            return classes
-        })
-
-        const labelStyles = computed(() => {
-            return {
-                color: props.status?.type === 'error' ? 'red' : 'gray'
-            }
-        })
-
-        const messageClasses = computed(() => {
-            let classes = 'dl-smart-search-input__message'
-
-            if (props.status) {
-                classes += ` dl-smart-search-input__message--${props.status}`
-            }
-
-            return classes
-        })
-
-        const withClearBtn = computed(() => {
-            return props.modelValue?.length > 0
-        })
-
-        const cssVars = computed(() => {
-            return {
-                '--dl-smart-search-bar-wrapper-height':
-                    props.expandedInputHeight,
-                '--dl-smart-search-input-height': props.inputHeight
-            }
-        })
-
         return {
             input,
             label,
@@ -363,15 +287,106 @@ export default defineComponent({
             focused,
             isOverflow,
             isTyping,
-            saveStatus,
-            statusIcon,
-            statusIconColor,
-            screenIcon,
-            searchBarClasses,
-            labelStyles,
-            messageClasses,
-            withClearBtn,
-            cssVars
+            scroll
+        }
+    },
+    computed: {
+        statusIcon(): string {
+            switch (this.status.type) {
+                case 'success':
+                    return 'icon-dl-approve-filled'
+                case 'error':
+                    return 'icon-dl-discard-filled'
+                case 'warning':
+                    return 'icon-dl-alert-filled'
+                default:
+                    return ''
+            }
+        },
+        statusIconColor(): string {
+            switch (this.status.type) {
+                case 'success':
+                    return 'dl-color-positive'
+                case 'error':
+                    return 'dl-color-negative'
+                case 'warning':
+                    return 'dl-color-warning'
+                default:
+                    return ''
+            }
+        },
+        screenIcon(): string {
+            return this.expanded
+                ? 'icon-dl-fit-to-screen'
+                : 'icon-dl-full-screen'
+        },
+        textareaStyles(): Record<string, any> {
+            const overflow: string =
+                this.scroll && this.focused ? 'scroll' : 'hidden'
+            return {
+                overflow,
+                '-webkit-appearance': 'textfield'
+            }
+        },
+        searchBarClasses(): string {
+            let classes = 'dl-smart-search-input__search-bar'
+
+            if (this.focused) {
+                classes += ' dl-smart-search-input__search-bar--focused'
+            } else if (!this.focused) {
+                if (this.status.type === 'error') {
+                    classes += ' dl-smart-search-input__search-bar--error'
+                } else if (this.status.type === 'warning') {
+                    classes += ' dl-smart-search-input__search-bar--warning'
+                }
+            }
+
+            if (this.expanded) {
+                classes += ' dl-smart-search-input__search-bar--expanded'
+            }
+
+            if (this.disabled) {
+                classes += ' dl-smart-search-input__search-bar--disabled'
+            }
+
+            return classes
+        },
+        inputClass(): string {
+            return `dl-smart-search-input__textarea${
+                this.focused ? ' focus' : ''
+            }`
+        },
+        messageClasses(): string {
+            let classes = 'dl-smart-search-input__message'
+
+            if (this.status) {
+                classes += ` dl-smart-search-input__message--${this.status}`
+            }
+
+            return classes
+        },
+        withClearBtn(): boolean {
+            return this.modelValue.length > 0
+        },
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-smart-search-bar-wrapper-height':
+                    this.expandedInputHeight,
+                '--dl-smart-search-input-height': this.inputHeight,
+                '--search-bar-width': this.searchBarWidth
+            }
+        },
+        saveStatus(): boolean {
+            return (
+                this.disabled ||
+                !this.modelValue ||
+                this.status.type === 'error'
+            )
+        },
+        labelStyles(): Record<string, any> {
+            return {
+                color: this.status?.type === 'error' ? 'red' : 'gray'
+            }
         }
     },
     watch: {
@@ -394,6 +409,7 @@ export default defineComponent({
                 this.isDatePickerVisible = true
                 this.suggestionModal = false
             }
+            this.scroll = (this.$refs.input as HTMLDivElement).offsetHeight > 40
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
@@ -419,6 +435,15 @@ export default defineComponent({
 
                 this.focus()
             })
+        },
+        focused(value) {
+            (this.$refs.searchBar as HTMLElement).style.maxHeight = `${
+                value ? parseInt(this.searchBarWidth) : 450
+            }px`
+            if (!value) {
+                (this.$refs.input as HTMLElement).parentElement.style.width =
+                    '1px'
+            }
         },
         isDatePickerVisible(val: boolean) {
             if (!val) {
@@ -508,7 +533,7 @@ export default defineComponent({
 
             this.$emit('update:modelValue', text)
         },
-        handleScreenBtnClick() {
+        handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
             this.expanded = !this.expanded
             if (!this.focused) {
@@ -530,6 +555,8 @@ export default defineComponent({
 .dl-smart-search-input {
     display: flex;
     text-align: left;
+    position: absolute;
+    width: var(--search-bar-width);
 
     &__char {
         ::selection {
@@ -547,7 +574,7 @@ export default defineComponent({
     &__search-bar {
         display: flex;
         flex-grow: 1;
-        height: auto;
+        height: 100%;
         padding: 0 10px;
         overflow-y: auto;
         background-color: var(--dl-color-panel-background);
@@ -558,7 +585,7 @@ export default defineComponent({
         border: 1px solid var(--dl-color-separator);
         border-radius: 2px;
 
-        max-height: 40px;
+        max-height: var(--dl-smart-search-bar-wrapper-height);
 
         &--error {
             border-color: var(--dl-color-negative);
@@ -589,45 +616,15 @@ export default defineComponent({
 
     &__status-icon-wrapper {
         display: flex;
-        align-items: center;
-        height: var(--dl-smart-search-input-height);
-        margin-right: 5px;
+        line-height: 15px;
+        margin: 6px 8px 0px 0px;
+        align-items: flex-start;
+        div:first-child {
+            display: flex;
+            align-items: center;
+        }
     }
 
-    &__input {
-        font-size: 12px;
-        line-height: 14px;
-        font-weight: 400;
-        font-family: 'Roboto', sans-serif;
-        width: 100%;
-        border: none;
-        outline: none;
-
-        position: absolute;
-        width: 100%;
-        font-size: inherit;
-        font-family: inherit;
-
-        height: 14px;
-        overflow-y: hidden;
-        overflow-x: auto;
-        white-space: nowrap;
-        user-select: none;
-
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-        &::-webkit-scrollbar {
-            display: none;
-        }
-        &:not(:focus) {
-            width: 100%;
-            text-overflow: ellipsis;
-        }
-
-        caret-color: var(--dl-color-tooltip-background);
-    }
-
-    &__input,
     &__text,
     &__textarea {
         width: 100%;
@@ -637,28 +634,28 @@ export default defineComponent({
 
     &__textarea {
         font-size: 12px;
-        line-height: 14px;
         font-weight: 400;
+        line-height: 14px;
         font-family: 'Roboto', sans-serif;
         width: 100%;
         border: none;
         outline: none;
         resize: none;
 
+        white-space: pre;
+        margin-top: 7px;
+
         height: auto;
+
         min-height: 14px;
         max-height: 100%;
-        overflow-y: auto;
-
-        word-break: break-all;
-        flex-wrap: wrap;
+        display: block;
     }
 
     &__input,
     &__textarea {
         color: var(--dl-color-darker);
         background-color: var(--dl-color-panel-background);
-        padding: 0;
 
         ::placeholder {
             color: var(--dl-color-lighter);
@@ -670,10 +667,10 @@ export default defineComponent({
 
     &__input-wrapper,
     &__textarea-wrapper {
+        min-height: 28px;
         position: relative;
         display: flex;
         flex-grow: 1;
-        padding: 6px 10px 6px 0;
         position: relative;
 
         align-items: flex-start;
@@ -686,14 +683,22 @@ export default defineComponent({
 
     &__toolbar {
         display: flex;
-        height: var(--dl-smart-search-input-height);
+        align-items: flex-start;
+        height: 28px;
+        &--right {
+            height: 100%;
+            display: flex;
+        }
     }
 
     &__clear-btn-wrapper {
         border-right: 1px solid var(--dl-color-separator);
-        padding: 0 7px;
+        height: 100%;
         display: flex;
         align-items: center;
+        div:first-child {
+            margin-right: 5px;
+        }
         ::v-deep .dl-button {
             padding: 0px;
             color: var(--dl-color-darker);
@@ -702,8 +707,9 @@ export default defineComponent({
 
     &__screen-btn-wrapper {
         display: flex;
+        margin-right: 14px;
         align-items: center;
-        padding: 0 10px;
+        margin-left: 9px;
         ::v-deep .dl-icon {
             font-size: 16px;
             color: var(--dl-color-darker);
@@ -747,9 +753,8 @@ export default defineComponent({
     }
 
     &__search-label {
+        margin-top: 3px;
         font-size: 10px;
-        margin-left: 4px;
-        margin-top: 4px;
         color: gray;
         position: relative;
         word-break: break-all;
@@ -758,5 +763,10 @@ export default defineComponent({
     &__date-picker-wrapper {
         width: 562px;
     }
+}
+.focus {
+    word-break: break-all;
+    flex-wrap: wrap;
+    white-space: pre-wrap;
 }
 </style>

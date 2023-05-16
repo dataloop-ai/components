@@ -59,7 +59,7 @@
                         size="m"
                         label="Reset"
                         :disabled="disabled || readonly"
-                        data-test="non-editable-slider-btn"
+                        data-test="non-editable-slider-button"
                         @click="handleResetButtonClick"
                     />
                     <dl-slider-input

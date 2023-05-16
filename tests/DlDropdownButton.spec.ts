@@ -18,7 +18,7 @@ describe('DlDropdownButton', () => {
             cover: false,
             disabled: false,
             disableDropdown: false,
-            disableMainBtn: false,
+            disableMainButton: false,
             dropdownIcon: 'icon-dl-down-chevron',
             flat: false,
             fluid: false,
@@ -26,7 +26,7 @@ describe('DlDropdownButton', () => {
             icon: '',
             label: '',
             iconSize: '20px',
-            mainBtnStyle: '',
+            mainButtonStyle: '',
             maxHeight: null,
             maxWidth: null,
             menuAnchor: 'bottom end',
@@ -41,7 +41,7 @@ describe('DlDropdownButton', () => {
             split: false,
             stretch: false,
             textColor: '',
-            uppercase: false,
+            transform: 'default',
             fitContent: false,
             noWrap: false,
             overflow: false,
@@ -49,7 +49,7 @@ describe('DlDropdownButton', () => {
             arrowNavItems: []
         })
 
-        expect(wrapper.vm.btnCSSStyles).toStrictEqual({
+        expect(wrapper.vm.buttonCSSStyles).toStrictEqual({
             '--dl-button-border-left': 'var(--dl-color-white)'
         })
 
@@ -57,7 +57,7 @@ describe('DlDropdownButton', () => {
 
         await wrapper.setProps({ outlined: true })
 
-        expect(wrapper.vm.btnCSSStyles).toStrictEqual({
+        expect(wrapper.vm.buttonCSSStyles).toStrictEqual({
             '--dl-button-border-left': 'none'
         })
 

@@ -25,7 +25,7 @@ describe('DlButton', () => {
             flat: false,
             styles: null,
             fluid: false,
-            uppercase: false,
+            transform: 'default',
             icon: '',
             noWrap: false,
             outlined: false,
@@ -34,7 +34,8 @@ describe('DlButton', () => {
             iconColor: '',
             overflow: false,
             tooltip: null,
-            dense: false
+            dense: false,
+            shaded: false
         })
 
         const buttonElem = await wrapper.find('.dl-button')

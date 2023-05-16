@@ -89,9 +89,13 @@ export function flattenConfusionMatrix(
                 xLabel: labelStrings[rowIndex],
                 yLabel: labelStrings[cellIndex],
                 x: rowIndex,
-                y: cellIndex,
-                link: cellIsObject ? (cell as DlConfusionMatrixCell).link : ''
+                y: cellIndex
             }
+
+            if ((cell as DlConfusionMatrixCell)?.link) {
+                object.link = (cell as DlConfusionMatrixCell)?.link
+            }
+
             toNormalize.push(object)
         }
     }

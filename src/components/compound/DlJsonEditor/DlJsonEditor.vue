@@ -101,7 +101,7 @@ export default defineComponent({
             default: () => [] as Query[]
         }
     },
-    emits: ['update:modelValue', 'save', 'remove', 'search'],
+    emits: ['update:modelValue', 'save', 'remove', 'search', 'update-query'],
     data() {
         return {
             preventOnChange: false,
@@ -144,20 +144,15 @@ export default defineComponent({
         queries() {
             this.resetEditor()
         },
-        query(val) {
-            this.$nextTick(() => {
-                this.selectedOption = {
-                    label: val.name,
-                    value: val.query
-                }
-                if (val.query && this.jsonEditor.set) {
-                    this.activeQuery = {
-                        name: '',
-                        query: val.query
-                    }
-                }
-                this.alignText()
+        activeQuery(val) {
+            this.$emit('update-query', val)
+            this.jsonEditor?.set({
+                text: val.query
             })
+            this.selectedOption = {
+                label: val.name,
+                value: val.query
+            }
         }
     },
     mounted() {
@@ -286,6 +281,11 @@ export default defineComponent({
 
 .footer-menu {
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.footer-save {
+    width: 25%;
     display: flex;
     justify-content: space-between;
 }
