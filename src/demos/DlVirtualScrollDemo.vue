@@ -83,9 +83,15 @@
                     >
                         <dl-item-section>
                             <div class="row custom-element">
-                                <DlCardDemo
+                                <DlCard
                                     v-for="i in item.inner"
+                                    v-bind="cardData"
                                     :key="i"
+                                    :image="{
+                                        src: `https://picsum.photos/200/300?random=${
+                                            i + index
+                                        }`
+                                    }"
                                 />
                             </div>
                         </dl-item-section>
@@ -212,8 +218,7 @@ const columns = [
 ]
 
 import DlVirtualScroll from '../components/shared/DlVirtualScroll/DlVirtualScroll.vue'
-import { DlTr, DlTd, DlListItem, DlItemSection } from '../components'
-import DlCardDemo from './DlCardDemo.vue'
+import { DlTr, DlTd, DlListItem, DlItemSection, DlCard } from '../components'
 import { defineComponent, ref } from 'vue-demi'
 
 export default defineComponent({
@@ -223,7 +228,7 @@ export default defineComponent({
         DlTr,
         DlListItem,
         DlItemSection,
-        DlCardDemo
+        DlCard
     },
     setup() {
         const heavyList = ref([])
@@ -249,6 +254,26 @@ export default defineComponent({
             })
         }
 
+        const cardData = {
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
+            title: 'Lorem ipsum',
+            keyboardShortcut: 'Shift + E',
+            links: [
+                {
+                    icon: 'icon-dl-list-view',
+                    href: 'https://www.google.md/?hl=ru',
+                    title: 'Lorem',
+                    newtab: true,
+                    external: true
+                },
+                {
+                    href: '#test',
+                    title: 'Developers',
+                    icon: 'icon-dl-code'
+                }
+            ]
+        }
+
         const log = console.log
 
         return {
@@ -257,6 +282,7 @@ export default defineComponent({
             horizontalList,
             customList,
             columns,
+            cardData,
             log
         }
     }
