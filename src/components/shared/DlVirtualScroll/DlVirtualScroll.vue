@@ -169,7 +169,9 @@ export default defineComponent({
 
         function __getVirtualChildren(create: Function) {
             let child = padVirtualScroll(
-                virtualScrollRootTag[props.type] || 'div',
+                virtualScrollRootTag[
+                    props.type as 'list' | 'table' | '__table'
+                ] || 'div',
                 virtualScrollScope.value.map(slots.default),
                 create
             )
