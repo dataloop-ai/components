@@ -26,6 +26,12 @@ const comps = {
     table: DlMarkupTable
 }
 
+const virtualScrollRootTag = {
+    list: 'div',
+    table: 'tbody',
+    __table: 'tbody'
+}
+
 const typeOptions = ['list', 'table', '__dltable']
 
 export default defineComponent({
@@ -163,7 +169,7 @@ export default defineComponent({
 
         function __getVirtualChildren(create: Function) {
             let child = padVirtualScroll(
-                props.type === 'list' ? 'div' : 'tbody',
+                virtualScrollRootTag[props.type] || 'div',
                 virtualScrollScope.value.map(slots.default),
                 create
             )
@@ -202,7 +208,7 @@ export default defineComponent({
         return {
             hasDefaultSlot,
             getVirtualChildren: __getVirtualChildren,
-            tag: (comps as Record<string, any>)[props.type],
+            tag: (comps as Record<string, any>)[props.type] || props.type,
             attrs,
             rootRef,
             classes,

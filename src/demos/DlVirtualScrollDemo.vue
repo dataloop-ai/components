@@ -23,6 +23,25 @@
             </dl-virtual-scroll>
         </div>
         <div style="margin-top: 100px">
+            <h3>Horizontal</h3>
+            <dl-virtual-scroll
+                v-slot="{ item, index }"
+                style="max-width: 500px"
+                :virtual-scroll-item-size="48"
+                :virtual-scroll-sticky-size-start="48"
+                :virtual-scroll-sticky-size-end="32"
+                :items="horizontalList"
+                virtual-scroll-horizontal
+            >
+                <div
+                    :key="index"
+                    :class="item.class"
+                >
+                    #{{ index }} - {{ item.label }}
+                </div>
+            </dl-virtual-scroll>
+        </div>
+        <div style="margin-top: 100px">
             <h3>List</h3>
             <dl-virtual-scroll
                 v-slot="{ item, index }"
@@ -42,6 +61,36 @@
                         #{{ index }} - {{ item.label }}
                     </dl-item-section>
                 </dl-list-item>
+            </dl-virtual-scroll>
+        </div>
+
+        <div style="margin-top: 100px">
+            <h3>Custom Elements</h3>
+            <dl-virtual-scroll
+                style="height: 300px; gap: 20px"
+                :items="customList"
+                :virtual-scroll-item-size="293"
+                :virtual-scroll-sticky-size-start="293"
+                :virtual-scroll-sticky-size-end="200"
+                separator
+                @virtual-scroll="log"
+            >
+                <template #default="{ item, index }">
+                    <dl-list-item
+                        :key="index"
+                        style="margin-bottom: 20px"
+                        dense
+                    >
+                        <dl-item-section>
+                            <div class="row custom-element">
+                                <DlCardDemo
+                                    v-for="i in item.inner"
+                                    :key="i"
+                                />
+                            </div>
+                        </dl-item-section>
+                    </dl-list-item>
+                </template>
             </dl-virtual-scroll>
         </div>
     </div>
@@ -164,6 +213,7 @@ const columns = [
 
 import DlVirtualScroll from '../components/shared/DlVirtualScroll/DlVirtualScroll.vue'
 import { DlTr, DlTd, DlListItem, DlItemSection } from '../components'
+import DlCardDemo from './DlCardDemo.vue'
 import { defineComponent, ref } from 'vue-demi'
 
 export default defineComponent({
@@ -172,11 +222,14 @@ export default defineComponent({
         DlTd,
         DlTr,
         DlListItem,
-        DlItemSection
+        DlItemSection,
+        DlCardDemo
     },
     setup() {
         const heavyList = ref([])
         const basicList = ref([])
+        const horizontalList = ref([])
+        const customList = ref([])
 
         // adding same data multiple times to
         // create a huge list
@@ -185,6 +238,15 @@ export default defineComponent({
             basicList.value.push({
                 label: 'Option ' + (i + 1)
             })
+            horizontalList.value.push({
+                label: 'Option ' + (i + 1),
+                class: i % 2 === 0 ? 'item item--odd' : 'item'
+            })
+
+            customList.value.push({
+                label: 'Option ' + (i + 1),
+                inner: ['inner item 1', 'inner item 2', 'inner item 3']
+            })
         }
 
         const log = console.log
@@ -192,9 +254,26 @@ export default defineComponent({
         return {
             heavyList,
             basicList,
+            horizontalList,
+            customList,
             columns,
             log
         }
     }
 })
 </script>
+
+<style scoped lang="scss">
+.item {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    &--odd {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+.custom-element {
+    gap: 20px;
+}
+</style>
