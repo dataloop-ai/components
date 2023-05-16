@@ -55,8 +55,8 @@
                 >
                     <dl-smart-search-filters
                         :filters="filters"
-                        @filters-select="emitFiltersSelect"
-                        @filters-delete="emitFiltersDelete"
+                        @filters-select="handleFiltersSelect"
+                        @filters-delete="handleFiltersDelete"
                     />
                 </dl-menu>
             </dl-button>
@@ -355,19 +355,13 @@ export default defineComponent({
                 console.log(error)
             }
         },
-        emitFiltersSave(currentTab: string, query: Query) {
-            this.activeQuery = query
-            this.currentTab = currentTab
-            this.saveQueryDialogBoxModel = true
-            this.filtersModel = false
-        },
-        emitFiltersDelete(currentTab: string, query: Query) {
+        handleFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
             this.currentTab = currentTab
             this.removeQueryDialogBoxModel = true
             this.filtersModel = false
         },
-        emitFiltersSelect(currentTab: string, query: Query) {
+        handleFiltersSelect(currentTab: string, query: Query) {
             this.activeQuery = { ...query }
             const stringQuery = stringifySmartQuery(JSON.parse(query.query))
             this.oldInputQuery = stringQuery
