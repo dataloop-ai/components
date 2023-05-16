@@ -60,7 +60,7 @@ export default defineComponent({
         }
     },
     computed: {
-        icon() {
+        icon(): string {
             return this.type === 'saved' ? 'icon-dl-save' : 'icon-dl-time'
         }
     }

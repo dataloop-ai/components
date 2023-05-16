@@ -289,8 +289,11 @@ export default defineComponent({
                 '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): object {
-            return createColorSchema(this.colorSchema, this.aliases)
+        defineStyleModel(): Record<string, string> {
+            return createColorSchema(
+                this.colorSchema,
+                this.aliases
+            ) as any as Record<string, string>
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
@@ -312,7 +315,7 @@ export default defineComponent({
                 message: this.error
             }
         },
-        stringQuery() {
+        stringQuery(): string {
             return this.isQuerying || this.inputModel === ''
                 ? this.activeQuery.name
                 : this.inputModel

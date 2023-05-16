@@ -96,7 +96,7 @@
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :style="labelStyles"
-            >{{ status?.message }}</label>
+            >{{ status ? status.message : null }}</label>
         </div>
         <div :class="messageClasses">
             {{ message }}
@@ -231,6 +231,11 @@ export default defineComponent({
         const styledTexarea = ref(null)
         const styledInput = ref(null)
 
+        const focused = ref(false)
+        const isOverflow = ref(false)
+        const isTyping = ref(false)
+        const scroll = ref(false)
+
         const { hasEllipsis } = useSizeObserver(input)
 
         const suggestionModal = ref(false)
@@ -278,20 +283,11 @@ export default defineComponent({
             styledTexarea,
             styledInput,
             datePickerSelection,
-            isDatePickerVisible
-        }
-    },
-    data(): {
-        focused: boolean
-        isOverflow: boolean
-        isTyping: boolean
-        scroll: boolean
-    } {
-        return {
-            focused: false,
-            isOverflow: false,
-            isTyping: false,
-            scroll: false
+            isDatePickerVisible,
+            focused,
+            isOverflow,
+            isTyping,
+            scroll
         }
     },
     computed: {
@@ -324,8 +320,9 @@ export default defineComponent({
                 ? 'icon-dl-fit-to-screen'
                 : 'icon-dl-full-screen'
         },
-        textareaStyles() {
-            const overflow = this.scroll && this.focused ? 'scroll' : 'hidden'
+        textareaStyles(): Record<string, any> {
+            const overflow: string =
+                this.scroll && this.focused ? 'scroll' : 'hidden'
             return {
                 overflow,
                 '-webkit-appearance': 'textfield'
@@ -354,7 +351,7 @@ export default defineComponent({
 
             return classes
         },
-        inputClass() {
+        inputClass(): string {
             return `dl-smart-search-input__textarea${
                 this.focused ? ' focus' : ''
             }`
@@ -379,7 +376,7 @@ export default defineComponent({
                 '--search-bar-width': this.searchBarWidth
             }
         },
-        saveStatus() {
+        saveStatus(): boolean {
             return (
                 this.disabled ||
                 !this.modelValue ||
