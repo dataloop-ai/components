@@ -34,7 +34,7 @@
                 <dl-button
                     icon="icon-dl-search"
                     :styles="{
-                        height: '30px'
+                        height: '28px'
                     }"
                     :disabled="disabled"
                     @click="emitSearchQuery"
@@ -43,8 +43,7 @@
 
             <dl-button
                 class="dl-smart-search__buttons--filters"
-                text-color="dl-color-secondary"
-                flat
+                shaded
                 size="s"
             >
                 Saved Filters
@@ -56,8 +55,8 @@
                 >
                     <dl-smart-search-filters
                         :filters="filters"
-                        @filters-search="emitFiltersSearch"
-                        @filters-delete="emitFiltersDelete"
+                        @filters-select="handleFiltersSelect"
+                        @filters-delete="handleFiltersDelete"
                     />
                 </dl-menu>
             </dl-button>
@@ -70,6 +69,7 @@
             @save="saveQueryDialogBoxModel = true"
             @remove="handleQueryRemove"
             @search="handleQuerySearchEditor"
+            @update-query="handleEditorQueryUpdate"
         />
         <dl-dialog-box v-model="removeQueryDialogBoxModel">
             <template #header>
@@ -146,7 +146,7 @@ import {
     createColorSchema
 } from './utils/utils'
 import { v4 } from 'uuid'
-import { parseSmartQuery } from '../../../../utils'
+import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
 
 export default defineComponent({
     components: {
@@ -194,8 +194,8 @@ export default defineComponent({
             default: 'saved'
         },
         filters: {
-            type: Array as PropType<Filters[]>,
-            default: () => [] as Filters[]
+            type: Object as PropType<Filters>,
+            default: () => ({} as Filters)
         },
         disabled: {
             type: Boolean,
@@ -289,8 +289,11 @@ export default defineComponent({
                 '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): object {
-            return createColorSchema(this.colorSchema, this.aliases)
+        defineStyleModel(): Record<string, string> {
+            return createColorSchema(
+                this.colorSchema,
+                this.aliases
+            ) as any as Record<string, string>
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
@@ -312,18 +315,10 @@ export default defineComponent({
                 message: this.error
             }
         },
-        stringQuery() {
+        stringQuery(): string {
             return this.isQuerying || this.inputModel === ''
                 ? this.activeQuery.name
                 : this.inputModel
-        }
-    },
-    watch: {
-        isLoading(val) {
-            this.inputModel = `Query "${this.activeQuery.name}" ${
-                val ? 'is running' : ''
-            }`
-            this.isQuerying = true
         }
     },
     mounted() {
@@ -353,23 +348,28 @@ export default defineComponent({
                 this.emitSaveQuery()
             }
         },
-        emitFiltersSave(currentTab: string, query: Query) {
+        handleEditorQueryUpdate(query: Query) {
             this.activeQuery = query
-            this.currentTab = currentTab
-            this.saveQueryDialogBoxModel = true
-            this.filtersModel = false
+            try {
+                const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+                this.inputModel = stringQuery
+                this.oldInputQuery = stringQuery
+            } catch (error) {
+                console.log(error)
+            }
         },
-        emitFiltersDelete(currentTab: string, query: Query) {
+        handleFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
             this.currentTab = currentTab
             this.removeQueryDialogBoxModel = true
             this.filtersModel = false
         },
-        emitFiltersSearch(currentTab: string, query: Query) {
-            this.activeQuery = query
-            this.oldInputQuery = query.query
+        handleFiltersSelect(currentTab: string, query: Query) {
+            this.activeQuery = { ...query }
+            const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+            this.oldInputQuery = stringQuery
+            this.inputModel = stringQuery
             this.currentTab = currentTab
-            this.emitSearchQuery()
             this.filtersModel = false
         },
         emitSearchQuery() {
@@ -417,9 +417,9 @@ export default defineComponent({
         display: flex;
         align-items: center;
         margin-left: 8px;
+        margin-top: 1px;
         &--filters {
             min-width: fit-content;
-            border: 1px solid var(--dl-color-secondary);
             border-radius: 3px;
             box-sizing: border-box;
             display: flex;

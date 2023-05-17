@@ -21,7 +21,7 @@
                             :key="index"
                             :type="currentTab"
                             :name="query.name"
-                            @search="$emit('filters-search', currentTab, query)"
+                            @select="$emit('filters-select', currentTab, query)"
                             @delete="$emit('filters-delete', currentTab, query)"
                         />
                     </div>
