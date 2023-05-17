@@ -1,11 +1,20 @@
 <template>
-    <div class="tabs-menu">
+    <div
+        class="tabs-menu"
+        :style="cssVars"
+    >
         <dl-tabs
             v-model="selectedTab"
             :items="tabItems"
             @update:model-value="handleSelectedOption"
         />
-        <div style="height: 4px" />
+        <div class="tabs-menu__border-icon">
+            <dl-button
+                flat
+                :icon="expandIcon"
+                @click="onToggle"
+            />
+        </div>
         <component :is="tabs" />
     </div>
 </template>
@@ -18,6 +27,8 @@ import DlTabPanel from '../../../../compound/DlTabPanels/DlTabPanel.vue'
 import { DlTabDetails } from '../../../../compound/DlTabs/types'
 import TabMenuAnnotations from './TabMenu/TabMenuAnnotations.vue'
 import TabMenuItem from './TabMenu/TabMenuItem.vue'
+import DlButton from '../../../../basic/DlButton/DlButton.vue'
+import DlIcon from '../../../../essential/DlIcon/DlIcon.vue'
 
 export default defineComponent({
     name: 'TabsMenu',
@@ -26,10 +37,16 @@ export default defineComponent({
         DlTabPanels,
         DlTabPanel,
         TabMenuAnnotations,
-        TabMenuItem
+        TabMenuItem,
+        DlButton,
+        DlIcon
     },
     props: {},
     setup() {
+        const LARGE_WIDTH = '250px'
+        const SMALL_WIDTH = '0px'
+        const tabsMenuWidth = ref('')
+        const isExpanded = ref(true)
         const selectedTab = ref('annotations')
         const tabItems = [
             {
@@ -55,25 +72,44 @@ export default defineComponent({
             }
         })
 
+        const onToggle = () => {
+            isExpanded.value = !isExpanded.value
+            tabsMenuWidth.value = isExpanded.value ? LARGE_WIDTH : SMALL_WIDTH
+        }
+        const expandIcon = computed(() =>
+            isExpanded.value ? 'icon-dl-right-chevron' : 'icon-dl-left-chevron'
+        )
+        const cssVars = computed(() => {
+            return {
+                '--tabs-menu-width': tabsMenuWidth.value
+            }
+        })
+
         return {
             selectedOption,
             handleSelectedOption,
             selectedTab,
             tabItems,
-            tabs
+            tabs,
+            cssVars,
+            onToggle,
+            expandIcon
         }
     }
 })
 </script>
 
 <style scoped lang="scss">
-.tabpanel {
-    margin: 0 auto;
-    padding: 1rem;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
 .tabs-menu {
-    padding: 10px;
+    width: var(--tabs-menu-width);
+    overflow: auto;
+    transition: all 300ms;
+
+    &__border-icon {
+        position: absolute;
+        margin-left: -21px;
+        background-color: var(--dl-color-bg);
+        border-radius: 50%;
+    }
 }
 </style>

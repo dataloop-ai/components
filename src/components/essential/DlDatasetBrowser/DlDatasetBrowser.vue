@@ -1,5 +1,5 @@
 <template>
-    <div class="dl-studio-layout">
+    <div>
         <dl-page-layout :template="template">
             <template #header>
                 <slot name="header" />
@@ -25,23 +25,12 @@ import { defineComponent } from 'vue-demi'
 import DlPageLayout from '../../essential/DlPageLayout/DlPageLayout.vue'
 
 export default defineComponent({
-    name: 'DlStudioLayout',
+    name: 'DlDatasetBrowser',
     components: {
         DlPageLayout
     },
-    props: {
-        expandLeftDrawer: {
-            type: Boolean,
-            default: false
-        },
-        expandRightDrawer: {
-            type: Boolean,
-            default: false
-        }
-    },
-    emits: ['expandedLeftDrawer', 'expandedRightDrawer'],
     setup() {
-        const template = '"h h h" "l p r" "l f r"'
+        const template = '"h h h" "l p r" "f f f"'
 
         return {
             template
@@ -50,4 +39,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped></style>

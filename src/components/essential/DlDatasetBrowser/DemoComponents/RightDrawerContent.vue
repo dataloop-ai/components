@@ -1,5 +1,16 @@
 <template>
-    <div class="left-drawer-content">
+    <div
+        class="right-drawer-content"
+        :style="cssVars"
+    >
+        <div class="right-drawer-content__toggle-icon">
+            <dl-button
+                flat
+                :icon="expandIcon"
+                color="secondary"
+                @click="onToggle"
+            />
+        </div>
         <div
             style="
                 padding-bottom: 10px;
@@ -25,29 +36,55 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref } from 'vue-demi'
 import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
 import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
+import DlButton from '../../../basic/DlButton/DlButton.vue'
 
 export default defineComponent({
     name: 'RightDrawerContent',
     components: {
         DlTypography,
-        DlIcon
+        DlIcon,
+        DlButton
     },
     setup() {
-        const checkModel = ref('')
+        const LARGE_WIDTH = '300px'
+        const SMALL_WIDTH = '30px'
+        const rightDrawerContentWidth = ref(LARGE_WIDTH)
+        const isExpanded = ref(true)
+
+        const onToggle = () => {
+            isExpanded.value = !isExpanded.value
+            rightDrawerContentWidth.value = isExpanded.value
+                ? LARGE_WIDTH
+                : SMALL_WIDTH
+        }
+        const expandIcon = computed(() =>
+            isExpanded.value ? 'icon-dl-collapse' : 'icon-dl-expand'
+        )
+        const cssVars = computed(() => {
+            return {
+                '--right-drawer-content-width': rightDrawerContentWidth.value
+            }
+        })
 
         return {
-            checkModel
+            onToggle,
+            expandIcon,
+            cssVars
         }
     }
 })
 </script>
 
 <style scoped lang="scss">
-.left-drawer-content {
-    padding: 10px;
-    height: 100%;
+.right-drawer-content {
+    width: var(--right-drawer-content-width);
+    transition: all 350ms;
+
+    &__toggle-icon {
+        left: 0;
+    }
 }
 </style>

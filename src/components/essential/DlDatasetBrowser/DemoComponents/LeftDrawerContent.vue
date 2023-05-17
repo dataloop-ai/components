@@ -1,6 +1,17 @@
 <template>
-    <div class="left-drawer-content">
-        <div style="padding-bottom: 10px">
+    <div
+        class="left-drawer-content"
+        :style="cssVars"
+    >
+        <div class="left-drawer-content__toggle-icon">
+            <dl-button
+                flat
+                color="secondary"
+                :icon="expandIcon"
+                @click="onToggle"
+            />
+        </div>
+        <div style="padding: 40px 0 10px">
             <dl-typography
                 size="12px"
                 color="dl-color-dark"
@@ -27,21 +38,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref } from 'vue-demi'
 import DlRadio from '../../../essential/DlRadio/DlRadio.vue'
 import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
+import DlButton from '../../../basic/DlButton/DlButton.vue'
 
 export default defineComponent({
     name: 'LeftDrawerContent',
     components: {
         DlRadio,
-        DlTypography
+        DlTypography,
+        DlButton
     },
     setup() {
+        const LARGE_WIDTH = '300px'
+        const SMALL_WIDTH = '30px'
+        const leftDrawerContentWidth = ref(LARGE_WIDTH)
+        const isExpanded = ref(true)
         const checkModel = ref('')
 
+        const onToggle = () => {
+            isExpanded.value = !isExpanded.value
+            leftDrawerContentWidth.value = isExpanded.value
+                ? LARGE_WIDTH
+                : SMALL_WIDTH
+        }
+        const expandIcon = computed(() =>
+            isExpanded.value ? 'icon-dl-expand' : 'icon-dl-collapse'
+        )
+        const cssVars = computed(() => {
+            return {
+                '--left-drawer-content-width': leftDrawerContentWidth.value
+            }
+        })
+
         return {
-            checkModel
+            checkModel,
+            onToggle,
+            expandIcon,
+            cssVars
         }
     }
 })
@@ -49,7 +84,13 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .left-drawer-content {
+    width: var(--left-drawer-content-width);
     position: relative;
-    padding: 10px;
+    transition: all 300ms;
+
+    &__toggle-icon {
+        position: absolute;
+        right: 0;
+    }
 }
 </style>

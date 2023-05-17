@@ -1,10 +1,32 @@
 <template>
     <div class="navbar-search">
-        <div style="display: flex; gap: 15px">
-            <DlSmartSearch width="100%" />
-            <dl-button flat>
+        <div
+            v-if="!isBasicSearch"
+            style="display: flex; gap: 15px"
+        >
+            <div style="width: 100%; position: relative">
+                <DlSmartSearch width="100%" />
+            </div>
+            <dl-button
+                flat
+                @click="isBasicSearch = !isBasicSearch"
+            >
                 <div style="white-space: nowrap">
                     Switch to basic
+                </div>
+            </dl-button>
+        </div>
+        <div
+            v-if="isBasicSearch"
+            style="display: flex; gap: 15px; align-items: center"
+        >
+            <SearchFilterMenu />
+            <dl-button
+                flat
+                @click="isBasicSearch = !isBasicSearch"
+            >
+                <div style="white-space: nowrap">
+                    Reset
                 </div>
             </dl-button>
         </div>
@@ -46,13 +68,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 import DlSmartSearch from '../../../compound/DlSearches/DlSmartSearch/DlSmartSearch.vue'
 import DlButton from '../../../basic/DlButton/DlButton.vue'
 import DlDropdownButton from '../../../compound/DlDropdownButton/DlDropdownButton.vue'
 import DlList from '../../../essential/DlList/DlList.vue'
 import DlListItem from '../../../basic/DlListItem/DlListItem.vue'
 import DlItemSection from '../../../shared/DlItemSection/DlItemSection.vue'
+import SearchFilterMenu from './SearchFilterMenu.vue'
 
 export default defineComponent({
     name: 'NavbarSearch',
@@ -62,7 +85,15 @@ export default defineComponent({
         DlDropdownButton,
         DlList,
         DlListItem,
-        DlItemSection
+        DlItemSection,
+        SearchFilterMenu
+    },
+    setup() {
+        const isBasicSearch = ref(false)
+
+        return {
+            isBasicSearch
+        }
     }
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="studio-layout-left-drawer-content">
         <div
             style="
                 display: flex;
@@ -234,4 +234,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.studio-layout-left-drawer-content {
+    width: 250px;
+}
+</style>

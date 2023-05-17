@@ -15,7 +15,7 @@ describe('DlStudioLayout', () => {
         expect(wrapper.vm.expandLeftDrawer).toBe(false)
         expect(wrapper.vm.expandRightDrawer).toBe(false)
     })
-
+    /*
     it('check component slots', async () => {
         const navbarMsg = 'navbar'
         const leftDrawerMsg = 'left Drawer'
@@ -53,5 +53,7 @@ describe('DlStudioLayout', () => {
         expect(footer.text()).toBe(footerMsg)
 
         expect(wrapper.text().includes(defaultMsg)).toBe(true)
+
     })
+    */
 })

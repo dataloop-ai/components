@@ -1,11 +1,5 @@
 <template>
-    <div
-        style="
-            color: var(--dl-color-lighter);
-            background-color: red;
-            height: 100%;
-        "
-    >
+    <div class="dl-studio-layout-footer">
         Footer slot Footer slot Footer slot Footer slot Footer slot Footer slot
         Footer slot Footer slot Footer slot Footer slot Footer slot Footer slot
         Footer slot
@@ -20,4 +14,12 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.dl-studio-layout-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dl-color-lighter);
+    height: 50px;
+}
+</style>
