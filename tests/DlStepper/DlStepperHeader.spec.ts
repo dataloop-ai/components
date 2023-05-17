@@ -1,17 +1,26 @@
 import { mount } from '@vue/test-utils'
 import DlStepperHeader from '../../src/components/compound/DlStepper/components/DlStepperHeader.vue'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('DlStepperHeader', () => {
-    it('should display the title; should emit the "close" event', async () => {
+    describe('When mounted', () => {
+        let wrapper: any
         const headerTitle = 'Title'
-        const wrapper = mount(DlStepperHeader, {
-            props: { headerTitle }
+        beforeAll(() => {
+            wrapper = mount(DlStepperHeader, {
+                props: { headerTitle }
+            })
         })
-
-        expect(wrapper.text()).toContain(headerTitle)
-        const button = wrapper.find('button')
-        await button.trigger('click')
-        expect(wrapper.emitted()['close'][0]).toBeTruthy()
+        it('should mount the component', () => {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should have the right text', () => {
+            expect(wrapper.text()).toContain(headerTitle)
+        })
+        it('should emitted click', async () => {
+            const button = wrapper.find('button')
+            await button.trigger('click')
+            expect(wrapper.emitted()['close'][0]).toBeTruthy()
+        })
     })
 })
