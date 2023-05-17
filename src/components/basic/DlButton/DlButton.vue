@@ -365,8 +365,7 @@ export default defineComponent({
     line-height: 1;
     z-index: 0;
     user-select: none !important;
-    min-width: 1.5em;
-    gap: var(--dl-button-gap, 7px);
+    gap: var(--dl-button-content-gap, 7px);
 }
 
 .dl-button-container {
