@@ -3,7 +3,7 @@
         :id="uuid"
         :style="cssVars"
         class="root-container"
-        :class="{ 'root-container--s': isSmall, [identifierClass]: true }"
+        :class="{ [identifierClass]: true }"
     >
         <div
             v-show="!!title.length || !!tooltip.length"
@@ -797,16 +797,15 @@ export default defineComponent({
 <style scoped lang="scss">
 .root-container {
     width: var(--dl-select-width);
-    &--s {
-        display: flex;
-        align-items: center;
-    }
+    display: flex;
+    gap: 6px;
+
     &--placeholder {
         color: var(--placeholder-color);
     }
 
     .dl-select__title-container {
-        margin-bottom: 6px;
+        //margin-bottom: 6px;
         display: flex;
         align-items: center;
         color: var(--dl-color-lighter);

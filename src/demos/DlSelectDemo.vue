@@ -202,6 +202,14 @@
                 </div>
             </template>
         </dl-select>
+
+        with small size and tooltip
+        <dl-select
+            :options="['one', 'two', 'three']"
+            title="Title"
+            size="s"
+            tooltip="Tooltip"
+        />
     </div>
 </template>
 
