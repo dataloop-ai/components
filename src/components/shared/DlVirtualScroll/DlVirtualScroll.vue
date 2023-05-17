@@ -2,7 +2,6 @@
 import {
     computed,
     defineComponent,
-    getCurrentInstance,
     onActivated,
     onBeforeMount,
     onBeforeUnmount,
@@ -19,7 +18,7 @@ import { listenOpts, mergeSlot } from '../../../utils'
 import { getScrollTarget } from '../../../utils/scroll'
 import { DlList } from '../../essential/DlList'
 import { DlMarkupTable } from '../../basic/DlMarkupTable'
-import { useVirtualScroll, useVirtualScrollProps } from './useVirtualScroll'
+import { useVirtualScroll } from './useVirtualScroll'
 
 const comps = {
     list: DlList,
@@ -37,8 +36,38 @@ const typeOptions = ['list', 'table', '__dltable']
 export default defineComponent({
     name: 'DllVirtualScroll',
     props: {
-        ...useVirtualScrollProps,
+        virtualScrollSliceSize: {
+            type: [Number, String],
+            default: null as number
+        },
 
+        virtualScrollSliceRatioBefore: {
+            type: [Number, String],
+            default: 1
+        },
+
+        virtualScrollSliceRatioAfter: {
+            type: [Number, String],
+            default: 1
+        },
+
+        virtualScrollItemSize: {
+            type: [Number, String],
+            default: 0
+        },
+
+        virtualScrollStickySizeStart: {
+            type: [Number, String],
+            default: 0
+        },
+
+        virtualScrollStickySizeEnd: {
+            type: [Number, String],
+            default: 0
+        },
+        tableColspan: [Number, String],
+        virtualScrollHorizontal: Boolean,
+        onVirtualScroll: Function,
         items: {
             type: Array,
             default: () => [] as Record<string, any>[]
@@ -60,8 +89,6 @@ export default defineComponent({
     },
     emits: ['virtual-scroll'],
     setup(props, { slots, attrs }) {
-        const vm = getCurrentInstance()
-
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
 
