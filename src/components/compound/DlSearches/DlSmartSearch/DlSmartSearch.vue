@@ -4,7 +4,10 @@
         class="dl-smart-search"
         :style="cssVars"
     >
-        <div class="dl-smart-search__input-wrapper">
+        <div
+            ref="inputWrapper"
+            class="dl-smart-search__input-wrapper"
+        >
             <dl-smart-search-input
                 :status="computedStatus"
                 :style-model="defineStyleModel"
@@ -15,6 +18,8 @@
                 :model-value="inputModel"
                 :expanded-input-height="expandedInputHeight"
                 :suggestions="suggestions"
+                :search-bar-width="searchBarWidth"
+                :default-width="width"
                 @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
                 @update:modelValue="handleInputModel"
@@ -22,23 +27,49 @@
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div class="dl-smart-search__search-btn-wrapper">
+            <div
+                style="height: 28px"
+                class="dl-smart-search__search-btn-wrapper"
+            >
                 <dl-button
                     icon="icon-dl-search"
-                    size="m"
+                    :styles="{
+                        height: '28px'
+                    }"
                     :disabled="disabled"
                     @click="emitSearchQuery"
                 />
             </div>
+
+            <dl-button
+                class="dl-smart-search__buttons--filters"
+                shaded
+                size="s"
+            >
+                Saved Filters
+                <dl-menu
+                    v-model="filtersModel"
+                    :offset="[0, 5]"
+                    anchor="bottom middle"
+                    self="top middle"
+                >
+                    <dl-smart-search-filters
+                        :filters="filters"
+                        @filters-select="handleFiltersSelect"
+                        @filters-delete="handleFiltersDelete"
+                    />
+                </dl-menu>
+            </dl-button>
         </div>
         <dl-json-editor
             :model-value="jsonEditorModel"
             :query="activeQuery"
-            :queries="savedQueries"
+            :queries="filters.saved"
             @update:modelValue="jsonEditorModel = $event"
             @save="saveQueryDialogBoxModel = true"
             @remove="handleQueryRemove"
             @search="handleQuerySearchEditor"
+            @update-query="handleEditorQueryUpdate"
         />
         <dl-dialog-box v-model="removeQueryDialogBoxModel">
             <template #header>
@@ -96,10 +127,11 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue-demi'
 import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
+import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
 import { DlJsonEditor } from '../../DlJsonEditor'
 import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
 import { DlInput } from '../../DlInput'
-import { DlTypography } from '../../../essential'
+import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
 import {
     useSuggestions,
@@ -107,14 +139,14 @@ import {
     Alias,
     removeBrackets
 } from '../../../../hooks/use-suggestions'
-import { Filter, Query, ColorSchema, SearchStatus } from './types'
+import { Filters, Query, ColorSchema, SearchStatus } from './types'
 import {
     replaceAliases,
     replaceWithJsDates,
     createColorSchema
 } from './utils/utils'
 import { v4 } from 'uuid'
-import { parseSmartQuery } from '../../../../utils'
+import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
 
 export default defineComponent({
     components: {
@@ -124,7 +156,9 @@ export default defineComponent({
         DlJsonEditor,
         DlButton,
         DlTypography,
-        DlInput
+        DlInput,
+        DlSmartSearchFilters,
+        DlMenu
     },
     props: {
         status: {
@@ -160,18 +194,23 @@ export default defineComponent({
             default: 'saved'
         },
         filters: {
-            type: Array as PropType<Filter[]>,
-            default: () => [] as Filter[]
+            type: Object as PropType<Filters>,
+            default: () => ({} as Filters)
         },
         disabled: {
             type: Boolean,
             default: false
+        },
+        width: {
+            type: String,
+            default: '450px'
         }
     },
     emits: ['save-query', 'remove-query', 'search-query'],
     setup(props) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
+        const searchBarWidth = ref('100%')
 
         const activeQuery = ref({
             name: 'New Query',
@@ -183,8 +222,8 @@ export default defineComponent({
         const newQueryName = ref('')
         const isFocused = ref(false)
         const isQuerying = ref(false)
-
-        let oldInputQuery = ''
+        const currentTab = ref('saved')
+        const oldInputQuery = ref('')
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -197,7 +236,7 @@ export default defineComponent({
             activeQuery.value.query = replaceAliases(json, props.aliases)
             findSuggestions(value)
             isQuerying.value = false
-            oldInputQuery = value
+            oldInputQuery.value = value
         }
 
         const toJSON = (value: string) => {
@@ -211,7 +250,7 @@ export default defineComponent({
             findSuggestions(inputModel.value)
 
             if (value) {
-                inputModel.value = oldInputQuery
+                inputModel.value = oldInputQuery.value
                 isQuerying.value = false
             }
             if (!value && !error) {
@@ -232,6 +271,9 @@ export default defineComponent({
             newQueryName,
             isFocused,
             isQuerying,
+            currentTab,
+            searchBarWidth,
+            oldInputQuery,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -242,25 +284,18 @@ export default defineComponent({
         identifierClass(): string {
             return `dl-smart-search`
         },
-        savedQueries(): Query[] {
-            return (
-                this.filters.find(
-                    (filter: Filter) => filter.name === this.savedFilterKey
-                ) || {
-                    queries: []
-                }
-            ).queries
-        },
         cssVars(): Record<string, string> {
             return {
-                '--dl-search-max-width': this.isFocused ? '100%' : '450px'
+                '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): object {
-            return createColorSchema(this.colorSchema, this.aliases)
+        defineStyleModel(): Record<string, string> {
+            return createColorSchema(
+                this.colorSchema,
+                this.aliases
+            ) as any as Record<string, string>
         },
         computedStatus(): SearchStatus {
-            if (this.isFocused) return
             if (this.isQuerying) return
             if (!this.error && this.inputModel !== '') {
                 return {
@@ -279,15 +314,18 @@ export default defineComponent({
                 type: 'error',
                 message: this.error
             }
+        },
+        stringQuery(): string {
+            return this.isQuerying || this.inputModel === ''
+                ? this.activeQuery.name
+                : this.inputModel
         }
     },
-    watch: {
-        isLoading(val) {
-            this.inputModel = `Query "${this.activeQuery.name}" ${
-                val ? 'is running' : ''
-            }`
-            this.isQuerying = true
-        }
+    mounted() {
+        const observer = new ResizeObserver((entries) => {
+            this.searchBarWidth = `${entries[0].contentRect.width}px`
+        })
+        observer.observe(this.$refs.inputWrapper as HTMLElement)
     },
     methods: {
         handleQueryRemove(query: Query) {
@@ -298,10 +336,11 @@ export default defineComponent({
         handleQuerySearchEditor(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
-            this.$emit('search-query', this.activeQuery)
+            this.oldInputQuery = query.query
+            this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleSaveQuery(performSearch: boolean) {
-            if (performSearch) {
+            if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()
                 this.jsonEditorModel = false
@@ -309,19 +348,48 @@ export default defineComponent({
                 this.emitSaveQuery()
             }
         },
+        handleEditorQueryUpdate(query: Query) {
+            this.activeQuery = query
+            try {
+                const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+                this.inputModel = stringQuery
+                this.oldInputQuery = stringQuery
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        handleFiltersDelete(currentTab: string, query: Query) {
+            this.activeQuery = query
+            this.currentTab = currentTab
+            this.removeQueryDialogBoxModel = true
+            this.filtersModel = false
+        },
+        handleFiltersSelect(currentTab: string, query: Query) {
+            this.activeQuery = { ...query }
+            const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+            this.oldInputQuery = stringQuery
+            this.inputModel = stringQuery
+            this.currentTab = currentTab
+            this.filtersModel = false
+        },
         emitSearchQuery() {
-            this.$emit('search-query', this.activeQuery)
+            this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         emitRemoveQuery() {
             if (!this.activeQuery) return
-            this.$emit('remove-query', this.activeQuery)
+            this.$emit(
+                'remove-query',
+                this.activeQuery,
+                this.currentTab,
+                this.inputModel
+            )
             this.removeQueryDialogBoxModel = false
         },
         emitSaveQuery() {
             if (!this.activeQuery) return
             if (this.newQueryName !== '')
                 this.activeQuery.name = this.newQueryName
-            this.$emit('save-query', { ...this.activeQuery })
+            this.$emit('save-query', { ...this.activeQuery }, this.currentTab)
             this.saveQueryDialogBoxModel = false
             this.newQueryName = ''
         }
@@ -333,7 +401,13 @@ export default defineComponent({
     display: flex;
     width: 100%;
 
+    &__inner {
+        display: flex;
+        height: 28px;
+    }
+
     &__input-wrapper {
+        flex-grow: 1;
         width: 100%;
         max-width: var(--dl-search-max-width);
         transition: max-width 0.3s ease-out;
@@ -341,9 +415,16 @@ export default defineComponent({
 
     &__buttons {
         display: flex;
-        margin: 0px 5px;
-        align-items: flex-start;
-
+        align-items: center;
+        margin-left: 8px;
+        margin-top: 1px;
+        &--filters {
+            min-width: fit-content;
+            border-radius: 3px;
+            box-sizing: border-box;
+            display: flex;
+            margin: 0px 8px 0px 16px;
+        }
         &--save {
             display: flex;
             width: 100%;
@@ -373,6 +454,15 @@ export default defineComponent({
             font-size: 12px;
             width: 110px;
         }
+    }
+
+    &__search-label {
+        font-size: 10px;
+        margin-left: 4px;
+        margin-top: 4px;
+        color: gray;
+        position: relative;
+        word-break: break-all;
     }
 }
 </style>

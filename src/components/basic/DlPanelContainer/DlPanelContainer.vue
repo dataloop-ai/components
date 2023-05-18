@@ -21,7 +21,7 @@
                 <div
                     v-if="direction === 'right' && isFullWidth === true"
                     class="collapse-icon collapse-icon--right"
-                    @click="handleCollapseBtnClick"
+                    @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
                     <dl-icon
@@ -33,7 +33,7 @@
                 <div
                     v-else-if="direction === 'right' && isFullWidth === false"
                     class="collapse-icon collapse-icon--right"
-                    @click="handleCollapseBtnClick"
+                    @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Show</dl-tooltip>
                     <dl-icon
@@ -45,7 +45,7 @@
                 <div
                     v-else-if="direction === 'left' && isFullWidth === true"
                     class="collapse-icon collapse-icon--left"
-                    @click="handleCollapseBtnClick"
+                    @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
                     <dl-icon
@@ -57,7 +57,7 @@
                 <div
                     v-else-if="direction === 'left' && isFullWidth === false"
                     class="collapse-icon collapse-icon--left--collapsed"
-                    @click="handleCollapseBtnClick"
+                    @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Show</dl-tooltip>
                     <dl-icon
@@ -346,7 +346,7 @@ export default defineComponent({
 
             this.avoidUserSelect = false
         },
-        handleCollapseBtnClick() {
+        handleCollapseButtonClick() {
             this.$emit('update:model-value', !this.modelValue)
         },
         collapse() {

@@ -93,7 +93,7 @@ export default defineComponent({
     }
 }
 
-::v-deep .dl-btn-content {
+::v-deep .dl-button-content {
     padding-top: 1px;
     min-height: var(--dl-tabs-arrows-size);
     width: var(--dl-tabs-arrows-size);
