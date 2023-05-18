@@ -1,67 +1,27 @@
 <template>
     <div class="json-editor-layout">
-        <dl-dialog-box
-            :model-value="modelValue"
-            :width="800"
-        >
-            <template #header>
-                <dl-dialog-box-header
-                    title="DQL Search"
-                    :close-button="true"
-                    style="font-weight: 200"
-                    @onClose="$emit('update:modelValue', false)"
+        <div class="json-query">
+            <div class="json-query-menu">
+                <dl-select
+                    :model-value="selectedOption"
+                    width="200px"
+                    :options="selectOptions"
+                    placeholder="New Query"
+                    @update:model-value="updateActiveQuery"
                 />
-            </template>
-            <template #body>
-                <div class="json-query">
-                    <div class="json-query-menu">
-                        <dl-select
-                            :model-value="selectedOption"
-                            width="200px"
-                            :options="selectOptions"
-                            placeholder="New Query"
-                            @update:model-value="updateActiveQuery"
-                        />
-                        <dl-button
-                            icon="icon-dl-align-left"
-                            label="Align Left"
-                            flat
-                            color="secondary"
-                            @click="alignText"
-                        />
-                    </div>
-                    <div
-                        ref="jsonEditorRef"
-                        class="json-editor"
-                    />
-                </div>
-            </template>
-            <template #footer>
-                <div class="footer-menu">
-                    <div class="footer-delete">
-                        <dl-button
-                            :disabled="deleteButtonState"
-                            icon="icon-dl-delete"
-                            label="Delete Query"
-                            flat
-                            color="secondary"
-                            @click="$emit('remove', activeQuery)"
-                        />
-                    </div>
-                    <div class="footer-save">
-                        <dl-button
-                            outlined
-                            label="Save As"
-                            @click="handleSaveButton"
-                        />
-                        <dl-button
-                            label="Search"
-                            @click="handleSearchButton"
-                        />
-                    </div>
-                </div>
-            </template>
-        </dl-dialog-box>
+                <dl-button
+                    icon="icon-dl-align-left"
+                    label="Align Left"
+                    flat
+                    color="secondary"
+                    @click="alignText"
+                />
+            </div>
+            <div
+                ref="jsonEditorRef"
+                class="json-editor"
+            />
+        </div>
     </div>
 </template>
 
@@ -72,7 +32,6 @@ import { debounce } from 'lodash'
 import { Query } from './types'
 import { DlSelect } from '../DlSelect'
 import { DlButton } from '../../basic'
-import { DlDialogBox, DlDialogBoxHeader } from '../DlDialogBox'
 
 interface JSONContent {
     json: JSONValue
@@ -81,13 +40,10 @@ interface JSONContent {
 
 export default defineComponent({
     components: {
-        DlDialogBox,
-        DlDialogBoxHeader,
         DlSelect,
         DlButton
     },
     props: {
-        modelValue: { type: Boolean, default: false },
         query: {
             type: Object as PropType<Query>,
             default: () =>
@@ -99,9 +55,13 @@ export default defineComponent({
         queries: {
             type: Array as PropType<Query[]>,
             default: () => [] as Query[]
+        },
+        newQuery: {
+            type: String,
+            default: null
         }
     },
-    emits: ['update:modelValue', 'save', 'remove', 'search', 'update-query'],
+    emits: ['update-json-query', 'update-query', 'update-new-query'],
     data() {
         return {
             preventOnChange: false,
@@ -126,33 +86,19 @@ export default defineComponent({
                     value: q.query
                 }))
             ]
-        },
-        deleteButtonState(): boolean {
-            return !this.queries.filter(
-                (q: Query) => q.name === this.activeQuery?.name
-            ).length
         }
     },
     watch: {
-        modelValue(value) {
-            this.$nextTick(() => {
-                if (value) this.initJsonEditor()
-                else this.jsonEditor?.destroy()
-                this.activeQuery = this.query
-            })
-        },
         queries() {
             this.resetEditor()
         },
         activeQuery(val) {
-            this.$emit('update-query', val)
-            this.jsonEditor?.set({
-                text: val.query
-            })
-            this.selectedOption = {
-                label: val.name,
-                value: val.query
+            if (!this.preventUpdate) {
+                this.$emit('update-query', val)
+                this.setJsonText(val)
             }
+            this.$emit('update-json-query', val)
+            this.preventUpdate = false
         }
     },
     mounted() {
@@ -160,12 +106,14 @@ export default defineComponent({
     },
     methods: {
         updateActiveQuery(option: Record<string, string>) {
+            this.preventUpdate = true
             this.activeQuery = {
                 name: option.label,
                 query: option.value
             }
             this.jsonEditor?.destroy()
             this.initJsonEditor()
+            this.setJsonText(this.activeQuery)
         },
         alignText() {
             if (!(this.jsonEditor.get && this.jsonEditor.get())) return
@@ -191,6 +139,17 @@ export default defineComponent({
                 value: ''
             }
         },
+        setJsonText(val: Query) {
+            this.jsonEditor?.set({
+                text: val.query || this.newQuery
+            })
+            if (!val.query) this.activeQuery.query = this.newQuery
+            this.alignText()
+            this.selectedOption = {
+                label: val.name,
+                value: val.query
+            }
+        },
         initJsonEditor() {
             const initialAttrs: any = {
                 onChange: debounce(
@@ -205,6 +164,7 @@ export default defineComponent({
                                 : 'New Query',
                             query: updatedContent.text
                         }
+                        this.$emit('update-new-query', updatedContent.text)
                         this.preventUpdate = true
                     },
                     100
@@ -232,21 +192,6 @@ export default defineComponent({
                 props: initialAttrs
             })
             this.alignText()
-        },
-        handleSaveButton() {
-            this.$emit(
-                'save',
-                this.activeQuery
-                    ? this.activeQuery
-                    : {
-                          name: 'New Query',
-                          query: (this.jsonEditor?.get() as any).text || ''
-                      }
-            )
-        },
-        handleSearchButton() {
-            this.$emit('search', this.activeQuery)
-            this.$emit('update:modelValue', false)
         }
     }
 })
@@ -273,20 +218,5 @@ export default defineComponent({
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-}
-
-.footer-save button {
-    margin: 0px 10px;
-}
-
-.footer-menu {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-}
-.footer-save {
-    width: 25%;
-    display: flex;
-    justify-content: space-between;
 }
 </style>

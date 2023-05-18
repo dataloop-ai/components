@@ -51,15 +51,10 @@ describe('SmartSearch', () => {
         expect(wrapper.vm.removeQueryDialogBoxModel).toBe(true)
         expect(wrapper.vm.activeQuery).toEqual(mockQuery)
     })
-    it('should handle query search editor', () => {
+    it('should set the query input to a specific value', () => {
         const wrapper = shallowMount(DlSmartSearch)
-        wrapper.vm.handleQuerySearchEditor(mockQuery)
-        expect(wrapper.vm.filtersModel).toBe(false)
-        expect(wrapper.vm.oldInputQuery).toMatch(mockQuery.query)
-        expect(wrapper.vm.activeQuery).toEqual(mockQuery)
-        expect(wrapper.emitted()['search-query']).toEqual([
-            [mockQuery, mockQuery.name]
-        ])
+        wrapper.vm.setQueryInput(mockQuery.query)
+        expect(wrapper.vm.inputModel).toMatch("Age = '20'")
     })
     it('should handle the save query button and functionality', () => {
         const wrapper = shallowMount(DlSmartSearch)

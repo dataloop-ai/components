@@ -9,6 +9,7 @@
             class="dl-smart-search__input-wrapper"
         >
             <dl-smart-search-input
+                v-show="!jsonEditorModel"
                 :status="computedStatus"
                 :style-model="defineStyleModel"
                 :with-save-button="true"
@@ -61,16 +62,55 @@
                 </dl-menu>
             </dl-button>
         </div>
-        <dl-json-editor
+        <dl-dialog-box
             :model-value="jsonEditorModel"
-            :query="activeQuery"
-            :queries="filters.saved"
-            @update:modelValue="jsonEditorModel = $event"
-            @save="saveQueryDialogBoxModel = true"
-            @remove="handleQueryRemove"
-            @search="handleQuerySearchEditor"
-            @update-query="handleEditorQueryUpdate"
-        />
+            :width="800"
+        >
+            <template #header>
+                <dl-dialog-box-header
+                    title="DQL Search"
+                    :close-button="true"
+                    style="font-weight: 200"
+                    @onClose="handleJsonEditorClose"
+                />
+            </template>
+            <template #body>
+                <dl-json-editor
+                    :query="activeQuery"
+                    :queries="filters.saved"
+                    :new-query="newQuery"
+                    @update-query="handleEditorQueryUpdate"
+                    @update-json-query="(query) => (jsonEditorQuery = query)"
+                    @update-new-query="(query) => (newQuery = query)"
+                />
+            </template>
+            <template #footer>
+                <div class="json-editor__footer-menu">
+                    <div class="json-editor__footer-delete">
+                        <dl-button
+                            :disabled="deleteButtonState"
+                            icon="icon-dl-delete"
+                            label="Delete Query"
+                            flat
+                            color="secondary"
+                            @click="handleQueryRemove"
+                        />
+                    </div>
+                    <div class="json-editor__footer-save">
+                        <dl-button
+                            outlined
+                            label="Save As"
+                            @click="saveQueryDialogBoxModel = true"
+                        />
+                        <dl-button
+                            label="Search"
+                            @click="handleJsonSearchButton"
+                        />
+                    </div>
+                </div>
+            </template>
+        </dl-dialog-box>
+
         <dl-dialog-box v-model="removeQueryDialogBoxModel">
             <template #header>
                 <dl-dialog-box-header
@@ -141,7 +181,8 @@ import {
 } from '../../../../hooks/use-suggestions'
 import { Filters, Query, ColorSchema, SearchStatus } from './types'
 import {
-    replaceAliases,
+    replaceWithAliases,
+    revertAliases,
     replaceWithJsDates,
     createColorSchema
 } from './utils/utils'
@@ -224,6 +265,8 @@ export default defineComponent({
         const isQuerying = ref(false)
         const currentTab = ref('saved')
         const oldInputQuery = ref('')
+        const jsonEditorQuery = ref(null)
+        const newQuery = ref('')
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -233,7 +276,7 @@ export default defineComponent({
         const handleInputModel = (value: string) => {
             inputModel.value = value
             const json = JSON.stringify(toJSON(removeBrackets(value)))
-            activeQuery.value.query = replaceAliases(json, props.aliases)
+            activeQuery.value.query = replaceWithAliases(json, props.aliases)
             findSuggestions(value)
             isQuerying.value = false
             oldInputQuery.value = value
@@ -274,6 +317,8 @@ export default defineComponent({
             currentTab,
             searchBarWidth,
             oldInputQuery,
+            jsonEditorQuery,
+            newQuery,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -319,6 +364,11 @@ export default defineComponent({
             return this.isQuerying || this.inputModel === ''
                 ? this.activeQuery.name
                 : this.inputModel
+        },
+        deleteButtonState(): boolean {
+            return !this.filters.saved.filter(
+                (q: Query) => q.name === this.activeQuery?.name
+            ).length
         }
     },
     mounted() {
@@ -333,12 +383,6 @@ export default defineComponent({
             this.activeQuery = query
             this.removeQueryDialogBoxModel = true
         },
-        handleQuerySearchEditor(query: Query) {
-            this.filtersModel = false
-            this.activeQuery = query
-            this.oldInputQuery = query.query
-            this.$emit('search-query', this.activeQuery, this.stringQuery)
-        },
         handleSaveQuery(performSearch: boolean) {
             if (performSearch === true) {
                 this.emitSaveQuery()
@@ -349,14 +393,23 @@ export default defineComponent({
             }
         },
         handleEditorQueryUpdate(query: Query) {
-            this.activeQuery = query
+            const newQuery = query?.query
+                ? query
+                : {
+                      name: 'New Query',
+                      query: '{}'
+                  }
+            this.activeQuery = newQuery
+            this.jsonEditorQuery = newQuery
             try {
-                const stringQuery = stringifySmartQuery(JSON.parse(query.query))
-                this.inputModel = stringQuery
-                this.oldInputQuery = stringQuery
-            } catch (error) {
-                console.log(error)
-            }
+                this.setQueryInput(query.query)
+            } catch (error) {}
+        },
+        handleJsonSearchButton() {
+            this.jsonEditorModel = false
+            this.activeQuery = this.jsonEditorQuery
+            this.setQueryInput()
+            this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
@@ -366,11 +419,18 @@ export default defineComponent({
         },
         handleFiltersSelect(currentTab: string, query: Query) {
             this.activeQuery = { ...query }
-            const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+            const stringQuery = revertAliases(
+                stringifySmartQuery(JSON.parse(query.query)),
+                this.aliases
+            )
             this.oldInputQuery = stringQuery
             this.inputModel = stringQuery
             this.currentTab = currentTab
             this.filtersModel = false
+        },
+        handleJsonEditorClose() {
+            this.jsonEditorModel = false
+            this.newQuery = ''
         },
         emitSearchQuery() {
             this.$emit('search-query', this.activeQuery, this.stringQuery)
@@ -392,6 +452,16 @@ export default defineComponent({
             this.$emit('save-query', { ...this.activeQuery }, this.currentTab)
             this.saveQueryDialogBoxModel = false
             this.newQueryName = ''
+        },
+        setQueryInput(query?: string) {
+            const stringQuery = revertAliases(
+                stringifySmartQuery(
+                    JSON.parse(query || this.activeQuery.query)
+                ),
+                this.aliases
+            )
+            this.inputModel = stringQuery
+            this.oldInputQuery = stringQuery
         }
     }
 })
@@ -463,6 +533,16 @@ export default defineComponent({
         color: gray;
         position: relative;
         word-break: break-all;
+    }
+}
+.json-editor__footer {
+    &-menu {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    &-save > * {
+        margin: 0px 10px;
     }
 }
 </style>
