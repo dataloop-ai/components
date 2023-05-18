@@ -109,6 +109,14 @@
                 size="m"
             />
         </div>
+
+        <dl-input
+            title="Readonly"
+            style="width: 220px"
+            placeholder="Readonly state"
+            size="m"
+            readonly
+        />
     </div>
 </template>
 <script lang="ts">

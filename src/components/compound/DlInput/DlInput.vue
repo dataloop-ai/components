@@ -750,7 +750,7 @@ export default defineComponent({
             color: var(--dl-color-disabled);
             cursor: not-allowed;
         }
-        &:readonly {
+        &:read-only {
             border-color: var(--dl-color-separator);
             cursor: text;
             &:hover {
