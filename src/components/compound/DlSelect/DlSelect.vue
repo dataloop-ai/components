@@ -9,7 +9,7 @@
             v-show="!!title.length || !!tooltip.length"
             :class="{
                 'dl-select__title-container': true,
-                'title-container--s': isSmall
+                'dl-select__title-container--s': isSmall
             }"
         >
             <label
