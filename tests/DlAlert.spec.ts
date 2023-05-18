@@ -36,7 +36,7 @@ describe('DlAlert', () => {
         })
     })
 
-    describe('when the props are updated', () => {
+    describe('When the props are updated', () => {
         it('should adapt the styling accordingly', async () => {
             const wrapper = mount(DlAlert, {
                 props: {
@@ -53,7 +53,7 @@ describe('DlAlert', () => {
         })
     })
 
-    describe('when the close icon is clicked', () => {
+    describe('When the close icon is clicked', () => {
         it('should trigger the "update:model-value" event and close hide the component', async () => {
             const wrapper = mount(DlAlert, {
                 props: {
