@@ -467,7 +467,7 @@ export default defineComponent({
         &__title {
             display: flex;
             align-items: center;
-            justify-content: space-around;
+            justify-content: space-between;
             text-align: center;
             padding: 0;
             flex: 10000 1 0%;
