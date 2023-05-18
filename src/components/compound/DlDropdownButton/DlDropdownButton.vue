@@ -115,7 +115,7 @@
                 disableDropdown === true
         "
         :disabled="disabled === true || disableMainButton === true"
-        :style="mainButtonStyle"
+        :style="[mainButtonStyle, cssVars]"
         :no-wrap="props.noWrap"
         :tooltip="tooltip"
         :max-width="maxWidth"
@@ -316,6 +316,14 @@ export default defineComponent({
             }
         })
 
+        const cssVars = computed(() => {
+            return {
+                '--justify-content': props.fluid
+                    ? 'space-between'
+                    : 'space-around'
+            }
+        })
+
         watch(
             () => props.modelValue,
             (val) => {
@@ -416,7 +424,8 @@ export default defineComponent({
             menuModel,
             props,
             setHighlightedIndex,
-            handleSelectedItem
+            handleSelectedItem,
+            cssVars
         }
     }
 })
@@ -467,7 +476,7 @@ export default defineComponent({
         &__title {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: var(--justify-content);
             text-align: center;
             padding: 0;
             flex: 10000 1 0%;
