@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlSelect } from '../../src/components'
 
@@ -375,5 +375,23 @@ describe('dl-select computed', () => {
 
         expect(wrapper.emitted().change).toBeTruthy()
         expect(wrapper.emitted()['update:model-value']).toBeTruthy()
+    })
+
+    describe('when usng dl-select with small size and tooltip', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options: ['one', 'two', 'three'],
+                    size: 's'
+                }
+            })
+        })
+
+        it('should have small class', async () => {
+            const elem = wrapper.get('.dl-select__title-container')
+            expect(elem.classes()).toContain('dl-select__title-container--s')
+        })
     })
 })
