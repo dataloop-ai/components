@@ -101,7 +101,7 @@ export default defineComponent({
             }
         },
         inlineStyles(): Record<string, string> {
-            return { display: this.inline ? 'inline' : 'flex;' }
+            return { display: this.inline ? 'inline' : 'flex' }
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {

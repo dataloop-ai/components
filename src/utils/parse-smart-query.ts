@@ -153,13 +153,15 @@ export const stringifySmartQuery = (query: { [key: string]: any }) => {
                                         | string[]
                                         | number[]
                                 }
-                                result += `${key} IN ${(
-                                    operatorValue as string[] | number[]
+
+                                const inValues: string = (
+                                    operatorValue as any[]
                                 )
                                     .map((x: string | number) =>
                                         isString(x) ? `'${x}'` : x
                                     )
-                                    .join(', ')}`
+                                    .join(', ')
+                                result += `${key} IN ${inValues} `
                                 break
                             case '$nin':
                                 if (!Array.isArray(operatorValue)) {
@@ -167,13 +169,16 @@ export const stringifySmartQuery = (query: { [key: string]: any }) => {
                                         | string[]
                                         | number[]
                                 }
-                                result += `${key} NOT-IN ${(
-                                    operatorValue as string[] | number[]
+
+                                const ninValues: string = (
+                                    operatorValue as any[]
                                 )
                                     .map((x: string | number) =>
                                         isString(x) ? `'${x}'` : x
                                     )
-                                    .join(', ')}`
+                                    .join(', ')
+
+                                result += `${key} NOT-IN ${ninValues}`
                                 break
                             default:
                                 throw new Error(`Invalid operator: ${operator}`)

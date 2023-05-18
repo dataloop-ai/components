@@ -1,10 +1,11 @@
 <template>
-    <div
+    <component
+        :is="tag"
         :id="uuid"
         :class="classes"
     >
         <slot :clickable="clickable" />
-    </div>
+    </component>
 </template>
 
 <script lang="ts">
@@ -16,7 +17,11 @@ export default defineComponent({
         bordered: Boolean,
         separator: Boolean,
         padding: Boolean,
-        clickable: Boolean
+        clickable: Boolean,
+        tag: {
+            type: String,
+            default: 'div'
+        }
     },
     data() {
         return {

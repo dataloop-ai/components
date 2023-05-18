@@ -57,12 +57,12 @@
         <DlVirtualScroll
             v-if="hasVirtScroll"
             ref="virtScrollRef"
+            type="__dltable"
             :class="tableClass"
-            :draggable-classes="additionalClasses"
             :style="tableStyle"
+            :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
-            :table-colspan="computedColspan"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -476,7 +476,8 @@ import {
     watch,
     getCurrentInstance,
     ComputedRef,
-    onMounted
+    onMounted,
+    toRef
 } from 'vue-demi'
 import {
     useTablePagination,
@@ -491,7 +492,7 @@ import {
     commonVirtScrollProps,
     ScrollDetails
 } from '../../shared/DlVirtualScroll/useVirtualScroll'
-import { DlVirtualScroll } from '../../shared/DlVirtualScroll'
+import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
 import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
 import { useTableSort, useTableSortProps } from './hooks/tableSort'
 import {
@@ -519,6 +520,11 @@ import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import { v4 } from 'uuid'
+
+const commonVirtPropsObj = {} as Record<string, any>
+commonVirtPropsList.forEach((p) => {
+    commonVirtPropsObj[p] = {}
+})
 
 export default defineComponent({
     name: 'DlTable',
@@ -865,12 +871,13 @@ export default defineComponent({
         )
 
         const { computedFilterMethod } = useTableFilter(props, setPagination)
+        const rowsPropRef = toRef(props, 'rows')
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
         const filteredSortedRows = computed(() => {
-            let rows = props.rows as DlTableRow[]
+            let rows = rowsPropRef.value as DlTableRow[]
 
             if (rows.length === 0) {
                 return rows
@@ -889,7 +896,7 @@ export default defineComponent({
 
             if (columnToSort.value !== null) {
                 rows = computedSortMethod.value(
-                    props.rows === rows ? rows.slice() : rows,
+                    rowsPropRef.value === rows ? rows.slice() : rows,
                     sortBy,
                     descending
                 )
@@ -908,7 +915,7 @@ export default defineComponent({
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && props.rows !== rows) {
+                if (firstRowIndex.value === 0 && rowsPropRef.value !== rows) {
                     if (rows.length > lastRowIndex.value) {
                         rows = rows.slice(0, lastRowIndex.value)
                     }
@@ -979,7 +986,7 @@ export default defineComponent({
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < props.rows.length
+                computedRows.value.length < rowsPropRef.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
