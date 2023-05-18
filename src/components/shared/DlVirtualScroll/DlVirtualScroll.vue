@@ -28,7 +28,7 @@ const comps = {
 const virtualScrollRootTag = {
     list: 'div',
     table: 'tbody',
-    __table: 'tbody'
+    __dltable: 'tbody'
 }
 
 const typeOptions = ['list', 'table', '__dltable']
@@ -197,7 +197,7 @@ export default defineComponent({
         function __getVirtualChildren(create: Function) {
             let child = padVirtualScroll(
                 virtualScrollRootTag[
-                    props.type as 'list' | 'table' | '__table'
+                    props.type as 'list' | 'table' | '__dltable'
                 ] || 'div',
                 virtualScrollScope.value.map(slots.default),
                 create
