@@ -447,7 +447,7 @@
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
-                            total-items="rows.length"
+                            :total-items="rows.length"
                             @update:rowsPerPage="
                                 (v) => setPagination({ rowsPerPage: v })
                             "
