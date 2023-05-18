@@ -476,7 +476,8 @@ import {
     watch,
     getCurrentInstance,
     ComputedRef,
-    onMounted
+    onMounted,
+    toRef
 } from 'vue-demi'
 import {
     useTablePagination,
@@ -865,12 +866,13 @@ export default defineComponent({
         )
 
         const { computedFilterMethod } = useTableFilter(props, setPagination)
+        const rowsPropRef = toRef(props, 'rows')
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
         const filteredSortedRows = computed(() => {
-            let rows = props.rows as DlTableRow[]
+            let rows = rowsPropRef.value as DlTableRow[]
 
             if (rows.length === 0) {
                 return rows
@@ -889,7 +891,7 @@ export default defineComponent({
 
             if (columnToSort.value !== null) {
                 rows = computedSortMethod.value(
-                    props.rows === rows ? rows.slice() : rows,
+                    rowsPropRef.value === rows ? rows.slice() : rows,
                     sortBy,
                     descending
                 )
@@ -908,7 +910,7 @@ export default defineComponent({
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && props.rows !== rows) {
+                if (firstRowIndex.value === 0 && rowsPropRef.value !== rows) {
                     if (rows.length > lastRowIndex.value) {
                         rows = rows.slice(0, lastRowIndex.value)
                     }
@@ -979,7 +981,7 @@ export default defineComponent({
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < props.rows.length
+                computedRows.value.length < rowsPropRef.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
