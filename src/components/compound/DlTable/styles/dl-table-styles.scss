@@ -1,8 +1,28 @@
+.dl-markup-table {
+  overflow: auto;
+}
+
 .dl-table {
   width: 100%;
   max-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+
+  //markup-table 
+
+  &__card {
+    background-color: var(--dl-color-panel-background);
+    border-radius: 2px;
+
+    .dl-table__middle {
+      flex: 1 1 auto;
+    }
+
+    .dl-table__top,
+    .dl-table__bottom {
+      flex: 0 0 auto;
+    }
+  }
 
   .dl-table__top,
   .dl-table__bottom,
