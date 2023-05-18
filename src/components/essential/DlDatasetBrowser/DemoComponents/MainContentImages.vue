@@ -1,5 +1,5 @@
 <template>
-    <div class="main-content">
+    <div class="main-content-images">
         <img
             v-for="(image, imageIndex) in images"
             :key="imageIndex"
@@ -13,7 +13,7 @@
 import { defineComponent, ref } from 'vue-demi'
 
 export default defineComponent({
-    name: 'MainContent',
+    name: 'MainContentImages',
     setup() {
         const images = ref([
             {
@@ -35,7 +35,7 @@ export default defineComponent({
                 url: 'https://static9.depositphotos.com/1325564/1170/i/950/depositphotos_11700802-stock-photo-still-life-multifruit.jpg'
             },
             {
-                url: 'https://www.aprifel.com/wp-content/uploads/2019/02/orange.jpg'
+                url: 'https://thumbs.dreamstime.com/b/sliced-orange-fruit-leaves-isolated-white-23331258.jpg'
             },
             {
                 url: 'https://www.tasteofhome.com/wp-content/uploads/2023/01/GettyImages-542323318.jpg'
@@ -74,7 +74,7 @@ export default defineComponent({
                 url: 'https://static9.depositphotos.com/1325564/1170/i/950/depositphotos_11700802-stock-photo-still-life-multifruit.jpg'
             },
             {
-                url: 'https://www.aprifel.com/wp-content/uploads/2019/02/orange.jpg'
+                url: 'https://thumbs.dreamstime.com/b/sliced-orange-fruit-leaves-isolated-white-23331258.jpg'
             },
             {
                 url: 'https://www.tasteofhome.com/wp-content/uploads/2023/01/GettyImages-542323318.jpg'
@@ -113,7 +113,7 @@ export default defineComponent({
                 url: 'https://static9.depositphotos.com/1325564/1170/i/950/depositphotos_11700802-stock-photo-still-life-multifruit.jpg'
             },
             {
-                url: 'https://www.aprifel.com/wp-content/uploads/2019/02/orange.jpg'
+                url: 'https://thumbs.dreamstime.com/b/sliced-orange-fruit-leaves-isolated-white-23331258.jpg'
             },
             {
                 url: 'https://www.tasteofhome.com/wp-content/uploads/2023/01/GettyImages-542323318.jpg'
@@ -152,7 +152,7 @@ export default defineComponent({
                 url: 'https://static9.depositphotos.com/1325564/1170/i/950/depositphotos_11700802-stock-photo-still-life-multifruit.jpg'
             },
             {
-                url: 'https://www.aprifel.com/wp-content/uploads/2019/02/orange.jpg'
+                url: 'https://thumbs.dreamstime.com/b/sliced-orange-fruit-leaves-isolated-white-23331258.jpg'
             },
             {
                 url: 'https://www.tasteofhome.com/wp-content/uploads/2023/01/GettyImages-542323318.jpg'
@@ -182,7 +182,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.main-content {
+.main-content-images {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;

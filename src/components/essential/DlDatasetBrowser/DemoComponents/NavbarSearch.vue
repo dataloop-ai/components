@@ -31,6 +31,23 @@
             </dl-button>
         </div>
         <div style="display: flex; align-items: center; justify-content: end">
+            <div
+                v-if="isBasicSearch"
+                style="display: flex"
+            >
+                <dl-button
+                    color="secondary"
+                    outlined
+                >
+                    Saved Filters
+                </dl-button>
+                <dl-button
+                    color="secondary"
+                    flat
+                >
+                    Advanced
+                </dl-button>
+            </div>
             <dl-button
                 icon="icon-dl-info"
                 color="secondary"

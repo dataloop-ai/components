@@ -123,7 +123,7 @@ import DlButton from '../../../../basic/DlButton/DlButton.vue'
 import DlCheckbox from '../../../../essential/DlCheckbox/DlCheckbox.vue'
 
 export default defineComponent({
-    name: 'LeftSideContent',
+    name: 'StudioLeftDrawer',
     components: {
         DlTypography,
         DlIcon,

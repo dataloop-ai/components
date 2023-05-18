@@ -31,7 +31,7 @@ import DlButton from '../../../../basic/DlButton/DlButton.vue'
 import DlIcon from '../../../../essential/DlIcon/DlIcon.vue'
 
 export default defineComponent({
-    name: 'TabsMenu',
+    name: 'StudioTabsMenu',
     components: {
         DlTabs,
         DlTabPanels,

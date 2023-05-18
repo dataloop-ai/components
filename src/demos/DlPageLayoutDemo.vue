@@ -14,14 +14,9 @@
                     @click="isOpenedStudioModal = false"
                 />
             </div>
-            <DlStudioLayout
-                :expand-left-drawer="expandLeftDrawer"
-                :expand-right-drawer="expandRightDrawer"
-                @expandedLeftDrawer="expandLeftDrawer = $event"
-                @expandedRightDrawer="expandRightDrawer = $event"
-            >
+            <DlStudioLayout>
                 <template #header>
-                    <navbar-demo-content
+                    <studio-header
                         :expand-left-drawer="expandLeftDrawer"
                         @update:expand-left-drawer="handleExpandLeftDrawer"
                     />
@@ -30,16 +25,16 @@
                     <left-menu-content />
                 </template>
                 <template #leftDrawer>
-                    <dataset-left-drawer-content />
+                    <studio-left-drawer />
                 </template>
                 <template #rightDrawer>
-                    <tabs-menu />
+                    <studio-tabs-menu />
                 </template>
                 <template #mainContent>
-                    <dataset-default-content />
+                    <studio-main-content />
                 </template>
                 <template #footer>
-                    <dataset-footer-content />
+                    <studio-footer />
                 </template>
             </DlStudioLayout>
         </div>
@@ -59,21 +54,19 @@
             </div>
             <dl-dataset-browser>
                 <template #header>
-                    <navbar-kpi />
-                    <navbar-search />
+                    <dataset-header />
                 </template>
                 <template #leftDrawer>
-                    <left-drawer-content />
+                    <dataset-left-drawer />
                 </template>
                 <template #rightDrawer>
-                    <right-drawer-content />
+                    <dataset-right-drawer />
                 </template>
                 <template #mainContent>
-                    <MainContentHeader />
-                    <MainContent />
+                    <dataset-main-content />
                 </template>
                 <template #footer>
-                    <footer-content />
+                    <dataset-footer />
                 </template>
             </dl-dataset-browser>
         </div>
@@ -82,42 +75,38 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlStudioLayout from '../components/essential/DlStudioLayout/DlStudioLayout.vue'
-import NavbarDemoContent from '../components/essential/DlStudioLayout/components/Demo/NavbarDemoContent.vue'
-import LeftMenuContent from '../components/essential/DlStudioLayout/components/Demo/LeftMenuContent.vue'
-import TabsMenu from '../components/essential/DlStudioLayout/components/Demo/TabsMenu.vue'
-import DatasetLeftDrawerContent from '../components/essential/DlStudioLayout/components/Demo/LeftDrawerContent.vue'
-import DatasetDefaultContent from '../components/essential/DlStudioLayout/components/Demo/DefaultContent.vue'
-import DatasetFooterContent from '../components/essential/DlStudioLayout/components/Demo/FooterContent.vue'
-import DlDatasetBrowser from '../components/essential/DlDatasetBrowser/DlDatasetBrowser.vue'
 import { DlButton } from '../components'
-import NavbarKpi from '../components/essential/DlDatasetBrowser/DemoComponents/NavbarKpi.vue'
-import LeftDrawerContent from '../components/essential/DlDatasetBrowser/DemoComponents/LeftDrawerContent.vue'
-import RightDrawerContent from '../components/essential/DlDatasetBrowser/DemoComponents/RightDrawerContent.vue'
-import FooterContent from '../components/essential/DlDatasetBrowser/DemoComponents/FooterContent.vue'
-import MainContentHeader from '../components/essential/DlDatasetBrowser/DemoComponents/MainContentHeader.vue'
-import MainContent from '../components/essential/DlDatasetBrowser/DemoComponents/MainContent.vue'
-import NavbarSearch from '../components/essential/DlDatasetBrowser/DemoComponents/NavbarSearch.vue'
+import DlStudioLayout from '../components/essential/DlStudioLayout/DlStudioLayout.vue'
+import StudioHeader from '../components/essential/DlStudioLayout/components/Demo/StudioHeader.vue'
+import StudioMainContent from '../components/essential/DlStudioLayout/components/Demo/StudioMainContent.vue'
+import LeftMenuContent from '../components/essential/DlStudioLayout/components/Demo/LeftMenuContent.vue'
+import StudioTabsMenu from '../components/essential/DlStudioLayout/components/Demo/StudioTabsMenu.vue'
+import StudioLeftDrawer from '../components/essential/DlStudioLayout/components/Demo/StudioLeftDrawer.vue'
+import StudioFooter from '../components/essential/DlStudioLayout/components/Demo/StudioFooter.vue'
+import DlDatasetBrowser from '../components/essential/DlDatasetBrowser/DlDatasetBrowser.vue'
+import DatasetHeader from '../components/essential/DlDatasetBrowser/DemoComponents/DatasetHeader.vue'
+import DatasetMainContent from '../components/essential/DlDatasetBrowser/DemoComponents/DatasetMainContent.vue'
+import DatasetLeftDrawer from '../components/essential/DlDatasetBrowser/DemoComponents/DatasetLeftDrawer.vue'
+import DatasetRightDrawer from '../components/essential/DlDatasetBrowser/DemoComponents/DatasetRightDrawer.vue'
+import DatasetFooter from '../components/essential/DlDatasetBrowser/DemoComponents/DatasetFooter.vue'
 
 export default defineComponent({
-    name: 'DlLayoutDemo',
+    name: 'DlPageLayoutDemo',
     components: {
-        DlStudioLayout,
-        NavbarDemoContent,
-        DlDatasetBrowser,
-        LeftMenuContent,
-        DatasetLeftDrawerContent,
-        DatasetDefaultContent,
-        DatasetFooterContent,
-        TabsMenu,
         DlButton,
-        NavbarKpi,
-        LeftDrawerContent,
-        RightDrawerContent,
-        FooterContent,
-        MainContentHeader,
-        MainContent,
-        NavbarSearch
+        DlStudioLayout,
+        StudioHeader,
+        StudioMainContent,
+        StudioTabsMenu,
+        StudioLeftDrawer,
+        StudioFooter,
+        LeftMenuContent,
+        DlDatasetBrowser,
+        DatasetHeader,
+        DatasetLeftDrawer,
+        DatasetRightDrawer,
+        DatasetFooter,
+        DatasetMainContent
     },
     setup() {
         const expandLeftDrawer = ref(false)

@@ -1,79 +1,75 @@
 <template>
     <div
-        class="left-drawer-content"
+        class="right-drawer-content"
         :style="cssVars"
     >
-        <div class="left-drawer-content__toggle-icon">
+        <div class="right-drawer-content__toggle-icon">
             <dl-button
                 flat
-                color="secondary"
                 :icon="expandIcon"
+                color="secondary"
                 @click="onToggle"
             />
         </div>
-        <div style="padding: 40px 0 10px">
+        <div
+            style="
+                padding-bottom: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 300px;
+            "
+        >
+            <dl-icon
+                icon="icon-dl-item-outline"
+                size="30px"
+                color="dl-color-darker"
+            />
             <dl-typography
                 size="12px"
-                color="dl-color-dark"
+                color="secondary"
             >
-                Search in:
+                Select an item from the left to get more item details.
             </dl-typography>
         </div>
-        <dl-radio
-            v-model="checkModel"
-            label="All Dataset items"
-            :value="1"
-        />
-        <dl-radio
-            v-model="checkModel"
-            label="Folders"
-            :value="2"
-        />
-        <dl-radio
-            v-model="checkModel"
-            label="Tasks"
-            :value="3"
-        />
     </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue-demi'
-import DlRadio from '../../../essential/DlRadio/DlRadio.vue'
 import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
+import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
 import DlButton from '../../../basic/DlButton/DlButton.vue'
 
 export default defineComponent({
-    name: 'LeftDrawerContent',
+    name: 'DatasetRightDrawer',
     components: {
-        DlRadio,
         DlTypography,
+        DlIcon,
         DlButton
     },
     setup() {
         const LARGE_WIDTH = '300px'
         const SMALL_WIDTH = '30px'
-        const leftDrawerContentWidth = ref(LARGE_WIDTH)
+        const rightDrawerContentWidth = ref(LARGE_WIDTH)
         const isExpanded = ref(true)
-        const checkModel = ref('')
 
         const onToggle = () => {
             isExpanded.value = !isExpanded.value
-            leftDrawerContentWidth.value = isExpanded.value
+            rightDrawerContentWidth.value = isExpanded.value
                 ? LARGE_WIDTH
                 : SMALL_WIDTH
         }
         const expandIcon = computed(() =>
-            isExpanded.value ? 'icon-dl-expand' : 'icon-dl-collapse'
+            isExpanded.value ? 'icon-dl-collapse' : 'icon-dl-expand'
         )
         const cssVars = computed(() => {
             return {
-                '--left-drawer-content-width': leftDrawerContentWidth.value
+                '--right-drawer-content-width': rightDrawerContentWidth.value
             }
         })
 
         return {
-            checkModel,
             onToggle,
             expandIcon,
             cssVars
@@ -83,14 +79,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.left-drawer-content {
-    width: var(--left-drawer-content-width);
-    position: relative;
-    transition: all 300ms;
+.right-drawer-content {
+    width: var(--right-drawer-content-width);
+    transition: all 350ms;
 
     &__toggle-icon {
-        position: absolute;
-        right: 0;
+        left: 0;
     }
 }
 </style>

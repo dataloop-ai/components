@@ -10,7 +10,7 @@
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
-    name: 'FooterContent'
+    name: 'StudioFooter'
 })
 </script>
 

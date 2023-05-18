@@ -32,7 +32,7 @@ import DlSlider from '../../../compound/DlSlider/DlSlider.vue'
 import DlPagination from '../../../compound/DlPagination/DlPagination.vue'
 
 export default defineComponent({
-    name: 'FooterContent',
+    name: 'DatasetFooter',
     components: {
         DlSlider,
         DlPagination
@@ -74,6 +74,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     height: 40px;
+    padding: 0 15px 0 15px;
     gap: 20px;
 }
 </style>

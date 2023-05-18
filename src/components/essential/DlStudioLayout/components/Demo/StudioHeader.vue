@@ -81,7 +81,7 @@ import DlAvatar from '../../../../basic/DlAvatar/DlAvatar.vue'
 import DlIcon from '../../../../essential/DlIcon/DlIcon.vue'
 
 export default defineComponent({
-    name: 'NavbarDemoContent',
+    name: 'StudioHeader',
     components: {
         DlButton,
         DlAvatar,

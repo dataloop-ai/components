@@ -28,24 +28,7 @@
             <dl-counters
                 counter-font-size="20px"
                 title-font-size="12px"
-                :items="[
-                    {
-                        value: 200,
-                        text: 'All dataset items'
-                    },
-                    {
-                        value: 100,
-                        text: 'Selected items'
-                    },
-                    {
-                        value: 12,
-                        text: 'Annotated items'
-                    },
-                    {
-                        value: 17,
-                        text: 'Annotations'
-                    }
-                ]"
+                :items="counterItems"
             />
         </div>
     </div>
@@ -61,6 +44,30 @@ export default defineComponent({
     components: {
         DlTypography,
         DlCounters
+    },
+    setup() {
+        const counterItems = [
+            {
+                value: 200,
+                text: 'All dataset items'
+            },
+            {
+                value: 100,
+                text: 'Selected items'
+            },
+            {
+                value: 12,
+                text: 'Annotated items'
+            },
+            {
+                value: 17,
+                text: 'Annotations'
+            }
+        ]
+
+        return {
+            counterItems
+        }
     }
 })
 </script>

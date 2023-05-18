@@ -24,7 +24,8 @@
                     label: 'Medium',
                     value: 'medium',
                     bgColor: 'dl-color-warning',
-                    textColor: 'dl-color-darker'
+                    textColor: 'dl-color-darker',
+                    icon: 'icon-dl-search'
                 },
                 {
                     label: 'Low',

@@ -29,17 +29,6 @@ export default defineComponent({
     components: {
         DlPageLayout
     },
-    props: {
-        expandLeftDrawer: {
-            type: Boolean,
-            default: false
-        },
-        expandRightDrawer: {
-            type: Boolean,
-            default: false
-        }
-    },
-    emits: ['expandedLeftDrawer', 'expandedRightDrawer'],
     setup() {
         const template = '"h h h" "l p r" "l f r"'
 
