@@ -26,6 +26,7 @@
                     :max="max"
                     :step="step"
                     :color="color"
+                    :thumb-size="thumbSize"
                     :readonly="readonly"
                     :disabled="disabled"
                     :snap="snap"
@@ -134,6 +135,10 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        thumbSize: {
+            type: String,
+            default: '10px'
+        },
         min: {
             type: Number,
             default: 0
@@ -210,6 +215,7 @@ export default defineComponent({
             return {
                 '--text-color': getColor(this.textColor, 'dl-color-darker'),
                 '--width': this.width,
+                '--thumb-size': parseInt(this.thumbSize) / 2 + 'px',
                 '--color': getColor(this.color, 'dl-color-secondary')
             }
         }
