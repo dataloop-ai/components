@@ -367,7 +367,7 @@ export default defineComponent({
         },
         deleteButtonState(): boolean {
             return !this.filters.saved.filter(
-                (q: Query) => q.name === this.activeQuery?.name
+                (q: Query) => q.name === this.jsonEditorQuery?.name
             ).length
         }
     },
