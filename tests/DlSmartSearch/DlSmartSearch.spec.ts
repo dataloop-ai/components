@@ -49,7 +49,10 @@ describe('SmartSearch', () => {
         wrapper.vm.handleQueryRemove(mockQuery)
         expect(wrapper.vm.filtersModel).toBe(false)
         expect(wrapper.vm.removeQueryDialogBoxModel).toBe(true)
-        expect(wrapper.vm.activeQuery).toEqual(mockQuery)
+        expect(wrapper.vm.activeQuery).toEqual({
+            name: 'New Query',
+            query: ''
+        })
     })
     it('should set the query input to a specific value', () => {
         const wrapper = shallowMount(DlSmartSearch)
@@ -65,11 +68,6 @@ describe('SmartSearch', () => {
         //with search
         wrapper.vm.handleSaveQuery(true)
         expect(wrapper.emitted()['search-query']).toBeTruthy()
-    })
-    it('should handle editor query update', () => {
-        const wrapper = shallowMount(DlSmartSearch)
-        wrapper.vm.handleEditorQueryUpdate(mockQuery)
-        expect(wrapper.vm.inputModel).toMatch("Age = '20'")
     })
     it('should handle deleting a filter', () => {
         const tab = 'saved'

@@ -75,14 +75,32 @@
                 />
             </template>
             <template #body>
-                <dl-json-editor
-                    :query="activeQuery"
-                    :queries="filters.saved"
-                    :new-query="newQuery"
-                    @update-query="handleEditorQueryUpdate"
-                    @update-json-query="(query) => (jsonEditorQuery = query)"
-                    @update-new-query="(query) => (newQuery = query)"
-                />
+                <div class="json-editor-layout">
+                    <div class="json-query">
+                        <div class="json-query-menu">
+                            <dl-select
+                                :model-value="selectedOption"
+                                width="200px"
+                                :options="selectOptions"
+                                placeholder="New Query"
+                                @update:model-value="updateActiveQuery"
+                            />
+                            <dl-button
+                                icon="icon-dl-align-left"
+                                label="Align Left"
+                                flat
+                                color="secondary"
+                                @click="alignJsonText"
+                            />
+                        </div>
+                        <dl-json-editor
+                            v-model="jsonEditorQuery"
+                            :prevent-update="preventUpdate"
+                            @update-prevent="(val) => (preventUpdate = val)"
+                            @align-text="alignJsonText"
+                        />
+                    </div>
+                </div>
             </template>
             <template #footer>
                 <div class="json-editor__footer-menu">
@@ -173,6 +191,7 @@ import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
 import { DlInput } from '../../DlInput'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
+import { DlSelect } from '../../../compound'
 import {
     useSuggestions,
     Schema,
@@ -199,7 +218,8 @@ export default defineComponent({
         DlTypography,
         DlInput,
         DlSmartSearchFilters,
-        DlMenu
+        DlMenu,
+        DlSelect
     },
     props: {
         status: {
@@ -265,8 +285,13 @@ export default defineComponent({
         const isQuerying = ref(false)
         const currentTab = ref('saved')
         const oldInputQuery = ref('')
-        const jsonEditorQuery = ref(null)
+        const jsonEditorQuery = ref('{}')
         const newQuery = ref('')
+        const preventUpdate = ref(false)
+        const selectedOption = ref({
+            label: 'New Query',
+            value: ''
+        })
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -276,7 +301,8 @@ export default defineComponent({
         const handleInputModel = (value: string) => {
             inputModel.value = value
             const json = JSON.stringify(toJSON(removeBrackets(value)))
-            activeQuery.value.query = replaceWithAliases(json, props.aliases)
+            const newQuery = replaceWithAliases(json, props.aliases)
+            activeQuery.value.query = newQuery
             findSuggestions(value)
             isQuerying.value = false
             oldInputQuery.value = value
@@ -300,7 +326,6 @@ export default defineComponent({
                 toJSON(inputModel.value)
             }
         }
-
         return {
             uuid: `dl-smart-search-${v4()}`,
             inputModel,
@@ -319,6 +344,8 @@ export default defineComponent({
             oldInputQuery,
             jsonEditorQuery,
             newQuery,
+            preventUpdate,
+            selectedOption,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -367,8 +394,40 @@ export default defineComponent({
         },
         deleteButtonState(): boolean {
             return !this.filters.saved.filter(
-                (q: Query) => q.name === this.jsonEditorQuery?.name
+                (q: Query) => q.name === this.activeQuery?.name
             ).length
+        },
+        selectOptions(): Record<string, string>[] {
+            return [
+                {
+                    label: 'New Query',
+                    value: '{}'
+                },
+                ...this.filters.saved.map((q: Query) => ({
+                    label: q.name,
+                    value: q.query
+                }))
+            ]
+        }
+    },
+    watch: {
+        jsonEditorModel() {
+            const json = JSON.stringify(
+                this.toJSON(removeBrackets(this.inputModel))
+            )
+            const newQuery = replaceWithAliases(json, this.aliases)
+            if (newQuery && newQuery !== '{}') {
+                this.jsonEditorQuery = newQuery
+            }
+            this.alignJsonText()
+        },
+        jsonEditorQuery(val) {
+            if (
+                this.activeQuery.name === 'New Query' ||
+                this.activeQuery.name === ''
+            ) {
+                this.newQuery = val
+            }
         }
     },
     mounted() {
@@ -378,36 +437,32 @@ export default defineComponent({
         observer.observe(this.$refs.inputWrapper as HTMLElement)
     },
     methods: {
-        handleQueryRemove(query: Query) {
+        handleQueryRemove() {
             this.filtersModel = false
-            this.activeQuery = query
             this.removeQueryDialogBoxModel = true
         },
         handleSaveQuery(performSearch: boolean) {
+            this.activeQuery = {
+                name: this.newQueryName || this.activeQuery.name,
+                query: this.jsonEditorQuery
+            }
             if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()
+                const newQuery = revertAliases(
+                    stringifySmartQuery(JSON.parse(this.activeQuery.query)),
+                    this.aliases
+                )
+                this.inputModel = newQuery
+                this.oldInputQuery = newQuery
                 this.jsonEditorModel = false
             } else {
                 this.emitSaveQuery()
             }
         },
-        handleEditorQueryUpdate(query: Query) {
-            const newQuery = query?.query
-                ? query
-                : {
-                      name: 'New Query',
-                      query: '{}'
-                  }
-            this.activeQuery = newQuery
-            this.jsonEditorQuery = newQuery
-            try {
-                this.setQueryInput(query.query)
-            } catch (error) {}
-        },
         handleJsonSearchButton() {
             this.jsonEditorModel = false
-            this.activeQuery = this.jsonEditorQuery
+            this.activeQuery.query = this.jsonEditorQuery
             this.setQueryInput()
             this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
@@ -443,6 +498,12 @@ export default defineComponent({
                 this.currentTab,
                 this.inputModel
             )
+            this.selectedOption = {
+                label: 'New Query',
+                value: '{}'
+            }
+            this.activeQuery.query = this.newQuery
+            this.jsonEditorQuery = this.newQuery || '{}'
             this.removeQueryDialogBoxModel = false
         },
         emitSaveQuery() {
@@ -462,6 +523,30 @@ export default defineComponent({
             )
             this.inputModel = stringQuery
             this.oldInputQuery = stringQuery
+        },
+        updateActiveQuery(option: Record<string, string>) {
+            this.preventUpdate = true
+            const isNewQuery =
+                option.label === 'New Query' || option.label === ''
+            this.activeQuery = {
+                name: option.label,
+                query: isNewQuery ? this.newQuery : this.activeQuery.query
+            }
+            this.preventUpdate = false
+            this.jsonEditorQuery = isNewQuery
+                ? this.newQuery || '{}'
+                : option.value
+            this.alignJsonText()
+        },
+        alignJsonText() {
+            try {
+                this.preventUpdate = false
+                this.jsonEditorQuery = JSON.stringify(
+                    JSON.parse(this.jsonEditorQuery),
+                    null,
+                    2
+                )
+            } catch (err) {}
         }
     }
 })
@@ -544,5 +629,11 @@ export default defineComponent({
     &-save > * {
         margin: 0px 10px;
     }
+}
+.json-query-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 </style>
