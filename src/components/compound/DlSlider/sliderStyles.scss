@@ -70,7 +70,8 @@
   & .slider-bar-container {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: calc(100% - var(--thumb-size));
+    align-self: center;
   }
 
   & .text {
