@@ -43,31 +43,40 @@ export default defineComponent({
 
         virtualScrollSliceRatioBefore: {
             type: [Number, String],
+            required: false,
             default: 1
         },
 
         virtualScrollSliceRatioAfter: {
             type: [Number, String],
+            required: false,
             default: 1
         },
 
         virtualScrollItemSize: {
             type: [Number, String],
+            required: false,
             default: 0
         },
 
         virtualScrollStickySizeStart: {
             type: [Number, String],
+            required: false,
             default: 0
         },
 
         virtualScrollStickySizeEnd: {
             type: [Number, String],
+            required: false,
             default: 0
         },
-        tableColspan: [Number, String],
-        virtualScrollHorizontal: Boolean,
-        onVirtualScroll: Function,
+        tableColspan: { type: [Number, String], required: false, default: 1 },
+        virtualScrollHorizontal: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        onVirtualScroll: { type: Function, default: null },
         items: {
             type: Array,
             default: () => [] as Record<string, any>[]
@@ -80,11 +89,12 @@ export default defineComponent({
                 typeOptions.includes(v)
         },
 
-        itemsFn: { type: Function, default: void 0 },
+        itemsFn: { type: Function, default: null },
         itemsSize: { type: Number, default: 0 },
 
         scrollTarget: {
-            default: void 0
+            type: [String, Object],
+            default: null
         }
     },
     emits: ['virtual-scroll'],
@@ -92,8 +102,10 @@ export default defineComponent({
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
 
+        const isDefined = (v: any) => v !== undefined && v !== null
+
         const virtualScrollLength = computed(() => {
-            return props.itemsSize >= 0 && props.itemsFn !== void 0
+            return props.itemsSize >= 0 && isDefined(props.itemsFn)
                 ? parseInt(props.itemsSize as unknown as string, 10)
                 : Array.isArray(props.items)
                 ? props.items.length
@@ -121,18 +133,19 @@ export default defineComponent({
                 item
             })
 
-            return props.itemsFn === void 0
-                ? props.items
+            const itemsFn = props.itemsFn as Function
+            const items = props.items as Record<string, any>[]
+
+            return isDefined(itemsFn)
+                ? itemsFn(
+                      virtualScrollSliceRange.value.from,
+                      virtualScrollSliceRange.value.to -
+                          virtualScrollSliceRange.value.from
+                  ).map(mapFn)
+                : items
                       .slice(
                           virtualScrollSliceRange.value.from,
                           virtualScrollSliceRange.value.to
-                      )
-                      .map(mapFn)
-                : props
-                      .itemsFn(
-                          virtualScrollSliceRange.value.from,
-                          virtualScrollSliceRange.value.to -
-                              virtualScrollSliceRange.value.from
                       )
                       .map(mapFn)
         })
@@ -143,11 +156,11 @@ export default defineComponent({
                 (props.virtualScrollHorizontal === true
                     ? '--horizontal'
                     : '--vertical') +
-                (props.scrollTarget !== void 0 ? '' : ' scroll')
+                (isDefined(props.scrollTarget) ? '' : ' scroll')
         )
 
         const attributes = computed(() =>
-            props.scrollTarget !== void 0 ? {} : { tabindex: 0 }
+            isDefined(props.scrollTarget) ? {} : { tabindex: 0 }
         )
 
         watch(virtualScrollLength, () => {
@@ -173,7 +186,7 @@ export default defineComponent({
         function configureScrollTarget() {
             localScrollTarget = getScrollTarget(
                 getVirtualScrollEl(),
-                props.scrollTarget
+                props.scrollTarget as any
             )
 
             localScrollTarget!.addEventListener(
@@ -184,13 +197,13 @@ export default defineComponent({
         }
 
         function unconfigureScrollTarget() {
-            if (localScrollTarget !== void 0) {
+            if (isDefined(localScrollTarget)) {
                 localScrollTarget.removeEventListener(
                     'scroll',
                     onVirtualScrollEvt,
                     listenOpts.passive
                 )
-                localScrollTarget = void 0
+                localScrollTarget = null
             }
         }
 
@@ -203,7 +216,7 @@ export default defineComponent({
                 create
             )
 
-            if (slots.before !== void 0) {
+            if (isDefined(slots.before)) {
                 child = slots.before().concat(child)
             }
 
@@ -245,6 +258,12 @@ export default defineComponent({
         }
     },
     render(createElement: Function) {
+        /**
+         * Had to do some general Typescript hackery here to get this to work in webpack based builder project.
+         * The original code is written in Vue 2, but this project is using Vue 3.
+         * Some of the types are not compatible, so I had to cast some of the types to any.
+         */
+
         const renderFn = isVue2 ? createElement : h
         const renderSlot = (fn: Function) => (isVue2 ? fn() : () => fn())
 
@@ -255,25 +274,36 @@ export default defineComponent({
             return
         }
 
-        return this.$props.type === '__dltable'
-            ? getTableMiddle(
-                  {
-                      ref: 'rootRef',
-                      class: 'dl-table__middle ' + this.classes
-                  },
-                  this.getVirtualChildren(renderFn),
-                  renderFn
-              )
-            : renderFn(
-                  this.tag,
-                  {
-                      ...this.attrs,
-                      ref: 'rootRef',
-                      class: [this.attrs.class, this.classes],
-                      ...this.attributes
-                  },
-                  renderSlot(() => this.getVirtualChildren(renderFn))
-              )
+        const isDlTable = (this.$props as any).type === '__dltable'
+        const getVirtualChildren = (this as any).getVirtualChildren as Function
+
+        if (isDlTable) {
+            return getTableMiddle(
+                {
+                    ref: 'rootRef',
+                    class: 'dl-table__middle ' + this.classes
+                },
+                getVirtualChildren(renderFn),
+                renderFn
+            )
+        }
+
+        const attrs = this.attrs as Record<string, any>
+        const attributes = this.attributes as Record<string, any>
+        const classes = this.classes as string // todo: does this have to be casted to an object?
+        const attributeClasses = attrs.class as Record<string, any>
+        const tag = this.tag as string
+
+        return renderFn(
+            tag,
+            {
+                ...attrs,
+                ref: 'rootRef',
+                class: [attributeClasses, classes],
+                ...attributes
+            },
+            renderSlot(() => getVirtualChildren(renderFn))
+        )
     }
 })
 </script>
