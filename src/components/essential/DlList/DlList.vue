@@ -3,6 +3,7 @@
         :is="tag"
         :id="uuid"
         :class="classes"
+        :style="cssVars"
     >
         <slot :clickable="clickable" />
     </component>
@@ -21,6 +22,10 @@ export default defineComponent({
         tag: {
             type: String,
             default: 'div'
+        },
+        maxHeight: {
+            type: String,
+            default: '30vh'
         }
     },
     data() {
@@ -36,6 +41,11 @@ export default defineComponent({
                 (this.separator ? ' dl-list--separator' : '') +
                 (this.padding ? ' dl-list--padding' : '')
             )
+        },
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-list-calculated-max-height': this.maxHeight
+            }
         }
     }
 })
@@ -62,5 +72,6 @@ export default defineComponent({
     &--padding {
         padding: 8px 0;
     }
+    max-height: var(--dl-list-max-height, --dl-list-calculated-max-height);
 }
 </style>
