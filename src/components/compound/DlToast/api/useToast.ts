@@ -2,6 +2,7 @@ import { isVue3 } from 'vue-demi'
 import toastComponent from '../components/ToastComponent.vue'
 import { createComponent } from '../utils/render'
 import { v4 } from 'uuid'
+import { DlToastProps, DlToastTypes } from '../types'
 
 const state: { prevToastId: any; toasts: { [key: string]: any } } = {
     prevToastId: null,
@@ -10,7 +11,7 @@ const state: { prevToastId: any; toasts: { [key: string]: any } } = {
 
 export const useToast = (globalProps = {}) => {
     return {
-        open(options: Object | string) {
+        open(options: DlToastProps | string) {
             let message = null
             if (typeof options === 'string') message = options
 
@@ -55,6 +56,46 @@ export const useToast = (globalProps = {}) => {
                 propsData,
                 document.body
             )
+        },
+        success(options: DlToastProps | string) {
+            let props: Partial<DlToastProps> = {}
+            if (typeof options === 'string') {
+                props.message = options
+            } else {
+                props = options
+            }
+
+            this.open({ ...props, type: DlToastTypes.SUCCESS } as DlToastProps)
+        },
+        error(options: DlToastProps | string) {
+            let props: Partial<DlToastProps> = {}
+            if (typeof options === 'string') {
+                props.message = options
+            } else {
+                props = options
+            }
+
+            this.open({ ...props, type: DlToastTypes.ERROR } as DlToastProps)
+        },
+        info(options: DlToastProps | string) {
+            let props: Partial<DlToastProps> = {}
+            if (typeof options === 'string') {
+                props.message = options
+            } else {
+                props = options
+            }
+
+            this.open({ ...props, type: DlToastTypes.INFO } as DlToastProps)
+        },
+        warn(options: DlToastProps | string) {
+            let props: Partial<DlToastProps> = {}
+            if (typeof options === 'string') {
+                props.message = options
+            } else {
+                props = options
+            }
+
+            this.open({ ...props, type: DlToastTypes.WARNING } as DlToastProps)
         }
     }
 }
