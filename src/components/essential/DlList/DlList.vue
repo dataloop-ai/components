@@ -3,7 +3,6 @@
         :is="tag"
         :id="uuid"
         :class="classes"
-        :style="cssVars"
     >
         <slot :clickable="clickable" />
     </component>
