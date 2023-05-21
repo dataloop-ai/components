@@ -83,25 +83,84 @@ export class Stepper {
         }
     }
 
-    public completeStep() {
-        if (!this.currentStep) return
-        this.currentStep.completed = true
-        this.moveToNextStep()
+    /**
+     *
+     * @param options { step?: number; preventNext?: boolean }
+     * @param options.step The steps to complete
+     * @param options.preventNext Prevents the stepper from moving to the next step
+     * @returns
+     */
+    public completeStep(options: { step?: Step; preventNext?: boolean } = {}) {
+        const { step, preventNext } = options
+        const stepToComplete = step ?? this.currentStep
+
+        if (!stepToComplete) {
+            return
+        }
+
+        stepToComplete.completed = true
+
+        if (!preventNext) {
+            this.moveToNextStep()
+        }
     }
 
-    public failStep(msg?: string) {
-        if (!this.currentStep) return
-        this.currentStep.error = msg || ''
+    /**
+     * @param message The error message
+     * @param options { step?: number; preventNext?: boolean }
+     * @param options.step The steps to Fail
+     * @returns
+     */
+    public failStep(message?: string, options: { step?: Step } = {}) {
+        const { step } = options
+        const stepToFail = step ?? this.currentStep
+
+        if (stepToFail) {
+            return
+        }
+
+        this.currentStep.error = message ?? ''
     }
 
-    public setStepWarning(msg?: string) {
-        if (!this.currentStep) return
-        this.currentStep.warning = msg || ''
-        this.moveToNextStep()
+    /**
+     * @param message The warning message
+     * @param options { step?: number; preventNext?: boolean }
+     * @param options.step The steps to Warn
+     * @param options.preventNext Prevents the stepper from moving to the next step
+     * @returns
+     */
+    public setStepWarning(
+        message?: string,
+        options: { step?: Step; preventNext?: boolean } = {}
+    ) {
+        const { step, preventNext } = options
+        const stepToWarn = step ?? this.currentStep
+
+        if (stepToWarn) {
+            return
+        }
+
+        this.currentStep.warning = message ?? ''
+
+        if (!preventNext) {
+            this.moveToNextStep()
+        }
     }
 
-    public resetStep() {
-        if (!this.currentStep) return
+    /**
+     *
+     * @param options { step?: number; preventNext?: boolean }
+     * @param options.step The steps to reset
+     * @returns
+     */
+    public resetStep(options: { step?: Step } = {}) {
+        const { step } = options
+        const stepToReset = step ?? this.currentStep
+
+        if (stepToReset) {
+            return
+        }
+
         this.currentStep.reset()
     }
 }
