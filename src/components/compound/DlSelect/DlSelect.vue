@@ -144,6 +144,7 @@
                 style="border-radius: 0"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
+                :max-height="dropdownMaxHeight"
                 @show="onMenuOpen"
                 @hide="closeMenu"
                 @highlightedIndex="setHighlightedIndex"
@@ -152,7 +153,6 @@
                 <dl-list
                     class="select-list"
                     :padding="false"
-                    :max-height="dropdownMaxHeight"
                 >
                     <dl-list-item v-if="noOptions">
                         <dl-item-section color="dl-color-medium">
