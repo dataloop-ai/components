@@ -118,7 +118,7 @@
                     :class="[
                         ...adornmentClasses,
                         `adornment-container--pos-right${
-                            disableDropdownIconPadding
+                            withoutDropdownIconPadding
                                 ? ' adornment-container--pos-right-without_padding'
                                 : ''
                         }`
