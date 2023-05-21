@@ -115,11 +115,11 @@ export class Stepper {
         const { step } = options
         const stepToFail = step ?? this.currentStep
 
-        if (stepToFail) {
+        if (!stepToFail) {
             return
         }
 
-        this.currentStep.error = message ?? ''
+        stepToFail.error = message ?? ''
     }
 
     /**
@@ -136,11 +136,11 @@ export class Stepper {
         const { step, preventNext } = options
         const stepToWarn = step ?? this.currentStep
 
-        if (stepToWarn) {
+        if (!stepToWarn) {
             return
         }
 
-        this.currentStep.warning = message ?? ''
+        stepToWarn.warning = message ?? ''
 
         if (!preventNext) {
             this.moveToNextStep()
@@ -157,10 +157,10 @@ export class Stepper {
         const { step } = options
         const stepToReset = step ?? this.currentStep
 
-        if (stepToReset) {
+        if (!stepToReset) {
             return
         }
 
-        this.currentStep.reset()
+        stepToReset.reset()
     }
 }
