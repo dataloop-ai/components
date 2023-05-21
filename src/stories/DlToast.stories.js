@@ -34,11 +34,6 @@ export default {
             description: 'number of seconds the component is displayed',
             defaultValue: 10
         },
-        classItem: {
-            control: 'text',
-            description: 'custom class for toast item',
-            defaultValue: 'demo-toast'
-        },
         width: {
             control: 'text',
             description: 'toast width size',
@@ -65,15 +60,8 @@ const Template = (args) => ({
     template: `<div style="padding: 50px"><DlButton @click="click" v-bind="args" /></div>`,
     methods: {
         click() {
-            const {
-                type,
-                message,
-                position,
-                duration,
-                closable,
-                classItem,
-                width
-            } = this.args
+            const { type, message, position, duration, closable, width } =
+                this.args
 
             DlToast.open({
                 type,
@@ -81,7 +69,6 @@ const Template = (args) => ({
                 position,
                 duration,
                 closable,
-                classItem,
                 width
             })
         }
