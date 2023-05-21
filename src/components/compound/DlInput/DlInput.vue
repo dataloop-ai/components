@@ -640,8 +640,7 @@ export default defineComponent({
         align-items: center;
 
         &--s {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin: 4px auto auto;
         }
     }
 

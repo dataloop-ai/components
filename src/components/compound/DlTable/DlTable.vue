@@ -158,7 +158,10 @@
                         onTrContextMenu($event, props.item, pageIndex)
                     "
                 >
-                    <td v-if="hasDraggableRows">
+                    <td
+                        v-if="hasDraggableRows"
+                        class="dl-table__drag-icon"
+                    >
                         <dl-icon
                             class="draggable-icon"
                             icon="icon-dl-drag"
@@ -340,7 +343,10 @@
                                 onTrContextMenu($event, row, pageIndex)
                             "
                         >
-                            <td v-if="hasDraggableRows">
+                            <td
+                                v-if="hasDraggableRows"
+                                class="dl-table__drag-icon"
+                            >
                                 <dl-icon
                                     class="draggable-icon"
                                     icon="icon-dl-drag"
@@ -447,7 +453,7 @@
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
-                            total-items="rows.length"
+                            :total-items="rows.length"
                             @update:rowsPerPage="
                                 (v) => setPagination({ rowsPerPage: v })
                             "

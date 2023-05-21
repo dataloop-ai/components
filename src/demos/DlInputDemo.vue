@@ -60,6 +60,17 @@
             optional
         />
         <dl-input
+            v-model="warningFieldValue"
+            title="Warning Example"
+            style="width: 220px"
+            placeholder="Select option"
+            size="s"
+            warning
+            warning-message="Something isn't right."
+            info-message="This won't show, error is true"
+            optional
+        />
+        <dl-input
             v-model="errorFieldValue"
             title="Error Example"
             style="width: 220px"
