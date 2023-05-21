@@ -151,8 +151,8 @@
             >
                 <dl-list
                     class="select-list"
-                    :style="dropdownCSSVars"
                     :padding="false"
+                    :max-height="dropdownMaxHeight"
                 >
                     <dl-list-item v-if="noOptions">
                         <dl-item-section color="dl-color-medium">
@@ -549,11 +549,6 @@ export default defineComponent({
                 '--dl-select-expand-icon-width': this.withoutDropdownIconPadding
                     ? '16px'
                     : '28px'
-            }
-        },
-        dropdownCSSVars(): Record<string, string> {
-            return {
-                '--dl-select-dropdown-max-height': this.dropdownMaxHeight
             }
         },
         asteriskClasses(): string[] {
@@ -965,6 +960,7 @@ export default defineComponent({
         background-color: var(--dl-color-fill);
     }
 
+    //todo: This doesnt work because of portal.
     .select-list {
         padding: 5px 0;
         max-height: var(--dl-select-dropdown-max-height);

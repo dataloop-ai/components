@@ -17,7 +17,8 @@ describe('DlList', () => {
             clickable: false,
             padding: false,
             separator: false,
-            tag: 'div'
+            tag: 'div',
+            maxHeight: '30vh'
         })
 
         expect(wrapper.vm.classes).toBe('dl-list')

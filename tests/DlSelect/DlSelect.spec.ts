@@ -296,9 +296,6 @@ describe('dl-select computed', () => {
             }
         })
         expect(wrapper.vm.cssVars['--dl-select-width']).toMatch('25vh')
-        expect(
-            wrapper.vm.dropdownCSSVars['--dl-select-dropdown-max-height']
-        ).toMatch('50%')
     })
 
     it('should get and set the items', () => {
