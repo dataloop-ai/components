@@ -17,10 +17,6 @@
                     title="Collapse count"
                 />
                 <dl-input
-                    v-model="classItem"
-                    title="Custom class for toast item"
-                />
-                <dl-input
                     v-model="width"
                     title="Custom width for toast item"
                 />
@@ -106,6 +102,7 @@ import {
     DlTextArea,
     DlToast
 } from '../components'
+import { DlToastPositions, DlToastTypes } from '../components/types'
 
 export default defineComponent({
     name: 'DlToast',
@@ -124,16 +121,14 @@ export default defineComponent({
         const type = ref('success')
         const position = ref('bottom')
         const closable = ref(true)
-        const classItem = ref('demo-toast')
         const width = ref('auto')
         const collapseCount = ref(null)
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
-                position: position.value,
-                type: type.value,
+                position: position.value as DlToastPositions,
+                type: type.value as DlToastTypes,
                 duration: Number(duration.value) || 1000,
-                classItem: classItem.value,
                 closable: closable.value,
                 width: width.value,
                 collapseCount: collapseCount.value
@@ -145,7 +140,6 @@ export default defineComponent({
             duration,
             type,
             position,
-            classItem,
             closable,
             width,
             collapseCount
