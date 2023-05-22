@@ -409,7 +409,7 @@ export default defineComponent({
         const isExpanded = ref(false)
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
-        const isEmpty = ref(false)
+        const isEmpty = ref(true)
         const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
 
         const setHighlightedIndex = (value: any) => {
