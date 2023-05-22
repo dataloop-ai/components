@@ -330,7 +330,7 @@ export default defineComponent({
         fitContent: Boolean,
         margin: {
             type: String,
-            default: '0px'
+            default: null
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
@@ -397,9 +397,7 @@ export default defineComponent({
         cssVars(): Record<string, any> {
             let inputMargin = this.margin
 
-            console.log(this.margin)
-
-            if (!parseInt(this.margin) && this.isSmall) {
+            if (!this.margin && this.isSmall) {
                 inputMargin = '0px 20px 0px 0px'
             }
             return {
