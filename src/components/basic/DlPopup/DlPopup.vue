@@ -464,7 +464,7 @@ export default defineComponent({
 .dl-popup {
     z-index: calc(var(--dl-z-index-menu) - 1);
     position: fixed !important;
-    padding: 10px 0 16px 0;
+    padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);
     display: flex;
     background-color: var(--dl-color-panel-background);
