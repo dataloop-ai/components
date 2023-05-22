@@ -44,12 +44,14 @@
                 </dl-chip>
             </template>
             <template #option="scope">
-                <dl-chip
-                    :text-color="scope.opt.textColor"
-                    :color="scope.opt.bgColor"
-                >
-                    {{ scope.opt.label }}
-                </dl-chip>
+                <div class="flex">
+                    <dl-chip
+                        :text-color="scope.opt.textColor"
+                        :color="scope.opt.bgColor"
+                    >
+                        {{ scope.opt.label }}
+                    </dl-chip>
+                </div>
             </template>
         </dl-select>
 
