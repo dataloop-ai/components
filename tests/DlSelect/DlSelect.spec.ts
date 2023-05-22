@@ -51,9 +51,7 @@ describe('dl-select methods', () => {
 
     it('should close the menu and emit hide events', () => {
         const wrapper = mount(DlSelect)
-        wrapper.setData({
-            isExpanded: true
-        })
+        wrapper.vm.isExpanded = true
         wrapper.vm.closeMenu()
 
         expect(wrapper.vm.isExpanded).toBeFalsy()
