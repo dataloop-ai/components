@@ -35,8 +35,15 @@
                 </span>
             </div>
             <div
+                v-if="!!topMessage.length && !isSmall"
+                class="break"
+            />
+            <div
                 v-show="!!topMessage.length"
-                class="dl-text-input__top-message-container"
+                :class="{
+                    'dl-text-input__top-message-container': true,
+                    'dl-text-input__top-message-container--s': isSmall
+                }"
             >
                 <dl-info-error-message
                     v-show="!!topMessage.length"
@@ -685,6 +692,10 @@ export default defineComponent({
         display: flex;
         margin-bottom: 10px;
         text-align: start;
+
+        &--s {
+            padding: 0px 10px;
+        }
     }
 
     &__input-wrapper {

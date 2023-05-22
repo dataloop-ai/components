@@ -2,7 +2,7 @@
     <div>
         <dl-input
             v-model="textInputValue"
-            style="width: 220px"
+            style="width: 920px"
             placeholder="Select option"
             size="l"
             margin="20px"
