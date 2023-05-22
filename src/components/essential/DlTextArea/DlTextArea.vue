@@ -4,6 +4,55 @@
         class="container"
         :style="cssVars"
     >
+        <div class="dl-textarea__header">
+            <div
+                v-show="!!title.length || !!tooltip.length"
+                class="dl-textarea__title-container"
+            >
+                <label
+                    v-show="!!title.length"
+                    class="dl-textarea__title"
+                >
+                    {{ title }}<span v-show="required"> *</span>
+                    {{ !required && optional ? ' (Optional)' : null }}
+                </label>
+                <span v-show="!!tooltip.length">
+                    <dl-icon
+                        class="dl-textarea__tooltip-icon"
+                        icon="icon-dl-info"
+                        size="12px"
+                    />
+                    <dl-tooltip>
+                        {{ tooltip }}
+                    </dl-tooltip>
+                </span>
+            </div>
+            <div
+                v-show="!!topMessage.length"
+                class="dl-textarea__top-message-container"
+            >
+                <dl-info-error-message
+                    v-show="!!topMessage.length"
+                    position="above"
+                    :value="topMessage"
+                />
+            </div>
+            <span
+                v-show="showClearButton"
+                class="dl-textarea__clear-button"
+            >
+                <dl-button
+                    ref="input-clear-button"
+                    icon="icon-dl-close"
+                    size="s"
+                    text-color="dl-color-darker"
+                    flat
+                    fluid
+                    @click="onClear"
+                />
+                <dl-tooltip v-if="clearButtonTooltip"> Remove text </dl-tooltip>
+            </span>
+        </div>
         <textarea
             ref="textarea"
             :value="modelValue"
@@ -55,10 +104,15 @@ import { v4 } from 'uuid'
 import { DlInfoErrorMessage } from '../../shared'
 import { defineComponent, computed, ref } from 'vue-demi'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
+import { DlIcon, DlTooltip } from '../'
+import DlButton from '../../basic/DlButton/DlButton.vue'
 
 export default defineComponent({
     name: 'DlTextArea',
     components: {
+        DlButton,
+        DlTooltip,
+        DlIcon,
         DlInfoErrorMessage
     },
     model: {
@@ -113,9 +167,37 @@ export default defineComponent({
         warning: {
             type: Boolean,
             default: false
+        },
+        required: {
+            type: Boolean,
+            default: false
+        },
+        tooltip: {
+            type: String,
+            default: ''
+        },
+        optional: {
+            type: Boolean,
+            default: false
+        },
+        title: {
+            type: String,
+            default: ''
+        },
+        topMessage: {
+            type: String,
+            default: ''
+        },
+        hideClearButton: {
+            type: Boolean,
+            default: false
+        },
+        clearButtonTooltip: {
+            type: Boolean,
+            default: false
         }
     },
-    emits: ['input', 'focus', 'blur', 'update:model-value', 'keydown'],
+    emits: ['input', 'focus', 'blur', 'clear', 'update:model-value', 'keydown'],
     setup(props) {
         const uuid = ref(`dl-text-area-${v4()}`)
         const textarea = ref(null)
@@ -161,7 +243,21 @@ export default defineComponent({
             textarea
         }
     },
+    computed: {
+        showClearButton(): boolean {
+            return !this.hideClearButton && !this.disabled && !!this.modelValue
+        }
+    },
     methods: {
+        onClear(e: any): void {
+            this.$emit('clear', this.modelValue)
+            this.$emit('input', '', e)
+            this.$emit('update:model-value', '')
+
+            const inputRef = this.$refs.textarea as HTMLInputElement
+            inputRef.value = ''
+            inputRef.focus()
+        },
         onChange(e: any) {
             this.$emit('input', e.target.value, e)
             this.$emit('update:model-value', e.target.value)
@@ -211,7 +307,36 @@ export default defineComponent({
     outline: none;
     color: var(--dl-color-darker);
     box-sizing: border-box;
-
+    &__clear-button {
+        position: absolute;
+        bottom: -25px;
+        right: 0;
+    }
+    &__header {
+        position: relative;
+        width: var(--dl-textarea-width);
+    }
+    &__title-container {
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        text-align: start;
+    }
+    &__title {
+        color: var(--dl-color-medium);
+        font-size: var(--dl-font-size-body);
+        text-align: left;
+        margin-right: 5px;
+        white-space: nowrap;
+    }
+    &__tooltip-icon {
+        color: var(--dl-color-medium);
+    }
+    &__top-message-container {
+        display: flex;
+        margin-bottom: 10px;
+        text-align: start;
+    }
     &:hover {
         border-color: var(--dl-color-hover);
     }
