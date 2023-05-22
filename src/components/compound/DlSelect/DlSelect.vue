@@ -186,8 +186,63 @@
                             {{ computedAllItemsLabel }}
                         </template>
                     </dl-select-option>
+                    <!-- Virtual scroll -->
+                    <dl-virtual-scroll
+                        v-if="optionsCount > MAX_ITEMS_PER_LIST"
+                        v-slot="{ item }"
+                        :items="options"
+                        :virtual-scroll-item-size="28"
+                        :virtual-scroll-sticky-size-start="28"
+                        :virtual-scroll-sticky-size-end="20"
+                        separator
+                    >
+                        <dl-select-option
+                            :key="getKeyForOption(item)"
+                            clickable
+                            :multiselect="multiselect"
+                            :class="{
+                                selected:
+                                    option === selectedOption &&
+                                    highlightSelected
+                            }"
+                            :style="
+                                optionIndex === highlightedIndex
+                                    ? 'background-color: var(--dl-color-fill)'
+                                    : ''
+                            "
+                            :with-wave="withWave"
+                            :model-value="modelValue"
+                            :value="getOptionValue(item)"
+                            :highlight-selected="highlightSelected"
+                            :count="getOptionCount(item)"
+                            :children="getOptionChildren(item)"
+                            :capitalized="capitalizedOptions"
+                            @update:model-value="handleModelValueUpdate"
+                            @click="selectOption(item)"
+                            @selected="handleSelected"
+                            @deselected="handleDeselected"
+                        >
+                            <slot
+                                v-if="hasOptionSlot"
+                                :opt="item"
+                                name="option"
+                            />
+                            <template v-else>
+                                {{
+                                    capitalizedOptions
+                                        ? typeof getOptionLabel(item) ===
+                                            'string' &&
+                                            getOptionLabel(item).toLowerCase()
+                                        : getOptionLabel(item)
+                                }}
+                            </template>
+                        </dl-select-option>
+                    </dl-virtual-scroll>
+
+                    <!-- Else normal list -->
                     <dl-select-option
                         v-for="(option, optionIndex) in options"
+                        v-else
                         :key="getKeyForOption(option)"
                         clickable
                         :multiselect="multiselect"
@@ -259,7 +314,11 @@
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { DlListItem } from '../../basic'
 import { DlTooltip, DlList, DlIcon, DlMenu } from '../../essential'
-import { DlInfoErrorMessage, DlItemSection } from '../../shared'
+import {
+    DlInfoErrorMessage,
+    DlItemSection,
+    DlVirtualScroll
+} from '../../shared'
 import { defineComponent, isVue2, PropType, ref } from 'vue-demi'
 import {
     getLabel,
@@ -282,7 +341,8 @@ export default defineComponent({
         DlListItem,
         DlMenu,
         DlTooltip,
-        DlSelectOption
+        DlSelectOption,
+        DlVirtualScroll
     },
     model: {
         prop: 'modelValue',
@@ -349,6 +409,8 @@ export default defineComponent({
         const isExpanded = ref(false)
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
+        const isEmpty = ref(true)
+        const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
 
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
@@ -367,6 +429,9 @@ export default defineComponent({
         }
 
         return {
+            uuid: `dl-select-${v4()}`,
+            MAX_ITEMS_PER_LIST,
+            isEmpty,
             isExpanded,
             highlightedIndex,
             selectedIndex,
@@ -375,13 +440,10 @@ export default defineComponent({
             handleModelValueUpdate
         }
     },
-    data() {
-        return {
-            uuid: `dl-select-${v4()}`,
-            isEmpty: true
-        }
-    },
     computed: {
+        optionsCount(): number {
+            return this.options?.length ?? 0
+        },
         identifierClass(): string {
             return `dl-select-${this.title}-${
                 this.placeholder ?? ''
