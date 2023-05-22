@@ -34,13 +34,6 @@
                         ref="jsonEditorRef"
                         class="json-editor"
                     />
-                    <dl-typography
-                        style="margin-top: 5px"
-                        variant="p"
-                        color="red"
-                    >
-                        {{ message }}
-                    </dl-typography>
                 </div>
             </template>
             <template #footer>
@@ -57,15 +50,13 @@
                     </div>
                     <div class="footer-save">
                         <dl-button
-                            :disabled="message !== ''"
                             outlined
                             label="Save As"
-                            @click="save"
+                            @click="handleSaveButton"
                         />
                         <dl-button
-                            :disabled="message !== ''"
                             label="Search"
-                            @click="$emit('search', activeQuery)"
+                            @click="handleSearchButton"
                         />
                     </div>
                 </div>
@@ -82,7 +73,6 @@ import { Query } from './types'
 import { DlSelect } from '../DlSelect'
 import { DlButton } from '../../basic'
 import { DlDialogBox, DlDialogBoxHeader } from '../DlDialogBox'
-import { DlTypography } from '../../essential'
 
 interface JSONContent {
     json: JSONValue
@@ -94,8 +84,7 @@ export default defineComponent({
         DlDialogBox,
         DlDialogBoxHeader,
         DlSelect,
-        DlButton,
-        DlTypography
+        DlButton
     },
     props: {
         modelValue: { type: Boolean, default: false },
@@ -112,7 +101,7 @@ export default defineComponent({
             default: () => [] as Query[]
         }
     },
-    emits: ['update:modelValue', 'save', 'remove', 'search'],
+    emits: ['update:modelValue', 'save', 'remove', 'search', 'update-query'],
     data() {
         return {
             preventOnChange: false,
@@ -122,8 +111,7 @@ export default defineComponent({
             selectedOption: {
                 label: this.query?.name,
                 value: this.query?.query
-            },
-            message: ''
+            }
         }
     },
     computed: {
@@ -156,27 +144,14 @@ export default defineComponent({
         queries() {
             this.resetEditor()
         },
-        query(val) {
-            this.$nextTick(() => {
-                if (val.name === 'New Query') return
-                this.selectedOption = {
-                    label: val.name,
-                    value: val.query
-                }
-                if (val.query && this.jsonEditor.set) {
-                    this.jsonEditor.set({
-                        text: val.query
-                    })
-                }
-                this.alignText()
-            })
-        },
         activeQuery(val) {
-            try {
-                if (val.query) JSON.parse(val.query)
-                this.message = ''
-            } catch {
-                this.message = 'Invalid Query.'
+            this.$emit('update-query', val)
+            this.jsonEditor?.set({
+                text: val.query
+            })
+            this.selectedOption = {
+                label: val.name,
+                value: val.query
             }
         }
     },
@@ -258,7 +233,7 @@ export default defineComponent({
             })
             this.alignText()
         },
-        save() {
+        handleSaveButton() {
             this.$emit(
                 'save',
                 this.activeQuery
@@ -268,6 +243,10 @@ export default defineComponent({
                           query: (this.jsonEditor?.get() as any).text || ''
                       }
             )
+        },
+        handleSearchButton() {
+            this.$emit('search', this.activeQuery)
+            this.$emit('update:modelValue', false)
         }
     }
 })
@@ -302,6 +281,11 @@ export default defineComponent({
 
 .footer-menu {
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.footer-save {
+    width: 25%;
     display: flex;
     justify-content: space-between;
 }

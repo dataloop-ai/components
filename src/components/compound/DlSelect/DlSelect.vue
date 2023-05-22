@@ -9,7 +9,7 @@
             v-show="!!title.length || !!tooltip.length"
             :class="{
                 'dl-select__title-container': true,
-                'title-container--s': isSmall
+                'dl-select__title-container--s': isSmall
             }"
         >
             <label
@@ -326,8 +326,7 @@ export default defineComponent({
             validator: optionsValidator
         },
         capitalizedOptions: { type: Boolean, default: false },
-        disableClearBtn: { type: Boolean, default: false },
-        disableDropdownIconPadding: { type: Boolean, default: false },
+        withoutDropdownIconPadding: { type: Boolean, default: false },
         clearButtonTooltip: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
         preserveSearch: { type: Boolean, default: false }
@@ -513,7 +512,7 @@ export default defineComponent({
             classes.push(`dl_select__select--${this.size}`)
             classes.push('dl_select__select--append')
 
-            if (this.disableDropdownIconPadding) {
+            if (this.withoutDropdownIconPadding) {
                 classes.push('dl_select__select--append-without_padding')
             }
             if (this.selectedIndex !== -1) {
@@ -547,7 +546,7 @@ export default defineComponent({
         cssVars(): Record<string, string> {
             return {
                 '--dl-select-width': this.width,
-                '--dl-select-expand-icon-width': this.disableDropdownIconPadding
+                '--dl-select-expand-icon-width': this.withoutDropdownIconPadding
                     ? '16px'
                     : '28px'
             }

@@ -18,7 +18,7 @@
             name="axe-x-labels"
         >
             <dl-chart-labels
-                :font-size="labelStyles.labelSize"
+                :font-size="labelStyles.fontSize"
                 :title="labelStyles.title"
                 :title-size="labelStyles.titleSize"
                 :title-color="labelStyles.titleColor"

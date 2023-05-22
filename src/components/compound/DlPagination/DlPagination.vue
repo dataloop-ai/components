@@ -98,7 +98,7 @@ export default defineComponent({
         directionLinks: Boolean,
         color: {
             type: String,
-            default: 'dl-color-bg'
+            default: 'dl-color-transparent'
         },
         textColor: {
             type: String,

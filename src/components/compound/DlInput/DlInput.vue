@@ -75,7 +75,7 @@
                     ]"
                 >
                     <slot name="append" />
-                    <span v-show="showClearBtn">
+                    <span v-show="showClearButton">
                         <dl-button
                             ref="input-clear-button"
                             icon="icon-dl-close"
@@ -89,7 +89,7 @@
                             Remove text
                         </dl-tooltip>
                     </span>
-                    <span v-show="showShowPassBtn">
+                    <span v-show="showShowPassButton">
                         <dl-button
                             ref="input-show-pass-button"
                             :icon="passShowIcon"
@@ -302,7 +302,7 @@ export default defineComponent({
             default: false
         },
         dense: Boolean,
-        disableClearBtn: {
+        hideClearButton: {
             type: Boolean,
             default: false
         },
@@ -436,7 +436,7 @@ export default defineComponent({
         hasAppend(): boolean {
             return (
                 (!!this.$slots.append ||
-                    !this.disableClearBtn ||
+                    !this.hideClearButton ||
                     this.type === 'password') &&
                 !this.isSmall
             )
@@ -447,9 +447,9 @@ export default defineComponent({
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
         },
-        showClearBtn(): boolean {
+        showClearButton(): boolean {
             return (
-                !this.disableClearBtn &&
+                !this.hideClearButton &&
                 this.type !== 'password' &&
                 !this.disabled &&
                 !this.readonly &&
@@ -457,7 +457,7 @@ export default defineComponent({
                 // this.focused
             )
         },
-        showShowPassBtn(): boolean {
+        showShowPassButton(): boolean {
             return !this.$slots.append && this.type === 'password'
         },
         showSuggestItems(): boolean {
@@ -640,8 +640,7 @@ export default defineComponent({
         align-items: center;
 
         &--s {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin: 4px auto auto;
         }
     }
 

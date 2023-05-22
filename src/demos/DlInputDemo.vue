@@ -60,6 +60,17 @@
             optional
         />
         <dl-input
+            v-model="warningFieldValue"
+            title="Warning Example"
+            style="width: 220px"
+            placeholder="Select option"
+            size="s"
+            warning
+            warning-message="Something isn't right."
+            info-message="This won't show, error is true"
+            optional
+        />
+        <dl-input
             v-model="errorFieldValue"
             title="Error Example"
             style="width: 220px"
@@ -90,13 +101,16 @@
             error-message="Error message is the strongest."
         />
         <p>input in a row with button</p>
-        <div class="row">
+        <div
+            class="row"
+            style="align-items: center"
+        >
             <dl-input
                 class="input-parts"
                 style="width: 440px"
                 placeholder="Select option"
                 title="Min"
-                without-root-padding
+                dense
                 size="s"
             />
             <dl-button

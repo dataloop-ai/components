@@ -80,8 +80,8 @@ describe('DlInput component', () => {
 
         const clearEvent: any = wrapper.emitted('clear')
         expect(clearEvent).toHaveLength(1)
-        const clearBtnInputEvent: any = wrapper.emitted('input')
-        expect(clearBtnInputEvent).toHaveLength(2)
+        const clearButtonInputEvent: any = wrapper.emitted('input')
+        expect(clearButtonInputEvent).toHaveLength(2)
     })
 
     describe(`When there's a warning`, () => {

@@ -97,5 +97,13 @@ export default defineComponent({
 
 .tabs {
     flex-grow: 1;
+    ::v-deep .dl-button-content {
+        padding-top: 1px;
+        min-height: var(--dl-tabs-arrows-size);
+        width: var(--dl-tabs-arrows-size);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 </style>

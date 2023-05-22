@@ -2,7 +2,7 @@
     <div class="dl-stepper-wrapper">
         <dl-stepper
             v-model="isOpen"
-            :hide-close-btn="true"
+            :hide-close-button="true"
             done-button-label="Create"
             width="calc(100vh-400px)"
             header-title="Create New Task"

@@ -85,6 +85,10 @@ export default defineComponent({
             type: String,
             default: '100%'
         },
+        height: {
+            type: String,
+            default: '4px'
+        },
         summary: {
             type: String,
             default: ''
@@ -102,6 +106,7 @@ export default defineComponent({
         cssVars(): Record<string, string> {
             return {
                 '--dl-progress-bar-width': `${this.computedValue}%`,
+                '--dl-progress-bar-height': `${this.height}`,
                 '--dl-progress-bar-bg': getColor(this.color)
             }
         }
@@ -109,7 +114,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .dl-progress-bar-label {
     margin: 0;
     font-size: var(--dl-font-size-body);
@@ -119,7 +124,7 @@ export default defineComponent({
 .dl-progress-bar {
     overflow: hidden;
     width: 100%;
-    height: 4px;
+    height: var(--dl-progress-bar-height);
     border-radius: 2px;
     background-color: var(--dl-color-separator);
     margin: 6px 0;
@@ -127,7 +132,7 @@ export default defineComponent({
 .dl-progress-bar-indicator {
     transition: width 0.5s;
     display: block;
-    height: 4px;
+    height: var(--dl-progress-bar-height);
     border-radius: 2px;
     background-color: var(--dl-progress-bar-bg);
     width: var(--dl-progress-bar-width);

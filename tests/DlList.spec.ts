@@ -14,9 +14,10 @@ describe('DlList', () => {
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.props()).toStrictEqual({
             bordered: false,
-            separator: false,
+            clickable: false,
             padding: false,
-            clickable: false
+            separator: false,
+            tag: 'div'
         })
 
         expect(wrapper.vm.classes).toBe('dl-list')
