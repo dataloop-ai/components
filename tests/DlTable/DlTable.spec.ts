@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlTable } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 const COLUMNS = [
     {
@@ -41,54 +41,46 @@ const COLUMNS = [
 ]
 
 describe('DlTable', () => {
-    it('should compute proper draggable values', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                draggable: 'rows'
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlTable, {
+                props: {
+                    columns: COLUMNS,
+                    draggable: 'rows',
+                    dense: true,
+                    separator: 'horizontal',
+                    titleClass: 'styled'
+                }
+            })
         })
 
-        expect(wrapper.vm.hasDraggableRows).toBe(true)
-        expect(wrapper.vm.hasDraggableColumns).toBe(false)
+        it('should compute title classes', async () => {
+            expect(wrapper.vm.titleClasses).toBe('dl-table__title styled')
 
-        await wrapper.setProps({
-            draggable: 'both'
+            await wrapper.setProps({
+                titleClass: undefined
+            })
+
+            expect(wrapper.vm.titleClasses.trim()).toBe('dl-table__title')
         })
-
-        expect(wrapper.vm.hasDraggableRows).toBe(true)
-        expect(wrapper.vm.hasDraggableColumns).toBe(true)
-    })
-
-    it('should compute container classes', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                dense: true,
-                separator: 'horizontal'
-            }
+        it('should compute container classes', () => {
+            expect(wrapper.vm.containerClass).toBe(
+                'dl-table__container dl-table--horizontal-separator column no-wrap dl-table--no-wrap dl-table--dense'
+            )
         })
+        it('should compute proper draggable values', async () => {
+            expect(wrapper.vm.hasDraggableRows).toBe(true)
+            expect(wrapper.vm.hasDraggableColumns).toBe(false)
 
-        expect(wrapper.vm.containerClass).toBe(
-            'dl-table__container dl-table--horizontal-separator column no-wrap dl-table--no-wrap dl-table--dense'
-        )
-    })
+            await wrapper.setProps({
+                draggable: 'both'
+            })
 
-    it('should compute title classes', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                titleClass: 'styled'
-            }
+            expect(wrapper.vm.hasDraggableRows).toBe(true)
+            expect(wrapper.vm.hasDraggableColumns).toBe(true)
         })
-
-        expect(wrapper.vm.titleClasses).toBe('dl-table__title styled')
-
-        await wrapper.setProps({
-            titleClass: undefined
-        })
-
-        expect(wrapper.vm.titleClasses.trim()).toBe('dl-table__title')
     })
 
     it('should compute the right bottom message', async () => {
