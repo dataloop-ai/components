@@ -346,12 +346,27 @@
                 </div>
             </template>
         </dl-select>
+
+        Select with virtual scrolling
+        <dl-select
+            v-model="selectedOption"
+            :options="alotOfOptions ? alotOfOptions : []"
+            style="margin-bottom: 150px"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlChip, DlSelect, DlIcon, DlBadge } from '../components'
+import { DlSelectOptionType } from '../components/compound/DlSelect/utils'
 
 const defaultOptions = [
     { label: 'Contributor 1', value: 'c1' },
@@ -480,6 +495,21 @@ export default defineComponent({
         isNotSelected() {
             // @ts-ignore
             return defaultOptions.includes(this.selectedBySearch as any)
+        },
+        alotOfOptions(): DlSelectOptionType {
+            const arr = [] as any[]
+
+            for (let i = 0; i < 1000; ++i) {
+                arr.push({
+                    key: i,
+                    subLabel: 'not so high',
+                    label: 'High ' + i,
+                    value: 'high',
+                    bgColor: 'dl-color-negative'
+                })
+            }
+
+            return arr
         }
     },
     methods: {
