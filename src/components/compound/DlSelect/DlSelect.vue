@@ -118,7 +118,7 @@
                     :class="[
                         ...adornmentClasses,
                         `adornment-container--pos-right${
-                            disableDropdownIconPadding
+                            withoutDropdownIconPadding
                                 ? ' adornment-container--pos-right-without_padding'
                                 : ''
                         }`
@@ -144,6 +144,7 @@
                 style="border-radius: 0"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
+                :max-height="dropdownMaxHeight"
                 @show="onMenuOpen"
                 @hide="closeMenu"
                 @highlightedIndex="setHighlightedIndex"
@@ -151,7 +152,6 @@
             >
                 <dl-list
                     class="select-list"
-                    :style="dropdownCSSVars"
                     :padding="false"
                 >
                     <dl-list-item v-if="noOptions">
@@ -549,11 +549,6 @@ export default defineComponent({
                 '--dl-select-expand-icon-width': this.withoutDropdownIconPadding
                     ? '16px'
                     : '28px'
-            }
-        },
-        dropdownCSSVars(): Record<string, string> {
-            return {
-                '--dl-select-dropdown-max-height': this.dropdownMaxHeight
             }
         },
         asteriskClasses(): string[] {
@@ -965,6 +960,7 @@ export default defineComponent({
         background-color: var(--dl-color-fill);
     }
 
+    //todo: This doesnt work because of portal.
     .select-list {
         padding: 5px 0;
         max-height: var(--dl-select-dropdown-max-height);

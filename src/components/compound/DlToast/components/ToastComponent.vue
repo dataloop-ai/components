@@ -8,11 +8,7 @@
             :id="`DlToastContainer-${uuid}`"
             ref="root"
             class="toast-item DlToastContainer"
-            :class="[
-                `toast-item--${type}`,
-                `toast-item--${position}`,
-                classItem
-            ]"
+            :class="[`toast-item--${type}`, `toast-item--${position}`]"
             :style="{ width }"
         >
             <dl-alert
@@ -64,7 +60,7 @@ import {
     ref
 } from 'vue-demi'
 import { DlAlert, DlBadge } from '../../../'
-import { Positions, Types } from '../utils/config'
+import { DlToastTypes, DlToastPositions } from '../types'
 import { removeElement } from '../utils/render'
 import { Animation } from '../types'
 import { v4 } from 'uuid'
@@ -79,14 +75,10 @@ export default defineComponent({
         },
         type: {
             type: String,
-            default: 'success',
-            validator(value: string): boolean {
-                return Object.values(Types as unknown).includes(value)
+            required: true,
+            validator(value: DlToastTypes): boolean {
+                return Object.values(DlToastTypes).includes(value)
             }
-        },
-        classItem: {
-            type: String,
-            default: ''
         },
         width: {
             type: String,
@@ -98,9 +90,9 @@ export default defineComponent({
         },
         position: {
             type: String,
-            default: Positions.bottom,
-            validator(value: string): boolean {
-                return Object.values(Positions as unknown).includes(value)
+            default: DlToastPositions.BOTTOM,
+            validator(value: DlToastPositions): boolean {
+                return Object.values(DlToastPositions).includes(value)
             }
         },
         closable: {
@@ -151,14 +143,14 @@ export default defineComponent({
 
         const correctParent = computed(() => {
             switch (position) {
-                case Positions.top:
-                case Positions.top_right:
-                case Positions.top_left:
+                case DlToastPositions.TOP:
+                case DlToastPositions.TOP_RIGHT:
+                case DlToastPositions.TOP_LEFT:
                     toastParentPosition.value = 'top'
                     return parentTop
-                case Positions.bottom:
-                case Positions.bottom_right:
-                case Positions.bottom_left:
+                case DlToastPositions.BOTTOM:
+                case DlToastPositions.BOTTOM_RIGHT:
+                case DlToastPositions.BOTTOM_LEFT:
                     toastParentPosition.value = 'bottom'
                     return parentBottom
             }
@@ -166,16 +158,16 @@ export default defineComponent({
 
         const transition = computed((): Animation => {
             switch (position) {
-                case Positions.top:
-                case Positions.top_right:
-                case Positions.top_left:
+                case DlToastPositions.TOP:
+                case DlToastPositions.TOP_RIGHT:
+                case DlToastPositions.TOP_LEFT:
                     return {
                         enter: 'dl-toast--fade-in-down',
                         leave: 'dl-toast--fade-out'
                     }
-                case Positions.bottom:
-                case Positions.bottom_right:
-                case Positions.bottom_left:
+                case DlToastPositions.BOTTOM:
+                case DlToastPositions.BOTTOM_RIGHT:
+                case DlToastPositions.BOTTOM_LEFT:
                     return {
                         enter: 'dl-toast--fade-in-up',
                         leave: 'dl-toast--fade-out'
@@ -231,13 +223,13 @@ export default defineComponent({
 
         const badgeColor = computed(() => {
             switch (props.type) {
-                case Types.success:
+                case DlToastTypes.SUCCESS:
                     return 'var(--dl-color-alert-success)'
-                case Types.warning:
+                case DlToastTypes.WARNING:
                     return 'var(--dl-color-alert-warn)'
-                case Types.error:
+                case DlToastTypes.ERROR:
                     return 'var(--dl-color-alert-error)'
-                case Types.info:
+                case DlToastTypes.INFO:
                     return 'var(--dl-color-alert-info)'
             }
         })
