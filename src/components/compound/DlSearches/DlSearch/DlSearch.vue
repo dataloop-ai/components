@@ -33,11 +33,8 @@
         </dl-input>
         <dl-button
             v-show="withSearchButton"
-            padding="9px 16px"
-            style="width: 20%; min-width: fit-content"
-            :size="size"
+            :size="buttonSize"
             :class="buttonClasses"
-            fluid
             @click="onSearchButtonPress"
         >
             Search
@@ -57,6 +54,11 @@ const SearchSizes = {
     m: 'm'
 } as const
 type TSearchSizes = (typeof SearchSizes)[keyof typeof SearchSizes]
+
+const BUTTON_SIZES = {
+    l: 'l',
+    m: 's'
+}
 
 export default defineComponent({
     name: 'DlSearch',
@@ -100,6 +102,9 @@ export default defineComponent({
         }
     },
     computed: {
+        buttonSize(): string {
+            return BUTTON_SIZES[this.size]
+        },
         identifierClass(): string {
             return `dl-search-${this.placeholder}`.replaceAll(' ', '-')
         },
