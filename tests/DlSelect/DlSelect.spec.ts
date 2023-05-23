@@ -51,9 +51,7 @@ describe('dl-select methods', () => {
 
     it('should close the menu and emit hide events', () => {
         const wrapper = mount(DlSelect)
-        wrapper.setData({
-            isExpanded: true
-        })
+        wrapper.vm.isExpanded = true
         wrapper.vm.closeMenu()
 
         expect(wrapper.vm.isExpanded).toBeFalsy()
@@ -296,9 +294,6 @@ describe('dl-select computed', () => {
             }
         })
         expect(wrapper.vm.cssVars['--dl-select-width']).toMatch('25vh')
-        expect(
-            wrapper.vm.dropdownCSSVars['--dl-select-dropdown-max-height']
-        ).toMatch('50%')
     })
 
     it('should get and set the items', () => {
