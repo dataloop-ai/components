@@ -290,7 +290,7 @@ input {
 }
 
 .sub-text {
-    margin-left: 6%;
+    padding-left: 30px;
     width: 80%;
     color: var(--dl-color-medium);
     word-break: break-all;

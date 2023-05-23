@@ -56,6 +56,7 @@ import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
 import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
+import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 
 export default {
     AvatarDemo,
@@ -115,5 +116,6 @@ export default {
     DlCardDemo,
     DlPageLayoutDemo,
     DlMarkupTableDemo,
-    DlVirtualScrollDemo
+    DlVirtualScrollDemo,
+    DlJsonEditorDemo
 }

@@ -281,6 +281,7 @@ export default defineComponent({
         const rangeStyles = computed(() => ({
             '--text-color': getColor(props.textColor, 'dl-color-darker'),
             '--width': props.width,
+            '--thumb-size': props.thumbSize,
             '--color': getColor(props.color, 'dl-color-secondary')
         }))
 

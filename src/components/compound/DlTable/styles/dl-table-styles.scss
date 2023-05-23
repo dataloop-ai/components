@@ -8,6 +8,11 @@
   border-collapse: separate;
   border-spacing: 0;
 
+  &__drag-icon > div {
+    transition: all ease-in 0.1s;
+      opacity: 0;
+  }
+
   //markup-table 
 
   &__card {
@@ -66,6 +71,9 @@
     height: 40px;
 
     &:not(.dl-tr--no-hover):hover {
+      .dl-table__drag-icon > div {
+        opacity: 1;
+      }
       td:not(.dl-td--no-hover) {
         background-color: var(--dl-color-fill-hover);
       }

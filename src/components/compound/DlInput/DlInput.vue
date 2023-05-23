@@ -35,8 +35,15 @@
                 </span>
             </div>
             <div
+                v-if="!!topMessage.length && !isSmall"
+                class="break"
+            />
+            <div
                 v-show="!!topMessage.length"
-                class="dl-text-input__top-message-container"
+                :class="{
+                    'dl-text-input__top-message-container': true,
+                    'dl-text-input__top-message-container--s': isSmall
+                }"
             >
                 <dl-info-error-message
                     v-show="!!topMessage.length"
@@ -327,7 +334,6 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        fitContent: Boolean,
         borderLeft: {
             type: String,
             default: ''
@@ -335,6 +341,11 @@ export default defineComponent({
         paddingProp: {
             type: String,
             default: '20px 20px 20px 0px'
+        },
+        fitContent: Boolean,
+        margin: {
+            type: String,
+            default: null
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
@@ -381,7 +392,13 @@ export default defineComponent({
     },
     computed: {
         cssVars(): Record<string, string> {
+            let inputMargin = this.margin
+
+            if (!this.margin && this.isSmall) {
+                inputMargin = '0px 20px 0px 0px'
+            }
             return {
+                '--dl-input-margin': inputMargin,
                 '--dl-input-border-left': this.borderLeft
                     ? this.borderLeft
                     : '1px solid var(--dl-color-separator)',
@@ -634,6 +651,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-text-input {
     padding: var(--dl-input-padding);
+    margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
@@ -657,8 +675,7 @@ export default defineComponent({
         align-items: center;
 
         &--s {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin: 4px auto auto;
         }
     }
 
@@ -688,6 +705,10 @@ export default defineComponent({
         display: flex;
         margin-bottom: 10px;
         text-align: start;
+
+        &--s {
+            padding: 0px 10px;
+        }
     }
 
     &__input-wrapper {

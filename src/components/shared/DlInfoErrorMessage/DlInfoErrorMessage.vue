@@ -65,7 +65,7 @@ export default defineComponent({
     text-overflow: ellipsis;
     line-height: 11px;
     max-height: 22px;
-    white-space: pre-wrap;
+    white-space: nowrap;
     overflow: hidden;
     display: inline-block;
 }
