@@ -8,6 +8,15 @@
             placeholder="Search here"
             :auto-suggest-items="suggestItems"
         />
+
+        <dl-search
+            v-model="searchValue"
+            size="m"
+            with-search-button
+            highlight-matches
+            placeholder="Search here"
+            :auto-suggest-items="suggestItems"
+        />
     </div>
 </template>
 
