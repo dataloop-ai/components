@@ -63,7 +63,8 @@
             </dl-button>
         </div>
         <dl-dialog-box
-            :model-value="jsonEditorModel"
+            v-model="jsonEditorModel"
+            :height="500"
             :width="800"
         >
             <template #header>
@@ -629,6 +630,12 @@ export default defineComponent({
     &-save > * {
         margin: 0px 10px;
     }
+}
+.json-query {
+    height: 100%;
+}
+.json-editor-layout {
+    height: 90%;
 }
 .json-query-menu {
     display: flex;

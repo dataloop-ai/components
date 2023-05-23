@@ -12,13 +12,20 @@ import { debounce } from 'lodash'
 
 export default defineComponent({
     props: {
+        /**
+         * The string to display and modify as JSON
+         */
         modelValue: {
             type: String,
             default: '{}'
         },
+        /**
+         *  When this prop is false, the editor will not refresh, paired with the update-prevent event
+         * it helps with controlling when the editor refreshes
+         */
         preventUpdate: {
             type: Boolean,
-            default: false
+            default: null
         }
     },
     emits: ['update:modelValue', 'update-prevent', 'align-text'],
@@ -31,7 +38,7 @@ export default defineComponent({
     watch: {
         modelValue: {
             handler(val) {
-                if (!this.preventUpdate) {
+                if (this.preventUpdate === false) {
                     this.setJsonText(val)
                 }
             }
@@ -52,7 +59,9 @@ export default defineComponent({
                             return
                         }
                         this.$emit('update:modelValue', updatedContent.text)
-                        this.$emit('update-prevent', true)
+                        if (this.preventUpdate !== null) {
+                            this.$emit('update-prevent', true)
+                        }
                     },
                     100
                 ),
@@ -89,6 +98,7 @@ export default defineComponent({
     --jse-background-color: var(--dl-color-tooltip-text);
     --jse-value-color-boolean: #ae6307;
     --jse-value-color-string: #337433;
+    height: 100%;
     .jse-error {
         display: none !important;
     }
