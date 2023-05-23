@@ -383,14 +383,7 @@ export default defineComponent({
     gap: var(--dl-button-content-gap, 7px);
 }
 
-.dl-chip.first-letter-capitalized {
-    &::first-letter,
-    & > *::first-letter {
-        text-transform: capitalize;
-    }
-}
-
-.dl-chip.first-letter-capitalized {
+.dl-button-container.first-letter-capitalized {
     &::first-letter,
     & > *::first-letter {
         text-transform: capitalize;
