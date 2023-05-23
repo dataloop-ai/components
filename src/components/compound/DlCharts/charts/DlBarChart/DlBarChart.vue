@@ -46,7 +46,7 @@
                 :datasets="legendDatasets"
                 :width="chartWidth"
                 :class="legendClasses"
-                :align-items="legendProperties.alignItems"
+                :align-items="legendProps.alignItems"
                 @hide="hideData"
                 @on-hover="onHoverLegend"
                 @on-leave="onLeaveLegend"
