@@ -36,7 +36,8 @@ describe('DlButton', () => {
             tooltip: null,
             dense: false,
             active: false,
-            shaded: false
+            shaded: false,
+            uppercase: false
         })
 
         const buttonElem = await wrapper.find('.dl-button')
