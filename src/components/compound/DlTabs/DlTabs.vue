@@ -26,6 +26,7 @@
                 :no-caps="item.noCaps"
                 :is-active="modelValue === item.name"
                 :font-size="fontSize"
+                :icon-size="iconSize"
                 @click="handleTabClick"
             />
         </div>
@@ -56,7 +57,8 @@ export default defineComponent({
         fullWidth: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
-        fontSize: { type: String, default: '12px' }
+        fontSize: { type: String, default: '18px' },
+        iconSize: { type: String, default: '16px' }
     },
     emits: ['update:model-value'],
     data() {
