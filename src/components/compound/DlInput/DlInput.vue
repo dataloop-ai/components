@@ -2,6 +2,7 @@
     <div
         :id="uuid"
         :class="rootContainerClasses"
+        :style="cssVars"
     >
         <div :class="wrapperClasses">
             <div
@@ -333,7 +334,11 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        fitContent: Boolean
+        fitContent: Boolean,
+        margin: {
+            type: String,
+            default: null
+        }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     setup(props, { emit }) {
@@ -395,6 +400,16 @@ export default defineComponent({
                 classes.push('dl-text-input--dense')
             }
             return classes
+        },
+        cssVars(): Record<string, any> {
+            let inputMargin = this.margin
+
+            if (!this.margin && this.isSmall) {
+                inputMargin = '0px 20px 0px 0px'
+            }
+            return {
+                '--dl-input-margin': inputMargin
+            }
         },
         inputClasses(): string[] {
             const classes = [
@@ -623,7 +638,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-text-input {
-    padding: 20px 20px 20px 0px;
+    margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
