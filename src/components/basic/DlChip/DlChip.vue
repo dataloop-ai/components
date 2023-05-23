@@ -202,8 +202,7 @@ export default defineComponent({
     border-radius: 2px;
     padding: var(--dl-chip-padding);
     outline: 0;
-    min-width: 18px; // +2px from borders
-    max-height: 18px; // +2px from borders
+    min-width: 18px;
     min-height: 12px;
     max-width: var(--dl-chip-max-width);
     color: var(--dl-chip-text-color);

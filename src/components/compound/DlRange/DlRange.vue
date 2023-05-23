@@ -13,7 +13,7 @@
                     flat
                     size="m"
                     :disabled="disabled || readonly"
-                    data-test="reset-btn"
+                    data-test="reset-button"
                     @click="handleResetButtonClick"
                 >
                     Reset
@@ -177,14 +177,8 @@ export default defineComponent({
         normalizeModel()
 
         const initialValue = {
-            min:
-                props.modelValue.min === null
-                    ? props.min
-                    : between(props.modelValue.min, props.min, props.max),
-            max:
-                props.modelValue.max === null
-                    ? props.max
-                    : between(props.modelValue.max, props.min, props.max)
+            min: props.min,
+            max: props.max
         }
 
         const modelMinRatio = computed(() =>
@@ -287,6 +281,7 @@ export default defineComponent({
         const rangeStyles = computed(() => ({
             '--text-color': getColor(props.textColor, 'dl-color-darker'),
             '--width': props.width,
+            '--thumb-size': props.thumbSize,
             '--color': getColor(props.color, 'dl-color-secondary')
         }))
 
@@ -402,7 +397,7 @@ export default defineComponent({
 
             model.value.min = initialValue.min!
             model.value.max = initialValue.max!
-            emit('update:model-value', { ...model.value })
+            updateValue()
         }
 
         return {

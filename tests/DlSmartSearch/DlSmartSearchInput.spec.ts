@@ -15,7 +15,7 @@ describe('DlSmartSearchInput', () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {}
         })
-        expect(wrapper.vm.screenIcon).toMatch('icon-dl-full-screen')
+        expect(wrapper.vm.screenIcon).toBe('icon-dl-full-screen')
     })
 
     it('should assign classes to component according to the props', async () => {
@@ -112,7 +112,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
 
-        wrapper.vm.handleScreenBtnClick()
+        wrapper.vm.handleScreenButtonClick()
         expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
     })
 
@@ -161,7 +161,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
         wrapper.vm.expanded = false
-        wrapper.vm.handleScreenBtnClick()
+        wrapper.vm.handleScreenButtonClick()
         expect(wrapper.vm.expanded).toBe(true)
     })
 
@@ -180,7 +180,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
 
-        wrapper.vm.handleScreenBtnClick()
+        wrapper.vm.handleScreenButtonClick()
         expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
     })
 })

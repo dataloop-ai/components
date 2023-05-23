@@ -3,7 +3,7 @@
         <div style="margin: 40px 0">
             <dl-checkbox
                 v-model="switchState"
-                without-root-padding
+                dense
                 label="Disabled"
             />
         </div>
@@ -41,11 +41,10 @@ export default defineComponent({
         DlSmartSearch,
         DlCheckbox
     },
-    setup() {
-        return { aliases, schema }
-    },
     data() {
         return {
+            schema,
+            aliases,
             switchState: false,
             isLoading: false,
             filters: {
@@ -64,15 +63,12 @@ export default defineComponent({
                     },
                     {
                         name: 'Query 4',
-                        query: JSON.stringify({
-                            aa: 'bb',
-                            no: [{ as: 'sa' }, { zz: 'ss' }]
-                        })
+                        query: '{"age": 12, "name": "john"}'
                     }
                 ],
                 recent: [],
                 suggested: []
-            }
+            } as { [key: string]: Query[] }
         }
     },
     methods: {
@@ -84,7 +80,7 @@ export default defineComponent({
                 this.isLoading = false
             }, 2000)
 
-            if (this.filters.recent.at(-1)?.name !== queryString) {
+            if (this.filters.recent[-1]?.name !== queryString) {
                 this.filters.recent.push({
                     name: queryString || query.name,
                     query: query.query
@@ -92,24 +88,20 @@ export default defineComponent({
             }
         },
         handleSaveQuery(query: Query, type: string) {
-            const saveQueryIndex = this.filters[
-                type as keyof typeof this.filters
-            ].findIndex(
+            const saveQueryIndex = this.filters[type].findIndex(
                 (q: Query) => q.name === query.name || q.query === query.query
             )
             if (saveQueryIndex !== -1) {
-                this.filters[type as keyof typeof this.filters][
-                    saveQueryIndex
-                ] = query
+                this.filters[type][saveQueryIndex] = query
             } else {
-                this.filters[type as keyof typeof this.filters].push(query)
+                this.filters[type].push(query)
             }
         },
 
         handleRemoveQuery(query: Query, type: string) {
-            this.filters[type as keyof typeof this.filters] = this.filters[
-                type as keyof typeof this.filters
-            ].filter((q: Query) => q.name !== query.name)
+            this.filters[type] = this.filters[type].filter(
+                (q: Query) => q.name !== query.name
+            )
         }
     }
 })

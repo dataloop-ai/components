@@ -5,7 +5,7 @@
     >
         <button
             v-if="boundaryLinks"
-            class="dl-pagination--nav_btn"
+            class="dl-pagination--nav_button"
             :disabled="disabled || isFirstPage"
             @click="setPage(min)"
         >
@@ -16,7 +16,7 @@
         </button>
         <button
             v-if="directionLinks"
-            class="dl-pagination--nav_btn"
+            class="dl-pagination--nav_button"
             :disabled="disabled || isFirstPage"
             @click="setPage(value - 1)"
         >
@@ -25,10 +25,10 @@
                 size="16px"
             />
         </button>
-        <div class="dl-pagination--page_btns_wrapper">
+        <div class="dl-pagination--page_buttons_wrapper">
             <button
                 v-if="boundaryNumbers"
-                class="dl-pagination--page_btn"
+                class="dl-pagination--page_button"
                 :class="{ 'dl-pagination--active': isActivePage(min) }"
                 :disabled="disabled"
                 @click="setPage(min)"
@@ -37,7 +37,7 @@
             </button>
             <button
                 v-if="ellipsesStart"
-                class="dl-pagination--page_btn"
+                class="dl-pagination--page_button"
                 :disabled="disabled"
                 @click="setPage(pgFrom - 1)"
             >
@@ -47,7 +47,7 @@
                 <button
                     v-for="page in pages"
                     :key="page"
-                    class="dl-pagination--page_btn"
+                    class="dl-pagination--page_button"
                     :class="{
                         'dl-pagination--active': isActivePage(page),
                         active: isActivePage(page)
@@ -60,7 +60,7 @@
             </template>
             <button
                 v-if="ellipsesEnd"
-                class="dl-pagination--page_btn"
+                class="dl-pagination--page_button"
                 :disabled="disabled"
                 @click="setPage(pgTo + 1)"
             >
@@ -68,7 +68,7 @@
             </button>
             <button
                 v-if="boundaryNumbers && min !== max"
-                class="dl-pagination--page_btn"
+                class="dl-pagination--page_button"
                 :class="{ 'dl-pagination--active': isActivePage(max) }"
                 :disabled="disabled"
                 @click="setPage(max)"
@@ -78,7 +78,7 @@
         </div>
         <button
             v-if="directionLinks"
-            class="dl-pagination--nav_btn"
+            class="dl-pagination--nav_button"
             :disabled="disabled || isLastPage"
             @click="setPage(value + 1)"
         >
@@ -89,7 +89,7 @@
         </button>
         <button
             v-if="boundaryLinks"
-            class="dl-pagination--nav_btn"
+            class="dl-pagination--nav_button"
             :disabled="disabled || isLastPage"
             @click="setPage(max)"
         >
@@ -172,16 +172,16 @@ export default defineComponent({
         isLastPage(): boolean {
             return this.value === this.max
         },
-        btnMinWidth(): string {
+        buttonMinWidth(): string {
             return `${Math.max(2, String(this.max).length)}em`
         },
         cssVars(): Record<string, any> {
             return {
-                '--dl-btn-bg-color': getColor(
+                '--dl-button-bg-color': getColor(
                     this.color,
                     'dl-color-transparent'
                 ),
-                '--dl-active-btn-bg-color': getColor(
+                '--dl-active-button-bg-color': getColor(
                     this.activeColor,
                     'dl-color-secondary'
                 ),
@@ -190,7 +190,7 @@ export default defineComponent({
                     this.activeTextColor,
                     'dl-color-text-buttons'
                 ),
-                '--dl-btn-min-width': this.btnMinWidth
+                '--dl-button-min-width': this.buttonMinWidth
             }
         },
         pages(): number[] {
@@ -285,13 +285,13 @@ export default defineComponent({
         padding: 0 16px;
     }
 
-    &--page_btns_wrapper {
+    &--page_buttons_wrapper {
         display: flex;
         padding-left: 10px;
         padding-right: 10px;
     }
 
-    &--page_btn {
+    &--page_button {
         text-align: center;
         width: 20px;
         height: 20px;
@@ -305,18 +305,18 @@ export default defineComponent({
 
     &--active {
         color: var(--dl-active-text-color) !important;
-        background-color: var(--dl-active-btn-bg-color) !important;
+        background-color: var(--dl-active-button-bg-color) !important;
     }
 
-    &--page_btn,
-    &--nav_btn {
-        min-width: var(--dl-btn-min-width);
+    &--page_button,
+    &--nav_button {
+        min-width: var(--dl-button-min-width);
         padding: 0;
         cursor: pointer;
         border: none;
         border-radius: 2px;
         color: var(--dl-text-color);
-        background-color: var(--dl-btn-bg-color);
+        background-color: var(--dl-button-bg-color);
 
         &:active:not(:disabled) {
             background-color: var(--dl-color-secondary);

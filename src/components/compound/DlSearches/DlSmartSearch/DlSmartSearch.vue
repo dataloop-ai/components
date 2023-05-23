@@ -27,10 +27,15 @@
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div class="dl-smart-search__search-btn-wrapper">
+            <div
+                style="height: 28px"
+                class="dl-smart-search__search-btn-wrapper"
+            >
                 <dl-button
                     icon="icon-dl-search"
-                    size="l"
+                    :styles="{
+                        height: '28px'
+                    }"
                     :disabled="disabled"
                     @click="emitSearchQuery"
                 />
@@ -38,8 +43,7 @@
 
             <dl-button
                 class="dl-smart-search__buttons--filters"
-                text-color="dl-color-secondary"
-                flat
+                shaded
                 size="s"
             >
                 Saved Filters
@@ -51,9 +55,8 @@
                 >
                     <dl-smart-search-filters
                         :filters="filters"
-                        @filters-search="emitFiltersSearch"
-                        @filters-save="emitFiltersSave"
-                        @filters-delete="emitFiltersDelete"
+                        @filters-select="handleFiltersSelect"
+                        @filters-delete="handleFiltersDelete"
                     />
                 </dl-menu>
             </dl-button>
@@ -66,6 +69,7 @@
             @save="saveQueryDialogBoxModel = true"
             @remove="handleQueryRemove"
             @search="handleQuerySearchEditor"
+            @update-query="handleEditorQueryUpdate"
         />
         <dl-dialog-box v-model="removeQueryDialogBoxModel">
             <template #header>
@@ -142,7 +146,7 @@ import {
     createColorSchema
 } from './utils/utils'
 import { v4 } from 'uuid'
-import { parseSmartQuery } from '../../../../utils'
+import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
 
 export default defineComponent({
     components: {
@@ -190,8 +194,8 @@ export default defineComponent({
             default: 'saved'
         },
         filters: {
-            type: Array as PropType<Filters[]>,
-            default: () => [] as Filters[]
+            type: Object as PropType<Filters>,
+            default: () => ({} as Filters)
         },
         disabled: {
             type: Boolean,
@@ -219,8 +223,7 @@ export default defineComponent({
         const isFocused = ref(false)
         const isQuerying = ref(false)
         const currentTab = ref('saved')
-
-        let oldInputQuery = ''
+        const oldInputQuery = ref('')
 
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
@@ -233,7 +236,7 @@ export default defineComponent({
             activeQuery.value.query = replaceAliases(json, props.aliases)
             findSuggestions(value)
             isQuerying.value = false
-            oldInputQuery = value
+            oldInputQuery.value = value
         }
 
         const toJSON = (value: string) => {
@@ -247,7 +250,7 @@ export default defineComponent({
             findSuggestions(inputModel.value)
 
             if (value) {
-                inputModel.value = oldInputQuery
+                inputModel.value = oldInputQuery.value
                 isQuerying.value = false
             }
             if (!value && !error) {
@@ -270,6 +273,7 @@ export default defineComponent({
             isQuerying,
             currentTab,
             searchBarWidth,
+            oldInputQuery,
             handleInputModel,
             setFocused,
             findSuggestions,
@@ -285,8 +289,11 @@ export default defineComponent({
                 '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): object {
-            return createColorSchema(this.colorSchema, this.aliases)
+        defineStyleModel(): Record<string, string> {
+            return createColorSchema(
+                this.colorSchema,
+                this.aliases
+            ) as any as Record<string, string>
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
@@ -308,18 +315,10 @@ export default defineComponent({
                 message: this.error
             }
         },
-        stringQuery() {
+        stringQuery(): string {
             return this.isQuerying || this.inputModel === ''
                 ? this.activeQuery.name
                 : this.inputModel
-        }
-    },
-    watch: {
-        isLoading(val) {
-            this.inputModel = `Query "${this.activeQuery.name}" ${
-                val ? 'is running' : ''
-            }`
-            this.isQuerying = true
         }
     },
     mounted() {
@@ -337,10 +336,11 @@ export default defineComponent({
         handleQuerySearchEditor(query: Query) {
             this.filtersModel = false
             this.activeQuery = query
+            this.oldInputQuery = query.query
             this.$emit('search-query', this.activeQuery, this.stringQuery)
         },
         handleSaveQuery(performSearch: boolean) {
-            if (performSearch) {
+            if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()
                 this.jsonEditorModel = false
@@ -348,23 +348,28 @@ export default defineComponent({
                 this.emitSaveQuery()
             }
         },
-        emitFiltersSave(currentTab: string, query: Query) {
+        handleEditorQueryUpdate(query: Query) {
             this.activeQuery = query
-            this.currentTab = currentTab
-            this.saveQueryDialogBoxModel = true
-            this.filtersModel = false
+            try {
+                const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+                this.inputModel = stringQuery
+                this.oldInputQuery = stringQuery
+            } catch (error) {
+                console.log(error)
+            }
         },
-        emitFiltersDelete(currentTab: string, query: Query) {
+        handleFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
             this.currentTab = currentTab
             this.removeQueryDialogBoxModel = true
             this.filtersModel = false
         },
-        emitFiltersSearch(currentTab: string, query: Query) {
-            console.log('dsn')
-            this.activeQuery = query
+        handleFiltersSelect(currentTab: string, query: Query) {
+            this.activeQuery = { ...query }
+            const stringQuery = stringifySmartQuery(JSON.parse(query.query))
+            this.oldInputQuery = stringQuery
+            this.inputModel = stringQuery
             this.currentTab = currentTab
-            this.emitSearchQuery()
             this.filtersModel = false
         },
         emitSearchQuery() {
@@ -409,16 +414,16 @@ export default defineComponent({
     }
 
     &__buttons {
-        margin: 0px 5px;
         display: flex;
         align-items: center;
+        margin-left: 8px;
+        margin-top: 1px;
         &--filters {
             min-width: fit-content;
-            border: 1px solid var(--dl-color-secondary);
             border-radius: 3px;
             box-sizing: border-box;
             display: flex;
-            margin: 0px 5px;
+            margin: 0px 8px 0px 16px;
         }
         &--save {
             display: flex;
