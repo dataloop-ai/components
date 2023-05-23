@@ -481,6 +481,7 @@ export default defineComponent({
 .popup-content {
     max-width: 100%;
     padding: 0 16px;
+    height: 100%;
 }
 
 .popup-footer {

@@ -54,11 +54,39 @@
                 />
             </dl-tooltip>
         </div>
+        <div>
+            Tooltip with chip
+            <dl-tooltip style="padding: 0; border-radius: 2px">
+                <DlChip
+                    label="Long Chip Label With Alot Of Text"
+                    max-width="75px"
+                />
+            </dl-tooltip>
+        </div>
+        <div>
+            Tooltip with chip and flex
+            <dl-tooltip>
+                <div style="display: flex; flex-flow: row wrap; gap: 3px">
+                    <DlChip
+                        label="Long Chip Label With Alot Of Text"
+                        max-width="75px"
+                    />
+                    <DlChip
+                        label="Long Chip Label With Alot Of Text"
+                        max-width="75px"
+                    />
+                    <DlChip
+                        label="Long Chip Label With Alot Of Text"
+                        max-width="75px"
+                    />
+                </div>
+            </dl-tooltip>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DlTooltip, DlLink, DlCard } from '../components'
+import { DlTooltip, DlLink, DlCard, DlChip } from '../components'
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
@@ -66,7 +94,8 @@ export default defineComponent({
     components: {
         DlCard,
         DlTooltip,
-        DlLink
+        DlLink,
+        DlChip
     },
     data() {
         return {
