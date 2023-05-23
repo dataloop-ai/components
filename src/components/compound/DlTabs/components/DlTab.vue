@@ -14,7 +14,7 @@
         <span>
             <dl-icon
                 v-if="showTooltip"
-                :size="iconSize"
+                size="16px"
                 icon="icon-dl-info"
                 class="info-icon"
                 color="dl-color-darker"
@@ -47,8 +47,7 @@ export default defineComponent({
         showTooltip: { type: Boolean, default: false },
         tooltip: { type: String, default: null },
         tabindex: { type: String, default: '0' },
-        fontSize: { type: String, default: '18px' },
-        iconSize: { type: String, default: '16px' }
+        fontSize: { type: String, default: '18px' }
     },
     emits: ['click'],
     data() {
