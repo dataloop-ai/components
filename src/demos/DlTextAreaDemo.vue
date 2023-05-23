@@ -6,8 +6,13 @@
                 placeholder="Type your text..."
                 show-counter
                 :max-length="20"
+                title="Text area title"
+                required
+                tooltip="Quis fugiat et non eu proident sit et amet."
+                top-message="Pariatur consequat non sit aliqua labore ad reprehenderit deserunt ullamco incididunt non irure laborum deserunt."
                 enable-resize
                 error
+                clear-button-tooltip
                 error-message="Something went wrong!"
                 @keydown="log"
                 @focus="textAreaFocused = true"
