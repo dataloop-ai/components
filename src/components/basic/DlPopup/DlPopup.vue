@@ -487,4 +487,23 @@ export default defineComponent({
 .popup-footer {
     padding: 20px 16px 0px;
 }
+
+// Fade Related transition
+.fade-enter,
+.fade-enter-active {
+    animation: fade-in var(--dl-transition-duration);
+}
+
+.fade-leave-active,
+.fade-leave-to {
+    animation: fade-in var(--dl-transition-duration) reverse;
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 </style>
