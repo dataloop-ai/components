@@ -62,10 +62,17 @@ function isValidDate(d: Date) {
     return d instanceof Date && !isNaN(d as any)
 }
 
-export function replaceAliases(json: string, aliases: Alias[]) {
+export function replaceWithAliases(json: string, aliases: Alias[]) {
     let newJson = json
     aliases.forEach((alias) => {
         newJson = newJson.replaceAll(alias.alias, alias.key)
+    })
+    return newJson
+}
+export function revertAliases(json: string, aliases: Alias[]) {
+    let newJson = json
+    aliases.forEach((alias) => {
+        newJson = newJson.replaceAll(alias.key, alias.alias)
     })
     return newJson
 }

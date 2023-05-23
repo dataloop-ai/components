@@ -125,6 +125,7 @@ export default defineComponent({
         padding: 5px 10px;
         font-size: var(--dl-tab-font-size);
         line-height: 14px;
+        border-color: var(--dl-color-separator) !important;
         &:not(:last-child) {
             border-right: 1px solid var(--dl-color-separator);
         }

@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
+import { ChartOptions } from 'chart.js'
 import { DlBarChart } from '../components'
 
 const labelsFn = () => {
@@ -59,6 +60,16 @@ const legendProps = {
     alignItems: 'center'
 }
 
+const options: ChartOptions = {
+    scales: {
+        y: {
+            afterFit: (scaleInstance) => {
+                scaleInstance.width = 50
+            }
+        }
+    }
+}
+
 export default defineComponent({
     name: 'DlChartDemo',
     components: {
@@ -67,6 +78,7 @@ export default defineComponent({
     data() {
         return {
             data,
+            options,
             legendProps
         }
     },

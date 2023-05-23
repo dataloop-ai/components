@@ -34,6 +34,19 @@ const data = {
         }
     ]
 }
+const options = {
+    scales: {
+        y: {
+            afterFit: (scaleInstance) => {
+                scaleInstance.width = 50
+            }
+        }
+    }
+}
+
+const legendProps = {
+    alignItems: 'center'
+}
 
 export default {
     title: 'Library/Components/DlBarChart',
@@ -69,17 +82,31 @@ const Template = (args) => ({
     setup() {
         const dataState = ref(data)
         return {
+            options,
             dataState,
+            data,
+            legendProps,
             args
         }
     },
     template: `
-     <div style="width: 600px">
-        <dl-bar-chart
-        v-bind="args"
-        :data="dataState"
-        :options="options"
-    />
+    <div
+           style="
+               display: flex;
+               width: 900px;
+               flex-wrap: wrap;
+               flex-direction: row;
+               gap: 0px;
+           "
+       >
+           <dl-bar-chart
+               v-bind="args"
+               :legend-properties="legendProps"
+               :data="data"
+               :options="options"
+               :items-in-view="6"
+           />
+       </div>
     </div>
   `
 })
