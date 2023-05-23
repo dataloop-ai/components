@@ -1,20 +1,31 @@
 <template>
     <div class="main-content">
-        <main-content-header />
-        <main-content-images />
+        <main-content-header @onChangeViewMode="handleViewMode" />
+        <main-content-images :view-mode="viewMode" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import MainContentHeader from './MainContentNav.vue'
-import MainContentImages from './MainContentImages.vue'
+import MainContentHeader from './MainContent/MainContentNav.vue'
+import MainContentImages from './MainContent/MainContentImages.vue'
 
 export default defineComponent({
     name: 'DatasetMainContent',
     components: {
         MainContentHeader,
         MainContentImages
+    },
+    setup() {
+        const viewMode = ref('')
+        const handleViewMode = (value: string) => {
+            viewMode.value = value
+        }
+
+        return {
+            viewMode,
+            handleViewMode
+        }
     }
 })
 </script>

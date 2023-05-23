@@ -4,8 +4,9 @@
             <dl-checkbox
                 v-model="selectPageValue"
                 :value="3"
-                label="Select Page"
+                :label="selectPageLabel"
                 label-color="dl-color-darker"
+                label-size="12px"
                 @update:model-value="logValue"
             />
             <dl-separator
@@ -35,19 +36,22 @@
                 flat
                 dense
                 icon="icon-dl-thumbnail"
-                color="secondary"
+                :text-color="getViewModeSelectedColor('gallery')"
+                @click="emitViewModeGallery"
             />
             <dl-button
                 flat
                 dense
                 icon="icon-dl-list-view"
-                color="secondary"
+                :text-color="getViewModeSelectedColor('table')"
+                @click="emitViewModeTable"
             />
             <dl-button
                 flat
                 dense
                 icon="icon-dl-card-view"
                 color="secondary"
+                @click="emitViewModeCard"
             />
         </div>
     </div>
@@ -55,12 +59,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
-import DlSeparator from '../../../essential/DlSeparator/DlSeparator.vue'
-import DlButton from '../../../basic/DlButton/DlButton.vue'
-import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
-import ActionsMenu from './MainContent/ActionsMenu.vue'
-import AutomationMenu from './MainContent/AutomationMenu.vue'
+import DlTypography from '../../../DlTypography/DlTypography.vue'
+import DlSeparator from '../../../DlSeparator/DlSeparator.vue'
+import DlButton from '../../../../basic/DlButton/DlButton.vue'
+import DlCheckbox from '../../../DlCheckbox/DlCheckbox.vue'
+import ActionsMenu from './ActionsMenu.vue'
+import AutomationMenu from './AutomationMenu.vue'
 
 export default defineComponent({
     name: 'MainContentNav',
@@ -72,8 +76,11 @@ export default defineComponent({
         ActionsMenu,
         AutomationMenu
     },
-    setup() {
+    emit: ['onChangeViewMode'],
+    setup(props, ctx) {
+        const selectPageLabel = ref<string>('Select Page (100)')
         const selectPageValue = ref<boolean>(false)
+        const viewModeSelected = ref<string>('gallery')
         const scopeOptions = [
             {
                 label: 'Select scope',
@@ -251,6 +258,11 @@ export default defineComponent({
             }
         ]
 
+        const getViewModeSelectedColor = (value: string) =>
+            viewModeSelected.value === value
+                ? 'dl-color-secondary'
+                : 'dl-color-dark'
+
         const logValue = (newValue: any) => console.log('New value:', newValue)
 
         const statusOption = ref({
@@ -268,9 +280,22 @@ export default defineComponent({
             value: 1,
             badgeColor: 'dl-color-disabled'
         })
+        const emitViewModeGallery = () => {
+            viewModeSelected.value = 'gallery'
+            ctx.emit('onChangeViewMode', 'gallery')
+        }
+        const emitViewModeTable = () => {
+            viewModeSelected.value = 'table'
+            ctx.emit('onChangeViewMode', 'table')
+        }
+        const emitViewModeCard = () => {
+            viewModeSelected.value = 'card'
+            ctx.emit('onChangeViewMode', 'card')
+        }
 
         return {
             logValue,
+            selectPageLabel,
             selectPageValue,
             scopeOptions,
             actionOptions,
@@ -279,7 +304,12 @@ export default defineComponent({
             actionOption,
             automationOption,
             actionItems,
-            automationItems
+            automationItems,
+            emitViewModeGallery,
+            emitViewModeTable,
+            viewModeSelected,
+            getViewModeSelectedColor,
+            emitViewModeCard
         }
     }
 })

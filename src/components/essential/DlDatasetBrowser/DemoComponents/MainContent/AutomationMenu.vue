@@ -5,6 +5,7 @@
         :no-wrap="false"
         :overflow="false"
         fit-content
+        size="s"
         text-color="dl-color-darker"
     >
         <dl-list
