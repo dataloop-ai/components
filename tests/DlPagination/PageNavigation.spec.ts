@@ -19,8 +19,8 @@ describe('PageNavigation', () => {
         })
         expect(wrapper.vm.isLastPage).toBe(true)
 
-        let btns = wrapper.findAll('button')
-        await btns[0].trigger('click')
+        let buttons = wrapper.findAll('button')
+        await buttons[0].trigger('click')
 
         expect(wrapper.emitted()['update:modelValue'][0]).toBeTruthy()
         expect(wrapper.vm.value).toBe(1)
@@ -35,9 +35,9 @@ describe('PageNavigation', () => {
             modelValue: 20
         })
 
-        btns = wrapper.findAll('button')
-        expect(btns[1].text()).toEqual('...')
-        expect(btns[btns.length - 2].text()).toEqual('...')
+        buttons = wrapper.findAll('button')
+        expect(buttons[1].text()).toEqual('...')
+        expect(buttons[buttons.length - 2].text()).toEqual('...')
     })
 
     it('should not pass the validation for the "max pages" value ', () => {

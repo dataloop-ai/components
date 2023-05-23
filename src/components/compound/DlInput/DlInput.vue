@@ -2,6 +2,7 @@
     <div
         :id="uuid"
         :class="rootContainerClasses"
+        :style="cssVars"
     >
         <div :class="wrapperClasses">
             <div
@@ -34,8 +35,15 @@
                 </span>
             </div>
             <div
+                v-if="!!topMessage.length && !isSmall"
+                class="break"
+            />
+            <div
                 v-show="!!topMessage.length"
-                class="dl-text-input__top-message-container"
+                :class="{
+                    'dl-text-input__top-message-container': true,
+                    'dl-text-input__top-message-container--s': isSmall
+                }"
             >
                 <dl-info-error-message
                     v-show="!!topMessage.length"
@@ -75,7 +83,7 @@
                     ]"
                 >
                     <slot name="append" />
-                    <span v-show="showClearBtn">
+                    <span v-show="showClearButton">
                         <dl-button
                             ref="input-clear-button"
                             icon="icon-dl-close"
@@ -89,7 +97,7 @@
                             Remove text
                         </dl-tooltip>
                     </span>
-                    <span v-show="showShowPassBtn">
+                    <span v-show="showShowPassButton">
                         <dl-button
                             ref="input-show-pass-button"
                             :icon="passShowIcon"
@@ -121,17 +129,21 @@
                     :offset="[0, 3]"
                     fit-container
                     :fit-content="fitContent"
+                    :arrow-nav-items="suggestItems"
                     @click="onMenuShow"
+                    @highlightedIndex="setHighlightedIndex"
+                    @handleSelectedItem="handleSelectedItem"
                 >
                     <dl-list
                         bordered
                         :style="{ maxWidth: suggestMenuWidth }"
                     >
                         <dl-list-item
-                            v-for="item in suggestItems"
+                            v-for="(item, suggestIndex) in suggestItems"
                             :key="item"
                             clickable
                             style="font-size: 12px"
+                            :is-highlighted="suggestIndex === highlightedIndex"
                             @click="onClick($event, item)"
                         >
                             <span
@@ -197,7 +209,7 @@
 
 <script lang="ts">
 import { debounce } from 'lodash'
-import { defineComponent, PropType } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlInfoErrorMessage } from '../../shared'
 import { DlListItem } from '../../basic'
 import { DlMenu, DlIcon, DlList, DlTooltip } from '../../essential'
@@ -297,11 +309,8 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        withoutRootPadding: {
-            type: Boolean,
-            default: false
-        },
-        disableClearBtn: {
+        dense: Boolean,
+        hideClearButton: {
             type: Boolean,
             default: false
         },
@@ -325,15 +334,52 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        fitContent: Boolean
+        fitContent: Boolean,
+        margin: {
+            type: String,
+            default: null
+        }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
+    setup(props, { emit }) {
+        const highlightedIndex = ref(-1)
+        const isMenuOpen = ref(false)
+        const suggestItems = computed<string[]>(() => {
+            return props.autoSuggestItems.filter((item) =>
+                item.includes(`${props.modelValue}`)
+            )
+        })
+
+        const setHighlightedIndex = (value: any) => {
+            highlightedIndex.value = value
+        }
+        const handleSelectedItem = (value: any) => {
+            onAutoSuggestClick(null, value)
+        }
+        const inputRef = ref<HTMLInputElement>(null)
+        const onAutoSuggestClick = (
+            e: Event,
+            item: string | HTMLInputElement
+        ): void => {
+            emit('input', item, e)
+            emit('update:model-value', item)
+            inputRef.value = item as HTMLInputElement
+        }
+
+        return {
+            suggestItems,
+            highlightedIndex,
+            onAutoSuggestClick,
+            isMenuOpen,
+            setHighlightedIndex,
+            handleSelectedItem
+        }
+    },
     data() {
         return {
             uuid: `dl-text-input-${v4()}`,
             showPass: false,
-            focused: false,
-            isMenuOpen: false
+            focused: false
         }
     },
     computed: {
@@ -350,10 +396,20 @@ export default defineComponent({
             if (this.isSmall) {
                 classes.push('dl-text-input--s')
             }
-            if (this.withoutRootPadding) {
-                classes.push('dl-text-input--without-root-padding')
+            if (this.dense) {
+                classes.push('dl-text-input--dense')
             }
             return classes
+        },
+        cssVars(): Record<string, any> {
+            let inputMargin = this.margin
+
+            if (!this.margin && this.isSmall) {
+                inputMargin = '0px 20px 0px 0px'
+            }
+            return {
+                '--dl-input-margin': inputMargin
+            }
         },
         inputClasses(): string[] {
             const classes = [
@@ -402,7 +458,7 @@ export default defineComponent({
         hasAppend(): boolean {
             return (
                 (!!this.$slots.append ||
-                    !this.disableClearBtn ||
+                    !this.hideClearButton ||
                     this.type === 'password') &&
                 !this.isSmall
             )
@@ -413,9 +469,9 @@ export default defineComponent({
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
         },
-        showClearBtn(): boolean {
+        showClearButton(): boolean {
             return (
-                !this.disableClearBtn &&
+                !this.hideClearButton &&
                 this.type !== 'password' &&
                 !this.disabled &&
                 !this.readonly &&
@@ -423,16 +479,11 @@ export default defineComponent({
                 // this.focused
             )
         },
-        showShowPassBtn(): boolean {
+        showShowPassButton(): boolean {
             return !this.$slots.append && this.type === 'password'
         },
         showSuggestItems(): boolean {
             return !!this.suggestItems.length && !!this.modelValue
-        },
-        suggestItems(): string[] {
-            return this.autoSuggestItems.filter((item) =>
-                item.includes(`${this.modelValue}`)
-            )
         },
         debouncedBlur(): any {
             const debounced = debounce(this.onBlur.bind(this), 50)
@@ -501,13 +552,6 @@ export default defineComponent({
         },
         onPassShowClick(): void {
             this.showPass = !this.showPass
-        },
-        onAutoSuggestClick(e: Event, item: string): void {
-            this.$emit('input', item, e)
-            this.$emit('update:model-value', item)
-
-            const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.value = item
         },
         onMenuShow(): void {
             this.focus()
@@ -594,7 +638,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-text-input {
-    padding: 20px 20px 20px 0px;
+    margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
@@ -608,7 +652,7 @@ export default defineComponent({
         -moz-appearance: textfield;
     }
 
-    &--without-root-padding {
+    &--dense {
         padding: 0;
     }
 
@@ -618,8 +662,7 @@ export default defineComponent({
         align-items: center;
 
         &--s {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin: 4px auto auto;
         }
     }
 
@@ -649,6 +692,10 @@ export default defineComponent({
         display: flex;
         margin-bottom: 10px;
         text-align: start;
+
+        &--s {
+            padding: 0px 10px;
+        }
     }
 
     &__input-wrapper {

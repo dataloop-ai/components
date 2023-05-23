@@ -1,8 +1,33 @@
+.dl-markup-table {
+  overflow: auto;
+}
+
 .dl-table {
   width: 100%;
   max-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+
+  &__drag-icon > div {
+    transition: all ease-in 0.1s;
+      opacity: 0;
+  }
+
+  //markup-table 
+
+  &__card {
+    background-color: var(--dl-color-panel-background);
+    border-radius: 2px;
+
+    .dl-table__middle {
+      flex: 1 1 auto;
+    }
+
+    .dl-table__top,
+    .dl-table__bottom {
+      flex: 0 0 auto;
+    }
+  }
 
   .dl-table__top,
   .dl-table__bottom,
@@ -21,9 +46,11 @@
   }
 
   /* this is when the loading indicator appears */
-  &.dl-table--loading thead tr:last-child th {
-    /* height of all previous header rows */
-    top: 40px;
+  &--loading {
+    thead tr:last-child th {
+      /* height of all previous header rows */
+      top: 38px;
+    }
   }
 
   th:first-child,
@@ -44,6 +71,9 @@
     height: 40px;
 
     &:not(.dl-tr--no-hover):hover {
+      .dl-table__drag-icon > div {
+        opacity: 1;
+      }
       td:not(.dl-td--no-hover) {
         background-color: var(--dl-color-fill-hover);
       }
@@ -371,6 +401,7 @@
  */
 
 .dl-table--dense {
+
   .dl-table__top {
     position: relative;
     padding: 5px 16px;
@@ -384,6 +415,8 @@
     // font-size: 110%;
     font-size: 80%;
   }
+
+
 
   .dl-table {
 
@@ -420,6 +453,13 @@
     .dl-field__marginal {
       height: 24px;
     }
+  }
+}
+
+.dl-table--dense.dl-table--loading {
+  thead tr:last-child th {
+    /* height of all previous header rows */
+    top: 32px;
   }
 }
 

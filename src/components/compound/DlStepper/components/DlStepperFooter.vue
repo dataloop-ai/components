@@ -5,7 +5,7 @@
                 <dl-button
                     :disabled="disabledPrevStep"
                     outlined
-                    :colors-object="prevBtnColorsObject"
+                    :colors-object="prevButtonColorsObject"
                     :label="prevLabel"
                     @click="$emit('prev')"
                 />
@@ -60,10 +60,10 @@ export default defineComponent({
     },
     emits: ['close', 'done', 'next', 'prev'],
     data(): {
-        prevBtnColorsObject: ButtonColors
+        prevButtonColorsObject: ButtonColors
     } {
         return {
-            prevBtnColorsObject: {
+            prevButtonColorsObject: {
                 [ButtonState.Active]: {
                     [ButtonPart.Text]: 'var(--dl-color-darker)',
                     [ButtonPart.Background]: 'var(--dl-color-transparent)',

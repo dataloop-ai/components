@@ -4,6 +4,16 @@ export default {
     title: 'Library/Components/DlSpinner',
     component: DlSpinner,
     argTypes: {
+        type: {
+            name: 'type',
+            defaultValue: 'Loading data, please wait...',
+            description:
+                'The type of the spinner. Accepted values are: default, circle, grid, dots and clock',
+            control: 'text',
+            table: {
+                type: { summary: String }
+            }
+        },
         text: {
             name: 'text',
             defaultValue: 'Loading data, please wait...',
@@ -67,10 +77,10 @@ export default {
                 type: { summary: String }
             }
         },
-        rotationSpeed: {
-            name: 'rotationSpeed',
-            defaultValue: '2s',
-            description: 'The speed the spinner rotates at',
+        thickness: {
+            name: 'thickness',
+            defaultValue: '3px',
+            description: 'The thickness of the circle spinner',
             control: 'text',
             table: {
                 type: { summary: String }
@@ -87,11 +97,25 @@ const Template = (args) => ({
         }
     },
     template: `
-    <div style="margin-left: 30vw;">
      <dl-spinner v-bind="args"/>
-    </div>
    `
 })
 
-export const Preview = Template.bind({})
-Preview.args = {}
+export const PreviewLogo = Template.bind({})
+PreviewLogo.args = {}
+export const PreviewCircle = Template.bind({})
+PreviewCircle.args = {
+    type: 'circle'
+}
+export const PreviewGrid = Template.bind({})
+PreviewGrid.args = {
+    type: 'grid'
+}
+export const PreviewDots = Template.bind({})
+PreviewDots.args = {
+    type: 'dots'
+}
+export const PreviewClock = Template.bind({})
+PreviewClock.args = {
+    type: 'clock'
+}

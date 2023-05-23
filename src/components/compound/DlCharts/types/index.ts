@@ -1,1 +1,2 @@
-export type { DlChartProps, DlChartComponentRef } from './types'
+export * from './DlConfusionMatrix.types'
+export * from './types'

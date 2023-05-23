@@ -20,12 +20,14 @@
                     @move="movePopup"
                 />
                 <popup-header
-                    v-if="hasHeaderSlot"
+                    v-if="
+                        hasHeaderSlot || hasCloseButtonSlot || withCloseButton
+                    "
                     :title="title"
                     :additional-info="additionalInfo"
                     :subtitle="subtitle"
                     :with-close-button="withCloseButton"
-                    @hide-button-clik="handleHideClick"
+                    @close-button-click="handleCloseClick"
                 >
                     <template
                         v-if="hasHeaderSlot"
@@ -34,10 +36,10 @@
                         <slot name="header" />
                     </template>
                     <template
-                        v-if="hasHideButtonSlot"
-                        #hide-button
+                        v-if="hasCloseButtonSlot"
+                        #close-button
                     >
-                        <slot name="hide-button" />
+                        <slot name="close-button" />
                     </template>
                 </popup-header>
                 <div class="popup-content">
@@ -112,6 +114,8 @@ import {
 import DraggableUpper from './components/DraggableUpper.vue'
 import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
+import { isString } from 'lodash'
+import { stringStyleToRecord } from '../../../utils'
 
 export default defineComponent({
     name: 'DlPopup',
@@ -144,7 +148,6 @@ export default defineComponent({
         withCloseButton: { type: Boolean, default: false },
         preventHide: { type: Boolean, default: false },
         disableCloseByEsc: { type: Boolean, default: false },
-        hideOnClickOutside: { type: Boolean, default: false },
         self: {
             type: String,
             default: 'top middle',
@@ -167,7 +170,7 @@ export default defineComponent({
         draggable: Boolean
     },
     emits: [
-        'hide-button-click',
+        'close-button-click',
         'show',
         'before-show',
         'hide',
@@ -203,8 +206,8 @@ export default defineComponent({
 
         const hasHeaderSlot = computed(() => slots.header !== undefined)
 
-        const hasHideButtonSlot = computed(
-            () => slots['hide-button'] !== undefined
+        const hasCloseButtonSlot = computed(
+            () => slots['close-button'] !== undefined
         )
 
         const { hide } = useModelToggle({
@@ -228,7 +231,7 @@ export default defineComponent({
             innerRef,
             onClickOutside: (e: AnchorEvent) =>
                 handleClickOutside(e, {
-                    persistent: !props.hideOnClickOutside,
+                    persistent: props.persistent,
                     showing: showing.value,
                     fn: hide
                 })
@@ -419,11 +422,11 @@ export default defineComponent({
             )
         }
 
-        function handleHideClick(e: Event) {
+        function handleCloseClick(e: Event) {
             if (!props.preventHide) {
                 hide(e as AnchorEvent)
             }
-            proxy.$emit('hide-button-click', e)
+            proxy.$emit('close-button-click', e)
         }
 
         onBeforeUnmount(anchorCleanup as any)
@@ -436,8 +439,8 @@ export default defineComponent({
             portalIsAccessible,
             anchorEl,
             showing,
-            handleHideClick,
-            hasHideButtonSlot,
+            handleCloseClick,
+            hasCloseButtonSlot,
             hasFooterSlot,
             movePopup,
             hasHeaderSlot,
@@ -446,7 +449,9 @@ export default defineComponent({
             portalIsActive,
             classes: 'dl-popup dl-position-engine scroll',
             styles: [
-                attrs.style,
+                isString(attrs.style)
+                    ? stringStyleToRecord(attrs.style)
+                    : attrs.style,
                 transitionStyle.value,
                 stylesFromProps.value
             ] as any
@@ -459,7 +464,7 @@ export default defineComponent({
 .dl-popup {
     z-index: calc(var(--dl-z-index-menu) - 1);
     position: fixed !important;
-    padding: 0 0 16px;
+    padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);
     display: flex;
     background-color: var(--dl-color-panel-background);
