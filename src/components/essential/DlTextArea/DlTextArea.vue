@@ -2,6 +2,7 @@
     <div
         :id="uuid"
         class="container"
+        :class="rootContainerClasses"
         :style="cssVars"
     >
         <div class="dl-textarea__header">
@@ -13,7 +14,11 @@
                     v-show="!!title.length"
                     class="dl-textarea__title"
                 >
-                    {{ title }}<span v-show="required"> *</span>
+                    {{ title }}
+                    <span
+                        v-show="required"
+                        :class="asteriskClasses"
+                    > *</span>
                     {{ !required && optional ? ' (Optional)' : null }}
                 </label>
                 <span v-show="!!tooltip.length">
@@ -60,6 +65,7 @@
             :placeholder="placeholder"
             :maxlength="maxLength"
             :disabled="disabled"
+            :readonly="readonly"
             @input="onChange"
             @keydown="onKeydown"
             @focus="onFocus"
@@ -91,9 +97,11 @@
                 warning
                 :value="warningMessage"
             />
-            <span v-show="showCounter">
-                {{ modelValue.length
-                }}{{ maxLength && maxLength > 0 ? `/${maxLength}` : null }}
+            <span
+                v-if="showCounter && maxLength && maxLength > 0"
+                class="dl-text-input__counter"
+            >
+                {{ characterCounter }}
             </span>
         </div>
     </div>
@@ -195,6 +203,19 @@ export default defineComponent({
         clearButtonTooltip: {
             type: Boolean,
             default: false
+        },
+        dense: Boolean,
+        redAsterisk: {
+            type: Boolean,
+            default: false
+        },
+        readonly: {
+            type: Boolean,
+            default: false
+        },
+        counterReverse: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'update:model-value', 'keydown'],
@@ -245,7 +266,42 @@ export default defineComponent({
     },
     computed: {
         showClearButton(): boolean {
-            return !this.hideClearButton && !this.disabled && !!this.modelValue
+            return (
+                !this.hideClearButton &&
+                !this.disabled &&
+                !this.readonly &&
+                !!this.modelValue
+            )
+        },
+        asteriskClasses(): string[] {
+            const classes = ['dl-textarea__asterisk']
+
+            if (this.redAsterisk) {
+                classes.push('dl-textarea__asterisk--red')
+            }
+
+            return classes
+        },
+        rootContainerClasses(): string[] {
+            const classes = []
+            if (this.dense) {
+                classes.push('dl-textarea--dense')
+            }
+            return classes
+        },
+        textareaLength(): number {
+            return `${this.modelValue}`.length
+        },
+        characterCounter(): string {
+            if (!this.maxLength) {
+                return ''
+            }
+
+            const chars = this.counterReverse
+                ? this.maxLength - this.textareaLength
+                : this.textareaLength
+
+            return `${chars}/${this.maxLength}`
         }
     },
     methods: {
@@ -307,6 +363,17 @@ export default defineComponent({
     outline: none;
     color: var(--dl-color-darker);
     box-sizing: border-box;
+    &--dense {
+        padding: 0;
+    }
+    &__asterisk {
+        color: var(--dl-color-medium);
+        font-size: var(--dl-font-size-body);
+        user-select: none;
+        &--red {
+            color: var(--dl-color-negative);
+        }
+    }
     &__clear-button {
         position: absolute;
         bottom: -25px;
@@ -351,7 +418,13 @@ export default defineComponent({
         cursor: not-allowed;
         user-select: none;
     }
-
+    &:readonly {
+        border-color: var(--dl-color-separator);
+        cursor: text;
+        &:hover {
+            border-color: var(--dl-color-separator) !important;
+        }
+    }
     &::placeholder {
         color: var(--dl-color-lighter);
         opacity: 1;
