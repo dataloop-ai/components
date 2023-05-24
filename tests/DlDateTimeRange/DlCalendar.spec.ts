@@ -145,7 +145,7 @@ describe('DlCalendar', () => {
         })
 
         expect(wrapper.vm.getInnerDayStyle(new CalendarDate(date))).toEqual({
-            backgroundColor: 'var(--dl-date-picker-selected-date)',
+            backgroundColor: 'var(--dl-color-secondary)',
             color: 'var(--dl-color-text-buttons)',
             borderRadius: '11px'
         })
@@ -190,7 +190,7 @@ describe('DlCalendar', () => {
         })
 
         expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({
-            backgroundColor: 'var(--dl-date-picker-selected-date)',
+            backgroundColor: 'var(--dl-color-secondary)',
             borderRadius: '11px',
             color: 'var(--dl-color-text-buttons)'
         })
