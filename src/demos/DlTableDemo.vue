@@ -316,6 +316,25 @@
                     </template>
                 </DlTable>
             </div>
+
+            <div>
+                <p>Test reactive cells</p>
+                first row:
+                <div class="row">
+                    <dl-input
+                        v-for="(value, key) in tableRows[0]"
+                        :key="key"
+                        v-model="tableRows[0][key]"
+                        :title="key"
+                    />
+                </div>
+
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Table Title"
+                />
+            </div>
         </div>
     </div>
 </template>
