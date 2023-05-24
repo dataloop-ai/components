@@ -260,7 +260,7 @@
                             <dl-item-section :no-wrap="true">
                                 <dl-ellipsis
                                     text="Very very very very long long long long text text text"
-                                    :middle-ellipsis="true"
+                                    split
                                 />
                             </dl-item-section>
                         </dl-list-item>
