@@ -53,6 +53,7 @@ import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
+import DlGridDemo from './DlGridDemo.vue'
 import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
 import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
@@ -113,6 +114,7 @@ export default {
     DlSeparatorDemo,
     DlKpiDemo,
     DlCardDemo,
+    DlGridDemo,
     DlMarkupTableDemo,
     DlVirtualScrollDemo,
     DlJsonEditorDemo
