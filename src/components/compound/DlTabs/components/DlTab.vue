@@ -14,7 +14,7 @@
         <span>
             <dl-icon
                 v-if="showTooltip"
-                size="16px"
+                :size="iconSize"
                 icon="icon-dl-info"
                 class="info-icon"
                 color="dl-color-darker"
@@ -56,6 +56,10 @@ export default defineComponent({
         }
     },
     computed: {
+        iconSize(): string {
+            const fontSize = Number(this.fontSize.replace('px', ''))
+            return `${fontSize - 2 < 0 ? 0 : fontSize - 2}px`
+        },
         cssFontSize(): Record<string, string> {
             return {
                 '--dl-tab-font-size': this.fontSize
