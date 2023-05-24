@@ -461,14 +461,13 @@ const TemplateWithIcon = (args) => ({
             @clear="clear"
             @enter="enter"
         >
-          <template #append>
-           <dl-icon
-            style="margin-bottom: 5px"
-            icon="icon-dl-save"
-            size="12px"
-           />
-          </template>
-          </dl-input>
+            <template #append>
+                <dl-icon
+                    style="margin-bottom: 5px"
+                    icon="icon-dl-save"
+                    size="12px"
+                />
+            </template>
         </DlInput>
     </div>
   `,
