@@ -1,9 +1,9 @@
 <template>
-    <div class="dl-ellipsis">
-        <span
-            ref="dlEllipsisRef"
-            class="dl-ellipsis__left"
-        >
+    <div
+        ref="dlEllipsisRef"
+        class="dl-ellipsis"
+    >
+        <span class="dl-ellipsis__left">
             {{ leftText }}
         </span>
         <span
@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, toRef } from 'vue-demi'
+import { defineComponent, ref, computed } from 'vue-demi'
 import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 
@@ -65,11 +65,12 @@ export default defineComponent({
     setup(props) {
         const { text, split } = props
 
-        const splitPositionsRef = toRef(props, 'splitPosition')
-        splitPositionsRef.value = Math.min(
-            Math.max(splitPositionsRef.value, 1),
-            0
-        )
+        const splitPositionsRef = computed(() => {
+            return Math.min(
+                Math.max(props.splitPosition, 1),
+                props.splitPosition
+            )
+        })
 
         const dlEllipsisRef = ref(null)
         const splitIndex = computed(() =>
