@@ -22,7 +22,7 @@
                     icon="icon-dl-drag"
                     color="dl-color-medium"
                     size="15px"
-                    @mousedown.native="startDragging"
+                    @mousedown="startDragging"
                 />
                 <slot name="menu" />
             </div>

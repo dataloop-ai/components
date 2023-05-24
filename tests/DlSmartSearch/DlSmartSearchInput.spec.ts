@@ -31,6 +31,10 @@ describe('DlSmartSearchInput', () => {
             status: { type: 'info', message: 'info label' }
         })
 
+        wrapper.vm.focused = true
+        await wrapper.vm.$nextTick()
+        expect(wrapper.vm.searchBarClasses.includes('--focused')).toBeTruthy()
+
         await wrapper.setProps({ disabled: true })
         expect(wrapper.vm.searchBarClasses.includes('--disabled')).toBeTruthy()
 
