@@ -194,6 +194,33 @@
                 Disabled
             </DlButton>
         </div>
+        <div
+            style="
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+            "
+        >
+            <h3>Button keeping its active state with menu</h3>
+            <dl-button
+                :active="activeButtonState"
+                @click="activeButtonState = !activeButtonState"
+            >
+                {{ activeButtonState ? 'Close' : 'Open' }}
+                <dl-menu
+                    :offset="[0, 5]"
+                    anchor="bottom middle"
+                    self="top middle"
+                    :model-value="!activeButtonState"
+                >
+                    <div
+                        style="width: 100px; height: 100px; text-align: center"
+                    >
+                        Menu
+                    </div>
+                </dl-menu>
+            </dl-button>
+        </div>
         <div>
             <h3>With badge</h3>
 
@@ -261,10 +288,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue-demi'
-import { DlButton, DlBadge, DlIcon } from '../components'
+import { defineComponent, reactive, ref } from 'vue-demi'
+import { DlButton, DlBadge, DlIcon, DlMenu } from '../components'
 import { ButtonSizes } from '../components/basic/DlButton/utils'
-import DlMenu from '../components/essential/DlMenu/DlMenu.vue'
 import DlList from '../components/essential/DlList/DlList.vue'
 import DlListItem from '../components/basic/DlListItem/DlListItem.vue'
 
@@ -280,9 +306,10 @@ export default defineComponent({
     },
     setup() {
         const buttons = reactive<ButtonSizes[]>(['s', 'm', 'l', 'xl'])
+        const activeButtonState = ref(false)
 
         const log = (e: Event) => console.log(e)
-        return { buttons, log }
+        return { buttons, log, activeButtonState }
     }
 })
 </script>
