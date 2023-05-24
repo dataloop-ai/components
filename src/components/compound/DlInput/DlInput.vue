@@ -2,6 +2,7 @@
     <div
         :id="uuid"
         :class="rootContainerClasses"
+        :style="cssVars"
     >
         <div :class="wrapperClasses">
             <div
@@ -34,8 +35,15 @@
                 </span>
             </div>
             <div
+                v-if="!!topMessage.length && !isSmall"
+                class="break"
+            />
+            <div
                 v-show="!!topMessage.length"
-                class="dl-text-input__top-message-container"
+                :class="{
+                    'dl-text-input__top-message-container': true,
+                    'dl-text-input__top-message-container--s': isSmall
+                }"
             >
                 <dl-info-error-message
                     v-show="!!topMessage.length"
@@ -75,7 +83,7 @@
                     ]"
                 >
                     <slot name="append" />
-                    <span v-show="showClearBtn">
+                    <span v-show="showClearButton">
                         <dl-button
                             ref="input-clear-button"
                             icon="icon-dl-close"
@@ -89,7 +97,7 @@
                             Remove text
                         </dl-tooltip>
                     </span>
-                    <span v-show="showShowPassBtn">
+                    <span v-show="showShowPassButton">
                         <dl-button
                             ref="input-show-pass-button"
                             :icon="passShowIcon"
@@ -302,7 +310,7 @@ export default defineComponent({
             default: false
         },
         dense: Boolean,
-        disableClearBtn: {
+        hideClearButton: {
             type: Boolean,
             default: false
         },
@@ -326,7 +334,11 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        fitContent: Boolean
+        fitContent: Boolean,
+        margin: {
+            type: String,
+            default: null
+        }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     setup(props, { emit }) {
@@ -389,6 +401,16 @@ export default defineComponent({
             }
             return classes
         },
+        cssVars(): Record<string, any> {
+            let inputMargin = this.margin
+
+            if (!this.margin && this.isSmall) {
+                inputMargin = '0px 20px 0px 0px'
+            }
+            return {
+                '--dl-input-margin': inputMargin
+            }
+        },
         inputClasses(): string[] {
             const classes = [
                 'dl-text-input__input',
@@ -436,7 +458,7 @@ export default defineComponent({
         hasAppend(): boolean {
             return (
                 (!!this.$slots.append ||
-                    !this.disableClearBtn ||
+                    !this.hideClearButton ||
                     this.type === 'password') &&
                 !this.isSmall
             )
@@ -447,9 +469,9 @@ export default defineComponent({
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
         },
-        showClearBtn(): boolean {
+        showClearButton(): boolean {
             return (
-                !this.disableClearBtn &&
+                !this.hideClearButton &&
                 this.type !== 'password' &&
                 !this.disabled &&
                 !this.readonly &&
@@ -457,7 +479,7 @@ export default defineComponent({
                 // this.focused
             )
         },
-        showShowPassBtn(): boolean {
+        showShowPassButton(): boolean {
             return !this.$slots.append && this.type === 'password'
         },
         showSuggestItems(): boolean {
@@ -616,7 +638,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-text-input {
-    padding: 20px 20px 20px 0px;
+    margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
@@ -640,8 +662,7 @@ export default defineComponent({
         align-items: center;
 
         &--s {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin: 4px auto auto;
         }
     }
 
@@ -671,6 +692,10 @@ export default defineComponent({
         display: flex;
         margin-bottom: 10px;
         text-align: start;
+
+        &--s {
+            padding: 0px 10px;
+        }
     }
 
     &__input-wrapper {

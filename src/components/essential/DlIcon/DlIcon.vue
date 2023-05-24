@@ -101,7 +101,7 @@ export default defineComponent({
             }
         },
         inlineStyles(): Record<string, string> {
-            return { display: this.inline ? 'inline' : 'flex;' }
+            return { display: this.inline ? 'inline-flex' : 'flex' }
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {
@@ -144,7 +144,7 @@ export default defineComponent({
                 try {
                     svgElement.src = this.svgSource
                         ? `${this.svgSource}/${this.icon}.svg`
-                        : require(`@dataloop-ai/icons/assets/${this.icon}.svg`)
+                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${this.icon}.svg`
                 } catch (e) {
                     reject(e)
                 }

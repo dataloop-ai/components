@@ -14,6 +14,7 @@ import {
     ComputedRef,
     Ref
 } from 'vue-demi'
+import { noop } from '../../../utils/events'
 
 export interface ScrollDetails {
     scrollStart: number
@@ -38,18 +39,25 @@ const filterProto = Array.prototype.filter
 
 const setOverflowAnchor =
     window.getComputedStyle(document.body).overflowAnchor === void 0
-        ? () => {}
+        ? noop
         : function (contentEl: HTMLElement | null, index: number) {
               if (contentEl === null) {
                   return
               }
 
-              cancelAnimationFrame((contentEl as any)._dlOverflowAnimationFrame)
-              ;(contentEl as any)._dlOverflowAnimationFrame =
+              if ((contentEl as any)._dlOverflowAnimationFrame !== void 0) {
+                  cancelAnimationFrame(
+                      (contentEl as any)._dlOverflowAnimationFrame
+                  )
+              }
+
+              (contentEl as any)._dlOverflowAnimationFrame =
                   requestAnimationFrame(() => {
                       if (contentEl === null) {
                           return
                       }
+
+                      (contentEl as any)._dlOverflowAnimationFrame = void 0
 
                       const children = (contentEl.children ||
                           []) as HTMLCollection
@@ -80,6 +88,7 @@ function getScrollDetails(
     child: any,
     beforeRef: HTMLElement | null,
     afterRef: HTMLElement | null,
+    horizontal: boolean,
     stickyStart: number,
     stickyEnd: number
 ): ScrollDetails {
@@ -87,7 +96,7 @@ function getScrollDetails(
         parent === window
             ? document.scrollingElement || document.documentElement
             : parent
-    const propElSize = 'offsetHeight'
+    const propElSize = horizontal === true ? 'offsetWidth' : 'offsetHeight'
     const details = {
         scrollStart: 0,
         scrollViewSize: -stickyStart - stickyEnd,
@@ -96,15 +105,33 @@ function getScrollDetails(
         offsetEnd: -stickyEnd
     }
 
-    if (parent === window) {
-        details.scrollStart =
-            window.pageYOffset || window.scrollY || document.body.scrollTop || 0
-        details.scrollViewSize += document.documentElement.clientHeight
+    if (horizontal === true) {
+        if (parent === window) {
+            details.scrollStart =
+                window.pageXOffset ||
+                window.scrollX ||
+                document.body.scrollLeft ||
+                0
+            details.scrollViewSize += document.documentElement.clientWidth
+        } else {
+            details.scrollStart = parentCalc.scrollLeft
+            details.scrollViewSize += parentCalc.clientWidth
+        }
+        details.scrollMaxSize = parentCalc.scrollWidth
     } else {
-        details.scrollStart = parentCalc.scrollTop
-        details.scrollViewSize += parentCalc.clientHeight
+        if (parent === window) {
+            details.scrollStart =
+                window.pageYOffset ||
+                window.scrollY ||
+                document.body.scrollTop ||
+                0
+            details.scrollViewSize += document.documentElement.clientHeight
+        } else {
+            details.scrollStart = parentCalc.scrollTop
+            details.scrollViewSize += parentCalc.clientHeight
+        }
+        details.scrollMaxSize = parentCalc.scrollHeight
     }
-    details.scrollMaxSize = parentCalc.scrollHeight
 
     if (beforeRef !== null) {
         for (
@@ -132,10 +159,17 @@ function getScrollDetails(
 
     if (child !== parent) {
         const parentRect = parentCalc.getBoundingClientRect()
-        const childRect = child.getBoundingClientRect()
+        const childRect = child?.getBoundingClientRect()
 
-        details.offsetStart += childRect.top - parentRect.top
-        details.offsetEnd -= childRect.height
+        if (childRect) {
+            if (horizontal === true) {
+                details.offsetStart += childRect.left - parentRect.left
+                details.offsetEnd -= childRect.width
+            } else {
+                details.offsetStart += childRect.top - parentRect.top
+                details.offsetEnd -= childRect.height
+            }
+        }
 
         if (parent !== window) {
             details.offsetStart += details.scrollStart
@@ -146,19 +180,33 @@ function getScrollDetails(
     return details
 }
 
-function setScroll(parent: any, scroll: string | number) {
+function setScroll(parent: any, scroll: string | number, horizontal: boolean) {
     if (scroll === 'end') {
-        scroll = (parent === window ? document.body : parent)['scrollHeight']
+        scroll = (parent === window ? document.body : parent)[
+            horizontal === true ? 'scrollWidth' : 'scrollHeight'
+        ]
     }
 
     if (parent === window) {
-        window.scrollTo(
-            window.pageXOffset ||
-                window.scrollX ||
-                document.body.scrollLeft ||
-                0,
-            scroll as number
-        )
+        if (horizontal === true) {
+            window.scrollTo(
+                scroll as number,
+                window.pageYOffset ||
+                    window.scrollY ||
+                    document.body.scrollTop ||
+                    0
+            )
+        } else {
+            window.scrollTo(
+                window.pageXOffset ||
+                    window.scrollX ||
+                    document.body.scrollLeft ||
+                    0,
+                scroll as number
+            )
+        }
+    } else if (horizontal === true) {
+        parent.scrollLeft = scroll
     } else {
         parent.scrollTop = scroll
     }
@@ -222,6 +270,7 @@ export const commonVirtScrollProps = {
 export const commonVirtPropsList = Object.keys(commonVirtScrollProps)
 
 export const useVirtualScrollProps = {
+    virtualScrollHorizontal: Boolean,
     onVirtualScroll: Function,
     ...commonVirtScrollProps
 }
@@ -307,6 +356,7 @@ export function useVirtualScroll({
             getVirtualScrollEl(),
             beforeRef.value,
             afterRef.value,
+            props.virtualScrollHorizontal as boolean,
             props.virtualScrollStickySizeStart as number,
             props.virtualScrollStickySizeEnd as number
         )
@@ -347,6 +397,7 @@ export function useVirtualScroll({
             getVirtualScrollEl(),
             beforeRef.value,
             afterRef.value,
+            props.virtualScrollHorizontal as boolean,
             props.virtualScrollStickySizeStart as number,
             props.virtualScrollStickySizeEnd as number
         )
@@ -447,7 +498,7 @@ export function useVirtualScroll({
         const alignForce =
             typeof align === 'string' && align.indexOf('-force') > -1
         const alignEnd =
-            alignForce === true ? align?.replace('-force', '') : align
+            alignForce === true ? align.replace('-force', '') : align
         const alignRange = alignEnd !== void 0 ? alignEnd : 'start'
 
         let from = Math.max(
@@ -483,9 +534,8 @@ export function useVirtualScroll({
             contentEl.addEventListener('focusout', onBlurRefocusFn)
 
             setTimeout(() => {
-                if (contentEl !== null) {
+                contentEl !== null &&
                     contentEl.removeEventListener('focusout', onBlurRefocusFn)
-                }
             })
         }
 
@@ -585,7 +635,11 @@ export function useVirtualScroll({
 
             prevScrollStart = scrollPosition
 
-            setScroll(scrollEl, scrollPosition)
+            setScroll(
+                scrollEl,
+                scrollPosition,
+                props.virtualScrollHorizontal as boolean
+            )
 
             emitScroll(toIndex)
         })
@@ -602,7 +656,10 @@ export function useVirtualScroll({
                     el.classList.contains('dl-virtual-scroll--skip') === false
             )
             const childrenLength = children.length
-            const sizeFn = (el: HTMLElement) => el.offsetHeight
+            const sizeFn =
+                props.virtualScrollHorizontal === true
+                    ? (el: HTMLElement) => el.getBoundingClientRect().width
+                    : (el: HTMLElement) => el.offsetHeight
 
             let index = from
             let size
@@ -636,13 +693,13 @@ export function useVirtualScroll({
     }
 
     function onBlurRefocusFn() {
-        if (contentRef.value !== null && contentRef.value !== void 0) {
+        contentRef.value !== null &&
+            contentRef.value !== void 0 &&
             contentRef.value.focus()
-        }
     }
 
     function localResetVirtualScroll(toIndex?: number, fullReset?: boolean) {
-        const defaultSize = 1 * virtualScrollItemSizeComputed!.value
+        const defaultSize = 1 * virtualScrollItemSizeComputed.value
 
         if (fullReset === true || Array.isArray(virtualScrollSizes) === false) {
             virtualScrollSizes = []
@@ -690,7 +747,7 @@ export function useVirtualScroll({
             virtualScrollLength.value
         )
 
-        if (toIndex && toIndex >= 0) {
+        if (toIndex >= 0) {
             updateVirtualScrollSizes(virtualScrollSliceRange.value.from)
             nextTick(() => {
                 scrollTo(toIndex)
@@ -714,6 +771,7 @@ export function useVirtualScroll({
                     getVirtualScrollEl(),
                     beforeRef.value,
                     afterRef.value,
+                    props.virtualScrollHorizontal as boolean,
                     props.virtualScrollStickySizeStart as number,
                     props.virtualScrollStickySizeEnd as number
                 ).scrollViewSize
@@ -752,6 +810,95 @@ export function useVirtualScroll({
             end: Math.ceil(baseSize * (1 + virtualScrollSliceRatioBefore)),
             view
         }
+    }
+
+    function padVirtualScroll(tag: string, content: any[], create: Function) {
+        const paddingSize =
+            props.virtualScrollHorizontal === true ? 'width' : 'height'
+
+        const style = {
+            ['--dl-virtual-scroll-item-' + paddingSize]:
+                virtualScrollItemSizeComputed.value + 'px'
+        }
+
+        return [
+            tag === 'tbody'
+                ? create(
+                      tag,
+                      {
+                          class: 'dl-virtual-scroll__padding',
+                          key: 'before',
+                          ref: beforeRef
+                      },
+                      [
+                          create('tr', [
+                              create('td', {
+                                  style: {
+                                      [paddingSize]: `${virtualScrollPaddingBefore.value}px`,
+                                      ...style
+                                  },
+                                  colspan: colspanAttr.value,
+                                  attrs: {
+                                      colspan: colspanAttr.value
+                                  }
+                              })
+                          ])
+                      ]
+                  )
+                : create(tag, {
+                      class: 'dl-virtual-scroll__padding',
+                      key: 'before',
+                      ref: beforeRef,
+                      style: {
+                          [paddingSize]: `${virtualScrollPaddingBefore.value}px`,
+                          ...style
+                      }
+                  }),
+
+            create(
+                tag,
+                {
+                    class: 'dl-virtual-scroll__content',
+                    key: 'content',
+                    ref: contentRef,
+                    tabindex: -1
+                },
+                content.flat()
+            ),
+
+            tag === 'tbody'
+                ? create(
+                      tag,
+                      {
+                          class: 'dl-virtual-scroll__padding',
+                          key: 'after',
+                          ref: afterRef
+                      },
+                      [
+                          create('tr', [
+                              create('td', {
+                                  style: {
+                                      [paddingSize]: `${virtualScrollPaddingAfter.value}px`,
+                                      ...style
+                                  },
+                                  colspan: colspanAttr.value,
+                                  attrs: {
+                                      colspan: colspanAttr.value
+                                  }
+                              })
+                          ])
+                      ]
+                  )
+                : create(tag, {
+                      class: 'dl-virtual-scroll__padding',
+                      key: 'after',
+                      ref: afterRef,
+                      style: {
+                          [paddingSize]: `${virtualScrollPaddingAfter.value}px`,
+                          ...style
+                      }
+                  })
+        ]
     }
 
     function emitScroll(index: number) {
@@ -794,7 +941,11 @@ export function useVirtualScroll({
             scrollEl !== null &&
             scrollEl.nodeType !== 8
         ) {
-            setScroll(scrollEl, prevScrollStart)
+            setScroll(
+                scrollEl,
+                prevScrollStart,
+                props.virtualScrollHorizontal as boolean
+            )
         } else {
             scrollTo(prevToIndex)
         }
@@ -814,18 +965,10 @@ export function useVirtualScroll({
         setVirtualScrollSize,
         onVirtualScrollEvt,
         localResetVirtualScroll,
+        padVirtualScroll,
 
         scrollTo,
         reset,
-        refresh,
-
-        virtualScrollPaddingBefore,
-        virtualScrollPaddingAfter,
-
-        beforeRef,
-        afterRef,
-        contentRef,
-
-        colspanAttr
+        refresh
     }
 }

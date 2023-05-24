@@ -1,6 +1,15 @@
 import { DlLineChart } from '../components'
-import { ref } from 'vue'
 import { orderBy } from 'lodash'
+import { Meta, StoryObj } from '@storybook/vue3'
+
+type Story = StoryObj<typeof DlLineChart>
+
+const meta: Meta<typeof DlLineChart> = {
+    title: 'Library/Components/DlLineChart',
+    component: DlLineChart
+}
+
+export default meta
 
 function randomIntFromInterval(min, max) {
     return new Array(18)
@@ -266,7 +275,8 @@ const options = {
     },
     scales: {
         y: {
-            suggestedMax: 9
+            suggestedMax: 9,
+            suggestedMin: 0
         }
     }
 }
@@ -275,139 +285,38 @@ const legendProps = {
     alignItems: 'center'
 }
 
-export default {
-    title: 'Library/Components/DlLineChart',
-    component: DlLineChart,
-    argTypes: {
-        data: {
-            name: 'data',
-            defaultValue: data,
-            control: 'object',
-            description: 'The data object, according to ChartJS structure',
-            table: {
-                type: { summary: Object },
-                defaultValue: { summary: data }
-            }
-        },
-        options: {
-            name: 'options',
-            defaultValue: options,
-            control: 'object',
-            description: 'The options object, according to ChartJS structure',
-            table: {
-                type: { summary: Object },
-                defaultValue: { summary: options }
-            }
-        }
+export const DeafultWithBrush: Story = {
+    args: {
+        brushProps,
+        legendProps,
+        options,
+        data,
+        style: 'width: 100%'
     }
 }
 
-const Template = (args) => ({
-    components: {
-        DlLineChart
-    },
-    setup() {
-        const dataState = ref(args.data)
-
-        const optionsState = ref(args.options)
-
-        return {
-            dataState,
-            optionsState,
-            brushProps,
-            legendProps,
-            args
-        }
-    },
-    template: `
-        <dl-line-chart
-         :brush-props="brushProps"
-         :legend-props="legendProps"
-         :options="optionsState"
-         :data="dataState"
-         style="width: 100%"
-       />
-  `
-})
-
-export const Preview = Template.bind({})
-Preview.args = {
-    data,
-    options
+export const NoPoint: Story = {
+    args: {
+        brushProps,
+        legendProps,
+        options,
+        data: {
+            ...data,
+            datasets: [{ ...data.datasets[0], pointRadius: 0, borderWidth: 1 }]
+        },
+        style: 'width: 100%'
+    }
 }
 
-const NoPoinTemplate = (args) => ({
-    components: {
-        DlLineChart
-    },
-    setup() {
-        const dataState = ref({
-            ...args.data,
-            datasets: [
-                { ...args.data.datasets[0], pointRadius: 0, borderWidth: 1 }
-            ]
-        })
-
-        const optionsState = ref(args.options)
-
-        return {
-            dataState,
-            optionsState,
-            brushProps,
-            legendProps,
-            args
-        }
-    },
-    template: `
-        <dl-line-chart
-         :brush-props="brushProps"
-         :legend-props="legendProps"
-         :options="optionsState"
-         :data="dataState"
-         style="width: 100%"
-       />
-  `
-})
-
-export const NoPointPreview = NoPoinTemplate.bind({})
-Preview.args = {
-    data,
-    options
-}
-
-const TensionTemplate = (args) => ({
-    components: {
-        DlLineChart
-    },
-    setup() {
-        const dataState = ref({
-            ...args.data,
-            datasets: [{ ...args.data.datasets[1], pointRadius: 0 }]
-        })
-
-        const optionsState = ref({ ...args.options, tension: 0.5 })
-
-        return {
-            dataState,
-            optionsState,
-            brushProps,
-            legendProps,
-            args
-        }
-    },
-    template: `
-        <dl-line-chart
-         :brush-props="brushProps"
-         :legend-props="legendProps"
-         :options="optionsState"
-         :data="dataState"
-         style="width: 100%"
-       />
-  `
-})
-
-export const TensionPreview = TensionTemplate.bind({})
-Preview.args = {
-    data,
-    options
+export const TensionLine: Story = {
+    args: {
+        brushProps,
+        legendProps,
+        options: { ...options, tension: 0.5 },
+        data: {
+            ...data,
+            datasets: [{ ...data.datasets[1], pointRadius: 0 }]
+        },
+        style: 'width: 100%'
+    }
 }

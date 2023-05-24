@@ -62,14 +62,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-
-const transformOptions: string[] = [
-    'none',
-    'capitalize',
-    'uppercase',
-    'lowercase',
-    'default'
-]
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -227,7 +220,6 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        padding: 3px 5px 3px 5px;
     }
 }
 

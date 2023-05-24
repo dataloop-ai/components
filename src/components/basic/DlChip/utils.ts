@@ -59,17 +59,17 @@ export const setPadding = ({
     const right = removable ? 20 : 5
 
     if (hasLabel && (removable || hasIcon)) {
-        return `3px ${right}px 3px ${left}px`
+        return `5px ${right}px 5px ${left}px`
     }
 
     if (!hasLabel && hasIcon && removable) {
-        return `3px ${right}px 3px 0`
+        return `5px ${right}px 5px 0`
     }
     if (removable || hasIcon) {
-        return '3px 0'
+        return '5px 0'
     }
 
-    return '3px 5px'
+    return '5px'
 }
 
 export const setRemoveIconWidth = ({

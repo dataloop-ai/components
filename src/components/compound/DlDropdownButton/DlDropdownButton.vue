@@ -10,23 +10,23 @@
     >
         <dl-button
             class="dl-button-dropdown--current"
-            :style="mainBtnStyle"
+            :style="mainButtonStyle"
             :label="label"
             :outlined="outlined"
             :size="size"
             :flat="flat"
-            :disabled="disabled === true || disableMainBtn === true"
+            :disabled="disabled === true || disableMainButton === true"
             :max-width="maxWidth"
             :color="color"
             :icon="icon"
-            :uppercase="uppercase"
+            :transform="transform"
             :text-color="textColor"
             no-wrap
             :aria-expanded="showing === true ? 'true' : 'false'"
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainBtn === true) ||
+                    (split === false && disableMainButton === true) ||
                     disableDropdown === true
             "
             :overflow="overflow"
@@ -35,7 +35,7 @@
         />
         <dl-button
             class="dl-button-dropdown__arrow-container"
-            :style="btnCSSStyles"
+            :style="buttonCSSStyles"
             :disabled="disabled === true || disableDropdown === true"
             :outlined="outlined"
             :flat="flat"
@@ -46,7 +46,7 @@
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainBtn === true) ||
+                    (split === false && disableMainButton === true) ||
                     disableDropdown === true
             "
             :no-wrap="noWrap"
@@ -111,11 +111,11 @@
         :aria-haspopup="true"
         :aria-disabled="
             disabled === true ||
-                (split === false && disableMainBtn === true) ||
+                (split === false && disableMainButton === true) ||
                 disableDropdown === true
         "
-        :disabled="disabled === true || disableMainBtn === true"
-        :style="mainBtnStyle"
+        :disabled="disabled === true || disableMainButton === true"
+        :style="[mainButtonStyle, cssVars]"
         :no-wrap="props.noWrap"
         :tooltip="tooltip"
         :max-width="maxWidth"
@@ -188,6 +188,7 @@ import {
     Ref
 } from 'vue-demi'
 import { v4 } from 'uuid'
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -208,7 +209,7 @@ export default defineComponent({
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },
         contentClass: { type: [Array, String, Object], default: '' },
         contentStyle: { type: [Array, String, Object], default: '' },
-        mainBtnStyle: { type: [Array, String, Object], default: '' },
+        mainButtonStyle: { type: [Array, String, Object], default: '' },
         cover: Boolean,
         maxWidth: { type: String, default: null },
         maxHeight: { type: String, default: null },
@@ -224,7 +225,7 @@ export default defineComponent({
             default: 'top end'
         },
         menuOffset: { type: Array, default: () => [0, 0] },
-        disableMainBtn: Boolean,
+        disableMainButton: Boolean,
         disableDropdown: Boolean,
         noIconAnimation: Boolean,
         disabled: Boolean,
@@ -237,7 +238,12 @@ export default defineComponent({
         icon: { type: String, required: false, default: '' },
         iconSize: { type: String, required: false, default: '20px' },
         flat: Boolean,
-        uppercase: Boolean,
+        transform: {
+            type: String,
+            default: 'default',
+            validator: (value: string): boolean =>
+                transformOptions.includes(value)
+        },
         outlined: Boolean,
         padding: { type: String, default: '5px' },
         fitContent: Boolean,
@@ -276,7 +282,7 @@ export default defineComponent({
 
             if (
                 props.disabled === true ||
-                (props.split === false && props.disableMainBtn === true) ||
+                (props.split === false && props.disableMainButton === true) ||
                 props.disableDropdown === true
             ) {
                 acc['aria-disabled'] = 'true'
@@ -302,11 +308,19 @@ export default defineComponent({
             )
         })
 
-        const btnCSSStyles = computed(() => {
+        const buttonCSSStyles = computed(() => {
             return {
                 '--dl-button-border-left': props.outlined
                     ? 'none'
                     : 'var(--dl-color-white)'
+            }
+        })
+
+        const cssVars = computed(() => {
+            return {
+                '--justify-content': props.fluid
+                    ? 'space-between'
+                    : 'space-around'
             }
         })
 
@@ -396,7 +410,7 @@ export default defineComponent({
             iconClass,
             menuRef,
             attributes,
-            btnCSSStyles,
+            buttonCSSStyles,
             showing,
             onBeforeShow,
             onBeforeHide,
@@ -410,7 +424,8 @@ export default defineComponent({
             menuModel,
             props,
             setHighlightedIndex,
-            handleSelectedItem
+            handleSelectedItem,
+            cssVars
         }
     }
 })
@@ -461,7 +476,7 @@ export default defineComponent({
         &__title {
             display: flex;
             align-items: center;
-            justify-content: space-around;
+            justify-content: var(--justify-content);
             text-align: center;
             padding: 0;
             flex: 10000 1 0%;

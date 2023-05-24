@@ -57,12 +57,12 @@
         <DlVirtualScroll
             v-if="hasVirtScroll"
             ref="virtScrollRef"
+            type="__dltable"
             :class="tableClass"
-            :draggable-classes="additionalClasses"
             :style="tableStyle"
+            :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
-            :table-colspan="computedColspan"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -158,7 +158,10 @@
                         onTrContextMenu($event, props.item, pageIndex)
                     "
                 >
-                    <td v-if="hasDraggableRows">
+                    <td
+                        v-if="hasDraggableRows"
+                        class="dl-table__drag-icon"
+                    >
                         <dl-icon
                             class="draggable-icon"
                             icon="icon-dl-drag"
@@ -340,7 +343,10 @@
                                 onTrContextMenu($event, row, pageIndex)
                             "
                         >
-                            <td v-if="hasDraggableRows">
+                            <td
+                                v-if="hasDraggableRows"
+                                class="dl-table__drag-icon"
+                            >
                                 <dl-icon
                                     class="draggable-icon"
                                     icon="icon-dl-drag"
@@ -492,7 +498,7 @@ import {
     commonVirtScrollProps,
     ScrollDetails
 } from '../../shared/DlVirtualScroll/useVirtualScroll'
-import { DlVirtualScroll } from '../../shared/DlVirtualScroll'
+import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
 import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
 import { useTableSort, useTableSortProps } from './hooks/tableSort'
 import {
@@ -520,6 +526,11 @@ import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import { v4 } from 'uuid'
+
+const commonVirtPropsObj = {} as Record<string, any>
+commonVirtPropsList.forEach((p) => {
+    commonVirtPropsObj[p] = {}
+})
 
 export default defineComponent({
     name: 'DlTable',
