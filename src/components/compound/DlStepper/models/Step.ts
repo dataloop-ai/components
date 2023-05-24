@@ -67,7 +67,7 @@ export class Step {
     public set warning(value: string) {
         set(this._state, 'warning', value)
         set(this._state, 'error', '')
-        set(this._state, 'completed', true)
+        set(this._state, 'completed', false)
     }
 
     public get value(): string {
