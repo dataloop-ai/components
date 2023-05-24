@@ -18,7 +18,7 @@
             name="axe-x-labels"
         >
             <dl-chart-labels
-                :font-size="labelStyles.labelSize"
+                :font-size="labelStyles.fontSize"
                 :title="labelStyles.title"
                 :title-size="labelStyles.titleSize"
                 :title-color="labelStyles.titleColor"
@@ -548,6 +548,7 @@ export default defineComponent({
                 defaultLineChartProps.options,
                 props.options
             )
+
             return {
                 title: options.scales.x.title.text,
                 titleSize: `${options.scales.x.title.font.size}px`,

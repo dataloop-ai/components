@@ -1,7 +1,7 @@
 <template>
     <div
         class="card"
-        :style="[{ width, height }, styles]"
+        :style="[{ width, height }, computedStyles]"
     >
         <div
             v-if="icon"
@@ -84,7 +84,9 @@
 </template>
 
 <script lang="ts">
+import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
+import { stringStyleToRecord } from '../../../utils'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
@@ -126,11 +128,16 @@ export default defineComponent({
             default: '200px'
         },
         styles: {
-            type: [Object, String, Array],
+            type: [Object, String],
             default: null
         }
     },
     computed: {
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
+        },
         iconStyles(): string {
             return this.icon?.styles ?? ''
         },
@@ -160,7 +167,7 @@ export default defineComponent({
     box-shadow: 0px 5px 15px 0px var(--dl-color-shadow);
 
     &--content {
-        padding: 16px 10px;
+        padding: 16px;
         &_text {
             font-size: 12px;
             color: var(--dl-color-medium);

@@ -23,7 +23,7 @@
         </div>
         <div class="inputs-container">
             <dl-input
-                without-root-padding
+                dense
                 required
                 title="Name"
             />
@@ -58,7 +58,7 @@
                 :options="['High', 'Medium', 'Low']"
             />
             <dl-input
-                without-root-padding
+                dense
                 title="Completion Due Date"
                 placeholder="dd/mm/yy"
             />

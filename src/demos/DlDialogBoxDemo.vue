@@ -4,6 +4,14 @@
             v-model="draggable"
             left-label="Draggable"
         />
+        <dl-switch
+            v-model="fullscreen"
+            left-label="Full screen"
+        />
+        <dl-switch
+            v-model="fullHeight"
+            left-label="Full height"
+        />
         <dl-button @click="openModal">
             Open modal
         </dl-button>
@@ -11,6 +19,8 @@
             ref="modalOne"
             v-model="isOpenedFirstModal"
             :draggable="draggable"
+            :full-height="fullHeight"
+            :fullscreen="fullscreen"
         >
             <template #header>
                 <dl-dialog-box-header
@@ -136,6 +146,8 @@ export default defineComponent({
         const modalOne = ref<any>(null)
         const modalTwo = ref<any>(null)
         const draggable = ref(true)
+        const fullscreen = ref(false)
+        const fullHeight = ref(false)
         const isOpenedFirstModal = ref(false)
 
         const openModal = () => {
@@ -178,7 +190,9 @@ export default defineComponent({
             modalOne,
             modalTwo,
             isOpenedFirstModal,
-            draggable
+            draggable,
+            fullscreen,
+            fullHeight
         }
     }
 })

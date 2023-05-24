@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.16.48",
+  "version": "0.17.32",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -18,7 +18,7 @@
     "format": "prettier --write ./src",
     "lint-staged": "lint-staged",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --silent",
     "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
   },
   "dependencies": {

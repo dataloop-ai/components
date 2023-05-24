@@ -1,4 +1,4 @@
-import { ColorSchema, SyntaxColorSchema } from '../types'
+import { ColorSchema, SyntaxColorSchema, Filters } from '../types'
 import {
     operators,
     Alias,
@@ -6,6 +6,23 @@ import {
     endDatePattern,
     dateIntervalPattern
 } from '../../../../../hooks/use-suggestions'
+
+export function getTabItems(filters: Filters) {
+    return [
+        {
+            label: `Saved DQL Queries (${filters.saved.length})`,
+            name: 'saved'
+        },
+        {
+            label: `Recent Searches (${filters.recent.length})`,
+            name: 'recent'
+        },
+        {
+            label: `Suggested Searches (${filters.suggested.length})`,
+            name: 'suggested'
+        }
+    ]
+}
 
 export function replaceWithJsDates(str: string) {
     const intervals = str.match(dateIntervalPattern)
@@ -45,10 +62,17 @@ function isValidDate(d: Date) {
     return d instanceof Date && !isNaN(d as any)
 }
 
-export function replaceAliases(json: string, aliases: Alias[]) {
+export function replaceWithAliases(json: string, aliases: Alias[]) {
     let newJson = json
     aliases.forEach((alias) => {
         newJson = newJson.replaceAll(alias.alias, alias.key)
+    })
+    return newJson
+}
+export function revertAliases(json: string, aliases: Alias[]) {
+    let newJson = json
+    aliases.forEach((alias) => {
+        newJson = newJson.replaceAll(alias.key, alias.alias)
     })
     return newJson
 }
