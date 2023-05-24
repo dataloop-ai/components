@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { DlTab, DlTabPanels, DlTabs } from '../src'
 import {
     getChildrenFromSlot,
@@ -142,5 +142,23 @@ describe('Tabs and Tab Groups', () => {
         expect(first).toHaveLength(0)
         expect(second).toHaveLength(2)
         expect(forVue2).toEqual(SOME_OBJECT)
+    })
+
+    describe('when changing fontsize to 14', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlTab, {
+                props: {
+                    label: 'Label',
+                    name: 'name',
+                    disabled: false,
+                    fontSize: '14px'
+                }
+            })
+        })
+
+        it('should have correct icon size relative to font size', () => {
+            expect(wrapper.vm.iconSize).toBe('12px')
+        })
     })
 })

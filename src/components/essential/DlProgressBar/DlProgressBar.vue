@@ -87,7 +87,7 @@ export default defineComponent({
         },
         height: {
             type: String,
-            default: '4px'
+            default: '5px'
         },
         summary: {
             type: String,

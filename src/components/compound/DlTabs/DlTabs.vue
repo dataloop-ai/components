@@ -68,7 +68,7 @@ export default defineComponent({
         fullWidth: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
-        fontSize: { type: String, default: '12px' },
+        fontSize: { type: String, default: '18px' },
         gap: { type: String, default: '40px' }
     },
     emits: ['update:model-value'],
