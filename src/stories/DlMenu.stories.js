@@ -264,13 +264,13 @@ const Template = (args) => ({
                     </dl-list-item>
                     <dl-list-item clickable bordered>
                         <dl-item-section side>
-                            <dl-icon icon="icon-dl-id" />
+                            <dl-icon size="16px" icon="icon-dl-id" />
                         </dl-item-section>
                         <dl-item-section no-wrap>
                             with left/right side icons + Submenu
                         </dl-item-section>
                         <dl-item-section side>
-                            <dl-icon icon="icon-dl-id" />
+                            <dl-icon size="16px" icon="icon-dl-id" />
                         </dl-item-section>
                         <dl-menu anchor="top end" self="top start">
                             <dl-list bordered separator>
@@ -310,7 +310,7 @@ const Template = (args) => ({
                     </dl-list-item>
                     <dl-list-item bordered>
                     <dl-item-section no-wrap>
-                       <dl-button size="s" fluid flat label="Clear Button" icon="icon-dl-search"/>
+                       <dl-button size="m" fluid flat label="Clear Button" icon="icon-dl-search"/>
                     </dl-item-section>
                 </dl-list-item>
                 </dl-list>

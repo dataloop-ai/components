@@ -2,9 +2,10 @@
     <div>
         <dl-input
             v-model="textInputValue"
-            style="width: 220px"
+            style="width: 920px"
             placeholder="Select option"
             size="l"
+            margin="20px"
             title="Input Title"
             required
             tooltip="Quis fugiat et non eu proident sit et amet."
@@ -54,6 +55,17 @@
             style="width: 220px"
             placeholder="Select option"
             size="m"
+            warning
+            warning-message="Something isn't right."
+            info-message="This won't show, error is true"
+            optional
+        />
+        <dl-input
+            v-model="warningFieldValue"
+            title="Warning Example"
+            style="width: 220px"
+            placeholder="Select option"
+            size="s"
             warning
             warning-message="Something isn't right."
             info-message="This won't show, error is true"

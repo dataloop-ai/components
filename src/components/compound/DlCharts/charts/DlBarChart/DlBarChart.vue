@@ -46,7 +46,7 @@
                 :datasets="legendDatasets"
                 :width="chartWidth"
                 :class="legendClasses"
-                :align-items="legendProperties.alignItems"
+                :align-items="legendProps.alignItems"
                 @hide="hideData"
                 @on-hover="onHoverLegend"
                 @on-leave="onLeaveLegend"
@@ -225,6 +225,9 @@ export default defineComponent({
             if (event.type !== 'mousemove') {
                 return
             }
+            const hover = !!document.querySelector('.drag-clone')
+            chartJS.options.plugins.tooltip.enabled = !hover
+            if (hover) return
             if (
                 items.length === 0 ||
                 chartJS.getElementsAtEventForMode(

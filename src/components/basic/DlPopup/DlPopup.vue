@@ -464,7 +464,7 @@ export default defineComponent({
 .dl-popup {
     z-index: calc(var(--dl-z-index-menu) - 1);
     position: fixed !important;
-    padding: 0 0 16px;
+    padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);
     display: flex;
     background-color: var(--dl-color-panel-background);
@@ -481,9 +481,29 @@ export default defineComponent({
 .popup-content {
     max-width: 100%;
     padding: 0 16px;
+    height: 100%;
 }
 
 .popup-footer {
     padding: 20px 16px 0px;
+}
+
+// Fade Related transition
+.fade-enter,
+.fade-enter-active {
+    animation: fade-in var(--dl-transition-duration);
+}
+
+.fade-leave-active,
+.fade-leave-to {
+    animation: fade-in var(--dl-transition-duration) reverse;
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>
