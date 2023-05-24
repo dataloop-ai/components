@@ -16,7 +16,9 @@ describe('DlEllipsis', () => {
                 text,
                 split: false,
                 splitPosition: 0.75,
-                tooltip: true
+                tooltip: true,
+                tooltipOffset: [0, 25],
+                tooltipPosition: 'top middle'
             }
         })
 
@@ -25,7 +27,9 @@ describe('DlEllipsis', () => {
             text,
             split: false,
             splitPosition: 0.75,
-            tooltip: true
+            tooltip: true,
+            tooltipOffset: [0, 25],
+            tooltipPosition: 'top middle'
         })
     })
 

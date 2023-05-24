@@ -112,6 +112,8 @@ export default defineComponent({
             type: Object as PropType<
                 DoughnutControllerChartOptions['animation']
             >,
+            default: () =>
+                Object as PropType<DoughnutControllerChartOptions['animation']>,
             required: false
         }
     },
