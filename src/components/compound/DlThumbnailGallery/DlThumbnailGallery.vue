@@ -76,26 +76,44 @@ export default defineComponent({
         event: 'update:modelValue'
     },
     props: {
+        /**
+         * The currently selected image
+         */
         modelValue: {
             type: Object as PropType<DlThumbnail>,
             default: null
         },
+        /**
+         * The array of image objects to be contained in the gallery
+         */
         images: {
             type: Array as PropType<DlThumbnail[]>,
             default: (): DlThumbnail[] => []
         },
+        /**
+         * The number of thumbnails visible at once
+         */
         visibleThumbnails: {
             type: Number,
             default: 10
         },
+        /**
+         * The source of the image to be displayed when an image is unavailable
+         */
         invalidImage: {
             type: String,
             default: null
         },
+        /**
+         * The aspect ratio of the image inside each thumbnail. Available values: default, full and full-with-padding
+         */
         aspectRatio: {
             type: String,
             default: 'default'
         },
+        /**
+         * The opacity value of the white overlay on the thumbnails
+         */
         overlayOpacity: {
             type: Number,
             default: 0.5

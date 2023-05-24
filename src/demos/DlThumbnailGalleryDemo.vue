@@ -14,22 +14,19 @@
             <div class="menu__pagination">
                 {{ selectedIndex }} / {{ images.length }} Items
             </div>
-            <div
-                class="menu__thumbnail-icon"
-                @mousedown="showGallery = !showGallery"
-            >
-                <dl-icon
-                    icon="icon-dl-thumbnail"
-                    size="l"
-                />
-            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue-demi'
-import { DlThumbnailGallery, DlThumbnail } from '../components'
+import { DlThumbnailGallery } from '../components'
+
+interface DlThumbnail {
+    name: string
+    src: string
+    status: string
+}
 
 const images: DlThumbnail[] = []
 for (let i = 1; i < 20; i++) {
