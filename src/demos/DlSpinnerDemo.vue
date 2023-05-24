@@ -6,8 +6,6 @@
                 type="default"
                 text="Loading..."
                 :text-styles="{
-                    fontSize: '1em',
-                    marginTop: '15px',
                     marginLeft: '10px'
                 }"
             />
