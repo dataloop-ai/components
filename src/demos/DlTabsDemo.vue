@@ -61,10 +61,12 @@
             </dl-tab-panel>
         </dl-tab-panels>
 
+        With smaller font 14px
         <dl-tabs
             v-model="selectedTab"
             :items="tabItems"
             style="margin-top: 100px; max-width: 60%"
+            font-size="14px"
             @update:model-value="handleModelValueUpdate"
         >
             <template #top-right="props">
