@@ -62,14 +62,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-
-const transformOptions: string[] = [
-    'none',
-    'capitalize',
-    'uppercase',
-    'lowercase',
-    'default'
-]
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -209,20 +202,12 @@ export default defineComponent({
     border-radius: 2px;
     padding: var(--dl-chip-padding);
     outline: 0;
-    min-width: 18px; // +2px from borders
-    max-height: 18px; // +2px from borders
+    min-width: 18px;
     min-height: 12px;
     max-width: var(--dl-chip-max-width);
     color: var(--dl-chip-text-color);
     background-color: var(--dl-chip-bg-color);
     border: var(--dl-chip-border);
-
-    .first-letter-capitalized {
-        &::first-letter,
-        & > *::first-letter {
-            text-transform: capitalize;
-        }
-    }
 
     &--content {
         cursor: default;
@@ -235,9 +220,16 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        padding: 3px 5px 3px 5px;
     }
 }
+
+.dl-chip.first-letter-capitalized {
+    &::first-letter,
+    & > *::first-letter {
+        text-transform: capitalize;
+    }
+}
+
 .dl-chip-remove-icon-container {
     cursor: var(--dl-chip-left-icon-cursor);
     position: absolute;

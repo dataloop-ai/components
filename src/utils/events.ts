@@ -1,8 +1,23 @@
 export const listenOpts: Record<string, any> = {
     hasPassive: false,
     passiveCapture: true,
-    notPassiveCapture: true,
-    passive: false
+    notPassiveCapture: true
+}
+
+try {
+    const opts = Object.defineProperty({}, 'passive', {
+        get() {
+            Object.assign(listenOpts, {
+                hasPassive: true,
+                passive: { passive: true },
+                notPassive: { passive: false },
+                passiveCapture: { passive: true, capture: true },
+                notPassiveCapture: { passive: false, capture: true }
+            })
+        }
+    })
+} catch (e) {
+    console.log(e)
 }
 
 export function stopAndPrevent(e: Event) {
@@ -11,6 +26,8 @@ export function stopAndPrevent(e: Event) {
     }
     e.stopPropagation()
 }
+
+export function noop() {}
 
 export function leftClick(e: MouseEvent) {
     return e.button === 0

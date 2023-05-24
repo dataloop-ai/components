@@ -54,6 +54,10 @@ import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
+import DlGridDemo from './DlGridDemo.vue'
+import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
+import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
+import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 
 export default {
     AvatarDemo,
@@ -164,5 +168,12 @@ export const demoState = {
     thumbnail_gallery: DlThumbnailGallery,
     confusion_matrix: DlConfusionMatrix,
     toggle_button: DlToggleButtonDemo,
-    separator: DlSeparatorDemo
+    separator: DlSeparatorDemo,
+    DlSeparatorDemo,
+    DlKpiDemo,
+    DlCardDemo,
+    DlGridDemo,
+    DlMarkupTableDemo,
+    DlVirtualScrollDemo,
+    DlJsonEditorDemo
 }

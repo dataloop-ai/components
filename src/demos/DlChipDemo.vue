@@ -66,7 +66,7 @@
             <DlChip
                 removable
                 icon="icon-dl-search"
-                label="Chip filled"
+                label="chip filled"
                 @remove="log('test')"
             />
             <DlChip
@@ -78,19 +78,19 @@
                 removable
                 icon="icon-dl-search"
                 outlined
-                label="Chip outlined"
+                label="chip outlined"
                 @remove="log('test')"
             />
             <DlChip
                 removable
                 icon="icon-dl-search"
                 disabled
-                label="Chip disabled"
+                label="chip disabled"
                 @remove="log('test')"
             />
             <DlChip
                 removable
-                label="Ellipsed Chip with a multiple words"
+                label="ellipsed Chip with a multiple words"
                 icon="icon-dl-search"
                 @remove="log('test')"
             />
@@ -130,7 +130,17 @@
             <DlChip
                 ref="removableChip"
                 removable
-                label="Ellipsed Chip with a multiple words"
+                label="ellipsed Chip with a multiple words"
+            />
+        </div>
+        <h4>Chips with no text transform</h4>
+        <div
+            class="col"
+            style="margin-bottom: 30px"
+        >
+            <DlChip
+                label="ellipsed Chip with a multiple words"
+                transform="none"
             />
         </div>
         <div class="col">

@@ -14,6 +14,7 @@
         <dl-button
             size="s"
             flat
+            margin="0"
             class="dl-pagination--quick_nav_button"
             :disabled="disabled"
             @click="handleNavigation"

@@ -46,8 +46,8 @@ export default {
                 type: 'text'
             }
         },
-        withSearchBtn: {
-            name: 'withSearchBtn',
+        withSearchButton: {
+            name: 'withSearchButton',
             type: { name: 'boolean', required: false },
             defaultValue: '',
             description: 'Show a search button next to the search bar',
@@ -106,7 +106,7 @@ const Template = (args) => ({
             @input="input"
             @clear="clear"
             @enter="enter"
-            @search-btn="searchBtn"
+            @search-button="searchButton"
         />
     </div>
   `,
@@ -116,7 +116,7 @@ const Template = (args) => ({
         input: action('input'),
         clear: action('clear'),
         enter: action('enter'),
-        searchBtn: action('searchBtn')
+        searchButton: action('searchButton')
     }
 })
 
@@ -124,7 +124,7 @@ export const Preview = Template.bind({})
 Preview.args = {
     size: 'l',
     placeholder: 'Type here...',
-    withSearchBtn: false,
+    withSearchButton: false,
     autoSuggestItems: defaultSuggestions,
     suggestMenuWidth: 'auto'
 }

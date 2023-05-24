@@ -9,7 +9,7 @@
             </dl-typography>
         </slot>
         <dl-button
-            v-if="!hideCloseBtn"
+            v-if="!hideCloseButton"
             text-color="dl-color-darker"
             flat
             icon="icon-dl-close"
@@ -34,7 +34,7 @@ export default defineComponent({
             required: false,
             default: ''
         },
-        hideCloseBtn: Boolean
+        hideCloseButton: Boolean
     },
     emits: ['close']
 })

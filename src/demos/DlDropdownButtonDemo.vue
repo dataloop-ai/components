@@ -69,7 +69,7 @@
                 auto-close
                 split
                 :label="name"
-                main-btn-style="width: 120px"
+                main-button-style="width: 120px"
                 @click="onClick"
             >
                 <dl-list>
@@ -198,7 +198,7 @@
                     auto-close
                     :model-value="showing"
                     :label="name"
-                    main-btn-style="width: 150px;"
+                    main-button-style="width: 150px;"
                     @show="onOpen"
                 >
                     <dl-list>
@@ -239,7 +239,7 @@
                     auto-close
                     :model-value="showing"
                     label="Ellipsis for very long text"
-                    main-btn-style="width: 150px;"
+                    main-button-style="width: 150px;"
                     :overflow="true"
                     :no-wrap="true"
                     tooltip="Tooltip message"
@@ -260,7 +260,7 @@
                             <dl-item-section :no-wrap="true">
                                 <dl-ellipsis
                                     text="Very very very very long long long long text text text"
-                                    :middle-ellipsis="true"
+                                    split
                                 />
                             </dl-item-section>
                         </dl-list-item>
@@ -288,7 +288,7 @@
                     auto-close
                     :model-value="showing"
                     :label="arrowNavigationLabel"
-                    main-btn-style="width: 150px;"
+                    main-button-style="width: 150px;"
                     :overflow="true"
                     :no-wrap="true"
                     tooltip="Tooltip message"

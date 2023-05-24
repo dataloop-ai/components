@@ -1,221 +1,55 @@
 <template>
-    <div class="json-editor-layout">
-        <dl-dialog-box
-            :model-value="modelValue"
-            :width="800"
-        >
-            <template #header>
-                <dl-dialog-box-header
-                    title="DQL Search"
-                    :close-button="true"
-                    style="font-weight: 200"
-                    @onClose="$emit('update:modelValue', false)"
-                />
-            </template>
-            <template #body>
-                <div class="json-query">
-                    <div class="json-query-menu">
-                        <dl-select
-                            :model-value="selectedOption"
-                            width="200px"
-                            :options="selectOptions"
-                            placeholder="New Query"
-                            @update:model-value="updateActiveQuery"
-                        />
-                        <dl-button
-                            icon="icon-dl-align-left"
-                            label="Align Left"
-                            flat
-                            color="secondary"
-                            @click="alignText"
-                        />
-                    </div>
-                    <div
-                        ref="jsonEditorRef"
-                        class="json-editor"
-                    />
-                    <dl-typography
-                        style="margin-top: 5px"
-                        variant="p"
-                        color="red"
-                    >
-                        {{ message }}
-                    </dl-typography>
-                </div>
-            </template>
-            <template #footer>
-                <div class="footer-menu">
-                    <div class="footer-delete">
-                        <dl-button
-                            :disabled="deleteButtonState"
-                            icon="icon-dl-delete"
-                            label="Delete Query"
-                            flat
-                            color="secondary"
-                            @click="$emit('remove', activeQuery)"
-                        />
-                    </div>
-                    <div class="footer-save">
-                        <dl-button
-                            :disabled="message !== ''"
-                            outlined
-                            label="Save As"
-                            @click="save"
-                        />
-                        <dl-button
-                            :disabled="message !== ''"
-                            label="Search"
-                            @click="$emit('search', activeQuery)"
-                        />
-                    </div>
-                </div>
-            </template>
-        </dl-dialog-box>
-    </div>
+    <div
+        ref="jsonEditorRef"
+        class="json-editor"
+    />
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
-import { JSONEditor, JSONValue, Mode } from 'vanilla-jsoneditor'
+import { defineComponent } from 'vue-demi'
+import { JSONEditor, Mode } from 'vanilla-jsoneditor'
 import { debounce } from 'lodash'
-import { Query } from './types'
-import { DlSelect } from '../DlSelect'
-import { DlButton } from '../../basic'
-import { DlDialogBox, DlDialogBoxHeader } from '../DlDialogBox'
-import { DlTypography } from '../../essential'
-
-interface JSONContent {
-    json: JSONValue
-    text: string
-}
 
 export default defineComponent({
-    components: {
-        DlDialogBox,
-        DlDialogBoxHeader,
-        DlSelect,
-        DlButton,
-        DlTypography
-    },
     props: {
-        modelValue: { type: Boolean, default: false },
-        query: {
-            type: Object as PropType<Query>,
-            default: () =>
-                ({
-                    name: 'New Query',
-                    query: null
-                } as Query)
+        /**
+         * The string to display and modify as JSON
+         */
+        modelValue: {
+            type: String,
+            default: '{}'
         },
-        queries: {
-            type: Array as PropType<Query[]>,
-            default: () => [] as Query[]
+        /**
+         *  When this prop is false, the editor will not refresh, paired with the update-prevent event
+         * it helps with controlling when the editor refreshes
+         */
+        preventUpdate: {
+            type: Boolean,
+            default: null
         }
     },
-    emits: ['update:modelValue', 'save', 'remove', 'search'],
+    emits: ['update:modelValue', 'update-prevent', 'align-text'],
     data() {
         return {
-            preventOnChange: false,
-            preventUpdate: false,
             jsonEditor: {} as JSONEditor,
-            activeQuery: this.query,
-            selectedOption: {
-                label: this.query?.name,
-                value: this.query?.query
-            },
-            message: ''
-        }
-    },
-    computed: {
-        selectOptions(): Record<string, string>[] {
-            return [
-                {
-                    label: 'New Query',
-                    value: ''
-                },
-                ...this.queries.map((q: Query) => ({
-                    label: q.name,
-                    value: q.query
-                }))
-            ]
-        },
-        deleteButtonState(): boolean {
-            return !this.queries.filter(
-                (q: Query) => q.name === this.activeQuery?.name
-            ).length
+            preventOnChange: false
         }
     },
     watch: {
-        modelValue(value) {
-            this.$nextTick(() => {
-                if (value) this.initJsonEditor()
-                else this.jsonEditor?.destroy()
-                this.activeQuery = this.query
-            })
-        },
-        queries() {
-            this.resetEditor()
-        },
-        query(val) {
-            this.$nextTick(() => {
-                if (val.name === 'New Query') return
-                this.selectedOption = {
-                    label: val.name,
-                    value: val.query
+        modelValue: {
+            handler(val) {
+                if (this.preventUpdate === false) {
+                    this.setJsonText(val)
                 }
-                if (val.query && this.jsonEditor.set) {
-                    this.jsonEditor.set({
-                        text: val.query
-                    })
-                }
-                this.alignText()
-            })
-        },
-        activeQuery(val) {
-            try {
-                if (val.query) JSON.parse(val.query)
-                this.message = ''
-            } catch {
-                this.message = 'Invalid Query.'
             }
         }
     },
     mounted() {
         this.initJsonEditor()
+        this.setJsonText(this.modelValue)
+        this.$emit('align-text')
     },
     methods: {
-        updateActiveQuery(option: Record<string, string>) {
-            this.activeQuery = {
-                name: option.label,
-                query: option.value
-            }
-            this.jsonEditor?.destroy()
-            this.initJsonEditor()
-        },
-        alignText() {
-            if (!(this.jsonEditor.get && this.jsonEditor.get())) return
-            try {
-                const parsed = JSON.parse(
-                    (
-                        this.jsonEditor.get &&
-                        (this.jsonEditor?.get() as JSONContent)
-                    )?.text
-                )
-                const newText = JSON.stringify(parsed, null, 2)
-                this.jsonEditor?.set({ text: newText })
-            } catch (error) {}
-        },
-        resetEditor() {
-            if (this.jsonEditor.set) {
-                this.jsonEditor.set({
-                    text: '{}'
-                })
-            }
-            this.selectedOption = {
-                label: 'New Query',
-                value: ''
-            }
-        },
         initJsonEditor() {
             const initialAttrs: any = {
                 onChange: debounce(
@@ -224,27 +58,17 @@ export default defineComponent({
                             this.preventOnChange = false
                             return
                         }
-                        this.activeQuery = {
-                            name: this.activeQuery
-                                ? this.activeQuery.name
-                                : 'New Query',
-                            query: updatedContent.text
+                        this.$emit('update:modelValue', updatedContent.text)
+                        if (this.preventUpdate !== null) {
+                            this.$emit('update-prevent', true)
                         }
-                        this.preventUpdate = true
                     },
                     100
                 ),
                 mode: Mode.text,
                 mainMenuBar: false,
                 navigationBar: false,
-                statusBar: false,
-                ...(this.activeQuery !== undefined && {
-                    content: {
-                        text: this.activeQuery?.query
-                            ? this.activeQuery.query
-                            : '{}'
-                    }
-                })
+                statusBar: false
             }
 
             // There is type instantiation issue with JSONEditor,
@@ -256,18 +80,11 @@ export default defineComponent({
                     : document.createElement('div'),
                 props: initialAttrs
             })
-            this.alignText()
         },
-        save() {
-            this.$emit(
-                'save',
-                this.activeQuery
-                    ? this.activeQuery
-                    : {
-                          name: 'New Query',
-                          query: (this.jsonEditor?.get() as any).text || ''
-                      }
-            )
+        setJsonText(text: string) {
+            this.jsonEditor?.set({
+                text
+            })
         }
     }
 })
@@ -281,28 +98,12 @@ export default defineComponent({
     --jse-background-color: var(--dl-color-tooltip-text);
     --jse-value-color-boolean: #ae6307;
     --jse-value-color-string: #337433;
+    height: 100%;
     .jse-error {
         display: none !important;
     }
     .cm-gutters {
         display: none !important;
     }
-}
-
-.json-query-menu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.footer-save button {
-    margin: 0px 10px;
-}
-
-.footer-menu {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
 }
 </style>

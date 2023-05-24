@@ -1,6 +1,7 @@
 <template>
     <div>
         <DlAlert
+            type="info"
             :closable="true"
             fluid
         >
@@ -34,20 +35,56 @@
         <DlAlert
             type="info"
             text="Text: Lorem ipsum dolor sit amet, consectetur adipisicing elit. "
+            :closable="true"
         >
             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
         </DlAlert>
+        <dl-alert
+            style="margin-top: 20px"
+            fluid
+            type="warning"
+        >
+            this is an annoying message with link, this is an annoying message
+            with linkthis is an annoying message with linkthis is an annoying
+            message with linkthis is an annoying message with linkthis is an
+            annoying message with linkthis is an annoying message with linkthis
+            is an annoying message with link
+            <span>
+                Please
+                <dl-link color="dl-color-link">Contact us</dl-link>.</span>
+        </dl-alert>
+        <DlAlert
+            type="success"
+            text="Text: Lorem ipsum dolor sit amet, consectetur adipisicing elit. "
+        >
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        </DlAlert>
+        <dl-alert
+            style="margin-top: 20px"
+            fluid
+            type="warning"
+        >
+            this is an annoying message with link, this is an annoying message
+            with linkthis is an annoying message with linkthis is an annoying
+            message with linkthis is an annoying message with linkthis is an
+            annoying message with linkthis is an annoying message with linkthis
+            is an annoying message with link
+            <span>
+                Please
+                <dl-link color="dl-color-link">Contact us</dl-link>.</span>
+        </dl-alert>
     </div>
 </template>
 
 <script lang="ts">
-import { DlAlert } from '../components'
+import { DlAlert, DlLink } from '../components'
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlAlertDemo',
     components: {
-        DlAlert
+        DlAlert,
+        DlLink
     },
     template: 'dl-alert-demo'
 })

@@ -1,5 +1,9 @@
-import { operators, Alias } from '../../../../../hooks/use-suggestions'
-import { ColorSchema, SyntaxColorSchema } from '../types'
+import { SyntaxColorSchema } from '../types'
+
+const SPAN_STYLES = `overflow: hidden;
+                     text-overflow: ellipsis;
+                     display: inline-block;
+                     max-width: 100%`
 
 let editor = document.getElementById('editor')
 let styleModel: SyntaxColorSchema
@@ -91,13 +95,13 @@ function renderText(text: string) {
     const words = text?.split(/(\s+)/)
     const output = words?.map((word) => {
         if (styleModel.keywords.values.includes(word)) {
-            return `<strong>${word}</strong>`
+            return `<strong style='${SPAN_STYLES}'>${word}</strong>`
         } else if (styleModel.fields.values.includes(word)) {
-            return `<span style='color:${styleModel.fields.color}'>${word}</span>`
+            return `<span style='color:${styleModel.fields.color}; ${SPAN_STYLES}'>${word}</span>`
         } else if (styleModel.operators.values.includes(word)) {
-            return `<span style='color:${styleModel.operators.color}'>${word}</span>`
+            return `<span style='color:${styleModel.operators.color}; ${SPAN_STYLES}'>${word}</span>`
         } else {
-            return `<span>${word}</span>`
+            return `<span style='${SPAN_STYLES}'>${word}</span>`
         }
     })
     return output?.join('')
@@ -111,57 +115,4 @@ export function setCaret(target: HTMLElement) {
     sel.removeAllRanges()
     sel.addRange(range)
     target.focus()
-}
-
-export const isEligibleToChange = (target: HTMLElement, expanded: boolean) => {
-    let childOffsetRight = 0
-    let childOffsetBottom = 20
-
-    if (target?.lastChild) {
-        const range = document.createRange()
-        range.selectNode(target?.lastChild)
-        childOffsetRight =
-            range.getBoundingClientRect().right -
-            target.getBoundingClientRect().left
-        childOffsetBottom =
-            range.getBoundingClientRect().bottom -
-            target.getBoundingClientRect().top +
-            5
-    }
-
-    if (childOffsetRight <= target.clientWidth) {
-        return [-childOffsetRight, 5]
-    } else {
-        return [-target.clientWidth, 5]
-    }
-}
-
-export function createColorSchema(
-    colorSchema: ColorSchema,
-    aliases: Alias[]
-): SyntaxColorSchema {
-    const thisFields = []
-    for (const key in aliases) {
-        thisFields.push(aliases[key].alias)
-    }
-
-    const thisOperators = []
-    for (const key in operators) {
-        thisOperators.push(operators[key])
-    }
-
-    return {
-        fields: {
-            values: thisFields,
-            color: colorSchema.fields
-        },
-        operators: {
-            values: thisOperators,
-            color: colorSchema.operators
-        },
-        keywords: {
-            values: ['OR', 'AND'],
-            color: colorSchema.keywords
-        }
-    }
 }

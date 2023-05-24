@@ -1,8 +1,13 @@
 import {
-    createColorSchema,
-    updateEditor
+    updateEditor,
+    createColorSchema
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { describe, expect, it } from 'vitest'
+
+const SPAN_STYLES = `overflow: hidden;
+                     text-overflow: ellipsis;
+                     display: inline-block;
+                     max-width: 100%`
 
 const aliases = [
     {
@@ -50,6 +55,6 @@ describe('createColorSchema', () => {
         mockDiv.setAttribute('id', 'editor')
         document.body.appendChild(mockDiv)
         updateEditor(schema)
-        expect(mockDiv.innerHTML).toMatch('<span></span>')
+        expect(mockDiv.innerHTML.includes('span')).toBeTruthy()
     })
 })

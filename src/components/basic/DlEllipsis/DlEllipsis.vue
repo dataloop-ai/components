@@ -1,9 +1,9 @@
 <template>
-    <div class="dl-ellipsis">
-        <span
-            ref="dlEllipsisRef"
-            class="dl-ellipsis__left"
-        >
+    <div
+        ref="dlEllipsisRef"
+        class="dl-ellipsis"
+    >
+        <span class="dl-ellipsis__left">
             {{ leftText }}
         </span>
         <span
@@ -29,15 +29,33 @@ export default defineComponent({
         DlTooltip
     },
     props: {
+        /**
+         * Text to be displayed
+         */
         text: {
             type: String,
             required: true
         },
-        middleEllipsis: {
+        /**
+         * Allows to split the text in two parts
+         */
+        split: {
             type: Boolean,
             default: false,
             required: false
         },
+        /**
+         * Position of the split in the text, % of the text length
+         */
+        splitPosition: {
+            type: Number,
+            required: false,
+            default: 0.5,
+            validator: (value: number) => value >= 0 && value <= 1
+        },
+        /**
+         * Tooltip to be displayed when the text is truncated
+         */
         tooltip: {
             type: Boolean,
             default: true,
@@ -45,20 +63,27 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const dlEllipsisRef = ref(null)
-        const leftText = ref('')
-        const rightText = ref('')
-        const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
+        const { text, split } = props
 
+        const splitPositionsRef = computed(() => {
+            return Math.min(
+                Math.max(props.splitPosition, 1),
+                props.splitPosition
+            )
+        })
+
+        const dlEllipsisRef = ref(null)
         const splitIndex = computed(() =>
-            props.middleEllipsis
-                ? Math.round(props.text.length * 0.75)
-                : props.text.length
+            split
+                ? Math.round(text.length * splitPositionsRef.value)
+                : text.length
         )
 
-        const fullText = computed(() => props.text)
-        leftText.value = props.text.slice(0, splitIndex.value)
-        rightText.value = props.text.slice(splitIndex.value)
+        const leftText = computed(() => text.slice(0, splitIndex.value))
+        const rightText = computed(() => text.slice(splitIndex.value))
+
+        const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
+        const fullText = computed(() => text)
 
         return {
             leftText,

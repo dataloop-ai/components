@@ -96,8 +96,9 @@
                             <span v-else>
                                 {{ label }}
                             </span>
-                            <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
                         </span>
+                        <dl-tooltip self="top middle">
+                            {{ labelStrings[index] }}</dl-tooltip>
                     </span>
                 </div>
                 <dl-brush
@@ -137,7 +138,7 @@
             The given props cannot create a valid matrix.
         </div>
         <div
-            v-if="tooltipState?.visible"
+            v-if="tooltipVisible"
             :style="tooltipStyles"
             class="tooltip"
         >
@@ -159,7 +160,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
 import {
@@ -177,7 +178,7 @@ import {
     getCellWidth,
     flattenConfusionMatrix
 } from './utils'
-import { debounce } from 'lodash'
+import { debounce, isObject } from 'lodash'
 export default defineComponent({
     components: {
         DlBrush,
@@ -218,36 +219,53 @@ export default defineComponent({
     setup(props) {
         const { variables } = useThemeVariables()
 
-        const getCellBackground = (value: number = 1) => {
-            return hexToRgbA(
-                { ...variables, ...colorNames }[props.color],
-                value
-            )
+        const tooltipState = ref<{
+            x: string
+            y: string
+            visible?: boolean
+        } | null>(null)
+        const currentBrushState = ref<{ min: number; max: number }>({
+            min: 0,
+            max: props.matrix.length
+        })
+        const cellWidth = ref<number | null>(null)
+
+        const getCellBackground = (value: number = 1): string => {
+            const object: { [key: string]: any } = {
+                ...variables,
+                ...colorNames
+            }
+            const hex = object[props.color]
+            return hexToRgbA(hex, value)
         }
-        return { variables, getCellBackground }
-    },
-    data(): {
-        tooltipState: { x: string; y: string } | null
-        currentBrushState: { min: number; max: number }
-        cellWidth: number
-    } {
         return {
-            tooltipState: null,
-            currentBrushState: { min: 0, max: this.matrix.length },
-            cellWidth: null
+            variables,
+            getCellBackground,
+            cellWidth,
+            tooltipState,
+            currentBrushState
         }
     },
     computed: {
-        visibleLabels(): string[] | DlConfusionMatrixLabel[] {
-            return this.labels.slice(
-                this.currentBrushState.min,
-                this.currentBrushState.max
-            )
+        tooltipVisible(): boolean {
+            return this.tooltipState?.visible
+        },
+        visibleLabels(): DlConfusionMatrixLabel[] {
+            if (this.labels[0]) {
+                const arr = this.labels as DlConfusionMatrixLabel[]
+                return arr.slice(
+                    this.currentBrushState.min,
+                    this.currentBrushState.max
+                )
+            }
+            return []
         },
         labelStrings(): string[] | DlConfusionMatrixLabel[] {
-            if (typeof this.labels[0] === 'object')
-                return this.labels.map((label: any) => label.title)
-            else return this.labels
+            if (isObject(this.labels[0])) {
+                const arr = this.labels as DlConfusionMatrixLabel[]
+                return arr.map((label: DlConfusionMatrixLabel) => label.title)
+            }
+            return this.labels
         },
         labelImages(): string[] {
             return this.visibleLabels.map((label: any) => label.image)
@@ -311,18 +329,17 @@ export default defineComponent({
                     ctx.matrix.length / (brush.max - brush.min),
                     ctx.$refs.matrix
                 )
-                const scroll = brush.min * getCellWidth() + 2
+                const scroll = brush.min * (getCellWidth() - 2)
                 const container = ctx.$refs.matrixWrapper
-                container.scroll(scroll, scroll)
+                container.scroll(scroll, 0)
                 ctx.currentBrushState = brush
                 ctx.resizeYAxis()
             },
             30
         ),
         resizeYAxis() {
-            (this.$refs.yAxis as HTMLElement).style.height = `${
-                getCellWidth() * this.matrix.length
-            }px`
+            const yAxis = this.$refs.yAxis as HTMLElement
+            yAxis.style.height = `${getCellWidth() * this.matrix.length}px`
         },
         handleMatrixScroll(e: MouseEvent) {
             const target = e.target as HTMLElement
@@ -400,6 +417,9 @@ export default defineComponent({
         line-height: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
+        &--text {
+            font-size: 12px;
+        }
     }
 }
 .y-axis {
@@ -412,6 +432,7 @@ export default defineComponent({
         line-height: var(--cell-dimensions);
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 12px;
     }
 }
 .y-axis-outer {
@@ -445,7 +466,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 80%;
+        font-size: 60%;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;

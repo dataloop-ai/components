@@ -241,7 +241,48 @@
                 </div>
             </div>
             <div>
-                <p>#no-data & #pagination declare together</p>
+                <h3>slots #no-data & #pagination declare together</h3>
+                <h4>case 1: table with data</h4>
+                <p>
+                    rows should appear with slot#pagination, slot#no-data should
+                    not
+                </p>
+                <DlTable
+                    :rows="tableRows"
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="columns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 200px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #pagination>
+                        <div style="background-color: #4db1d3">
+                            &lt slot#pagination >
+                        </div>
+                    </template>
+                    <template #no-data>
+                        <div style="background-color: #734145">
+                            &lt slot#no-data > should not be visible
+                        </div>
+                    </template>
+                </DlTable>
+                <h4>case 2: table with no data</h4>
+                <p>slot#no-data should appear, slot#pagination not</p>
+
                 <DlTable
                     :selected="selected"
                     :separator="separator"
@@ -264,12 +305,35 @@
                     @update:selected="updateSeleted"
                 >
                     <template #pagination>
-                        pagination slot, no-data slot should be visible too
+                        <div style="background-color: #734145">
+                            &lt slot#pagination > should not be visible
+                        </div>
                     </template>
                     <template #no-data>
-                        no-data slot, pagination slot should be visible too
+                        <div style="background-color: #2f3c4b">
+                            &lt slot#no-data >
+                        </div>
                     </template>
                 </DlTable>
+            </div>
+
+            <div>
+                <p>Test reactive cells</p>
+                first row:
+                <div class="row">
+                    <dl-input
+                        v-for="(value, key) in tableRows[0]"
+                        :key="key"
+                        v-model="tableRows[0][key]"
+                        :title="key"
+                    />
+                </div>
+
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Table Title"
+                />
             </div>
         </div>
     </div>
