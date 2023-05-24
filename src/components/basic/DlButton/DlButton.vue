@@ -116,7 +116,7 @@ export default defineComponent({
          * The color of the icon inside the button
          */
         iconColor: { type: String!, default: '' },
-        /**Padding inside the button */
+        /** Padding inside the button */
         padding: { type: String, default: '' },
         /**
          * The size of the button, it can be s,m,l or xl
@@ -127,7 +127,7 @@ export default defineComponent({
          * The assigned color will fill the entirety of the button
          */
         filled: { type: Boolean, default: true },
-        /**Makes the button rounded */
+        /** Makes the button rounded */
         round: { type: Boolean, default: false },
         /**
          * The width of the button will take that of its container
