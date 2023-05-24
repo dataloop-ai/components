@@ -70,6 +70,7 @@ export default defineComponent({
     width: 100%;
     align-items: flex-start;
     justify-content: space-between;
+    padding-top: 20px;
 }
 
 .title {
