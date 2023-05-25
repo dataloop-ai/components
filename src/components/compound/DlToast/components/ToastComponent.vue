@@ -5,24 +5,47 @@
     >
         <div
             v-show="isActive"
+            :id="`DlToastContainer-${uuid}`"
             ref="root"
-            class="v-toast__item"
-            :class="[
-                `v-toast__item--${type}`,
-                `v-toast__item--${position}`,
-                classItem
-            ]"
+            class="toast-item DlToastContainer"
+            :class="[`toast-item--${type}`, `toast-item--${position}`]"
             :style="{ width }"
         >
             <dl-alert
+                class="alert"
                 :type="type"
                 :closable="closable"
+                :dark-mode="false"
+                close-button-position="center"
+                style="position: relative"
                 @update:model-value="closeToast"
             >
                 <span
-                    class="v-toast__text"
+                    class="toast-message"
                     data-test="message-text"
                 />
+                <dl-badge
+                    v-if="count"
+                    with-border
+                    floating
+                    align="top"
+                    :color="badgeColor"
+                    :text-color="
+                        type === 'warning'
+                            ? 'var(--dl-color-alert-text)'
+                            : 'var(--dl-color-text-buttons)'
+                    "
+                    style="
+                        display: grid;
+                        text-align: center;
+                        width: fit-content;
+                        padding: 3px;
+                        min-width: 1em;
+                        top: -5px;
+                    "
+                >
+                    {{ count + 1 }}
+                </dl-badge>
             </dl-alert>
         </div>
     </transition>
@@ -36,14 +59,15 @@ import {
     onMounted,
     ref
 } from 'vue-demi'
-import { DlAlert } from '../../../basic'
-import { Positions, Types } from '../utils/config'
+import { DlAlert, DlBadge } from '../../../'
+import { DlToastTypes, DlToastPositions } from '../types'
 import { removeElement } from '../utils/render'
 import { Animation } from '../types'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     name: 'ToastComponent',
-    components: { DlAlert },
+    components: { DlAlert, DlBadge },
     props: {
         message: {
             type: String,
@@ -51,14 +75,10 @@ export default defineComponent({
         },
         type: {
             type: String,
-            default: 'success',
-            validator(value: string): boolean {
-                return Object.values(Types as unknown).includes(value)
+            required: true,
+            validator(value: DlToastTypes): boolean {
+                return Object.values(DlToastTypes).includes(value)
             }
-        },
-        classItem: {
-            type: String,
-            default: ''
         },
         width: {
             type: String,
@@ -70,41 +90,51 @@ export default defineComponent({
         },
         position: {
             type: String,
-            default: Positions.bottom,
-            validator(value: string): boolean {
-                return Object.values(Positions as unknown).includes(value)
+            default: DlToastPositions.BOTTOM,
+            validator(value: DlToastPositions): boolean {
+                return Object.values(DlToastPositions).includes(value)
             }
         },
         closable: {
             type: Boolean,
             default: true
+        },
+        collapseCount: {
+            type: Number,
+            default: 5
         }
     },
-    setup(props: any) {
-        const { position, duration, message } = props
+    emits: ['removed'],
+    setup(props: any, { emit }) {
+        const uuid = v4()
+        const { position, duration, message, collapseCount } = props
         const root = ref(null)
+        const count = ref(0)
         let parentTop: HTMLElement = null
         let parentBottom: HTMLElement = null
         const toastParentPosition = ref(null)
         const isActive = ref(false)
         function closeToastMessage(): void {
             isActive.value = false
-            setTimeout(() => removeElement(root.value), 200)
+            setTimeout(() => {
+                emit('removed')
+                removeElement(root.value)
+            }, 200)
         }
         onBeforeMount(() => {
             setupContainer()
         })
         function setupContainer(): void {
-            parentTop = document.querySelector('.v-toast.v-toast--top')
-            parentBottom = document.querySelector('.v-toast.v-toast--bottom')
+            parentTop = document.getElementById('DlToastContainerTop')
+            parentBottom = document.getElementById('DlToastContainerBottom')
             if (parentTop && parentBottom) return
             if (!parentTop) {
                 parentTop = document.createElement('div')
-                parentTop.className = 'v-toast v-toast--top'
+                parentTop.id = 'DlToastContainerTop'
             }
             if (!parentBottom) {
                 parentBottom = document.createElement('div')
-                parentBottom.className = 'v-toast v-toast--bottom'
+                parentBottom.id = 'DlToastContainerBottom'
             }
             const container = document.body
             container.appendChild(parentTop)
@@ -113,14 +143,14 @@ export default defineComponent({
 
         const correctParent = computed(() => {
             switch (position) {
-                case Positions.top:
-                case Positions.top_right:
-                case Positions.top_left:
+                case DlToastPositions.TOP:
+                case DlToastPositions.TOP_RIGHT:
+                case DlToastPositions.TOP_LEFT:
                     toastParentPosition.value = 'top'
                     return parentTop
-                case Positions.bottom:
-                case Positions.bottom_right:
-                case Positions.bottom_left:
+                case DlToastPositions.BOTTOM:
+                case DlToastPositions.BOTTOM_RIGHT:
+                case DlToastPositions.BOTTOM_LEFT:
                     toastParentPosition.value = 'bottom'
                     return parentBottom
             }
@@ -128,19 +158,19 @@ export default defineComponent({
 
         const transition = computed((): Animation => {
             switch (position) {
-                case Positions.top:
-                case Positions.top_right:
-                case Positions.top_left:
+                case DlToastPositions.TOP:
+                case DlToastPositions.TOP_RIGHT:
+                case DlToastPositions.TOP_LEFT:
                     return {
-                        enter: 'v-toast--fade-in-down',
-                        leave: 'v-toast--fade-out'
+                        enter: 'dl-toast--fade-in-down',
+                        leave: 'dl-toast--fade-out'
                     }
-                case Positions.bottom:
-                case Positions.bottom_right:
-                case Positions.bottom_left:
+                case DlToastPositions.BOTTOM:
+                case DlToastPositions.BOTTOM_RIGHT:
+                case DlToastPositions.BOTTOM_LEFT:
                     return {
-                        enter: 'v-toast--fade-in-up',
-                        leave: 'v-toast--fade-out'
+                        enter: 'dl-toast--fade-in-up',
+                        leave: 'dl-toast--fade-out'
                     }
             }
         })
@@ -149,79 +179,104 @@ export default defineComponent({
             showNotice()
         })
 
+        const timeoutId = ref(null)
+
+        const setHideTimeout = () => {
+            if (timeoutId.value) {
+                clearTimeout(timeoutId.value)
+            }
+
+            timeoutId.value = setTimeout(() => {
+                closeToastMessage()
+                timeoutId.value = null
+            }, duration * 1000)
+        }
+
         function showNotice(): void {
             const parent = correctParent.value
-            const container = root.value.closest('.v-toast--pending')
-            root.value.querySelector('.v-toast__text').innerHTML = message
+            const container = root.value.closest('.dl-toast-container--pending')
+            root.value.querySelector('.toast-message').innerHTML = message
             parent.insertAdjacentElement('afterbegin', root.value)
             container?.remove()
             isActive.value = true
             if (duration) {
+                setHideTimeout()
+            }
+            if (collapseCount && collapseCount < parent.childNodes.length) {
                 setTimeout(() => {
-                    closeToastMessage()
-                }, duration * 1000)
+                    emit('removed')
+                    removeElement(parent.lastElementChild)
+                }, 200)
             }
         }
         function closeToast(val: boolean) {
-            if (!val) removeElement(root.value)
+            if (!val) {
+                emit('removed')
+                removeElement(root.value)
+            }
         }
 
+        const updateCount = (val: number) => {
+            count.value = val
+            setHideTimeout()
+        }
+
+        const badgeColor = computed(() => {
+            switch (props.type) {
+                case DlToastTypes.SUCCESS:
+                    return 'var(--dl-color-alert-success)'
+                case DlToastTypes.WARNING:
+                    return 'var(--dl-color-alert-warn)'
+                case DlToastTypes.ERROR:
+                    return 'var(--dl-color-alert-error)'
+                case DlToastTypes.INFO:
+                    return 'var(--dl-color-alert-info)'
+            }
+        })
+
         return {
+            uuid,
             root,
             transition,
             isActive,
             closeToast,
-            correctParent
+            correctParent,
+            updateCount,
+            count,
+            badgeColor
         }
     }
 })
 </script>
 
-<style lang="scss">
-.v-toast {
-    position: fixed;
-    display: flex;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    z-index: 1052;
-    pointer-events: none;
-    &__item {
-        display: inline-flex;
-        align-items: center;
-        pointer-events: auto;
-        min-width: 400px;
-        max-width: 900px;
-        margin: 5px;
-        cursor: pointer;
-        animation-duration: 150ms;
+<style lang="scss" scoped>
+.toast-item {
+    display: inline-flex;
+    align-items: center;
+    pointer-events: auto;
+    min-width: 400px;
+    max-width: 900px;
+    margin: 5px;
+    cursor: pointer;
+    animation-duration: 150ms;
 
-        &.v-toast__item--top,
-        &.v-toast__item--bottom {
-            align-self: center;
-        }
-
-        &.v-toast__item--top-right,
-        &.v-toast__item--bottom-right {
-            align-self: flex-end;
-        }
-
-        &.v-toast__item--top-left,
-        &.v-toast__item--bottom-left {
-            align-self: flex-start;
-        }
+    &.toast-item--top,
+    &.toast-item--bottom {
+        align-self: center;
     }
 
-    &.v-toast--top {
-        flex-direction: column;
+    &.toast-item--top-right,
+    &.toast-item--bottom-right {
+        align-self: flex-end;
     }
 
-    &.v-toast--bottom {
-        flex-direction: column-reverse;
+    &.toast-item--top-left,
+    &.toast-item--bottom-left {
+        align-self: flex-start;
     }
 }
+
+// using unique class to identify the changes
 
 @keyframes fadeOut {
     from {
@@ -232,7 +287,7 @@ export default defineComponent({
     }
 }
 
-.v-toast--fade-out {
+.dl-toast--fade-out {
     animation-name: fadeOut;
 }
 
@@ -247,7 +302,7 @@ export default defineComponent({
     }
 }
 
-.v-toast--fade-in-down {
+.dl-toast--fade-in-down {
     animation-name: fadeInDown;
 }
 
@@ -262,14 +317,11 @@ export default defineComponent({
     }
 }
 
-.v-toast--fade-in-up {
+.dl-toast--fade-in-up {
     animation-name: fadeInUp;
 }
 
-/**
- * Vue Transitions
- */
-
+// animations
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 150ms ease-out;
@@ -278,5 +330,51 @@ export default defineComponent({
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
+}
+</style>
+
+<style lang="scss">
+#DlToastContainerTop {
+    position: fixed;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: var(--dl-z-index-toast);
+    pointer-events: none;
+    flex-direction: column;
+    .root {
+        width: 100% !important;
+    }
+}
+#DlToastContainerBottom {
+    position: fixed;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: var(--dl-z-index-toast);
+    pointer-events: none;
+    flex-direction: column-reverse;
+    .root {
+        width: 100% !important;
+    }
+}
+
+.DlToastContainer {
+    --dl-color-negative: var(--dl-color-alert-error);
+    --dl-color-negative-background: var(--dl-color-alert-error-background);
+    --dl-color-warning: var(--dl-color-alert-warn);
+    --dl-color-warning-background: var(--dl-color-alert-warn-background);
+    --dl-color-positive: var(--dl-color-alert-success);
+    --dl-color-positive-background: var(--dl-color-alert-success-background);
+    --dl-color-info: var(--dl-color-alert-info);
+    --dl-color-info-background: var(--dl-color-alert-info-background);
+    --dl-color-darker: var(--dl-color-alert-text);
+    --dl-alert-align-button: center;
 }
 </style>

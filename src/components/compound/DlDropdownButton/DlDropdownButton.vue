@@ -3,30 +3,30 @@
         v-if="split"
         :id="uuid"
         :class="identifierClass"
-        class="dl-btn-dropdown dl-btn-dropdown--split no-wrap dl-btn-item"
+        class="dl-button-dropdown dl-button-dropdown--split no-wrap dl-button-item"
         :outlined="outlined"
         :flat="flat"
         :stretch="stretch"
     >
         <dl-button
-            class="dl-btn-dropdown--current"
-            :style="mainBtnStyle"
+            class="dl-button-dropdown--current"
+            :style="mainButtonStyle"
             :label="label"
             :outlined="outlined"
             :size="size"
             :flat="flat"
-            :disabled="disabled === true || disableMainBtn === true"
+            :disabled="disabled === true || disableMainButton === true"
             :max-width="maxWidth"
             :color="color"
             :icon="icon"
-            :uppercase="uppercase"
+            :transform="transform"
             :text-color="textColor"
             no-wrap
             :aria-expanded="showing === true ? 'true' : 'false'"
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainBtn === true) ||
+                    (split === false && disableMainButton === true) ||
                     disableDropdown === true
             "
             :overflow="overflow"
@@ -34,8 +34,8 @@
             @click="onClickHide"
         />
         <dl-button
-            class="dl-btn-dropdown__arrow-container"
-            :style="btnCSSStyles"
+            class="dl-button-dropdown__arrow-container"
+            :style="buttonCSSStyles"
             :disabled="disabled === true || disableDropdown === true"
             :outlined="outlined"
             :flat="flat"
@@ -46,7 +46,7 @@
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainBtn === true) ||
+                    (split === false && disableMainButton === true) ||
                     disableDropdown === true
             "
             :no-wrap="noWrap"
@@ -54,7 +54,7 @@
             :tooltip="tooltip"
         >
             <div
-                class="dl-btn-dropdown--separator"
+                class="dl-button-dropdown--separator"
                 :style="`
                     background-color: ${
                     disabled
@@ -65,6 +65,7 @@
                 }`"
             />
             <dl-icon
+                class="expand-icon"
                 :class="iconClass"
                 :icon="dropdownIcon"
                 :size="iconSize"
@@ -103,24 +104,24 @@
     </button-group>
     <dl-button
         v-else
-        class="dl-btn-dropdown dl-btn-dropdown--simple"
+        class="dl-button-dropdown dl-button-dropdown--simple"
         v-bind="$props"
         label=""
         :aria-expanded="showing"
         :aria-haspopup="true"
         :aria-disabled="
             disabled === true ||
-                (split === false && disableMainBtn === true) ||
+                (split === false && disableMainButton === true) ||
                 disableDropdown === true
         "
-        :disabled="disabled === true || disableMainBtn === true"
-        :style="mainBtnStyle"
+        :disabled="disabled === true || disableMainButton === true"
+        :style="[mainButtonStyle, cssVars]"
         :no-wrap="props.noWrap"
         :tooltip="tooltip"
         :max-width="maxWidth"
         @click="onClick"
     >
-        <div class="dl-btn-dropdown--simple__title">
+        <div class="dl-button-dropdown--simple__title">
             <span
                 :class="{
                     'dl-button-no-wrap': noWrap
@@ -159,10 +160,13 @@
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
+            :arrow-nav-items="arrowNavItems"
             @before-show="onBeforeShow"
             @show="onShow"
             @before-hide="onBeforeHide"
             @hide="onHide"
+            @highlightedIndex="setHighlightedIndex"
+            @handleSelectedItem="handleSelectedItem"
         >
             <slot />
         </dl-menu>
@@ -184,6 +188,7 @@ import {
     Ref
 } from 'vue-demi'
 import { v4 } from 'uuid'
+import { transformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -204,7 +209,7 @@ export default defineComponent({
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },
         contentClass: { type: [Array, String, Object], default: '' },
         contentStyle: { type: [Array, String, Object], default: '' },
-        mainBtnStyle: { type: [Array, String, Object], default: '' },
+        mainButtonStyle: { type: [Array, String, Object], default: '' },
         cover: Boolean,
         maxWidth: { type: String, default: null },
         maxHeight: { type: String, default: null },
@@ -220,7 +225,7 @@ export default defineComponent({
             default: 'top end'
         },
         menuOffset: { type: Array, default: () => [0, 0] },
-        disableMainBtn: Boolean,
+        disableMainButton: Boolean,
         disableDropdown: Boolean,
         noIconAnimation: Boolean,
         disabled: Boolean,
@@ -233,13 +238,22 @@ export default defineComponent({
         icon: { type: String, required: false, default: '' },
         iconSize: { type: String, required: false, default: '20px' },
         flat: Boolean,
-        uppercase: Boolean,
+        transform: {
+            type: String,
+            default: 'default',
+            validator: (value: string): boolean =>
+                transformOptions.includes(value)
+        },
         outlined: Boolean,
         padding: { type: String, default: '5px' },
         fitContent: Boolean,
         noWrap: { type: Boolean, default: false, required: false },
         overflow: { type: Boolean, default: false, required: false },
-        tooltip: { type: String, default: null, required: false }
+        tooltip: { type: String, default: null, required: false },
+        arrowNavItems: {
+            type: [String, Array, Object],
+            default: () => [] as any[]
+        }
     },
     emits: [
         'update:model-value',
@@ -248,7 +262,9 @@ export default defineComponent({
         'before-show',
         'show',
         'before-hide',
-        'hide'
+        'hide',
+        'highlightedIndex',
+        'handleSelectedItem'
     ],
 
     setup(props, { emit }) {
@@ -266,7 +282,7 @@ export default defineComponent({
 
             if (
                 props.disabled === true ||
-                (props.split === false && props.disableMainBtn === true) ||
+                (props.split === false && props.disableMainButton === true) ||
                 props.disableDropdown === true
             ) {
                 acc['aria-disabled'] = 'true'
@@ -282,21 +298,29 @@ export default defineComponent({
 
         const iconClass = computed(() => {
             return (
-                'dl-btn-dropdown__arrow' +
+                'dl-button-dropdown__arrow' +
                 (showing.value === true && props.noIconAnimation === false
                     ? ' rotate-180'
                     : '') +
                 (props.split === false
-                    ? ' dl-btn-dropdown__arrow-container'
+                    ? ' dl-button-dropdown__arrow-container'
                     : '')
             )
         })
 
-        const btnCSSStyles = computed(() => {
+        const buttonCSSStyles = computed(() => {
             return {
-                '--dl-btn-border-left': props.outlined
+                '--dl-button-border-left': props.outlined
                     ? 'none'
                     : 'var(--dl-color-white)'
+            }
+        })
+
+        const cssVars = computed(() => {
+            return {
+                '--justify-content': props.fluid
+                    ? 'space-between'
+                    : 'space-around'
             }
         })
 
@@ -360,6 +384,12 @@ export default defineComponent({
                 (menuRef.value as Record<string, Function>).hide(evt)
             }
         }
+        const setHighlightedIndex = (value: any) => {
+            emit('highlightedIndex', value)
+        }
+        const handleSelectedItem = (value: any) => {
+            emit('handleSelectedItem', value)
+        }
 
         onMounted(() => {
             if (props.modelValue) {
@@ -380,7 +410,7 @@ export default defineComponent({
             iconClass,
             menuRef,
             attributes,
-            btnCSSStyles,
+            buttonCSSStyles,
             showing,
             onBeforeShow,
             onBeforeHide,
@@ -392,7 +422,10 @@ export default defineComponent({
             show,
             hide,
             menuModel,
-            props
+            props,
+            setHighlightedIndex,
+            handleSelectedItem,
+            cssVars
         }
     }
 })
@@ -405,9 +438,9 @@ export default defineComponent({
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.dl-btn-dropdown {
-    padding-right: var(--dl-btn-padding-right) !important;
-    &--split .dl-btn-dropdown__arrow-container {
+.dl-button-dropdown {
+    padding-right: var(--dl-button-padding-right) !important;
+    &--split .dl-button-dropdown__arrow-container {
         // padding: 0 4px;
         ::v-deep .dl-button {
             border-top-left-radius: 0 !important;
@@ -443,7 +476,7 @@ export default defineComponent({
         &__title {
             display: flex;
             align-items: center;
-            justify-content: space-around;
+            justify-content: var(--justify-content);
             text-align: center;
             padding: 0;
             flex: 10000 1 0%;
@@ -475,8 +508,29 @@ export default defineComponent({
             }
         }
     }
+
+    .expand-icon {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center;
+        color: var(--dl-color-medium);
+        transition-property: transform, -webkit-transform;
+        transition-duration: 0.28s, 0.28s;
+        transition-timing-function: ease, ease;
+        transition-delay: 0s, 0s;
+        &.expanded {
+            transform: rotate(180deg);
+        }
+    }
 }
 ::v-deep .dl-button-no-wrap {
     flex-grow: 1;
+}
+</style>
+<style lang="scss">
+.dl-button-dropdown {
+    .dl-button-content {
+        line-height: unset;
+    }
 }
 </style>

@@ -67,11 +67,13 @@
             </span>
         </label>
         <div
-            v-if="subLabel"
+            v-if="hasSubLabel"
             :style="subLabelStyle"
             class="sub-text"
         >
-            <span>{{ subLabel }}</span>
+            <slot name="sub-label">
+                <span>{{ subLabel }}</span>
+            </slot>
         </div>
     </div>
 </template>
@@ -96,7 +98,7 @@ export default defineComponent({
         id: { type: [String, Number], default: null },
         modelValue: { type: ValueTypes, required: false, default: null },
         label: { default: null, type: String },
-        subLabel: { type: String, default: '' },
+        subLabel: { type: String, default: null },
         toggleIndeterminate: { type: Boolean, default: false },
         indeterminateValue: { type: ValueTypes, default: null },
         value: { type: ValueTypes, default: null },
@@ -158,6 +160,9 @@ export default defineComponent({
         },
         hasLabel(): boolean {
             return !!this.label || !!this.$slots.default
+        },
+        hasSubLabel(): boolean {
+            return !!this.subLabel || !!this.$slots['sub-label']
         },
         subLabelStyle(): Record<string, string> {
             return {
@@ -274,7 +279,7 @@ input {
 }
 
 .sub-text {
-    margin-left: 6%;
+    padding-left: 30px;
     width: 80%;
     color: var(--dl-color-medium);
     word-break: break-all;

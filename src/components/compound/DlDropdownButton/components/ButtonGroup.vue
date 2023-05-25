@@ -32,20 +32,21 @@ export default defineComponent({
                 // todo: wtf is this ?
                 // @ts-ignore
                 .filter((t) => this[t] === true)
-                .map((t) => `dl-btn-group--${t}`)
+                .map((t) => `dl-button-group--${t}`)
                 .join(' ')
 
             return (
-                `dl-btn-group row no-wrap${cls.length > 0 ? ' ' + cls : ''}` +
-                (this.spread ? ' dl-btn-group--spread' : ' inline')
+                `dl-button-group row no-wrap${
+                    cls.length > 0 ? ' ' + cls : ''
+                }` + (this.spread ? ' dl-button-group--spread' : ' inline')
             )
         }
     }
 })
 </script>
 
-<style lang="scss">
-.dl-btn-group {
+<style lang="scss" scoped>
+.dl-button-group {
     border-radius: 2px;
     vertical-align: middle;
 
@@ -57,7 +58,7 @@ export default defineComponent({
             box-shadow: none;
         }
     }
-    > .dl-btn-group {
+    > .dl-button-group {
         box-shadow: none;
 
         &:first-child {
@@ -73,10 +74,10 @@ export default defineComponent({
             }
         }
     }
-    > .dl-btn-group:not(:first-child) > .dl-button:first-child:before {
+    > .dl-button-group:not(:first-child) > .dl-button:first-child:before {
         border-left: 0;
     }
-    > .dl-btn-group:not(:last-child) > .dl-button:last-child:before {
+    > .dl-button-group:not(:last-child) > .dl-button:last-child:before {
         border-right: 0;
     }
     > .dl-button:not(:last-child) {
@@ -108,11 +109,12 @@ export default defineComponent({
         border-radius: 0;
     }
     &--spread {
-        > .dl-btn-group {
+        > .dl-button-group {
             display: flex !important;
         }
         > .dl-button,
-        > .dl-btn-group > .dl-button:not(.dl-btn-dropdown__arrow-container) {
+        > .dl-button-group
+            > .dl-button:not(.dl-button-dropdown__arrow-container) {
             width: auto;
             min-width: 0;
             max-width: 100%;

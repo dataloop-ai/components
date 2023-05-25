@@ -43,6 +43,7 @@ export interface DlButtonProps {
     outlined: boolean
     flat: boolean
     filled: boolean
+    shaded: boolean
     color: string
     textColor: string
 }
@@ -63,6 +64,7 @@ export const setTextColor = ({
     flat,
     color,
     filled,
+    shaded,
     textColor
 }: DlButtonProps): string => {
     if (disabled) {
@@ -78,6 +80,9 @@ export const setTextColor = ({
 
         return getColor(textColor, 'dl-color-secondary')
     }
+    if (shaded) {
+        return getColor(textColor, 'dl-color-darker')
+    }
     if (filled) {
         return getColor(textColor, 'dl-color-text-buttons')
     }
@@ -89,10 +94,14 @@ export const setBgColor = ({
     disabled,
     flat,
     outlined,
+    shaded,
     color = ''
 }: Partial<DlButtonProps>) => {
     if (disabled || flat || outlined) {
         return 'var(--dl-color-transparent)'
+    }
+    if (shaded) {
+        return 'var(--dl-color-fill)'
     }
 
     return getColor(color, 'dl-color-secondary')
@@ -101,14 +110,15 @@ export const setBgColor = ({
 export const setBorder = ({
     disabled,
     flat,
-    color = ''
+    color = '',
+    shaded
 }: Partial<DlButtonProps>) => {
     if (disabled) {
         return flat
             ? 'var(--dl-color-transparent)'
             : 'var(--dl-color-separator)'
     }
-    if (flat) {
+    if (flat || shaded) {
         return 'var(--dl-color-transparent)'
     }
 

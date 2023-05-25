@@ -151,3 +151,10 @@ export function getElementsAtEvent(chart: Chart, event: MouseEvent) {
         false
     )
 }
+
+export const getMaxDatasetValue = (chartDataset: [{ data: number[] }]) => {
+    return Math.max.apply(
+        null,
+        chartDataset.map((data) => [...data.data]).flat(1)
+    )
+}

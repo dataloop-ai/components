@@ -90,6 +90,7 @@
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect"
                     @deselected="handleSingleDeselect"
+                    @depth-change="$emit('depth-change')"
                 />
             </div>
         </div>
@@ -120,6 +121,7 @@ export default defineComponent({
     },
     props: {
         withWave: Boolean,
+        // todo: clean this up; rename the prop to something better
         defaultStyles: { type: Boolean, default: true },
         multiselect: { type: Boolean, default: false },
         value: { type: ValueTypes, default: null },
@@ -135,7 +137,13 @@ export default defineComponent({
         label: { type: String, default: null },
         capitalized: { type: Boolean, default: false }
     },
-    emits: ['update:model-value', 'click', 'selected', 'deselected'],
+    emits: [
+        'update:model-value',
+        'click',
+        'selected',
+        'deselected',
+        'depth-change'
+    ],
     data() {
         return {
             showChildren: false,
@@ -190,6 +198,7 @@ export default defineComponent({
         },
         chevronClick(e: Event) {
             e.stopPropagation()
+            this.$emit('depth-change')
             this.handleChildren(e)
         },
         toggleChildren() {
@@ -252,8 +261,7 @@ export default defineComponent({
 .capitalized {
     text-transform: capitalize !important;
 }
-</style>
-<style lang="scss">
+
 .capitalized .checkbox-label {
     text-transform: capitalize !important;
 }

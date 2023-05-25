@@ -16,10 +16,14 @@
             />
             <dl-chart-scroll-bar
                 v-if="maxItems > thisItemsInView"
+                :wrapper-styles="{
+                    marginTop: '10px'
+                }"
                 :height="wrapperHeight"
                 :item-count="maxItems"
                 :items-in-view="thisItemsInView"
                 :position="scrollPosition"
+                :scroll-deficit="50"
                 @position-update="handleScrollUpdate"
             />
         </div>
@@ -42,7 +46,7 @@
                 :datasets="legendDatasets"
                 :width="chartWidth"
                 :class="legendClasses"
-                :align-items="legendProperties.alignItems"
+                :align-items="legendProps.alignItems"
                 @hide="hideData"
                 @on-hover="onHoverLegend"
                 @on-leave="onLeaveLegend"
@@ -221,6 +225,9 @@ export default defineComponent({
             if (event.type !== 'mousemove') {
                 return
             }
+            const hover = !!document.querySelector('.drag-clone')
+            chartJS.options.plugins.tooltip.enabled = !hover
+            if (hover) return
             if (
                 items.length === 0 ||
                 chartJS.getElementsAtEventForMode(
@@ -361,7 +368,7 @@ export default defineComponent({
 
         const maxItems = computed(() => chartData.value?.labels.length)
 
-        const handleScrollUpdate = (position: number) => {
+        const handleScrollUpdate = ({ position }: { position: number }) => {
             if (position >= maxItems.value - thisItemsInView.value) return
             chart.value.options.scales.y.min = position
             chart.value.options.scales.y.max = position + thisItemsInView.value

@@ -57,12 +57,12 @@
         <DlVirtualScroll
             v-if="hasVirtScroll"
             ref="virtScrollRef"
+            type="__dltable"
             :class="tableClass"
-            :draggable-classes="additionalClasses"
             :style="tableStyle"
+            :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
-            :table-colspan="computedColspan"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -158,7 +158,10 @@
                         onTrContextMenu($event, props.item, pageIndex)
                     "
                 >
-                    <td v-if="hasDraggableRows">
+                    <td
+                        v-if="hasDraggableRows"
+                        class="dl-table__drag-icon"
+                    >
                         <dl-icon
                             class="draggable-icon"
                             icon="icon-dl-drag"
@@ -272,7 +275,7 @@
 
                             <slot
                                 v-for="col in computedCols"
-                                v-bind="getHeaderScope({ col })"
+                                v-bind="getHeaderScope({ col, onThClick })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
                                         ? `header-cell-${col.name}`
@@ -282,6 +285,7 @@
                                 <DlTh
                                     :key="col.name"
                                     :props="getHeaderScope({ col })"
+                                    @click="onThClick($event, col.name)"
                                 >
                                     {{ col.label }}
                                 </DlTh>
@@ -339,7 +343,10 @@
                                 onTrContextMenu($event, row, pageIndex)
                             "
                         >
-                            <td v-if="hasDraggableRows">
+                            <td
+                                v-if="hasDraggableRows"
+                                class="dl-table__drag-icon"
+                            >
                                 <dl-icon
                                     class="draggable-icon"
                                     icon="icon-dl-drag"
@@ -411,20 +418,21 @@
         </div>
 
         <div
-            v-if="hasPaginationSlot"
-            class="dl-table__control"
-        >
-            <slot
-                v-bind="marginalsScope"
-                name="pagination"
-            />
-        </div>
-
-        <div
-            v-else-if="!hideBottom || hideNoData"
+            v-if="!hideBottom"
             :class="bottomClasses"
         >
-            <div class="dl-table__control">
+            <div
+                v-if="nothingToDisplay && !hideNoData"
+                class="dl-table__control"
+            >
+                <slot name="no-data">
+                    {{ noDataMessage }}
+                </slot>
+            </div>
+            <div
+                v-else
+                class="dl-table__control"
+            >
                 <slot
                     name="bottom"
                     v-bind="marginalsScope"
@@ -437,20 +445,22 @@
                             {{ selectedRowsLabel(rowsSelectedNumber) }}
                         </div>
                     </div>
-                    <dl-pagination
-                        v-if="displayPagination"
-                        v-bind="marginalsScope.pagination"
-                        @update:rowsPerPage="
-                            (v) => setPagination({ rowsPerPage: v })
-                        "
-                        @update:modelValue="(v) => setPagination({ page: v })"
-                    />
 
                     <slot
-                        v-if="nothingToDisplay && !hideNoData"
-                        name="no-data"
+                        name="pagination"
+                        v-bind="marginalsScope"
                     >
-                        {{ bottomMessage }}
+                        <dl-pagination
+                            v-if="displayPagination"
+                            v-bind="marginalsScope.pagination"
+                            :total-items="rows.length"
+                            @update:rowsPerPage="
+                                (v) => setPagination({ rowsPerPage: v })
+                            "
+                            @update:modelValue="
+                                (v) => setPagination({ page: v })
+                            "
+                        />
                     </slot>
                 </slot>
             </div>
@@ -472,7 +482,8 @@ import {
     watch,
     getCurrentInstance,
     ComputedRef,
-    onMounted
+    onMounted,
+    toRef
 } from 'vue-demi'
 import {
     useTablePagination,
@@ -487,7 +498,7 @@ import {
     commonVirtScrollProps,
     ScrollDetails
 } from '../../shared/DlVirtualScroll/useVirtualScroll'
-import { DlVirtualScroll } from '../../shared/DlVirtualScroll'
+import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
 import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
 import { useTableSort, useTableSortProps } from './hooks/tableSort'
 import {
@@ -515,6 +526,11 @@ import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import { v4 } from 'uuid'
+
+const commonVirtPropsObj = {} as Record<string, any>
+commonVirtPropsList.forEach((p) => {
+    commonVirtPropsObj[p] = {}
+})
 
 export default defineComponent({
     name: 'DlTable',
@@ -621,6 +637,7 @@ export default defineComponent({
         'row-reorder',
         'col-reorder',
         'row-click',
+        'th-click',
         'row-dblclick',
         'row-contextmenu',
         ...useTableRowExpandEmits,
@@ -698,7 +715,7 @@ export default defineComponent({
         })
         //
 
-        const bottomMessage = computed(() => {
+        const noDataMessage = computed(() => {
             if (props.loading) {
                 return props.loadingLabel
             }
@@ -860,12 +877,13 @@ export default defineComponent({
         )
 
         const { computedFilterMethod } = useTableFilter(props, setPagination)
+        const rowsPropRef = toRef(props, 'rows')
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
         const filteredSortedRows = computed(() => {
-            let rows = props.rows as DlTableRow[]
+            let rows = rowsPropRef.value as DlTableRow[]
 
             if (rows.length === 0) {
                 return rows
@@ -884,7 +902,7 @@ export default defineComponent({
 
             if (columnToSort.value !== null) {
                 rows = computedSortMethod.value(
-                    props.rows === rows ? rows.slice() : rows,
+                    rowsPropRef.value === rows ? rows.slice() : rows,
                     sortBy,
                     descending
                 )
@@ -903,7 +921,7 @@ export default defineComponent({
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && props.rows !== rows) {
+                if (firstRowIndex.value === 0 && rowsPropRef.value !== rows) {
                     if (rows.length > lastRowIndex.value) {
                         rows = rows.slice(0, lastRowIndex.value)
                     }
@@ -974,7 +992,7 @@ export default defineComponent({
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < props.rows.length
+                computedRows.value.length < rowsPropRef.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
@@ -1121,7 +1139,12 @@ export default defineComponent({
         function onVScroll(info: ScrollDetails) {
             emit('virtual-scroll', info)
         }
+
         //
+
+        const onThClick = (evt: MouseEvent, name: string) => {
+            emit('th-click', evt, computedRows.value, name)
+        }
 
         const onTrClick = (
             evt: MouseEvent,
@@ -1251,7 +1274,7 @@ export default defineComponent({
             bottomClasses,
             hasTopSlots,
             nothingToDisplay,
-            bottomMessage,
+            noDataMessage,
             paginationState,
             hasTopSelectionMode,
             hasBotomSelectionBanner,
@@ -1274,6 +1297,7 @@ export default defineComponent({
             displayPagination,
             onTrClick,
             onTrDblClick,
+            onThClick,
             onTrContextMenu,
             hasPaginationSlot
         }

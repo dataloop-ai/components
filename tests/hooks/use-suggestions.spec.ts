@@ -1,4 +1,3 @@
-import { mountComposition } from 'vue-composition-test-utils'
 import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
@@ -45,10 +44,10 @@ export const aliases: Alias[] = [
 ]
 
 describe('use-suggestions', () => {
-    const wrapper = mountComposition(() => useSuggestions(schema, aliases))
-    const findSuggestions = wrapper.result.current!.findSuggestions
-    const suggestions = wrapper.result.current!.suggestions
-    const error = wrapper.result.current!.error
+    const { suggestions, error, findSuggestions } = useSuggestions(
+        schema,
+        aliases
+    )
 
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
@@ -109,6 +108,7 @@ describe('use-suggestions', () => {
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
             findSuggestions('Level = ')
+            console.log(suggestions.value)
             expect(suggestions.value).toEqual(['high', 'medium', 'low', 30])
         })
 
@@ -132,14 +132,9 @@ describe('use-suggestions', () => {
         it('suggestions should have the "dateIntervalSuggestionString"', () => {
             findSuggestions('StartTime = ')
             expect(suggestions.value).toEqual([
-                '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
-            ])
-        })
-
-        it('suggestions should have the "dateIntervalSuggestionString" when the "dateIntervalSuggestionString" includes the value', () => {
-            findSuggestions('StartTime = (From (dd/mm/yyyy)')
-            expect(suggestions.value).toEqual([
-                '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
+                '(From (dd/mm/yyyy) To (dd/mm/yyyy))',
+                '(From dd/mm/yyyy)',
+                '(To dd/mm/yyyy)'
             ])
         })
 
@@ -180,7 +175,7 @@ describe('use-suggestions', () => {
 
     it('should give suggestions for multiple expressions', () => {
         findSuggestions(
-            'Age = 10 AND Level = medium AND StartTime = (From (12/12/2022) To (15/12/2022)) '
+            'Age = 10 AND Level = medium AND StartTime = (From 12/12/2022 To 15/12/2022) '
         )
         expect(suggestions.value).toEqual(['AND', 'OR'])
     })

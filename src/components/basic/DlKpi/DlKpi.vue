@@ -43,6 +43,7 @@
         >
             <dl-progress-bar
                 color="dl-color-darker"
+                height="5px"
                 :value="progressValue(progress)"
                 :show-value="true"
                 :show-percentage="true"
@@ -78,11 +79,10 @@ export default defineComponent({
         counterFontSize: {
             type: String,
             default: '1.88em',
-            required: true
+            required: false
         },
         title: {
             type: String,
-            default: '---',
             required: true
         },
         titleFontSize: {
@@ -130,7 +130,7 @@ export default defineComponent({
 
         const emptyString = '---'
 
-        const isSingleWord = (text: string) => text.split(' ').length === 1
+        const isSingleWord = (text: string) => text?.split(' ').length === 1
 
         const cssVars = computed(() => {
             return {
@@ -152,13 +152,13 @@ export default defineComponent({
         )
 
         const formatCounter = (counter: DlKpiCounterType) => {
-            if (!counter) {
+            if (counter === null) {
                 return emptyString
             }
             if (typeof counter === 'number') {
                 return formatNumberCounter(counter)
             }
-            if (!counter.value) {
+            if (counter.value === null || counter.value === undefined) {
                 return emptyString
             }
             if (typeof counter.value === 'number') {
@@ -198,7 +198,7 @@ export default defineComponent({
         }
 
         const formatNumberCounter = (amount: number, format = '') => {
-            if (!amount) {
+            if (isNaN(amount)) {
                 return emptyString
             }
             if (amount === 0) {
@@ -227,7 +227,7 @@ export default defineComponent({
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    padding: 20px 6px;
+    padding: var(--dl-kpi-padding, 20px 6px);
     border-radius: 2px;
     overflow: hidden;
     border: var(--dl-kpi-border);
@@ -249,7 +249,7 @@ export default defineComponent({
         &__text {
             display: flex;
             flex-direction: row;
-            max-width: var(--dl-kpi-title-max-width);
+            max-width: var(--dl-kpi-max-width, var(--dl-kpi-title-max-width));
             max-height: 40px;
             font-style: normal;
             font-weight: 400;
@@ -261,7 +261,10 @@ export default defineComponent({
             gap: 10px;
         }
         &__subtext {
-            max-width: var(--dl-kpi-sub-title-max-width);
+            max-width: var(
+                --dl-kpi-max-width,
+                var(--dl-kpi-sub-title-max-width)
+            );
             max-height: 40px;
             font-style: normal;
             font-weight: 400;

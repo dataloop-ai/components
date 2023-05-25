@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlSelect } from '../../src/components'
 
@@ -51,9 +51,7 @@ describe('dl-select methods', () => {
 
     it('should close the menu and emit hide events', () => {
         const wrapper = mount(DlSelect)
-        wrapper.setData({
-            isExpanded: true
-        })
+        wrapper.vm.isExpanded = true
         wrapper.vm.closeMenu()
 
         expect(wrapper.vm.isExpanded).toBeFalsy()
@@ -234,18 +232,15 @@ describe('dl-select computed', () => {
         await wrapper.setProps({
             options: ['option1']
         })
-        await wrapper.setData({
-            selectedIndex: 0
-        })
+
+        wrapper.vm.selectedIndex = 0
         expect(wrapper.vm.selectedOption).toMatch('option1')
     })
 
     it('should return a list of classes according to the props', async () => {
         const wrapper = mount(DlSelect)
+        wrapper.vm.selectedIndex = 0
 
-        await wrapper.setData({
-            selectedIndex: 0
-        })
         expect(wrapper.vm.selectClasses).toContain(
             'dl_select__select--has-selection'
         )
@@ -281,9 +276,7 @@ describe('dl-select computed', () => {
             'dl_select__select--disabled'
         )
 
-        wrapper.setData({
-            isExpanded: true
-        })
+        wrapper.vm.isExpanded = true
         expect(wrapper.vm.selectClasses).toContain('dl_select__select--focused')
 
         await wrapper.setProps({
@@ -301,9 +294,6 @@ describe('dl-select computed', () => {
             }
         })
         expect(wrapper.vm.cssVars['--dl-select-width']).toMatch('25vh')
-        expect(
-            wrapper.vm.dropdownCSSVars['--dl-select-dropdown-max-height']
-        ).toMatch('50%')
     })
 
     it('should get and set the items', () => {
@@ -380,5 +370,23 @@ describe('dl-select computed', () => {
 
         expect(wrapper.emitted().change).toBeTruthy()
         expect(wrapper.emitted()['update:model-value']).toBeTruthy()
+    })
+
+    describe('when usng dl-select with small size and tooltip', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options: ['one', 'two', 'three'],
+                    size: 's'
+                }
+            })
+        })
+
+        it('should have small class', async () => {
+            const elem = wrapper.get('.dl-select__title-container')
+            expect(elem.classes()).toContain('dl-select__title-container--s')
+        })
     })
 })

@@ -15,7 +15,8 @@
                 :style="{
                     width: Number(width) ? `${width}px` : width,
                     height: Number(height) ? `${height}px` : height,
-                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`
+                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`,
+                    maxHeight: !fullscreen && !fullHeight ? '90vh' : ''
                 }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
@@ -226,7 +227,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     z-index: var(--dl-z-index-menu);
-    max-height: 100vh;
 
     &--fullscreen {
         margin: 0;
@@ -267,7 +267,7 @@ export default defineComponent({
 }
 
 .content {
-    padding: 10px 16px 30px 16px;
+    padding: var(--dl-dialog-box-content-padding, 20px 16px 30px 16px);
     overflow: auto;
     height: 100%;
 
@@ -281,7 +281,7 @@ export default defineComponent({
 
 .footer {
     display: flex;
-    padding: 16px;
+    padding: 20px 16px;
     border-top: var(--dl-dialog-separator);
 }
 

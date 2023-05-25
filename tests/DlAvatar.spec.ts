@@ -1,22 +1,42 @@
 import { mount } from '@vue/test-utils'
 import { DlAvatar } from '../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlAvatar', () => {
-    it('should compute right first letters', async () => {
-        const wrapper = mount(DlAvatar, {
-            props: {
-                name: 'Alexandru Cojuhari'
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlAvatar, {
+                props: {
+                    name: 'Alexandru Cojuhari'
+                }
+            })
+        })
+        it('should have the right props', () => {
+            expect(wrapper.props().name).to.equal('Alexandru Cojuhari')
         })
 
-        let computedLetters = ''
+        it('should compute right first letters', () => {
+            const computedLetters = wrapper.vm.computedLetters
+            expect(computedLetters).toBe('AC')
+        })
+    })
 
-        computedLetters = wrapper.vm.computedLetters
-        expect(computedLetters).toBe('AC')
+    describe('When updating name prop', () => {
+        let wrapper: any
 
-        await wrapper.setProps({ name: 'Elmondo' })
-        computedLetters = wrapper.vm.computedLetters
-        expect(computedLetters).toBe('E')
+        beforeAll(async () => {
+            wrapper = mount(DlAvatar, {
+                props: {
+                    name: 'Alexandru Cojuhari'
+                }
+            })
+            await wrapper.setProps({ name: 'Elmondo' })
+        })
+        it('should compute right first letters', () => {
+            const computedLetters = wrapper.vm.computedLetters
+            expect(computedLetters).toBe('E')
+        })
     })
 })

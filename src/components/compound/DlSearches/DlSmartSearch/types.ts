@@ -3,10 +3,10 @@ export interface Query {
     query: string | null
 }
 
-export interface Filter {
-    name: string
-    label: string
-    queries: Query[]
+export interface Filters {
+    saved: Query[]
+    recent: Query[]
+    suggested: Query[]
 }
 
 export interface ColorSchema {

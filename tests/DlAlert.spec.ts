@@ -3,12 +3,13 @@ import { DlAlert } from '../src/components'
 import { describe, it, expect } from 'vitest'
 
 describe('DlAlert', () => {
-    const _closeBtn = '[data-test="close-btn-icon"]'
+    const _closeButton = '[data-test="close-button-icon"]'
     const _root = '[data-test="root"]'
 
     it('should render the given text prop', () => {
         const wrapper = mount(DlAlert, {
             props: {
+                type: 'success',
                 text: 'Alert'
             }
         })
@@ -19,13 +20,14 @@ describe('DlAlert', () => {
     it('should render the close icon', () => {
         const wrapper = mount(DlAlert, {
             props: {
+                type: 'success',
                 text: 'Alert',
                 closable: true
             }
         })
 
         expect(wrapper.get(_root)).toBeDefined()
-        expect(wrapper.get(_closeBtn)).toBeDefined()
+        expect(wrapper.get(_closeButton)).toBeDefined()
     })
 
     it('should accept only valid "type" properties', () => {
@@ -39,6 +41,7 @@ describe('DlAlert', () => {
         it('should adapt the styling accordingly', async () => {
             const wrapper = mount(DlAlert, {
                 props: {
+                    type: 'success',
                     text: 'Alert'
                 }
             })
@@ -56,12 +59,13 @@ describe('DlAlert', () => {
             const wrapper = mount(DlAlert, {
                 props: {
                     text: 'Alert',
+                    type: 'success',
                     closable: true
                 }
             })
 
-            const closeBtn = await wrapper.find(_closeBtn)
-            closeBtn.trigger('click')
+            const closeButton = await wrapper.find(_closeButton)
+            closeButton.trigger('click')
             await wrapper.vm.$nextTick()
             expect(wrapper.emitted()).toHaveProperty('update:model-value')
             let error: any

@@ -158,7 +158,7 @@ export default defineComponent({
     cursor: pointer;
     display: inline-flex;
     max-width: max-content;
-    gap: 10px;
+    gap: 6px;
     align-items: center;
     padding: var(--dl-radio-padding);
     user-select: none;
@@ -209,7 +209,7 @@ input {
     flex-direction: column;
 }
 .sub-text {
-    margin-left: 6%;
+    margin-left: 5%;
     width: 80%;
     color: var(--dl-color-medium);
     word-break: break-all;

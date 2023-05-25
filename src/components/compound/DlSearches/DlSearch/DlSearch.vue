@@ -14,7 +14,7 @@
             :placeholder="placeholder"
             :auto-suggest-items="autoSuggestItems"
             :highlight-matches="highlightMatches"
-            :without-root-padding="withoutRootPadding"
+            :dense="dense"
             :suggest-menu-width="suggestMenuWidth"
             @input="onChange"
             @focus="onFocus"
@@ -32,11 +32,9 @@
             </template>
         </dl-input>
         <dl-button
-            v-show="withSearchBtn"
-            padding="9px 16px"
-            :size="size"
+            v-show="withSearchButton"
+            :size="buttonSize"
             :class="buttonClasses"
-            fluid
             @click="onSearchButtonPress"
         >
             Search
@@ -56,6 +54,11 @@ const SearchSizes = {
     m: 'm'
 } as const
 type TSearchSizes = (typeof SearchSizes)[keyof typeof SearchSizes]
+
+const BUTTON_SIZES = {
+    l: 'l',
+    m: 's'
+}
 
 export default defineComponent({
     name: 'DlSearch',
@@ -80,8 +83,8 @@ export default defineComponent({
             default: (): string[] => []
         },
         highlightMatches: { type: Boolean, default: false },
-        withoutRootPadding: { type: Boolean, default: false },
-        withSearchBtn: { type: Boolean, default: false },
+        dense: { type: Boolean, default: false },
+        withSearchButton: { type: Boolean, default: false },
         suggestMenuWidth: { type: String, default: 'auto' }
     },
     emits: [
@@ -90,7 +93,7 @@ export default defineComponent({
         'blur',
         'clear',
         'enter',
-        'search-btn',
+        'search',
         'update:model-value'
     ],
     data() {
@@ -99,6 +102,9 @@ export default defineComponent({
         }
     },
     computed: {
+        buttonSize(): string {
+            return BUTTON_SIZES[this.size]
+        },
         identifierClass(): string {
             return `dl-search-${this.placeholder}`.replaceAll(' ', '-')
         },
@@ -106,7 +112,7 @@ export default defineComponent({
             return [`button--${this.size}`]
         },
         rootVars(): Record<string, any> {
-            return this.withSearchBtn
+            return this.withSearchButton
                 ? {
                       '--dl-search-text-input-margin': '0 20px 0 0'
                   }
@@ -131,7 +137,7 @@ export default defineComponent({
             this.$emit('clear', value)
         },
         onSearchButtonPress(): void {
-            this.$emit('search-btn', this.modelValue)
+            this.$emit('search', this.modelValue)
         }
     }
 })

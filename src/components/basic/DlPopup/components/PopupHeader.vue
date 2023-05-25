@@ -27,12 +27,12 @@
             </span>
             <span
                 v-if="withCloseButton"
-                class="hide-button"
-                @click="handleHide"
+                class="close-button"
+                @click="handleClick"
             >
                 <slot
-                    v-if="hasHideButtonSlot"
-                    name="hide-button"
+                    v-if="hasCloseButtonSlot"
+                    name="close-button"
                 />
                 <dl-icon
                     v-else
@@ -61,13 +61,13 @@ export default defineComponent({
         additionalInfo: { type: String, default: '' },
         withCloseButton: { type: Boolean, default: false }
     },
-    emits: ['hide-button-clik'],
+    emits: ['close-button-click'],
     computed: {
         hasHeaderSlot(): boolean {
             return this.$slots.header !== undefined
         },
-        hasHideButtonSlot(): boolean {
-            return this.$slots['hide-button'] !== undefined
+        hasCloseButtonSlot(): boolean {
+            return this.$slots['close-button'] !== undefined
         },
         hasAdditionalInfo(): boolean {
             return this.additionalInfo !== ''
@@ -81,8 +81,8 @@ export default defineComponent({
         }
     },
     methods: {
-        handleHide(e: Event) {
-            this.$emit('hide-button-clik', e)
+        handleClick(e: Event) {
+            this.$emit('close-button-click', e)
         }
     }
 })
@@ -107,7 +107,7 @@ export default defineComponent({
     color: var(--dl-color-darker);
 }
 
-.hide-button {
+.close-button {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -62,7 +62,7 @@ import useSlider, {
     useSliderEmits,
     dragType,
     Dragging
-} from '../../DlSlider/useSlider'
+} from '../../../compound/DlSlider/useSlider'
 
 import { between, isMobileOrTablet, getColor } from '../../../../utils'
 import BrushThumb from '../shared/BrushThumb.vue'
@@ -97,6 +97,10 @@ export default defineComponent({
         trackColor: {
             type: String,
             default: 'dl-color-panel-background'
+        },
+        maxRange: {
+            type: Number,
+            default: null
         },
         selectionColor: {
             type: String,
@@ -225,6 +229,7 @@ export default defineComponent({
         const rangeStyles = computed(() => ({
             '--dl-track-width': 0.25 * parseInt(props.thumbSize) + 'px',
             '--text-color': getColor(props.textColor, 'dl-color-darker'),
+            '--thumb-size': props.thumbSize,
             '--width': props.width,
             '--color': getColor(props.color, 'dl-color-secondary'),
             width: props.width
@@ -387,6 +392,8 @@ export default defineComponent({
                     break
             }
 
+            if (pos.max - pos.min < props.maxRange) return
+
             model.value =
                 model.value.min === null || model.value.max === null
                     ? { min: pos.min || props.min, max: pos.max || props.max }
@@ -454,6 +461,7 @@ export default defineComponent({
             }
 
             & .thumb {
+                background-color: var(--color);
                 z-index: 1;
                 outline: 0;
                 transition: transform 0.18s ease-out, fill 0.18s ease-out,

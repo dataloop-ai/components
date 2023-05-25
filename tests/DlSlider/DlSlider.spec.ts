@@ -23,17 +23,18 @@ describe('DlSlider', () => {
         const _nonEditableSlider = '[data-test="non-editable-slider"]'
         const _nonEditableSliderInput =
             '[data-test="non-editable-slider-input"]'
-        const _nonEditableSliderBtn = '[data-test="non-editable-slider-btn"]'
+        const _nonEditableSliderButton =
+            '[data-test="non-editable-slider-button"]'
 
         expect(wrapper.text()).toContain('test slider')
 
         expect(wrapper.find(_nonEditableSlider).exists()).toBe(true)
         expect(wrapper.find(_nonEditableSliderInput).exists()).toBe(true)
-        expect(wrapper.find(_nonEditableSliderBtn).exists()).toBe(true)
+        expect(wrapper.find(_nonEditableSliderButton).exists()).toBe(true)
 
-        const nonEditableSliderBtn = wrapper.find(_nonEditableSliderBtn)
+        const nonEditableSliderButton = wrapper.find(_nonEditableSliderButton)
 
-        await nonEditableSliderBtn.trigger('click')
+        await nonEditableSliderButton.trigger('click')
 
         expect(wrapper.emitted()['update:model-value']).not.toBeDefined()
 
@@ -41,7 +42,7 @@ describe('DlSlider', () => {
             modelValue: 0
         })
 
-        await nonEditableSliderBtn.trigger('click')
+        await nonEditableSliderButton.trigger('click')
         expect(wrapper.emitted()['update:model-value'][0]).toEqual([-10])
 
         const nonEditableSliderInput = wrapper.get(_nonEditableSliderInput)

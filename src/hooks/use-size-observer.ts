@@ -6,12 +6,13 @@ export function useSizeObserver(elRef: Ref, entryLevel = 'target') {
     const widthRef = ref(0)
     const heightRef = ref(0)
     const hasEllipsis = ref(false)
-
+    const borderBoxSize = ref(null)
     const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
             hasEllipsis.value = isEllipsisActive(get(entry, entryLevel))
             widthRef.value = entry.contentRect.width
             heightRef.value = entry.contentRect.height
+            borderBoxSize.value = entry.borderBoxSize
         }
     })
 
@@ -21,6 +22,7 @@ export function useSizeObserver(elRef: Ref, entryLevel = 'target') {
     return {
         widthRef,
         heightRef,
-        hasEllipsis
+        hasEllipsis,
+        borderBoxSize
     }
 }

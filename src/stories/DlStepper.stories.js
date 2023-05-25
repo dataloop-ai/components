@@ -8,11 +8,11 @@ import {
     DlChip,
     DlCounters
 } from '../'
-import GeneralStep from '../demo/DlStepperDemo/steps/GeneralStep.vue'
-import InstructionStep from '../demo/DlStepperDemo/steps/InstructionStep.vue'
-import DataStep from '../demo/DlStepperDemo/steps/DataStep.vue'
-import AssignmentsStep from '../demo/DlStepperDemo/steps/AssignmentsStep.vue'
-import QualityStep from '../demo/DlStepperDemo/steps/QualityStep.vue'
+import GeneralStep from '../demos/DlStepperDemo/steps/GeneralStep.vue'
+import InstructionStep from '../demos/DlStepperDemo/steps/InstructionStep.vue'
+import DataStep from '../demos/DlStepperDemo/steps/DataStep.vue'
+import AssignmentsStep from '../demos/DlStepperDemo/steps/AssignmentsStep.vue'
+import QualityStep from '../demos/DlStepperDemo/steps/QualityStep.vue'
 import { getColor } from '../utils'
 import './assets/stepper.scss'
 

@@ -62,28 +62,35 @@ const Template = (args) => ({
         const isLoading = ref(false)
         const filters = ref(initFilters)
 
-        const handleSearchQuery = ({ query }) => {
+        const handleSearchQuery = (query, queryString) => {
             isLoading.value = true
-            console.log(`Searching for: ${query}...`)
+            console.log(`Searching for: ${query.query}...`)
             const search = setTimeout(() => {
-                console.log(`Results: ${query}`)
+                console.log(`Results: ${query.query}`)
                 isLoading.value = false
             }, 2000)
-        }
 
-        const handleSaveQuery = (query) => {
-            const saveQueryIndex = filters.value[0].queries.findIndex(
-                (q) => q.name === query.name || q.query === query.query
-            )
-            if (saveQueryIndex !== -1) {
-                filters.value[0].queries[saveQueryIndex] = query
-            } else {
-                filters.value[0].queries.push(query)
+            if (filters.value.recent.at(-1)?.name !== queryString) {
+                filters.value.recent.push({
+                    name: queryString || query.name,
+                    query: query.query
+                })
             }
         }
 
-        const handleRemoveQuery = (query) => {
-            filters.value[0].queries = filters.value[0].queries.filter(
+        const handleSaveQuery = (query, type) => {
+            const saveQueryIndex = filters.value[type].findIndex(
+                (q) => q.name === query.name || q.query === query.query
+            )
+            if (saveQueryIndex !== -1) {
+                filters.value[type][saveQueryIndex] = query
+            } else {
+                filters.value[type].push(query)
+            }
+        }
+
+        const handleRemoveQuery = (query, type) => {
+            this.filters[type] = this.filters[type].filter(
                 (q) => q.name !== query.name
             )
         }
@@ -93,21 +100,43 @@ const Template = (args) => ({
             smartSearch,
             isLoading,
             filters,
+            schema,
+            aliases,
+            colorSchema,
             handleSearchQuery,
             handleSaveQuery,
             handleRemoveQuery
         }
     },
     template: `
-         <dl-smart-search
-         v-bind="args"
-         :filters="filters"
-         :isLoading="isLoading"
-         :disabled="switchState"
-         @remove-query="handleRemoveQuery"
-         @save-query="handleSaveQuery"
-         @search-query="handleSearchQuery"
+    <div style="width: 900px">
+    <div style="margin: 40px 0">
+        <dl-checkbox
+            v-model="switchState"
+            dense
+            label="Disabled"
         />
+    </div>
+    <div
+        style="width: 100px"
+        class="props"
+    />
+    <dl-smart-search
+        :aliases="aliases"
+        :schema="schema"
+        :color-schema="{
+            fields: 'blue',
+            operators: 'green',
+            keywords: 'bold'
+        }"
+        :filters="filters"
+        :disabled="switchState"
+        :is-loading="isLoading"
+        @remove-query="handleRemoveQuery"
+        @save-query="handleSaveQuery"
+        @search-query="handleSearchQuery"
+    />
+    </div>
     `
 })
 
