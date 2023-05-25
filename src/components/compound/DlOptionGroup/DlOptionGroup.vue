@@ -124,14 +124,6 @@ export default defineComponent({
                 '--option-group-width':
                     this.leftLabel && !this.inline ? '100%' : 'auto',
                 '--option-group-max-width': this.maxWidth
-                // '--control-element-padding-left': this.leftLabel
-                //     ? '10px'
-                //     : this.inline
-                //     ? '12px'
-                //     : '0px',
-                // '--control-element-padding-right': this.leftLabel
-                //     ? '0px'
-                //     : '10px'
             }
         }
     },
