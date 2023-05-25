@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
-import { DlThumbnail, DlThumbnailGallery } from '../src'
+import { describe, it, expect, beforeAll } from 'vitest'
+import { DlThumbnailGallery } from '../src'
+import { DlThumbnail } from '../src/components/compound/DlThumbnailGallery/types'
 
 const images: DlThumbnail[] = []
 for (let i = 0; i < 20; i++) {
@@ -12,53 +13,53 @@ for (let i = 0; i < 20; i++) {
 }
 
 describe('DlThumbnailGallery', () => {
-    it('should mount with default props', () => {
-        const wrapper = mount(DlThumbnailGallery, {
-            props: {
-                images,
-                modelValue: images[0]
-            }
+    const wrapper = mount(DlThumbnailGallery)
+    describe('when mounting', () => {
+        it('should mount with default props', () => {
+            expect(wrapper.vm.visibleThumbnails).toBe(10)
+            expect(wrapper.vm.aspectRatio).toMatch('default')
         })
-        expect(wrapper.vm.visibleThumbnails).toBe(10)
-        expect(wrapper.vm.aspectRatio).toMatch('default')
     })
-    it('should navigate back and forth', () => {
-        const wrapper = mount(DlThumbnailGallery, {
-            props: {
+    describe('mouse events', () => {
+        beforeAll(() => {
+            wrapper.setProps({
                 images,
                 aspectRatio: 'full-with-padding'
-            }
+            })
         })
-        expect(wrapper.vm.currentImages[0]).toEqual(images[0])
-        wrapper.vm.navigateForward()
-        expect(wrapper.vm.currentImages[0]).toEqual(
-            images[wrapper.vm.visibleThumbnails]
-        )
-        wrapper.vm.navigateBackward()
-        expect(wrapper.vm.currentImages[0]).toEqual(images[0])
+        it('should navigate back and forth', () => {
+            expect(wrapper.vm.currentImages[0]).toEqual(images[0])
+            wrapper.vm.navigateForward()
+            expect(wrapper.vm.currentImages[0]).toEqual(
+                images[wrapper.vm.visibleThumbnails]
+            )
+            wrapper.vm.navigateBackward()
+            expect(wrapper.vm.currentImages[0]).toEqual(images[0])
+        })
     })
-    it('should fallback on custom image on error', () => {
+    describe('thumbnail behaviour', () => {
         const invalid = 'error'
-        const wrapper = mount(DlThumbnailGallery, {
-            props: {
+        beforeAll(() => {
+            wrapper.setProps({
                 invalidImage: invalid,
                 aspectRatio: 'full'
-            }
+            })
         })
-        const event = { target: { src: '' } }
-        wrapper.vm.handleImageError(event)
-        expect(event.target.src).toMatch(invalid)
-    })
-    it('should return status icon', () => {
-        const wrapper = mount(DlThumbnailGallery)
-        expect(wrapper.vm.getStatusIcon('approve')).toMatch(
-            'icon-dl-approve-filled'
-        )
-        expect(wrapper.vm.getStatusIcon('discard')).toMatch(
-            'icon-dl-discard-filled'
-        )
-        expect(wrapper.vm.getStatusIcon('issue')).toMatch(
-            'icon-dl-alert-filled'
-        )
+        it('should fallback on custom image on error', () => {
+            const event = { target: { src: '' } }
+            wrapper.vm.handleImageError(event)
+            expect(event.target.src).toMatch(invalid)
+        })
+        it('should return status icon', () => {
+            expect(wrapper.vm.getStatusIcon('approve')).toMatch(
+                'icon-dl-approve-filled'
+            )
+            expect(wrapper.vm.getStatusIcon('discard')).toMatch(
+                'icon-dl-discard-filled'
+            )
+            expect(wrapper.vm.getStatusIcon('issue')).toMatch(
+                'icon-dl-alert-filled'
+            )
+        })
     })
 })
