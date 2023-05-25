@@ -65,6 +65,13 @@ export const Fluid: Story = {
     }
 }
 
+export const Shaded: Story = {
+    args: {
+        label: 'Shaded',
+        shaded: true
+    }
+}
+
 export const Dense: Story = {
     args: {
         filled: true,
