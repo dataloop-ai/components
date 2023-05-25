@@ -27,7 +27,7 @@
                     :key="image.src"
                     :class="getImageClass(image.src)"
                     :style="getImageOutline(image.src)"
-                    @mousedown="$emit('update:modelValue', image)"
+                    @mousedown="handleThumbnailMousedown(image)"
                 >
                     <div class="slider__images--status">
                         <dl-icon
@@ -119,6 +119,7 @@ export default defineComponent({
             default: 0.5
         }
     },
+    emits: ['update:modelValue', 'selected'],
     data() {
         return {
             currentList: { first: 0, last: this.visibleThumbnails }
@@ -182,6 +183,10 @@ export default defineComponent({
             return isVisible
                 ? 'slider__arrow--icon'
                 : 'slider__arrow--icon--invisible'
+        },
+        handleThumbnailMousedown(image: string) {
+            this.$emit('update:modelValue', image)
+            this.$emit('selected', image)
         }
     }
 })
