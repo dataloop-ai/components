@@ -146,7 +146,7 @@ export default defineComponent({
             return to > this.totalItems ? this.totalItems : to
         },
         max(): number {
-            return this.rowsPerPageState === 0
+            return this.rowsPerPageState === 0 || this.totalItems === 0
                 ? 1
                 : Math.ceil(this.totalItems / this.rowsPerPageState)
         }
