@@ -76,7 +76,7 @@ export default defineComponent({
         disabled: { type: Boolean, default: false },
         id: { type: [String, Number], default: null },
         label: { type: String, default: null },
-        padding: { type: String, default: '5px' },
+        padding: { type: String, default: '0' },
         modelValue: { type: [String, Number, Boolean], required: true },
         value: { type: [String, Number, Boolean], required: true },
         tabindex: { type: String, default: '0' },
