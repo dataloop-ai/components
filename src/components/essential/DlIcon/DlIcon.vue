@@ -90,7 +90,7 @@ export default defineComponent({
             return {
                 '--dl-icon-font-size': `${this.size}`,
                 '--dl-icon-color': this.color
-                    ? // needed for now until the swap of DLBTN in OA
+                    ? // todo: remove this. this is needed for now until the swap of DLBTN in OA
                       getColor(
                           this.color === 'secondary'
                               ? 'q-color-secondary'
