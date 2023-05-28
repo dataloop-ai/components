@@ -69,11 +69,9 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-pagination {
     &--rows_selector {
-        width: 15%;
         display: flex;
         align-items: center;
         color: var(--dl-color-darker);
-        padding-right: 2px;
     }
 
     &--rows_per_page_label {
