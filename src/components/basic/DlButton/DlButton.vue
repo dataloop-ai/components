@@ -312,9 +312,12 @@ export default defineComponent({
                         filled: this.filled,
                         color: this.color
                     }),
-                    '--dl-button-text-color-pressed':
-                        'var(--dl-button-text-color)',
-                    '--dl-button-bg-pressed': 'var(--dl-button-bg)',
+                    '--dl-button-text-color-pressed': this.shaded
+                        ? 'var(--dl-color-text-buttons)'
+                        : 'var(--dl-button-text-color)',
+                    '--dl-button-bg-pressed': this.shaded
+                        ? 'var(--dl-color-secondary)'
+                        : 'var(--dl-button-bg)',
                     '--dl-button-border-pressed': 'var(--dl-button-border)'
                 }
             }

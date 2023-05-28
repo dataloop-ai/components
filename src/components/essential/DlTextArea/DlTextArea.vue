@@ -216,6 +216,10 @@ export default defineComponent({
         counterReverse: {
             type: Boolean,
             default: false
+        },
+        maxHeight: {
+            type: String,
+            default: '120px'
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'update:model-value', 'keydown'],
@@ -228,6 +232,7 @@ export default defineComponent({
         const cssVars = computed(() => {
             return {
                 '--dl-textarea-max-width': props.width || 'auto',
+                '--dl-textarea-max-height': props.maxHeight,
                 '--dl-textarea-width':
                     borderBoxSize.value?.[0].inlineSize + 'px' || '100%'
             }
@@ -359,7 +364,7 @@ export default defineComponent({
     min-width: 100px;
     max-width: 100%;
     min-height: 80px;
-    max-height: 120px;
+    max-height: var(--dl-textarea-max-height);
     outline: none;
     color: var(--dl-color-darker);
     box-sizing: border-box;
