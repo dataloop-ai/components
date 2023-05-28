@@ -54,13 +54,13 @@ import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
-import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
 import DlGridDemo from './DlGridDemo.vue'
 import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
 import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
+import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 
 export default {
     AvatarDemo,
@@ -112,6 +112,15 @@ export default {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
+    DlConfusionMatrix,
+    DlToggleButtonDemo,
     DlEllipsisDemo,
+    DlSeparatorDemo,
+    DlKpiDemo,
+    DlCardDemo,
+    DlGridDemo,
+    DlMarkupTableDemo,
+    DlVirtualScrollDemo,
+    DlJsonEditorDemo,
     DlThumbnailGallery
 }
