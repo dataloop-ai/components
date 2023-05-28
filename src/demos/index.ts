@@ -1,3 +1,6 @@
+import DlDemoPage from './DlDemoPage.vue'
+export { DlDemoPage }
+
 import AvatarDemo from './DlAvatarDemo.vue'
 import DlAlertDemo from './DlAlertDemo.vue'
 import DlProgressChartDemo from './DlProgressChartDemo.vue'
