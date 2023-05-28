@@ -90,6 +90,18 @@ export class Step {
         set(this._state, 'sidebarNavigation', value)
     }
 
+    public clearError() {
+        set(this._state, 'error', '')
+    }
+
+    public clearWarning() {
+        set(this._state, 'warning', '')
+    }
+
+    public clearCompleted() {
+        set(this._state, 'completed', false)
+    }
+
     public reset() {
         for (const key of Object.keys(this._initialState)) {
             if (key !== 'active') {
