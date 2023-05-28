@@ -100,8 +100,8 @@ export default defineComponent({
                     : 'inherit'
             }
         },
-        inlineStyles(): string {
-            return this.inline ? 'display: inline' : 'display: flex'
+        inlineStyles(): Record<string, string> {
+            return { display: this.inline ? 'inline-flex' : 'flex' }
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {
