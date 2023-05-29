@@ -50,6 +50,15 @@
                 </div>
             </template>
         </dl-empty-state>
+
+        <dl-empty-state
+            :bg-image="`url(./src/demos/assets/agenda.svg)`"
+            style="width: 400px; min-height: 300px; resize: both"
+            title="This analytics will populate with data when relevant information will be available."
+            subtitle="This analytics will populate with data when relevant information will be available."
+            info="To learn more about this analytics, read our documentation."
+            title-class="dl-eta-title"
+        />
     </div>
 </template>
 
@@ -64,3 +73,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style scoped lang="scss">
+.dl-eta-title {
+    font-size: 10vw;
+}
+</style>

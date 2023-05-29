@@ -1,20 +1,21 @@
 <template>
     <div
         :id="uuid"
+        ref="dlEtaRef"
         :style="cssVars"
-        class="empty-state empty-state--centered"
+        :class="[{ 'empty-state': true }, `empty-state--${align}`]"
     >
         <dl-icon
             :class="iconClassName"
             :color="iconColor"
-            :size="iconSize"
+            :size="iconFontSize + 'px'"
             :icon="icon"
         />
 
         <dl-typography
             v-if="title"
             bold
-            size="20px"
+            :size="titleSize + 'px'"
             :color="titleColor"
             :class="titleClassName"
         >
@@ -23,7 +24,7 @@
 
         <dl-typography
             v-if="subtitle"
-            size="14px"
+            :size="subtitleFonSize + 'px'"
             :color="subtitleColor"
             :class="subtitleClassName"
         >
@@ -39,7 +40,7 @@
 
         <dl-typography
             v-if="info"
-            size="14px"
+            :size="infoFontSize + 'px'"
             :color="infoColor"
             class="empty-state--info"
         >
@@ -58,6 +59,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { DlIcon, DlTypography } from '../../essential'
+import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { defineComponent, computed, ref } from 'vue-demi'
 
 export default defineComponent({
@@ -126,10 +128,47 @@ export default defineComponent({
         iconClass: {
             type: String,
             default: ''
+        },
+        responsive: Boolean,
+        align: {
+            type: String,
+            default: 'center'
         }
     },
     setup(props, { slots }) {
         const uuid = ref(`dl-empty-state-${v4()}`)
+
+        const dlEtaRef = ref(null)
+
+        const { widthRef, heightRef } = useSizeObserver(dlEtaRef)
+
+        const metric = computed(() => {
+            return widthRef.value > heightRef.value
+                ? widthRef.value
+                : heightRef.value
+        })
+
+        const fontSize = (value: number) => metric.value * (value / 365)
+
+        const titleSize = computed(() => (props.responsive ? fontSize(18) : 20))
+
+        const infoFontSize = computed(() =>
+            props.responsive ? fontSize(12) : 14
+        )
+
+        const iconFontSize = computed(() =>
+            props.responsive ? fontSize(26) : parseInt(props.iconSize)
+        )
+
+        const subtitleFonSize = computed(() =>
+            props.responsive ? fontSize(14) : 14
+        )
+
+        const bgImageSize = computed(() =>
+            props.responsive
+                ? fontSize(parseInt(props.bgSize)) + 'px'
+                : props.bgSize
+        )
 
         const hasCTASlot = !!slots['cta']
 
@@ -178,7 +217,7 @@ export default defineComponent({
         const cssVars = computed(() => {
             return {
                 '--bg-image': props.bgImage,
-                '--bg-size': props.bgSize
+                '--bg-size': bgImageSize.value
             }
         })
 
@@ -190,7 +229,12 @@ export default defineComponent({
             infoClassName,
             subtitleClassName,
             hasCTASlot,
-            hasLinkSlot
+            hasLinkSlot,
+            dlEtaRef,
+            titleSize,
+            subtitleFonSize,
+            infoFontSize,
+            iconFontSize
         }
     }
 })
@@ -228,12 +272,21 @@ export default defineComponent({
         margin-bottom: 10px;
     }
 
-    &--centered {
+    &--center,
+    &--left {
         display: flex;
         width: 100%;
+    }
+
+    &--center {
         justify-content: center;
         align-items: center;
         text-align: center;
+    }
+
+    &--left {
+        align-items: flex-start;
+        text-align: start;
     }
 }
 </style>

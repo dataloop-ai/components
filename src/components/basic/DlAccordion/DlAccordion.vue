@@ -27,20 +27,36 @@
             class="accordion-content"
             :class="{ closed: !isOpen, 'right-side': rightSide }"
         >
-            <slot v-if="isOpen" />
+            <slot v-if="isOpen && !isEmpty" />
+            <dl-empty-state
+                v-if="isOpen && isEmpty"
+                v-bind="emptyStateProps"
+            >
+                <template
+                    v-for="(_, slot) in $slots"
+                    #[slot]="props"
+                >
+                    <slot
+                        :name="slot"
+                        v-bind="props"
+                    />
+                </template>
+            </dl-empty-state>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import DlAccordionHeader from './components/AccordionHeader.vue'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 import { defineComponent } from 'vue-demi'
 import { v4 } from 'uuid'
 
 export default defineComponent({
     name: 'DlAccordion',
     components: {
-        DlAccordionHeader
+        DlAccordionHeader,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
@@ -53,7 +69,12 @@ export default defineComponent({
         fontSize: { type: String, default: '12px' },
         titleColor: { type: String, default: 'dl-color-medium' },
         modelValue: { type: Boolean, default: null },
-        rightSide: { type: Boolean, default: false }
+        rightSide: { type: Boolean, default: false },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object,
+            default: () => {}
+        }
     },
     emits: ['update:model-value', 'hide', 'show'],
     data() {
