@@ -43,7 +43,21 @@
                     </template>
                 </popup-header>
                 <div class="popup-content">
-                    <slot />
+                    <slot v-if="!isEmpty" />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </div>
                 <div
                     v-if="hasFooterSlot"
@@ -116,13 +130,15 @@ import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
 import { isString } from 'lodash'
 import { stringStyleToRecord } from '../../../utils'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
     name: 'DlPopup',
     components: {
         DlTeleport,
         PopupHeader,
-        DraggableUpper
+        DraggableUpper,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
@@ -167,7 +183,12 @@ export default defineComponent({
         maxWidth: { type: String, default: 'auto' },
         height: { type: String, default: 'auto' },
         width: { type: String, default: 'auto' },
-        draggable: Boolean
+        draggable: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object,
+            default: () => {}
+        }
     },
     emits: [
         'close-button-click',

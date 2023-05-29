@@ -328,6 +328,7 @@
                         name="body"
                     >
                         <DlTr
+                            v-if="!isEmpty"
                             :key="getRowKey(row)"
                             :class="
                                 isRowSelected(getRowKey(row))
@@ -409,6 +410,23 @@
                             </slot>
                         </DlTr>
                     </slot>
+                    <DlTr v-if="isEmpty">
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center">
+                                <dl-empty-state v-bind="emptyStateProps">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="props"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="props"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
+                        </DlTd>
+                    </DlTr>
                     <slot
                         name="bottom-row"
                         :cols="computedCols"
@@ -525,6 +543,7 @@ import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 
 const commonVirtPropsObj = {} as Record<string, any>
@@ -542,7 +561,8 @@ export default defineComponent({
         DlPagination,
         DlProgressBar,
         DlIcon,
-        DlCheckbox
+        DlCheckbox,
+        DlEmptyState
     },
     props: {
         columns: { type: Array, default: () => [] as Record<string, any>[] },
@@ -622,6 +642,11 @@ export default defineComponent({
             default: null
         },
         noHover: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object,
+            default: () => {}
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
