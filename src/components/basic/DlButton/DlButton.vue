@@ -12,7 +12,7 @@
             :disabled="disabled"
             :style="[computedStyles]"
             style="pointer-events: auto"
-            class="dl-button"
+            :class="buttonClass"
             @click="onClick"
             @mousedown="onMouseDown"
         >
@@ -67,13 +67,14 @@ import {
     setMaxHeight
 } from './utils'
 import type { ButtonSizes } from './utils'
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
 import { transformOptions } from '../../shared/types'
 import { stringStyleToRecord } from '../../../utils'
+import { textTransform } from '../../../utils/string'
 import { isString } from 'lodash'
 
 export default defineComponent({
@@ -84,27 +85,66 @@ export default defineComponent({
     },
 
     props: {
+        /**
+         * The user will not be able to press on the button
+         */
         disabled: Boolean,
+        /**
+         * The color of the button
+         */
         color: {
             type: String! as PropType<keyof typeof colorNames>,
             default: ''
         },
+        /**
+         * The button's padding is lowered and the white space shrinks
+         */
         dense: { type: Boolean, default: false },
+        /**
+         * The text content of the button
+         */
         label: { type: String, default: '' },
+        /**
+         * The color of the button's text
+         */
         textColor: { type: String!, default: '' },
         colorsObject: {
             type: Object as PropType<ButtonColors>,
             default: null
         },
+        /**
+         * The color of the icon inside the button
+         */
         iconColor: { type: String!, default: '' },
+        /** Padding inside the button */
         padding: { type: String, default: '' },
+        /**
+         * The size of the button, it can be s,m,l or xl
+         */
         margin: { type: String, default: '0 auto' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
+        /**
+         * The assigned color will fill the entirety of the button
+         */
         filled: { type: Boolean, default: true },
+        /** Makes the button rounded */
         round: { type: Boolean, default: false },
+        /**
+         * The width of the button will take that of its container
+         */
         shaded: { type: Boolean, default: false },
         fluid: Boolean,
+        /**
+         * The button will not have an outline
+         */
         flat: Boolean,
+        /**
+         * All the characters inside the button will be uppercase
+         */
+        uppercase: Boolean,
+        /**
+         * The button will be transparent with a colored outline
+         */
         transform: {
             type: String,
             default: 'default',
@@ -112,21 +152,39 @@ export default defineComponent({
                 transformOptions.includes(value)
         },
         outlined: Boolean,
+        /**
+         * Doesn't allow the button's text to be wrapped along multiple rows
+         */
         noWrap: Boolean,
+        /**
+         * The name of the icon to go inside the button
+         */
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
+        /**
+         * The tooltip displayed when hovering over the button
+         */
         tooltip: { type: String, default: null, required: false },
+        /**
+         * The button will maintain the styles it has when it's pressed if this prop is active
+         */
+        active: { type: Boolean, default: false, required: false },
         styles: { type: [Object, String], default: null }
     },
     emits: ['click', 'mousedown'],
-    setup() {
+    setup(props) {
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
+
+        const buttonClass = computed(() => {
+            return props.active ? 'dl-button active-class' : 'dl-button'
+        })
 
         return {
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
-            isOverflowing: hasEllipsis
+            isOverflowing: hasEllipsis,
+            buttonClass
         }
     },
     computed: {
@@ -156,6 +214,9 @@ export default defineComponent({
                 this.label !== null &&
                 this.label !== ''
             )
+        },
+        buttonLabel(): string {
+            return textTransform(this.label)
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
@@ -253,9 +314,12 @@ export default defineComponent({
                         filled: this.filled,
                         color: this.color
                     }),
-                    '--dl-button-text-color-pressed':
-                        'var(--dl-button-text-color)',
-                    '--dl-button-bg-pressed': 'var(--dl-button-bg)',
+                    '--dl-button-text-color-pressed': this.shaded
+                        ? 'var(--dl-color-text-buttons)'
+                        : 'var(--dl-button-text-color)',
+                    '--dl-button-bg-pressed': this.shaded
+                        ? 'var(--dl-color-secondary)'
+                        : 'var(--dl-button-bg)',
                     '--dl-button-border-pressed': 'var(--dl-button-border)'
                 }
             }
@@ -383,7 +447,7 @@ export default defineComponent({
     gap: var(--dl-button-content-gap, 7px);
 }
 
-.dl-chip.first-letter-capitalized {
+.dl-button-container.first-letter-capitalized {
     &::first-letter,
     & > *::first-letter {
         text-transform: capitalize;
@@ -393,5 +457,15 @@ export default defineComponent({
 .dl-button-container {
     display: inline-block;
     width: var(--dl-button-container-width);
+}
+
+.active-class {
+    color: var(--dl-button-text-color-hover);
+    background-color: var(--dl-button-bg-hover);
+    border-color: var(--dl-button-border-hover);
+    & .dl-button-label {
+        transition: all ease-in 0.15s;
+        color: var(--dl-button-color-hover);
+    }
 }
 </style>

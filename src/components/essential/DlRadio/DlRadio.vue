@@ -76,7 +76,7 @@ export default defineComponent({
         disabled: { type: Boolean, default: false },
         id: { type: [String, Number], default: null },
         label: { type: String, default: null },
-        padding: { type: String, default: '5px' },
+        padding: { type: String, default: '0' },
         modelValue: { type: [String, Number, Boolean], required: true },
         value: { type: [String, Number, Boolean], required: true },
         tabindex: { type: String, default: '0' },
@@ -158,7 +158,7 @@ export default defineComponent({
     cursor: pointer;
     display: inline-flex;
     max-width: max-content;
-    gap: 10px;
+    gap: 6px;
     align-items: center;
     padding: var(--dl-radio-padding);
     user-select: none;
@@ -209,7 +209,7 @@ input {
     flex-direction: column;
 }
 .sub-text {
-    margin-left: 6%;
+    margin-left: 5%;
     width: 80%;
     color: var(--dl-color-medium);
     word-break: break-all;

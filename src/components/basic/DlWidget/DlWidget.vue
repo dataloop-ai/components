@@ -7,18 +7,16 @@
             :id="uuid"
             ref="widget"
             :class="widgetStyles"
+            @mouseenter="handleVisibleDragIcon(true)"
+            @mouseleave="handleVisibleDragIcon(false)"
         >
-            <div
-                class="dl-widget__header"
-                @mouseenter="visibleDragIcon = true"
-                @mouseleave="visibleDragIcon = false"
-            >
+            <div class="dl-widget__header">
                 <div class="dl-widget__header--titles">
                     <slot name="header" />
                 </div>
                 <dl-icon
                     :style="`visibility: ${
-                        visibleDragIcon ? 'visible' : 'hidden'
+                        visibleDragIcon && !isDragging ? 'visible' : 'hidden'
                     }`"
                     class="dl-widget__header--drag-icon"
                     icon="icon-dl-drag"
@@ -47,14 +45,7 @@
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
 import { DlIcon } from '../../essential'
-import {
-    getElementAbove,
-    addMouseEnter,
-    removeMouseEnter,
-    setFlexBasis,
-    insertAfter
-} from './utils'
-import { swapNodes } from '../../../utils/swapNodes'
+import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
 
 export default defineComponent({
     name: 'DlWidget',
@@ -78,20 +69,20 @@ export default defineComponent({
             return `${this.isDragging ? 'dl-widget__drag' : 'dl-widget'}`
         }
     },
-    mounted() {
-        setFlexBasis()
-    },
     methods: {
         startDragging(e: MouseEvent) {
             this.isDragging = true
+            document.body.style.cursor = 'grabbing'
             this.draggedWidget = getElementAbove(
                 e.target as HTMLElement,
                 'dl-widget'
             )
             if (this.draggedWidget) {
-                (this.$refs.clone as HTMLElement).appendChild(
-                    this.draggedWidget.cloneNode(true)
-                )
+                const clone = this.$refs.clone as HTMLElement
+                clone.appendChild(this.draggedWidget.cloneNode(true))
+                clone.style.visibility = 'visible'
+                clone.style.width = `${this.draggedWidget.offsetWidth}px`
+                clone.style.height = `${this.draggedWidget.offsetHeight}px`
             }
 
             const sourceCanvas = this.draggedWidget?.querySelector('canvas')
@@ -118,13 +109,20 @@ export default defineComponent({
         },
         stopDragging(e: MouseEvent) {
             this.isDragging = false
-            ;(this.$refs.clone as HTMLElement).innerHTML = ''
+            document.body.style.cursor = 'default'
+            const clone = this.$refs.clone as HTMLElement
+            clone.style.visibility = 'hidden'
+            clone.innerHTML = ''
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
+            const change = {
+                source: this.draggedWidget,
+                target
+            }
             if (target && this.draggedWidget) {
-                swapNodes({
-                    source: this.draggedWidget,
-                    target
+                const event = new CustomEvent('change-position', {
+                    detail: change
                 })
+                ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)
@@ -148,30 +146,26 @@ export default defineComponent({
                     this.handleMouseInsideWidget
                 )
             })
-            this.timer = setTimeout(this.insertWidget, 1000)
+            this.timer = setTimeout(this.insertWidget, 200)
         },
         insertWidget() {
             const targetWidget = getElementAbove(
                 this.hoveredWidget,
                 'widget-wrapper'
             )
-            const targetRow = getElementAbove(this.hoveredWidget, 'dl-grid-row')
-            if (this.isLeftSide) {
-                targetRow.insertBefore(
-                    this.$refs.wrapper as HTMLElement,
-                    targetWidget
-                )
-            } else {
-                insertAfter(
-                    this.$refs.wrapper as unknown as HTMLElement,
-                    targetWidget
-                )
-            }
+            const event = new CustomEvent('change-position', {
+                detail: {
+                    source: this.$refs.wrapper,
+                    target: targetWidget,
+                    side: this.isLeftSide ? 'left' : 'right'
+                }
+            })
+            ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
+            window.clearTimeout(this.timer)
             this.hoveredWidget.removeEventListener(
                 'mousemove',
                 this.handleMouseInsideWidget
             )
-            setFlexBasis()
         },
         handleMouseInsideWidget(e: MouseEvent) {
             const mouseOffsetInside = e.clientX - this.hoveredWidget.offsetLeft
@@ -180,6 +174,11 @@ export default defineComponent({
             if (this.isLeftSide !== isLeftSide) {
                 clearTimeout(this.timer)
                 this.handleMouseEnter(e)
+            }
+        },
+        handleVisibleDragIcon(val: boolean) {
+            if (!document.querySelector('.drag-clone').innerHTML.toString()) {
+                this.visibleDragIcon = val
             }
         }
     }
@@ -200,7 +199,7 @@ export default defineComponent({
 
         &--drag-icon {
             flex-grow: 1;
-            cursor: pointer;
+            cursor: grab;
 
             &::v-deep .dl-icon {
                 transform: rotate(90deg) !important;
@@ -217,13 +216,30 @@ export default defineComponent({
         padding: 5px;
     }
     &__description {
-        margin-top: auto;
-        padding: 5px;
-        font-size: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1;
+        max-height: 1 * 2;
+        margin: 20px 16px 16px 16px;
+        font-size: 12px;
+        color: var(--dl-color-medium);
     }
 
     &__drag {
-        visibility: hidden;
+        position: relative;
+        &::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: var(--dl-color-separator);
+            border-radius: 5px;
+        }
     }
 }
 
@@ -236,6 +252,6 @@ export default defineComponent({
 .widget-wrapper {
     flex-basis: var(--widget-flex-basis);
     margin: var(--row-gap) var(--column-gap);
-    transition: 0.1s;
+    padding: 15px;
 }
 </style>

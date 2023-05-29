@@ -106,7 +106,7 @@ export default defineComponent({
         indeterminateValue: { type: ValueTypes, default: null },
         value: { type: ValueTypes, default: null },
         falseValue: { type: ValueTypes, default: false },
-        padding: { type: String, default: '5px' },
+        padding: { type: String, default: '0' },
         trueValue: { type: ValueTypes, default: true },
         tabindex: { type: String, default: '0' },
         subLabelSize: { type: String, default: '10px' }
@@ -253,7 +253,7 @@ export default defineComponent({
     display: inline-flex;
     max-width: max-content;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     padding: var(--dl-checkbox-padding);
     user-select: none;
 }

@@ -59,6 +59,20 @@
         >
             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
         </DlAlert>
+        <dl-alert
+            style="margin-top: 20px"
+            fluid
+            type="warning"
+        >
+            this is an annoying message with link, this is an annoying message
+            with linkthis is an annoying message with linkthis is an annoying
+            message with linkthis is an annoying message with linkthis is an
+            annoying message with linkthis is an annoying message with linkthis
+            is an annoying message with link
+            <span>
+                Please
+                <dl-link color="dl-color-link">Contact us</dl-link>.</span>
+        </dl-alert>
     </div>
 </template>
 
