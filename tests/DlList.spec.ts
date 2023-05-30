@@ -21,7 +21,8 @@ describe('DlList', () => {
                 bordered: false,
                 separator: false,
                 padding: false,
-                clickable: false
+                clickable: false,
+                tag: 'div'
             })
         })
         it('should right class', function () {

@@ -33,8 +33,8 @@ describe('DlListItem', () => {
                 endIcon: '',
                 startIconColor: 'dl-color-darker',
                 endIconColor: 'dl-color-darker',
-                startIconSize: '12px',
-                endIconSize: '12px',
+                startIconSize: '16px',
+                endIconSize: '16px',
                 withWave: false,
                 height: null,
                 padding: null

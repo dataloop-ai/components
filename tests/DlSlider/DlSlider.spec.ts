@@ -9,7 +9,7 @@ describe('DlSlider', () => {
         const _nonEditableSlider = '[data-test="non-editable-slider"]'
         const _nonEditableSliderInput =
             '[data-test="non-editable-slider-input"]'
-        const _nonEditableSliderBtn = '[data-test="non-editable-slider-btn"]'
+        const _nonEditableSliderBtn = '[data-test="non-editable-slider-button"]'
         let wrapper: any
 
         beforeAll(() => {

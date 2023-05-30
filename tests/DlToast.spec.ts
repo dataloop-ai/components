@@ -1,6 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import ToastComponent from '../src/components/compound/DlToast/components/ToastComponent.vue'
+import {
+    DlToastPositions,
+    DlToastTypes
+} from '../src/components/compound/DlToast/types'
 
 describe('DlToastMessage component', () => {
     describe('When mounting', () => {
@@ -9,11 +13,13 @@ describe('DlToastMessage component', () => {
         beforeAll(() => {
             mount(ToastComponent, {
                 props: {
-                    message: 'Test message'
+                    message: 'Test message',
+                    type: DlToastTypes.SUCCESS
                 }
             })
             toast = document.body.querySelectorAll('.toast-item')
         })
+
         it('should the right toast message', function () {
             expect(
                 toast[0].querySelector('[data-test="message-text"]')
@@ -31,10 +37,12 @@ describe('DlToastMessage component', () => {
             wrapper = mount(ToastComponent, {
                 props: {
                     message: 'Test message',
-                    position: 'bottom'
+                    position: DlToastPositions.BOTTOM,
+                    type: DlToastTypes.SUCCESS
                 }
             })
         })
+
         it('should the right compute transition prop', function () {
             expect(wrapper.vm.transition).toEqual({
                 enter: 'dl-toast--fade-in-up',

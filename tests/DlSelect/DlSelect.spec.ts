@@ -64,10 +64,11 @@ describe('dl-select methods', () => {
     describe('When close the menu and emit hide events', () => {
         let wrapper: any
 
-        beforeAll(() => {
-            wrapper = mount(DlSelect)
-            wrapper.setData({
-                isExpanded: true
+        beforeAll(async () => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    isExpanded: true
+                }
             })
             wrapper.vm.closeMenu()
         })

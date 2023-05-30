@@ -92,7 +92,7 @@ describe('DlTable', () => {
                 const LOADING_LABEL = 'Loading...'
                 const NO_RESULTS_LABEL = 'No results.'
 
-                expect(wrapper.vm.bottomMessage).toBe(LOADING_LABEL)
+                expect(wrapper.vm.noDataMessage).toBe(LOADING_LABEL)
 
                 await wrapper.setProps({
                     loading: false,
@@ -100,7 +100,7 @@ describe('DlTable', () => {
                     noResultsLabel: NO_RESULTS_LABEL
                 })
 
-                expect(wrapper.vm.bottomMessage).toBe(NO_RESULTS_LABEL)
+                expect(wrapper.vm.noDataMessage).toBe(NO_RESULTS_LABEL)
             })
         })
     })

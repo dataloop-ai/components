@@ -3,7 +3,7 @@ import { DlAlert } from '../src/components'
 import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlAlert', () => {
-    const _closeBtn = '[data-test="close-btn-icon"]'
+    const _closeBtn = '[data-test="close-button-icon"]'
     const _root = '[data-test="root"]'
 
     describe('When mounting', () => {

@@ -26,10 +26,11 @@ describe('DlButton', () => {
                 disabled: false,
                 round: false,
                 padding: '',
+                margin: '0 auto',
                 flat: false,
                 styles: null,
                 fluid: false,
-                uppercase: false,
+                transform: 'default',
                 icon: '',
                 noWrap: false,
                 outlined: false,
@@ -38,7 +39,10 @@ describe('DlButton', () => {
                 iconColor: '',
                 overflow: false,
                 tooltip: null,
-                dense: false
+                dense: false,
+                active: false,
+                shaded: false,
+                uppercase: false
             })
         })
     })
@@ -120,7 +124,7 @@ describe('DlButton', () => {
                 textColor: ''
             })
 
-            const button = wrapper.find('button')
+            const button = wrapper.find('.dl-button-container')
 
             expect(
                 button.element.style.getPropertyValue(
