@@ -64,5 +64,6 @@ export default defineComponent({
 .container-wrapper {
     flex-basis: var(--container-flex-basis);
     margin: var(--row-gap) var(--column-gap);
+    height: 100%;
 }
 </style>
