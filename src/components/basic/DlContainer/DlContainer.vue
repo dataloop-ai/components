@@ -56,7 +56,8 @@ export default defineComponent({
         border-bottom: 1px solid var(--dl-color-separator);
     }
     &__content {
-        padding: 5px;
+        padding: 10px;
+        overflow-y: auto;
     }
 }
 
