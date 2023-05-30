@@ -60,6 +60,52 @@
                     :animation="doughnutAnimation"
                 />
             </div>
+
+            <div>
+                <DlDoughnutChart
+                    :data="doughnutData"
+                    :is-small="true"
+                    :has-summary="true"
+                    :animation="doughnutAnimation"
+                    is-empty
+                    :empty-state-props="{
+                        responsive: true,
+                        style: 'min-height: 350px;',
+                        bgSize: '130px',
+                        bgImage: `url(./src/demos/assets/agenda.svg)`,
+                        title: 'Lorem ipsum',
+                        subtitle:
+                            'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                        info: 'To learn more about this analytics, read our documentation.'
+                    }"
+                >
+                    <template #links="">
+                        <div style="display: flex; gap: 5px; padding: 0 20px">
+                            <dl-button
+                                padding="0px"
+                                icon="icon-dl-sdk-documentation"
+                                flat
+                                uppercase
+                                label="SDK"
+                            />
+                            <div class="break" />
+                            <dl-button
+                                padding="0px"
+                                icon="icon-dl-file"
+                                flat
+                                label="Documentation"
+                            />
+                            <div class="break" />
+                            <dl-button
+                                padding="0px"
+                                icon="icon-dl-youtube"
+                                flat
+                                label="Video"
+                            />
+                        </div>
+                    </template>
+                </DlDoughnutChart>
+            </div>
         </div>
     </div>
 </template>
@@ -67,13 +113,14 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DoughnutControllerChartOptions } from 'chart.js'
-import { DlDoughnutChart } from '../components'
+import { DlDoughnutChart, DlButton } from '../components'
 import { TDoughnutChartData } from '../components/compound/DlCharts/charts/DlDoughnutChart/types'
 
 export default defineComponent({
     name: 'DlChartDoughnutDemo',
     components: {
-        DlDoughnutChart
+        DlDoughnutChart,
+        DlButton
     },
     setup() {
         const doughnutAnimation = ref<

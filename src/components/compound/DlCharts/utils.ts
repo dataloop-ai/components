@@ -65,7 +65,7 @@ export function setDatasets<
 ) {
     const addedDatasets: ChartDataset<TType, TData>[] = []
 
-    currentData.datasets = nextDatasets.map(
+    currentData.datasets = (nextDatasets || []).map(
         (nextDataset: Record<string, unknown>) => {
             // given the new set, find it's current match
             const currentDataset = currentData.datasets.find(

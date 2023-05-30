@@ -4,7 +4,22 @@
             class="canvas-container"
             :style="`height: ${wrapperHeight}`"
         >
+            <dl-empty-state
+                v-if="isEmpty"
+                v-bind="emptyStateProps"
+            >
+                <template
+                    v-for="(_, slot) in $slots"
+                    #[slot]="props"
+                >
+                    <slot
+                        :name="slot"
+                        v-bind="props"
+                    />
+                </template>
+            </dl-empty-state>
             <Bar
+                v-if="!isEmpty"
                 :id="id"
                 ref="barChart"
                 :class="chartClasses"
@@ -15,7 +30,7 @@
                 @wheel.native="handleChartScroll"
             />
             <dl-chart-scroll-bar
-                v-if="maxItems > thisItemsInView"
+                v-if="!isEmpty || (maxItems > thisItemsInView && !isEmpty)"
                 :wrapper-styles="{
                     marginTop: '10px'
                 }"
@@ -28,10 +43,12 @@
             />
         </div>
         <slot
+            v-if="!isEmpty"
             v-bind="{ labels: xLabels, chartWidth }"
             name="axe-x-labels"
         />
         <slot
+            v-if="!isEmpty"
             v-bind="{
                 data: legendDatasets,
                 chartWidth,
@@ -82,6 +99,7 @@ import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { isEqual, merge } from 'lodash'
 import { rgba2hex, hexToRgbA, revertRGBAOpacity } from '../../../../../utils'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 
 ChartJS.register(
     CategoryScale,
@@ -98,7 +116,8 @@ export default defineComponent({
     components: {
         Bar,
         DlChartScrollBar,
-        DlChartLegend
+        DlChartLegend,
+        DlEmptyState
     },
     props: {
         ...CommonProps,
@@ -110,6 +129,11 @@ export default defineComponent({
         id: {
             type: String,
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object,
+            default: () => {}
         }
     },
     setup(props) {

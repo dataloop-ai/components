@@ -10,21 +10,22 @@ describe('DlEmptyState', () => {
 
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.props()).toStrictEqual({
+            align: 'center',
             bgImage: null,
             bgSize: '240px',
             icon: 'icon-dl-alert-filled',
-            iconClass: '',
             iconColor: 'dl-color-darker',
             iconSize: '40px',
             info: '',
-            infoClass: '',
             infoColor: 'dl-color-darker',
+            infoSize: '14px',
+            responsive: false,
             subtitle: '',
-            subtitleClass: '',
             subtitleColor: 'dl-color-medium',
+            subtitleSize: '14px',
             title: 'Something Went Wrong',
-            titleClass: '',
-            titleColor: 'dl-color-darker'
+            titleColor: 'dl-color-darker',
+            titleSize: '20px'
         })
 
         expect(wrapper.vm.iconClassName).toBe('empty-state--icon')
@@ -37,37 +38,32 @@ describe('DlEmptyState', () => {
         })
 
         await wrapper.setProps({
-            bgImage: 'url(random-image.org)',
-            iconClass: 'icon',
-            titleClass: 'title',
-            subtitleClass: 'subtitle',
-            infoClass: 'info'
+            bgImage: 'url(random-image.org)'
         })
 
         expect(wrapper.props()).toStrictEqual({
             bgImage: 'url(random-image.org)',
+            align: 'center',
             bgSize: '240px',
             icon: 'icon-dl-alert-filled',
-            iconClass: 'icon',
             iconColor: 'dl-color-darker',
             iconSize: '40px',
             info: '',
-            infoClass: 'info',
             infoColor: 'dl-color-darker',
+            infoSize: '14px',
+            responsive: false,
             subtitle: '',
-            subtitleClass: 'subtitle',
             subtitleColor: 'dl-color-medium',
+            subtitleSize: '14px',
             title: 'Something Went Wrong',
-            titleClass: 'title',
-            titleColor: 'dl-color-darker'
+            titleColor: 'dl-color-darker',
+            titleSize: '20px'
         })
 
-        expect(wrapper.vm.iconClassName).toBe('empty-state--icon icon')
-        expect(wrapper.vm.titleClassName).toBe('empty-state--title title')
-        expect(wrapper.vm.subtitleClassName).toBe(
-            'empty-state--subtitle subtitle'
-        )
-        expect(wrapper.vm.infoClassName).toBe('empty-state--info info')
+        expect(wrapper.vm.iconClassName).toBe('empty-state--icon')
+        expect(wrapper.vm.titleClassName).toBe('empty-state--title')
+        expect(wrapper.vm.subtitleClassName).toBe('empty-state--subtitle')
+        expect(wrapper.vm.infoClassName).toBe('empty-state--info')
         expect(wrapper.vm.cssVars).toEqual({
             '--bg-image': 'url(random-image.org)',
             '--bg-size': '240px'

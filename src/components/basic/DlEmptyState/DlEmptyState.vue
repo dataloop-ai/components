@@ -8,14 +8,14 @@
         <dl-icon
             :class="iconClassName"
             :color="iconColor"
-            :size="iconFontSize + 'px'"
+            :size="iconFontSize"
             :icon="icon"
         />
 
         <dl-typography
             v-if="title"
             bold
-            :size="titleSize + 'px'"
+            :size="titleFontSize"
             :color="titleColor"
             :class="titleClassName"
         >
@@ -24,7 +24,7 @@
 
         <dl-typography
             v-if="subtitle"
-            :size="subtitleFonSize + 'px'"
+            :size="subtitleFontSize"
             :color="subtitleColor"
             :class="subtitleClassName"
         >
@@ -40,7 +40,7 @@
 
         <dl-typography
             v-if="info"
-            :size="infoFontSize + 'px'"
+            :size="infoFontSize"
             :color="infoColor"
             class="empty-state--info"
         >
@@ -85,21 +85,21 @@ export default defineComponent({
             type: String,
             default: 'dl-color-darker'
         },
-        titleClass: {
+        titleSize: {
             type: String,
-            default: ''
+            default: '20px'
         },
         subtitle: {
             type: String,
             default: ''
         },
+        subtitleSize: {
+            type: String,
+            default: '14px'
+        },
         subtitleColor: {
             type: String,
             default: 'dl-color-medium'
-        },
-        subtitleClass: {
-            type: String,
-            default: ''
         },
         info: {
             type: String,
@@ -109,9 +109,9 @@ export default defineComponent({
             type: String,
             default: 'dl-color-darker'
         },
-        infoClass: {
+        infoSize: {
             type: String,
-            default: ''
+            default: '14px'
         },
         icon: {
             type: String,
@@ -124,10 +124,6 @@ export default defineComponent({
         iconColor: {
             type: String,
             default: 'dl-color-darker'
-        },
-        iconClass: {
-            type: String,
-            default: ''
         },
         responsive: Boolean,
         align: {
@@ -150,18 +146,28 @@ export default defineComponent({
 
         const fontSize = (value: number) => metric.value * (value / 365)
 
-        const titleSize = computed(() => (props.responsive ? fontSize(18) : 20))
+        const titleFontSize = computed(() =>
+            props.responsive
+                ? fontSize(parseInt(props.titleSize)) + 'px'
+                : props.titleSize
+        )
 
         const infoFontSize = computed(() =>
-            props.responsive ? fontSize(12) : 14
+            props.responsive
+                ? fontSize(parseInt(props.infoSize)) + 'px'
+                : props.infoSize
         )
 
         const iconFontSize = computed(() =>
-            props.responsive ? fontSize(26) : parseInt(props.iconSize)
+            props.responsive
+                ? fontSize(parseInt(props.iconSize)) + 'px'
+                : props.iconSize
         )
 
-        const subtitleFonSize = computed(() =>
-            props.responsive ? fontSize(14) : 14
+        const subtitleFontSize = computed(() =>
+            props.responsive
+                ? fontSize(parseInt(props.subtitleSize)) + 'px'
+                : props.subtitleSize
         )
 
         const bgImageSize = computed(() =>
@@ -175,41 +181,25 @@ export default defineComponent({
         const hasLinkSlot = !!slots['links']
 
         const iconClassName = computed(() => {
-            let classname = 'empty-state--icon'
-
-            if (props.iconClass) {
-                classname = classname + ' ' + props.iconClass
-            }
+            const classname = 'empty-state--icon'
 
             return classname
         })
 
         const titleClassName = computed(() => {
-            let classname = 'empty-state--title'
-
-            if (props.titleClass) {
-                classname = classname + ' ' + props.titleClass
-            }
+            const classname = 'empty-state--title'
 
             return classname
         })
 
         const subtitleClassName = computed(() => {
-            let classname = 'empty-state--subtitle'
-
-            if (props.subtitleClass) {
-                classname = classname + ' ' + props.subtitleClass
-            }
+            const classname = 'empty-state--subtitle'
 
             return classname
         })
 
         const infoClassName = computed(() => {
-            let classname = 'empty-state--info'
-
-            if (props.infoClass) {
-                classname = classname + ' ' + props.infoClass
-            }
+            const classname = 'empty-state--info'
 
             return classname
         })
@@ -231,8 +221,8 @@ export default defineComponent({
             hasCTASlot,
             hasLinkSlot,
             dlEtaRef,
-            titleSize,
-            subtitleFonSize,
+            titleFontSize,
+            subtitleFontSize,
             infoFontSize,
             iconFontSize
         }
