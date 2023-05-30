@@ -48,7 +48,8 @@ import {
     cleanEvt,
     clearSelection,
     getColor,
-    isMobileOrTablet
+    isMobileOrTablet,
+    stringStyleToRecord
 } from '../../../utils'
 import {
     parsePosition,
@@ -65,6 +66,7 @@ import {
 } from '../../../utils/click-outside'
 import DlTeleport from '../../../utils/teleport'
 import { v4 } from 'uuid'
+import { isString } from 'lodash'
 
 export default defineComponent({
     name: 'DlTooltip',
@@ -391,7 +393,9 @@ export default defineComponent({
             innerRef,
             portalEl: isVue2 ? 'body' : portalEl,
             styles: [
-                attrs.style,
+                isString(attrs.style)
+                    ? stringStyleToRecord(attrs.style)
+                    : attrs.style,
                 transitionStyle.value,
                 {
                     '--dl-tooltip-color': getColor(

@@ -1,5 +1,8 @@
 <template>
-    <div class="confusion-matrix-container">
+    <div
+        :style="`max-width: ${maxWidth}`"
+        class="confusion-matrix-container"
+    >
         <div
             v-if="isValidMatrix"
             ref="wrapper"
@@ -33,7 +36,9 @@
                         <span v-else>
                             {{ label }}
                         </span>
-                        <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
+                        <dl-tooltip :offset="[0, 0]">
+                            {{ labelStrings[index] }}
+                        </dl-tooltip>
                     </div>
                 </div>
             </div>
@@ -91,8 +96,9 @@
                             <span v-else>
                                 {{ label }}
                             </span>
-                            <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
                         </span>
+                        <dl-tooltip self="top middle">
+                            {{ labelStrings[index] }}</dl-tooltip>
                     </span>
                 </div>
                 <dl-brush
@@ -132,7 +138,7 @@
             The given props cannot create a valid matrix.
         </div>
         <div
-            v-if="tooltipState?.visible"
+            v-if="tooltipVisible"
             :style="tooltipStyles"
             class="tooltip"
         >
@@ -154,7 +160,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
 import {
@@ -172,7 +178,7 @@ import {
     getCellWidth,
     flattenConfusionMatrix
 } from './utils'
-import { debounce } from 'lodash'
+import { debounce, isObject } from 'lodash'
 export default defineComponent({
     components: {
         DlBrush,
@@ -204,41 +210,62 @@ export default defineComponent({
         leftLabel: {
             type: String,
             default: 'True Label'
+        },
+        maxWidth: {
+            type: String,
+            default: '800px'
         }
     },
     setup(props) {
         const { variables } = useThemeVariables()
 
-        const getCellBackground = (value: number = 1) => {
-            return hexToRgbA(
-                { ...variables, ...colorNames }[props.color],
-                value
-            )
+        const tooltipState = ref<{
+            x: string
+            y: string
+            visible?: boolean
+        } | null>(null)
+        const currentBrushState = ref<{ min: number; max: number }>({
+            min: 0,
+            max: props.matrix.length
+        })
+        const cellWidth = ref<number | null>(null)
+
+        const getCellBackground = (value: number = 1): string => {
+            const object: { [key: string]: any } = {
+                ...variables,
+                ...colorNames
+            }
+            const hex = object[props.color]
+            return hexToRgbA(hex, value)
         }
-        return { variables, getCellBackground }
-    },
-    data(): {
-        tooltipState: { x: string; y: string } | null
-        currentBrushState: { min: number; max: number }
-        cellWidth: number
-    } {
         return {
-            tooltipState: null,
-            currentBrushState: { min: 0, max: this.matrix.length },
-            cellWidth: null
+            variables,
+            getCellBackground,
+            cellWidth,
+            tooltipState,
+            currentBrushState
         }
     },
     computed: {
-        visibleLabels(): string[] | DlConfusionMatrixLabel[] {
-            return this.labels.slice(
-                this.currentBrushState.min,
-                this.currentBrushState.max
-            )
+        tooltipVisible(): boolean {
+            return this.tooltipState?.visible
+        },
+        visibleLabels(): DlConfusionMatrixLabel[] {
+            if (this.labels[0]) {
+                const arr = this.labels as DlConfusionMatrixLabel[]
+                return arr.slice(
+                    this.currentBrushState.min,
+                    this.currentBrushState.max
+                )
+            }
+            return []
         },
         labelStrings(): string[] | DlConfusionMatrixLabel[] {
-            if (typeof this.labels[0] === 'object')
-                return this.labels.map((label: any) => label.title)
-            else return this.labels
+            if (isObject(this.labels[0])) {
+                const arr = this.labels as DlConfusionMatrixLabel[]
+                return arr.map((label: DlConfusionMatrixLabel) => label.title)
+            }
+            return this.labels
         },
         labelImages(): string[] {
             return this.visibleLabels.map((label: any) => label.image)
@@ -283,11 +310,9 @@ export default defineComponent({
             const yAxisOuter = this.$refs.yAxisOuter as HTMLElement
             const width = verticalWrapper?.offsetWidth
 
+            labelY.style.marginTop = `-${this.leftLabel.length * 16}px`
             this.cellWidth = width / this.matrix.length
             colorSpectrum.style.height = `${width}px`
-            labelY.style.width = `${this.cellWidth * 2}px`
-            labelY.style.height = `${labelY.offsetWidth}px`
-            labelY.style.marginTop = `${width / 2}px`
             yAxisOuter.style.height = `${width}px`
         },
         handleBrushUpdate(brush: DlConfusionMatrixBrushState) {
@@ -304,18 +329,17 @@ export default defineComponent({
                     ctx.matrix.length / (brush.max - brush.min),
                     ctx.$refs.matrix
                 )
-                const scroll = brush.min * getCellWidth() + 2
+                const scroll = brush.min * (getCellWidth() - 2)
                 const container = ctx.$refs.matrixWrapper
-                container.scroll(scroll, scroll)
+                container.scroll(scroll, 0)
                 ctx.currentBrushState = brush
                 ctx.resizeYAxis()
             },
             30
         ),
         resizeYAxis() {
-            (this.$refs.yAxis as HTMLElement).style.height = `${
-                getCellWidth() * this.matrix.length
-            }px`
+            const yAxis = this.$refs.yAxis as HTMLElement
+            yAxis.style.height = `${getCellWidth() * this.matrix.length}px`
         },
         handleMatrixScroll(e: MouseEvent) {
             const target = e.target as HTMLElement
@@ -352,6 +376,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.confusion-matrix-container {
+    margin: auto;
+}
 .wrapper {
     display: flex;
     width: 100%;
@@ -370,7 +397,9 @@ export default defineComponent({
     color: var(--dl-color-medium);
 }
 .label-tag.y {
-    transform: rotate(-90deg);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
     margin-right: 10px;
 }
 .label-tag.x {
@@ -388,6 +417,9 @@ export default defineComponent({
         line-height: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
+        &--text {
+            font-size: 12px;
+        }
     }
 }
 .y-axis {
@@ -396,14 +428,16 @@ export default defineComponent({
     flex-direction: column;
     justify-content: space-between;
     &__element {
-        text-align: end;
+        text-align: center;
         line-height: var(--cell-dimensions);
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 12px;
     }
 }
 .y-axis-outer {
     overflow: hidden;
+    width: 200px;
 }
 .y-axis,
 .x-axis {
@@ -432,7 +466,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 80%;
+        font-size: 60%;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;

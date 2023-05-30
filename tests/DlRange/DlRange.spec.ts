@@ -4,7 +4,7 @@ import { DlRange } from '../../src/components'
 import touchPanDirective from '../../src/directives/TouchPan'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
-const _resetBtn = '[data-test="reset-btn"]'
+const _resetButton = '[data-test="reset-button"]'
 const _sliderBar = '[data-test="slider-bar"]'
 const _trackContainer = '[data-test="track-container"]'
 const _minThumb = '[data-test="min-thumb"]'
@@ -126,11 +126,11 @@ describe('DlRange', () => {
         })
     })
 
-    describe('when reset btn is pressed', () => {
+    describe('when reset button is pressed', () => {
         describe('when state is editable', () => {
             it('should reset the model value', async () => {
                 await wrapper
-                    .find(_resetBtn)
+                    .find(_resetButton)
                     .find('.dl-button')
                     .trigger('click')
                 expect(wrapper.emitted()['update:model-value'][0]).toEqual([
@@ -148,7 +148,7 @@ describe('DlRange', () => {
                 await wrapper.setProps({
                     disabled: true
                 })
-                wrapper.find(_resetBtn).find('.dl-button').trigger('click')
+                wrapper.find(_resetButton).find('.dl-button').trigger('click')
                 expect(wrapper.emitted()).not.toHaveProperty(
                     'update:model-value'
                 )

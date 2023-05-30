@@ -717,8 +717,8 @@ const ExpandingRowsTemplate = (args) => ({
                         {{ col.value }}
                     </dl-td>
                 </dl-tr>
-                <dl-tr v-show="expandedIndex === props.rowIndex" :props="props">
-                    <dl-td colspan="100%">
+                <dl-tr v-show="expandedIndex === props.rowIndex" :props="props" style="background-color: var(--dl-color-fill);">
+                    <dl-td colspan="100%" style="padding: 16px 16px 16px 32px;">
                         <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
                     </dl-td>
                 </dl-tr>

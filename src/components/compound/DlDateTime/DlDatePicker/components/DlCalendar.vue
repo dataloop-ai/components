@@ -178,7 +178,7 @@ export default defineComponent({
 
             if (value.isDisabled) return style
 
-            const disabledOpacity = 0.6
+            const disabledOpacity = 1
             const isToday = value.isSame(
                 new CalendarDate().startOf('day'),
                 'day'
@@ -215,7 +215,8 @@ export default defineComponent({
                     style = {
                         ...style,
                         ...selectedStyle,
-                        opacity: disabledOpacity
+                        opacity: disabledOpacity,
+                        backgroundColor: 'var(--dl-date-picker-selected-date)'
                     }
                 } else if (isIntervalBoundary) {
                     style = {

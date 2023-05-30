@@ -1,7 +1,7 @@
 <template>
     <div
         class="card"
-        :style="{ width, height }"
+        :style="[{ width, height }, computedStyles]"
     >
         <div
             v-if="icon"
@@ -9,9 +9,9 @@
         >
             <dl-icon
                 :icon="icon.src"
-                :styles="icon?.styles"
-                :size="icon?.size || '50px'"
-                :color="icon?.color || 'var(--dl-color-darker)'"
+                :styles="iconStyles"
+                :size="iconSize"
+                :color="iconColor"
             />
         </div>
         <div
@@ -20,21 +20,42 @@
         >
             <img
                 :src="image.src"
-                :style="image?.styles"
-                :alt="image?.alt"
+                :style="imageStyles"
+                :alt="imageAlt"
             >
         </div>
         <div class="card--content">
             <div>
-                <div class="card--header">
+                <slot
+                    v-if="!!$slots.header"
+                    name="header"
+                />
+                <div
+                    v-else
+                    class="card--header"
+                >
                     <span class="card--header_title">{{ title }}</span>
                     <span class="card--header_shortcut">{{
                         keyboardShortcut
                     }}</span>
                 </div>
-                <span class="card--content_text">{{ text }}</span>
+                <slot
+                    v-if="!!$slots.content"
+                    name="content"
+                />
+                <span
+                    v-else
+                    class="card--content_text"
+                >{{ text }}</span>
             </div>
-            <div class="card--links">
+            <slot
+                v-if="!!$slots.footer"
+                name="footer"
+            />
+            <div
+                v-else
+                class="card--links"
+            >
                 <div
                     v-for="(link, idx) in links"
                     :key="idx"
@@ -63,7 +84,9 @@
 </template>
 
 <script lang="ts">
+import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
+import { stringStyleToRecord } from '../../../utils'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
@@ -103,6 +126,32 @@ export default defineComponent({
         width: {
             type: String,
             default: '200px'
+        },
+        styles: {
+            type: [Object, String],
+            default: null
+        }
+    },
+    computed: {
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
+        },
+        iconStyles(): string {
+            return this.icon?.styles ?? ''
+        },
+        iconSize(): string {
+            return this.icon?.size ?? '50px'
+        },
+        iconColor(): string {
+            return this.icon?.color ?? 'var(--dl-color-darker)'
+        },
+        imageStyles(): string {
+            return this.image?.styles ?? ''
+        },
+        imageAlt(): string {
+            return this.image?.alt ?? ''
         }
     }
 })
@@ -115,9 +164,10 @@ export default defineComponent({
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
     pointer-events: auto;
+    box-shadow: 0px 5px 15px 0px var(--dl-color-shadow);
 
     &--content {
-        padding: 16px 10px;
+        padding: 16px;
         &_text {
             font-size: 12px;
             color: var(--dl-color-medium);

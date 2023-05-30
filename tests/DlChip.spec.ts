@@ -32,7 +32,7 @@ describe('DlChip', () => {
                 tabIndex: '',
                 icon: '',
                 textColor: '',
-                transform: 'lowercase',
+                transform: 'default',
                 overflow: false,
                 fit: false
             })
@@ -100,6 +100,66 @@ describe('DlChip', () => {
                     .attributes('style')
                     ?.includes('--dl-chip-max-width: fit-content')
             ).to.be.true
+        })
+    })
+
+    describe('When using a dl-chip with transform property', () => {
+        describe('When the transform property is one of the accepted options', () => {
+            let chip: DOMWrapper<HTMLDivElement>
+
+            beforeAll(async () => {
+                const wrapper = mount(DlChip, {
+                    props: {
+                        filled: true,
+                        label: 'Filled chip',
+                        disabled: false,
+                        removable: true,
+                        fit: true,
+                        transform: 'capitalized'
+                    }
+                })
+
+                chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+            })
+
+            it('will have the inputted transform', () => {
+                console.log(chip.attributes('style'))
+                expect(
+                    chip
+                        .attributes('style')
+                        ?.includes('-dl-chip-text-transform: capitalized')
+                ).to.be.true
+            })
+        })
+    })
+
+    describe('When using a dl-chip without transform property', () => {
+        describe('When the transform property is not one of the accepted options', () => {
+            let chip: DOMWrapper<HTMLDivElement>
+
+            beforeAll(async () => {
+                const wrapper = mount(DlChip, {
+                    props: {
+                        filled: true,
+                        label: 'Filled chip',
+                        disabled: false,
+                        removable: true,
+                        fit: true
+                    }
+                })
+
+                chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+            })
+
+            it('will have the inputted transform', () => {
+                expect(
+                    chip
+                        .attributes('style')
+                        ?.includes('--dl-chip-text-transform')
+                ).to.be.false
+                expect(chip.classes()?.includes('first-letter-capitalized')).to
+                    .be.true
+            })
         })
     })
 })

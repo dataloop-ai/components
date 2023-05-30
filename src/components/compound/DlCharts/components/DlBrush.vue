@@ -229,6 +229,7 @@ export default defineComponent({
         const rangeStyles = computed(() => ({
             '--dl-track-width': 0.25 * parseInt(props.thumbSize) + 'px',
             '--text-color': getColor(props.textColor, 'dl-color-darker'),
+            '--thumb-size': props.thumbSize,
             '--width': props.width,
             '--color': getColor(props.color, 'dl-color-secondary'),
             width: props.width

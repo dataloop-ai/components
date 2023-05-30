@@ -10,9 +10,17 @@
             <dl-text-holder
                 prefix="home/Desktop/"
                 suffix=".mp3"
-            >
-                very-loooooooooooong-named-song2
-            </dl-text-holder>
+                text="very-loooooooooooong-named-song"
+                split
+            />
+
+            <dl-text-holder
+                prefix="home/Desktop/"
+                suffix=".mp3"
+                text="very-loooooooooooong-named-song"
+                split
+                :split-position="0.7"
+            />
         </div>
     </div>
 </template>

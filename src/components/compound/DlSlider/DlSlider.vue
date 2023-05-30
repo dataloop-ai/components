@@ -28,6 +28,7 @@
                     :color="color"
                     :readonly="readonly"
                     :disabled="disabled"
+                    :thumb-size="thumbSize"
                     :snap="snap"
                     :tabindex="tabindex"
                     :name="name"
@@ -59,7 +60,7 @@
                         size="m"
                         label="Reset"
                         :disabled="disabled || readonly"
-                        data-test="non-editable-slider-btn"
+                        data-test="non-editable-slider-button"
                         @click="handleResetButtonClick"
                     />
                     <dl-slider-input
@@ -82,6 +83,7 @@
                     :step="step"
                     :color="color"
                     :readonly="readonly"
+                    :thumb-size="thumbSize"
                     :disabled="disabled"
                     :snap="snap"
                     :name="name"
@@ -133,6 +135,10 @@ export default defineComponent({
         editable: {
             type: Boolean,
             default: false
+        },
+        thumbSize: {
+            type: String,
+            default: '10px'
         },
         min: {
             type: Number,
@@ -210,6 +216,7 @@ export default defineComponent({
             return {
                 '--text-color': getColor(this.textColor, 'dl-color-darker'),
                 '--width': this.width,
+                '--thumb-size': parseInt(this.thumbSize) / 2 + 'px',
                 '--color': getColor(this.color, 'dl-color-secondary')
             }
         }

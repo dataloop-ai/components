@@ -12,6 +12,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor } from '../../../utils'
+import { transformOptions } from '../../shared/types'
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p'
 
@@ -30,7 +31,12 @@ export default defineComponent({
             required: false,
             default: null
         },
-        uppercase: Boolean,
+        transform: {
+            type: String,
+            default: 'default',
+            validator: (value: string): boolean =>
+                transformOptions.includes(value)
+        },
         bold: Boolean,
         color: {
             type: String,
@@ -46,7 +52,7 @@ export default defineComponent({
         styles(): Record<string, string | number> {
             const styles: Record<string, string | number> = {
                 color: getColor(this.color as string, 'dl-color-darker'),
-                textTransform: this.uppercase ? 'uppercase' : 'none',
+                textTransform: this.letterClass ? null : this.transform,
                 fontWeight: this.bold ? 'bold' : 400
             }
 
@@ -55,6 +61,12 @@ export default defineComponent({
             }
 
             return styles
+        },
+        letterClass(): string {
+            if (this.transform === 'default') {
+                return 'first-letter-capitalized'
+            }
+            return null
         },
         classes(): string[] {
             const classes = [`dl-typography`]
@@ -69,6 +81,10 @@ export default defineComponent({
                 } else {
                     classes.push(`dl-typography--body`)
                 }
+            }
+
+            if (this.letterClass) {
+                classes.push(this.letterClass)
             }
 
             return classes

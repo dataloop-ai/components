@@ -150,4 +150,22 @@ describe('Tabs and Tab Groups', () => {
             unsubscribe.mockReset()
         })
     })
+
+    describe('when changing fontsize to 14', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlTab, {
+                props: {
+                    label: 'Label',
+                    name: 'name',
+                    disabled: false,
+                    fontSize: '14px'
+                }
+            })
+        })
+
+        it('should have correct icon size relative to font size', () => {
+            expect(wrapper.vm.iconSize).toBe('12px')
+        })
+    })
 })

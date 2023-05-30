@@ -4,10 +4,9 @@
             v-model="value"
             width="500px"
             :min="0"
-            :max="100"
-            :step="5"
+            :max="1"
+            :step="0.1"
             text="Range"
-            :snap="true"
             :readonly="readonly"
             :disabled="disabled"
             name="range"
@@ -19,6 +18,9 @@
             <button @click="disabled = !disabled">
                 Disable: {{ disabled }}
             </button>
+        </div>
+        <div>
+            {{ value }}
         </div>
     </div>
 </template>
@@ -34,9 +36,14 @@ export default defineComponent({
     },
     data() {
         return {
-            value: { min: 0, max: 100 },
+            value: { min: 0, max: 0.5 },
             disabled: false,
             readonly: false
+        }
+    },
+    watch: {
+        value(val) {
+            console.log('value changed: ', val)
         }
     },
     template: 'dl-range-demo'

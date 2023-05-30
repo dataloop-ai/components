@@ -26,7 +26,7 @@
                         :plugins="doughnutPlugins"
                     />
                     <div
-                        v-if="hasSummary"
+                        v-if="hasSummaryProp"
                         ref="dlDoughnutChartSummaryRef"
                         class="dl_doughnut__wrapper__container__chart__summary text-center"
                     >
@@ -65,7 +65,8 @@ import {
     ref,
     reactive,
     PropType,
-    onMounted
+    onMounted,
+    watch
 } from 'vue-demi'
 
 import {
@@ -127,6 +128,11 @@ export default defineComponent({
 
         const chartRefValue = computed(() => {
             return doughnutChartRef.value?.chart?.value || {}
+        })
+        const hasSummaryProp = computed(() => props.hasSummary)
+
+        watch(hasSummaryProp, () => {
+            chartRefValue.value.update()
         })
 
         const hiddenIndexes = ref([])
@@ -355,7 +361,8 @@ export default defineComponent({
             darkHighlight,
             resetColors,
             setHoverLight,
-            doughnutPlugins
+            doughnutPlugins,
+            hasSummaryProp
         }
     }
 })
