@@ -57,6 +57,7 @@ export default defineComponent({
     }
     &__content {
         padding: 10px;
+        height: 100%;
         overflow-y: auto;
     }
 }
