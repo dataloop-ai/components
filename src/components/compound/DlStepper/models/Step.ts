@@ -28,8 +28,16 @@ export class Step {
         return this._state.title
     }
 
+    public set title(value: string) {
+        set(this._state, 'title', value)
+    }
+
     public get subtitle(): string {
         return this._state.subtitle
+    }
+
+    public set subtitle(value: string) {
+        set(this._state, 'subtitle', value)
     }
 
     public get optional(): boolean {
@@ -88,6 +96,18 @@ export class Step {
 
     public set sidebarNavigation(value: boolean) {
         set(this._state, 'sidebarNavigation', value)
+    }
+
+    public clearError() {
+        set(this._state, 'error', '')
+    }
+
+    public clearWarning() {
+        set(this._state, 'warning', '')
+    }
+
+    public clearCompleted() {
+        set(this._state, 'completed', false)
     }
 
     public reset() {

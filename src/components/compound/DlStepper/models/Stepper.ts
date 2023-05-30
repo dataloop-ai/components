@@ -163,4 +163,38 @@ export class Stepper {
 
         stepToReset.reset()
     }
+
+    /**
+     *
+     * @param options { step?: number; error?: boolean, warning?: boolean, completed?: boolean }
+     * @param options.step The step to clear its state
+     * @returns
+     */
+    public clearStepState(
+        options: {
+            step?: Step
+            error?: boolean
+            warning?: boolean
+            completed?: boolean
+        } = {}
+    ) {
+        const { step, error, warning, completed } = options
+        const stepToClear = step ?? this.currentStep
+
+        if (!stepToClear) {
+            return
+        }
+
+        if (error) {
+            stepToClear.clearError()
+        }
+
+        if (warning) {
+            stepToClear.clearWarning()
+        }
+
+        if (completed) {
+            stepToClear.clearCompleted()
+        }
+    }
 }

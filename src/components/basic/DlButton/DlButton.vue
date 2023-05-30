@@ -67,7 +67,7 @@ import {
     setMaxHeight
 } from './utils'
 import type { ButtonSizes } from './utils'
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
@@ -166,20 +166,25 @@ export default defineComponent({
          */
         tooltip: { type: String, default: null, required: false },
         /**
-         * The button will mentain the styles it has when it's pressed if this prop is active
+         * The button will maintain the styles it has when it's pressed if this prop is active
          */
         active: { type: Boolean, default: false, required: false },
         styles: { type: [Object, String], default: null }
     },
     emits: ['click', 'mousedown'],
-    setup() {
+    setup(props) {
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
+
+        const buttonClass = computed(() => {
+            return props.active ? 'dl-button active-class' : 'dl-button'
+        })
 
         return {
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
-            isOverflowing: hasEllipsis
+            isOverflowing: hasEllipsis,
+            buttonClass
         }
     },
     computed: {
@@ -212,9 +217,6 @@ export default defineComponent({
         },
         buttonLabel(): string {
             return textTransform(this.label)
-        },
-        buttonClass() {
-            return this.active ? 'dl-button active-class' : 'dl-button'
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
@@ -312,9 +314,12 @@ export default defineComponent({
                         filled: this.filled,
                         color: this.color
                     }),
-                    '--dl-button-text-color-pressed':
-                        'var(--dl-button-text-color)',
-                    '--dl-button-bg-pressed': 'var(--dl-button-bg)',
+                    '--dl-button-text-color-pressed': this.shaded
+                        ? 'var(--dl-color-text-buttons)'
+                        : 'var(--dl-button-text-color)',
+                    '--dl-button-bg-pressed': this.shaded
+                        ? 'var(--dl-color-secondary)'
+                        : 'var(--dl-button-bg)',
                     '--dl-button-border-pressed': 'var(--dl-button-border)'
                 }
             }
