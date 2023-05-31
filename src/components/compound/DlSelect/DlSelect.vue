@@ -189,7 +189,7 @@
                     <!-- Virtual scroll -->
                     <dl-virtual-scroll
                         v-if="optionsCount > MAX_ITEMS_PER_LIST"
-                        v-slot="{ item }"
+                        v-slot="{ item, index }"
                         :items="options"
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
@@ -202,11 +202,10 @@
                             :multiselect="multiselect"
                             :class="{
                                 selected:
-                                    option === selectedOption &&
-                                    highlightSelected
+                                    item === selectedOption && highlightSelected
                             }"
                             :style="
-                                optionIndex === highlightedIndex
+                                index === highlightedIndex
                                     ? 'background-color: var(--dl-color-fill)'
                                     : ''
                             "

@@ -11,6 +11,10 @@ import { JSONEditor, Mode } from 'vanilla-jsoneditor'
 import { debounce } from 'lodash'
 
 export default defineComponent({
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
+    },
     props: {
         /**
          * The string to display and modify as JSON

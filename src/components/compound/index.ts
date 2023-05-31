@@ -7,7 +7,6 @@ export * from './DlItem'
 export * from './DlOptionGroup'
 export * from './DlPagination'
 export * from './DlRange'
-export * from './DlSearches'
 export * from './DlSelect'
 export * from './DlSlider'
 export * from './DlStepper'
@@ -15,8 +14,16 @@ export * from './DlTable'
 export * from './DlTabPanels'
 export * from './DlTabs'
 export * from './DlToast'
+
+// uses other compound
 export * from './DlDialogBox'
 export * from './DlThumbnailGallery'
 export * from './DlToggleButton'
 export * from './DlThumbnailGallery'
 export * from './DlJsonEditor'
+
+/**
+ * Moved to bottom of file as dlsmartsearch specifically uses other components here and needs to be initialized last
+ * todo: Fix potential circular dependency
+ */
+export * from './DlSearches'
