@@ -79,7 +79,14 @@ import {
     BarChartProps,
     defaultBarChartProps
 } from '../../types/props'
-import { defineComponent, reactive, ref, watch, computed } from 'vue-demi'
+import {
+    defineComponent,
+    reactive,
+    ref,
+    watch,
+    computed,
+    PropType
+} from 'vue-demi'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartScrollBar from '../../components/DlChartScrollBar.vue'
 import { updateKey } from '../../../../../utils/update-key'
@@ -99,6 +106,7 @@ import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { isEqual, merge } from 'lodash'
 import { rgba2hex, hexToRgbA, revertRGBAOpacity } from '../../../../../utils'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 
 ChartJS.register(
@@ -132,7 +140,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         }
     },

@@ -129,6 +129,7 @@ import DraggableUpper from './components/DraggableUpper.vue'
 import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
 import { isString } from 'lodash'
+import { Props } from '../DlEmptyState/types'
 import { stringStyleToRecord } from '../../../utils'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
@@ -186,7 +187,7 @@ export default defineComponent({
         draggable: Boolean,
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         }
     },

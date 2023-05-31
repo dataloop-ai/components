@@ -98,8 +98,16 @@ import {
     ColumnChartProps,
     defaultLineChartProps
 } from '../../types/props'
-import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
+import {
+    defineComponent,
+    reactive,
+    watch,
+    ref,
+    computed,
+    PropType
+} from 'vue-demi'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -158,7 +166,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         },
         ...CommonProps,

@@ -63,9 +63,10 @@
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
 import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
+import { Props } from '../DlEmptyState/types'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
@@ -77,7 +78,7 @@ export default defineComponent({
     props: {
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         }
     },

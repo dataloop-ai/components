@@ -105,6 +105,7 @@ import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { stringStyleToRecord } from '../../../utils'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
+import { Props } from '../DlEmptyState/types'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
@@ -151,7 +152,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         }
     },

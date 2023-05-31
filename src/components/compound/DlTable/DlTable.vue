@@ -544,6 +544,7 @@ import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
 
 const commonVirtPropsObj = {} as Record<string, any>
@@ -644,7 +645,7 @@ export default defineComponent({
         noHover: Boolean,
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         },
         ...useTableActionsProps,

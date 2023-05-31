@@ -98,7 +98,14 @@ import {
     ColumnChartProps,
     defaultColumnChartProps
 } from '../../types/props'
-import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
+import {
+    defineComponent,
+    reactive,
+    watch,
+    ref,
+    computed,
+    PropType
+} from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -117,6 +124,7 @@ import {
     BarControllerDatasetOptions
 } from 'chart.js'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { unionBy, orderBy, merge, isEqual } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
@@ -149,7 +157,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object,
+            type: Object as PropType<Props>,
             default: () => {}
         },
         ...CommonProps,
