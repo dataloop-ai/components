@@ -26,6 +26,7 @@
                 dense
                 required
                 title="Name"
+                @input="$emit('set-subtitle', $event)"
             />
             <span>
                 <dl-typography color="dl-color-medium">Type *</dl-typography>
