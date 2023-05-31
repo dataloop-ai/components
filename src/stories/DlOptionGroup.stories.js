@@ -94,7 +94,7 @@ const Template = (args) => ({
             model: this.args.type === 'radio' ? ref(1) : ref([1])
         }
     },
-    template: `<div style="padding: 50px"><DlOptionGroup :options="options" v-model="model" v-bind="args" /></div>`
+    template: `<div><DlOptionGroup :options="options" v-model="model" v-bind="args" /></div>`
 })
 
 export const Preview = Template.bind({})

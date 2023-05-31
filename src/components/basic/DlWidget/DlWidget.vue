@@ -239,15 +239,23 @@ export default defineComponent({
             width: 50%;
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
     }
     &__content {
         padding: 5px;
     }
     &__description {
-        margin-top: auto;
-        padding: 5px;
-        font-size: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1;
+        max-height: 1 * 2;
+        margin: 20px 16px 16px 16px;
+        font-size: 12px;
+        color: var(--dl-color-medium);
     }
 
     &__drag {
