@@ -9,7 +9,6 @@
             class="dl-smart-search__input-wrapper"
         >
             <dl-smart-search-input
-                v-show="!jsonEditorModel"
                 :status="computedStatus"
                 :style-model="defineStyleModel"
                 :with-save-button="true"
@@ -185,14 +184,16 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue-demi'
-import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
-import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
-import { DlJsonEditor } from '../../DlJsonEditor'
-import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
-import { DlInput } from '../../DlInput'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
-import { DlSelect } from '../../../compound'
+import { DlSelect } from '../../DlSelect'
+import { DlInput } from '../../DlInput'
+import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
+import { DlJsonEditor } from '../../DlJsonEditor'
+
+import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
+import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
+
 import {
     useSuggestions,
     Schema,
@@ -394,21 +395,27 @@ export default defineComponent({
                 : this.inputModel
         },
         deleteButtonState(): boolean {
-            return !this.filters.saved.filter(
+            return !this.filters?.saved?.filter(
                 (q: Query) => q.name === this.activeQuery?.name
             ).length
         },
         selectOptions(): Record<string, string>[] {
-            return [
+            const options: Record<string, string>[] = [
                 {
                     label: 'New Query',
                     value: '{}'
-                },
-                ...this.filters.saved.map((q: Query) => ({
-                    label: q.name,
-                    value: q.query
-                }))
+                }
             ]
+
+            const filters = this.filters?.saved ?? []
+            for (const filter of filters) {
+                options.push({
+                    label: filter.name,
+                    value: filter.query
+                })
+            }
+
+            return options
         }
     },
     watch: {

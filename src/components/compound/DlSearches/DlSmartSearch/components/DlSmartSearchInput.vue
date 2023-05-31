@@ -496,6 +496,7 @@ export default defineComponent({
                 element.scrollLeft = 0
                 element.scrollTop = 0
                 this.focused = false
+                this.expanded = false
                 this.$emit('focus', false)
             } else {
                 this.focus()
@@ -600,6 +601,7 @@ export default defineComponent({
         }
 
         &--expanded {
+            z-index: var(--dl-z-index-overlay);
             transition: height 0.3s ease-out;
             position: relative;
             top: 0;
