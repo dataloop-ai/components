@@ -1,53 +1,54 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { DlCounters } from '../src/components'
 
-describe('DlCounters component', () => {
-    it('should mount the component', async () => {
-        const wrapper = mount(DlCounters)
+describe('DlCounters', () => {
+    describe('When mounting', () => {
+        let wrapper: any
 
-        expect(wrapper.exists()).toBe(true)
+        beforeAll(() => {
+            wrapper = mount(DlCounters, {
+                props: {
+                    items: [
+                        {
+                            value: 123,
+                            text: 'text',
+                            subtext: 'subtext'
+                        }
+                    ],
+                    small: true
+                }
+            })
+        })
+        it('should mount the component', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should compute the correct classes when calling computeClass', function () {
+            const className = 'demo'
+            const expected = ['demo', 'demo--small']
+
+            const result = wrapper.vm.computeClass(className)
+
+            expected.forEach((item) => {
+                expect(result).toContain(item)
+            })
+        })
     })
-
-    it('should compute the correct classes when calling computeClass', () => {
-        const wrapper = mount(DlCounters, {
-            props: {
-                items: [
-                    {
-                        value: 123,
+    describe('When set a 10 items', () => {
+        beforeAll(() => {
+            vi.spyOn(console, 'warn')
+            mount(DlCounters, {
+                props: {
+                    items: [...Array(10)].map(() => ({
+                        value: 10,
                         text: 'text',
                         subtext: 'subtext'
-                    }
-                ],
-                small: true
-            }
+                    }))
+                }
+            })
         })
-
-        expect(wrapper.exists()).toBe(true)
-
-        const className = 'demo'
-        const expected = ['demo', 'demo--small']
-
-        const result = wrapper.vm.computeClass(className)
-
-        expected.forEach((item) => {
-            expect(result).toContain(item)
+        it('should have a warn', function () {
+            expect(console.warn).toHaveBeenCalled()
         })
-    })
-
-    it('should throw error when the item limit is exceeded', () => {
-        vi.spyOn(console, 'warn')
-
-        mount(DlCounters, {
-            props: {
-                items: [...Array(10)].map(() => ({
-                    value: 10,
-                    text: 'text',
-                    subtext: 'subtext'
-                }))
-            }
-        })
-
-        expect(console.warn).toHaveBeenCalled()
     })
 })

@@ -1,31 +1,48 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
 import { DlPagination } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('DlPagination', () => {
-    it('should render the pagination component', async () => {
-        const wrapper = mount(DlPagination, {
-            props: {
-                maxPages: 6,
-                totalItems: 1002,
-                rowsPerPage: 50,
-                modelValue: 2
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlPagination, {
+                props: {
+                    maxPages: 6,
+                    totalItems: 1002,
+                    rowsPerPage: 50,
+                    modelValue: 2
+                }
+            })
         })
-
-        expect(wrapper.vm.rowFrom).toBe(51)
-        expect(wrapper.vm.rowTo).toBe(100)
-
-        await wrapper.setProps({
-            modelValue: 21
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
         })
-
-        expect(wrapper.vm.rowFrom).toBe(1001)
-        expect(wrapper.vm.rowTo).toBe(1002)
-
-        wrapper.vm.rowsPerPageState = 10
-        await nextTick()
-        expect(wrapper.vm.value).toEqual(1)
+        it('should have the right rowFrom', function () {
+            expect(wrapper.vm.rowFrom).toBe(51)
+        })
+        it('should have the right rowTo', function () {
+            expect(wrapper.vm.rowTo).toBe(100)
+        })
+        describe('When set modelValue', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({
+                    modelValue: 21
+                })
+            })
+            it('should have the right rowFrom', function () {
+                expect(wrapper.vm.rowFrom).toBe(1001)
+            })
+            it('should have the right rowTo', function () {
+                expect(wrapper.vm.rowTo).toBe(1002)
+            })
+            it('should have the right value', async function () {
+                wrapper.vm.rowsPerPageState = 10
+                await nextTick()
+                expect(wrapper.vm.value).toEqual(1)
+            })
+        })
     })
 })

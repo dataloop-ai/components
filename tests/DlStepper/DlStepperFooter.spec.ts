@@ -1,38 +1,57 @@
 import { mount } from '@vue/test-utils'
 import DlStepperFooter from '../../src/components/compound/DlStepper/components/DlStepperFooter.vue'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('DlStepperFooter', () => {
-    it('should trigger the close & done events depending on the prop', async () => {
-        const wrapper = mount(DlStepperFooter, {
-            props: { finished: true }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlStepperFooter, {
+                props: { finished: true }
+            })
         })
-
-        const [prevButton, nextButton, createButton] = wrapper.findAll('button')
-
-        await wrapper.setProps({
-            hasPreviousStep: true
+        it('should mount the component', () => {
+            expect(wrapper.exists()).toBe(true)
         })
-        // const prevButton = wrapper.find('button')
-        expect(prevButton.text()).toEqual('Back')
-        await prevButton.trigger('click')
-        expect(wrapper.emitted()['prev'][0]).toBeTruthy()
+        describe('When trigger the close & done events depending on the prop', () => {
+            let prevBtn: any
+            let nextBtn: any
+            let createButton: any
 
-        await wrapper.setProps({
-            hasPreviousStep: false,
-            hasNextStep: true
+            beforeAll(() => {
+                [prevBtn, nextBtn, createButton] = wrapper.findAll('button')
+            })
+            it('should have the right prevBtn text', async () => {
+                await wrapper.setProps({
+                    hasPreviousStep: true
+                })
+                expect(prevBtn.text()).toEqual('Back')
+            })
+            it('should emitted click on prevBtn', async () => {
+                await prevBtn.trigger('click')
+                expect(wrapper.emitted()['prev'][0]).toBeTruthy()
+            })
+            it('should have the right nextBtn text', async () => {
+                await wrapper.setProps({
+                    hasPreviousStep: false,
+                    hasNextStep: true
+                })
+                expect(nextBtn.text()).toEqual('Next')
+            })
+            it('should emitted click on nextBtn', async () => {
+                await nextBtn.trigger('click')
+                expect(wrapper.emitted()['next'][0]).toBeTruthy()
+            })
+            it('should emitted click on createButton', async () => {
+                await createButton.trigger('click')
+                expect(wrapper.emitted()['done'][0]).toBeTruthy()
+            })
+            it('should emitted click on createButton when finished false', async () => {
+                await wrapper.setProps({ finished: false })
+                await createButton.trigger('click')
+                expect(wrapper.emitted()['done'][1]).toBeFalsy()
+            })
         })
-
-        // const nextButton = wrapper.findAll('button').at(1)
-        expect(nextButton.text()).toEqual('Next')
-        await nextButton.trigger('click')
-        expect(wrapper.emitted()['next'][0]).toBeTruthy()
-
-        await createButton.trigger('click')
-        expect(wrapper.emitted()['done'][0]).toBeTruthy()
-
-        await wrapper.setProps({ finished: false })
-        await createButton.trigger('click')
-        expect(wrapper.emitted()['done'][1]).toBeFalsy()
     })
 })
