@@ -418,6 +418,7 @@ export default defineComponent({
         const handleModelValueUpdate = (val: any) => {
             emit('update:model-value', val)
             emit('change', val)
+            emit('selected', val)
         }
         const handleSelectedItem = (value: any) => {
             selectedIndex.value = props.options.findIndex(
