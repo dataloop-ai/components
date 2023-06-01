@@ -183,7 +183,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref, nextTick } from 'vue-demi'
+import { defineComponent, PropType, ref, nextTick, toRef } from 'vue-demi'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
 import { DlSelect } from '../../DlSelect'
@@ -267,6 +267,13 @@ export default defineComponent({
         width: {
             type: String,
             default: '450px'
+        },
+        /**
+         * If true, the validation will be a closed set based on the schema provided
+         */
+        strict: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['save-query', 'remove-query', 'search-query'],
@@ -295,9 +302,12 @@ export default defineComponent({
             value: ''
         })
 
+        const strictRef = toRef(props, 'strict')
+
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
-            props.aliases
+            props.aliases,
+            { strict: strictRef }
         )
 
         const handleInputModel = (value: string) => {

@@ -90,7 +90,12 @@ export const dateIntervalPattern = new RegExp(
     'gi'
 )
 
-export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
+export const useSuggestions = (
+    schema: Schema,
+    aliases: Alias[],
+    options: { strict?: Ref<boolean> } = {}
+) => {
+    const { strict } = options
     const initialSuggestions = Object.keys(schema)
     const aliasedKeys = aliases.map((alias) => alias.key)
     const aliasedSuggestions = initialSuggestions.map((suggestion) =>
@@ -209,7 +214,7 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
         }
 
         error.value = input.length
-            ? getError(schema, aliases, expressions)
+            ? getError(schema, aliases, expressions, { strict })
             : null
 
         suggestions.value = localSuggestions
@@ -223,11 +228,38 @@ const errors = {
     INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`
 }
 
+const isInputAllowed = (input: string, allowedKeys: string[]): boolean => {
+    for (const key of allowedKeys) {
+        const keyParts = key.split('.')
+        const inputParts = input.split('.')
+
+        if (keyParts.length > inputParts.length) {
+            continue
+        }
+
+        let isMatch = true
+        for (let i = 0; i < keyParts.length; i++) {
+            if (keyParts[i] !== '*' && keyParts[i] !== inputParts[i]) {
+                isMatch = false
+                break
+            }
+        }
+
+        if (isMatch) {
+            return true
+        }
+    }
+
+    return false
+}
+
 const getError = (
     schema: Schema,
     aliases: Alias[],
-    expressions: Expression[]
+    expressions: Expression[],
+    options: { strict?: Ref<boolean> } = {}
 ): string | null => {
+    const { strict } = options
     const hasErrorInStructure = expressions
         .flatMap((exp) => Object.values(exp))
         .some((el, index, arr) => {
@@ -258,7 +290,10 @@ const getError = (
                 }
             }
 
-            if (!keys.includes(key)) return 'warning'
+            const isValid = isInputAllowed(key, keys)
+            if (!keys.includes(key) && !isValid) {
+                return strict.value ? errors.INVALID_EXPRESSION : 'warning'
+            }
 
             const valid = isValidByDataType(
                 validateBracketValues(value),
@@ -280,6 +315,10 @@ const isValidByDataType = (
     dataType: string | string[],
     operator: string // TODO: use operator
 ): boolean => {
+    if (dataType === 'any') {
+        return true
+    }
+
     if (Array.isArray(dataType)) {
         let isOneOf = !!getValueMatch(dataType, str)
         for (const type of dataType) {
@@ -370,6 +409,9 @@ const getDataType = (
         if (!value) return null
 
         const nextKey = nestedKey[i]
+        if (!value[nextKey] && value['*']) {
+            return 'any'
+        }
         value = (value[nextKey] as Schema) ?? null
     }
 
