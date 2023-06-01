@@ -1,5 +1,6 @@
 import { Ref, ref } from 'vue-demi'
 import { splitByQuotes } from '../utils/splitByQuotes'
+import { cloneDeep } from 'lodash'
 
 export type Schema = {
     [key: string]:
@@ -80,13 +81,27 @@ export const dateIntervalPattern = new RegExp(
 )
 
 export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
-    const initialSuggestions = aliases.map((alias) => alias.alias)
-    const suggestions: Ref<Suggestion[]> = ref(initialSuggestions)
+    const initialSuggestions = Object.keys(schema)
+    const aliasedKeys = aliases.map((alias) => alias.key)
+    const aliasedSuggestions = initialSuggestions.map((suggestion) =>
+        aliasedKeys.includes(suggestion)
+            ? aliases.find((alias) => alias.key === suggestion)?.alias
+            : suggestion
+    )
+
+    for (const alias of aliases) {
+        if (aliasedSuggestions.includes(alias.alias)) {
+            continue
+        }
+        aliasedSuggestions.push(alias.alias)
+    }
+
+    const suggestions: Ref<Suggestion[]> = ref(aliasedSuggestions)
     const error: Ref<string | null> = ref(null)
 
     const findSuggestions = (input: string) => {
         input = input.replace(/\s+/g, ' ').trimStart()
-        localSuggestions = initialSuggestions
+        localSuggestions = aliasedSuggestions
 
         const words = splitByQuotes(input, space)
         const expressions = mapWordsToExpressions(words)
@@ -110,9 +125,7 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
                 continue
             }
 
-            const alias = getAliasObjByAlias(aliases, matchedField)
-            if (!alias) continue
-            const dataType = getDataTypeByAliasKey(schema, alias.key)
+            const dataType = getDataType(schema, aliases, matchedField)
             if (!dataType) {
                 localSuggestions = []
                 continue
@@ -176,7 +189,7 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
                 continue
 
-            localSuggestions = initialSuggestions
+            localSuggestions = aliasedSuggestions
         }
 
         error.value = input.length
@@ -214,11 +227,13 @@ const getError = (
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
             if (acc === 'warning') return acc
-            const aliasObj = getAliasObjByAlias(aliases, field)
-            if (!aliasObj) return 'warning'
+            const key: string = getAliasObjByAlias(aliases, field)?.key ?? field
+
+            if (!Object.keys(schema).includes(key)) return 'warning'
+
             const valid = isValidByDataType(
                 validateBracketValues(value),
-                getDataTypeByAliasKey(schema, aliasObj!.key),
+                getDataType(schema, aliases, key),
                 operator
             )
 
@@ -300,11 +315,14 @@ const mapWordsToExpression = (words: string[]): Expression => {
     }
 }
 
-const getDataTypeByAliasKey = (
+const getDataType = (
     schema: Schema,
+    aliases: Alias[],
     key: string
 ): string | string[] | null => {
-    const nestedKey = key.split('.')
+    const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
+
+    const nestedKey = aliasedKey.split('.')
 
     if (nestedKey.length === 1) {
         return (schema[nestedKey[0]] as string | string[]) ?? null
