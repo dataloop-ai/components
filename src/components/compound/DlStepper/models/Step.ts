@@ -28,8 +28,16 @@ export class Step {
         return this._state.title
     }
 
+    public set title(value: string) {
+        set(this._state, 'title', value)
+    }
+
     public get subtitle(): string {
         return this._state.subtitle
+    }
+
+    public set subtitle(value: string) {
+        set(this._state, 'subtitle', value)
     }
 
     public get optional(): boolean {
