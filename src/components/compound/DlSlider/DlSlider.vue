@@ -57,7 +57,7 @@
                 <div class="right-container capitalize">
                     <dl-button
                         flat
-                        size="m"
+                        size="12px"
                         label="Reset"
                         :disabled="disabled || readonly"
                         data-test="non-editable-slider-button"
