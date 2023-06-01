@@ -317,6 +317,14 @@ export default defineComponent({
                 : getGradationValues(this.matrix)
         }
     },
+    watch: {
+        matrix: {
+            handler(value) {
+                this.currentBrushState.max = value.length
+                this.resizeMatrix()
+            }
+        }
+    },
     mounted() {
         if (!this.isValidMatrix) return
         this.resizeMatrix()

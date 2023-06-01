@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlKpi } from '../../src'
 import { DlKpiCounterFormat } from '../../src/components/types'
@@ -15,85 +15,50 @@ const counterDataEmpty = {}
 const progressDataEmpty = {}
 
 describe('DlKpi', () => {
-    it('should render kpi box', () => {
-        const wrapper = mount(DlKpi, {
-            props: {
-                counter: counterData,
-                progress: progressData
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+        let className: any
+        let expected: any
+
+        beforeAll(() => {
+            className = 'kpi_box'
+            expected = [
+                'kpi_box',
+                'kpi_box__counter',
+                'kpi_box__title',
+                'kpi_box__title__text',
+                'kpi_box__progress_bar'
+            ]
+            wrapper = mount(DlKpi, {
+                props: {
+                    title: 'test',
+                    counter: counterData,
+                    progress: progressData
+                }
+            })
         })
-
-        expect(wrapper.exists()).toBe(true)
-    })
-
-    it('should compute the correct classes when calling computeClass', () => {
-        const wrapper = mount(DlKpi, {
-            props: {
-                counter: counterData,
-                progress: progressData
-            }
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
         })
+        it('should compute the correct classes when calling computeClass', () => {
+            const result = wrapper.classes(className)
 
-        const className = 'kpi_box'
-        const expected = [
-            // 'kpi_box',
-            'kpi_box__counter',
-            'kpi_box__title',
-            'kpi_box__title__text',
-            'kpi_box__progress_bar'
-        ]
-
-        const result = wrapper.classes(className)
-
-        expected.forEach(() => {
-            expect(result).toBe(true)
+            expected.forEach(() => {
+                expect(result).toBe(true)
+            })
         })
-    })
-
-    it('should not to display when it passed empty data', () => {
-        const wrapper = mount(DlKpi, {
-            props: {
-                counter: counterData,
-                progress: progressData
-            }
-        })
-
-        const className = 'kpi_box'
-        const expected = [
-            'kpi_box',
-            'kpi_box__counter',
-            'kpi_box__title',
-            'kpi_box__title__text',
-            'kpi_box__progress_bar'
-        ]
-
-        const result = wrapper.classes(className)
-
-        expected.forEach(() => {
-            expect(result).toBe(true)
-        })
-    })
-    it('should to display when it passed empty params', () => {
-        const wrapper = mount(DlKpi, {
-            props: {
+        it('should to display when it passed empty params', async () => {
+            await wrapper.setProps({
                 counter: counterDataEmpty,
                 progress: progressDataEmpty
-            }
-        })
+            })
+            await wrapper.vm.$nextTick()
 
-        const className = 'kpi_box'
-        const expected = [
-            'kpi_box',
-            'kpi_box__counter',
-            'kpi_box__title',
-            'kpi_box__title__text',
-            'kpi_box__progress_bar'
-        ]
+            const result = wrapper.classes(className)
 
-        const result = wrapper.classes(className)
-
-        expected.forEach(() => {
-            expect(result).toBe(true)
+            expected.forEach(() => {
+                expect(result).toBe(true)
+            })
         })
     })
 })

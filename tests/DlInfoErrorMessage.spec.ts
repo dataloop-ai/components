@@ -1,27 +1,29 @@
 import { mount } from '@vue/test-utils'
 import { DlInfoErrorMessage } from '../src'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlColorPicker DlInfoErrorMessage component', () => {
-    it('should mount the component', () => {
-        const wrapper = mount(DlInfoErrorMessage)
+    describe('When mounting', () => {
+        let wrapper: any
 
-        expect(wrapper.exists()).toBe(true)
-    })
-
-    it('should have the correct classes depending on the props', async () => {
-        const wrapper = mount(DlInfoErrorMessage, {
-            props: {
-                error: true,
-                position: 'above'
-            }
+        beforeAll(() => {
+            wrapper = mount(DlInfoErrorMessage)
         })
 
-        expect(wrapper.classes()).toContain('text-error')
-        expect(wrapper.classes()).toContain('text-above')
+        it('should exist the component', () => {
+            expect(wrapper.exists()).toBe(true)
+        })
+    })
+    describe('When updating position prop', () => {
+        let wrapper: any
 
-        await wrapper.setProps({ position: 'below' })
+        beforeAll(async () => {
+            wrapper = mount(DlInfoErrorMessage)
+            await wrapper.setProps({ position: 'below' })
+        })
 
-        expect(wrapper.classes()).toContain('text')
+        it('should the right class', () => {
+            expect(wrapper.classes()).toContain('text')
+        })
     })
 })

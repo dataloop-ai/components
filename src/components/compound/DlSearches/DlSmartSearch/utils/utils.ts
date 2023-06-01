@@ -10,15 +10,15 @@ import {
 export function getTabItems(filters: Filters) {
     return [
         {
-            label: `Saved DQL Queries (${filters.saved.length})`,
+            label: `Saved DQL Queries (${filters.saved?.length ?? 0})`,
             name: 'saved'
         },
         {
-            label: `Recent Searches (${filters.recent.length})`,
+            label: `Recent Searches (${filters.recent?.length ?? 0})`,
             name: 'recent'
         },
         {
-            label: `Suggested Searches (${filters.suggested.length})`,
+            label: `Suggested Searches (${filters.suggested?.length ?? 0})`,
             name: 'suggested'
         }
     ]

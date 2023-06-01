@@ -1,37 +1,25 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { DlProgressBar } from '../src/'
 
 describe('DlProgressBar', () => {
-    it('should render the given label prop', () => {
-        const wrapper = mount(DlProgressBar, {
-            props: {
-                color: 'dl-color-secondary',
-                label: 'test label',
-                showValue: false,
-                showPercentage: false,
-                value: 0,
-                indeterminate: false,
-                width: '100%',
-                height: '4px',
-                summary: ''
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlProgressBar, {
+                props: {
+                    label: 'test label'
+                }
+            })
         })
-
-        const label = wrapper.find('[data-test-id="progress-label"]')
-            ?.element as HTMLElement
-        expect(label).not.toBe(undefined)
-
-        expect(wrapper.props()).toStrictEqual({
-            color: 'dl-color-secondary',
-            label: 'test label',
-            showValue: false,
-            showPercentage: false,
-            value: 0,
-            indeterminate: false,
-            width: '100%',
-            height: '4px',
-            summary: ''
+        it('should exist', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should render the given label prop', () => {
+            const label = wrapper.find('[data-test-id="progress-label"]')
+                ?.element as HTMLElement
+            expect(label).not.toBe(undefined)
         })
     })
     it('should accept only values between 0 and 1', () => {

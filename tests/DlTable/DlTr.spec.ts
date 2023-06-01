@@ -1,28 +1,53 @@
 import { mount } from '@vue/test-utils'
 import { DlTr } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('DlTr', () => {
-    it('should compute right class name', async () => {
-        const wrapper = mount(DlTr, {
-            props: {}
+    describe('When mounting', () => {
+        let wrapper: any
+        let trClasses: any
+
+        beforeAll(() => {
+            wrapper = mount(DlTr, {
+                props: {}
+            })
+            trClasses = wrapper.vm.trClasses
         })
 
-        let trClasses = ''
-
-        trClasses = wrapper.vm.trClasses
-        expect(trClasses).toBe('dl-tr')
-
-        await wrapper.setProps({ props: { header: true } })
-        trClasses = wrapper.vm.trClasses
-        expect(wrapper.vm.trClasses).toBe('dl-tr')
-
-        await wrapper.setProps({ props: { _trClass: 'styled' } })
-        trClasses = wrapper.vm.trClasses
-        expect(wrapper.vm.trClasses).toBe('dl-tr styled')
-
-        await wrapper.setProps({ noHover: true })
-        trClasses = wrapper.vm.trClasses
-        expect(wrapper.vm.trClasses).toBe('dl-tr styled dl-tr--no-hover')
+        it('should mount the component', () => {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should the right class', () => {
+            expect(trClasses).toBe('dl-tr')
+        })
+        describe('When change header prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ props: { header: true } })
+                trClasses = wrapper.vm.trClasses
+            })
+            it('should compute right class name', () => {
+                expect(wrapper.vm.trClasses).toBe('dl-tr')
+            })
+        })
+        describe('When change _trClass prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ props: { _trClass: 'styled' } })
+                trClasses = wrapper.vm.trClasses
+            })
+            it('should compute right class name', () => {
+                expect(wrapper.vm.trClasses).toBe('dl-tr styled')
+            })
+        })
+        describe('When change noHover prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ noHover: true })
+                trClasses = wrapper.vm.trClasses
+            })
+            it('should compute right class name', () => {
+                expect(wrapper.vm.trClasses).toBe(
+                    'dl-tr styled dl-tr--no-hover'
+                )
+            })
+        })
     })
 })
