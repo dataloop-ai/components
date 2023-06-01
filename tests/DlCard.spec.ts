@@ -29,10 +29,10 @@ describe('DlCard', () => {
             })
             await wrapper.setProps({ width: '400px' })
         })
-        it('should right styles', function () {
-            expect((wrapper.element as HTMLElement).style.width).toEqual(
-                '400px'
-            )
+        it('should right styles', async () => {
+            expect(
+                wrapper.element.style.getPropertyValue('--dl-card-width')
+            ).toBe('400px')
         })
     })
     describe('Enable Shopify props', () => {
@@ -43,6 +43,8 @@ describe('DlCard', () => {
                 props
             })
             await wrapper.setProps({ shopify: true })
+        })
+        it('should change the shopify prop value', async () => {
             await expect(wrapper.vm.shopify).toBe(true)
         })
         it('should have card--content__shopify-title class', async () => {

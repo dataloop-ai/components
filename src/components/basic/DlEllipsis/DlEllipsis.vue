@@ -5,12 +5,10 @@
             class="dl-ellipsis__left"
         >
             <slot
-                v-if="!!$slots.default"
+                v-if="hasDefaultSlot"
                 name="default"
             />
-            <span v-else>
-                {{ leftText }}
-            </span>
+            <span v-else>{{ leftText }}</span>
         </span>
         <span
             v-if="rightText"
@@ -19,25 +17,23 @@
             {{ rightText }}
         </span>
         <dl-tooltip
-            v-if="hasEllipsis && tooltip"
-            max-width="max-content"
+            v-if="shouldShowTooltip"
+            :max-width="'max-content'"
             :self="tooltipPosition"
             :anchor="tooltipPosition"
             :offset="tooltipOffset"
         >
             <slot
-                v-if="!!$slots.default"
+                v-if="hasDefaultSlot"
                 name="default"
             />
-            <span v-else>
-                {{ fullText }}
-            </span>
+            <span v-else>{{ fullText }}</span>
         </dl-tooltip>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, toRef } from 'vue-demi'
+import { defineComponent, ref, computed } from 'vue-demi'
 import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 
@@ -52,33 +48,29 @@ export default defineComponent({
          */
         text: {
             type: String,
-            default: '',
-            required: false
+            default: ''
         },
         /**
          * Allows to split the text in two parts
          */
         split: {
             type: Boolean,
-            default: false,
-            required: false
+            default: false
         },
         /**
          * Position of the split in the text, % of the text length
          */
         splitPosition: {
             type: Number,
-            required: false,
             default: 0.5,
-            validator: (value: number) => value >= 0 && value <= 1
+            validator: (value) => value >= 0 && value <= 1
         },
         /**
          * Tooltip to be displayed when the text is truncated
          */
         tooltip: {
             type: Boolean,
-            default: true,
-            required: false
+            default: true
         },
         tooltipPosition: {
             type: String,
@@ -89,40 +81,41 @@ export default defineComponent({
             default: () => [0, 25]
         }
     },
-    setup(props) {
-        const textProp = computed(() => props.text)
-        const splitPositionProp = computed(() => props.splitPosition)
-        const splitPositionsRef = computed(() => {
-            if (!textProp.value?.length) return 0
-            return Math.min(Math.max(splitPositionProp.value, 1), 0)
-        })
-
+    setup(props, ctx) {
         const dlEllipsisRef = ref(null)
+        const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
+
+        const hasDefaultSlot = computed(() => !!ctx.slots.default)
         const splitIndex = computed(() => {
-            if (!props.text?.length) return null
+            if (!props.text.length) return null
             return props.split
-                ? Math.round(props.text.length * splitPositionsRef.value)
+                ? Math.round(props.text.length * props.splitPosition)
                 : props.text.length
         })
-
         const leftText = computed(() => {
-            if (!splitIndex.value) return
-            return props.text.slice(0, splitIndex.value)
+            if (splitIndex.value !== null) {
+                return props.text.slice(0, splitIndex.value)
+            }
+            return ''
         })
         const rightText = computed(() => {
-            if (!splitIndex.value) return
-            return props.text.slice(splitIndex.value)
+            if (splitIndex.value !== null) {
+                return props.text.slice(splitIndex.value)
+            }
+            return ''
         })
-
-        const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
+        const shouldShowTooltip = computed(
+            () => hasEllipsis.value && props.tooltip
+        )
         const fullText = computed(() => props.text)
 
         return {
+            hasDefaultSlot,
             leftText,
             rightText,
+            shouldShowTooltip,
             fullText,
-            dlEllipsisRef,
-            hasEllipsis
+            dlEllipsisRef
         }
     }
 })
