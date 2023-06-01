@@ -82,7 +82,10 @@
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
                 >
-                <div v-if="hasSelectedSlot">
+                <div
+                    v-if="hasSelectedSlot"
+                    style="width: 100%"
+                >
                     <slot
                         v-if="search ? !isExpanded : true"
                         :opt="selectedOption"
@@ -189,7 +192,7 @@
                     <!-- Virtual scroll -->
                     <dl-virtual-scroll
                         v-if="optionsCount > MAX_ITEMS_PER_LIST"
-                        v-slot="{ item }"
+                        v-slot="{ item, index }"
                         :items="options"
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
@@ -202,11 +205,10 @@
                             :multiselect="multiselect"
                             :class="{
                                 selected:
-                                    option === selectedOption &&
-                                    highlightSelected
+                                    item === selectedOption && highlightSelected
                             }"
                             :style="
-                                optionIndex === highlightedIndex
+                                index === highlightedIndex
                                     ? 'background-color: var(--dl-color-fill)'
                                     : ''
                             "
@@ -418,6 +420,7 @@ export default defineComponent({
         const handleModelValueUpdate = (val: any) => {
             emit('update:model-value', val)
             emit('change', val)
+            emit('selected', val)
         }
         const handleSelectedItem = (value: any) => {
             selectedIndex.value = props.options.findIndex(

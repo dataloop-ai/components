@@ -38,6 +38,7 @@ import { DlTabPanels, DlTabPanel } from '../../../DlTabPanels'
 import { Filters } from '../../../DlSearches/DlSmartSearch/types'
 import { getTabItems } from '../utils/utils'
 import FiltersQuery from './FiltersQuery.vue'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
@@ -55,6 +56,7 @@ export default defineComponent({
     emits: ['filters-delete', 'filters-search'],
     data() {
         return {
+            uuid: `dl-smart-search-filters-${v4()}`,
             currentTab: 'saved'
         }
     },
