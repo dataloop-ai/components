@@ -1,6 +1,7 @@
 import { Ref, ref } from 'vue-demi'
 import { splitByQuotes } from '../utils/splitByQuotes'
-import { cloneDeep } from 'lodash'
+import { flatten } from 'flat'
+import { isObject } from 'lodash'
 
 export type Schema = {
     [key: string]:
@@ -96,12 +97,16 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
         aliasedSuggestions.push(alias.alias)
     }
 
-    const suggestions: Ref<Suggestion[]> = ref(aliasedSuggestions)
+    const sortString = (a: string, b: string) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' })
+    const sortedSuggestions = aliasedSuggestions.sort(sortString)
+
+    const suggestions: Ref<Suggestion[]> = ref(sortedSuggestions)
     const error: Ref<string | null> = ref(null)
 
     const findSuggestions = (input: string) => {
         input = input.replace(/\s+/g, ' ').trimStart()
-        localSuggestions = aliasedSuggestions
+        localSuggestions = sortedSuggestions
 
         const words = splitByQuotes(input, space)
         const expressions = mapWordsToExpressions(words)
@@ -189,7 +194,7 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
                 continue
 
-            localSuggestions = aliasedSuggestions
+            localSuggestions = sortedSuggestions
         }
 
         error.value = input.length
@@ -229,7 +234,20 @@ const getError = (
             if (acc === 'warning') return acc
             const key: string = getAliasObjByAlias(aliases, field)?.key ?? field
 
-            if (!Object.keys(schema).includes(key)) return 'warning'
+            /**
+             * Handle nested keys to validate if the key exists in the schema or not.
+             */
+            const keys: string[] = []
+            for (const key of Object.keys(schema)) {
+                if (isObject(schema[key]) && !Array.isArray(schema[key])) {
+                    const flattened = flatten({ [key]: schema[key] })
+                    keys.push(...Object.keys(flattened))
+                } else {
+                    keys.push(key)
+                }
+            }
+
+            if (!keys.includes(key)) return 'warning'
 
             const valid = isValidByDataType(
                 validateBracketValues(value),
@@ -329,7 +347,11 @@ const getDataType = (
     }
 
     let value = schema[nestedKey[0]] as Schema
+    if (!value) return null
+
     for (let i = 1; i < nestedKey.length; i++) {
+        if (!value) return null
+
         const nextKey = nestedKey[i]
         value = (value[nextKey] as Schema) ?? null
     }
