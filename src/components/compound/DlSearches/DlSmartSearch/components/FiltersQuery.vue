@@ -8,10 +8,7 @@
             class="query__header"
             @mousedown="$emit('select')"
         >
-            <dl-icon
-                :icon="icon"
-                style="margin-bottom: 3px"
-            />
+            <dl-icon :icon="icon" />
             <span class="query__header--title">
                 {{ name }}
             </span>
@@ -80,7 +77,7 @@ export default defineComponent({
         display: flex;
         align-items: center;
         &--title {
-            font-size: 0.5em;
+            font-size: 12px;
             margin: 0px 12px;
         }
     }
