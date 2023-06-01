@@ -146,7 +146,7 @@ export default defineComponent({
                 color:
                     this.disabled !== true
                         ? getColor(this.color, 'dl-color-secondary')
-                        : 'var(--dl-color-separator)'
+                        : 'var(--dl-color-disabled-slider)'
             }
         },
         thumbStyle(): Record<string, any> {
