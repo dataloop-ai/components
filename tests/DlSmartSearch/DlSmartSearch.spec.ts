@@ -12,13 +12,52 @@ window.ResizeObserver =
 
 const mockQuery = {
     name: 'Query 1',
-    query: '{"Age":20}'
+    query: '{"metadata.nesting.age":20}'
 }
+
+const schema = {
+    name: 'string',
+    level: ['high', 'medium', 'low', 30],
+    completed: 'boolean',
+    metadata: {
+        nesting: {
+            age: 'number',
+            valid: 'boolean'
+        },
+        date: 'date',
+        start: 'datetime',
+        classTime: 'time'
+    }
+}
+
+const aliases = [
+    {
+        alias: 'Name',
+        key: 'name'
+    },
+    {
+        alias: 'Age',
+        key: 'metadata.nesting.age'
+    },
+    {
+        alias: 'StartTime',
+        key: 'metadata.start'
+    },
+    {
+        alias: 'Level',
+        key: 'level'
+    }
+]
 
 describe('SmartSearch', () => {
     let wrapper: any
     beforeAll(() => {
-        wrapper = shallowMount(DlSmartSearch)
+        wrapper = shallowMount(DlSmartSearch, {
+            props: {
+                schema,
+                aliases
+            }
+        })
     })
     describe('when mounting', () => {
         it('should mount the component', () => {
@@ -48,11 +87,13 @@ describe('SmartSearch', () => {
             const testString = 'Age = 21'
             wrapper.vm.handleInputModel(testString)
             expect(wrapper.vm.inputModel).toMatch(testString)
-            expect(wrapper.vm.activeQuery.query).toEqual('{"Age":21}')
+            expect(wrapper.vm.activeQuery.query).toEqual(
+                '{"metadata.nesting.age":21}'
+            )
         })
         it('should set the query input to a specific value', () => {
             wrapper.vm.setQueryInput(mockQuery.query)
-            expect(wrapper.vm.inputModel).toMatch("Age = '20'")
+            expect(wrapper.vm.inputModel).toMatch('Age = 20')
         })
     })
     describe('emitting events', () => {
@@ -94,11 +135,11 @@ describe('SmartSearch', () => {
             const tab = 'saved'
             const q = {
                 name: 'Query1',
-                query: '{"Age":20}'
+                query: '{"metadata.nesting.age":20}'
             }
             wrapper.vm.handleFiltersSelect(tab, q)
             expect(wrapper.vm.activeQuery).toEqual(q)
-            expect(wrapper.vm.inputModel).toMatch("Age = '20'")
+            expect(wrapper.vm.inputModel).toMatch('Age = 20')
         })
     })
     describe('selecting queries from the select menu', () => {
@@ -112,7 +153,7 @@ describe('SmartSearch', () => {
         it('should select a query given a DlSelect option', () => {
             const q = {
                 name: 'Query 1',
-                query: '{"Age":20}'
+                query: '{"metadata.nesting.age":20}'
             }
             const option = {
                 label: q.name,
