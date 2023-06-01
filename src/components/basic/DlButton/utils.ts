@@ -220,5 +220,3 @@ export const setBorderOnPressed = ({
     }
     return 'var(--dl-button-border)'
 }
-
-//'var(--dl-button-border)'
