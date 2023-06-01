@@ -52,6 +52,15 @@ const operatorToDataTypeMap: OperatorToDataTypeMap = {
     $nin: []
 }
 
+const knownDataTypes = [
+    'number',
+    'boolean',
+    'string',
+    'date',
+    'datetime',
+    'time'
+]
+
 type Suggestion = string
 
 type Expression = {
@@ -157,7 +166,9 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType
+                localSuggestions = dataType.filter(
+                    (type) => !knownDataTypes.includes(type)
+                )
 
                 if (!value) continue
 
@@ -270,7 +281,11 @@ const isValidByDataType = (
     operator: string // TODO: use operator
 ): boolean => {
     if (Array.isArray(dataType)) {
-        return !!getValueMatch(dataType, str)
+        let isOneOf = !!getValueMatch(dataType, str)
+        for (const type of dataType) {
+            isOneOf = isOneOf || isValidByDataType(str, type, operator)
+        }
+        return isOneOf
     }
 
     switch (dataType) {
@@ -316,6 +331,8 @@ const isValidString = (str: string) => {
 }
 
 const getOperatorByDataType = (dataType: string) => {
+    if (dataType === 'boolean') return ['$eq', '$neq']
+
     return Object.keys(operatorToDataTypeMap).filter((key) => {
         const value = operatorToDataTypeMap[key]
         return value.length === 0 || value.includes(dataType)
