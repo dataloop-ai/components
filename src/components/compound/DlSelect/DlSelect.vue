@@ -82,7 +82,10 @@
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
                 >
-                <div v-if="hasSelectedSlot">
+                <div
+                    v-if="hasSelectedSlot"
+                    style="width: 100%"
+                >
                     <slot
                         v-if="search ? !isExpanded : true"
                         :opt="selectedOption"
