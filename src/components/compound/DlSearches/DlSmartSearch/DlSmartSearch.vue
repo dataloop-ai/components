@@ -183,7 +183,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { defineComponent, PropType, ref, nextTick } from 'vue-demi'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
 import { DlSelect } from '../../DlSelect'
@@ -239,9 +239,9 @@ export default defineComponent({
         colorSchema: {
             type: Object as PropType<ColorSchema>,
             default: () => ({
-                fields: 'blue',
-                operators: 'darkgreen',
-                keywords: 'bold'
+                fields: 'var(--dl-color-secondary)',
+                operators: 'var(--dl-color-positive)',
+                keywords: 'var(--dl-color-medium)'
             })
         },
         isLoading: {
@@ -302,10 +302,13 @@ export default defineComponent({
 
         const handleInputModel = (value: string) => {
             inputModel.value = value
-            const json = JSON.stringify(toJSON(removeBrackets(value)))
-            const newQuery = replaceWithAliases(json, props.aliases)
+            const json = toJSON(removeBrackets(value))
+            const stringified = JSON.stringify(json)
+            const newQuery = replaceWithAliases(stringified, props.aliases)
             activeQuery.value.query = newQuery
-            findSuggestions(value)
+            nextTick(() => {
+                findSuggestions(value)
+            })
             isQuerying.value = false
             oldInputQuery.value = value
         }
