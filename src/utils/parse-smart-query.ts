@@ -2,6 +2,26 @@
 
 import { isFinite, isObject, isString } from 'lodash'
 
+const GeneratePureValue = (value: any) => {
+    if (typeof value === 'string') {
+        if (value === 'true') {
+            return true
+        }
+        if (value === 'false') {
+            return false
+        }
+
+        try {
+            const num = Number(value)
+            if (isFinite(num)) {
+                return num
+            }
+            return value.replaceAll('"', '').replaceAll("'", '')
+        } catch (e) {}
+    }
+    return value
+}
+
 export const parseSmartQuery = (query: string) => {
     const queryArr = query.split(' OR ')
     const orTerms: { [key: string]: any }[] = []
@@ -15,44 +35,31 @@ export const parseSmartQuery = (query: string) => {
         let key: string
         let value: string | number | object
 
-        const cleanValue = (value: any) => {
-            if (typeof value === 'string') {
-                try {
-                    const num = Number(value)
-                    if (isFinite(num)) {
-                        return num
-                    }
-                } catch (e) {}
-                return value.replaceAll('"', '').replaceAll("'", '')
-            }
-            return value
-        }
-
         for (const term of andTerms) {
             switch (true) {
                 case term.includes('>='):
                     [key, value] = term.split('>=').map((x) => x.trim())
-                    andQuery[key] = { $gte: cleanValue(value) }
+                    andQuery[key] = { $gte: GeneratePureValue(value) }
                     break
                 case term.includes('<='):
                     [key, value] = term.split('<=').map((x) => x.trim())
-                    andQuery[key] = { $lte: cleanValue(value) }
+                    andQuery[key] = { $lte: GeneratePureValue(value) }
                     break
                 case term.includes('>'):
                     [key, value] = term.split('>').map((x) => x.trim())
-                    andQuery[key] = { $gt: cleanValue(value) }
+                    andQuery[key] = { $gt: GeneratePureValue(value) }
                     break
                 case term.includes('<'):
                     [key, value] = term.split('<').map((x) => x.trim())
-                    andQuery[key] = { $lt: cleanValue(value) }
+                    andQuery[key] = { $lt: GeneratePureValue(value) }
                     break
                 case term.includes('!='):
                     [key, value] = term.split('!=').map((x) => x.trim())
-                    andQuery[key] = { $ne: cleanValue(value) }
+                    andQuery[key] = { $ne: GeneratePureValue(value) }
                     break
                 case term.includes('='):
                     [key, value] = term.split('=').map((x) => x.trim())
-                    andQuery[key] = cleanValue(value)
+                    andQuery[key] = GeneratePureValue(value)
                     break
                 case term.includes('IN'):
                     [key, value] = term.split('IN').map((x) => x.trim())
@@ -64,15 +71,15 @@ export const parseSmartQuery = (query: string) => {
                             .split('NOT-IN')
                             .map((x) => x.trim())[1]
                             .split(',')
-                            .map((x) => cleanValue(x.trim()))
-                        andQuery[key] = { $nin: cleanValue(queryValue) }
+                            .map((x) => GeneratePureValue(x.trim()))
+                        andQuery[key] = { $nin: GeneratePureValue(queryValue) }
                     } else {
                         queryValue = term
                             .split('IN')
                             .map((x) => x.trim())[1]
                             .split(',')
-                            .map((x) => cleanValue(x.trim()))
-                        andQuery[key] = { $in: cleanValue(queryValue) }
+                            .map((x) => GeneratePureValue(x.trim()))
+                        andQuery[key] = { $in: GeneratePureValue(queryValue) }
                     }
                     break
             }
