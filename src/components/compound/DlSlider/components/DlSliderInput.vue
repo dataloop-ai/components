@@ -82,7 +82,7 @@ export default defineComponent({
 <style scoped>
 input[type='number'] {
     width: 31px;
-    height: 12px;
+    height: 20px;
     padding-top: 3px;
     padding-left: 5px;
     padding-bottom: 3px;
