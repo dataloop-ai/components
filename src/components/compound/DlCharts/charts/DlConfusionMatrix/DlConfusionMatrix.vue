@@ -96,8 +96,9 @@
                             <span v-else>
                                 {{ label }}
                             </span>
-                            <dl-tooltip> {{ labelStrings[index] }}</dl-tooltip>
                         </span>
+                        <dl-tooltip self="top middle">
+                            {{ labelStrings[index] }}</dl-tooltip>
                     </span>
                 </div>
                 <dl-brush
@@ -250,7 +251,7 @@ export default defineComponent({
             return this.tooltipState?.visible
         },
         visibleLabels(): DlConfusionMatrixLabel[] {
-            if (isObject(this.labels[0])) {
+            if (this.labels[0]) {
                 const arr = this.labels as DlConfusionMatrixLabel[]
                 return arr.slice(
                     this.currentBrushState.min,
@@ -294,6 +295,14 @@ export default defineComponent({
                 : getGradationValues(this.matrix)
         }
     },
+    watch: {
+        matrix: {
+            handler(value) {
+                this.currentBrushState.max = value.length
+                this.resizeMatrix()
+            }
+        }
+    },
     mounted() {
         if (!this.isValidMatrix) return
         this.resizeMatrix()
@@ -328,9 +337,9 @@ export default defineComponent({
                     ctx.matrix.length / (brush.max - brush.min),
                     ctx.$refs.matrix
                 )
-                const scroll = brush.min * getCellWidth() + 2
+                const scroll = brush.min * (getCellWidth() - 2)
                 const container = ctx.$refs.matrixWrapper
-                container.scroll(scroll, scroll)
+                container.scroll(scroll, 0)
                 ctx.currentBrushState = brush
                 ctx.resizeYAxis()
             },
@@ -416,6 +425,9 @@ export default defineComponent({
         line-height: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
+        &--text {
+            font-size: 12px;
+        }
     }
 }
 .y-axis {
@@ -428,6 +440,7 @@ export default defineComponent({
         line-height: var(--cell-dimensions);
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 12px;
     }
 }
 .y-axis-outer {
@@ -461,7 +474,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 80%;
+        font-size: 60%;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;

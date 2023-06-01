@@ -38,7 +38,7 @@
                     v-else
                     color="dl-color-darker"
                     icon="icon-dl-close"
-                    size="8px"
+                    size="12px"
                 />
             </span>
             <span class="subtitle">{{ subtitle }}</span>
@@ -91,7 +91,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .popup-header {
     max-width: 100%;
-    padding: 0 10px 20px 16px;
+    padding: 16px 10px 20px 16px;
 }
 
 .header-content {
@@ -111,6 +111,7 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 4px;
     cursor: pointer;
     transition: color 200ms;
     &:hover {

@@ -1,17 +1,29 @@
 import { mount } from '@vue/test-utils'
 import { DlColorPicker } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
-describe('DlColorPicker DlColorPicker component', () => {
-    it('should mount the component', async () => {
-        const wrapper = mount(DlColorPicker)
+describe('DlColorPicker component', () => {
+    describe('When mounting', () => {
+        let wrapper: any
 
-        expect(wrapper.exists()).toBe(true)
+        beforeAll(() => {
+            wrapper = mount(DlColorPicker)
+        })
+        it('should ', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+    })
+    describe('When set prop', () => {
+        let wrapper: any
 
-        await wrapper.setData({ r: 1 })
+        beforeAll(async () => {
+            wrapper = mount(DlColorPicker)
+            await wrapper.setData({ r: 1 })
+        })
+        it('should have the changeColor event', function () {
+            const changeColorEvent: any = wrapper.emitted('changeColor')
 
-        const changeColorEvent: any = wrapper.emitted('changeColor')
-
-        expect(changeColorEvent).toHaveLength(1)
+            expect(changeColorEvent).toHaveLength(1)
+        })
     })
 })

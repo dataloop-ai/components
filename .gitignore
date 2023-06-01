@@ -60,4 +60,4 @@ storybook-static
 tsconfig.tsbuildinfo
 tsconfig.node.tsbuildinfo
 
-vue2.6-vite
+*vue2.6-vite

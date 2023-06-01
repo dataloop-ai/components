@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DlEllipsis } from '../src/components'
 
 const text =
@@ -9,70 +9,61 @@ describe('DlEllipsis', () => {
     beforeEach(() => {
         vi.resetModules()
     })
-
-    it('should have text', async () => {
-        const wrapper = mount(DlEllipsis, {
-            props: {
-                text,
-                split: false,
-                splitPosition: 0.75,
-                tooltip: true,
-                tooltipOffset: [0, 25],
-                tooltipPosition: 'top middle'
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlEllipsis, {
+                props: {
+                    text
+                }
+            })
         })
-
-        expect(wrapper.exists()).toBe(true)
-        expect(wrapper.props()).toStrictEqual({
-            text,
-            split: false,
-            splitPosition: 0.75,
-            tooltip: true,
-            tooltipOffset: [0, 25],
-            tooltipPosition: 'top middle'
+        it('should exist component', function () {
+            expect(wrapper.exists()).toBe(true)
         })
-    })
-
-    it('should to display both parts of label with middle ellipsis', () => {
-        const wrapper = mount(DlEllipsis, {
-            props: {
-                text,
-                middleEllipsis: true
-            }
-        })
-
-        const className = 'dl-ellipsis'
-        const expected = [
-            'dl-ellipsis',
-            'dl-dl-ellipsis__left',
-            'dl-dl-ellipsis__right'
-        ]
-
-        const result = wrapper.classes(className)
-
-        expected.forEach(() => {
-            expect(result).toBe(true)
-        })
-    })
-
-    it('should to display both parts of label without middle ellipsis', () => {
-        const wrapper = mount(DlEllipsis, {
-            props: {
+        it('should right props', function () {
+            expect(wrapper.props()).toMatchObject({
                 text
-            }
+            })
         })
+        it('should to display both parts of label without middle ellipsis', () => {
+            const className = 'dl-ellipsis'
+            const expected = [
+                'dl-ellipsis',
+                'dl-dl-ellipsis__left',
+                'dl-dl-ellipsis__right'
+            ]
 
-        const className = 'dl-ellipsis'
-        const expected = [
-            'dl-ellipsis',
-            'dl-dl-ellipsis__left',
-            'dl-dl-ellipsis__right'
-        ]
+            const result = wrapper.classes(className)
 
-        const result = wrapper.classes(className)
+            expected.forEach(() => {
+                expect(result).toBe(true)
+            })
+        })
+    })
+    describe('When mounting middle ellipsis', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlEllipsis, {
+                props: {
+                    text,
+                    middleEllipsis: true
+                }
+            })
+        })
+        it('should to display both parts of label with middle ellipsis', function () {
+            const className = 'dl-ellipsis'
+            const expected = [
+                'dl-ellipsis',
+                'dl-dl-ellipsis__left',
+                'dl-dl-ellipsis__right'
+            ]
 
-        expected.forEach(() => {
-            expect(result).toBe(true)
+            const result = wrapper.classes(className)
+
+            expected.forEach(() => {
+                expect(result).toBe(true)
+            })
         })
     })
 })

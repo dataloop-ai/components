@@ -267,7 +267,7 @@ export default defineComponent({
 }
 
 .content {
-    padding: var(--dl-dialog-box-content-padding, 10px 16px 30px 16px);
+    padding: var(--dl-dialog-box-content-padding, 20px 16px 30px 16px);
     overflow: auto;
     height: 100%;
 
@@ -281,7 +281,7 @@ export default defineComponent({
 
 .footer {
     display: flex;
-    padding: 16px;
+    padding: 20px 16px;
     border-top: var(--dl-dialog-separator);
 }
 

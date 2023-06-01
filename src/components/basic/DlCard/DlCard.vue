@@ -609,6 +609,7 @@ export default defineComponent({
 
             &_icon {
                 margin-right: 7px;
+                margin-top: 2px;
                 vertical-align: middle;
             }
 
