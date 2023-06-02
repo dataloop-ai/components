@@ -1,10 +1,14 @@
 <template>
-    <div
-        ref="dlEllipsisRef"
-        class="dl-ellipsis"
-    >
-        <span class="dl-ellipsis__left">
-            {{ leftText }}
+    <div class="dl-ellipsis">
+        <span
+            ref="dlEllipsisRef"
+            class="dl-ellipsis__left"
+        >
+            <slot
+                v-if="hasDefaultSlot"
+                name="default"
+            />
+            <span v-else>{{ leftText }}</span>
         </span>
         <span
             v-if="rightText"
@@ -12,8 +16,18 @@
         >
             {{ rightText }}
         </span>
-        <dl-tooltip v-if="hasEllipsis && tooltip">
-            {{ fullText }}
+        <dl-tooltip
+            v-if="shouldShowTooltip"
+            :max-width="'max-content'"
+            :self="tooltipPosition"
+            :anchor="tooltipPosition"
+            :offset="tooltipOffset"
+        >
+            <slot
+                v-if="hasDefaultSlot"
+                name="default"
+            />
+            <span v-else>{{ fullText }}</span>
         </dl-tooltip>
     </div>
 </template>
@@ -34,63 +48,74 @@ export default defineComponent({
          */
         text: {
             type: String,
-            required: true
+            default: ''
         },
         /**
          * Allows to split the text in two parts
          */
         split: {
             type: Boolean,
-            default: false,
-            required: false
+            default: false
         },
         /**
          * Position of the split in the text, % of the text length
          */
         splitPosition: {
             type: Number,
-            required: false,
             default: 0.5,
-            validator: (value: number) => value >= 0 && value <= 1
+            validator: (value) => value >= 0 && value <= 1
         },
         /**
          * Tooltip to be displayed when the text is truncated
          */
         tooltip: {
             type: Boolean,
-            default: true,
-            required: false
+            default: true
+        },
+        tooltipPosition: {
+            type: String,
+            default: 'top middle'
+        },
+        tooltipOffset: {
+            type: Array,
+            default: () => [0, 25]
         }
     },
-    setup(props) {
-        const { text, split } = props
-
-        const splitPositionsRef = computed(() => {
-            return Math.min(
-                Math.max(props.splitPosition, 1),
-                props.splitPosition
-            )
-        })
-
+    setup(props, ctx) {
         const dlEllipsisRef = ref(null)
-        const splitIndex = computed(() =>
-            split
-                ? Math.round(text.length * splitPositionsRef.value)
-                : text.length
-        )
-
-        const leftText = computed(() => text.slice(0, splitIndex.value))
-        const rightText = computed(() => text.slice(splitIndex.value))
-
         const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
-        const fullText = computed(() => text)
+
+        const hasDefaultSlot = computed(() => !!ctx.slots.default)
+        const splitIndex = computed(() => {
+            if (!props.text.length) return null
+            return props.split
+                ? Math.round(props.text.length * props.splitPosition)
+                : props.text.length
+        })
+        const leftText = computed(() => {
+            if (splitIndex.value !== null) {
+                return props.text.slice(0, splitIndex.value)
+            }
+            return ''
+        })
+        const rightText = computed(() => {
+            if (splitIndex.value !== null) {
+                return props.text.slice(splitIndex.value)
+            }
+            return ''
+        })
+        const shouldShowTooltip = computed(
+            () => hasEllipsis.value && props.tooltip
+        )
+        const fullText = computed(() => props.text)
 
         return {
+            hasDefaultSlot,
             leftText,
             rightText,
+            shouldShowTooltip,
             fullText,
-            dlEllipsisRef,
-            hasEllipsis
+            dlEllipsisRef
         }
     }
 })
