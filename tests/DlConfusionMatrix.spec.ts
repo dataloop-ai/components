@@ -64,8 +64,8 @@ describe('DlConfusionMatrix', () => {
             yLabel: 'Label 1'
         }
         const event = {
-            pageX: 10,
-            pageY: 10
+            x: 10,
+            y: 10
         }
         wrapper.vm.handleShowTooltip(cell, event)
         wrapper.vm.handleShowTooltip(cell, event)
