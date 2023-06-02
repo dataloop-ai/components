@@ -69,7 +69,7 @@ export default defineComponent({
         iconStyles() {
             return {
                 '--dl-widget-drag-icon-left': `${
-                    this.$refs.widget?.offsetWidth / 2
+                    (this.$refs.widget as HTMLElement)?.offsetWidth / 2
                 }px`,
                 visibility:
                     this.visibleDragIcon && !this.isDragging
