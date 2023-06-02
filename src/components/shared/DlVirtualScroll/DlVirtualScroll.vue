@@ -11,7 +11,8 @@ import {
     ref,
     watch,
     isVue2,
-    h
+    h,
+    onUnmounted
 } from 'vue-demi'
 import getTableMiddle from '../../compound/DlTable/utils/getTableMiddle'
 import { listenOpts, mergeSlot } from '../../../utils'
@@ -54,7 +55,7 @@ export default defineComponent({
         },
 
         virtualScrollItemSize: {
-            type: [Number, String],
+            type: Number,
             required: false,
             default: 0
         },
@@ -70,7 +71,7 @@ export default defineComponent({
             required: false,
             default: 0
         },
-        tableColspan: { type: [Number, String], required: false, default: 1 },
+        tableColspan: { type: [Number, String], required: false, default: 100 },
         virtualScrollHorizontal: {
             type: Boolean,
             required: false,
@@ -101,6 +102,8 @@ export default defineComponent({
     setup(props, { slots, attrs }) {
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
+        const scrollSizeItem: Ref<number> = ref(40)
+        const isMounted: Ref<boolean> = ref(false)
 
         const isDefined = (v: any) => v !== undefined && v !== null
 
@@ -112,6 +115,37 @@ export default defineComponent({
                 : 0
         })
 
+        onMounted(() => {
+            window.addEventListener('load', setItemSize)
+        })
+
+        onUnmounted(() =>
+            window.removeEventListener('load', () => (isMounted.value = false))
+        )
+
+        const setItemSize = () => {
+            isMounted.value = true
+            scrollSizeItem.value = props.virtualScrollItemSize
+                ? props.virtualScrollItemSize
+                : rootRef.value?.getElementsByClassName(
+                      'dl-virtual-scroll__content'
+                  )[0].children[0].clientHeight
+        }
+
+        watch(
+            props,
+            () => {
+                if (isMounted) {
+                    setItemSize()
+                }
+            },
+            { deep: true }
+        )
+
+        const virtualScrollItemSizeComputed = computed(() => {
+            return scrollSizeItem.value
+        })
+
         const {
             virtualScrollSliceRange,
             localResetVirtualScroll,
@@ -120,7 +154,8 @@ export default defineComponent({
         } = useVirtualScroll({
             virtualScrollLength,
             getVirtualScrollTarget,
-            getVirtualScrollEl
+            getVirtualScrollEl,
+            virtualScrollItemSizeComputed
         })
 
         const virtualScrollScope = computed(() => {

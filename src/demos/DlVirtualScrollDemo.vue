@@ -4,9 +4,6 @@
             <dl-virtual-scroll
                 v-slot="{ item: row, index }"
                 type="table"
-                :virtual-scroll-item-size="48"
-                :virtual-scroll-sticky-size-start="48"
-                :virtual-scroll-sticky-size-end="32"
                 :items="heavyList"
                 style="height: 500px"
                 @virtual-scroll="log"
@@ -27,9 +24,6 @@
             <dl-virtual-scroll
                 v-slot="{ item, index }"
                 style="max-width: 500px"
-                :virtual-scroll-item-size="48"
-                :virtual-scroll-sticky-size-start="48"
-                :virtual-scroll-sticky-size-end="32"
                 :items="horizontalList"
                 virtual-scroll-horizontal
             >
@@ -47,9 +41,6 @@
                 v-slot="{ item, index }"
                 style="height: 300px"
                 :items="basicList"
-                :virtual-scroll-item-size="28"
-                :virtual-scroll-sticky-size-start="28"
-                :virtual-scroll-sticky-size-end="20"
                 separator
                 @virtual-scroll="log"
             >
@@ -69,9 +60,9 @@
             <dl-virtual-scroll
                 style="height: 300px; gap: 20px"
                 :items="customList"
-                :virtual-scroll-item-size="293"
-                :virtual-scroll-sticky-size-start="293"
-                :virtual-scroll-sticky-size-end="200"
+                :virtual-scroll-item-size="295"
+                :virtual-scroll-sticky-size-start="20"
+                :virtual-scroll-sticky-size-end="20"
                 separator
                 @virtual-scroll="log"
             >
