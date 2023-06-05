@@ -114,12 +114,6 @@ export default defineComponent({
                 : 0
         })
 
-        onMounted(() => {
-            window.addEventListener('load', setItemSize)
-        })
-
-        onUnmounted(() => window.removeEventListener('load', () => {}))
-
         const setItemSize = () => {
             scrollSizeItem.value = props.virtualScrollItemSize
                 ? props.virtualScrollItemSize
@@ -260,7 +254,10 @@ export default defineComponent({
 
         onMounted(() => {
             configureScrollTarget()
+            window.addEventListener('load', setItemSize)
         })
+
+        onUnmounted(() => window.removeEventListener('load', () => {}))
 
         onActivated(() => {
             configureScrollTarget()

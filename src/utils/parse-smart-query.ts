@@ -22,6 +22,12 @@ const GeneratePureValue = (value: any) => {
     return value
 }
 
+/**
+ * Method to convert a DlSmartSearch query string to Mongo based JSON query
+ *
+ * @param { string } query DlSmartSearch query string
+ * @returns Mongo based JSON
+ */
 export const parseSmartQuery = (query: string) => {
     const queryArr = query.split(' OR ')
     const orTerms: { [key: string]: any }[] = []
@@ -93,6 +99,12 @@ export const parseSmartQuery = (query: string) => {
     return builtQuery
 }
 
+/**
+ * Method to convert a Mongo based JSON query to a DlSmartSearch query string
+ *
+ * @param { { [key: string]: any } } query Mongo based JSON that represents a query
+ * @returns DlSmartSearch query string
+ */
 export const stringifySmartQuery = (query: { [key: string]: any }) => {
     let result = ''
 
