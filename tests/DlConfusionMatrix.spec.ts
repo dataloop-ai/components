@@ -76,8 +76,8 @@ describe('DlConfusionMatrix', () => {
                 yLabel: 'Label 1'
             }
             event = {
-                pageX: 10,
-                pageY: 10
+                x: 10,
+                y: 10
             }
         })
         it('should the right tooltipState', function () {

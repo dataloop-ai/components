@@ -26,7 +26,7 @@ describe('DlWidget', () => {
             })
         })
         it('should add draggable class to widget', () => {
-            expect(wrapper.vm.widgetStyles).toMatch('dl-widget__drag')
+            expect(wrapper.vm.widgetClasses).toMatch('dl-widget__drag')
         })
         it('should start performing drag operation', () => {
             const div = document.createElement('div')

@@ -139,6 +139,8 @@ describe('DlEllipsis', () => {
             })
         })
 
-        expect(wrapper.find('.dl-ellipsis__left').text()).toContain(text)
+        it('should display left text', () => {
+            expect(wrapper.find('.dl-ellipsis__left').text()).toContain(text)
+        })
     })
 })
