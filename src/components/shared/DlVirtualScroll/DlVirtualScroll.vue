@@ -103,7 +103,6 @@ export default defineComponent({
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
         const scrollSizeItem: Ref<number> = ref(40)
-        const isMounted: Ref<boolean> = ref(false)
 
         const isDefined = (v: any) => v !== undefined && v !== null
 
@@ -119,25 +118,22 @@ export default defineComponent({
             window.addEventListener('load', setItemSize)
         })
 
-        onUnmounted(() =>
-            window.removeEventListener('load', () => (isMounted.value = false))
-        )
+        onUnmounted(() => window.removeEventListener('load', () => {}))
 
         const setItemSize = () => {
-            isMounted.value = true
             scrollSizeItem.value = props.virtualScrollItemSize
                 ? props.virtualScrollItemSize
-                : rootRef.value?.getElementsByClassName(
+                : typeof rootRef.value?.getElementsByClassName === 'function'
+                ? rootRef.value?.getElementsByClassName(
                       'dl-virtual-scroll__content'
                   )[0].children[0].clientHeight
+                : 40
         }
 
         watch(
             props,
             () => {
-                if (isMounted) {
-                    setItemSize()
-                }
+                setItemSize()
             },
             { deep: true }
         )
