@@ -37,7 +37,8 @@ describe('DlListItem', () => {
                 endIconSize: '16px',
                 withWave: false,
                 height: null,
-                padding: null
+                padding: null,
+                borderLeft: ''
             })
         })
         it('should right the class', function () {
