@@ -43,6 +43,9 @@ export const aliases: Alias[] = [
     }
 ]
 
+const sortString = (a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: 'base' })
+
 describe('use-suggestions', () => {
     const { suggestions, error, findSuggestions } = useSuggestions(
         schema,
@@ -51,14 +54,17 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
-        expect(suggestions.value).toEqual([
-            'Name',
-            'Completed',
-            'Age',
-            'StartTime',
-            'Level',
-            'No-Schema'
-        ])
+        expect(suggestions.value).toEqual(
+            [
+                'Name',
+                'Completed',
+                'Age',
+                'StartTime',
+                'Level',
+                'No-Schema',
+                'metadata'
+            ].sort(sortString)
+        )
     })
 
     it('suggestions should have the field that includes the value', () => {
@@ -163,15 +169,20 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual([
-            'Name',
-            'Completed',
-            'Age',
-            'StartTime',
-            'Level',
-            'No-Schema'
-        ])
+        expect(suggestions.value).toEqual(
+            [
+                'Name',
+                'Level',
+                'Completed',
+                'metadata',
+                'Age',
+                'StartTime',
+                'No-Schema'
+            ].sort(sortString)
+        )
     })
+
+    // sort array of strings ignore case
 
     it('should give suggestions for multiple expressions', () => {
         findSuggestions(

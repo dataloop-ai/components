@@ -69,12 +69,19 @@ export function replaceWithAliases(json: string, aliases: Alias[]) {
     })
     return newJson
 }
-export function revertAliases(json: string, aliases: Alias[]) {
-    let newJson = json
-    aliases.forEach((alias) => {
-        newJson = newJson.replaceAll(alias.key, alias.alias)
-    })
-    return newJson
+
+export function revertAliases(str: string, aliases: Alias[]) {
+    const words: string[] = []
+    for (const alias of aliases) {
+        words.push(alias.key)
+    }
+    const replacement = (match: string) => {
+        const index = words.indexOf(match)
+        return aliases[index].alias
+    }
+
+    const regex = new RegExp(words.join('|'), 'gi')
+    return str.replace(regex, replacement)
 }
 
 export function createColorSchema(
