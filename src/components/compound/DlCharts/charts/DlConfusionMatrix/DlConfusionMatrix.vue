@@ -3,8 +3,22 @@
         :style="`max-width: ${maxWidth}`"
         class="confusion-matrix-container"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <div
-            v-if="isValidMatrix"
+            v-if="isValidMatrix && !isEmpty"
             ref="wrapper"
             :style="matrixStyles"
             class="wrapper"
@@ -61,9 +75,7 @@
                             class="matrix__cell"
                             :style="`background-color: ${getCellBackground(
                                 cell.value
-                            )}; color: var(--dl-color-text${
-                                cell.value < 0.5 ? '-darker' : ''
-                            }-buttons)`"
+                            )}; color: ${getCellTextColor(cell.value)}`"
                             @mouseenter="handleShowTooltip(cell, $event)"
                             @mouseleave="handleHideTooltip"
                             @mousedown="openLink(cell)"
@@ -132,7 +144,7 @@
             </div>
         </div>
         <div
-            v-else
+            v-if="!isValidMatrix && !isEmpty"
             class="invalid"
         >
             The given props cannot create a valid matrix.
@@ -140,14 +152,14 @@
         <div
             v-if="tooltipVisible"
             :style="tooltipStyles"
-            class="tooltip"
+            class="matrix-tooltip"
         >
-            <span class="tooltip__x">{{ tooltipState.xLabel }}</span>
-            <span class="tooltip__y">{{ tooltipState.yLabel }}</span>
+            <span class="matrix-tooltip__x">{{ tooltipState.xLabel }}</span>
+            <span class="matrix-tooltip__y">{{ tooltipState.yLabel }}</span>
             <span>
                 <span
                     v-if="tooltipState.value"
-                    class="tooltip__color"
+                    class="matrix-tooltip__color"
                     :style="`background-color: ${getCellBackground(
                         tooltipState.value
                     )}`"
@@ -170,6 +182,8 @@ import {
 } from '../../types'
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import {
     getGradationValues,
@@ -182,7 +196,8 @@ import { debounce, isObject } from 'lodash'
 export default defineComponent({
     components: {
         DlBrush,
-        DlTooltip
+        DlTooltip,
+        DlEmptyState
     },
     props: {
         labels: {
@@ -214,6 +229,11 @@ export default defineComponent({
         maxWidth: {
             type: String,
             default: '800px'
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         }
     },
     setup(props) {
@@ -238,9 +258,19 @@ export default defineComponent({
             const hex = object[props.color]
             return hexToRgbA(hex, value)
         }
+
+        const getCellTextColor = (value: number) => {
+            const isDark =
+                document.documentElement.getAttribute('data-theme') ===
+                'dark-mode'
+            if (isDark) return 'var(--dl-color-text-buttons)'
+            return `var(--dl-color-text${value < 0.5 ? '-darker' : ''}-buttons)`
+        }
+
         return {
             variables,
             getCellBackground,
+            getCellTextColor,
             cellWidth,
             tooltipState,
             currentBrushState
@@ -293,6 +323,14 @@ export default defineComponent({
             return this.normalized
                 ? [1, 0.8, 0.6, 0.4, 0.2, 0]
                 : getGradationValues(this.matrix)
+        }
+    },
+    watch: {
+        matrix: {
+            handler(value) {
+                this.currentBrushState.max = value.length
+                this.resizeMatrix()
+            }
         }
     },
     mounted() {
@@ -357,8 +395,8 @@ export default defineComponent({
                     value: ctx.normalized ? cell.value : cell.unnormalizedValue,
                     xLabel: cell.xLabel,
                     yLabel: cell.yLabel,
-                    x: e.pageX,
-                    y: e.pageY,
+                    x: e.x,
+                    y: e.y,
                     visible: true
                 }
             },
@@ -506,7 +544,7 @@ export default defineComponent({
     }
 }
 
-.tooltip {
+.matrix-tooltip {
     position: absolute;
     border: 1px solid var(--dl-color-separator);
     padding: 8px;
@@ -514,6 +552,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     background-color: var(--dl-color-shadow);
+    color: var(--dl-color-tooltip-background);
     border-radius: 3px;
     animation: fadeIn 0.4s;
 

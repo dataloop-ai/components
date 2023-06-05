@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <dl-list>
+        <dl-list v-if="!hide">
             <dl-list-item
                 v-for="(step, index) in steps"
                 :key="index"
@@ -55,7 +55,8 @@ export default defineComponent({
             required: false,
             default: 'dl-color-fill-third'
         },
-        sidebarNavigation: { type: Boolean, default: true }
+        sidebarNavigation: { type: Boolean, default: true },
+        hide: Boolean
     },
     emits: ['step-click'],
     methods: {

@@ -152,10 +152,12 @@
                                 : ''
                     "
                     :no-hover="noHover"
-                    @click="onTrClick($event, props.item, pageIndex)"
-                    @dblclick="onTrDblClick($event, props.item, pageIndex)"
+                    @click="onTrClick($event, props.item, props.pageIndex)"
+                    @dblclick="
+                        onTrDblClick($event, props.item, props.pageIndex)
+                    "
                     @contextmenu="
-                        onTrContextMenu($event, props.item, pageIndex)
+                        onTrContextMenu($event, props.item, props.pageIndex)
                     "
                 >
                     <td
@@ -328,6 +330,7 @@
                         name="body"
                     >
                         <DlTr
+                            v-if="!isEmpty"
                             :key="getRowKey(row)"
                             :class="
                                 isRowSelected(getRowKey(row))
@@ -409,6 +412,23 @@
                             </slot>
                         </DlTr>
                     </slot>
+                    <DlTr v-if="isEmpty">
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center">
+                                <dl-empty-state v-bind="emptyStateProps">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="props"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="props"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
+                        </DlTd>
+                    </DlTr>
                     <slot
                         name="bottom-row"
                         :cols="computedCols"
@@ -525,6 +545,8 @@ import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
 
 const commonVirtPropsObj = {} as Record<string, any>
@@ -542,7 +564,8 @@ export default defineComponent({
         DlPagination,
         DlProgressBar,
         DlIcon,
-        DlCheckbox
+        DlCheckbox,
+        DlEmptyState
     },
     props: {
         columns: { type: Array, default: () => [] as Record<string, any>[] },
@@ -622,6 +645,11 @@ export default defineComponent({
             default: null
         },
         noHover: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -1068,10 +1096,6 @@ export default defineComponent({
             commonVirtPropsList.forEach((p) => {
                 acc[p] = (props as Record<string, any>)[p]
             })
-
-            if (!acc.virtualScrollItemSize) {
-                acc.virtualScrollItemSize = props.dense === true ? 30 : 40
-            }
 
             return acc
         })

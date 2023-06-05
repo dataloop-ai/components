@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlDoughnutChart } from '../../src/components'
 import {
@@ -9,71 +9,93 @@ import {
 } from './data'
 
 describe('DlDoughnutChart', () => {
-    it('should render a canvas', () => {
-        const wrapper = mount(DlDoughnutChart, {
-            props: {
-                data: doughnutLessData
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlDoughnutChart, {
+                props: {
+                    data: doughnutLessData
+                }
+            })
         })
 
-        const canvas = wrapper.find('canvas')
+        it('should mount the component', function () {
+            const canvas = wrapper.find('canvas')
 
-        expect(canvas.exists()).toBe(true)
+            expect(canvas.exists()).toBe(true)
+        })
+
+        describe('When set summary', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ hasSummary: true })
+            })
+            it('should have chart summary', function () {
+                const summary = wrapper.find({
+                    ref: 'dlDoughnutChartSummaryRef'
+                })
+                expect(summary.exists()).toBe(true)
+            })
+        })
+        describe('When set false summary', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ hasSummary: false })
+            })
+            it('should have chart summary', function () {
+                const summary = wrapper.find({
+                    ref: 'dlDoughnutChartSummaryRef'
+                })
+                expect(summary.exists()).toBe(false)
+            })
+        })
     })
-    it('pass empty data object', () => {
-        const wrapper = mount(DlDoughnutChart, {
-            props: {
-                data: doughnutEmptyObject
-            }
+    describe('When mounting with empty object', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlDoughnutChart, {
+                props: {
+                    data: doughnutEmptyObject
+                }
+            })
         })
 
-        const canvas = wrapper.find('canvas')
+        it('should not mount the component', function () {
+            const canvas = wrapper.find('canvas')
 
-        expect(canvas.exists()).toBe(false)
+            expect(canvas.exists()).toBe(false)
+        })
     })
-    it('pass empty dataset', () => {
-        const wrapper = mount(DlDoughnutChart, {
-            props: {
-                data: doughnutEmptyDataset
-            }
+    describe('When mounting with empty dataset', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlDoughnutChart, {
+                props: {
+                    data: doughnutEmptyDataset
+                }
+            })
         })
+        it('should not mount the component', function () {
+            const canvas = wrapper.find('canvas')
 
-        const canvas = wrapper.find('canvas')
-
-        expect(canvas.exists()).toBe(false)
+            expect(canvas.exists()).toBe(false)
+        })
     })
-    it('pass empty data', () => {
-        const wrapper = mount(DlDoughnutChart, {
-            props: {
-                data: doughnutEmptyData
-            }
+    describe('When mounting with empty data', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlDoughnutChart, {
+                props: {
+                    data: doughnutEmptyData
+                }
+            })
         })
+        it('should not mount the component', function () {
+            const canvas = wrapper.find('canvas')
 
-        const canvas = wrapper.find('canvas')
-
-        expect(canvas.exists()).toBe(false)
-    })
-
-    it('should render a summary', () => {
-        const wrapper = mount(DlDoughnutChart, {
-            props: {
-                data: doughnutLessData,
-                hasSummary: true
-            }
+            expect(canvas.exists()).toBe(false)
         })
-
-        const summary = wrapper.find({ ref: 'dlDoughnutChartSummaryRef' })
-        expect(summary.exists()).toBe(true)
-    })
-    it('should render a summary', () => {
-        const wrapper = mount(DlDoughnutChart, {
-            props: {
-                data: doughnutLessData,
-                hasSummary: false
-            }
-        })
-
-        const summary = wrapper.find({ ref: 'dlDoughnutChartSummaryRef' })
-        expect(summary.exists()).toBe(false)
     })
 })

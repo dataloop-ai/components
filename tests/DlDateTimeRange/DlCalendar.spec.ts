@@ -1,10 +1,10 @@
 import { mount } from '@vue/test-utils'
 import {
-    CustomDate,
-    CalendarDate
+    CalendarDate,
+    CustomDate
 } from '../../src/components/compound/DlDateTime/DlDatePicker/models'
 import DlCalendar from '../../src/components/compound/DlDateTime/DlDatePicker/components/DlCalendar.vue'
-import { describe, it, expect, afterAll, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 const month = 11
 const year = 1990
@@ -37,162 +37,215 @@ const date2 = new Date(year, month, 15)
 const customDate = new CustomDate(date)
 
 describe('DlCalendar', () => {
-    it('should return computed properties', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                title: 'Calendar',
-                dates: calendarDates
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlCalendar, {
+                props: {
+                    title: 'Calendar',
+                    dates: calendarDates,
+                    modelValue: {
+                        from: date,
+                        to: date2
+                    }
+                }
+            })
         })
 
-        expect(wrapper.vm.weekNames).toEqual([
-            'Su',
-            'Mo',
-            'Tu',
-            'We',
-            'Th',
-            'Fr',
-            'Sa'
-        ])
-
-        expect(wrapper.vm.chevronStyle).toEqual({
-            color: 'var(--dl-color-darker)',
-            cursor: 'pointer'
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should compute right weekNames', () => {
+            expect(wrapper.vm.weekNames).toEqual([
+                'Su',
+                'Mo',
+                'Tu',
+                'We',
+                'Th',
+                'Fr',
+                'Sa'
+            ])
+        })
+        it('should compute right chevronStyle', () => {
+            expect(wrapper.vm.chevronStyle).toEqual({
+                color: 'var(--dl-color-darker)',
+                cursor: 'pointer'
+            })
+        })
+        describe('When emit dates upon clicking the dates', () => {
+            beforeAll(() => {
+                wrapper.vm.handleClick(customDate)
+            })
+            it('should the right model value data', function () {
+                expect(wrapper.emitted()['update:modelValue']).toEqual([
+                    [
+                        {
+                            from: date,
+                            to: date
+                        }
+                    ]
+                ])
+            })
+            describe('When move mouse down', () => {
+                beforeAll(() => {
+                    wrapper.vm.handleMouseDown(customDate)
+                })
+                it('should ', function () {
+                    expect(wrapper.emitted().mousedown).toEqual([[date]])
+                })
+            })
+            describe('When mouse enter', () => {
+                beforeAll(() => {
+                    wrapper.vm.handleMouseEnter(customDate)
+                })
+                it('should ', function () {
+                    expect(wrapper.emitted().mouseenter).toEqual([[date]])
+                })
+            })
         })
     })
+    describe('When get styles according to the specific date, first date in the month', () => {
+        let wrapper: any
 
-    it('should emit dates upon clicking the dates', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                dates: calendarDates,
-                title: 'Calendar',
-                modelValue: {
-                    from: date,
-                    to: date2
+        beforeAll(() => {
+            wrapper = mount(DlCalendar, {
+                props: {
+                    title: 'Calendar',
+                    dates: calendarDates,
+                    modelValue: {
+                        from: date,
+                        to: date2
+                    }
                 }
-            }
+            })
         })
-        wrapper.vm.handleClick(customDate)
-        expect(wrapper.emitted()['update:modelValue']).toEqual([
-            [
+
+        it('should compute right getDayStyle', () => {
+            expect(wrapper.vm.getDayStyle(calendarDates[0])).toMatchObject({
+                borderBottomLeftRadius: '11px',
+                borderTopLeftRadius: '11px'
+            })
+        })
+        it('should compute right getInnerDayStyle', () => {
+            expect(wrapper.vm.getInnerDayStyle(calendarDates[0])).toEqual({})
+        })
+    })
+    describe('When get styles according to the specific date, last date in the month', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlCalendar, {
+                props: {
+                    dates: calendarDates,
+                    title: 'Calendar',
+                    modelValue: {
+                        from: date,
+                        to: date2
+                    }
+                }
+            })
+        })
+        it('should compute right getDayStyle', () => {
+            expect(
+                wrapper.vm.getDayStyle(calendarDates[calendarDates.length - 1])
+            ).toMatchObject({})
+        })
+        it('should compute right getInnerDayStyle', () => {
+            expect(
+                wrapper.vm.getInnerDayStyle(
+                    calendarDates[calendarDates.length - 1]
+                )
+            ).toEqual({})
+        })
+    })
+    describe('When get styles according to the specific date, selected date boundry', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlCalendar, {
+                props: {
+                    title: 'Calendar',
+                    dates: calendarDates,
+                    modelValue: {
+                        from: date,
+                        to: date2
+                    }
+                }
+            })
+        })
+        it('should compute right getDayStyle', () => {
+            expect(wrapper.vm.getDayStyle(new CalendarDate(date))).toEqual({
+                background:
+                    'linear-gradient(to right, transparent 50%, var(--dl-date-picker-selected-strip) 50%)'
+            })
+        })
+        it('should compute right getInnerDayStyle', () => {
+            expect(wrapper.vm.getInnerDayStyle(new CalendarDate(date))).toEqual(
                 {
-                    from: date,
-                    to: date
+                    backgroundColor: 'var(--dl-color-secondary)',
+                    color: 'var(--dl-color-text-buttons)',
+                    borderRadius: '11px'
                 }
-            ]
-        ])
-
-        wrapper.vm.handleMouseDown(customDate)
-        expect(wrapper.emitted().mousedown).toEqual([[date]])
-        wrapper.vm.handleMouseEnter(customDate)
-        expect(wrapper.emitted().mouseenter).toEqual([[date]])
-    })
-
-    it('should get styles according to the specific date, first date in the month', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                title: 'Calendar',
-                dates: calendarDates,
-                modelValue: {
-                    from: date,
-                    to: date2
-                }
-            }
-        })
-        expect(wrapper.vm.getDayStyle(calendarDates[0])).toMatchObject({
-            borderBottomLeftRadius: '11px',
-            borderTopLeftRadius: '11px'
-        })
-
-        expect(wrapper.vm.getInnerDayStyle(calendarDates[0])).toEqual({})
-    })
-
-    it('should get styles according to the specific date, last date in the month', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                dates: calendarDates,
-                title: 'Calendar',
-                modelValue: {
-                    from: date,
-                    to: date2
-                }
-            }
-        })
-
-        expect(
-            wrapper.vm.getDayStyle(calendarDates[calendarDates.length - 1])
-        ).toMatchObject({})
-
-        expect(
-            wrapper.vm.getInnerDayStyle(calendarDates[calendarDates.length - 1])
-        ).toEqual({})
-    })
-
-    it('should get styles according to the specific date, selected date boundry', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                title: 'Calendar',
-                dates: calendarDates,
-                modelValue: {
-                    from: date,
-                    to: date2
-                }
-            }
-        })
-        expect(wrapper.vm.getDayStyle(new CalendarDate(date))).toEqual({
-            background:
-                'linear-gradient(to right, transparent 50%, var(--dl-date-picker-selected-strip) 50%)'
-        })
-
-        expect(wrapper.vm.getInnerDayStyle(new CalendarDate(date))).toEqual({
-            backgroundColor: 'var(--dl-color-secondary)',
-            color: 'var(--dl-color-text-buttons)',
-            borderRadius: '11px'
+            )
         })
     })
+    describe('When get styles according to the specific date, start of the week', () => {
+        let wrapper: any
 
-    it('should get styles according to the specific date, start of the week', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                title: 'Calendar',
-                dates: calendarDates,
-                modelValue: {
-                    from: date,
-                    to: date2
+        beforeAll(() => {
+            wrapper = mount(DlCalendar, {
+                props: {
+                    title: 'Calendar',
+                    dates: calendarDates,
+                    modelValue: {
+                        from: date,
+                        to: date2
+                    }
                 }
-            }
-        })
-        expect(wrapper.vm.getDayStyle(startOfTheWeek)).toEqual({
-            borderBottomLeftRadius: '11px',
-            borderTopLeftRadius: '11px'
+            })
         })
 
-        expect(wrapper.vm.getInnerDayStyle(startOfTheWeek)).toEqual({})
+        it('should compute right getDayStyle', () => {
+            expect(wrapper.vm.getDayStyle(startOfTheWeek)).toEqual({
+                borderBottomLeftRadius: '11px',
+                borderTopLeftRadius: '11px'
+            })
+        })
+        it('should compute right getInnerDayStyle', () => {
+            expect(wrapper.vm.getInnerDayStyle(startOfTheWeek)).toEqual({})
+        })
     })
+    describe('When get styles according to the specific date, interval date + end of the week', () => {
+        let wrapper: any
 
-    it('should get styles according to the specific date, interval date + end of the week', () => {
-        const wrapper = mount(DlCalendar, {
-            props: {
-                title: 'Calendar',
-                dates: calendarDates,
-                modelValue: {
-                    from: date,
-                    to: date2
+        beforeAll(() => {
+            wrapper = mount(DlCalendar, {
+                props: {
+                    title: 'Calendar',
+                    dates: calendarDates,
+                    modelValue: {
+                        from: date,
+                        to: date2
+                    }
                 }
-            }
+            })
         })
 
-        expect(wrapper.vm.getDayStyle(endOfWeek)).toEqual({
-            background:
-                'linear-gradient(to right, var(--dl-date-picker-selected-strip) 50%, transparent 50%)',
-            borderBottomRightRadius: '11px',
-            borderTopRightRadius: '11px'
+        it('should compute right getDayStyle', () => {
+            expect(wrapper.vm.getDayStyle(endOfWeek)).toEqual({
+                background:
+                    'linear-gradient(to right, var(--dl-date-picker-selected-strip) 50%, transparent 50%)',
+                borderBottomRightRadius: '11px',
+                borderTopRightRadius: '11px'
+            })
         })
-
-        expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({
-            backgroundColor: 'var(--dl-color-secondary)',
-            borderRadius: '11px',
-            color: 'var(--dl-color-text-buttons)'
+        it('should compute right getInnerDayStyle', () => {
+            expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({
+                backgroundColor: 'var(--dl-color-secondary)',
+                borderRadius: '11px',
+                color: 'var(--dl-color-text-buttons)'
+            })
         })
     })
 

@@ -50,6 +50,7 @@ import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlEmptyStateDemo from './DlEmptyStateDemo.vue'
 import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
@@ -113,9 +114,10 @@ export default {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
+    DlEmptyStateDemo,
+    DlEllipsisDemo,
     DlConfusionMatrix,
     DlToggleButtonDemo,
-    DlEllipsisDemo,
     DlSeparatorDemo,
     DlKpiDemo,
     DlCardDemo,

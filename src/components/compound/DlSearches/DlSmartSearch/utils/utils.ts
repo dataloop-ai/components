@@ -10,15 +10,15 @@ import {
 export function getTabItems(filters: Filters) {
     return [
         {
-            label: `Saved DQL Queries (${filters.saved.length})`,
+            label: `Saved DQL Queries (${filters.saved?.length ?? 0})`,
             name: 'saved'
         },
         {
-            label: `Recent Searches (${filters.recent.length})`,
+            label: `Recent Searches (${filters.recent?.length ?? 0})`,
             name: 'recent'
         },
         {
-            label: `Suggested Searches (${filters.suggested.length})`,
+            label: `Suggested Searches (${filters.suggested?.length ?? 0})`,
             name: 'suggested'
         }
     ]
@@ -69,12 +69,19 @@ export function replaceWithAliases(json: string, aliases: Alias[]) {
     })
     return newJson
 }
-export function revertAliases(json: string, aliases: Alias[]) {
-    let newJson = json
-    aliases.forEach((alias) => {
-        newJson = newJson.replaceAll(alias.key, alias.alias)
-    })
-    return newJson
+
+export function revertAliases(str: string, aliases: Alias[]) {
+    const words: string[] = []
+    for (const alias of aliases) {
+        words.push(alias.key)
+    }
+    const replacement = (match: string) => {
+        const index = words.indexOf(match)
+        return aliases[index].alias
+    }
+
+    const regex = new RegExp(words.join('|'), 'gi')
+    return str.replace(regex, replacement)
 }
 
 export function createColorSchema(

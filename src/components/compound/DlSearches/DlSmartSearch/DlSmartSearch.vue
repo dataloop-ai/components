@@ -9,7 +9,6 @@
             class="dl-smart-search__input-wrapper"
         >
             <dl-smart-search-input
-                v-show="!jsonEditorModel"
                 :status="computedStatus"
                 :style-model="defineStyleModel"
                 :with-save-button="true"
@@ -23,7 +22,7 @@
                 :default-width="width"
                 @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
-                @update:modelValue="handleInputModel"
+                @update:modelValue="debouncedInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
             />
         </div>
@@ -45,6 +44,7 @@
             <dl-button
                 class="dl-smart-search__buttons--filters"
                 shaded
+                outlined
                 size="s"
             >
                 Saved Filters
@@ -66,6 +66,7 @@
             v-model="jsonEditorModel"
             :height="500"
             :width="800"
+            style="--dl-dialog-box-footer-padding: 10px 16px"
         >
             <template #header>
                 <dl-dialog-box-header
@@ -91,6 +92,7 @@
                                 label="Align Left"
                                 flat
                                 color="secondary"
+                                padding="0px 3px"
                                 @click="alignJsonText"
                             />
                         </div>
@@ -112,11 +114,13 @@
                             label="Delete Query"
                             flat
                             color="secondary"
+                            padding="0"
                             @click="handleQueryRemove"
                         />
                     </div>
                     <div class="json-editor__footer-save">
                         <dl-button
+                            style="margin-right: 14px"
                             outlined
                             label="Save As"
                             @click="saveQueryDialogBoxModel = true"
@@ -153,7 +157,10 @@
                 </div>
             </template>
         </dl-dialog-box>
-        <dl-dialog-box v-model="saveQueryDialogBoxModel">
+        <dl-dialog-box
+            v-model="saveQueryDialogBoxModel"
+            style="--dl-dialog-box-footer-padding: 14px 17px"
+        >
             <template #header>
                 <dl-dialog-box-header
                     title="Save Query"
@@ -163,17 +170,22 @@
             <template #body>
                 <dl-input
                     v-model="newQueryName"
+                    title="Query name"
                     style="text-align: center"
                     placeholder="Type query name"
                 />
             </template>
             <template #footer>
                 <div class="dl-smart-search__buttons--save">
-                    <dl-button @click="handleSaveQuery">
+                    <dl-button
+                        :disabled="!newQueryName"
+                        outlined
+                        @click="handleSaveQuery"
+                    >
                         Save
                     </dl-button>
                     <dl-button
-                        padding="10px"
+                        :disabled="!newQueryName"
                         @click="handleSaveQuery(true)"
                     >
                         Save and Search
@@ -184,15 +196,25 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
-import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
-import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
-import { DlJsonEditor } from '../../DlJsonEditor'
-import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
-import { DlInput } from '../../DlInput'
+import {
+    defineComponent,
+    PropType,
+    ref,
+    nextTick,
+    toRef,
+    onMounted,
+    watch
+} from 'vue-demi'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
-import { DlSelect } from '../../../compound'
+import { DlSelect } from '../../DlSelect'
+import { DlInput } from '../../DlInput'
+import { DlDialogBox, DlDialogBoxHeader } from '../../DlDialogBox'
+import { DlJsonEditor } from '../../DlJsonEditor'
+
+import DlSmartSearchInput from './components/DlSmartSearchInput.vue'
+import DlSmartSearchFilters from './components/DlSmartSearchFilters.vue'
+
 import {
     useSuggestions,
     Schema,
@@ -208,6 +230,7 @@ import {
 } from './utils/utils'
 import { v4 } from 'uuid'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
+import { debounce } from 'lodash'
 
 export default defineComponent({
     components: {
@@ -222,7 +245,15 @@ export default defineComponent({
         DlMenu,
         DlSelect
     },
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
+    },
     props: {
+        modelValue: {
+            type: Object,
+            default: {} as { [key: string]: any }
+        },
         status: {
             type: Object as PropType<SearchStatus>,
             default: () => ({ type: 'info', message: '' })
@@ -238,9 +269,9 @@ export default defineComponent({
         colorSchema: {
             type: Object as PropType<ColorSchema>,
             default: () => ({
-                fields: 'blue',
-                operators: 'darkgreen',
-                keywords: 'bold'
+                fields: 'var(--dl-color-secondary)',
+                operators: 'var(--dl-color-positive)',
+                keywords: 'var(--dl-color-medium)'
             })
         },
         isLoading: {
@@ -266,10 +297,17 @@ export default defineComponent({
         width: {
             type: String,
             default: '450px'
+        },
+        /**
+         * If true, the validation will be a closed set based on the schema provided
+         */
+        strict: {
+            type: Boolean,
+            default: false
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query'],
-    setup(props) {
+    emits: ['save-query', 'remove-query', 'search-query', 'update:modelValue'],
+    setup(props, { emit }) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
         const searchBarWidth = ref('100%')
@@ -294,20 +332,29 @@ export default defineComponent({
             value: ''
         })
 
+        const strictRef = toRef(props, 'strict')
+
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
-            props.aliases
+            props.aliases,
+            { strict: strictRef }
         )
 
         const handleInputModel = (value: string) => {
             inputModel.value = value
-            const json = JSON.stringify(toJSON(removeBrackets(value)))
-            const newQuery = replaceWithAliases(json, props.aliases)
+            const json = toJSON(removeBrackets(value))
+            emit('update:modelValue', json)
+            const stringified = JSON.stringify(json)
+            const newQuery = replaceWithAliases(stringified, props.aliases)
             activeQuery.value.query = newQuery
-            findSuggestions(value)
+            nextTick(() => {
+                findSuggestions(value)
+            })
             isQuerying.value = false
             oldInputQuery.value = value
         }
+
+        const debouncedInputModel = debounce(handleInputModel, 300)
 
         const toJSON = (value: string) => {
             return parseSmartQuery(
@@ -327,6 +374,23 @@ export default defineComponent({
                 toJSON(inputModel.value)
             }
         }
+
+        const modelRef: any = toRef(props, 'modelValue')
+
+        watch(modelRef, (val: any) => {
+            if (val) {
+                const stringQuery = stringifySmartQuery(val)
+                debouncedInputModel(stringQuery)
+            }
+        })
+
+        onMounted(() => {
+            if (props.modelValue) {
+                const stringQuery = stringifySmartQuery(props.modelValue)
+                debouncedInputModel(stringQuery)
+            }
+        })
+
         return {
             uuid: `dl-smart-search-${v4()}`,
             inputModel,
@@ -348,6 +412,7 @@ export default defineComponent({
             preventUpdate,
             selectedOption,
             handleInputModel,
+            debouncedInputModel,
             setFocused,
             findSuggestions,
             toJSON
@@ -394,21 +459,27 @@ export default defineComponent({
                 : this.inputModel
         },
         deleteButtonState(): boolean {
-            return !this.filters.saved.filter(
+            return !this.filters?.saved?.filter(
                 (q: Query) => q.name === this.activeQuery?.name
             ).length
         },
         selectOptions(): Record<string, string>[] {
-            return [
+            const options: Record<string, string>[] = [
                 {
                     label: 'New Query',
                     value: '{}'
-                },
-                ...this.filters.saved.map((q: Query) => ({
-                    label: q.name,
-                    value: q.query
-                }))
+                }
             ]
+
+            const filters = this.filters?.saved ?? []
+            for (const filter of filters) {
+                options.push({
+                    label: filter.name,
+                    value: filter.query
+                })
+            }
+
+            return options
         }
     },
     watch: {
@@ -627,8 +698,12 @@ export default defineComponent({
         display: flex;
         justify-content: space-between;
     }
-    &-save > * {
-        margin: 0px 10px;
+    &-delete {
+        align-items: center;
+        display: flex;
+        & > * {
+            margin-bottom: 6px;
+        }
     }
 }
 .json-query {

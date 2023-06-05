@@ -6,32 +6,50 @@
         <div
             :id="uuid"
             ref="widget"
-            :class="widgetStyles"
+            :class="widgetClasses"
             @mouseenter="handleVisibleDragIcon(true)"
             @mouseleave="handleVisibleDragIcon(false)"
         >
+            <dl-icon
+                :style="iconStyles"
+                class="dl-widget__drag-icon"
+                icon="icon-dl-drag"
+                color="dl-color-medium"
+                size="15px"
+                @mousedown="startDragging"
+            />
             <div class="dl-widget__header">
                 <div class="dl-widget__header--titles">
                     <slot name="header" />
                 </div>
-                <dl-icon
-                    :style="`visibility: ${
-                        visibleDragIcon && !isDragging ? 'visible' : 'hidden'
-                    }`"
-                    class="dl-widget__header--drag-icon"
-                    icon="icon-dl-drag"
-                    color="dl-color-medium"
-                    size="15px"
-                    @mousedown="startDragging"
-                />
                 <slot name="menu" />
             </div>
 
             <div class="dl-widget__content">
-                <slot name="content" />
+                <dl-empty-state
+                    v-if="isEmpty"
+                    v-bind="emptyStateProps"
+                >
+                    <template
+                        v-for="(_, slot) in $slots"
+                        #[slot]="props"
+                    >
+                        <slot
+                            :name="slot"
+                            v-bind="props"
+                        />
+                    </template>
+                </dl-empty-state>
+                <slot
+                    v-if="!isEmpty"
+                    name="content"
+                />
             </div>
 
-            <div class="dl-widget__description">
+            <div
+                v-if="!isEmpty"
+                class="dl-widget__description"
+            >
                 <slot name="description" />
             </div>
         </div>
@@ -43,14 +61,24 @@
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
 import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
+import { Props } from '../DlEmptyState/types'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
     name: 'DlWidget',
     components: {
-        DlIcon
+        DlIcon,
+        DlEmptyState
+    },
+    props: {
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
+        }
     },
     data() {
         return {
@@ -65,8 +93,19 @@ export default defineComponent({
         }
     },
     computed: {
-        widgetStyles() {
+        widgetClasses() {
             return `${this.isDragging ? 'dl-widget__drag' : 'dl-widget'}`
+        },
+        iconStyles() {
+            return {
+                '--dl-widget-drag-icon-left': `${
+                    (this.$refs.widget as HTMLElement)?.offsetWidth / 2
+                }px`,
+                visibility:
+                    this.visibleDragIcon && !this.isDragging
+                        ? 'visible'
+                        : 'hidden'
+            }
         }
     },
     methods: {
@@ -192,24 +231,20 @@ export default defineComponent({
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
     &__header {
         display: flex;
         padding: 10px;
         border-bottom: 1px solid var(--dl-color-separator);
-
-        &--drag-icon {
-            flex-grow: 1;
-            cursor: grab;
-
-            &::v-deep .dl-icon {
-                transform: rotate(90deg) !important;
-            }
-        }
+        font-size: 20px;
+        color: var(--dl-color-darker);
+        justify-content: space-between;
 
         &--titles {
             width: 50%;
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
     }
     &__content {
@@ -226,6 +261,18 @@ export default defineComponent({
         margin: 20px 16px 16px 16px;
         font-size: 12px;
         color: var(--dl-color-medium);
+    }
+
+    &__drag-icon {
+        position: absolute;
+        top: 5px;
+        left: calc(var(--dl-widget-drag-icon-left) - 5px);
+        flex-grow: 1;
+        cursor: grab;
+
+        &::v-deep .dl-icon {
+            transform: rotate(90deg) !important;
+        }
     }
 
     &__drag {

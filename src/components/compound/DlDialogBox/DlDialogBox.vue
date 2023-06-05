@@ -47,7 +47,24 @@
                         'content--fullheight': fullHeight
                     }"
                 >
-                    <slot name="body" />
+                    <slot
+                        v-if="!isEmpty"
+                        name="body"
+                    />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </div>
                 <div
                     v-if="hasFooter"
@@ -64,11 +81,13 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import DlIcon from '../../essential/DlIcon/DlIcon.vue'
+import { Props } from '../../basic/DlEmptyState/types'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { throttle } from 'lodash'
 
 export default defineComponent({
     name: 'DlDialogBox',
-    components: { DlIcon },
+    components: { DlIcon, DlEmptyState },
     model: {
         prop: 'modelValue',
         event: 'update:modelValue'
@@ -88,6 +107,11 @@ export default defineComponent({
         draggable: {
             type: Boolean,
             default: false
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         }
     },
     emits: ['update:modelValue', 'hide', 'show'],
@@ -262,7 +286,7 @@ export default defineComponent({
 
 .header {
     display: flex;
-    padding: 16px;
+    padding: var(--dl-dialog-box-header-padding, 16px);
     border-bottom: var(--dl-dialog-separator);
 }
 
@@ -281,7 +305,7 @@ export default defineComponent({
 
 .footer {
     display: flex;
-    padding: 20px 16px;
+    padding: var(--dl-dialog-box-footer-padding, 20px 16px);
     border-top: var(--dl-dialog-separator);
 }
 

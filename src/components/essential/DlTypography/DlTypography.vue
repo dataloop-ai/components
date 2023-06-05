@@ -16,7 +16,7 @@ import { transformOptions } from '../../shared/types'
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p'
 
-const sizes = ['h1', 'h2', 'h3', 'h4', 'body', 'small']
+const sizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'small']
 
 export default defineComponent({
     name: 'DlTypography',
@@ -107,6 +107,12 @@ export default defineComponent({
     }
     &--h4 {
         font-size: var(--dl-font-size-h4);
+    }
+    &--h5 {
+        font-size: var(--dl-font-size-h5);
+    }
+    &--h6 {
+        font-size: var(--dl-font-size-h6);
     }
     &--body {
         font-size: var(--dl-font-size-body);
