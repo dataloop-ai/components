@@ -142,6 +142,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .scroll-bar-wrapper {
     width: 1%;
+    min-width: 5px;
 }
 .scroll-bar {
     background: #d9d9d9;
