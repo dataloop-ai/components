@@ -17,6 +17,7 @@
             class="props"
         />
         <dl-smart-search
+            v-model="queryObject"
             :aliases="aliases"
             :schema="schema"
             :color-schema="colorSchema"
@@ -28,6 +29,7 @@
             @save-query="handleSaveQuery"
             @search-query="handleSearchQuery"
         />
+        {{ queryObject }}
     </div>
 </template>
 
@@ -95,6 +97,7 @@ export default defineComponent({
             switchState: false,
             strictState: false,
             isLoading: false,
+            queryObject: {},
             filters: {
                 saved: [
                     {

@@ -26,7 +26,8 @@ const schema = {
         },
         date: 'date',
         start: 'datetime',
-        classTime: 'time'
+        classTime: 'time',
+        '*': 'any'
     }
 }
 
@@ -65,7 +66,7 @@ describe('SmartSearch', () => {
             expect(component.exists()).toBe(true)
         })
     })
-    describe('changing status when typing a query', () => {
+    describe('when changing status when typing a query', () => {
         it('should have status info by default', () => {
             expect(wrapper.vm.computedStatus.type).toMatch('info')
         })
@@ -96,7 +97,7 @@ describe('SmartSearch', () => {
             expect(wrapper.vm.inputModel).toMatch('Age = 20')
         })
     })
-    describe('emitting events', () => {
+    describe('when emitting events', () => {
         it('should emit searching a query upon pressing the button', () => {
             //without search
             wrapper.vm.handleSaveQuery(false)
@@ -116,7 +117,7 @@ describe('SmartSearch', () => {
             ])
         })
     })
-    describe('filters menu', () => {
+    describe('when filters menu', () => {
         beforeAll(() => {
             wrapper.inputModel = '{}'
             wrapper.activeQuery = {
@@ -142,7 +143,7 @@ describe('SmartSearch', () => {
             expect(wrapper.vm.inputModel).toMatch('Age = 20')
         })
     })
-    describe('selecting queries from the select menu', () => {
+    describe('when selecting queries from the select menu', () => {
         beforeAll(() => {
             wrapper.setProps({
                 filters: {
@@ -161,6 +162,74 @@ describe('SmartSearch', () => {
             }
             wrapper.vm.updateActiveQuery(option)
             expect(wrapper.vm.activeQuery).toEqual(q)
+        })
+    })
+    describe.only('when querying with a set scheme', () => {
+        describe('when using an alias', () => {
+            beforeAll(() => {
+                wrapper.vm.handleInputModel(`Age = 25`)
+            })
+            it('should have not have errors', () => {
+                expect(wrapper.vm.error).to.be.null
+            })
+        })
+        describe('when having a supported anykey field', () => {
+            beforeAll(() => {
+                wrapper.vm.handleInputModel(`metadata.test = 'bla'`)
+            })
+            it('should have not have errors', () => {
+                expect(wrapper.vm.error).to.be.null
+            })
+        })
+        describe('when having a supported nested anykey field', () => {
+            beforeAll(() => {
+                wrapper.vm.handleInputModel(`metadata.test.a = 'bla'`)
+            })
+            it('should have not have errors', () => {
+                expect(wrapper.vm.error).to.be.null
+            })
+        })
+        describe('when having a nested unsupported key', () => {
+            beforeAll(() => {
+                wrapper.vm.handleInputModel(`metadata.nesting.a = 'bla'`)
+            })
+            it('should have not have errors', () => {
+                expect(wrapper.vm.error).to.be.equal(
+                    'Invalid value for "metadata.nesting.a" field'
+                )
+            })
+        })
+        describe('when having a non supported field in the schema', () => {
+            beforeAll(() => {
+                wrapper.vm.handleInputModel(`metadata.nesting.a = 'bla'`)
+            })
+            it('should have not have errors', () => {
+                expect(wrapper.vm.error).to.be.equal(
+                    'Invalid value for "metadata.nesting.a" field'
+                )
+            })
+            describe('When using non strict mode', () => {
+                beforeAll(() => {
+                    wrapper.setProps({
+                        strict: false
+                    })
+                    wrapper.vm.handleInputModel(`nonexistingfield = 'bla'`)
+                })
+                it('should give an error', () => {
+                    expect(wrapper.vm.error).to.be.equal('warning')
+                })
+            })
+            describe('When using strict mode', () => {
+                beforeAll(() => {
+                    wrapper.setProps({
+                        strict: true
+                    })
+                    wrapper.vm.handleInputModel(`nonexistingfield = 'bla'`)
+                })
+                it('should give an error', () => {
+                    expect(wrapper.vm.error).to.be.equal('Invalid Expression')
+                })
+            })
         })
     })
 })
