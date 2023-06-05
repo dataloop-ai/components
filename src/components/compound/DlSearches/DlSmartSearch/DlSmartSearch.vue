@@ -398,6 +398,7 @@ export default defineComponent({
             newQuery,
             preventUpdate,
             selectedOption,
+            handleInputModel,
             debouncedInputModel,
             setFocused,
             findSuggestions,
