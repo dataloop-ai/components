@@ -57,7 +57,7 @@
                     style: 'max-width: 300px;',
                     align: 'left',
                     bgSize: '200px',
-                    bgImage: `url(./src/demos/assets/agenda.svg)`,
+                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
                     title: 'Lorem ipsum',
                     subtitle:
                         'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
