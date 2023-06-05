@@ -3,7 +3,22 @@
         :style="cssVars"
         :class="chartWrapperClasses"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <Bar
+            v-if="!isEmpty"
             :id="id"
             ref="columnChart"
             :class="chartClasses"
@@ -13,7 +28,7 @@
             @mouseout="onChartLeave"
         />
         <slot
-            v-if="displayLabels"
+            v-if="!isEmpty || displayLabels"
             v-bind="{ ...labelStyles, labels: xLabels, chartWidth }"
             name="axe-x-labels"
         >
@@ -28,7 +43,7 @@
             />
         </slot>
         <slot
-            v-if="displayBrush"
+            v-if="displayBrush || !isEmpty"
             v-bind="{
                 chartWidth,
                 modelValue: brush.value,
@@ -52,7 +67,7 @@
             />
         </slot>
         <slot
-            v-if="displayLegend"
+            v-if="displayLegend || !isEmpty"
             v-bind="{
                 data: legendDatasets,
                 chartWidth,
@@ -83,7 +98,14 @@ import {
     ColumnChartProps,
     defaultColumnChartProps
 } from '../../types/props'
-import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
+import {
+    defineComponent,
+    reactive,
+    watch,
+    ref,
+    computed,
+    PropType
+} from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -101,6 +123,8 @@ import {
     LineElement,
     BarControllerDatasetOptions
 } from 'chart.js'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { unionBy, orderBy, merge, isEqual } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
@@ -123,12 +147,18 @@ export default defineComponent({
         DlBrush,
         DlChartLegend,
         Bar,
-        DlChartLabels
+        DlChartLabels,
+        DlEmptyState
     },
     props: {
         id: {
             type: String,
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         },
         ...CommonProps,
         ...ColumnChartProps

@@ -3,8 +3,22 @@
         :style="`max-width: ${maxWidth}`"
         class="confusion-matrix-container"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <div
-            v-if="isValidMatrix"
+            v-if="isValidMatrix && !isEmpty"
             ref="wrapper"
             :style="matrixStyles"
             class="wrapper"
@@ -132,7 +146,7 @@
             </div>
         </div>
         <div
-            v-else
+            v-if="!isValidMatrix && !isEmpty"
             class="invalid"
         >
             The given props cannot create a valid matrix.
@@ -170,6 +184,8 @@ import {
 } from '../../types'
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import {
     getGradationValues,
@@ -182,7 +198,8 @@ import { debounce, isObject } from 'lodash'
 export default defineComponent({
     components: {
         DlBrush,
-        DlTooltip
+        DlTooltip,
+        DlEmptyState
     },
     props: {
         labels: {
@@ -214,6 +231,11 @@ export default defineComponent({
         maxWidth: {
             type: String,
             default: '800px'
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         }
     },
     setup(props) {

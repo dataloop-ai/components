@@ -149,6 +149,116 @@
                 </template>
             </dl-panel-container>
         </div>
+        <h2>Empty State</h2>
+        <div
+            class="dl-panel-container-demo"
+            style="margin-top: 50px"
+        >
+            <dl-panel-container
+                v-model="collapseP1"
+                :direction="direction"
+                :resizable="resizable"
+                :collapsable="collapsable"
+                width="500px"
+                height="550px"
+                is-empty
+                :empty-state-props="{
+                    responsive: true,
+                    style: 'min-height: 350px;',
+                    bgSize: '130px',
+                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                    title: 'Lorem ipsum',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                    info: 'To learn more about this analytics, read our documentation.'
+                }"
+            >
+                <template #links="">
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            flex-direction: row;
+                            padding: 0 20px;
+                        "
+                    >
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-sdk-documentation"
+                            flat
+                            uppercase
+                            label="SDK"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-file"
+                            flat
+                            label="Documentation"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-youtube"
+                            flat
+                            label="Video"
+                        />
+                    </div>
+                </template>
+            </dl-panel-container>
+            <dl-panel-container
+                v-model="collapseP2"
+                :direction="direction"
+                :resizable="resizable"
+                :collapsable="collapsable"
+                width="200px"
+                height="500px"
+                is-empty
+                :empty-state-props="{
+                    responsive: true,
+                    style: 'min-height: 350px;',
+                    bgSize: '130px',
+                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                    title: 'Lorem ipsum',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                    info: 'To learn more about this analytics, read our documentation.'
+                }"
+            >
+                <template #links="">
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            flex-wrap: wrap;
+                            padding: 0 20px;
+                        "
+                    >
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-sdk-documentation"
+                            flat
+                            uppercase
+                            label="SDK"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-file"
+                            flat
+                            label="Documentation"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-youtube"
+                            flat
+                            label="Video"
+                        />
+                    </div>
+                </template>
+            </dl-panel-container>
+        </div>
         <div class="controls">
             <select v-model="direction">
                 <option>left</option>
@@ -172,13 +282,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlPanel, DlPanelContainer } from '../components'
+import { DlPanel, DlPanelContainer, DlButton } from '../components'
 
 export default defineComponent({
     name: 'DlPanelContainerDemo',
     components: {
         DlPanelContainer,
-        DlPanel
+        DlPanel,
+        DlButton
     },
     data() {
         return {

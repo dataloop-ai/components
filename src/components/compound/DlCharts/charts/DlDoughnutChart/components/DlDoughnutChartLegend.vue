@@ -108,7 +108,7 @@ export default defineComponent({
             ]
         },
         itemsCount(): number | undefined {
-            return this.data?.datasets[0]?.data?.length
+            return (this.data?.datasets?.[0]?.data || []).length
         }
     },
     mounted(): void {

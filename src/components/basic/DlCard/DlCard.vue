@@ -7,7 +7,7 @@
         @click="onCardClick"
     >
         <div
-            v-if="icon"
+            v-if="icon && !isEmpty"
             class="card--icon"
         >
             <dl-icon
@@ -18,7 +18,7 @@
             />
         </div>
         <div
-            v-else-if="image"
+            v-else-if="image && !isEmpty"
             class="card--image"
         >
             <div
@@ -80,7 +80,10 @@
                 </figure>
             </dl-tooltip>
         </div>
-        <div class="card--content">
+        <div
+            v-if="!isEmpty"
+            class="card--content"
+        >
             <div>
                 <slot
                     v-if="!!$slots.header"
@@ -233,6 +236,20 @@
                 </div>
             </div>
         </div>
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
     </div>
 </template>
 
@@ -240,6 +257,8 @@
 import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor, stringStyleToRecord } from '../../../utils'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
+import { Props } from '../DlEmptyState/types'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { DlChip, DlEllipsis } from '../../../components'
@@ -265,7 +284,8 @@ export default defineComponent({
         DlChip,
         DlEllipsis,
         DescriptionModal,
-        DlTypography
+        DlTypography,
+        DlEmptyState
     },
     props: {
         image: {
@@ -339,6 +359,11 @@ export default defineComponent({
         cardId: {
             type: Number,
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         }
     },
     emits: ['onUpdateDescription', 'onCardActive'],
