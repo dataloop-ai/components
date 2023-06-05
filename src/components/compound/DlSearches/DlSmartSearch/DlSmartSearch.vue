@@ -44,6 +44,7 @@
             <dl-button
                 class="dl-smart-search__buttons--filters"
                 shaded
+                outlined
                 size="s"
             >
                 Saved Filters
@@ -65,6 +66,7 @@
             v-model="jsonEditorModel"
             :height="500"
             :width="800"
+            style="--dl-dialog-box-footer-padding: 10px 16px"
         >
             <template #header>
                 <dl-dialog-box-header
@@ -90,6 +92,7 @@
                                 label="Align Left"
                                 flat
                                 color="secondary"
+                                padding="0px 3px"
                                 @click="alignJsonText"
                             />
                         </div>
@@ -111,11 +114,13 @@
                             label="Delete Query"
                             flat
                             color="secondary"
+                            padding="0"
                             @click="handleQueryRemove"
                         />
                     </div>
                     <div class="json-editor__footer-save">
                         <dl-button
+                            style="margin-right: 14px"
                             outlined
                             label="Save As"
                             @click="saveQueryDialogBoxModel = true"
@@ -152,7 +157,10 @@
                 </div>
             </template>
         </dl-dialog-box>
-        <dl-dialog-box v-model="saveQueryDialogBoxModel">
+        <dl-dialog-box
+            v-model="saveQueryDialogBoxModel"
+            style="--dl-dialog-box-footer-padding: 14px 17px"
+        >
             <template #header>
                 <dl-dialog-box-header
                     title="Save Query"
@@ -162,17 +170,22 @@
             <template #body>
                 <dl-input
                     v-model="newQueryName"
+                    title="Query name"
                     style="text-align: center"
                     placeholder="Type query name"
                 />
             </template>
             <template #footer>
                 <div class="dl-smart-search__buttons--save">
-                    <dl-button @click="handleSaveQuery">
+                    <dl-button
+                        :disabled="!newQueryName"
+                        outlined
+                        @click="handleSaveQuery"
+                    >
                         Save
                     </dl-button>
                     <dl-button
-                        padding="10px"
+                        :disabled="!newQueryName"
                         @click="handleSaveQuery(true)"
                     >
                         Save and Search
@@ -685,8 +698,12 @@ export default defineComponent({
         display: flex;
         justify-content: space-between;
     }
-    &-save > * {
-        margin: 0px 10px;
+    &-delete {
+        align-items: center;
+        display: flex;
+        & > * {
+            margin-bottom: 6px;
+        }
     }
 }
 .json-query {
