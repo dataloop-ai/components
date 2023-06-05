@@ -84,7 +84,11 @@ export default defineComponent({
             validator: optionsValidator
         },
         type: { type: String, default: 'radio', validator: typeValidator },
-        modelValue: { type: [Array, String, Number, Boolean], required: true }
+        modelValue: {
+            type: [Array, String, Number, Boolean],
+            required: false,
+            default: null
+        }
     },
     data() {
         const logger = loggerFactory('DlOptionGroup')
