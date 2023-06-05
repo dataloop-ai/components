@@ -152,10 +152,12 @@
                                 : ''
                     "
                     :no-hover="noHover"
-                    @click="onTrClick($event, props.item, pageIndex)"
-                    @dblclick="onTrDblClick($event, props.item, pageIndex)"
+                    @click="onTrClick($event, props.item, props.pageIndex)"
+                    @dblclick="
+                        onTrDblClick($event, props.item, props.pageIndex)
+                    "
                     @contextmenu="
-                        onTrContextMenu($event, props.item, pageIndex)
+                        onTrContextMenu($event, props.item, props.pageIndex)
                     "
                 >
                     <td
@@ -1068,10 +1070,6 @@ export default defineComponent({
             commonVirtPropsList.forEach((p) => {
                 acc[p] = (props as Record<string, any>)[p]
             })
-
-            if (!acc.virtualScrollItemSize) {
-                acc.virtualScrollItemSize = props.dense === true ? 30 : 40
-            }
 
             return acc
         })
