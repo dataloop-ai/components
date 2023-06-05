@@ -22,7 +22,7 @@
                 :default-width="width"
                 @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
-                @update:modelValue="handleInputModel"
+                @update:modelValue="debouncedInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
             />
         </div>
@@ -183,7 +183,15 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import {
+    defineComponent,
+    PropType,
+    ref,
+    nextTick,
+    toRef,
+    onMounted,
+    watch
+} from 'vue-demi'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
 import { DlSelect } from '../../DlSelect'
@@ -209,6 +217,7 @@ import {
 } from './utils/utils'
 import { v4 } from 'uuid'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
+import { debounce } from 'lodash'
 
 export default defineComponent({
     components: {
@@ -223,7 +232,15 @@ export default defineComponent({
         DlMenu,
         DlSelect
     },
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
+    },
     props: {
+        modelValue: {
+            type: Object,
+            default: {} as { [key: string]: any }
+        },
         status: {
             type: Object as PropType<SearchStatus>,
             default: () => ({ type: 'info', message: '' })
@@ -239,9 +256,9 @@ export default defineComponent({
         colorSchema: {
             type: Object as PropType<ColorSchema>,
             default: () => ({
-                fields: 'blue',
-                operators: 'darkgreen',
-                keywords: 'bold'
+                fields: 'var(--dl-color-secondary)',
+                operators: 'var(--dl-color-positive)',
+                keywords: 'var(--dl-color-medium)'
             })
         },
         isLoading: {
@@ -267,10 +284,17 @@ export default defineComponent({
         width: {
             type: String,
             default: '450px'
+        },
+        /**
+         * If true, the validation will be a closed set based on the schema provided
+         */
+        strict: {
+            type: Boolean,
+            default: false
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query'],
-    setup(props) {
+    emits: ['save-query', 'remove-query', 'search-query', 'update:modelValue'],
+    setup(props, { emit }) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
         const searchBarWidth = ref('100%')
@@ -295,20 +319,29 @@ export default defineComponent({
             value: ''
         })
 
+        const strictRef = toRef(props, 'strict')
+
         const { suggestions, error, findSuggestions } = useSuggestions(
             props.schema,
-            props.aliases
+            props.aliases,
+            { strict: strictRef }
         )
 
         const handleInputModel = (value: string) => {
             inputModel.value = value
-            const json = JSON.stringify(toJSON(removeBrackets(value)))
-            const newQuery = replaceWithAliases(json, props.aliases)
+            const json = toJSON(removeBrackets(value))
+            emit('update:modelValue', json)
+            const stringified = JSON.stringify(json)
+            const newQuery = replaceWithAliases(stringified, props.aliases)
             activeQuery.value.query = newQuery
-            findSuggestions(value)
+            nextTick(() => {
+                findSuggestions(value)
+            })
             isQuerying.value = false
             oldInputQuery.value = value
         }
+
+        const debouncedInputModel = debounce(handleInputModel, 300)
 
         const toJSON = (value: string) => {
             return parseSmartQuery(
@@ -328,6 +361,23 @@ export default defineComponent({
                 toJSON(inputModel.value)
             }
         }
+
+        const modelRef: any = toRef(props, 'modelValue')
+
+        watch(modelRef, (val: any) => {
+            if (val) {
+                const stringQuery = stringifySmartQuery(val)
+                debouncedInputModel(stringQuery)
+            }
+        })
+
+        onMounted(() => {
+            if (props.modelValue) {
+                const stringQuery = stringifySmartQuery(props.modelValue)
+                debouncedInputModel(stringQuery)
+            }
+        })
+
         return {
             uuid: `dl-smart-search-${v4()}`,
             inputModel,
@@ -349,6 +399,7 @@ export default defineComponent({
             preventUpdate,
             selectedOption,
             handleInputModel,
+            debouncedInputModel,
             setFocused,
             findSuggestions,
             toJSON
