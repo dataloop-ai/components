@@ -60,56 +60,6 @@
                     Erat ac duis sed ullamcorper sagittis, sed. Tempus ac
                     pellentesque dignissim lobortis.
                 </p>
-
-                <dl-dialog-box ref="modalTwo">
-                    <template #header>
-                        <dl-dialog-box-header
-                            has-back-button
-                            title="Dialog Box Title"
-                            subtitle="updated by rotemshaham@dataloop.ai"
-                            @on-close="closeSecondModal"
-                        />
-                    </template>
-                    <template #body>
-                        <p
-                            style="
-                                margin: 0;
-                                color: var(--dl-color-medium);
-                                font-size: 10px;
-                            "
-                        >
-                            Updated by rotemshaham@dataloop.ai
-                        </p>
-                        <p
-                            style="
-                                margin: 0;
-                                color: var(--dl-color-medium);
-                                font-size: 10px;
-                                margin-bottom: 20px;
-                            "
-                        >
-                            Dec 1, 2020, 12:21pm
-                        </p>
-                        <p
-                            style="
-                                margin: 0;
-                                color: var(--dl-color-darker);
-                                font-size: 12px;
-                            "
-                        >
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Erat ac duis sed ullamcorper sagittis, sed.
-                            Tempus ac pellentesque dignissim lobortis.
-                        </p>
-                    </template>
-                    <template #footer>
-                        <dl-dialog-box-footer>
-                            <dl-button @click="closeSecondModal">
-                                Close
-                            </dl-button>
-                        </dl-dialog-box-footer>
-                    </template>
-                </dl-dialog-box>
             </template>
             <template #footer>
                 <dl-dialog-box-footer>
@@ -117,9 +67,64 @@
                         outlined
                         @click="openSecondModal"
                     >
-                        Open second modal
+                        Open empty modal
                     </dl-button>
                     <dl-button @click="closeModal">
+                        Close
+                    </dl-button>
+                </dl-dialog-box-footer>
+            </template>
+        </dl-dialog-box>
+
+        <dl-dialog-box
+            ref="modalTwo"
+            is-empty
+            :empty-state-props="{
+                responsive: true,
+                bgSize: '100px',
+                bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                title: 'Lorem ipsum',
+                subtitle:
+                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                info: 'To learn more about this analytics, read our documentation.'
+            }"
+        >
+            <template #header>
+                <dl-dialog-box-header
+                    has-back-button
+                    title="Dialog Box Title"
+                    subtitle="updated by rotemshaham@dataloop.ai"
+                    @on-close="closeSecondModal"
+                />
+            </template>
+
+            <template #links="">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap">
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-sdk-documentation"
+                        flat
+                        uppercase
+                        label="SDK"
+                    />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-file"
+                        flat
+                        label="Documentation"
+                    />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-youtube"
+                        flat
+                        label="Video"
+                    />
+                </div>
+            </template>
+
+            <template #footer>
+                <dl-dialog-box-footer>
+                    <dl-button @click="closeSecondModal">
                         Close
                     </dl-button>
                 </dl-dialog-box-footer>

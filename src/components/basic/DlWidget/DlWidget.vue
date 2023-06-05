@@ -28,10 +28,30 @@
             </div>
 
             <div class="dl-widget__content">
-                <slot name="content" />
+                <dl-empty-state
+                    v-if="isEmpty"
+                    v-bind="emptyStateProps"
+                >
+                    <template
+                        v-for="(_, slot) in $slots"
+                        #[slot]="props"
+                    >
+                        <slot
+                            :name="slot"
+                            v-bind="props"
+                        />
+                    </template>
+                </dl-empty-state>
+                <slot
+                    v-if="!isEmpty"
+                    name="content"
+                />
             </div>
 
-            <div class="dl-widget__description">
+            <div
+                v-if="!isEmpty"
+                class="dl-widget__description"
+            >
                 <slot name="description" />
             </div>
         </div>
@@ -43,14 +63,24 @@
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
 import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
+import { Props } from '../DlEmptyState/types'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
     name: 'DlWidget',
     components: {
-        DlIcon
+        DlIcon,
+        DlEmptyState
+    },
+    props: {
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
+        }
     },
     data() {
         return {

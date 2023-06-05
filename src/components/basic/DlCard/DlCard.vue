@@ -4,7 +4,7 @@
         :style="[{ width, height }, computedStyles]"
     >
         <div
-            v-if="icon"
+            v-if="icon && !isEmpty"
             class="card--icon"
         >
             <dl-icon
@@ -15,7 +15,7 @@
             />
         </div>
         <div
-            v-else-if="image"
+            v-else-if="image && !isEmpty"
             class="card--image"
         >
             <img
@@ -24,7 +24,10 @@
                 :alt="imageAlt"
             >
         </div>
-        <div class="card--content">
+        <div
+            v-if="!isEmpty"
+            class="card--content"
+        >
             <div>
                 <slot
                     v-if="!!$slots.header"
@@ -80,6 +83,20 @@
                 </div>
             </div>
         </div>
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
     </div>
 </template>
 
@@ -87,13 +104,15 @@
 import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { stringStyleToRecord } from '../../../utils'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
+import { Props } from '../DlEmptyState/types'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
 
 export default defineComponent({
     name: 'DlCard',
-    components: { DlLink, DlIcon },
+    components: { DlLink, DlIcon, DlEmptyState },
     props: {
         image: {
             type: Object as PropType<ImageItem>,
@@ -130,6 +149,11 @@ export default defineComponent({
         styles: {
             type: [Object, String],
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         }
     },
     computed: {
