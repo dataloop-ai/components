@@ -66,15 +66,16 @@
                             v-if="withSaveButton"
                             class="dl-smart-search-input__save-btn-wrapper"
                         >
-                            <dl-button
-                                icon="icon-dl-save"
-                                size="16px"
-                                flat
-                                :disabled="saveStatus"
-                                @click="save"
-                            >
+                            <div>
+                                <dl-button
+                                    icon="icon-dl-save"
+                                    size="16px"
+                                    flat
+                                    :disabled="saveStatus"
+                                    @click="save"
+                                />
                                 <dl-tooltip> Save Query </dl-tooltip>
-                            </dl-button>
+                            </div>
                             <dl-button
                                 icon="icon-dl-edit"
                                 size="16px"
@@ -612,7 +613,7 @@ export default defineComponent({
         }
 
         &--disabled {
-            border-color: var(--dl-color-disabled);
+            border-color: var(--dl-color-separator);
         }
     }
 
@@ -650,7 +651,7 @@ export default defineComponent({
         height: auto;
 
         min-height: 14px;
-        max-height: 100%;
+        max-height: var(--dl-smart-search-bar-wrapper-height);
         display: block;
     }
 
