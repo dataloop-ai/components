@@ -251,8 +251,8 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Object,
-            default: {} as { [key: string]: any }
+            type: Object as PropType<Record<string, any>>,
+            default: () => ({})
         },
         status: {
             type: Object as PropType<SearchStatus>,
@@ -260,7 +260,7 @@ export default defineComponent({
         },
         schema: {
             type: Object as PropType<Schema>,
-            default: () => {}
+            default: () => ({})
         },
         aliases: {
             type: Array as PropType<Alias[]>,
