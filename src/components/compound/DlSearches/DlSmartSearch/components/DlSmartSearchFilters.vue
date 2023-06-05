@@ -8,6 +8,7 @@
             volatile
             full-width
             :items="tabItems"
+            font-size="14px"
         />
         <div class="dl-filters-tabs">
             <dl-tab-panels v-model="currentTab">

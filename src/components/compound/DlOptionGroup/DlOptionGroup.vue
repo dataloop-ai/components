@@ -170,9 +170,11 @@ export default defineComponent({
     display: inline-flex;
     width: var(--option-group-width);
     max-width: var(--option-group-max-width);
+    gap: 20px;
 }
 .option-group-wrapper.column {
     flex-direction: column;
+    gap: 10px;
 }
 
 .option {
@@ -183,8 +185,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-body);
     user-select: none;
     color: var(--dl-color-darker);
-    margin: 10px 5px;
-    gap: 5px;
+    gap: 10px;
 }
 
 .disabled {

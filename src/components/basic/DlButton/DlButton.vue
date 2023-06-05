@@ -62,6 +62,9 @@ import {
     setColorOnHover,
     setBorderOnHover,
     setBgOnHover,
+    setBgOnPressed,
+    setBorderOnPressed,
+    setTextOnPressed,
     setIconSize,
     setIconPadding,
     setMaxHeight
@@ -291,7 +294,8 @@ export default defineComponent({
                         disabled: this.disabled,
                         flat: this.flat,
                         shaded: this.shaded,
-                        color: this.color
+                        color: this.color,
+                        outlined: this.outlined
                     }),
                     '--dl-button-text-color-hover': setColorOnHover({
                         disabled: this.disabled,
@@ -314,13 +318,18 @@ export default defineComponent({
                         filled: this.filled,
                         color: this.color
                     }),
-                    '--dl-button-text-color-pressed': this.shaded
-                        ? 'var(--dl-color-text-buttons)'
-                        : 'var(--dl-button-text-color)',
-                    '--dl-button-bg-pressed': this.shaded
-                        ? 'var(--dl-color-secondary)'
-                        : 'var(--dl-button-bg)',
-                    '--dl-button-border-pressed': 'var(--dl-button-border)'
+                    '--dl-button-text-color-pressed': setTextOnPressed({
+                        shaded: this.shaded,
+                        outlined: this.shaded
+                    }),
+                    '--dl-button-bg-pressed': setBgOnPressed({
+                        shaded: this.shaded,
+                        outlined: this.outlined
+                    }),
+                    '--dl-button-border-pressed': setBorderOnPressed({
+                        shaded: this.shaded,
+                        outlined: this.outlined
+                    })
                 }
             }
 
