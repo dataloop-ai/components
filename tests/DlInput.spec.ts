@@ -109,8 +109,10 @@ describe('DlInput component', () => {
             })
         })
     })
+    /**
+     * TODO: Find a way to test this
+     */
     describe.skip(`Trigger blur() method`, () => {
-        // Should be skipped until we find a way to test this
         const wrapper = mount(DlInput)
 
         describe(`When blur() method is triggered`, () => {
@@ -124,6 +126,9 @@ describe('DlInput component', () => {
             })
         })
     })
+    /**
+     * TODO: Find a way to test this
+     */
     describe.skip(`Trigger focus() method`, () => {
         // Should be skipped until we find a way to test this
         const wrapper = mount(DlInput)
