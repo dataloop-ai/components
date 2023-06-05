@@ -202,7 +202,7 @@ describe('use-suggestions', () => {
             expect(error.value).toBe('Invalid Expression')
         })
 
-        it.only('should be "Invalid value for "Age" field" when the Age is not a number', () => {
+        it('should be "Invalid value for "Age" field" when the Age is not a number', () => {
             findSuggestions('Age = "value"')
             expect(error.value).toBe('Invalid value for "Age" field')
         })

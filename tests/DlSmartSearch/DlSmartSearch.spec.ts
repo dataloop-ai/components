@@ -164,7 +164,7 @@ describe('SmartSearch', () => {
             expect(wrapper.vm.activeQuery).toEqual(q)
         })
     })
-    describe.only('when querying with a set scheme', () => {
+    describe('when querying with a set scheme', () => {
         describe('when using an alias', () => {
             beforeAll(() => {
                 wrapper.vm.handleInputModel(`Age = 25`)
