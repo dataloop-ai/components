@@ -6,24 +6,22 @@
         <div
             :id="uuid"
             ref="widget"
-            :class="widgetStyles"
+            :class="widgetClasses"
             @mouseenter="handleVisibleDragIcon(true)"
             @mouseleave="handleVisibleDragIcon(false)"
         >
+            <dl-icon
+                :style="iconStyles"
+                class="dl-widget__drag-icon"
+                icon="icon-dl-drag"
+                color="dl-color-medium"
+                size="15px"
+                @mousedown="startDragging"
+            />
             <div class="dl-widget__header">
                 <div class="dl-widget__header--titles">
                     <slot name="header" />
                 </div>
-                <dl-icon
-                    :style="`visibility: ${
-                        visibleDragIcon && !isDragging ? 'visible' : 'hidden'
-                    }`"
-                    class="dl-widget__header--drag-icon"
-                    icon="icon-dl-drag"
-                    color="dl-color-medium"
-                    size="15px"
-                    @mousedown="startDragging"
-                />
                 <slot name="menu" />
             </div>
 
@@ -95,8 +93,19 @@ export default defineComponent({
         }
     },
     computed: {
-        widgetStyles() {
+        widgetClasses() {
             return `${this.isDragging ? 'dl-widget__drag' : 'dl-widget'}`
+        },
+        iconStyles() {
+            return {
+                '--dl-widget-drag-icon-left': `${
+                    (this.$refs.widget as HTMLElement)?.offsetWidth / 2
+                }px`,
+                visibility:
+                    this.visibleDragIcon && !this.isDragging
+                        ? 'visible'
+                        : 'hidden'
+            }
         }
     },
     methods: {
@@ -222,19 +231,14 @@ export default defineComponent({
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
     &__header {
         display: flex;
         padding: 10px;
         border-bottom: 1px solid var(--dl-color-separator);
-
-        &--drag-icon {
-            flex-grow: 1;
-            cursor: grab;
-
-            &::v-deep .dl-icon {
-                transform: rotate(90deg) !important;
-            }
-        }
+        font-size: 20px;
+        color: var(--dl-color-darker);
+        justify-content: space-between;
 
         &--titles {
             width: 50%;
@@ -257,6 +261,18 @@ export default defineComponent({
         margin: 20px 16px 16px 16px;
         font-size: 12px;
         color: var(--dl-color-medium);
+    }
+
+    &__drag-icon {
+        position: absolute;
+        top: 5px;
+        left: calc(var(--dl-widget-drag-icon-left) - 5px);
+        flex-grow: 1;
+        cursor: grab;
+
+        &::v-deep .dl-icon {
+            transform: rotate(90deg) !important;
+        }
     }
 
     &__drag {

@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.17.63",
+  "version": "0.17.69",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -25,6 +25,7 @@
     "@dataloop-ai/icons": "^3.0.6",
     "@types/lodash": "^4.14.184",
     "chart.js": "^3.9.1",
+    "flat": "^5.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "sass": "^1.51.0",
@@ -45,6 +46,7 @@
     "@storybook/client-api": "^7.0.4",
     "@storybook/vue3": "^7.0.4",
     "@storybook/vue3-vite": "^7.0.4",
+    "@types/flat": "^5.0.2",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.7.18",
     "@types/resize-observer-browser": "^0.1.7",

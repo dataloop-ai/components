@@ -38,7 +38,7 @@
             <dl-widget>
                 <template #header>
                     <span>Widget 1</span>
-                    <span style="font-size: 12px; color: gray">Subtitle</span>
+                    <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
                 </template>
                 <template #content>
                     <dl-bar-chart

@@ -61,10 +61,11 @@ export function useTablePaginationState(
                 sortBy: null,
                 descending: false,
                 page: 1,
-                rowsPerPage:
-                    props.rowsPerPageOptions.length > 0
-                        ? props.rowsPerPageOptions[0]
-                        : 5,
+                rowsPerPage: props.virtualScroll
+                    ? 0
+                    : props.rowsPerPageOptions.length > 0
+                    ? props.rowsPerPageOptions[0]
+                    : 5,
                 min: 1,
                 maxPages: 0,
                 boundaryNumbers: true,
@@ -74,7 +75,9 @@ export function useTablePaginationState(
                 itemsName: 'Rows',
                 withLegend: true,
                 withRowsPerPage: true,
-                rowsPerPageOptions: props.rowsPerPageOptions
+                rowsPerPageOptions: props.virtualScroll
+                    ? [0]
+                    : props.rowsPerPageOptions
             },
             props.pagination
         )

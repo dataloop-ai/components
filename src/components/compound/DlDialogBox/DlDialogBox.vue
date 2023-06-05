@@ -286,7 +286,7 @@ export default defineComponent({
 
 .header {
     display: flex;
-    padding: 16px;
+    padding: var(--dl-dialog-box-header-padding, 16px);
     border-bottom: var(--dl-dialog-separator);
 }
 
@@ -305,7 +305,7 @@ export default defineComponent({
 
 .footer {
     display: flex;
-    padding: 20px 16px;
+    padding: var(--dl-dialog-box-footer-padding, 20px 16px);
     border-top: var(--dl-dialog-separator);
 }
 

@@ -12,20 +12,32 @@ describe('DlEllipsis', () => {
     describe('When mounting', () => {
         let wrapper: any
         beforeAll(() => {
+            wrapper = mount(DlEllipsis)
+        })
+        it('should exist component', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should display leftText slot or leftTextValue', function () {
+            expect(wrapper.text()).toContain(wrapper.vm.leftText)
+        })
+        it('should not display rightText slot or rightTextValue', function () {
+            expect(wrapper.find('.dl-ellipsis__right').exists()).toBe(false)
+        })
+        it('should not display tooltip', function () {
+            expect(wrapper.find('dl-tooltip').exists()).toBe(false)
+        })
+    })
+
+    describe('When mounting with props', () => {
+        let wrapper: any
+        beforeAll(() => {
             wrapper = mount(DlEllipsis, {
                 props: {
                     text
                 }
             })
         })
-        it('should exist component', function () {
-            expect(wrapper.exists()).toBe(true)
-        })
-        it('should right props', function () {
-            expect(wrapper.props()).toMatchObject({
-                text
-            })
-        })
+
         it('should to display both parts of label without middle ellipsis', () => {
             const className = 'dl-ellipsis'
             const expected = [
@@ -41,6 +53,7 @@ describe('DlEllipsis', () => {
             })
         })
     })
+
     describe('When mounting middle ellipsis', () => {
         let wrapper: any
         beforeAll(() => {
@@ -65,5 +78,67 @@ describe('DlEllipsis', () => {
                 expect(result).toBe(true)
             })
         })
+    })
+
+    describe('When mounting with split', () => {
+        const text = 'Hello World with split prop and very long text'
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlEllipsis, {
+                props: {
+                    text,
+                    split: true
+                }
+            })
+        })
+
+        it('should display both left and right text', () => {
+            expect(wrapper.text()).toContain(wrapper.vm.leftText)
+            expect(wrapper.text()).toContain(wrapper.vm.rightText)
+            expect(wrapper.find('.dl-ellipsis__left').exists()).toBe(true)
+            expect(wrapper.find('.dl-ellipsis__right').exists()).toBe(true)
+        })
+
+        it('should not display tooltip', () => {
+            expect(wrapper.find('dl-tooltip').exists()).toBe(false)
+        })
+    })
+
+    describe('when using tooltip', () => {
+        const text = 'Hello World'
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlEllipsis, {
+                props: {
+                    text,
+                    tooltip: true
+                }
+            })
+        })
+
+        it('should display left text', () => {
+            expect(wrapper.text()).toContain(wrapper.vm.leftText)
+        })
+
+        it('should not display right text', () => {
+            expect(wrapper.find('.dl-ellipsis__right').exists()).toBe(false)
+        })
+    })
+
+    describe('When mounting with default slot', () => {
+        const text = 'Hello World'
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlEllipsis, {
+                slots: {
+                    default: text
+                }
+            })
+        })
+
+        expect(wrapper.find('.dl-ellipsis__left').text()).toContain(text)
     })
 })
