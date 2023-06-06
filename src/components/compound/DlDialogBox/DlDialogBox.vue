@@ -116,7 +116,11 @@ export default defineComponent({
                 '--dl-dialog-separator': this.separators
                     ? '1px solid var(--dl-color-separator)'
                     : 'none',
-                '--dl-dialog-box-drag-icon-left': `${this.width / 2}px`
+                '--dl-dialog-box-drag-icon-left': `${
+                    typeof this.width === 'string'
+                        ? parseInt(this.width)
+                        : this.width / 2
+                }px`
             }
         },
         iconStyles() {
