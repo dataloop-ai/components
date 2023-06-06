@@ -24,6 +24,7 @@
             <div class="dl-button-content dl-anchor--skip">
                 <dl-icon
                     v-if="hasIcon"
+                    class="dl-button-icon"
                     :size="iconSizePX"
                     :color="iconColor || textColor"
                     :icon="icon"
@@ -135,7 +136,6 @@ export default defineComponent({
         /**
          * The width of the button will take that of its container
          */
-        shaded: { type: Boolean, default: false },
         fluid: Boolean,
         /**
          * The button will not have an outline
@@ -154,7 +154,6 @@ export default defineComponent({
             validator: (value: string): boolean =>
                 transformOptions.includes(value)
         },
-        outlined: Boolean,
         /**
          * Doesn't allow the button's text to be wrapped along multiple rows
          */
@@ -172,7 +171,9 @@ export default defineComponent({
          * The button will maintain the styles it has when it's pressed if this prop is active
          */
         active: { type: Boolean, default: false, required: false },
-        styles: { type: [Object, String], default: null }
+        styles: { type: [Object, String], default: null },
+        shaded: { type: Boolean, default: false },
+        outlined: Boolean
     },
     emits: ['click', 'mousedown'],
     setup(props) {
@@ -334,6 +335,8 @@ export default defineComponent({
             }
 
             return {
+                '--dl-button-transition-duration': 'all ease 0.15s',
+                '--dl-button-text-transition-duration': 'all ease 0.05s',
                 '--dl-button-container-width': this.fluid ? '100%' : 'auto',
                 '--dl-button-padding': this.dense
                     ? '0'
@@ -416,27 +419,28 @@ export default defineComponent({
     align-items: stretch;
     position: relative;
     vertical-align: middle;
-    transition: all ease-in 0.15s;
+    transition: var(--dl-button-transition-duration);
     justify-content: center;
 
     &:active {
-        transition: all ease-in 0.15s;
+        transition: var(--dl-button-transition-duration);
         color: var(--dl-button-text-color-pressed) !important;
         background-color: var(--dl-button-bg-pressed) !important;
         border-color: var(--dl-button-border-pressed) !important;
 
         & > span > i {
-            transition: all ease-in 0.15s;
+            transition: var(--dl-button-text-transition-duration);
         }
     }
 
     &:hover:enabled:not(:active) {
+        transition: var(--dl-button-transition-duration);
         color: var(--dl-button-text-color-hover);
         background-color: var(--dl-button-bg-hover);
         border-color: var(--dl-button-border-hover);
 
         & .dl-button-label {
-            transition: all ease-in 0.15s;
+            transition: var(--dl-button-text-transition-duration);
             color: var(--dl-button-color-hover);
         }
     }
@@ -456,6 +460,10 @@ export default defineComponent({
     gap: var(--dl-button-content-gap, 7px);
 }
 
+.dl-button-icon {
+    transition: var(--dl-button-text-transition-duration);
+}
+
 .dl-button-container.first-letter-capitalized {
     &::first-letter,
     & > *::first-letter {
@@ -472,9 +480,11 @@ export default defineComponent({
     color: var(--dl-button-text-color-hover);
     background-color: var(--dl-button-bg-hover);
     border-color: var(--dl-button-border-hover);
+    transition: var(--dl-button-transition-duration);
+
     & .dl-button-label {
-        transition: all ease-in 0.15s;
         color: var(--dl-button-color-hover);
+        transition: var(--dl-button-text-transition-duration);
     }
 }
 </style>
