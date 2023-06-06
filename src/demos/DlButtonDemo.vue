@@ -284,6 +284,16 @@
                 </div>
             </dl-button>
         </div>
+        <div>
+            <h3>Shaded and outlined</h3>
+            <dl-button
+                :active="activeButtonState"
+                icon="icon-dl-search"
+                label="test me"
+                shaded
+                outlined
+            />
+        </div>
     </div>
 </template>
 

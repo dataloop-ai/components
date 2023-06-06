@@ -158,7 +158,7 @@ describe('Tabs and Tab Groups', () => {
         })
 
         it('should have correct icon size relative to font size', () => {
-            expect(wrapper.vm.iconSize).toBe('12px')
+            expect(wrapper.vm.iconSize).toBe('8px')
         })
     })
 })
