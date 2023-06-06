@@ -81,11 +81,12 @@ export default defineComponent({
             default: () => [0, 25]
         }
     },
-    setup(props, ctx) {
+    // TODO: fix type issue here
+    setup(props: any, { slots }) {
         const dlEllipsisRef = ref(null)
         const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
 
-        const hasDefaultSlot = computed(() => !!ctx.slots.default)
+        const hasDefaultSlot = computed(() => !!slots.default)
         const splitIndex = computed(() => {
             if (!props.text.length) return null
             return props.split
