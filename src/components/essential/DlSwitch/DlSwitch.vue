@@ -79,7 +79,7 @@ export default defineComponent({
             type: String,
             default: '0'
         },
-        modelValue: { type: Any, required: true },
+        modelValue: { type: Any, required: false, default: null },
         labelProps: {
             type: Object as PropType<{ fontSize: number; color: string }>,
             default: () => ({

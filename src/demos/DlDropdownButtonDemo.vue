@@ -6,19 +6,17 @@
                 auto-close
                 outlined
                 split
-                label="Dropdown Button Outlined"
+                :label="outlinedLabel"
+                @handleSelectedItem="handleOutlinedSelect"
             >
                 <dl-list>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
+                    <dl-list-item
+                        v-for="val in ['Photos', 'Videos', 'Articles']"
+                        :key="val"
+                        clickable
+                        @click="handleOutlinedSelect(val)"
+                    >
+                        <dl-item-section> {{ val }} </dl-item-section>
                     </dl-list-item>
                 </dl-list>
             </dl-dropdown-button>
@@ -47,19 +45,17 @@
 
             <dl-dropdown-button
                 split
-                label="Dropdown Button Contained"
+                :label="containedLabel"
+                auto-close
             >
                 <dl-list>
-                    <dl-list-item clickable>
-                        <dl-item-section> Photos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Videos </dl-item-section>
-                    </dl-list-item>
-
-                    <dl-list-item clickable>
-                        <dl-item-section> Articles </dl-item-section>
+                    <dl-list-item
+                        v-for="val in ['Photos', 'Videos', 'Articles']"
+                        :key="val"
+                        clickable
+                        @click="handleContainedSelect(val)"
+                    >
+                        <dl-item-section> {{ val }} </dl-item-section>
                     </dl-list-item>
                 </dl-list>
             </dl-dropdown-button>
@@ -109,7 +105,7 @@
                 <dl-dropdown-button
                     auto-close
                     outlined
-                    label="Dropdown Button Outlined"
+                    :label="outlinedLabel"
                 >
                     <dl-list>
                         <dl-list-item clickable>
@@ -149,7 +145,7 @@
 
                 <dl-dropdown-button
                     auto-close
-                    label="Dropdown Button Contained"
+                    :label="containedLabel"
                     max-height="210px"
                 >
                     <dl-list>
@@ -290,6 +286,7 @@
                     :label="arrowNavigationLabel"
                     main-button-style="width: 150px;"
                     :overflow="true"
+                    disabled
                     :no-wrap="true"
                     tooltip="Tooltip message"
                     :arrow-nav-items="listItems"
@@ -339,6 +336,8 @@ export default defineComponent({
         const name = ref('Dropdown Button Controlled')
         const showing = ref(false)
         const arrowNavigationLabel = ref('Arrow Navigation Label')
+        const outlinedLabel = ref('Outlined Label')
+        const containedLabel = ref('Contained Label')
 
         const listItems = ref([
             'New tab',
@@ -354,6 +353,12 @@ export default defineComponent({
             arrowNavigationLabel.value = value
             showing.value = false
         }
+        const handleOutlinedSelect = (value: string) =>
+            (outlinedLabel.value = value)
+
+        const handleContainedSelect = (value: string) =>
+            (containedLabel.value = value)
+
         const onClose = (newName: string) => {
             name.value = newName
             showing.value = false
@@ -378,8 +383,12 @@ export default defineComponent({
             showing,
             setHighlightedIndex,
             handleSelectedItem,
+            handleOutlinedSelect,
+            handleContainedSelect,
             highlightedIndex,
-            arrowNavigationLabel
+            arrowNavigationLabel,
+            outlinedLabel,
+            containedLabel
         }
     }
 })
