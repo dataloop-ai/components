@@ -18,6 +18,6 @@ export default defineComponent({
     width: 100%;
     align-items: flex-start;
     justify-content: flex-end;
-    gap: 15px;
+    gap: 16px;
 }
 </style>
