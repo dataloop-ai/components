@@ -110,7 +110,7 @@ import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
 import { updateKey } from '../../../../../utils/update-key'
-import { rgba2hex, hexToRgbA, revertRGBAOpacity } from '../../../../../utils'
+import { hexToRgbA } from '../../../../../utils'
 import {
     Chart as ChartJS,
     Title,
@@ -121,12 +121,20 @@ import {
     LinearScale,
     PointElement,
     LineElement,
+    DatasetController,
     BarControllerDatasetOptions
 } from 'chart.js'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { Props } from '../../../../basic/DlEmptyState/types'
-import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
-import { unionBy, orderBy, merge, isEqual } from 'lodash'
+import type {
+    Chart,
+    ChartMeta,
+    ChartDataset,
+    ActiveElement,
+    ChartData
+} from 'chart.js'
+import { unionBy, orderBy, merge, isEqual, cloneDeep } from 'lodash'
+import { updateKeys } from '../../../../../utils/update-key'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import { getMaxDatasetValue } from '../../utils'
 
@@ -184,14 +192,14 @@ export default defineComponent({
             }
         }
 
-        const chart = computed(() => {
-            return columnChart.value?.chart?.value || {}
-        })
-
         const replaceColor = (key: keyof typeof variables) =>
             variables[key] || key
 
         const columnChart = ref(null)
+
+        const chart = computed(() => {
+            return columnChart.value?.chart?.value || {}
+        })
 
         const brush = reactive({
             value: {
@@ -265,6 +273,46 @@ export default defineComponent({
             )
         )
 
+        const getChartBackup = () => {
+            if (!chart.value) {
+                return {
+                    data: {},
+                    options: {}
+                }
+            }
+            const datasets: DatasetController<'bar'> = updateKeys(
+                props.data.datasets,
+                [
+                    'backgroundColor',
+                    'pointBackgroundColor',
+                    'pointBorderColor',
+                    'borderColor',
+                    'hoverBorderColor',
+                    'hoverBackgroundColor',
+                    'pointHoverBackgroundColor',
+                    'pointHoverBorderColor'
+                ],
+                replaceColor
+            ).map((item: BarControllerDatasetOptions) => {
+                return {
+                    ...item,
+                    backgroundColor:
+                        item.backgroundColor ||
+                        hexToRgbA(item.backgroundColor as string, 0.2)
+                }
+            })
+
+            const chartProps = cloneDeep({
+                options: props.options,
+                data: {
+                    ...props.data,
+                    datasets
+                }
+            })
+
+            return chartProps
+        }
+
         const onChartLeave = () => {
             if (chartHoverDataset.value) {
                 const filteredItems = chart.value.data.datasets
@@ -277,11 +325,16 @@ export default defineComponent({
                             dataset.label !== chartHoverDataset.value.label
                     )
 
+                const backup = getChartBackup()
+
                 for (const dataset of filteredItems) {
-                    chart.value.data.datasets[dataset.index].backgroundColor =
-                        rgba2hex(revertRGBAOpacity(dataset.backgroundColor))
+                    chart.value.data.datasets[dataset.index].backgroundColor = (
+                        backup.data as ChartData<'line'>
+                    ).datasets[dataset.index].backgroundColor
                 }
+
                 chart.value.update()
+
                 chartHoverDataset.value = null
             }
         }
@@ -316,13 +369,11 @@ export default defineComponent({
                                 dataset.label !== chartHoverDataset.value.label
                         )
 
+                    const backup = getChartBackup()
                     for (const dataset of filteredItems) {
-                        chartJS.data.datasets[dataset.index].backgroundColor =
-                            rgba2hex(
-                                revertRGBAOpacity(
-                                    dataset.backgroundColor as string
-                                )
-                            )
+                        chartJS.data.datasets[dataset.index].backgroundColor = (
+                            backup.data as ChartData<'bar'>
+                        ).datasets[dataset.index].backgroundColor
                     }
                     chartJS.update()
 
@@ -367,13 +418,12 @@ export default defineComponent({
                                 dataset.label !== chartHoverDataset.value.label
                         )
 
+                    const backup = getChartBackup()
+
                     for (const dataset of filteredItems) {
-                        chartJS.data.datasets[dataset.index].backgroundColor =
-                            rgba2hex(
-                                revertRGBAOpacity(
-                                    dataset.backgroundColor as string
-                                )
-                            )
+                        chartJS.data.datasets[dataset.index].backgroundColor = (
+                            backup.data as ChartData<'bar'>
+                        ).datasets[dataset.index].backgroundColor
                     }
 
                     chartHoverDataset.value = datasetItem
@@ -491,9 +541,12 @@ export default defineComponent({
                         dataset.index !== index
                 )
 
+            const backup = getChartBackup()
+
             for (const dataset of filteredItems) {
-                chart.value.data.datasets[dataset.index].backgroundColor =
-                    rgba2hex(revertRGBAOpacity(dataset.backgroundColor))
+                chart.value.data.datasets[dataset.index].backgroundColor = (
+                    backup.data as ChartData<'bar'>
+                ).datasets[dataset.index].backgroundColor
             }
             chart.value.update()
         }
