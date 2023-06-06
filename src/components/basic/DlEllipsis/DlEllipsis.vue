@@ -82,7 +82,7 @@ export default defineComponent({
         }
     },
     // TODO: fix type issue here
-    setup(props: any, { slots }) {
+    setup(props: any, { slots }: any) {
         const dlEllipsisRef = ref(null)
         const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
 
