@@ -93,7 +93,18 @@ export default defineComponent({
         }
     },
     emits: ['update:modelValue', 'hide', 'show'],
-    data() {
+    data(): {
+        uuid: string
+        show: boolean
+        draggableOptions: {
+            draggableX: number
+            draggableY: number
+            originalX: number
+            originalY: number
+            draggableCursor: string
+        }
+        visibleDragIcon: boolean
+    } {
         return {
             uuid: `dl-dialog-box-${v4()}`,
             show: this.modelValue,
@@ -123,7 +134,7 @@ export default defineComponent({
                 }px`
             }
         },
-        iconStyles() {
+        iconStyles(): Record<string, string> {
             return {
                 cursor: this.draggableOptions.draggableCursor,
                 visibility: this.visibleDragIcon ? 'visible' : 'hidden'
