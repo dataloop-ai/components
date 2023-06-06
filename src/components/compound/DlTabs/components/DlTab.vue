@@ -15,9 +15,10 @@
             <dl-icon
                 v-if="showTooltip"
                 :size="iconSize"
+                :inline="false"
                 icon="icon-dl-info"
                 class="info-icon"
-                color="dl-color-darker"
+                color="dl-color-lighter"
             />
             <dl-tooltip v-if="showTooltip === true">
                 {{ tooltip }}
@@ -57,8 +58,8 @@ export default defineComponent({
     },
     computed: {
         iconSize(): string {
-            const fontSize = Number(this.fontSize.replace('px', ''))
-            return `${fontSize - 2 < 0 ? 0 : fontSize - 2}px`
+            const fontSize = parseInt(this.fontSize)
+            return `${fontSize - 2 < 0 ? 0 : fontSize - 6}px`
         },
         cssFontSize(): Record<string, string> {
             return {
