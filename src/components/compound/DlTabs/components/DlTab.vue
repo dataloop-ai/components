@@ -112,7 +112,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
     &--active {
         color: var(--dl-color-secondary);
         border-color: var(--dl-color-secondary) !important;
@@ -148,5 +147,8 @@ export default defineComponent({
     }
     cursor: pointer;
     flex-grow: 1;
+}
+.info-icon {
+    margin: 0px 5px;
 }
 </style>
