@@ -3,6 +3,10 @@
 import { isBoolean, isFinite, isNumber, isObject, isString } from 'lodash'
 
 const GeneratePureValue = (value: any) => {
+    if (value === '') {
+        return null
+    }
+
     if (typeof value === 'string') {
         if (value === 'true') {
             return true
@@ -40,32 +44,59 @@ export const parseSmartQuery = (query: string) => {
 
         let key: string
         let value: string | number | object
+        let pureValue:
+            | string
+            | number
+            | object
+            | boolean
+            | null
+            | (string | number | object | boolean)[]
 
         for (const term of andTerms) {
+            pureValue = null
+
             switch (true) {
                 case term.includes('>='):
                     [key, value] = term.split('>=').map((x) => x.trim())
-                    andQuery[key] = { $gte: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue) {
+                        andQuery[key] = { $gte: pureValue }
+                    }
                     break
                 case term.includes('<='):
                     [key, value] = term.split('<=').map((x) => x.trim())
-                    andQuery[key] = { $lte: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue) {
+                        andQuery[key] = { $lte: pureValue }
+                    }
                     break
                 case term.includes('>'):
                     [key, value] = term.split('>').map((x) => x.trim())
-                    andQuery[key] = { $gt: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue) {
+                        andQuery[key] = { $gt: pureValue }
+                    }
                     break
                 case term.includes('<'):
                     [key, value] = term.split('<').map((x) => x.trim())
-                    andQuery[key] = { $lt: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue) {
+                        andQuery[key] = { $lt: pureValue }
+                    }
                     break
                 case term.includes('!='):
                     [key, value] = term.split('!=').map((x) => x.trim())
-                    andQuery[key] = { $ne: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue) {
+                        andQuery[key] = { $ne: pureValue }
+                    }
                     break
                 case term.includes('='):
                     [key, value] = term.split('=').map((x) => x.trim())
-                    andQuery[key] = GeneratePureValue(value)
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue) {
+                        andQuery[key] = pureValue
+                    }
                     break
                 case term.includes('IN'):
                     [key, value] = term.split('IN').map((x) => x.trim())
@@ -78,14 +109,24 @@ export const parseSmartQuery = (query: string) => {
                             .map((x) => x.trim())[1]
                             .split(',')
                             .map((x) => GeneratePureValue(x.trim()))
-                        andQuery[key] = { $nin: GeneratePureValue(queryValue) }
+                            .filter((x) => x)
+
+                        pureValue = GeneratePureValue(queryValue)
+                        if (pureValue && Array.isArray(pureValue)) {
+                            andQuery[key] = { $nin: pureValue }
+                        }
                     } else {
                         queryValue = term
                             .split('IN')
                             .map((x) => x.trim())[1]
                             .split(',')
                             .map((x) => GeneratePureValue(x.trim()))
-                        andQuery[key] = { $in: GeneratePureValue(queryValue) }
+                            .filter((x) => x)
+
+                        pureValue = GeneratePureValue(queryValue)
+                        if (pureValue && Array.isArray(pureValue)) {
+                            andQuery[key] = { $in: pureValue }
+                        }
                     }
                     break
             }
