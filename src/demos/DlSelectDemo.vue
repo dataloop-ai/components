@@ -535,7 +535,7 @@ export default defineComponent({
         handleInput(e: Event) {
             return (e.target as HTMLInputElement).value
         },
-        log(e) {
+        log(e: any) {
             console.log(e)
         }
     }
