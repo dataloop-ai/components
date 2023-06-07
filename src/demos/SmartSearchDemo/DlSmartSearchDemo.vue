@@ -12,6 +12,12 @@
                 label="Strict"
             />
         </div>
+        <dl-input
+            v-model="textQuery"
+            style="width: 220px"
+            placeholder="Select option"
+            size="m"
+        />
         <div
             style="width: 100px"
             class="props"
@@ -35,14 +41,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlSmartSearch, DlCheckbox } from '../../components'
+import { DlSmartSearch, DlCheckbox, DlInput } from '../../components'
 import { Query } from '../../components/types'
+import { parseSmartQuery } from '../../utils'
 
 export default defineComponent({
     name: 'DlSmartSearchDemo',
     components: {
         DlSmartSearch,
-        DlCheckbox
+        DlCheckbox,
+        DlInput
     },
     data() {
         const schema: any = {
@@ -98,6 +106,7 @@ export default defineComponent({
             strictState: false,
             isLoading: false,
             queryObject: {},
+            textQuery: '',
             filters: {
                 saved: [
                     {
@@ -120,6 +129,11 @@ export default defineComponent({
                 recent: [],
                 suggested: []
             } as { [key: string]: Query[] }
+        }
+    },
+    watch: {
+        textQuery(query: string) {
+            this.queryObject = parseSmartQuery(query)
         }
     },
     methods: {
