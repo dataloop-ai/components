@@ -482,7 +482,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 60%;
+        font-size: 12px;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
