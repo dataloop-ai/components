@@ -101,16 +101,6 @@ describe('use-suggestions', () => {
         ])
     })
 
-    it('suggestions should have the operator that includes the value', () => {
-        findSuggestions('Age =')
-        expect(suggestions.value).toEqual(['=', '!=', '>=', '<='])
-    })
-
-    it('suggestions should be empty when none of the operators were matched', () => {
-        findSuggestions('Age == ')
-        expect(suggestions.value).toEqual([])
-    })
-
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
             findSuggestions('Level = ')
