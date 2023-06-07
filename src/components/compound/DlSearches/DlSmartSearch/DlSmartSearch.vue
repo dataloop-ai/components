@@ -230,7 +230,7 @@ import {
 } from './utils/utils'
 import { v4 } from 'uuid'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 
 export default defineComponent({
     components: {
@@ -376,9 +376,12 @@ export default defineComponent({
         }
 
         const modelRef: any = toRef(props, 'modelValue')
-
         watch(modelRef, (val: any) => {
             if (val) {
+                const currModel = parseSmartQuery(activeQuery.value.query)
+                if (isEqual(val, currModel)) {
+                    return
+                }
                 const stringQuery = stringifySmartQuery(val)
                 debouncedInputModel(stringQuery)
             }
