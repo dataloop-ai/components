@@ -102,6 +102,8 @@ export default defineComponent({
     --jse-background-color: var(--dl-color-tooltip-text);
     --jse-value-color-boolean: #ae6307;
     --jse-value-color-string: #337433;
+    --jse-panel-background: var(--dl-color-fill);
+    --jse-panel-border: var(--dl-color-separator);
     height: 100%;
     .jse-error {
         display: none !important;
