@@ -493,6 +493,12 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
     const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
     const suggestion: string[] = []
 
+    if (Array.isArray(dataType)) {
+        suggestion.push(
+            ...dataType.filter((type) => !knownDataTypes.includes(type))
+        )
+    }
+
     for (const type of types) {
         switch (type) {
             case 'boolean':
@@ -500,6 +506,14 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
                     suggestion.push('true', 'false')
                 }
                 break
+            case 'date':
+            case 'time':
+            case 'datetime':
+                suggestion.push(
+                    dateIntervalSuggestionString,
+                    dateStartSuggestionString,
+                    dateEndSuggestionString
+                )
             default:
                 // do nothing
                 break
