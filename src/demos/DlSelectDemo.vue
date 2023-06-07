@@ -64,19 +64,23 @@
                 {
                     label: 'Status 1',
                     value: 1,
-                    badgeColor: 'dl-color-disabled'
+                    badgeColor: 'var(--dl-color-disabled)'
                 },
                 {
                     label: 'Status 2',
                     value: 2,
-                    badgeColor: 'dl-color-secondary'
+                    badgeColor: 'var(--dl-color-secondary)'
                 },
                 {
                     label: 'Status 3',
                     value: 3,
-                    badgeColor: 'dl-color-positive'
+                    badgeColor: 'var(--dl-color-positive)'
                 },
-                { label: 'Status 4', value: 4, badgeColor: 'dl-color-warning' }
+                {
+                    label: 'Status 4',
+                    value: 4,
+                    badgeColor: 'var(--dl-color-warning)'
+                }
             ]"
             required
         >
@@ -125,7 +129,6 @@
             :options="searchOptions"
             size="m"
             multiselect
-            style="background-color: beige"
             placeholder="contributors"
             search
         />
@@ -179,34 +182,42 @@
                     subLabel: 'not so high',
                     label: 'High',
                     value: 'high',
-                    bgColor: 'dl-color-negative'
+                    labelColor: 'var(--dl-color-darker)',
+                    subLabelColor: 'var(--dl-color-lighter)'
                 },
                 {
                     subLabel: 'not so medium',
                     label: 'Medium',
                     value: 'medium',
-                    bgColor: 'dl-color-warning',
-                    textColor: 'dl-color-darker'
+                    labelColor: 'var(--dl-color-darker)',
+                    subLabelColor: 'var(--dl-color-lighter)'
                 },
                 {
                     subLabel: 'not so low',
                     label: 'Low',
                     value: 'low',
-                    bgColor: 'dl-color-positive',
-                    textColor: 'dl-color-darker'
+                    labelColor: 'var(--dl-color-darker)',
+                    subLabelColor: 'var(--dl-color-lighter)'
                 }
             ]"
         >
             <template #option="scope">
                 <div style="padding: 5px 0px">
-                    <div>{{ scope.opt.label }}</div>
-                    <div>{{ scope.opt.subLabel }}</div>
+                    <div :style="`color: ${scope.opt.labelColor}`">
+                        {{ scope.opt.label }}
+                    </div>
+                    <div
+                        :style="`color: ${scope.opt.subLabelColor}; font-size: 10px`"
+                    >
+                        {{ scope.opt.subLabel }}
+                    </div>
                 </div>
             </template>
         </dl-select>
         With tooltip
         <dl-select
             v-model="selectedOption"
+            title="With tooltip"
             :tooltip="'Test Me'"
             :options="[
                 {
@@ -523,6 +534,9 @@ export default defineComponent({
         },
         handleInput(e: Event) {
             return (e.target as HTMLInputElement).value
+        },
+        log(e) {
+            console.log(e)
         }
     }
 })
