@@ -79,10 +79,15 @@
                 <div class="x-axis">
                     <span
                         v-for="(label, index) in visibleLabels"
+                        ref="xAxis"
                         :key="index"
                         class="x-axis__element"
                         :style="`${
-                            !labelImages[0] ? 'transform: rotate(70deg);' : ''
+                            !labelImages[0]
+                                ? `transform: rotate(${
+                                    rotateXLabels ? '70' : '0'
+                                }deg);`
+                                : ''
                         }`"
                     >
                         <span class="x-axis__element--text">
@@ -227,6 +232,7 @@ export default defineComponent({
             max: props.matrix.length
         })
         const cellWidth = ref<number | null>(null)
+        const rotateXLabels = ref(true)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -251,7 +257,8 @@ export default defineComponent({
             getCellTextColor,
             cellWidth,
             tooltipState,
-            currentBrushState
+            currentBrushState,
+            rotateXLabels
         }
     },
     computed: {
@@ -309,6 +316,14 @@ export default defineComponent({
                 this.currentBrushState.max = value.length
                 this.resizeMatrix()
             }
+        },
+        currentBrushState() {
+            const longest = Math.max(
+                ...this.visibleLabels.map(
+                    (el: DlConfusionMatrixLabel) => el.title.length
+                )
+            )
+            this.rotateXLabels = longest * 12 > getCellWidth()
         }
     },
     mounted() {
@@ -424,7 +439,7 @@ export default defineComponent({
 .x-axis {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-top: 10px;
     min-height: 100px;
     max-height: 100px;
@@ -482,7 +497,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 60%;
+        font-size: 12px;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
