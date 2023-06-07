@@ -26,6 +26,7 @@
             <span v-show="!!tooltip.length">
                 <dl-icon
                     icon="icon-dl-info"
+                    :inline="false"
                     class="tooltip-icon"
                     size="12px"
                 />
@@ -82,6 +83,9 @@
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
                 >
+                <dl-tooltip v-if="disabled">
+                    {{ disabledTooltip }}
+                </dl-tooltip>
                 <div
                     v-if="hasSelectedSlot"
                     style="width: 100%"
@@ -129,6 +133,7 @@
                 >
                     <dl-icon
                         :icon="dropdownIcon"
+                        :color="chevronIconColor"
                         class="expand-icon"
                         :inline="false"
                         :size="withoutBorders ? '12px' : '16px'"
@@ -391,7 +396,8 @@ export default defineComponent({
         withoutDropdownIconPadding: { type: Boolean, default: false },
         clearButtonTooltip: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
-        preserveSearch: { type: Boolean, default: false }
+        preserveSearch: { type: Boolean, default: false },
+        disabledTooltip: { type: String, default: 'Disabled' }
     },
     emits: [
         'search-focus',
@@ -613,7 +619,8 @@ export default defineComponent({
                 '--dl-select-width': this.width,
                 '--dl-select-expand-icon-width': this.withoutDropdownIconPadding
                     ? '16px'
-                    : '28px'
+                    : '28px',
+                '--dl-menu-scrollbar-width': '10px'
             }
         },
         asteriskClasses(): string[] {
@@ -637,6 +644,9 @@ export default defineComponent({
                 return !!this.$scopedSlots.prepend && !this.isSmall
             }
             return !!this.$slots.prepend && !this.isSmall
+        },
+        chevronIconColor() {
+            return `${this.disabled ? 'dl-color-disabled' : null}`
         }
     },
     watch: {
