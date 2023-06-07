@@ -150,6 +150,14 @@ export const useSuggestions = (
                 continue
             }
 
+            if (operator && (!value || value === '')) {
+                const valueSuggestion = getValueSuggestions(dataType, operator)
+                if (valueSuggestion) {
+                    localSuggestions = valueSuggestion
+                    continue
+                }
+            }
+
             const ops: string[] = Array.isArray(dataType)
                 ? getGenericOperators()
                 : getOperatorByDataType(dataType)
@@ -479,4 +487,24 @@ export const removeBrackets = (str: string) => {
 
 const removeQuotes = (str: string) => {
     return str.replaceAll('"', '').replaceAll("'", '')
+}
+
+const getValueSuggestions = (dataType: string | string[], operator: string) => {
+    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+    const suggestion: string[] = []
+
+    for (const type of types) {
+        switch (type) {
+            case 'boolean':
+                if (operator === '=' || operator === '!=') {
+                    suggestion.push('true', 'false')
+                }
+                break
+            default:
+                // do nothing
+                break
+        }
+    }
+
+    return suggestion
 }
