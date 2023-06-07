@@ -59,42 +59,42 @@ export const parseSmartQuery = (query: string) => {
                 case term.includes('>='):
                     [key, value] = term.split('>=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue) {
+                    if (pureValue !== null) {
                         andQuery[key] = { $gte: pureValue }
                     }
                     break
                 case term.includes('<='):
                     [key, value] = term.split('<=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue) {
+                    if (pureValue !== null) {
                         andQuery[key] = { $lte: pureValue }
                     }
                     break
                 case term.includes('>'):
                     [key, value] = term.split('>').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue) {
+                    if (pureValue !== null) {
                         andQuery[key] = { $gt: pureValue }
                     }
                     break
                 case term.includes('<'):
                     [key, value] = term.split('<').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue) {
+                    if (pureValue !== null) {
                         andQuery[key] = { $lt: pureValue }
                     }
                     break
                 case term.includes('!='):
                     [key, value] = term.split('!=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue) {
+                    if (pureValue !== null) {
                         andQuery[key] = { $ne: pureValue }
                     }
                     break
                 case term.includes('='):
                     [key, value] = term.split('=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue) {
+                    if (pureValue !== null) {
                         andQuery[key] = pureValue
                     }
                     break
@@ -112,7 +112,7 @@ export const parseSmartQuery = (query: string) => {
                             .filter((x) => x)
 
                         pureValue = GeneratePureValue(queryValue)
-                        if (pureValue && Array.isArray(pureValue)) {
+                        if (pureValue !== null && Array.isArray(pureValue)) {
                             andQuery[key] = { $nin: pureValue }
                         }
                     } else {
@@ -124,7 +124,7 @@ export const parseSmartQuery = (query: string) => {
                             .filter((x) => x)
 
                         pureValue = GeneratePureValue(queryValue)
-                        if (pureValue && Array.isArray(pureValue)) {
+                        if (pureValue !== null && Array.isArray(pureValue)) {
                             andQuery[key] = { $in: pureValue }
                         }
                     }
