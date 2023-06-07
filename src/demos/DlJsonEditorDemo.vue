@@ -26,7 +26,7 @@
                 />
             </template>
             <template #body>
-                <div style="height: 200px">
+                <div style="height: 350px">
                     <dl-json-editor v-model="dialogJsonModel" />
                 </div>
             </template>
