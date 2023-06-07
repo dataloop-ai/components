@@ -140,6 +140,13 @@ describe('use-suggestions', () => {
         })
     })
 
+    describe('when the field is of type "boolean"', () => {
+        it('suggestions should options of true or false', () => {
+            findSuggestions('completed = ')
+            expect(suggestions.value).toEqual(['true', 'false'])
+        })
+    })
+
     describe('when the field type does not have predefined values or requires custom behavior', () => {
         it('suggestions should be empty', () => {
             findSuggestions('Age = ')
