@@ -319,7 +319,9 @@ export default defineComponent({
         },
         currentBrushState() {
             const longest = Math.max(
-                ...this.visibleLabels.map((el: string) => el.length)
+                ...this.visibleLabels.map(
+                    (el: DlConfusionMatrixLabel) => el.title.length
+                )
             )
             this.rotateXLabels = longest * 12 > getCellWidth()
         }
