@@ -84,7 +84,11 @@ export default defineComponent({
             validator: optionsValidator
         },
         type: { type: String, default: 'radio', validator: typeValidator },
-        modelValue: { type: [Array, String, Number, Boolean], required: true }
+        modelValue: {
+            type: [Array, String, Number, Boolean],
+            required: false,
+            default: null
+        }
     },
     data() {
         const logger = loggerFactory('DlOptionGroup')
@@ -166,9 +170,11 @@ export default defineComponent({
     display: inline-flex;
     width: var(--option-group-width);
     max-width: var(--option-group-max-width);
+    gap: 20px;
 }
 .option-group-wrapper.column {
     flex-direction: column;
+    gap: 10px;
 }
 
 .option {
@@ -179,8 +185,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-body);
     user-select: none;
     color: var(--dl-color-darker);
-    margin: 10px 5px;
-    gap: 5px;
+    gap: 10px;
 }
 
 .disabled {

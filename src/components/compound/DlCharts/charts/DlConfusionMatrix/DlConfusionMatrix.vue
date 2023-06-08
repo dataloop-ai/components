@@ -75,9 +75,7 @@
                             class="matrix__cell"
                             :style="`background-color: ${getCellBackground(
                                 cell.value
-                            )}; color: var(--dl-color-text${
-                                cell.value < 0.5 ? '-darker' : ''
-                            }-buttons)`"
+                            )}; color: ${getCellTextColor(cell.value)}`"
                             @mouseenter="handleShowTooltip(cell, $event)"
                             @mouseleave="handleHideTooltip"
                             @mousedown="openLink(cell)"
@@ -154,14 +152,14 @@
         <div
             v-if="tooltipVisible"
             :style="tooltipStyles"
-            class="tooltip"
+            class="matrix-tooltip"
         >
-            <span class="tooltip__x">{{ tooltipState.xLabel }}</span>
-            <span class="tooltip__y">{{ tooltipState.yLabel }}</span>
+            <span class="matrix-tooltip__x">{{ tooltipState.xLabel }}</span>
+            <span class="matrix-tooltip__y">{{ tooltipState.yLabel }}</span>
             <span>
                 <span
                     v-if="tooltipState.value"
-                    class="tooltip__color"
+                    class="matrix-tooltip__color"
                     :style="`background-color: ${getCellBackground(
                         tooltipState.value
                     )}`"
@@ -260,9 +258,19 @@ export default defineComponent({
             const hex = object[props.color]
             return hexToRgbA(hex, value)
         }
+
+        const getCellTextColor = (value: number) => {
+            const isDark =
+                document.documentElement.getAttribute('data-theme') ===
+                'dark-mode'
+            if (isDark) return 'var(--dl-color-text-buttons)'
+            return `var(--dl-color-text${value < 0.5 ? '-darker' : ''}-buttons)`
+        }
+
         return {
             variables,
             getCellBackground,
+            getCellTextColor,
             cellWidth,
             tooltipState,
             currentBrushState
@@ -387,8 +395,8 @@ export default defineComponent({
                     value: ctx.normalized ? cell.value : cell.unnormalizedValue,
                     xLabel: cell.xLabel,
                     yLabel: cell.yLabel,
-                    x: e.pageX,
-                    y: e.pageY,
+                    x: e.x,
+                    y: e.y,
                     visible: true
                 }
             },
@@ -536,7 +544,7 @@ export default defineComponent({
     }
 }
 
-.tooltip {
+.matrix-tooltip {
     position: absolute;
     border: 1px solid var(--dl-color-separator);
     padding: 8px;
@@ -544,6 +552,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     background-color: var(--dl-color-shadow);
+    color: var(--dl-color-tooltip-background);
     border-radius: 3px;
     animation: fadeIn 0.4s;
 

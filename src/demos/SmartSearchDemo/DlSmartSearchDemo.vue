@@ -6,47 +6,107 @@
                 dense
                 label="Disabled"
             />
+            <dl-checkbox
+                v-model="strictState"
+                dense
+                label="Strict"
+            />
         </div>
+        <dl-input
+            v-model="textQuery"
+            style="width: 220px"
+            placeholder="Select option"
+            size="m"
+        />
         <div
             style="width: 100px"
             class="props"
         />
         <dl-smart-search
+            v-model="queryObject"
             :aliases="aliases"
             :schema="schema"
-            :color-schema="{
-                fields: 'blue',
-                operators: 'green',
-                keywords: 'bold'
-            }"
+            :color-schema="colorSchema"
             :filters="filters"
             :disabled="switchState"
             :is-loading="isLoading"
+            :strict="strictState"
             @remove-query="handleRemoveQuery"
             @save-query="handleSaveQuery"
             @search-query="handleSearchQuery"
         />
+        {{ queryObject }}
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlSmartSearch, DlCheckbox } from '../../components'
+import { DlSmartSearch, DlCheckbox, DlInput } from '../../components'
 import { Query } from '../../components/types'
-import { aliases, schema } from './schema'
+import { parseSmartQuery } from '../../utils'
 
 export default defineComponent({
     name: 'DlSmartSearchDemo',
     components: {
         DlSmartSearch,
-        DlCheckbox
+        DlCheckbox,
+        DlInput
     },
     data() {
+        const schema: any = {
+            id: ['string', 'number'],
+            filename: 'string',
+            name: 'string',
+            url: 'string',
+            type: 'string',
+            dataset: 'string',
+            datasetId: 'string',
+            dir: 'string',
+            thumbnail: 'string',
+            createdAt: 'date',
+            annotated: 'boolean',
+            hidden: 'boolean',
+            metadata: {
+                system: {
+                    width: 'number',
+                    height: 'number',
+                    '*': 'any'
+                },
+                test: 'any',
+                '*': 'any'
+            }
+        }
+
+        const colorSchema: any = {
+            fields: 'var(--dl-color-secondary)',
+            operators: 'var(--dl-color-positive)',
+            keywords: 'var(--dl-color-medium)'
+        }
+
+        const aliases: any = [
+            {
+                alias: 'ItemID',
+                key: 'id'
+            },
+            {
+                alias: 'ItemHeight',
+                key: 'metadata.system.height'
+            },
+            {
+                alias: 'ItemWidth',
+                key: 'metadata.system.width'
+            }
+        ]
+
         return {
             schema,
             aliases,
+            colorSchema,
             switchState: false,
+            strictState: false,
             isLoading: false,
+            queryObject: {},
+            textQuery: '',
             filters: {
                 saved: [
                     {
@@ -69,6 +129,11 @@ export default defineComponent({
                 recent: [],
                 suggested: []
             } as { [key: string]: Query[] }
+        }
+    },
+    watch: {
+        textQuery(query: string) {
+            this.queryObject = parseSmartQuery(query)
         }
     },
     methods: {

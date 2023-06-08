@@ -15,12 +15,6 @@
                 @mouseenter="emitMouseOverLegend(index)"
                 @mouseleave="emitMouseLeaveLegend(index)"
             >
-                <dl-tooltip
-                    self="top middle"
-                    anchor="top middle"
-                >
-                    {{ data.labels[index] }}
-                </dl-tooltip>
                 <div class="wrapper__legend__item__label">
                     <div>
                         <div
@@ -28,14 +22,12 @@
                             :style="{ backgroundColor: getColor(index, badge) }"
                         />
                     </div>
-                    <dl-typography>
-                        <div
-                            :class="legendLabelClass"
-                            :style="{ color: getColor(index, text) }"
-                        >
-                            {{ data.labels[index] }}
-                        </div>
-                    </dl-typography>
+                    <div
+                        :class="legendLabelClass"
+                        :style="{ color: getColor(index, text) }"
+                    >
+                        <dl-ellipsis :text="data.labels[index]" />
+                    </div>
                 </div>
                 <div
                     class="wrapper__legend__item__counter truncate"
@@ -50,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlTypography, DlTooltip } from '../../../../../essential'
+import DlEllipsis from '../../../../../basic/DlEllipsis/DlEllipsis.vue'
 import { TDoughnutChartData } from '../types/TDoughnutChartData'
 
 enum EBadgeText {
@@ -62,8 +54,7 @@ type TBadgeText = EBadgeText.badge | EBadgeText.text
 export default defineComponent({
     name: 'DlDoughnutChartLegend',
     components: {
-        DlTypography,
-        DlTooltip
+        DlEllipsis
     },
     props: {
         data: {

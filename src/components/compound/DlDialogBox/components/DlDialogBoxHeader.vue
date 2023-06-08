@@ -81,12 +81,11 @@ export default defineComponent({
 
 .subtitle {
     font-size: var(--dl-font-size-body);
-    margin: 3px 0 0 0;
     color: var(--dl-color-medium);
+    margin: 0;
 }
 
 .close-button {
-    margin-right: -6px;
-    margin-top: -6px;
+    margin-top: 5px;
 }
 </style>

@@ -1,5 +1,7 @@
 import { Ref, ref } from 'vue-demi'
 import { splitByQuotes } from '../utils/splitByQuotes'
+import { flatten } from 'flat'
+import { isObject } from 'lodash'
 
 export type Schema = {
     [key: string]:
@@ -50,6 +52,15 @@ const operatorToDataTypeMap: OperatorToDataTypeMap = {
     $nin: []
 }
 
+const knownDataTypes = [
+    'number',
+    'boolean',
+    'string',
+    'date',
+    'datetime',
+    'time'
+]
+
 type Suggestion = string
 
 type Expression = {
@@ -79,14 +90,37 @@ export const dateIntervalPattern = new RegExp(
     'gi'
 )
 
-export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
-    const initialSuggestions = aliases.map((alias) => alias.alias)
-    const suggestions: Ref<Suggestion[]> = ref(initialSuggestions)
+export const useSuggestions = (
+    schema: Schema,
+    aliases: Alias[],
+    options: { strict?: Ref<boolean> } = {}
+) => {
+    const { strict } = options
+    const initialSuggestions = Object.keys(schema)
+    const aliasedKeys = aliases.map((alias) => alias.key)
+    const aliasedSuggestions = initialSuggestions.map((suggestion) =>
+        aliasedKeys.includes(suggestion)
+            ? aliases.find((alias) => alias.key === suggestion)?.alias
+            : suggestion
+    )
+
+    for (const alias of aliases) {
+        if (aliasedSuggestions.includes(alias.alias)) {
+            continue
+        }
+        aliasedSuggestions.push(alias.alias)
+    }
+
+    const sortString = (a: string, b: string) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' })
+    const sortedSuggestions = aliasedSuggestions.sort(sortString)
+
+    const suggestions: Ref<Suggestion[]> = ref(sortedSuggestions)
     const error: Ref<string | null> = ref(null)
 
     const findSuggestions = (input: string) => {
         input = input.replace(/\s+/g, ' ').trimStart()
-        localSuggestions = initialSuggestions
+        localSuggestions = sortedSuggestions
 
         const words = splitByQuotes(input, space)
         const expressions = mapWordsToExpressions(words)
@@ -110,12 +144,18 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
                 continue
             }
 
-            const alias = getAliasObjByAlias(aliases, matchedField)
-            if (!alias) continue
-            const dataType = getDataTypeByAliasKey(schema, alias.key)
+            const dataType = getDataType(schema, aliases, matchedField)
             if (!dataType) {
                 localSuggestions = []
                 continue
+            }
+
+            if (operator && (!value || value === '')) {
+                const valueSuggestion = getValueSuggestions(dataType, operator)
+                if (valueSuggestion) {
+                    localSuggestions = valueSuggestion
+                    continue
+                }
             }
 
             const ops: string[] = Array.isArray(dataType)
@@ -139,7 +179,9 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType
+                localSuggestions = dataType.filter(
+                    (type) => !knownDataTypes.includes(type)
+                )
 
                 if (!value) continue
 
@@ -176,11 +218,11 @@ export const useSuggestions = (schema: Schema, aliases: Alias[]) => {
             if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
                 continue
 
-            localSuggestions = initialSuggestions
+            localSuggestions = sortedSuggestions
         }
 
         error.value = input.length
-            ? getError(schema, aliases, expressions)
+            ? getError(schema, aliases, expressions, { strict })
             : null
 
         suggestions.value = localSuggestions
@@ -194,11 +236,38 @@ const errors = {
     INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`
 }
 
+const isInputAllowed = (input: string, allowedKeys: string[]): boolean => {
+    for (const key of allowedKeys) {
+        const keyParts = key.split('.')
+        const inputParts = input.split('.')
+
+        if (keyParts.length > inputParts.length) {
+            continue
+        }
+
+        let isMatch = true
+        for (let i = 0; i < keyParts.length; i++) {
+            if (keyParts[i] !== '*' && keyParts[i] !== inputParts[i]) {
+                isMatch = false
+                break
+            }
+        }
+
+        if (isMatch) {
+            return true
+        }
+    }
+
+    return false
+}
+
 const getError = (
     schema: Schema,
     aliases: Alias[],
-    expressions: Expression[]
+    expressions: Expression[],
+    options: { strict?: Ref<boolean> } = {}
 ): string | null => {
+    const { strict } = options
     const hasErrorInStructure = expressions
         .flatMap((exp) => Object.values(exp))
         .some((el, index, arr) => {
@@ -214,11 +283,29 @@ const getError = (
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
             if (acc === 'warning') return acc
-            const aliasObj = getAliasObjByAlias(aliases, field)
-            if (!aliasObj) return 'warning'
+            const key: string = getAliasObjByAlias(aliases, field)?.key ?? field
+
+            /**
+             * Handle nested keys to validate if the key exists in the schema or not.
+             */
+            const keys: string[] = []
+            for (const key of Object.keys(schema)) {
+                if (isObject(schema[key]) && !Array.isArray(schema[key])) {
+                    const flattened = flatten({ [key]: schema[key] })
+                    keys.push(...Object.keys(flattened))
+                } else {
+                    keys.push(key)
+                }
+            }
+
+            const isValid = isInputAllowed(key, keys)
+            if (!keys.includes(key) && !isValid) {
+                return strict.value ? errors.INVALID_EXPRESSION : 'warning'
+            }
+
             const valid = isValidByDataType(
                 validateBracketValues(value),
-                getDataTypeByAliasKey(schema, aliasObj!.key),
+                getDataType(schema, aliases, key),
                 operator
             )
 
@@ -236,8 +323,16 @@ const isValidByDataType = (
     dataType: string | string[],
     operator: string // TODO: use operator
 ): boolean => {
+    if (dataType === 'any') {
+        return true
+    }
+
     if (Array.isArray(dataType)) {
-        return !!getValueMatch(dataType, str)
+        let isOneOf = !!getValueMatch(dataType, str)
+        for (const type of dataType) {
+            isOneOf = isOneOf || isValidByDataType(str, type, operator)
+        }
+        return isOneOf
     }
 
     switch (dataType) {
@@ -283,6 +378,8 @@ const isValidString = (str: string) => {
 }
 
 const getOperatorByDataType = (dataType: string) => {
+    if (dataType === 'boolean') return ['$eq', '$neq']
+
     return Object.keys(operatorToDataTypeMap).filter((key) => {
         const value = operatorToDataTypeMap[key]
         return value.length === 0 || value.includes(dataType)
@@ -300,19 +397,29 @@ const mapWordsToExpression = (words: string[]): Expression => {
     }
 }
 
-const getDataTypeByAliasKey = (
+const getDataType = (
     schema: Schema,
+    aliases: Alias[],
     key: string
 ): string | string[] | null => {
-    const nestedKey = key.split('.')
+    const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
+
+    const nestedKey = aliasedKey.split('.')
 
     if (nestedKey.length === 1) {
         return (schema[nestedKey[0]] as string | string[]) ?? null
     }
 
     let value = schema[nestedKey[0]] as Schema
+    if (!value) return null
+
     for (let i = 1; i < nestedKey.length; i++) {
+        if (!value) return null
+
         const nextKey = nestedKey[i]
+        if (!value[nextKey] && value['*']) {
+            return 'any'
+        }
         value = (value[nextKey] as Schema) ?? null
     }
 
@@ -380,4 +487,38 @@ export const removeBrackets = (str: string) => {
 
 const removeQuotes = (str: string) => {
     return str.replaceAll('"', '').replaceAll("'", '')
+}
+
+const getValueSuggestions = (dataType: string | string[], operator: string) => {
+    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+    const suggestion: string[] = []
+
+    if (Array.isArray(dataType)) {
+        suggestion.push(
+            ...dataType.filter((type) => !knownDataTypes.includes(type))
+        )
+    }
+
+    for (const type of types) {
+        switch (type) {
+            case 'boolean':
+                if (operator === '=' || operator === '!=') {
+                    suggestion.push('true', 'false')
+                }
+                break
+            case 'date':
+            case 'time':
+            case 'datetime':
+                suggestion.push(
+                    dateIntervalSuggestionString,
+                    dateStartSuggestionString,
+                    dateEndSuggestionString
+                )
+            default:
+                // do nothing
+                break
+        }
+    }
+
+    return suggestion
 }
