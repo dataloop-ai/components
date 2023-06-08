@@ -1,4 +1,4 @@
-export type Props = {
+export type DlEmptyStateProps = {
     bgImage?: string
     bgSize?: string
     title?: string
@@ -17,4 +17,4 @@ export type Props = {
     align: 'center' | 'left'
 }
 
-export type EmptyStateSlots = ['cta', 'links']
+export type DlEmptyStateSlots = ['cta', 'links']
