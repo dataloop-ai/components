@@ -452,6 +452,9 @@ export default defineComponent({
     border-radius: 2px;
     overflow-y: auto;
     overflow-x: hidden;
+    &::-webkit-scrollbar {
+        width: var(--dl-menu-scrollbar-width, 5px);
+    }
     outline: 0;
     max-height: 65vh;
     z-index: var(--dl-z-index-menu);
