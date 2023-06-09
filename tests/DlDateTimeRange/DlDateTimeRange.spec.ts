@@ -270,6 +270,22 @@ describe('Date Time Range', () => {
         })
     })
 
+    it('should clear the selection on click Clear button', async () => {
+        const wrapper = mount(DlDateTimeRange, {
+            props: {
+                modelValue: {
+                    from: date1,
+                    to: date2
+                },
+                type: 'month'
+            }
+        })
+
+        wrapper.vm.clearDateInterval()
+        expect(wrapper.vm.dateInterval).toEqual(null)
+        expect(wrapper.vm.isInputDisabled).toEqual(false)
+    })
+
     afterAll(() => {
         vi.useRealTimers()
     })

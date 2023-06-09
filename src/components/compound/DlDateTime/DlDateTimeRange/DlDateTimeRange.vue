@@ -53,6 +53,14 @@
                         />
                     </div>
                 </div>
+                <dl-button
+                    class="dl-date-time-range--button"
+                    outlined
+                    size="s"
+                    @click="clearDateInterval"
+                >
+                    Clear
+                </dl-button>
             </dl-menu>
         </dl-date-input>
     </div>
@@ -67,6 +75,7 @@ import {
     MonthTypeOption,
     MONTH_SIDEBAR_OPTION
 } from './types'
+import { DlButton } from '../../../basic'
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
 import DlDatePicker from '../DlDatePicker/DlDatePicker.vue'
 import { CalendarDate } from '../DlDatePicker/models/CalendarDate'
@@ -78,6 +87,7 @@ import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
+        DlButton,
         DlCardSidebar,
         DlDatePicker,
         DlTimePicker,
@@ -459,6 +469,11 @@ export default defineComponent({
             }
 
             this.updateDateInterval(option.value)
+        },
+        clearDateInterval() {
+            this.updateDateInterval(null)
+            this.isInputDisabled = false
+            this.currentSidebarOption = MONTH_SIDEBAR_OPTION.custom
         }
     }
 })
@@ -473,10 +488,26 @@ export default defineComponent({
         z-index: 1;
         display: flex;
         border-radius: 2px;
+
+        ::v-deep .dl-date-picker {
+            padding: 0 16px;
+
+            &--calendar_from,
+            &--calendar_to {
+                padding: 16px 0;
+            }
+        }
     }
 
     &--card_content {
         width: var(--card-content-width);
+    }
+
+    &--button {
+        display: flex;
+        margin: 0 16px 16px 0;
+        margin-left: auto;
+        width: fit-content;
     }
 }
 </style>
