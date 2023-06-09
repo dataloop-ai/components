@@ -53,6 +53,16 @@
                         />
                     </div>
                 </div>
+                <dl-button
+                    size="s"
+                    outlined
+                    class="dl-date-time-range--button"
+                    @click="handleClearAction"
+                >
+                    <span style="text-transform: capitalize">
+                        Clear
+                    </span>
+                </dl-button>
             </dl-menu>
         </dl-date-input>
     </div>
@@ -75,6 +85,7 @@ import { DlMenu } from '../../../essential'
 import { defineComponent, PropType } from 'vue-demi'
 import { isInRange } from '../DlDatePicker/utils'
 import { v4 } from 'uuid'
+import { DlButton } from '../../../basic'
 
 export default defineComponent({
     components: {
@@ -82,7 +93,8 @@ export default defineComponent({
         DlDatePicker,
         DlTimePicker,
         DlDateInput,
-        DlMenu
+        DlMenu,
+        DlButton
     },
     model: {
         prop: 'modelValue',
@@ -459,6 +471,11 @@ export default defineComponent({
             }
 
             this.updateDateInterval(option.value)
+        },
+        handleClearAction() {
+            this.dateInterval = null;
+            this.currentSidebarOption = DAY_SIDEBAR_OPTION.custom
+            this.isInputDisabled = false;
         }
     }
 })
@@ -473,10 +490,28 @@ export default defineComponent({
         z-index: 1;
         display: flex;
         border-radius: 2px;
+
+        ::v-deep .dl-date-picker {
+            padding: 0 16px;
+
+            &--calendar_from,
+            &--calendar_to {
+                padding: 16px 0;
+            }
+        }
     }
 
     &--card_content {
         width: var(--card-content-width);
     }
+
+    &--button {
+        display: flex;
+        margin-left: auto;
+        width: fit-content;
+        margin-right: 16px;
+        margin-bottom: 16px;
+    }
+
 }
 </style>
