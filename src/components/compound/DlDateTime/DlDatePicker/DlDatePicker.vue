@@ -298,7 +298,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-date-picker {
     user-select: none;
-    padding: 0 30px;
+    padding: 0 16px;
 
     &--day_picker,
     &--month_picker {
@@ -310,7 +310,7 @@ export default defineComponent({
     &--calendar_from,
     &--calendar_to {
         width: 230px;
-        padding: 30px 0;
+        padding: 16px 0 16px 0;
     }
 }
 </style>

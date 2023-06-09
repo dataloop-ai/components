@@ -37,7 +37,19 @@
                         class="dl-date-time-range--card_content"
                         :style="cardContentStyles"
                     >
+                        <div
+                            :class="[
+                                'clear-button-container',
+                                dateInterval === null
+                                    ? 'disabled-clear-button-container'
+                                    : undefined
+                            ]"
+                        >
+                            <span @click="onClearDatePress">Clear
+                                {{ type == 'day' ? 'Date' : 'Month' }}</span>
+                        </div>
                         <dl-date-picker
+                            ref="date_picker_ref"
                             :model-value="dateInterval"
                             :type="typeState"
                             :available-range="availableRange"
@@ -405,6 +417,10 @@ export default defineComponent({
         }
     },
     methods: {
+        onClearDatePress() {
+            if (this.dateInterval == null) return null
+            this.updateDateInterval(null)
+        },
         handleTypeChange(value: 'day' | 'month') {
             this.isInputDisabled = false
             this.currentSidebarOption =
@@ -477,6 +493,20 @@ export default defineComponent({
 
     &--card_content {
         width: var(--card-content-width);
+
+        .clear-button-container {
+            color: var(--dl-color-secondary);
+            padding: 16px 19px 0px 16px;
+            display: flex;
+            justify-content: flex-end;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .disabled-clear-button-container {
+            color: var(--dl-color-disabled);
+            cursor: not-allowed;
+        }
     }
 }
 </style>
