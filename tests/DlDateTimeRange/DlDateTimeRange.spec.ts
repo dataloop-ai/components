@@ -6,6 +6,7 @@ import {
     DayTypeOption,
     MonthTypeOption
 } from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
+import { DAY_SIDEBAR_OPTION } from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
 
 const date1 = new Date(1990, 12, 1)
 const date2 = new Date(1990, 12, 2)
@@ -268,6 +269,29 @@ describe('Date Time Range', () => {
         await wrapper.setProps({
             mode: 'single'
         })
+    })
+
+    it('should clear the selection on click Clear button', async () => {
+        const wrapper = mount(DlDateTimeRange, {
+            props: {
+                modelValue: {
+                    from: date1,
+                    to: date2
+                },
+                type: 'month'
+            }
+        })
+
+        await wrapper.setProps({
+            type: 'day'
+        })
+
+        wrapper.vm.handleClearAction()
+        expect(wrapper.vm.dateInterval).toEqual(null)
+        expect(wrapper.vm.isInputDisabled).toEqual(false)
+        expect(wrapper.vm.currentSidebarOption).toEqual(
+            DAY_SIDEBAR_OPTION.custom
+        )
     })
 
     afterAll(() => {

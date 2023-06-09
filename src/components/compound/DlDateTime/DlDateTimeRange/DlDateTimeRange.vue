@@ -59,9 +59,7 @@
                     class="dl-date-time-range--button"
                     @click="handleClearAction"
                 >
-                    <span style="text-transform: capitalize">
-                        Clear
-                    </span>
+                    <span style="text-transform: capitalize"> Clear </span>
                 </dl-button>
             </dl-menu>
         </dl-date-input>
@@ -473,9 +471,10 @@ export default defineComponent({
             this.updateDateInterval(option.value)
         },
         handleClearAction() {
-            this.dateInterval = null;
             this.currentSidebarOption = DAY_SIDEBAR_OPTION.custom
-            this.isInputDisabled = false;
+            this.isInputDisabled = false
+
+            this.updateDateInterval(null)
         }
     }
 })
@@ -512,6 +511,5 @@ export default defineComponent({
         margin-right: 16px;
         margin-bottom: 16px;
     }
-
 }
 </style>
