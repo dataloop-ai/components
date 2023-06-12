@@ -151,7 +151,7 @@
                         name="body"
                     >
                         <DlTrTree
-                            v-show="row.isExpandedParent || !row.level"
+                            v-show="row.isExpandedParent || row.level === 1"
                             :key="getRowKey(row)"
                             :class="
                                 isRowSelected(getRowKey(row))
@@ -560,7 +560,10 @@ export default defineComponent({
             return props.noDataLabel
         })
 
-        const getTdStyles = (row, colIndex) => {
+        const getTdStyles = (
+            row: (typeof computedRows.value)[number],
+            colIndex: number
+        ) => {
             let styles = ''
             if (colIndex === 0) {
                 styles = 'max-width: 100px; box-sizing: border-box;'
@@ -622,8 +625,8 @@ export default defineComponent({
         })
 
         const updateExpandedRow = (
-            isExpanded,
-            name,
+            isExpanded: boolean,
+            name: string,
             rowsArr = tableRows.value
         ) => {
             (rowsArr as DlTableRow[]).some((o) => {
@@ -639,16 +642,21 @@ export default defineComponent({
             })
         }
 
-        const updateNestedRows = (row, isExpanded) => {
+        const updateNestedRows = (
+            row: (typeof computedRows.value)[number],
+            isExpanded: boolean
+        ) => {
             if ((row.children || []).length > 0) {
-                row.children.forEach((r) => {
-                    r.isExpandedParent = isExpanded
+                row.children.forEach(
+                    (r: (typeof computedRows.value)[number]) => {
+                        r.isExpandedParent = isExpanded
 
-                    if (!isExpanded) {
-                        r.expanded = isExpanded
-                        updateNestedRows(r, isExpanded)
+                        if (!isExpanded) {
+                            r.expanded = isExpanded
+                            updateNestedRows(r, isExpanded)
+                        }
                     }
-                })
+                )
             }
         }
 

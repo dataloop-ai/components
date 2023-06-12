@@ -1,6 +1,9 @@
 import { flatMapDeep } from 'lodash'
 
 const flatten = (item: Record<string, any>): Record<string, any>[] => {
+    if (!item.level) {
+        item.level = 1
+    }
     const leveledItems = (item.children || []).map((i: any) => {
         return {
             ...i,

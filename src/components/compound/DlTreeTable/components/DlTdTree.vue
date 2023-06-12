@@ -5,7 +5,6 @@
     >
         <div
             ref="tableTd"
-            :style="innerDivStyles"
             class="dl-table-cell-inner-div"
         >
             <slot name="icon" />
@@ -22,7 +21,6 @@ import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { getColor } from '../../../../utils'
 import { DlTooltip } from '../../../essential'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
-import { setTrSpacing } from '../utils/trSpacing'
 
 export default defineComponent({
     name: 'DlTdTree',

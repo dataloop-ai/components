@@ -297,8 +297,7 @@ const rows2 = [
         protein: 6,
         sodium: 337,
         calcium: '6%',
-        iron: '7%',
-        level: 2
+        iron: '7%'
     },
     {
         name: 'Ice cream sandwich',
@@ -310,6 +309,16 @@ const rows2 = [
         calcium: '8%',
         iron: '1%',
         children: [
+            {
+                name: 'Eclair3.0',
+                calories: 262,
+                fat: 16,
+                carbs: 23,
+                protein: 6,
+                sodium: 337,
+                calcium: '6%',
+                iron: '7%'
+            },
             {
                 name: 'Eclair3',
                 calories: 262,
@@ -390,8 +399,7 @@ const rows2 = [
                 calcium: '6%',
                 iron: '7%'
             }
-        ],
-        level: 2
+        ]
     },
     {
         name: 'Eclair9',
@@ -401,8 +409,7 @@ const rows2 = [
         protein: 6,
         sodium: 337,
         calcium: '6%',
-        iron: '7%',
-        level: 3
+        iron: '7%'
     }
 ]
 
