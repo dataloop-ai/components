@@ -76,29 +76,52 @@
                     />
                 </div>
             </div>
-            <DlTreeTable
-                :selected="selected"
-                :separator="separator"
-                :columns="tableColumns"
-                :bordered="bordered"
-                :draggable="draggable"
-                :dense="dense"
-                class="sticky-header"
-                :filter="filter"
-                :selection="selection"
-                :loading="loading"
-                :rows="tableRows"
-                :resizable="resizable"
-                row-key="name"
-                color="dl-color-secondary"
-                title="Table Title"
-                :virtual-scroll="vScroll"
-                style="height: 500px"
-                :rows-per-page-options="rowsPerPageOptions"
-                @row-click="log"
-                @th-click="log"
-                @update:selected="updateSeleted"
-            />
+            <div style="margin-top: 100px">
+                <DlTreeTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                />
+            </div>
+
+            <div style="margin-top: 100px">
+                <p>Infinite scrolling</p>
+                <DlTreeTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    virtual-scroll
+                    row-key="name"
+                    color="dl-color-secondary"
+                    style="height: 500px"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -410,7 +433,17 @@ const rows2 = [
         sodium: 337,
         calcium: '6%',
         iron: '7%'
-    }
+    },
+    ...times(100, (index) => ({
+        name: 'KitKat' + index,
+        calories: 518,
+        fat: 26.0,
+        carbs: 65,
+        protein: 7,
+        sodium: 54,
+        calcium: '12%',
+        iron: '6%'
+    }))
 ]
 
 type Rows = (typeof rows)[0]

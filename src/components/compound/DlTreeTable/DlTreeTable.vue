@@ -53,7 +53,210 @@
         </div>
         <!--  -->
 
-        <div class="dl-table__middle scroll">
+        <!-- Virtual scroll  -->
+        <DlVirtualScroll
+            v-if="hasVirtScroll"
+            ref="virtScrollRef"
+            type="__dltable"
+            :class="tableClass"
+            :style="tableStyle"
+            :table-colspan="computedColspan"
+            :scroll-target="virtualScrollTarget"
+            :items="computedRows"
+            v-bind="virtProps"
+            @virtual-scroll="onVScroll"
+        >
+            <template #before>
+                <thead>
+                    <slot
+                        v-if="!hideHeader"
+                        name="header"
+                        v-bind="getHeaderScope({ header: true })"
+                    >
+                        <DlTrTree>
+                            <th
+                                v-if="hasDraggableRows"
+                                class="dl-table--col-auto-with empty-col"
+                                :data-resizable="false"
+                            />
+                            <th
+                                v-if="singleSelection"
+                                class="dl-table--col-auto-with"
+                            />
+
+                            <th
+                                v-else-if="multipleSelection"
+                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                :data-resizable="false"
+                            >
+                                <slot
+                                    name="header-selection"
+                                    v-bind="getHeaderScope({})"
+                                >
+                                    <DlCheckbox
+                                        :color="color"
+                                        :model-value="headerSelectedValue"
+                                        :indeterminate-value="
+                                            selectionCheckboxIndeterminateVal
+                                        "
+                                        @update:model-value="
+                                            onMultipleSelectionSet
+                                        "
+                                    />
+                                </slot>
+                            </th>
+
+                            <slot
+                                v-for="col in computedCols"
+                                v-bind="getHeaderScope({ col })"
+                                :name="
+                                    hasSlotByName(`header-cell-${col.name}`)
+                                        ? `header-cell-${col.name}`
+                                        : 'header-cell'
+                                "
+                            >
+                                <DlTh
+                                    :key="col.name"
+                                    :props="getHeaderScope({ col })"
+                                >
+                                    {{ col.label }}
+                                </DlTh>
+                            </slot>
+                        </DlTrTree>
+
+                        <tr
+                            v-if="loading && !hasLoadingSlot"
+                            class="dl-table__progress"
+                        >
+                            <th
+                                :colspan="computedColspan"
+                                class="relative-position"
+                            >
+                                <dl-progress-bar
+                                    indeterminate
+                                    :color="color"
+                                />
+                            </th>
+                        </tr>
+                    </slot>
+                </thead>
+            </template>
+            <template #default="props">
+                <DlTr
+                    v-show="
+                        props.item.isExpandedParent || props.item.level === 1
+                    "
+                    :key="getRowKey(props.item)"
+                    :class="
+                        isRowSelected(getRowKey(props.item))
+                            ? 'selected'
+                            : hasAnyAction
+                                ? ' cursor-pointer'
+                                : ''
+                    "
+                    :no-hover="noHover"
+                    @click="onTrClick($event, props.item, props.pageIndex)"
+                    @dblclick="
+                        onTrDblClick($event, props.item, props.pageIndex)
+                    "
+                    @contextmenu="
+                        onTrContextMenu($event, props.item, props.pageIndex)
+                    "
+                >
+                    <td
+                        v-if="hasDraggableRows"
+                        class="dl-table__drag-icon"
+                    >
+                        <dl-icon
+                            class="draggable-icon"
+                            icon="icon-dl-drag"
+                            size="12px"
+                        />
+                    </td>
+                    <td
+                        v-if="hasSelectionMode"
+                        class="dl-table--col-auto-with"
+                    >
+                        <slot
+                            name="body-selection"
+                            v-bind="
+                                getBodySelectionScope({
+                                    key: getRowKey(props.item),
+                                    row: props.item,
+                                    pageIndex: props.pageIndex
+                                })
+                            "
+                        >
+                            <DlCheckbox
+                                :color="color"
+                                :model-value="
+                                    isRowSelected(getRowKey(props.item))
+                                "
+                                @update:model-value="
+                                    (adding, evt) =>
+                                        updateSelection(
+                                            [getRowKey(props.item)],
+                                            [props.item],
+                                            adding,
+                                            evt
+                                        )
+                                "
+                            />
+                        </slot>
+                    </td>
+                    <slot
+                        v-for="(col, colIndex) in computedCols"
+                        v-bind="
+                            getBodyCellScope({
+                                key: getRowKey(props.item),
+                                row: props.item,
+                                pageIndex: props.pageIndex,
+                                col
+                            })
+                        "
+                        :name="
+                            hasSlotByName(`body-cell-${col.name}`)
+                                ? `body-cell-${col.name}`
+                                : 'body-cell'
+                        "
+                    >
+                        <DlTdTree
+                            :class="col.tdClass(props.item)"
+                            :style="
+                                col.tdStyle(props.item) +
+                                    getTdStyles(props.item, colIndex)
+                            "
+                            :no-hover="noHover"
+                        >
+                            <template #icon="{}">
+                                <DlIcon
+                                    v-if="
+                                        (props.item.children || []).length >
+                                            0 && colIndex === 0
+                                    "
+                                    :icon="`icon-dl-${
+                                        props.item.expanded ? 'down' : 'right'
+                                    }-chevron`"
+                                    @click="
+                                        updateExpandedRow(
+                                            !props.item.expanded,
+                                            getRowKey(props.item)
+                                        )
+                                    "
+                                />
+                            </template>
+                            {{ getCellValue(col, props.item) }}
+                        </DlTdTree>
+                    </slot>
+                </DlTr>
+            </template>
+        </DlVirtualScroll>
+        <!--  -->
+
+        <div
+            v-else
+            class="dl-table__middle scroll"
+        >
             <table
                 class="dl-table"
                 :class="additionalClasses"
@@ -334,6 +537,7 @@ import {
     commonVirtScrollProps,
     ScrollDetails
 } from '../../shared/DlVirtualScroll/useVirtualScroll'
+import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
 import {
     useTableFilter,
     useTableFilterProps
@@ -375,7 +579,8 @@ export default defineComponent({
         DlIcon,
         DlCheckbox,
         DlTrTree,
-        DlTdTree
+        DlTdTree,
+        DlVirtualScroll
     },
     props: {
         columns: { type: Array, default: () => [] as Record<string, any>[] },
@@ -635,7 +840,6 @@ export default defineComponent({
                     updateNestedRows(o, isExpanded)
                 } else {
                     if ((o.children || []).length > 0) {
-                        console.log('eb')
                         updateExpandedRow(isExpanded, name, o.children)
                     }
                 }
@@ -667,8 +871,6 @@ export default defineComponent({
         const computedRows = computed(() => {
             let rows = filteredSortedRows.value
 
-            console.log(rows)
-
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
@@ -682,8 +884,6 @@ export default defineComponent({
             }
 
             rows = flatTreeData(rows)
-
-            console.log(rows)
 
             return rows
         })
