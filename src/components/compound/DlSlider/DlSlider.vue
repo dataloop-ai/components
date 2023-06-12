@@ -245,6 +245,10 @@ export default defineComponent({
 <style scoped lang="scss">
 @import './sliderStyles.scss';
 
+.slider-bar-container {
+    padding: 0 6px;
+}
+
 .dl-button {
     padding: 0;
 }
