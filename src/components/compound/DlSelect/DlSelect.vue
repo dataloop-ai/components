@@ -49,6 +49,8 @@
             class="select-wrapper"
             tabindex="0"
             :style="placeholderStyles"
+            @blur="onSelectBlur"
+            @keydown="onKeyDownPress"
         >
             <div
                 ref="select"
@@ -245,7 +247,6 @@
                             </template>
                         </dl-select-option>
                     </dl-virtual-scroll>
-
                     <!-- Else normal list -->
                     <dl-select-option
                         v-for="(option, optionIndex) in options"
@@ -433,8 +434,26 @@ export default defineComponent({
                 (option: string | Record<string, string | number> | number) =>
                     isEqual(option as any, value)
             )
-
-            handleModelValueUpdate(value)
+            let newValue = value
+            if (props.multiselect) {
+                if (Array.isArray(props.modelValue)) {
+                    newValue = props.modelValue.includes(value.value || value)
+                        ? props.modelValue.filter(
+                              (v) => v !== (value.value || value)
+                          )
+                        : [...props.modelValue, value.value || value]
+                }
+            } else if (
+                props.emitValue &&
+                !(
+                    typeof value === 'string' ||
+                    typeof value === 'number' ||
+                    typeof value === 'boolean'
+                )
+            ) {
+                newValue = value.value
+            }
+            handleModelValueUpdate(newValue)
         }
 
         return {
@@ -659,6 +678,11 @@ export default defineComponent({
                     })
                 }
             }
+            if (newVal == true) {
+                document.body.style.overflow = 'hidden'
+            } else {
+                document.body.style.overflow = 'auto'
+            }
         },
         modelValue() {
             this.setSelectedIndex()
@@ -668,6 +692,34 @@ export default defineComponent({
         this.setSelectedIndex()
     },
     methods: {
+        onSelectBlur() {
+            setTimeout(() => {
+                if (this.isExpanded && !this.search) {
+                    this.isExpanded = false
+                }
+            }, 100)
+        },
+        onKeyDownPress(e: KeyboardEvent) {
+            const KEY_UP = 38
+            const KEY_DOWN = 40
+            if (this.disabled) return null
+            if (
+                (this.isExpanded && e.keyCode === KEY_UP) ||
+                e.key.toLowerCase() === 'arrowup'
+            ) {
+                if (this.highlightedIndex == 0) {
+                    this.isExpanded = false
+                }
+            } else if (
+                (!this.isExpanded && e.keyCode === KEY_DOWN) ||
+                e.key.toLowerCase() === 'arrowdown'
+            ) {
+                if (this.highlightedIndex == 0) {
+                    this.highlightedIndex = 0
+                }
+                this.handleMenuTrigger(true)
+            }
+        },
         handleDepthChange() {
             // todo: remove this hack
             setTimeout(() => {
@@ -798,7 +850,6 @@ export default defineComponent({
                 this.emitValue && !this.isPrimitiveValue(selectedOption)
                     ? (selectedOption as Record<string, any>)?.value
                     : selectedOption
-
             this.handleModelValueUpdate(valueToEmit)
         },
         handleSearchInput(e: Event): void {
@@ -866,10 +917,12 @@ export default defineComponent({
 <style scoped lang="scss">
 .root-container {
     width: var(--dl-select-width);
+
     &--s {
         display: flex;
         align-items: center;
     }
+
     &--placeholder {
         color: var(--placeholder-color);
     }
@@ -981,14 +1034,17 @@ export default defineComponent({
         &--error {
             border-color: var(--dl-color-negative);
         }
+
         &--without-border {
             border: none;
             width: calc(100% - var(--dl-select-expand-icon-width));
             padding: 0;
             padding-right: var(--dl-select-expand-icon-width);
+
             .adornment-container {
                 height: 100%;
             }
+
             height: auto;
         }
 
@@ -1013,6 +1069,7 @@ export default defineComponent({
             &:hover {
                 border-color: var(--dl-color-separator);
             }
+
             & input {
                 pointer-events: none;
             }
@@ -1025,6 +1082,7 @@ export default defineComponent({
             &:hover {
                 border-color: var(--dl-color-separator);
             }
+
             & input {
                 pointer-events: none;
             }
@@ -1051,6 +1109,7 @@ export default defineComponent({
         transition-duration: 0.28s, 0.28s;
         transition-timing-function: ease, ease;
         transition-delay: 0s, 0s;
+
         &.expanded {
             transform: rotate(180deg);
         }
@@ -1083,6 +1142,7 @@ export default defineComponent({
         &--pos-right {
             top: 0;
             right: 0;
+
             &-without_padding {
                 width: 14px;
             }
@@ -1111,6 +1171,7 @@ export default defineComponent({
             border: 0;
         }
     }
+
     .bottom-message-container {
         display: flex;
         justify-content: space-between;
