@@ -745,13 +745,19 @@ export default defineComponent({
 
         &--error {
             border-color: var(--dl-color-negative);
+
+            &:focus {
+                border-color: var(--dl-color-negative) !important;
+            }
+
             &:hover {
-                border-color: var(--dl-color-separator) !important;
+                border-color: var(--dl-color-negative) !important;
             }
         }
 
         &--warning {
             border-color: var(--dl-color-warning);
+
             &:hover {
                 border-color: var(--dl-color-separator) !important;
             }
@@ -775,9 +781,11 @@ export default defineComponent({
             color: var(--dl-color-disabled);
             cursor: not-allowed;
         }
+
         &:read-only {
             border-color: var(--dl-color-separator);
             cursor: text;
+
             &:hover {
                 border-color: var(--dl-color-separator) !important;
             }
@@ -812,6 +820,7 @@ export default defineComponent({
             top: 0;
             right: 0;
         }
+
         &--pos-right-out {
             top: 0;
             right: -30px;
