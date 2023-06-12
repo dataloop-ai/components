@@ -2,8 +2,11 @@
     <div
         v-if="!svg"
         :id="uuid"
-        :style="[inlineStyles, styles]"
+        :style="[inlineStyles, computedStyles]"
         @click="$emit('click', $event)"
+        @mousedown="$emit('mousedown', $event)"
+        @mouseup="$emit('mouseup', $event)"
+        @mousemove="$emit('mousemove', $event)"
     >
         <i
             class="dl-icon"
@@ -21,6 +24,9 @@
         :id="uuid"
         style="display: inline"
         @click="$emit('click', $event)"
+        @mousedown="$emit('mousedown', $event)"
+        @mouseup="$emit('mouseup', $event)"
+        @mousemove="$emit('mousemove', $event)"
     >
         <div ref="svgIcon">
             <div ref="childToReplace" />
@@ -29,9 +35,10 @@
 </template>
 
 <script lang="ts">
+import { isString } from 'lodash'
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
-import { getColor, loggerFactory } from '../../../utils'
+import { getColor, loggerFactory, stringStyleToRecord } from '../../../utils'
 
 export default defineComponent({
     name: 'DlIcon',
@@ -49,7 +56,7 @@ export default defineComponent({
             default: '12px'
         },
         styles: {
-            type: [Array, String, Object],
+            type: [String, Object],
             default: null
         },
         svg: {
@@ -65,7 +72,7 @@ export default defineComponent({
             default: null
         }
     },
-    emits: ['click'],
+    emits: ['click', 'mousemove', 'mouseup', 'mousedown'],
     data() {
         return {
             uuid: `dl-icon-${v4()}`,
@@ -74,11 +81,16 @@ export default defineComponent({
         }
     },
     computed: {
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
+        },
         cssIconVars(): Record<string, string> {
             return {
                 '--dl-icon-font-size': `${this.size}`,
                 '--dl-icon-color': this.color
-                    ? // needed for now until the swap of DLBTN in OA
+                    ? // todo: remove this. this is needed for now until the swap of DLBTN in OA
                       getColor(
                           this.color === 'secondary'
                               ? 'q-color-secondary'
@@ -88,8 +100,8 @@ export default defineComponent({
                     : 'inherit'
             }
         },
-        inlineStyles(): string {
-            return this.inline ? 'display: inline' : 'display: flex;'
+        inlineStyles(): Record<string, string> {
+            return { display: this.inline ? 'inline-flex' : 'flex' }
         },
         // needed to allow external source of icons that do not use class based
         externalIcon(): boolean {
@@ -132,7 +144,7 @@ export default defineComponent({
                 try {
                     svgElement.src = this.svgSource
                         ? `${this.svgSource}/${this.icon}.svg`
-                        : require(`@dataloop-ai/icons/assets/${this.icon}.svg`)
+                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${this.icon}.svg`
                 } catch (e) {
                     reject(e)
                 }

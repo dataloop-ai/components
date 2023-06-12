@@ -5,7 +5,7 @@ export interface DlConfusionMatrixCell {
     yLabel: string | DlConfusionMatrixLabel
     x: number
     y: number
-    link: string
+    link?: string
 }
 
 export interface DlConfusionMatrixLabel {

@@ -1,11 +1,193 @@
+<template>
+    <div>
+        <div class="options">
+            <div class="select-layout">
+                <select
+                    class="select-layout__input"
+                    @change="selectLayout"
+                >
+                    <option
+                        v-for="(layout, index) in layouts"
+                        :key="index"
+                        :value="index"
+                    >
+                        {{ layout.name }}
+                    </option>
+                </select>
+                <button
+                    class="select-layout__button"
+                    @mousedown="saveLayout"
+                >
+                    Save
+                </button>
+                <span class="select-layout__info">{{ hasBeenSaved }}</span>
+            </div>
+            <div class="widgets-per-row">
+                <span class="widgets-per-row__label"> Widgets per row: </span>
+                <input
+                    v-model="widgetsPerRow"
+                    class="widgets-per-row__input"
+                    type="number"
+                >
+            </div>
+        </div>
+        <dl-grid
+            v-model="layout"
+            :max-elements-per-row="widgetsPerRow"
+        >
+            <dl-widget>
+                <template #header>
+                    <span>Widget 1</span>
+                    <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="8"
+                    />
+                </template>
+                <template #menu>
+                    <div class="menu-icons">
+                        <dl-icon
+                            size="m"
+                            icon="icon-dl-settings"
+                        />
+                        <dl-icon
+                            size="m"
+                            icon="icon-dl-download"
+                        />
+                    </div>
+                </template>
+                <template #description>
+                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
+                        elit. Libero eligendi dolore, similique possimus
+                        veritatis in vitae quia praesentium fuga quibusdam
+                        autem. Doloremque tenetur repudiandae a cupiditate modi
+                        dicta eveniet veritatis?</span>
+                </template>
+            </dl-widget>
+
+            <dl-widget>
+                <template #header>
+                    <span>Widget 2</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+
+            <dl-widget>
+                <template #header>
+                    <span>Widget 3</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+
+            <dl-widget>
+                <template #header>
+                    <span>Widget 4</span>
+                    <span style="font-size: 12px; color: gray">Subtitle</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="8"
+                    />
+                </template>
+                <template #description>
+                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
+                        elit. Libero eligendi dolore, similique possimus
+                        veritatis in vitae quia praesentium fuga quibusdam
+                        autem. Doloremque tenetur repudiandae a cupiditate modi
+                        dicta eveniet veritatis?</span>
+                </template>
+            </dl-widget>
+
+            <dl-widget>
+                <template #header>
+                    <span>Widget 5</span>
+                </template>
+                <template #content>
+                    <dl-bar-chart
+                        :legend-props="legendProps"
+                        :data="data"
+                        :options="options"
+                        :items-in-view="6"
+                    />
+                </template>
+            </dl-widget>
+
+            <dl-widget
+                is-empty
+                :empty-state-props="{
+                    responsive: true,
+                    style: 'min-height: 350px;',
+                    bgSize: '130px',
+                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                    title: 'Lorem ipsum',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                    info: 'To learn more about this analytics, read our documentation.'
+                }"
+            >
+                <template #header>
+                    <span>Widget 5</span>
+                </template>
+                <template #links="">
+                    <div style="display: flex; gap: 5px; padding: 0 20px">
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-sdk-documentation"
+                            flat
+                            uppercase
+                            label="SDK"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-file"
+                            flat
+                            label="Documentation"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-youtube"
+                            flat
+                            label="Video"
+                        />
+                    </div>
+                </template>
+            </dl-widget>
+        </dl-grid>
+    </div>
+</template>
+
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 import {
     DlWidget,
-    DlGridRow,
     DlGrid,
     DlBarChart,
-    DlConfusionMatrix
+    DlGridLayout,
+    DlIcon,
+    DlButton
 } from '../components'
 
 const labelsFn = () => {
@@ -65,67 +247,86 @@ export default defineComponent({
         DlGrid,
         DlWidget,
         DlBarChart,
-        DlGridRow,
-        DlConfusionMatrix
+        DlIcon,
+        DlButton
     },
     setup() {
-        return { data, labels, matrix }
+        const layout = ref([
+            [1, 5, 2],
+            [3, 4, 6]
+        ])
+
+        const layouts = ref<DlGridLayout[]>([
+            {
+                name: 'Layout 1',
+                value: layout.value
+            }
+        ])
+
+        const widgetsPerRow = ref(3)
+        const hasBeenSaved = ref('')
+
+        const saveLayout = () => {
+            const newLayout = {
+                name: `Layout ${layouts.value.length + 1}`,
+                value: layout.value
+            }
+            layouts.value.push(newLayout)
+            hasBeenSaved.value = `${newLayout.name} has been saved.`
+            setTimeout(() => {
+                hasBeenSaved.value = ''
+            }, 2000)
+        }
+
+        const selectLayout = (e: InputEvent) => {
+            const index = parseInt((e.target as HTMLInputElement).value)
+            layout.value = layouts.value[index].value
+        }
+
+        return {
+            data,
+            layout,
+            layouts,
+            widgetsPerRow,
+            hasBeenSaved,
+            saveLayout,
+            selectLayout
+        }
     }
 })
 </script>
 
-<template>
-    <div>
-        <dl-grid gap="20px">
-            <dl-grid-row>
-                <dl-widget>
-                    <template #header>
-                        <span>Widget 7</span>
-                        <span style="font-size: 12px; color: gray">Subtitle</span>
-                    </template>
-                    <template #content>
-                        <dl-confusion-matrix
-                            :matrix="matrix"
-                            :labels="labels"
-                        />
-                    </template>
-                    <template #description>
-                        <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Libero eligee a cupiditate modi dicta eveniet
-                            veritatis?</span>
-                    </template>
-                </dl-widget>
-            </dl-grid-row>
-
-            <dl-grid-row gap="20px">
-                <dl-widget>
-                    <template #header>
-                        <span>Widget 2</span>
-                    </template>
-                    <template #content>
-                        <dl-bar-chart
-                            :legend-props="legendProps"
-                            :data="data"
-                            :options="options"
-                            :items-in-view="6"
-                        />
-                    </template>
-                </dl-widget>
-
-                <dl-widget>
-                    <template #header>
-                        <span>Widget 3</span>
-                    </template>
-                    <template #content>
-                        <dl-bar-chart
-                            :legend-props="legendProps"
-                            :data="data"
-                            :options="options"
-                            :items-in-view="6"
-                        />
-                    </template>
-                </dl-widget>
-            </dl-grid-row>
-        </dl-grid>
-    </div>
-</template>
+<style lang="scss" scoped>
+.options {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.widgets-per-row {
+    &__input {
+        padding: 5px;
+        border-radius: 5px;
+        width: 50px;
+    }
+}
+.select-layout {
+    &__input,
+    &__button {
+        padding: 5px;
+        border-radius: 5px;
+        margin: 0px 2px;
+    }
+    &__info {
+        font-size: 0.8em;
+        margin-left: 10px;
+    }
+}
+.menu-icons {
+    display: flex;
+    align-items: center;
+    & > * {
+        cursor: pointer;
+        margin: 0px 5px;
+    }
+}
+</style>

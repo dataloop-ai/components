@@ -15,7 +15,8 @@
                 :style="{
                     width: Number(width) ? `${width}px` : width,
                     height: Number(height) ? `${height}px` : height,
-                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`
+                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`,
+                    maxHeight: !fullscreen && !fullHeight ? '90vh' : ''
                 }"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
@@ -23,14 +24,16 @@
                     'dialog-wrapper--right': position === 'right',
                     'dialog-wrapper--left': position === 'left'
                 }"
+                @mouseenter="visibleDragIcon = true"
+                @mouseleave="visibleDragIcon = false"
             >
                 <dl-icon
                     v-if="draggable"
-                    :style="{ cursor: draggableOptions.draggableCursor }"
+                    :style="iconStyles"
                     class="dialog-wrapper--draggable-icon"
                     color="dl-color-medium"
                     icon="icon-dl-drag"
-                    size="15px"
+                    size="12px"
                     @mousedown="startDragElement"
                 />
                 <div
@@ -46,7 +49,24 @@
                         'content--fullheight': fullHeight
                     }"
                 >
-                    <slot name="body" />
+                    <slot
+                        v-if="!isEmpty"
+                        name="body"
+                    />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </div>
                 <div
                     v-if="hasFooter"
@@ -63,11 +83,13 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import DlIcon from '../../essential/DlIcon/DlIcon.vue'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { throttle } from 'lodash'
 
 export default defineComponent({
     name: 'DlDialogBox',
-    components: { DlIcon },
+    components: { DlIcon, DlEmptyState },
     model: {
         prop: 'modelValue',
         event: 'update:modelValue'
@@ -87,10 +109,26 @@ export default defineComponent({
         draggable: {
             type: Boolean,
             default: false
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () => {}
         }
     },
     emits: ['update:modelValue', 'hide', 'show'],
-    data() {
+    data(): {
+        uuid: string
+        show: boolean
+        draggableOptions: {
+            draggableX: number
+            draggableY: number
+            originalX: number
+            originalY: number
+            draggableCursor: string
+        }
+        visibleDragIcon: boolean
+    } {
         return {
             uuid: `dl-dialog-box-${v4()}`,
             show: this.modelValue,
@@ -100,7 +138,8 @@ export default defineComponent({
                 originalX: 0,
                 originalY: 0,
                 draggableCursor: 'pointer'
-            }
+            },
+            visibleDragIcon: false
         }
     },
     computed: {
@@ -111,7 +150,18 @@ export default defineComponent({
                     : 'rgba(0, 0, 0, 0.4)',
                 '--dl-dialog-separator': this.separators
                     ? '1px solid var(--dl-color-separator)'
-                    : 'none'
+                    : 'none',
+                '--dl-dialog-box-drag-icon-left': `${
+                    typeof this.width === 'string'
+                        ? parseInt(this.width)
+                        : this.width / 2
+                }px`
+            }
+        },
+        iconStyles(): Record<string, string> {
+            return {
+                cursor: this.draggableOptions.draggableCursor,
+                visibility: this.visibleDragIcon ? 'visible' : 'hidden'
             }
         },
         hasParent(): boolean {
@@ -226,7 +276,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     z-index: var(--dl-z-index-menu);
-    max-height: 90vh;
 
     &--fullscreen {
         margin: 0;
@@ -243,8 +292,8 @@ export default defineComponent({
 
     &--draggable-icon {
         position: absolute;
-        top: -1px;
-        left: 3px;
+        top: 2px;
+        left: var(--dl-dialog-box-drag-icon-left);
         cursor: pointer;
         transform: rotate(90deg);
     }
@@ -262,12 +311,13 @@ export default defineComponent({
 
 .header {
     display: flex;
-    padding: 16px;
+    padding: var(--dl-dialog-box-header-padding, 16px);
     border-bottom: var(--dl-dialog-separator);
+    height: var(--dl-dialog-box-header-height, 60px);
 }
 
 .content {
-    padding: 10px 16px 30px 16px;
+    padding: var(--dl-dialog-box-content-padding, 20px 16px 30px 16px);
     overflow: auto;
     height: 100%;
 
@@ -281,7 +331,8 @@ export default defineComponent({
 
 .footer {
     display: flex;
-    padding: 16px;
+    padding: var(--dl-dialog-box-footer-padding, 20px 16px);
+    height: var(--dl-dialog-box-footer-height, 35px);
     border-top: var(--dl-dialog-separator);
 }
 

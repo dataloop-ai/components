@@ -9,7 +9,7 @@
             v-show="!!title.length || !!tooltip.length"
             :class="{
                 'dl-select__title-container': true,
-                'title-container--s': isSmall
+                'dl-select__title-container--s': isSmall
             }"
         >
             <label
@@ -26,6 +26,7 @@
             <span v-show="!!tooltip.length">
                 <dl-icon
                     icon="icon-dl-info"
+                    :inline="false"
                     class="tooltip-icon"
                     size="12px"
                 />
@@ -82,7 +83,13 @@
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
                 >
-                <div v-if="hasSelectedSlot">
+                <dl-tooltip v-if="disabled">
+                    {{ disabledTooltip }}
+                </dl-tooltip>
+                <div
+                    v-if="hasSelectedSlot"
+                    style="width: 100%"
+                >
                     <slot
                         v-if="search ? !isExpanded : true"
                         :opt="selectedOption"
@@ -118,7 +125,7 @@
                     :class="[
                         ...adornmentClasses,
                         `adornment-container--pos-right${
-                            disableDropdownIconPadding
+                            withoutDropdownIconPadding
                                 ? ' adornment-container--pos-right-without_padding'
                                 : ''
                         }`
@@ -126,6 +133,7 @@
                 >
                     <dl-icon
                         :icon="dropdownIcon"
+                        :color="chevronIconColor"
                         class="expand-icon"
                         :inline="false"
                         :size="withoutBorders ? '12px' : '16px'"
@@ -144,6 +152,7 @@
                 style="border-radius: 0"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
+                :max-height="dropdownMaxHeight"
                 @show="onMenuOpen"
                 @hide="closeMenu"
                 @highlightedIndex="setHighlightedIndex"
@@ -151,7 +160,6 @@
             >
                 <dl-list
                     class="select-list"
-                    :style="dropdownCSSVars"
                     :padding="false"
                 >
                     <dl-list-item v-if="noOptions">
@@ -186,8 +194,62 @@
                             {{ computedAllItemsLabel }}
                         </template>
                     </dl-select-option>
+                    <!-- Virtual scroll -->
+                    <dl-virtual-scroll
+                        v-if="optionsCount > MAX_ITEMS_PER_LIST"
+                        v-slot="{ item, index }"
+                        :items="options"
+                        :virtual-scroll-item-size="28"
+                        :virtual-scroll-sticky-size-start="28"
+                        :virtual-scroll-sticky-size-end="20"
+                        separator
+                    >
+                        <dl-select-option
+                            :key="getKeyForOption(item)"
+                            clickable
+                            :multiselect="multiselect"
+                            :class="{
+                                selected:
+                                    item === selectedOption && highlightSelected
+                            }"
+                            :style="
+                                index === highlightedIndex
+                                    ? 'background-color: var(--dl-color-fill)'
+                                    : ''
+                            "
+                            :with-wave="withWave"
+                            :model-value="modelValue"
+                            :value="getOptionValue(item)"
+                            :highlight-selected="highlightSelected"
+                            :count="getOptionCount(item)"
+                            :children="getOptionChildren(item)"
+                            :capitalized="capitalizedOptions"
+                            @update:model-value="handleModelValueUpdate"
+                            @click="selectOption(item)"
+                            @selected="handleSelected"
+                            @deselected="handleDeselected"
+                        >
+                            <slot
+                                v-if="hasOptionSlot"
+                                :opt="item"
+                                name="option"
+                            />
+                            <template v-else>
+                                {{
+                                    capitalizedOptions
+                                        ? typeof getOptionLabel(item) ===
+                                            'string' &&
+                                            getOptionLabel(item).toLowerCase()
+                                        : getOptionLabel(item)
+                                }}
+                            </template>
+                        </dl-select-option>
+                    </dl-virtual-scroll>
+
+                    <!-- Else normal list -->
                     <dl-select-option
                         v-for="(option, optionIndex) in options"
+                        v-else
                         :key="getKeyForOption(option)"
                         clickable
                         :multiselect="multiselect"
@@ -259,7 +321,11 @@
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { DlListItem } from '../../basic'
 import { DlTooltip, DlList, DlIcon, DlMenu } from '../../essential'
-import { DlInfoErrorMessage, DlItemSection } from '../../shared'
+import {
+    DlInfoErrorMessage,
+    DlItemSection,
+    DlVirtualScroll
+} from '../../shared'
 import { defineComponent, isVue2, PropType, ref } from 'vue-demi'
 import {
     getLabel,
@@ -282,7 +348,8 @@ export default defineComponent({
         DlListItem,
         DlMenu,
         DlTooltip,
-        DlSelectOption
+        DlSelectOption,
+        DlVirtualScroll
     },
     model: {
         prop: 'modelValue',
@@ -326,11 +393,11 @@ export default defineComponent({
             validator: optionsValidator
         },
         capitalizedOptions: { type: Boolean, default: false },
-        disableClearBtn: { type: Boolean, default: false },
-        disableDropdownIconPadding: { type: Boolean, default: false },
+        withoutDropdownIconPadding: { type: Boolean, default: false },
         clearButtonTooltip: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
-        preserveSearch: { type: Boolean, default: false }
+        preserveSearch: { type: Boolean, default: false },
+        disabledTooltip: { type: String, default: 'Disabled' }
     },
     emits: [
         'search-focus',
@@ -350,6 +417,8 @@ export default defineComponent({
         const isExpanded = ref(false)
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
+        const isEmpty = ref(true)
+        const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
 
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
@@ -357,6 +426,7 @@ export default defineComponent({
         const handleModelValueUpdate = (val: any) => {
             emit('update:model-value', val)
             emit('change', val)
+            emit('selected', val)
         }
         const handleSelectedItem = (value: any) => {
             selectedIndex.value = props.options.findIndex(
@@ -368,6 +438,9 @@ export default defineComponent({
         }
 
         return {
+            uuid: `dl-select-${v4()}`,
+            MAX_ITEMS_PER_LIST,
+            isEmpty,
             isExpanded,
             highlightedIndex,
             selectedIndex,
@@ -376,13 +449,10 @@ export default defineComponent({
             handleModelValueUpdate
         }
     },
-    data() {
-        return {
-            uuid: `dl-select-${v4()}`,
-            isEmpty: true
-        }
-    },
     computed: {
+        optionsCount(): number {
+            return this.options?.length ?? 0
+        },
         identifierClass(): string {
             return `dl-select-${this.title}-${
                 this.placeholder ?? ''
@@ -513,7 +583,7 @@ export default defineComponent({
             classes.push(`dl_select__select--${this.size}`)
             classes.push('dl_select__select--append')
 
-            if (this.disableDropdownIconPadding) {
+            if (this.withoutDropdownIconPadding) {
                 classes.push('dl_select__select--append-without_padding')
             }
             if (this.selectedIndex !== -1) {
@@ -547,14 +617,10 @@ export default defineComponent({
         cssVars(): Record<string, string> {
             return {
                 '--dl-select-width': this.width,
-                '--dl-select-expand-icon-width': this.disableDropdownIconPadding
+                '--dl-select-expand-icon-width': this.withoutDropdownIconPadding
                     ? '16px'
-                    : '28px'
-            }
-        },
-        dropdownCSSVars(): Record<string, string> {
-            return {
-                '--dl-select-dropdown-max-height': this.dropdownMaxHeight
+                    : '28px',
+                '--dl-menu-scrollbar-width': '10px'
             }
         },
         asteriskClasses(): string[] {
@@ -578,6 +644,9 @@ export default defineComponent({
                 return !!this.$scopedSlots.prepend && !this.isSmall
             }
             return !!this.$slots.prepend && !this.isSmall
+        },
+        chevronIconColor() {
+            return `${this.disabled ? 'dl-color-disabled' : null}`
         }
     },
     watch: {
@@ -966,6 +1035,7 @@ export default defineComponent({
         background-color: var(--dl-color-fill);
     }
 
+    //todo: This doesnt work because of portal.
     .select-list {
         padding: 5px 0;
         max-height: var(--dl-select-dropdown-max-height);

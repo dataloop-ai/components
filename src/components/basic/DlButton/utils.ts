@@ -43,6 +43,7 @@ export interface DlButtonProps {
     outlined: boolean
     flat: boolean
     filled: boolean
+    shaded: boolean
     color: string
     textColor: string
 }
@@ -63,10 +64,14 @@ export const setTextColor = ({
     flat,
     color,
     filled,
+    shaded,
     textColor
 }: DlButtonProps): string => {
     if (disabled) {
         return getColor('', 'dl-color-disabled')
+    }
+    if (shaded && outlined) {
+        return getColor(textColor, 'dl-color-text-darker-buttons')
     }
     if (outlined) {
         return getColor(textColor, 'dl-color-secondary')
@@ -77,6 +82,9 @@ export const setTextColor = ({
         }
 
         return getColor(textColor, 'dl-color-secondary')
+    }
+    if (shaded) {
+        return getColor(textColor, 'dl-color-darker')
     }
     if (filled) {
         return getColor(textColor, 'dl-color-text-buttons')
@@ -89,10 +97,14 @@ export const setBgColor = ({
     disabled,
     flat,
     outlined,
+    shaded,
     color = ''
 }: Partial<DlButtonProps>) => {
     if (disabled || flat || outlined) {
         return 'var(--dl-color-transparent)'
+    }
+    if (shaded) {
+        return 'var(--dl-color-fill)'
     }
 
     return getColor(color, 'dl-color-secondary')
@@ -101,14 +113,19 @@ export const setBgColor = ({
 export const setBorder = ({
     disabled,
     flat,
-    color = ''
+    color = '',
+    shaded,
+    outlined
 }: Partial<DlButtonProps>) => {
     if (disabled) {
         return flat
             ? 'var(--dl-color-transparent)'
             : 'var(--dl-color-separator)'
     }
-    if (flat) {
+    if (shaded && outlined) {
+        return 'var(--dl-color-separator)'
+    }
+    if (flat || shaded) {
         return 'var(--dl-color-transparent)'
     }
 
@@ -166,4 +183,40 @@ export const setBgOnHover = ({
     }
 
     return 'var(--dl-color-panel-background)'
+}
+
+export const setBgOnPressed = ({
+    shaded,
+    outlined
+}: Partial<DlButtonProps>) => {
+    if (shaded && outlined) {
+        return 'var(--dl-color-text-buttons)'
+    }
+    if (shaded) {
+        return 'var(--dl-color-secondary)'
+    }
+    return 'var(--dl-button-bg)'
+}
+
+export const setTextOnPressed = ({
+    shaded,
+    outlined
+}: Partial<DlButtonProps>) => {
+    if (shaded && outlined) {
+        return 'var(--dl-color-secondary)'
+    }
+    if (shaded) {
+        return 'var(--dl-color-text-buttons)'
+    }
+    return 'var(--dl-button-text-color)'
+}
+
+export const setBorderOnPressed = ({
+    shaded,
+    outlined
+}: Partial<DlButtonProps>) => {
+    if (shaded && outlined) {
+        return 'var(--dl-color-secondary)'
+    }
+    return 'var(--dl-button-border)'
 }

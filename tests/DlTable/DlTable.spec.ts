@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlTable } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 const COLUMNS = [
     {
@@ -41,81 +41,71 @@ const COLUMNS = [
 ]
 
 describe('DlTable', () => {
-    it('should compute proper draggable values', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                draggable: 'rows'
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlTable, {
+                props: {
+                    columns: COLUMNS,
+                    draggable: 'rows',
+                    dense: true,
+                    separator: 'horizontal',
+                    titleClass: 'styled',
+                    loadingLabel: 'Loading...',
+                    loading: true
+                }
+            })
         })
 
-        expect(wrapper.vm.hasDraggableRows).toBe(true)
-        expect(wrapper.vm.hasDraggableColumns).toBe(false)
-
-        await wrapper.setProps({
-            draggable: 'both'
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
         })
 
-        expect(wrapper.vm.hasDraggableRows).toBe(true)
-        expect(wrapper.vm.hasDraggableColumns).toBe(true)
+        describe('Test computed props', () => {
+            it('should compute title classes', async () => {
+                expect(wrapper.vm.titleClasses).toBe('dl-table__title styled')
+
+                await wrapper.setProps({
+                    titleClass: undefined
+                })
+
+                expect(wrapper.vm.titleClasses.trim()).toBe('dl-table__title')
+            })
+            it('should compute container classes', () => {
+                expect(wrapper.vm.containerClass).toBe(
+                    'dl-table__container dl-table--horizontal-separator column no-wrap dl-table--no-wrap dl-table--dense dl-table--loading'
+                )
+            })
+            it('should compute proper draggable values', async () => {
+                expect(wrapper.vm.hasDraggableRows).toBe(true)
+                expect(wrapper.vm.hasDraggableColumns).toBe(false)
+
+                await wrapper.setProps({
+                    draggable: 'both'
+                })
+
+                expect(wrapper.vm.hasDraggableRows).toBe(true)
+                expect(wrapper.vm.hasDraggableColumns).toBe(true)
+            })
+            it('should compute the right bottom message', async () => {
+                const LOADING_LABEL = 'Loading...'
+                const NO_RESULTS_LABEL = 'No results.'
+
+                expect(wrapper.vm.noDataMessage).toBe(LOADING_LABEL)
+
+                await wrapper.setProps({
+                    loading: false,
+                    filter: 'a',
+                    noResultsLabel: NO_RESULTS_LABEL
+                })
+
+                expect(wrapper.vm.noDataMessage).toBe(NO_RESULTS_LABEL)
+            })
+        })
     })
-
-    it('should compute container classes', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                dense: true,
-                separator: 'horizontal'
-            }
-        })
-
-        expect(wrapper.vm.containerClass).toBe(
-            'dl-table__container dl-table--horizontal-separator column no-wrap dl-table--no-wrap dl-table--dense'
-        )
-    })
-
-    it('should compute title classes', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                titleClass: 'styled'
-            }
-        })
-
-        expect(wrapper.vm.titleClasses).toBe('dl-table__title styled')
-
-        await wrapper.setProps({
-            titleClass: undefined
-        })
-
-        expect(wrapper.vm.titleClasses.trim()).toBe('dl-table__title')
-    })
-
-    it('should compute the right bottom message', async () => {
-        const LOADING_LABEL = 'Loading...'
-        const NO_RESULTS_LABEL = 'No results.'
-
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                rows: [],
-                loadingLabel: LOADING_LABEL,
-                loading: true
-            }
-        })
-
-        expect(wrapper.vm.bottomMessage).toBe(LOADING_LABEL)
-
-        await wrapper.setProps({
-            loading: false,
-            filter: 'a',
-            noResultsLabel: NO_RESULTS_LABEL
-        })
-
-        expect(wrapper.vm.bottomMessage).toBe(NO_RESULTS_LABEL)
-    })
-
-    it('should emit virtual scroll event', async () => {
+    describe('When emit virtual scroll', () => {
+        let wrapper: any
         const SCROLL_DETAILS = {
             scrollStart: 0,
             scrollViewSize: 300,
@@ -124,34 +114,44 @@ describe('DlTable', () => {
             offsetEnd: 200
         }
 
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS
-            }
-        })
-
-        wrapper.vm.onVScroll(SCROLL_DETAILS)
-
-        expect(wrapper.emitted()['virtual-scroll'][0]).toBeTruthy()
-        expect((wrapper.emitted()['virtual-scroll'][0] as any[])[0]).toEqual(
-            SCROLL_DETAILS
-        )
-    })
-
-    it('should return to page 1 after filter', async () => {
-        const wrapper = mount(DlTable, {
-            props: {
-                columns: COLUMNS,
-                filter: 'y',
-                pagination: {
-                    page: 2
+        beforeAll(() => {
+            wrapper = mount(DlTable, {
+                props: {
+                    columns: COLUMNS
                 }
-            }
+            })
+
+            wrapper.vm.onVScroll(SCROLL_DETAILS)
         })
 
-        await wrapper.setProps({ filter: 'yo' })
-        await wrapper.vm.$nextTick()
+        it('should emitted virtual-scroll', () => {
+            expect(wrapper.emitted()['virtual-scroll'][0]).toBeTruthy()
+        })
+        it('should emitted virtual scroll with scroll details', () => {
+            expect(
+                (wrapper.emitted()['virtual-scroll'][0] as any[])[0]
+            ).toEqual(SCROLL_DETAILS)
+        })
+    })
+    describe('When return to page 1 after filter', () => {
+        let wrapper: any
 
-        expect(wrapper.vm.marginalsScope.pagination.page).toBe(1)
+        beforeAll(async () => {
+            wrapper = mount(DlTable, {
+                props: {
+                    columns: COLUMNS,
+                    filter: 'y',
+                    pagination: {
+                        page: 2
+                    }
+                }
+            })
+            await wrapper.setProps({ filter: 'yo' })
+            await wrapper.vm.$nextTick()
+        })
+
+        it('should have the right pagination page', () => {
+            expect(wrapper.vm.marginalsScope.pagination.page).toBe(1)
+        })
     })
 })

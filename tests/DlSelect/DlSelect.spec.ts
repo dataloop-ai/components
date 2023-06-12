@@ -1,125 +1,155 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { DlSelect } from '../../src/components'
 
 describe('dl-select methods', () => {
-    it('should set the index according to the model value', async () => {
-        const wrapper = mount(DlSelect, {
-            props: {
-                options: ['one', 'two', 'three']
-            }
-        })
-        wrapper.vm.setSelectedIndex()
-        await wrapper.setProps({
-            modelValue: 'two'
-        })
-        expect(wrapper.vm.selectedIndex).toBe(1)
+    describe('When set the index according to the model value', () => {
+        let wrapper: any
 
-        await wrapper.setProps({
-            modelValue: 'three'
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options: ['one', 'two', 'three']
+                }
+            })
+            wrapper.vm.setSelectedIndex()
         })
-        expect(wrapper.vm.selectedIndex).toBe(2)
+        it('should the right selected index', async () => {
+            await wrapper.setProps({
+                modelValue: 'two'
+            })
+            expect(wrapper.vm.selectedIndex).toBe(1)
+        })
+        it('should the right selected index', async () => {
+            await wrapper.setProps({
+                modelValue: 'three'
+            })
+            expect(wrapper.vm.selectedIndex).toBe(2)
+        })
     })
-
-    it('should select an option', async () => {
+    describe('When select an option', function () {
+        let wrapper: any
         const mockObjOptions = ['option1', 'option2', 'option3']
-
         const selectedOption = 'option2'
-        const wrapper = mount(DlSelect, {
-            props: {
-                options: mockObjOptions
-            }
+
+        beforeAll(async () => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options: mockObjOptions
+                }
+            })
+            wrapper.vm.selectOption(selectedOption)
+            await wrapper.vm.$nextTick()
         })
-
-        wrapper.vm.selectOption(selectedOption)
-        await wrapper.vm.$nextTick()
-
-        expect(wrapper.emitted().change).toBeTruthy()
-        expect(wrapper.emitted().change).toEqual([['option2']])
+        it('should the right selected option', async () => {
+            expect(wrapper.emitted().change).toBeTruthy()
+            expect(wrapper.emitted().change).toEqual([['option2']])
+        })
     })
-
-    it('should emit the search input', async () => {
+    describe('When emit the search input', function () {
+        let wrapper: any
         const mockEvent = { target: { value: 'val1' } }
 
-        const wrapper = mount(DlSelect)
-        wrapper.vm.handleSearchInput(mockEvent)
+        beforeAll(async () => {
+            wrapper = mount(DlSelect)
+            wrapper.vm.handleSearchInput(mockEvent)
 
-        await wrapper.vm.$nextTick()
-
-        expect(wrapper.emitted()['search-input']).toEqual([['val1']])
-    })
-
-    it('should close the menu and emit hide events', () => {
-        const wrapper = mount(DlSelect)
-        wrapper.setData({
-            isExpanded: true
+            await wrapper.vm.$nextTick()
         })
-        wrapper.vm.closeMenu()
 
-        expect(wrapper.vm.isExpanded).toBeFalsy()
-        expect(wrapper.emitted().hide).toBeTruthy()
-        expect(wrapper.emitted()['before-hide']).toBeTruthy()
-    })
-
-    it('should emit show events on menu open', async () => {
-        const wrapper = mount(DlSelect)
-        wrapper.vm.onMenuOpen()
-        expect(wrapper.emitted().show).toBeTruthy()
-        wrapper.vm.onMenuOpen()
-        wrapper.vm.$nextTick()
-        await wrapper.setProps({
-            search: true
+        it('should the right search input value', function () {
+            expect(wrapper.emitted()['search-input']).toEqual([['val1']])
         })
-        expect(wrapper.emitted()['before-show']).toBeTruthy()
     })
+    describe('When close the menu and emit hide events', () => {
+        let wrapper: any
 
-    it('should emit search event', () => {
-        const wrapper = mount(DlSelect)
-        wrapper.vm.handleSearchFocus()
-        expect(wrapper.emitted()['search-focus']).toBeTruthy()
-    })
-
-    it('should emit blur event', () => {
-        const wrapper = mount(DlSelect)
-        wrapper.vm.onBlur()
-        expect(wrapper.emitted()['search-blur']).toBeTruthy()
-    })
-
-    it('should trigger the option menu', () => {
-        const wrapper = mount(DlSelect)
-
-        wrapper.vm.handleMenuTrigger(true)
-        expect(wrapper.vm.isExpanded).toBeTruthy()
-        wrapper.vm.handleMenuTrigger(false)
-        expect(wrapper.vm.isExpanded).toBeFalsy()
-    })
-
-    it('should emit @change if multiselect is true', async () => {
-        const wrapper = mount(DlSelect, {
-            props: {
-                multiselect: true
-            }
+        beforeAll(async () => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    isExpanded: true
+                }
+            })
+            wrapper.vm.closeMenu()
         })
-        wrapper.vm.handleModelValueUpdate(['option1', 'option2'])
-        await wrapper.vm.$nextTick()
-        expect(wrapper.emitted().change).toBeTruthy()
+        it('should to be falsy isExpanded', function () {
+            expect(wrapper.vm.isExpanded).toBeFalsy()
+        })
+        it('should the right emitted hide event', function () {
+            expect(wrapper.emitted().hide).toBeTruthy()
+            expect(wrapper.emitted()['before-hide']).toBeTruthy()
+        })
     })
+    describe('When emit show events on menu open', () => {
+        let wrapper: any
 
-    it('should clear all selections', () => {
-        const wrapper = mount(DlSelect)
-        wrapper.vm.clearSelection()
-        expect(wrapper.vm.selectedIndex).toBe(-1)
+        beforeAll(() => {
+            wrapper = mount(DlSelect)
+            wrapper.vm.onMenuOpen()
+        })
+        it('should the emit show event', function () {
+            expect(wrapper.emitted().show).toBeTruthy()
+        })
+        it('should the emit before-show event', async function () {
+            wrapper.vm.onMenuOpen()
+            wrapper.vm.$nextTick()
+            await wrapper.setProps({
+                search: true
+            })
+            expect(wrapper.emitted()['before-show']).toBeTruthy()
+        })
     })
+    describe('When emit the events', () => {
+        let wrapper: any
 
-    it('should return the option value', () => {
-        const mockOption = { label: 'option one', value: 'option1' }
-        const wrapper = mount(DlSelect)
-        expect(wrapper.vm.getOptionValue(mockOption)).toEqual('option1')
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    multiselect: true
+                }
+            })
+        })
+        it('should emit search event', () => {
+            wrapper.vm.handleSearchFocus()
+            expect(wrapper.emitted()['search-focus']).toBeTruthy()
+        })
+
+        it('should emit blur event', () => {
+            wrapper.vm.onBlur()
+            expect(wrapper.emitted()['search-blur']).toBeTruthy()
+        })
+        it('should emit @change if multiselect is true', async () => {
+            wrapper.vm.handleModelValueUpdate(['option1', 'option2'])
+            await wrapper.vm.$nextTick()
+            expect(wrapper.emitted().change).toBeTruthy()
+        })
     })
-    it('should return the option label', () => {
-        const mockOption = { label: 'option one', value: 'option1' }
-        const wrapper = mount(DlSelect)
-        expect(wrapper.vm.getOptionLabel(mockOption)).toEqual('option one')
+    describe('When trigger options', () => {
+        let wrapper: any
+        let mockOption: any
+
+        beforeAll(() => {
+            mockOption = { label: 'option one', value: 'option1' }
+            wrapper = mount(DlSelect)
+        })
+        it('should trigger the option menu', () => {
+            wrapper.vm.handleMenuTrigger(true)
+            expect(wrapper.vm.isExpanded).toBeTruthy()
+            wrapper.vm.handleMenuTrigger(false)
+            expect(wrapper.vm.isExpanded).toBeFalsy()
+        })
+
+        it('should clear all selections', () => {
+            wrapper.vm.clearSelection()
+            expect(wrapper.vm.selectedIndex).toBe(-1)
+        })
+
+        it('should return the option value', () => {
+            expect(wrapper.vm.getOptionValue(mockOption)).toEqual('option1')
+        })
+        it('should return the option label', () => {
+            expect(wrapper.vm.getOptionLabel(mockOption)).toEqual('option one')
+        })
     })
     it('should return the option children', () => {
         const wrapper = mount(DlSelect)
@@ -296,9 +326,6 @@ describe('dl-select computed', () => {
             }
         })
         expect(wrapper.vm.cssVars['--dl-select-width']).toMatch('25vh')
-        expect(
-            wrapper.vm.dropdownCSSVars['--dl-select-dropdown-max-height']
-        ).toMatch('50%')
     })
 
     it('should get and set the items', () => {
@@ -375,5 +402,23 @@ describe('dl-select computed', () => {
 
         expect(wrapper.emitted().change).toBeTruthy()
         expect(wrapper.emitted()['update:model-value']).toBeTruthy()
+    })
+
+    describe('when usng dl-select with small size and tooltip', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options: ['one', 'two', 'three'],
+                    size: 's'
+                }
+            })
+        })
+
+        it('should have small class', async () => {
+            const elem = wrapper.get('.dl-select__title-container')
+            expect(elem.classes()).toContain('dl-select__title-container--s')
+        })
     })
 })

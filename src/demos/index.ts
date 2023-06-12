@@ -1,3 +1,6 @@
+import DlDemoPage from './DlDemoPage.vue'
+export { DlDemoPage }
+
 import AvatarDemo from './DlAvatarDemo.vue'
 import DlAlertDemo from './DlAlertDemo.vue'
 import DlProgressChartDemo from './DlProgressChartDemo.vue'
@@ -47,6 +50,7 @@ import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
+import DlEmptyStateDemo from './DlEmptyStateDemo.vue'
 import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
 import DlToggleButtonDemo from './DlToggleButtonDemo.vue'
 import DlKpiDemo from './DlKpiDemo.vue'
@@ -54,6 +58,11 @@ import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
 import DlTreeTableDemo from './DlTreeTableDemo.vue'
+import DlGridDemo from './DlGridDemo.vue'
+import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
+import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
+import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
+import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 
 export default {
     AvatarDemo,
@@ -106,10 +115,16 @@ export default {
     DlBarChartDemo,
     DlLineChartDemo,
     DlSpinner,
+    DlEmptyStateDemo,
+    DlEllipsisDemo,
     DlConfusionMatrix,
     DlToggleButtonDemo,
-    DlEllipsisDemo,
     DlSeparatorDemo,
     DlKpiDemo,
-    DlCardDemo
+    DlCardDemo,
+    DlGridDemo,
+    DlMarkupTableDemo,
+    DlVirtualScrollDemo,
+    DlJsonEditorDemo,
+    DlThumbnailGallery
 }

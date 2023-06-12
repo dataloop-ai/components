@@ -23,29 +23,27 @@
 
 <script lang="ts">
 import { DlIcon, DlInput, DlToggleButton } from '../components'
+import { DlToggleButtonOption } from '../components/types'
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlToggleButtonDemo',
     components: { DlIcon, DlInput, DlToggleButton },
-    setup() {
-        return {
-            DlToggleButton
-        }
-    },
     data: () => ({
         options: [
             { label: 'Button 1', value: 1 },
             { label: 'Button 2', value: 2 },
             { label: 'Button 3', value: 3 }
-        ],
+        ] as DlToggleButtonOption[],
         selectedValue: 1,
         width: '100%'
     }),
     computed: {
-        label() {
-            return this.options.find((o) => o.value === this.selectedValue)
-                ?.label
+        label(): string {
+            const option = this.options.find(
+                (o: DlToggleButtonOption) => o.value === this.selectedValue
+            )
+            return option?.label ?? ''
         }
     },
     methods: {

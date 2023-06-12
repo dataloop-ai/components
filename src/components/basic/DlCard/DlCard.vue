@@ -1,30 +1,33 @@
 <template>
     <div
         class="card"
-        :style="[{ width, height }, styles]"
+        :style="[{ width, height }, computedStyles]"
     >
         <div
-            v-if="icon"
+            v-if="icon && !isEmpty"
             class="card--icon"
         >
             <dl-icon
                 :icon="icon.src"
-                :styles="icon?.styles"
-                :size="icon?.size || '50px'"
-                :color="icon?.color || 'var(--dl-color-darker)'"
+                :styles="iconStyles"
+                :size="iconSize"
+                :color="iconColor"
             />
         </div>
         <div
-            v-else-if="image"
+            v-else-if="image && !isEmpty"
             class="card--image"
         >
             <img
                 :src="image.src"
-                :style="image?.styles"
-                :alt="image?.alt"
+                :style="imageStyles"
+                :alt="imageAlt"
             >
         </div>
-        <div class="card--content">
+        <div
+            v-if="!isEmpty"
+            class="card--content"
+        >
             <div>
                 <slot
                     v-if="!!$slots.header"
@@ -80,18 +83,36 @@
                 </div>
             </div>
         </div>
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
     </div>
 </template>
 
 <script lang="ts">
+import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
+import { stringStyleToRecord } from '../../../utils'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
+import { Props } from '../DlEmptyState/types'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'
 
 export default defineComponent({
     name: 'DlCard',
-    components: { DlLink, DlIcon },
+    components: { DlLink, DlIcon, DlEmptyState },
     props: {
         image: {
             type: Object as PropType<ImageItem>,
@@ -126,8 +147,35 @@ export default defineComponent({
             default: '200px'
         },
         styles: {
-            type: [Object, String, Array],
+            type: [Object, String],
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
+        }
+    },
+    computed: {
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
+        },
+        iconStyles(): string {
+            return this.icon?.styles ?? ''
+        },
+        iconSize(): string {
+            return this.icon?.size ?? '50px'
+        },
+        iconColor(): string {
+            return this.icon?.color ?? 'var(--dl-color-darker)'
+        },
+        imageStyles(): string {
+            return this.image?.styles ?? ''
+        },
+        imageAlt(): string {
+            return this.image?.alt ?? ''
         }
     }
 })
@@ -143,7 +191,7 @@ export default defineComponent({
     box-shadow: 0px 5px 15px 0px var(--dl-color-shadow);
 
     &--content {
-        padding: 16px 10px;
+        padding: 16px;
         &_text {
             font-size: 12px;
             color: var(--dl-color-medium);
@@ -189,6 +237,7 @@ export default defineComponent({
 
             &_icon {
                 margin-right: 7px;
+                margin-top: 2px;
                 vertical-align: middle;
             }
 

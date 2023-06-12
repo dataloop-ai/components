@@ -3,7 +3,22 @@
         :style="cssVars"
         :class="chartWrapperClasses"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <DlLine
+            v-if="!isEmpty"
             :id="id"
             ref="lineChart"
             :class="chartClasses"
@@ -13,12 +28,12 @@
             @mouseout="onChartLeave"
         />
         <slot
-            v-if="displayLabels"
+            v-if="!isEmpty || displayLabels"
             v-bind="{ ...labelStyles, labels: xLabels, chartWidth }"
             name="axe-x-labels"
         >
             <dl-chart-labels
-                :font-size="labelStyles.labelSize"
+                :font-size="labelStyles.fontSize"
                 :title="labelStyles.title"
                 :title-size="labelStyles.titleSize"
                 :title-color="labelStyles.titleColor"
@@ -28,7 +43,7 @@
             />
         </slot>
         <slot
-            v-if="displayBrush"
+            v-if="displayBrush || !isEmpty"
             v-bind="{
                 chartWidth,
                 modelValue: brush.value,
@@ -52,7 +67,7 @@
             />
         </slot>
         <slot
-            v-if="displayLegend"
+            v-if="displayLegend || !isEmpty"
             v-bind="{
                 data: legendDatasets,
                 chartWidth,
@@ -83,7 +98,16 @@ import {
     ColumnChartProps,
     defaultLineChartProps
 } from '../../types/props'
-import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
+import {
+    defineComponent,
+    reactive,
+    watch,
+    ref,
+    computed,
+    PropType
+} from 'vue-demi'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -132,12 +156,18 @@ export default defineComponent({
         DlBrush,
         DlChartLegend,
         DlLine,
-        DlChartLabels
+        DlChartLabels,
+        DlEmptyState
     },
     props: {
         id: {
             type: String,
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         },
         ...CommonProps,
         ...ColumnChartProps
@@ -548,6 +578,7 @@ export default defineComponent({
                 defaultLineChartProps.options,
                 props.options
             )
+
             return {
                 title: options.scales.x.title.text,
                 titleSize: `${options.scales.x.title.font.size}px`,

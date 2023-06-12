@@ -14,9 +14,11 @@
         <span>
             <dl-icon
                 v-if="showTooltip"
-                size="12px"
+                :size="iconSize"
+                :inline="false"
                 icon="icon-dl-info"
                 class="info-icon"
+                color="dl-color-lighter"
             />
             <dl-tooltip v-if="showTooltip === true">
                 {{ tooltip }}
@@ -46,7 +48,7 @@ export default defineComponent({
         showTooltip: { type: Boolean, default: false },
         tooltip: { type: String, default: null },
         tabindex: { type: String, default: '0' },
-        fontSize: { type: String, default: '12px' }
+        fontSize: { type: String, default: '18px' }
     },
     emits: ['click'],
     data() {
@@ -55,6 +57,10 @@ export default defineComponent({
         }
     },
     computed: {
+        iconSize(): string {
+            const fontSize = parseInt(this.fontSize)
+            return `${fontSize - 2 < 0 ? 0 : fontSize - 6}px`
+        },
         cssFontSize(): Record<string, string> {
             return {
                 '--dl-tab-font-size': this.fontSize
@@ -106,7 +112,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
     &--active {
         color: var(--dl-color-secondary);
         border-color: var(--dl-color-secondary) !important;
@@ -123,6 +128,7 @@ export default defineComponent({
         padding: 5px 10px;
         font-size: var(--dl-tab-font-size);
         line-height: 14px;
+        border-color: var(--dl-color-separator) !important;
         &:not(:last-child) {
             border-right: 1px solid var(--dl-color-separator);
         }
@@ -141,5 +147,8 @@ export default defineComponent({
     }
     cursor: pointer;
     flex-grow: 1;
+}
+.info-icon {
+    margin: 0px 5px;
 }
 </style>

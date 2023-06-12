@@ -1,24 +1,27 @@
-import { describe, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import DlBrush from '../../src/components/compound/DlCharts/components/DlBrush.vue'
 
 describe('DlBrush', () => {
-    it('return computed props', () => {
-        const wrapper = mount(DlBrush, {
-            props: {
-                thumbSize: 12
-            }
-        })
-        // const events = wrapper.vm.getEvents('min')
-        // expect(
-        //     events.onFocus &&
-        //         events.onBlur &&
-        //         events.onKeyup
-        // ).toBeTruthy()
-    })
+    describe('When mounting', () => {
+        let wrapper: any
 
-    it('should update its value on keydown', () => {
-        const wrapper = mount(DlBrush)
-        // wrapper.vm.updateValue()
+        beforeAll(() => {
+            wrapper = mount(DlBrush, {
+                props: {
+                    maxRange: 12,
+                    selectionColor: 'black'
+                }
+            })
+        })
+        it('should mount the canvas', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should the right maxRange prop', function () {
+            expect(wrapper.vm.maxRange).toBe(12)
+        })
+        it('should the right selectionColor prop', function () {
+            expect(wrapper.vm.selectionColor).toBe('black')
+        })
     })
 })

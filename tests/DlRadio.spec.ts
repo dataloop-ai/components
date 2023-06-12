@@ -1,46 +1,49 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { DlRadio } from '../src'
 
 describe('DlRadio', () => {
     const id = 'some-id'
+    describe('When mounting', () => {
+        let wrapper: any
 
-    it('should set the proper id if the id prop is passed', () => {
-        const wrapper = mount(DlRadio, {
-            props: {
-                id,
-                modelValue: 11,
-                value: 12
-            }
+        beforeAll(() => {
+            wrapper = mount(DlRadio, {
+                props: {
+                    id,
+                    modelValue: 11,
+                    value: 12
+                }
+            })
         })
-
-        const input = wrapper.find('input')
-        expect(input.element.id).toMatch(id)
+        it('should mount the component', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should set the proper id if the id prop is passed', function () {
+            const input = wrapper.find('input')
+            expect(input.element.id).toMatch(id)
+        })
     })
+    describe('When emit events', () => {
+        let wrapper: any
 
-    it('should emit event on click', async () => {
-        const wrapper = mount(DlRadio, {
-            props: {
-                modelValue: 42,
-                value: 21
-            }
+        beforeAll(() => {
+            wrapper = mount(DlRadio, {
+                props: {
+                    modelValue: 11,
+                    value: 12
+                }
+            })
         })
-
-        const label = wrapper.find('label')
-        await label.trigger('click')
-        expect(wrapper.emitted()['update:model-value']).toBeTruthy()
-    })
-
-    it('should emit event on Enter keypress', async () => {
-        const wrapper = mount(DlRadio, {
-            props: {
-                modelValue: 'qwerty',
-                value: 'qwerty'
-            }
+        it('should emit event on click', async () => {
+            const label = wrapper.find('label')
+            await label.trigger('click')
+            expect(wrapper.emitted()['update:model-value']).toBeTruthy()
         })
-
-        const label = wrapper.find('label')
-        await label.trigger('keyup', { key: 'Enter' })
-        expect(wrapper.emitted()['update:model-value']).toBeTruthy()
+        it('should emit event on Enter keypress', async () => {
+            const label = wrapper.find('label')
+            await label.trigger('keyup', { key: 'Enter' })
+            expect(wrapper.emitted()['update:model-value']).toBeTruthy()
+        })
     })
 })

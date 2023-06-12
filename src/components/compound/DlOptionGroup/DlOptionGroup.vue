@@ -84,7 +84,11 @@ export default defineComponent({
             validator: optionsValidator
         },
         type: { type: String, default: 'radio', validator: typeValidator },
-        modelValue: { type: [Array, String, Number, Boolean], required: true }
+        modelValue: {
+            type: [Array, String, Number, Boolean],
+            required: false,
+            default: null
+        }
     },
     data() {
         const logger = loggerFactory('DlOptionGroup')
@@ -123,15 +127,7 @@ export default defineComponent({
                         : 'flex-end',
                 '--option-group-width':
                     this.leftLabel && !this.inline ? '100%' : 'auto',
-                '--option-group-max-width': this.maxWidth,
-                '--control-element-padding-left': this.leftLabel
-                    ? '10px'
-                    : this.inline
-                    ? '12px'
-                    : '0px',
-                '--control-element-padding-right': this.leftLabel
-                    ? '0px'
-                    : '10px'
+                '--option-group-max-width': this.maxWidth
             }
         }
     },
@@ -160,6 +156,11 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.control-element {
+    display: flex;
+    align-items: center;
+}
+
 .tooltip-icon {
     color: var(--dl-color-medium);
     display: flex !important;
@@ -169,9 +170,11 @@ export default defineComponent({
     display: inline-flex;
     width: var(--option-group-width);
     max-width: var(--option-group-max-width);
+    gap: 20px;
 }
 .option-group-wrapper.column {
     flex-direction: column;
+    gap: 10px;
 }
 
 .option {
@@ -181,8 +184,8 @@ export default defineComponent({
     justify-content: var(--option-justify-content);
     font-size: var(--dl-font-size-body);
     user-select: none;
-    height: 24px;
     color: var(--dl-color-darker);
+    gap: 10px;
 }
 
 .disabled {
@@ -191,10 +194,5 @@ export default defineComponent({
         cursor: not-allowed;
     }
     color: var(--dl-color-disabled);
-}
-
-.control-element {
-    padding-left: var(--control-element-padding-left);
-    padding-right: var(--control-element-padding-right);
 }
 </style>

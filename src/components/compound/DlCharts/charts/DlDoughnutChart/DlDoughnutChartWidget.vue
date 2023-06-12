@@ -26,14 +26,13 @@
 import { defineComponent, PropType } from 'vue-demi'
 import DlDoughnutChart from './DlDoughnutChart.vue'
 import { TDoughnutChartData } from './types/TDoughnutChartData'
-import { DlWidget, DlGridRow, DlGrid } from '../../../../basic'
+import { DlWidget, DlGrid } from '../../../../basic'
 
 export default defineComponent({
     name: 'DlDoughnutChartWidget',
     components: {
         DlDoughnutChart,
         DlGrid,
-        DlGridRow,
         DlWidget
     },
     props: {

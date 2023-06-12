@@ -1,9 +1,11 @@
 import {
     isEndOfString,
     isEndingWithDateIntervalPattern,
-    replaceDateInterval
+    replaceDateInterval,
+    revertAliases
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
-import { describe, it, expect } from 'vitest'
+import { stringifySmartQuery } from '../../src/utils'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('isEndOfString', () => {
     it('should retun "false" when the string does not match the pattern', () => {
@@ -60,5 +62,30 @@ describe('replaceDateInterval', () => {
                 }
             )
         ).toEqual('field = (From (12/12/22) To (22/12/22)) AND field = 10')
+    })
+})
+
+describe(revertAliases.name, () => {
+    describe('When translating back to string query from json', () => {
+        const query = {
+            'metadata.system.width': 25
+        }
+
+        const aliases = [
+            {
+                alias: 'Width',
+                key: 'metadata.system.width'
+            }
+        ]
+
+        let reverted: string = ''
+
+        beforeAll(() => {
+            reverted = revertAliases(stringifySmartQuery(query), aliases)
+        })
+
+        it('should replace the key with the alias', () => {
+            expect(reverted).to.equal('Width = 25')
+        })
     })
 })

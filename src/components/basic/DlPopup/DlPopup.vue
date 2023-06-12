@@ -20,12 +20,14 @@
                     @move="movePopup"
                 />
                 <popup-header
-                    v-if="hasHeaderSlot"
+                    v-if="
+                        hasHeaderSlot || hasCloseButtonSlot || withCloseButton
+                    "
                     :title="title"
                     :additional-info="additionalInfo"
                     :subtitle="subtitle"
                     :with-close-button="withCloseButton"
-                    @hide-button-clik="handleHideClick"
+                    @close-button-click="handleCloseClick"
                 >
                     <template
                         v-if="hasHeaderSlot"
@@ -34,14 +36,28 @@
                         <slot name="header" />
                     </template>
                     <template
-                        v-if="hasHideButtonSlot"
-                        #hide-button
+                        v-if="hasCloseButtonSlot"
+                        #close-button
                     >
-                        <slot name="hide-button" />
+                        <slot name="close-button" />
                     </template>
                 </popup-header>
                 <div class="popup-content">
-                    <slot />
+                    <slot v-if="!isEmpty" />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </div>
                 <div
                     v-if="hasFooterSlot"
@@ -112,13 +128,18 @@ import {
 import DraggableUpper from './components/DraggableUpper.vue'
 import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
+import { isString } from 'lodash'
+import { Props } from '../DlEmptyState/types'
+import { stringStyleToRecord } from '../../../utils'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
     name: 'DlPopup',
     components: {
         DlTeleport,
         PopupHeader,
-        DraggableUpper
+        DraggableUpper,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
@@ -144,7 +165,6 @@ export default defineComponent({
         withCloseButton: { type: Boolean, default: false },
         preventHide: { type: Boolean, default: false },
         disableCloseByEsc: { type: Boolean, default: false },
-        hideOnClickOutside: { type: Boolean, default: false },
         self: {
             type: String,
             default: 'top middle',
@@ -164,10 +184,15 @@ export default defineComponent({
         maxWidth: { type: String, default: 'auto' },
         height: { type: String, default: 'auto' },
         width: { type: String, default: 'auto' },
-        draggable: Boolean
+        draggable: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
+        }
     },
     emits: [
-        'hide-button-click',
+        'close-button-click',
         'show',
         'before-show',
         'hide',
@@ -203,8 +228,8 @@ export default defineComponent({
 
         const hasHeaderSlot = computed(() => slots.header !== undefined)
 
-        const hasHideButtonSlot = computed(
-            () => slots['hide-button'] !== undefined
+        const hasCloseButtonSlot = computed(
+            () => slots['close-button'] !== undefined
         )
 
         const { hide } = useModelToggle({
@@ -228,7 +253,7 @@ export default defineComponent({
             innerRef,
             onClickOutside: (e: AnchorEvent) =>
                 handleClickOutside(e, {
-                    persistent: !props.hideOnClickOutside,
+                    persistent: props.persistent,
                     showing: showing.value,
                     fn: hide
                 })
@@ -419,11 +444,11 @@ export default defineComponent({
             )
         }
 
-        function handleHideClick(e: Event) {
+        function handleCloseClick(e: Event) {
             if (!props.preventHide) {
                 hide(e as AnchorEvent)
             }
-            proxy.$emit('hide-button-click', e)
+            proxy.$emit('close-button-click', e)
         }
 
         onBeforeUnmount(anchorCleanup as any)
@@ -436,8 +461,8 @@ export default defineComponent({
             portalIsAccessible,
             anchorEl,
             showing,
-            handleHideClick,
-            hasHideButtonSlot,
+            handleCloseClick,
+            hasCloseButtonSlot,
             hasFooterSlot,
             movePopup,
             hasHeaderSlot,
@@ -446,7 +471,9 @@ export default defineComponent({
             portalIsActive,
             classes: 'dl-popup dl-position-engine scroll',
             styles: [
-                attrs.style,
+                isString(attrs.style)
+                    ? stringStyleToRecord(attrs.style)
+                    : attrs.style,
                 transitionStyle.value,
                 stylesFromProps.value
             ] as any
@@ -459,7 +486,7 @@ export default defineComponent({
 .dl-popup {
     z-index: calc(var(--dl-z-index-menu) - 1);
     position: fixed !important;
-    padding: 0 0 16px;
+    padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);
     display: flex;
     background-color: var(--dl-color-panel-background);
@@ -476,9 +503,29 @@ export default defineComponent({
 .popup-content {
     max-width: 100%;
     padding: 0 16px;
+    height: 100%;
 }
 
 .popup-footer {
     padding: 20px 16px 0px;
+}
+
+// Fade Related transition
+.fade-enter,
+.fade-enter-active {
+    animation: fade-in var(--dl-transition-duration);
+}
+
+.fade-leave-active,
+.fade-leave-to {
+    animation: fade-in var(--dl-transition-duration) reverse;
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 </style>

@@ -10,9 +10,9 @@
             :tabindex="tabIndex"
             :aria-disabled="disabled ? 'true' : 'false'"
             :disabled="disabled"
-            :style="[cssButtonVars, styles]"
+            :style="[computedStyles]"
             style="pointer-events: auto"
-            class="dl-button"
+            :class="buttonClass"
             @click="onClick"
             @mousedown="onMouseDown"
         >
@@ -24,6 +24,7 @@
             <div class="dl-button-content dl-anchor--skip">
                 <dl-icon
                     v-if="hasIcon"
+                    class="dl-button-icon"
                     :size="iconSizePX"
                     :color="iconColor || textColor"
                     :icon="icon"
@@ -62,17 +63,23 @@ import {
     setColorOnHover,
     setBorderOnHover,
     setBgOnHover,
+    setBgOnPressed,
+    setBorderOnPressed,
+    setTextOnPressed,
     setIconSize,
     setIconPadding,
     setMaxHeight
 } from './utils'
 import type { ButtonSizes } from './utils'
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
 import { transformOptions } from '../../shared/types'
+import { stringStyleToRecord } from '../../../utils'
+import { textTransform } from '../../../utils/string'
+import { isString } from 'lodash'
 
 export default defineComponent({
     name: 'DlButton',
@@ -82,48 +89,106 @@ export default defineComponent({
     },
 
     props: {
+        /**
+         * The user will not be able to press on the button
+         */
         disabled: Boolean,
+        /**
+         * The color of the button
+         */
         color: {
             type: String! as PropType<keyof typeof colorNames>,
             default: ''
         },
+        /**
+         * The button's padding is lowered and the white space shrinks
+         */
         dense: { type: Boolean, default: false },
+        /**
+         * The text content of the button
+         */
         label: { type: String, default: '' },
+        /**
+         * The color of the button's text
+         */
         textColor: { type: String!, default: '' },
         colorsObject: {
             type: Object as PropType<ButtonColors>,
             default: null
         },
+        /**
+         * The color of the icon inside the button
+         */
         iconColor: { type: String!, default: '' },
+        /** Padding inside the button */
         padding: { type: String, default: '' },
+        /**
+         * The size of the button, it can be s,m,l or xl
+         */
         margin: { type: String, default: '0 auto' },
         size: { type: String! as PropType<ButtonSizes>, default: 'm' },
+        /**
+         * The assigned color will fill the entirety of the button
+         */
         filled: { type: Boolean, default: true },
+        /** Makes the button rounded */
         round: { type: Boolean, default: false },
+        /**
+         * The width of the button will take that of its container
+         */
         fluid: Boolean,
+        /**
+         * The button will not have an outline
+         */
         flat: Boolean,
+        /**
+         * All the characters inside the button will be uppercase
+         */
+        uppercase: Boolean,
+        /**
+         * The button will be transparent with a colored outline
+         */
         transform: {
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
                 transformOptions.includes(value)
         },
-        outlined: Boolean,
+        /**
+         * Doesn't allow the button's text to be wrapped along multiple rows
+         */
         noWrap: Boolean,
+        /**
+         * The name of the icon to go inside the button
+         */
         icon: { type: String, default: '' },
         overflow: { type: Boolean, default: false, required: false },
+        /**
+         * The tooltip displayed when hovering over the button
+         */
         tooltip: { type: String, default: null, required: false },
-        styles: { type: [Object, String, Array], default: null }
+        /**
+         * The button will maintain the styles it has when it's pressed if this prop is active
+         */
+        active: { type: Boolean, default: false, required: false },
+        styles: { type: [Object, String], default: null },
+        shaded: { type: Boolean, default: false },
+        outlined: Boolean
     },
     emits: ['click', 'mousedown'],
-    setup() {
+    setup(props) {
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
+
+        const buttonClass = computed(() => {
+            return props.active ? 'dl-button active-class' : 'dl-button'
+        })
 
         return {
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
-            isOverflowing: hasEllipsis
+            isOverflowing: hasEllipsis,
+            buttonClass
         }
     },
     computed: {
@@ -132,6 +197,11 @@ export default defineComponent({
                 return 'first-letter-capitalized'
             }
             return null
+        },
+        computedStyles(): Record<string, string> {
+            return isString(this.styles)
+                ? stringStyleToRecord(this.styles)
+                : this.styles
         },
         isActionable(): boolean {
             return this.disabled !== true
@@ -148,6 +218,9 @@ export default defineComponent({
                 this.label !== null &&
                 this.label !== ''
             )
+        },
+        buttonLabel(): string {
+            return textTransform(this.label)
         },
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
@@ -208,45 +281,62 @@ export default defineComponent({
                         flat: this.flat,
                         color: this.color,
                         filled: this.filled,
+                        shaded: this.shaded,
                         textColor: this.textColor
                     }),
                     '--dl-button-bg': setBgColor({
                         disabled: this.disabled,
                         outlined: this.outlined,
+                        shaded: this.shaded,
                         flat: this.flat,
                         color: this.color
                     }),
                     '--dl-button-border': setBorder({
                         disabled: this.disabled,
                         flat: this.flat,
-                        color: this.color
+                        shaded: this.shaded,
+                        color: this.color,
+                        outlined: this.outlined
                     }),
                     '--dl-button-text-color-hover': setColorOnHover({
                         disabled: this.disabled,
                         outlined: this.outlined,
+                        shaded: this.shaded,
                         flat: this.flat,
                         color: this.textColor
                     }),
                     '--dl-button-border-hover': setBorderOnHover({
                         disabled: this.disabled,
                         flat: this.flat,
+                        shaded: this.shaded,
                         color: this.color
                     }),
                     '--dl-button-bg-hover': setBgOnHover({
                         disabled: this.disabled,
+                        shaded: this.shaded,
                         outlined: this.outlined,
                         flat: this.flat,
                         filled: this.filled,
                         color: this.color
                     }),
-                    '--dl-button-text-color-pressed':
-                        'var(--dl-button-text-color)',
-                    '--dl-button-bg-pressed': 'var(--dl-button-bg)',
-                    '--dl-button-border-pressed': 'var(--dl-button-border)'
+                    '--dl-button-text-color-pressed': setTextOnPressed({
+                        shaded: this.shaded,
+                        outlined: this.shaded
+                    }),
+                    '--dl-button-bg-pressed': setBgOnPressed({
+                        shaded: this.shaded,
+                        outlined: this.outlined
+                    }),
+                    '--dl-button-border-pressed': setBorderOnPressed({
+                        shaded: this.shaded,
+                        outlined: this.outlined
+                    })
                 }
             }
 
             return {
+                '--dl-button-transition-duration': 'all ease 0.15s',
+                '--dl-button-text-transition-duration': 'all ease 0.05s',
                 '--dl-button-container-width': this.fluid ? '100%' : 'auto',
                 '--dl-button-padding': this.dense
                     ? '0'
@@ -329,27 +419,28 @@ export default defineComponent({
     align-items: stretch;
     position: relative;
     vertical-align: middle;
-    transition: all ease-in 0.15s;
+    transition: var(--dl-button-transition-duration);
     justify-content: center;
 
     &:active {
-        transition: all ease-in 0.15s;
+        transition: var(--dl-button-transition-duration);
         color: var(--dl-button-text-color-pressed) !important;
         background-color: var(--dl-button-bg-pressed) !important;
         border-color: var(--dl-button-border-pressed) !important;
 
         & > span > i {
-            transition: all ease-in 0.15s;
+            transition: var(--dl-button-text-transition-duration);
         }
     }
 
     &:hover:enabled:not(:active) {
+        transition: var(--dl-button-transition-duration);
         color: var(--dl-button-text-color-hover);
         background-color: var(--dl-button-bg-hover);
         border-color: var(--dl-button-border-hover);
 
         & .dl-button-label {
-            transition: all ease-in 0.15s;
+            transition: var(--dl-button-text-transition-duration);
             color: var(--dl-button-color-hover);
         }
     }
@@ -366,11 +457,14 @@ export default defineComponent({
     line-height: 1;
     z-index: 0;
     user-select: none !important;
-    min-width: 1.5em;
-    gap: var(--dl-button-gap, 7px);
+    gap: var(--dl-button-content-gap, 7px);
 }
 
-.dl-chip.first-letter-capitalized {
+.dl-button-icon {
+    transition: var(--dl-button-text-transition-duration);
+}
+
+.dl-button-container.first-letter-capitalized {
     &::first-letter,
     & > *::first-letter {
         text-transform: capitalize;
@@ -380,5 +474,17 @@ export default defineComponent({
 .dl-button-container {
     display: inline-block;
     width: var(--dl-button-container-width);
+}
+
+.active-class {
+    color: var(--dl-button-text-color-hover);
+    background-color: var(--dl-button-bg-hover);
+    border-color: var(--dl-button-border-hover);
+    transition: var(--dl-button-transition-duration);
+
+    & .dl-button-label {
+        color: var(--dl-button-color-hover);
+        transition: var(--dl-button-text-transition-duration);
+    }
 }
 </style>

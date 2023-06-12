@@ -3,8 +3,22 @@
         ref="dlDoughnutChartWidgetRef"
         class="dl_doughnut"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <div
-            v-if="itemsCount"
+            v-if="itemsCount && !isEmpty"
             class="dl_doughnut__wrapper"
             :class="classFlexLg"
         >
@@ -26,7 +40,7 @@
                         :plugins="doughnutPlugins"
                     />
                     <div
-                        v-if="hasSummary"
+                        v-if="hasSummaryProp"
                         ref="dlDoughnutChartSummaryRef"
                         class="dl_doughnut__wrapper__container__chart__summary text-center"
                     >
@@ -52,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div v-else>
+        <div v-else-if="!itemsCount && !isEmpty">
             No data
         </div>
     </div>
@@ -65,7 +79,8 @@ import {
     ref,
     reactive,
     PropType,
-    onMounted
+    onMounted,
+    watch
 } from 'vue-demi'
 
 import {
@@ -87,12 +102,15 @@ import { updateNestedArrayValues } from '../../../../../utils/update-key'
 import DlDoughnutChartLegend from './components/DlDoughnutChartLegend.vue'
 import { defaultDoughnutChartProps } from '../../types/props'
 import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { Props } from '../../../../basic/DlEmptyState/types'
 
 export default defineComponent({
     name: 'DlDoughnutChart',
     components: {
         Doughnut,
-        DlDoughnutChartLegend
+        DlDoughnutChartLegend,
+        DlEmptyState
     },
     props: {
         data: {
@@ -112,6 +130,11 @@ export default defineComponent({
                 DoughnutControllerChartOptions['animation']
             >,
             required: false
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<Props>,
+            default: () => {}
         }
     },
     setup(props) {
@@ -127,6 +150,11 @@ export default defineComponent({
 
         const chartRefValue = computed(() => {
             return doughnutChartRef.value?.chart?.value || {}
+        })
+        const hasSummaryProp = computed(() => props.hasSummary)
+
+        watch(hasSummaryProp, () => {
+            chartRefValue.value.update()
         })
 
         const hiddenIndexes = ref([])
@@ -263,6 +291,23 @@ export default defineComponent({
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            yAlign: 'none',
+                            callbacks: {
+                                labelColor(
+                                    tooltipItem: { dataIndex: string | number },
+                                    chart: any
+                                ) {
+                                    return {
+                                        backgroundColor:
+                                            chartRefValue.value.data.datasets[0]
+                                                .hoverBackgroundColor[
+                                                tooltipItem.dataIndex
+                                            ]
+                                    }
+                                }
+                            }
                         }
                     }
                 },
@@ -355,7 +400,8 @@ export default defineComponent({
             darkHighlight,
             resetColors,
             setHoverLight,
-            doughnutPlugins
+            doughnutPlugins,
+            hasSummaryProp
         }
     }
 })

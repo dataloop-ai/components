@@ -2,7 +2,7 @@
     <div class="dl-stepper-wrapper">
         <dl-stepper
             v-model="isOpen"
-            :hide-close-btn="true"
+            :hide-close-button="true"
             done-button-label="Create"
             width="calc(100vh-400px)"
             header-title="Create New Task"
@@ -59,6 +59,7 @@
                     @complete-click="stepper.completeStep()"
                     @warning-click="stepper.setStepWarning('Custom Warning')"
                     @reset-click="stepper.resetStep()"
+                    @set-subtitle="setSubtitle"
                 />
             </template>
             <template #data>
@@ -184,6 +185,9 @@ export default defineComponent({
             this.stepper.currentIndex = this.stepper.steps.findIndex(
                 (s) => s.value === step.value
             )
+        },
+        setSubtitle(subtitle: string) {
+            this.stepper.currentStep.subtitle = subtitle
         }
     }
 })

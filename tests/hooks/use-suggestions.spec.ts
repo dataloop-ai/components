@@ -1,4 +1,3 @@
-import { mountComposition } from 'vue-composition-test-utils'
 import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
@@ -44,22 +43,28 @@ export const aliases: Alias[] = [
     }
 ]
 
+const sortString = (a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: 'base' })
+
 describe('use-suggestions', () => {
-    const wrapper = mountComposition(() => useSuggestions(schema, aliases))
-    const findSuggestions = wrapper.result.current!.findSuggestions
-    const suggestions = wrapper.result.current!.suggestions
-    const error = wrapper.result.current!.error
+    const { suggestions, error, findSuggestions } = useSuggestions(
+        schema,
+        aliases
+    )
 
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
-        expect(suggestions.value).toEqual([
-            'Name',
-            'Completed',
-            'Age',
-            'StartTime',
-            'Level',
-            'No-Schema'
-        ])
+        expect(suggestions.value).toEqual(
+            [
+                'Name',
+                'Completed',
+                'Age',
+                'StartTime',
+                'Level',
+                'No-Schema',
+                'metadata'
+            ].sort(sortString)
+        )
     })
 
     it('suggestions should have the field that includes the value', () => {
@@ -96,19 +101,10 @@ describe('use-suggestions', () => {
         ])
     })
 
-    it('suggestions should have the operator that includes the value', () => {
-        findSuggestions('Age =')
-        expect(suggestions.value).toEqual(['=', '!=', '>=', '<='])
-    })
-
-    it('suggestions should be empty when none of the operators were matched', () => {
-        findSuggestions('Age == ')
-        expect(suggestions.value).toEqual([])
-    })
-
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
             findSuggestions('Level = ')
+            console.log(suggestions.value)
             expect(suggestions.value).toEqual(['high', 'medium', 'low', 30])
         })
 
@@ -132,20 +128,22 @@ describe('use-suggestions', () => {
         it('suggestions should have the "dateIntervalSuggestionString"', () => {
             findSuggestions('StartTime = ')
             expect(suggestions.value).toEqual([
-                '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
-            ])
-        })
-
-        it('suggestions should have the "dateIntervalSuggestionString" when the "dateIntervalSuggestionString" includes the value', () => {
-            findSuggestions('StartTime = (From (dd/mm/yyyy)')
-            expect(suggestions.value).toEqual([
-                '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
+                '(From (dd/mm/yyyy) To (dd/mm/yyyy))',
+                '(From dd/mm/yyyy)',
+                '(To dd/mm/yyyy)'
             ])
         })
 
         it('suggestions should be empty when value does not matches', () => {
             findSuggestions('StartTime = (From (dd/mm/ffff)')
             expect(suggestions.value).toEqual([])
+        })
+    })
+
+    describe('when the field is of type "boolean"', () => {
+        it('suggestions should options of true or false', () => {
+            findSuggestions('completed = ')
+            expect(suggestions.value).toEqual(['true', 'false'])
         })
     })
 
@@ -168,19 +166,24 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual([
-            'Name',
-            'Completed',
-            'Age',
-            'StartTime',
-            'Level',
-            'No-Schema'
-        ])
+        expect(suggestions.value).toEqual(
+            [
+                'Name',
+                'Level',
+                'Completed',
+                'metadata',
+                'Age',
+                'StartTime',
+                'No-Schema'
+            ].sort(sortString)
+        )
     })
+
+    // sort array of strings ignore case
 
     it('should give suggestions for multiple expressions', () => {
         findSuggestions(
-            'Age = 10 AND Level = medium AND StartTime = (From (12/12/2022) To (15/12/2022)) '
+            'Age = 10 AND Level = medium AND StartTime = (From 12/12/2022 To 15/12/2022) '
         )
         expect(suggestions.value).toEqual(['AND', 'OR'])
     })

@@ -23,9 +23,10 @@
         </div>
         <div class="inputs-container">
             <dl-input
-                without-root-padding
+                dense
                 required
                 title="Name"
+                @input="$emit('set-subtitle', $event)"
             />
             <span>
                 <dl-typography color="dl-color-medium">Type *</dl-typography>
@@ -58,7 +59,7 @@
                 :options="['High', 'Medium', 'Low']"
             />
             <dl-input
-                without-root-padding
+                dense
                 title="Completion Due Date"
                 placeholder="dd/mm/yy"
             />

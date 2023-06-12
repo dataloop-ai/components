@@ -1,12 +1,10 @@
 <template>
-    <div
-        :class="['tabs-wrapper', { scrollable: isScrollable }]"
-        :style="cssVars"
-    >
+    <div :class="['tabs-wrapper', { scrollable: isScrollable }]">
         <dl-button
             v-if="isScrollable"
-            size="l"
+            :size="buttonSize"
             flat
+            padding="0"
             :disabled="isAtStart"
             data-qa="left-arrow-button"
             class="arrow-button"
@@ -21,12 +19,13 @@
         <slot class="tabs" />
         <dl-button
             v-if="isScrollable"
-            size="l"
+            :size="buttonSize"
             data-qa="right-arrow-button"
             text-color="dl-color-darker"
             flat
+            padding="0"
             :disabled="isAtEnd"
-            class="arrow-button"
+            :class="rightArrowClass"
             @click="handleRightArrowClick"
         >
             <dl-icon
@@ -54,10 +53,17 @@ export default defineComponent({
     },
     emits: ['left-arrow-click', 'right-arrow-click'],
     computed: {
-        cssVars(): string {
-            return `
-                --dl-tabs-arrows-size: ${this.isVertical ? '24px' : '40px'}
-            `
+        buttonSize(): string {
+            return this.isVertical ? 's' : 'm'
+        },
+        hasTopRightSlot(): boolean {
+            return !!this.$parent.$slots['top-right']
+        },
+        rightArrowClass(): string {
+            if (this.hasTopRightSlot && !this.isVertical) {
+                return 'arrow-button--right'
+            }
+            return 'arrow-button'
         }
     },
     methods: {
@@ -81,24 +87,23 @@ export default defineComponent({
     align-items: center;
 }
 
-.tabs {
-    flex-grow: 1;
-}
-
-::v-deep .dl-button {
-    padding: 0px;
-
-    &:disabled {
-        pointer-events: none;
+.arrow-button {
+    &--right {
+        border-bottom: 1px solid var(--dl-color-separator);
+        height: calc(100% - 1px);
+        display: flex;
     }
 }
 
-::v-deep .dl-btn-content {
-    padding-top: 1px;
-    min-height: var(--dl-tabs-arrows-size);
-    width: var(--dl-tabs-arrows-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.tabs {
+    flex-grow: 1;
+    ::v-deep .dl-button-content {
+        padding-top: 1px;
+        min-height: var(--dl-tabs-arrows-size);
+        width: var(--dl-tabs-arrows-size);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 </style>

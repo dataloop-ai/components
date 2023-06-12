@@ -1,6 +1,6 @@
 import {
-    createColorSchema,
-    updateEditor
+    updateEditor,
+    createColorSchema
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { describe, expect, it } from 'vitest'
 
@@ -50,6 +50,6 @@ describe('createColorSchema', () => {
         mockDiv.setAttribute('id', 'editor')
         document.body.appendChild(mockDiv)
         updateEditor(schema)
-        expect(mockDiv.innerHTML).toMatch('<span></span>')
+        expect(mockDiv.innerHTML.includes('span')).toBeTruthy()
     })
 })

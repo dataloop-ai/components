@@ -200,7 +200,7 @@ export default defineComponent({
                 }
             } else if (this.modelValue !== null) {
                 const selectedStyle = {
-                    backgroundColor: 'var(--dl-date-picker-selected-date)',
+                    backgroundColor: 'var(--dl-color-secondary)',
                     color: 'var(--dl-color-text-buttons)',
                     borderRadius: '11px'
                 }
@@ -215,7 +215,8 @@ export default defineComponent({
                     style = {
                         ...style,
                         ...selectedStyle,
-                        opacity: disabledOpacity
+                        opacity: disabledOpacity,
+                        backgroundColor: 'var(--dl-date-picker-selected-date)'
                     }
                 } else if (isIntervalBoundary) {
                     style = {
