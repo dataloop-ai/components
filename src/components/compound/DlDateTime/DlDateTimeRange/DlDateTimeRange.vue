@@ -37,6 +37,14 @@
                         class="dl-date-time-range--card_content"
                         :style="cardContentStyles"
                     >
+                        <div class="clear_btn">
+                            <button
+                                :disabled="!dateInterval"
+                                @click="clear_date()"
+                            >
+                                Clear Date
+                            </button>
+                        </div>
                         <dl-date-picker
                             :model-value="dateInterval"
                             :type="typeState"
@@ -459,6 +467,9 @@ export default defineComponent({
             }
 
             this.updateDateInterval(option.value)
+        },
+        clear_date() {
+            this.dateInterval = null
         }
     }
 })
@@ -477,6 +488,21 @@ export default defineComponent({
 
     &--card_content {
         width: var(--card-content-width);
+    }
+}
+.dl-date-time-range--card_content {
+    & .clear_btn {
+        display: flex;
+        justify-content: flex-end;
+    }
+    & button {
+        border: none;
+        color: #1756f7;
+        padding: 10px;
+        cursor: pointer;
+        &:disabled {
+            color: #b3b3b3;
+        }
     }
 }
 </style>
