@@ -131,6 +131,11 @@ export default defineComponent({
             default: 'left',
             validator: (v: string) =>
                 ['left', 'right', 'justify', 'center'].includes(v)
+        },
+        border: {
+            type: String,
+            required: false,
+            default: null
         }
     },
     setup(props, { emit, attrs }) {
@@ -409,7 +414,8 @@ export default defineComponent({
                     '--dl-tooltip-text-align': props.textAlignment,
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
-                        : 'none'
+                        : 'none',
+                    '--dl-tooltip-border': props.border
                 }
             ] as any
         }
@@ -431,6 +437,7 @@ export default defineComponent({
     color: var(--dl-tooltip-color);
     background: var(--dl-tooltip-background);
     border-radius: 2px;
+    border: var(--dl-tooltip-border) solid var(--dl-color-separator);
     text-transform: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
