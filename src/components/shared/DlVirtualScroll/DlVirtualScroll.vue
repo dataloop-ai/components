@@ -120,7 +120,7 @@ export default defineComponent({
                 : typeof rootRef.value?.getElementsByClassName === 'function'
                 ? rootRef.value?.getElementsByClassName(
                       'dl-virtual-scroll__content'
-                  )[0].children[0].clientHeight
+                  )[0]?.children[0]?.clientHeight ?? 40
                 : 40
         }
 

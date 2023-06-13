@@ -290,6 +290,21 @@ export function useVirtualScroll({
 
     const { props, emit, proxy } = vm
 
+    let scrollAnimationFrameId: number | null = null
+    let changedRangeAnimationFrameId: number | null = null
+
+    onBeforeUnmount(() => {
+        resetAnimationFrame(scrollAnimationFrameId)
+        resetAnimationFrame(changedRangeAnimationFrameId)
+    })
+
+    const resetAnimationFrame = (frameId: number | null) => {
+        if (frameId) {
+            cancelAnimationFrame(frameId)
+        }
+        frameId = null
+    }
+
     let prevScrollStart: number | undefined
     let prevToIndex: number
     let localScrollViewSize: number | undefined
@@ -571,7 +586,9 @@ export function useVirtualScroll({
                 virtualScrollLength.value
             )
 
-            requestAnimationFrame(() => {
+            resetAnimationFrame(changedRangeAnimationFrameId)
+
+            changedRangeAnimationFrameId = requestAnimationFrame(() => {
                 if (
                     virtualScrollSliceRange.value.to !== to &&
                     prevScrollStart === scrollDetails.scrollStart
@@ -590,7 +607,9 @@ export function useVirtualScroll({
             })
         }
 
-        requestAnimationFrame(() => {
+        resetAnimationFrame(scrollAnimationFrameId)
+
+        scrollAnimationFrameId = requestAnimationFrame(() => {
             // if the scroll was changed give up
             // (another call to setVirtualScrollSliceRange before animation frame)
             if (prevScrollStart !== scrollDetails.scrollStart) {
