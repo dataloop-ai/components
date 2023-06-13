@@ -1,9 +1,6 @@
 #!/bin/bash
 
-CURRENT_DIRECTORY = $(pwd)
-DESIRED_DIRECTORY="misc"
-
-if [[ "$CURRENT_DIRECTORY" != *"$DESIRED_DIRECTORY"* ]]; then
+if [[ "$PWD" != *misc* ]]; then
   cd misc
 fi
 
