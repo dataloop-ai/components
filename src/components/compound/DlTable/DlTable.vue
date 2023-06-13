@@ -63,6 +63,7 @@
             :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
+            :scroll-debounce="scrollDebounce"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -624,6 +625,10 @@ export default defineComponent({
             default: null
         },
         noHover: Boolean,
+        scrollDebounce: {
+            type: Number,
+            default: 100
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
