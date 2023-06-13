@@ -645,7 +645,7 @@ export default defineComponent({
             }
             return !!this.$slots.prepend && !this.isSmall
         },
-        chevronIconColor() {
+        chevronIconColor(): string {
             return `${this.disabled ? 'dl-color-disabled' : null}`
         }
     },
