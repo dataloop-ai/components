@@ -279,12 +279,14 @@ export function useVirtualScroll({
     virtualScrollLength,
     getVirtualScrollTarget,
     getVirtualScrollEl,
-    virtualScrollItemSizeComputed // optional
+    virtualScrollItemSizeComputed, // optional
+    debounceValue
 }: {
     virtualScrollLength: ComputedRef<number>
     getVirtualScrollTarget: () => HTMLElement | undefined
     getVirtualScrollEl: () => HTMLElement
     virtualScrollItemSizeComputed?: ComputedRef<number>
+    debounceValue?: number
 }) {
     const vm = getCurrentInstance()
 
@@ -935,7 +937,10 @@ export function useVirtualScroll({
     }
 
     setVirtualScrollSize()
-    const onVirtualScrollEvt = debounce(localOnVirtualScrollEvt, 35)
+    const onVirtualScrollEvt = debounce(
+        localOnVirtualScrollEvt,
+        debounceValue ?? 100
+    )
 
     onBeforeMount(() => {
         setVirtualScrollSize()
