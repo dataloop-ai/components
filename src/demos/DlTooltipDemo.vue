@@ -82,6 +82,30 @@
                 </div>
             </dl-tooltip>
         </div>
+        <div>
+            Styled Tooltip using styles
+            <dl-tooltip style="border: 1px solid red">
+                <div style="display: flex; flex-flow: row wrap; gap: 3px">
+                    i am with a border!
+                </div>
+            </dl-tooltip>
+        </div>
+        <div>
+            Styled Tooltip using a class
+            <dl-tooltip class="TestID">
+                <div style="display: flex; flex-flow: row wrap; gap: 3px">
+                    i am with a border!
+                </div>
+            </dl-tooltip>
+        </div>
+        <div>
+            Styled Tooltip using an id
+            <dl-tooltip id="TestID">
+                <div style="display: flex; flex-flow: row wrap; gap: 3px">
+                    i am with a border!
+                </div>
+            </dl-tooltip>
+        </div>
     </div>
 </template>
 
@@ -128,3 +152,12 @@ export default defineComponent({
     template: 'dl-tooltip-demo'
 })
 </script>
+
+<style>
+#TestID {
+    border: 1px solid red;
+}
+.TestID {
+    border: 1px solid red;
+}
+</style>

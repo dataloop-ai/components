@@ -131,11 +131,6 @@ export default defineComponent({
             default: 'left',
             validator: (v: string) =>
                 ['left', 'right', 'justify', 'center'].includes(v)
-        },
-        border: {
-            type: String,
-            required: false,
-            default: null
         }
     },
     setup(props, { emit, attrs }) {
@@ -178,7 +173,12 @@ export default defineComponent({
 
         const { showPortal, hidePortal, portalIsActive, portalEl } = usePortal(
             vm,
-            innerRef
+            innerRef,
+            false,
+            {
+                parentId: attrs.id as string,
+                parentClass: attrs.class as string
+            }
         )
 
         const isMobile = computed(() => isMobileOrTablet())
@@ -391,7 +391,9 @@ export default defineComponent({
         Object.assign(vm!.proxy, { updatePosition })
 
         return {
-            uuid: `dl-tooltip-${v4()}`,
+            uuid: (attrs.id as string)?.length
+                ? attrs.id
+                : `dl-tooltip-${v4()}`,
             portalIsActive,
             classes: ['dl-tooltip dl-position-engine', attrs.class],
             showing,
@@ -414,8 +416,7 @@ export default defineComponent({
                     '--dl-tooltip-text-align': props.textAlignment,
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
-                        : 'none',
-                    '--dl-tooltip-border': props.border
+                        : 'none'
                 }
             ] as any
         }
@@ -431,13 +432,12 @@ export default defineComponent({
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 16px;
-    padding: 2px 5px;
+    padding: var(--dl-tooltip-padding, 2px 5px);
     font-size: var(--dl-font-size-small);
     line-height: 16px;
     color: var(--dl-tooltip-color);
     background: var(--dl-tooltip-background);
     border-radius: 2px;
-    border: var(--dl-tooltip-border) solid var(--dl-color-separator);
     text-transform: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;

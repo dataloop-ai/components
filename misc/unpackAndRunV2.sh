@@ -1,6 +1,11 @@
 #!/bin/bash
 
-cd misc
+CURRENT_DIRECTORY = $(pwd)
+DESIRED_DIRECTORY="misc"
+
+if [[ "$CURRENT_DIRECTORY" != *"$DESIRED_DIRECTORY"* ]]; then
+  cd misc
+fi
 
 # check if vue2-playground exists
 if [ ! -d "vue2.6-vite" ]; then
