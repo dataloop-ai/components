@@ -59,11 +59,7 @@ export default function (
 
         if (portalIsActive.value === false) {
             if (onGlobalDialog === false && portalEl.value === null) {
-                portalEl.value = createGlobalNode(parentId)
-                portalEl.value.className =
-                    portalEl.value.className + (parentClass || '')
-                portalEl.value.style.cssText =
-                    portalEl.value.style.cssText + (parentStyle || '')
+                portalEl.value = createGlobalNode()
             }
 
             portalIsActive.value = true
