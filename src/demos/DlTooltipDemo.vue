@@ -156,8 +156,10 @@ export default defineComponent({
 <style>
 #TestID {
     border: 1px solid red;
+    background-color: blue;
 }
 .TestID {
     border: 1px solid red;
+    background-color: blue;
 }
 </style>
