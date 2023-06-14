@@ -80,6 +80,40 @@ export const datePattern = new RegExp(
     'gi'
 )
 
+const mergeWords = (words: string[]) => {
+    const result: string[] = []
+    let merging = false
+    let mergeIndex = -1
+
+    for (let i = 0; i < words.length; ++i) {
+        const currentItem = words[i]
+
+        if (currentItem === 'IN' || currentItem === 'NOT-IN') {
+            merging = true
+            mergeIndex = i + 1
+            result.push(currentItem)
+            continue
+        } else if (
+            Object.values(Logical).includes(currentItem as any) ||
+            Object.values(operators).includes(currentItem as any)
+        ) {
+            merging = false
+        }
+
+        if (merging) {
+            if (!result[mergeIndex]) {
+                result[mergeIndex] = ''
+            }
+            result[mergeIndex] += ' ' + currentItem
+            continue
+        }
+
+        result.push(currentItem)
+    }
+
+    return result
+}
+
 export const useSuggestions = (
     schema: Schema,
     aliases: Alias[],
@@ -113,7 +147,8 @@ export const useSuggestions = (
         localSuggestions = sortedSuggestions
 
         const words = splitByQuotes(input, space)
-        const expressions = mapWordsToExpressions(words)
+        const mergedWords = mergeWords(words)
+        const expressions = mapWordsToExpressions(mergedWords)
 
         for (const { field, operator, value, keyword } of expressions) {
             let matchedField: Suggestion | null = null
