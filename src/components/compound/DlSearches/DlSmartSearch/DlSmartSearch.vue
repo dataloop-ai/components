@@ -343,7 +343,9 @@ export default defineComponent({
         const handleInputModel = (value: string) => {
             inputModel.value = value
             const json = toJSON(removeBrackets(value))
-            emit('update:modelValue', json)
+            if (!isEqual(json, props.modelValue)) {
+                emit('update:modelValue', json)
+            }
             const stringified = JSON.stringify(json)
             const newQuery = replaceWithAliases(stringified, props.aliases)
             activeQuery.value.query = newQuery
@@ -356,10 +358,23 @@ export default defineComponent({
 
         const debouncedInputModel = debounce(handleInputModel, 300)
 
+        const isValidJSON = (item: string | Object): boolean => {
+            let value = typeof item !== 'string' ? JSON.stringify(item) : item
+            try {
+                value = JSON.parse(value)
+            } catch (e) {
+                return false
+            }
+
+            return typeof value === 'object' && value !== null
+        }
+
         const toJSON = (value: string) => {
-            return parseSmartQuery(
+            const json = parseSmartQuery(
                 replaceWithJsDates(value) ?? inputModel.value
             )
+
+            return isValidJSON(json) ? json : inputModel.value
         }
 
         const setFocused = (value: boolean) => {
@@ -383,7 +398,9 @@ export default defineComponent({
                     return
                 }
                 const stringQuery = stringifySmartQuery(val)
-                // debouncedInputModel(stringQuery)
+                if (stringQuery !== inputModel.value.trim()) {
+                    debouncedInputModel(stringQuery)
+                }
             }
         })
 
