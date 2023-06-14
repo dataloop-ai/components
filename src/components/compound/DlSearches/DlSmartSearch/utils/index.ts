@@ -11,6 +11,7 @@ export const isEndOfString = (str: string, pattern: RegExp): boolean => {
     if (!matches || !matches.length) return false
 
     const lastMatch = matches[matches.length - 1]
+
     return (
         trimmed.lastIndexOf(lastMatch) + lastMatch.length + 1 === trimmed.length
     )
