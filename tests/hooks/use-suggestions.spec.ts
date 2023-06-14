@@ -127,11 +127,7 @@ describe('use-suggestions', () => {
     describe('when the field is of type "datetime"', () => {
         it('suggestions should have the "dateIntervalSuggestionString"', () => {
             findSuggestions('StartTime = ')
-            expect(suggestions.value).toEqual([
-                '(From (dd/mm/yyyy) To (dd/mm/yyyy))',
-                '(From dd/mm/yyyy)',
-                '(To dd/mm/yyyy)'
-            ])
+            expect(suggestions.value).toEqual(['(dd/mm/yyyy)'])
         })
 
         it('suggestions should be empty when value does not matches', () => {
