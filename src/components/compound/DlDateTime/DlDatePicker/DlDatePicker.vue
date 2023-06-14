@@ -103,9 +103,9 @@ export default defineComponent({
             type: Object as PropType<Partial<DateInterval> | null>,
             default: null
         },
-        allowIntervalSelection: {
+        singleSelection: {
             type: Boolean,
-            default: true
+            default: false
         },
         normalizeCalendars: Boolean,
         disabled: Boolean
@@ -249,7 +249,7 @@ export default defineComponent({
 
             this.dateInterval = { from: date, to: date }
 
-            if (this.allowIntervalSelection) {
+            if (this.singleSelection) {
                 this.isSelectionMode = true
             } else {
                 this.updateModelValue(this.dateInterval)

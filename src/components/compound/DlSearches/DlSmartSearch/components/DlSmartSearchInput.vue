@@ -118,7 +118,7 @@
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
-                    :allow-interval-selection="false"
+                    :single-selection="false"
                     @change="handleDateSelectionUpdate"
                 />
             </div>
