@@ -83,7 +83,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import DlIcon from '../../essential/DlIcon/DlIcon.vue'
-import { Props } from '../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { throttle } from 'lodash'
 
@@ -112,7 +112,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         }
     },

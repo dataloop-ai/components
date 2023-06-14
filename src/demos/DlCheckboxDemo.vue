@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="--dl-checkbox-sub-label-left-padding: 20px">
         <dl-checkbox
             v-model="customValueCheck"
             toggle-indeterminate
