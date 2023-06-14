@@ -76,9 +76,11 @@ const dateSuggestionPattern = '(dd/mm/yyyy)'
 let localSuggestions: Suggestion[] = []
 
 export const datePattern = new RegExp(
-    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/,
+    /(\(\d{2}\/\d{2}\/\d{4}\)\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
     'gi'
 )
+export const datePatternNoBrackets =
+    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/
 
 const mergeWords = (words: string[]) => {
     const result: string[] = []
@@ -377,7 +379,7 @@ const validateBracketValues = (value: string) => {
 }
 
 const isValidDateIntervalPattern = (str: string) => {
-    return !!str.match(datePattern)
+    return !!str.match(datePatternNoBrackets)
 }
 
 const isValidNumber = (str: string) => {
@@ -526,11 +528,7 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'date':
             case 'time':
             case 'datetime':
-                suggestion.push(
-                    dateSuggestionPattern
-                    // dateStartSuggestionString,
-                    // dateEndSuggestionString
-                )
+                suggestion.push(dateSuggestionPattern)
             default:
                 // do nothing
                 break
