@@ -394,10 +394,18 @@ export default defineComponent({
         modelValue(value: string) {
             const target = this.$refs['input'] as HTMLInputElement
             value = value?.replaceAll(' ', ' ') ?? ''
-            if (!this.isTyping) target.innerHTML = value
+            /*
+             * I commented out this line because it was blocking arrow navigation
+             * */
+            // if (!this.isTyping) target.innerHTML = value
+            target.innerHTML = value
             updateEditor(this.styleModel)
             this.setMenuOffset(isEligibleToChange(target, this.expanded))
-            if (!this.isTyping) setCaret(target)
+            /*
+             * I commented out this line because it was blocking arrow navigation
+             * */
+            // if (!this.isTyping) setCaret(target)
+            setCaret(target)
             if (!this.expanded) {
                 this.isOverflow =
                     isEllipsisActive(this.$refs['input'] as Element) ||
