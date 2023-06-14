@@ -1,8 +1,11 @@
 export * from './highlightSyntax'
 export * from './utils'
 
-import { datePattern } from '../../../../../hooks/use-suggestions'
 import { DateInterval } from '../../../DlDateTime/types'
+import {
+    datePattern,
+    datePatternNoBrackets
+} from '../../../../../hooks/use-suggestions'
 
 export const isEndOfString = (str: string, pattern: RegExp): boolean => {
     const trimmed = str.trim()
@@ -11,9 +14,8 @@ export const isEndOfString = (str: string, pattern: RegExp): boolean => {
     if (!matches || !matches.length) return false
 
     const lastMatch = matches[matches.length - 1]
-    return (
-        trimmed.lastIndexOf(lastMatch) + lastMatch.length + 1 === trimmed.length
-    )
+
+    return trimmed.lastIndexOf(lastMatch) + lastMatch.length === trimmed.length
 }
 
 export const isEndingWithDateIntervalPattern = (str: string) => {
@@ -22,10 +24,11 @@ export const isEndingWithDateIntervalPattern = (str: string) => {
 
 export const replaceDateInterval = (str: string, date: DateInterval) => {
     const newStr = `${formatDate(date.from)}`
-    return replaceLastOccurrence(str, newStr, datePattern)
+    return replaceLastOccurrence(str, newStr, datePatternNoBrackets)
 }
 
 const formatDate = (date: Date): string => {
+    if (!date) return
     return `${addZero(date.getDate())}/${addZero(
         date.getMonth() + 1
     )}/${date.getFullYear()}`
