@@ -383,7 +383,7 @@ export default defineComponent({
                     return
                 }
                 const stringQuery = stringifySmartQuery(val)
-                debouncedInputModel(stringQuery)
+                // debouncedInputModel(stringQuery)
             }
         })
 

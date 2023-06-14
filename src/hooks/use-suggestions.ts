@@ -71,22 +71,12 @@ type Expression = {
 }
 
 const space = ' '
-const dateStartSuggestionString = '(From dd/mm/yyyy)'
-const dateEndSuggestionString = '(To dd/mm/yyyy)'
-const dateIntervalSuggestionString = '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
+const dateSuggestionPattern = '(dd/mm/yyyy)'
 
 let localSuggestions: Suggestion[] = []
 
-export const startDatePattern = new RegExp(
-    /(from\s?\d{2}\/\d{2}\/\d{4}\s?|from\s?dd\/mm\/yyyy\s?)/,
-    'gi'
-)
-export const endDatePattern = new RegExp(
-    /(to\s?\d{2}\/\d{2}\/\d{4}\s?|to\s?dd\/mm\/yyyy\s?)/,
-    'gi'
-)
-export const dateIntervalPattern = new RegExp(
-    /(from\s?\d{2}\/\d{2}\/\d{4}\s?to\s?\d{2}\/\d{2}\/\d{4})|(from\s?dd\/mm\/yyyy\s?to\s?dd\/mm\/yyyy)/,
+export const datePattern = new RegExp(
+    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/,
     'gi'
 )
 
@@ -191,11 +181,7 @@ export const useSuggestions = (
                 dataType === 'date' ||
                 dataType === 'time'
             ) {
-                localSuggestions = [
-                    dateIntervalSuggestionString,
-                    dateStartSuggestionString,
-                    dateEndSuggestionString
-                ]
+                localSuggestions = [dateSuggestionPattern]
 
                 if (!value) continue
 
@@ -356,11 +342,7 @@ const validateBracketValues = (value: string) => {
 }
 
 const isValidDateIntervalPattern = (str: string) => {
-    return (
-        !!str.match(dateIntervalPattern) ||
-        !!str.match(startDatePattern) ||
-        !!str.match(endDatePattern)
-    )
+    return !!str.match(datePattern)
 }
 
 const isValidNumber = (str: string) => {
@@ -510,9 +492,9 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'time':
             case 'datetime':
                 suggestion.push(
-                    dateIntervalSuggestionString,
-                    dateStartSuggestionString,
-                    dateEndSuggestionString
+                    dateSuggestionPattern
+                    // dateStartSuggestionString,
+                    // dateEndSuggestionString
                 )
             default:
                 // do nothing
