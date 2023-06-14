@@ -52,7 +52,7 @@ export function useArrowNavigation(items: any, isOpen: any) {
 
     const handleArrowUp = (event: KeyboardEvent) => {
         event.preventDefault()
-        if (isEligibleToDecrementHighlightedIndex) {
+        if (isEligibleToDecrementHighlightedIndex.value) {
             decrementHighlightedIndex()
         }
     }
