@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue-demi'
+import { defineComponent, ref, computed, toRef } from 'vue-demi'
 import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 
@@ -63,8 +63,8 @@ export default defineComponent({
         }
     },
     setup(props) {
-        const { text, split } = props
-
+        const { split } = props
+        const textRef = toRef(props, 'text')
         const splitPositionsRef = computed(() => {
             return Math.min(
                 Math.max(props.splitPosition, 1),
@@ -75,15 +75,17 @@ export default defineComponent({
         const dlEllipsisRef = ref(null)
         const splitIndex = computed(() =>
             split
-                ? Math.round(text.length * splitPositionsRef.value)
-                : text.length
+                ? Math.round(textRef.value.length * splitPositionsRef.value)
+                : textRef.value.length
         )
 
-        const leftText = computed(() => text.slice(0, splitIndex.value))
-        const rightText = computed(() => text.slice(splitIndex.value))
+        const leftText = computed(() =>
+            textRef.value.slice(0, splitIndex.value)
+        )
+        const rightText = computed(() => textRef.value.slice(splitIndex.value))
 
         const { hasEllipsis } = useSizeObserver(dlEllipsisRef)
-        const fullText = computed(() => text)
+        const fullText = computed(() => textRef.value)
 
         return {
             leftText,
