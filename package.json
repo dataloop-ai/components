@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.17.62",
+  "version": "0.17.63-rogue-hf1.0",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
