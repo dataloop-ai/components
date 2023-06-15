@@ -19,49 +19,6 @@
                     class="magnifier-glass"
                 />
             </div>
-            <!--<dl-tooltip
-                    v-show="zoomMode"
-                    anchor="center right"
-                    self="center right"
-                    :offset="[300, 0]"
-                    max-height="280px"
-                    max-width="280px"
-                    style="border: 6px solid black"
-            >
-                <div
-
-                        class="image-preview"
-                >
-                    <img
-                            ref="imagePreview"
-                            :src="imageUrl"
-                            :alt="altText"
-                    >
-                </div>
-            </dl-tooltip>-->
-            <!--
-
-            -->
-            <!--<dl-tooltip
-                    v-show="zoomMode"
-                    anchor="center right"
-                    self="center right"
-                    :offset="[300, 0]"
-                    max-height="280px"
-                    max-width="280px"
-                    style="border: 6px solid black"
-            >
-                <div
-                        v-if="showImagePreview && zoomMode"
-                        class="image-preview"
-                >
-                    <img
-                            ref="imagePreview"
-                            :src="imageUrl"
-                            :alt="altText"
-                    >
-                </div>
-            </dl-tooltip>-->
             <div
                 v-if="showImagePreview && zoomMode"
                 class="image-preview"

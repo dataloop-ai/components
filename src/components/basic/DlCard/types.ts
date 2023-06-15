@@ -1,48 +1,31 @@
-export type ImageItem = {
+export type DlCardTagType = {
+    label: string
+    color?: string
+    textColor?: string
+}
+
+export type DlCardImageType = {
     src: string
     styles?: string
     alt?: string
+    link?: {
+        href: string
+        icon: string
+        color?: string
+        backgroundColor?: string
+        size?: string
+    }
 }
 
-export type IconItem = {
-    src: string
-    styles?: string
-    size?: string
+export type DlCardHintType = {
+    icon: string
     color?: string
 }
 
-export type LinkItem = {
+export type DlCardLinkType = {
     title: string
     href: string
     icon?: string
     newtab?: boolean
     external?: boolean
-}
-
-export type IconLink = {
-    icon: string
-    color: string
-    backgroundColor: string
-    size: string
-    link: string
-    circle: {
-        size: string
-        color: string
-    }
-}
-
-export type ChipsItemsType = {
-    label: string
-    color: string
-    textColor: string
-}
-
-export type InnerIconsType = {
-    icon: string
-    color: string
-}
-
-export type ShopifyTitleType = {
-    label: string
-    count: number
 }

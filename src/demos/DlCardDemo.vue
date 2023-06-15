@@ -4,39 +4,25 @@
             :image="image"
             :text="text"
             :title="title"
-            :keyboard-shortcut="keyboardShortcut"
             :links="links"
         />
-        <div>Card (Shopify)</div>
+        <div>Card (interactive)</div>
         <div style="display: flex; flex-direction: row; gap: 10px">
             <DlCard
-                shopify
-                zoom-mode
+                interactive
+                zoom
                 :card-id="1"
                 :image="orangeImage"
-                :shopify-title="shopifyTitle"
-                :icon-link="iconLink"
-                :chips-items="chipsItemsEmpty"
-                :shopify-description="shopifyDescription"
-                @onUpdateDescription="updateDescription"
-                @onCardActive="onCardActive"
-            />
-            <DlCard
-                shopify
-                zoom-mode
-                :card-id="2"
-                :image="appleImage"
-                :icon-link="iconLink"
-                :shopify-title="shopifyTitle"
-                :chips-items="chipsItems"
-                :inner-icons="classificationItems"
-                :shopify-description="shopifyDescriptionSecond"
-                colored-strip="dl-color-negative"
+                :title="'Classifications'"
+                :hints="classificationItems"
+                :tags="tags"
+                :description="shopifyDescription"
+                indicator-color="red"
                 @onUpdateDescription="updateDescription"
                 @onCardActive="onCardActive"
             />
         </div>
-
+        <div>Card empty state</div>
         <DlCard
             is-empty
             :empty-state-props="{
@@ -106,7 +92,13 @@ export default defineComponent({
             },
             orangeImage: {
                 src: 'https://www.shutterstock.com/image-photo/ripe-orange-isolated-on-white-260nw-606022676.jpg',
-                styles: 'width: 200px; height: 112px'
+                styles: 'width: 200px; height: 112px',
+                link: {
+                    icon: 'icon-dl-link',
+                    color: 'black',
+                    size: '12px',
+                    href: 'https://dataloop.ai/'
+                }
             },
             parisImage: {
                 src: 'https://blmparis.files.wordpress.com/2014/07/day.jpg',
@@ -137,19 +129,7 @@ export default defineComponent({
                     icon: 'icon-dl-code'
                 }
             ],
-            iconLink: {
-                icon: 'icon-dl-link',
-                color: 'black',
-                backgroundColor: 'grey',
-                size: '12px',
-                link: 'https://dataloop.ai/',
-                circle: {
-                    size: '20px',
-                    // color: 'rgba(255, 0, 0, 0.8)'
-                    color: 'rgba(255, 255, 255, 0.8)'
-                }
-            },
-            chipsItems: [
+            tags: [
                 {
                     label: 'A',
                     color: '#BECB5D',
@@ -181,11 +161,6 @@ export default defineComponent({
                     textColor: 'black'
                 }
             ],
-            shopifyTitle: {
-                label: 'Classification',
-                count: 6
-            },
-            chipsItemsEmpty: [],
             classificationItems: [
                 {
                     icon: 'icon-dl-related-filled',

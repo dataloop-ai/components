@@ -7,34 +7,23 @@
         @click="onCardClick"
     >
         <div
-            v-if="icon && !isEmpty"
-            class="card--icon"
-        >
-            <dl-icon
-                :icon="icon.src"
-                :styles="iconStyles"
-                :size="iconSize"
-                :color="iconColor"
-            />
-        </div>
-        <div
-            v-else-if="image && !isEmpty"
+            v-if="image && !isEmpty"
             class="card--image"
         >
             <div
-                v-if="shopify && iconLink?.icon"
+                v-if="interactive && image?.link?.icon"
                 class="card--image__link-icon"
                 @click="stopPropagationEvent"
             >
                 <DlLink
                     newtab
                     external
-                    :href="iconLink?.link"
+                    :href="image?.link?.href"
                 >
                     <dl-icon
-                        :icon="iconLink?.icon"
-                        :size="iconLink?.size"
-                        :color="iconLink?.color"
+                        :icon="image?.link?.icon"
+                        :size="image?.link?.size"
+                        :color="image?.link?.color"
                     />
                 </DlLink>
             </div>
@@ -60,7 +49,7 @@
                 />
             </figure>
             <dl-tooltip
-                v-if="zoomMode"
+                v-if="zoom"
                 :delay="0"
                 anchor="center right"
                 self="center right"
@@ -85,156 +74,148 @@
             class="card--content"
         >
             <div>
-                <slot
-                    v-if="!!$slots.header"
-                    name="header"
-                />
-                <div v-else-if="shopify">
-                    <div class="card--content__shopify-title">
-                        <div class="full-width">
+                <slot name="header">
+                    <div v-if="interactive">
+                        <div class="card--content__interactive-title">
+                            <div class="full-width">
+                                <dl-typography
+                                    size="10px"
+                                    color="dl-color-medium"
+                                >
+                                    {{ title }}
+                                    ({{ tags ? tags.length : 0 }})
+                                </dl-typography>
+                            </div>
+                            <div
+                                class="card--content__interactive-title__icons"
+                            >
+                                <dl-icon
+                                    v-for="(hint, index) in hints"
+                                    :key="index"
+                                    :icon="hint.icon"
+                                    :color="hint.color"
+                                    size="12px"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        v-else
+                        class="card--header"
+                    >
+                        <span class="card--header_title">{{ title }}</span>
+                    </div>
+                </slot>
+                <slot name="content">
+                    <div v-if="interactive">
+                        <div class="card--content__interactive-chips">
+                            <dl-ellipsis
+                                tooltip-position="top middle"
+                                :tooltip-offset="[0, 25]"
+                            >
+                                <div>
+                                    <div
+                                        v-if="tags.length"
+                                        class="card--content__interactive-chips__row"
+                                    >
+                                        <div
+                                            v-for="(tag, index) in tags"
+                                            :key="index"
+                                            style="width: max-content"
+                                        >
+                                            <DlChip
+                                                fit
+                                                :label="tag.label"
+                                                :color="tag.color"
+                                                :text-color="tag.textColor"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div
+                                        v-else
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            height: 23px;
+                                        "
+                                    >
+                                        <dl-typography
+                                            size="10px"
+                                            color="dl-color-lighter"
+                                        >
+                                            No classes to display
+                                        </dl-typography>
+                                    </div>
+                                </div>
+                            </dl-ellipsis>
+                        </div>
+                    </div>
+                    <span
+                        v-else
+                        class="card--content_text"
+                    >{{ text }}</span>
+                </slot>
+            </div>
+            <slot name="footer">
+                <div v-if="interactive">
+                    <div class="card__interactive-description">
+                        <div class="flex full-width items-center">
                             <dl-typography
                                 size="10px"
                                 color="dl-color-medium"
                             >
-                                {{ shopifyTitle.label }} {{ shopifyCountLabel }}
+                                Description
                             </dl-typography>
                         </div>
-                        <div class="card--content__shopify-title__icons">
-                            <dl-icon
-                                v-for="(
-                                    classificationItem, classificationItemIndex
-                                ) in innerIcons"
-                                :key="classificationItemIndex"
-                                :icon="classificationItem.icon"
-                                :color="classificationItem.color"
-                                size="12px"
+                        <div class="card__interactive-description__modal">
+                            <description-modal
+                                :description="description"
+                                @onSubmit="updateDescription"
                             />
                         </div>
                     </div>
-                </div>
-                <div
-                    v-else
-                    class="card--header"
-                >
-                    <span class="card--header_title">{{ title }}</span>
-                    <span class="card--header_shortcut">{{
-                        keyboardShortcut
-                    }}</span>
-                </div>
-                <slot
-                    v-if="!!$slots.content"
-                    name="content"
-                />
-                <div v-else-if="shopify">
-                    <div class="card--content__shopify-chips">
+                    <div class="card__interactive-description__text">
                         <dl-ellipsis
-                            tooltip-position="top middle"
-                            :tooltip-offset="[0, 25]"
-                        >
-                            <div>
-                                <div
-                                    v-if="chipsItems.length"
-                                    class="card--content__shopify-chips__row"
-                                >
-                                    <div
-                                        v-for="(chip, chipIndex) in chipsItems"
-                                        :key="chipIndex"
-                                        style="width: max-content"
-                                    >
-                                        <DlChip
-                                            fit
-                                            :label="chip.label"
-                                            :color="chip.color"
-                                            :text-color="chip.textColor"
-                                        />
-                                    </div>
-                                </div>
-                                <div
-                                    v-else
-                                    style="
-                                        display: flex;
-                                        align-items: center;
-                                        height: 23px;
-                                    "
-                                >
-                                    <dl-typography
-                                        size="10px"
-                                        color="dl-color-lighter"
-                                    >
-                                        No classes to display
-                                    </dl-typography>
-                                </div>
-                            </div>
-                        </dl-ellipsis>
-                    </div>
-                </div>
-                <span
-                    v-else
-                    class="card--content_text"
-                >{{ text }}</span>
-            </div>
-            <slot
-                v-if="!!$slots.footer"
-                name="footer"
-            />
-            <div v-else-if="shopify">
-                <div class="card__shopify-description">
-                    <div class="flex full-width items-center">
+                            v-if="description"
+                            :text="description"
+                        />
                         <dl-typography
-                            size="10px"
-                            color="dl-color-medium"
+                            v-else
+                            size="12px"
+                            color="dl-color-lighter"
                         >
-                            Description
+                            No description
                         </dl-typography>
                     </div>
-                    <div class="card__shopify-description__modal">
-                        <description-modal
-                            :description-value="shopifyDescription"
-                            @onSubmit="updateDescription"
-                        />
-                    </div>
                 </div>
-                <div class="card__shopify-description__text">
-                    <dl-ellipsis
-                        v-if="shopifyDescription"
-                        :text="shopifyDescription"
-                    />
-                    <dl-typography
-                        v-else
-                        size="12px"
-                        color="dl-color-lighter"
-                    >
-                        No description
-                    </dl-typography>
-                </div>
-            </div>
-            <div
-                v-else
-                class="card--links"
-            >
                 <div
-                    v-for="(link, idx) in links"
-                    :key="idx"
-                    class="card--links_linkItem"
+                    v-else
+                    class="card--links"
                 >
-                    <div class="card--links_linkItem_icon">
-                        <dl-icon
-                            v-if="link.icon"
-                            :icon="link.icon"
-                            size="12px"
-                        />
-                    </div>
-                    <div class="card--links_linkItem_link">
-                        <dl-link
-                            :external="!!link.external"
-                            :href="link.href"
-                            :newtab="!!link.newtab"
-                        >
-                            {{ link.title }}
-                        </dl-link>
+                    <div
+                        v-for="(link, idx) in links"
+                        :key="idx"
+                        class="card--links_linkItem"
+                    >
+                        <div class="card--links_linkItem_icon">
+                            <dl-icon
+                                v-if="link.icon"
+                                :icon="link.icon"
+                                size="12px"
+                            />
+                        </div>
+                        <div class="card--links_linkItem_link">
+                            <dl-link
+                                :external="!!link.external"
+                                :href="link.href"
+                                :newtab="!!link.newtab"
+                            >
+                                {{ link.title }}
+                            </dl-link>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </slot>
         </div>
         <dl-empty-state
             v-if="isEmpty"
@@ -258,18 +239,15 @@ import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor, stringStyleToRecord } from '../../../utils'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
-import { Props } from '../DlEmptyState/types'
+import { DlEmptyStateProps } from '../DlEmptyState/types'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { DlChip, DlEllipsis } from '../../../components'
 import {
-    IconItem,
-    ImageItem,
-    LinkItem,
-    IconLink,
-    ChipsItemsType,
-    InnerIconsType,
-    ShopifyTitleType
+    DlCardImageType,
+    DlCardLinkType,
+    DlCardTagType,
+    DlCardHintType
 } from './types'
 import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import DescriptionModal from './components/DescriptionModal.vue'
@@ -289,11 +267,7 @@ export default defineComponent({
     },
     props: {
         image: {
-            type: Object as PropType<ImageItem>,
-            default: null
-        },
-        icon: {
-            type: Object as PropType<IconItem>,
+            type: Object as PropType<DlCardImageType>,
             default: null
         },
         title: {
@@ -309,8 +283,8 @@ export default defineComponent({
             default: ''
         },
         links: {
-            type: Array as PropType<LinkItem[]>,
-            default: (): LinkItem[] => []
+            type: Array as PropType<DlCardLinkType[]>,
+            default: (): DlCardLinkType[] => []
         },
         height: {
             type: String,
@@ -324,35 +298,23 @@ export default defineComponent({
             type: [Object, String],
             default: null
         },
-        zoomMode: {
+        zoom: {
             type: Boolean,
             default: false
         },
-        iconLink: {
-            type: Object as PropType<IconLink>,
-            default: () => ({} as IconLink)
-        },
-        shopify: {
+        interactive: {
             type: Boolean,
             default: false
         },
-        chipsItems: {
-            type: Array as PropType<ChipsItemsType[]>,
-            default: (): ChipsItemsType[] => []
+        tags: {
+            type: Array as PropType<DlCardTagType[]>,
+            default: (): DlCardTagType[] => []
         },
-        innerIcons: {
-            type: Array as PropType<InnerIconsType[]>,
-            default: (): InnerIconsType[] => []
+        hints: {
+            type: Array as PropType<DlCardHintType[]>,
+            default: (): DlCardHintType[] => []
         },
-        coloredStrip: {
-            type: String,
-            default: ''
-        },
-        shopifyTitle: {
-            type: Object as PropType<ShopifyTitleType>,
-            default: () => ({} as ShopifyTitleType)
-        },
-        shopifyDescription: {
+        indicatorColor: {
             type: String,
             default: ''
         },
@@ -362,7 +324,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         }
     },
@@ -382,26 +344,27 @@ export default defineComponent({
     computed: {
         cssVars() {
             return {
-                '--dl-card-colored-strip': this.coloredStrip
+                '--dl-card-colored-strip': this.indicatorColor
                     ? `4px solid ${getColor(
-                          this.coloredStrip as string,
+                          this.indicatorColor as string,
                           'dl-color-separator'
                       )}`
                     : this.dlCardBorderBottom,
                 '--dl-card-border': this.dlCardBorder,
                 '--dl-card-box-shadow': this.boxShadow,
-                '--dl-card-content-padding': this.shopify
-                    ? `10px 10px ${this.coloredStrip ? '16px' : '20px'} 10px`
+                '--dl-card-content-padding': this.interactive
+                    ? `10px 10px ${this.indicatorColor ? '16px' : '20px'} 10px`
                     : '16px',
-                '--dl-card-link-icon-circle-size': this.iconLink?.circle?.size
-                    ? this.iconLink?.circle?.size
+                '--dl-card-link-icon-circle-size': this.image?.link?.size
+                    ? parseInt(this.image?.link?.size) + 8 + 'px'
                     : '20px',
-                '--dl-card-link-icon-circle-color': this.iconLink?.circle?.color
-                    ? this.iconLink?.circle?.color
+                '--dl-card-link-icon-circle-color': this.image?.link
+                    ?.backgroundColor
+                    ? this.image?.link?.backgroundColor
                     : 'rgba(255, 255, 255, 0.8)',
-                '--dl-card-width': this.shopify ? '180px' : this.width,
-                '--dl-card-image-width': this.shopify ? '180px' : '200px',
-                '--dl-card-image-height': this.shopify ? '112px' : '100px'
+                '--dl-card-width': this.interactive ? '180px' : this.width,
+                '--dl-card-image-width': this.interactive ? '180px' : '200px',
+                '--dl-card-image-height': this.interactive ? '112px' : '100px'
             }
         },
         computedStyles(): Record<string, string> {
@@ -409,25 +372,11 @@ export default defineComponent({
                 ? stringStyleToRecord(this.styles)
                 : this.styles
         },
-        iconStyles(): string {
-            return this.icon?.styles ?? ''
-        },
-        iconSize(): string {
-            return this.icon?.size ?? '50px'
-        },
-        iconColor(): string {
-            return this.icon?.color ?? 'var(--dl-color-darker)'
-        },
         imageStyles(): string {
             return this.image?.styles ?? ''
         },
         imageAlt(): string {
             return this.image?.alt ?? ''
-        },
-        shopifyCountLabel(): string | null {
-            return this.shopifyTitle?.count
-                ? `(${this.shopifyTitle?.count})`
-                : null
         },
         tooltipPreviewStyles() {
             return {
@@ -437,27 +386,21 @@ export default defineComponent({
             }
         }
     },
-    mounted() {
-        this.initDescriptionValue()
-    },
     methods: {
-        initDescriptionValue() {
-            this.shopifyDescriptionValue = this.shopifyDescription
-        },
         onCardMouseover() {
-            if (!this.shopify) return
+            if (!this.interactive) return
             this.dlCardBorder = '1px solid var(--dl-color-hover)'
             this.dlCardBorderBottom = this.dlCardBorder
         },
         onCardMouseleave() {
-            if (!this.shopify) return
+            if (!this.interactive) return
             this.dlCardBorder = this.isCardActive
                 ? '1px solid var(--dl-color-secondary)'
                 : '1px solid var(--dl-color-separator)'
             this.dlCardBorderBottom = this.dlCardBorder
         },
         onCardClick() {
-            if (!this.shopify) return
+            if (!this.interactive) return
             this.isCardActive = !this.isCardActive
             this.dlCardBorder = this.isCardActive
                 ? '1px solid var(--dl-color-secondary)'
@@ -470,15 +413,15 @@ export default defineComponent({
             }
         },
         showMagnifier() {
-            if (!this.zoomMode) return
+            if (!this.zoom) return
             this.hasMagnifyingGlass = true
         },
         hideMagnifier() {
-            if (!this.zoomMode) return
+            if (!this.zoom) return
             this.hasMagnifyingGlass = false
         },
         getCursorPos(event: MouseEvent) {
-            if (!this.zoomMode) return
+            if (!this.zoom) return
             const image = this.$refs.image as HTMLElement
             const rect = image.getBoundingClientRect()
 
@@ -491,7 +434,7 @@ export default defineComponent({
             return { x, y }
         },
         movePreview(event: MouseEvent) {
-            if (!this.zoomMode) return
+            if (!this.zoom) return
             const image = this.$refs.image as HTMLElement
             const rect = image.getBoundingClientRect()
 
@@ -501,7 +444,7 @@ export default defineComponent({
             this.previewOffset = { x, y }
         },
         moveMagnifier(event: MouseEvent) {
-            if (!this.zoomMode) return
+            if (!this.zoom) return
             const holder = this.$refs.imageHolder as HTMLElement
             const glass = this.$refs.magnifyingGlass as HTMLElement
             const image = this.$refs.image as HTMLElement
@@ -572,19 +515,19 @@ export default defineComponent({
             color: var(--dl-color-medium);
         }
 
-        &__shopify-title {
+        &__interactive-title {
             display: flex;
             width: 100%;
             font-size: 10px;
 
             &__icons {
                 display: flex;
-                width: 100%;
+                width: 80%;
                 justify-content: right;
                 gap: 10px;
             }
         }
-        &__shopify-chips {
+        &__interactive-chips {
             margin-top: 10px;
 
             &__row {
@@ -722,7 +665,7 @@ export default defineComponent({
         color: var(--dl-color-darker);
     }
 
-    &__shopify-description {
+    &__interactive-description {
         display: flex;
         width: 100%;
         font-size: 10px;
