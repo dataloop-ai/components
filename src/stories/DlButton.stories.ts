@@ -168,6 +168,7 @@ export const KeepingActiveState: Story = {
             >
             <h3>Button keeping its active state with menu</h3>
             <dl-button
+                v-bind="args"
                 :active="activeButtonState"
                 @click="activeButtonState = !activeButtonState"
                 >{{ activeButtonState ? 'Close' : 'Open' }}

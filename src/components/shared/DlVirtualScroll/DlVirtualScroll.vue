@@ -96,6 +96,10 @@ export default defineComponent({
         scrollTarget: {
             type: [String, Object],
             default: null
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['virtual-scroll'],
@@ -120,7 +124,7 @@ export default defineComponent({
                 : typeof rootRef.value?.getElementsByClassName === 'function'
                 ? rootRef.value?.getElementsByClassName(
                       'dl-virtual-scroll__content'
-                  )[0].children[0].clientHeight
+                  )[0]?.children[0]?.clientHeight ?? 40
                 : 40
         }
 
@@ -145,7 +149,8 @@ export default defineComponent({
             virtualScrollLength,
             getVirtualScrollTarget,
             getVirtualScrollEl,
-            virtualScrollItemSizeComputed
+            virtualScrollItemSizeComputed,
+            debounceValue: props.scrollDebounce
         })
 
         const virtualScrollScope = computed(() => {

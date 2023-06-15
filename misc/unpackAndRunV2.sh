@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cd misc
+if [[ "$PWD" != *misc* ]]; then
+  cd misc
+fi
 
 # check if vue2-playground exists
 if [ ! -d "vue2.6-vite" ]; then

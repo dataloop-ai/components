@@ -107,7 +107,7 @@ import {
     PropType
 } from 'vue-demi'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -166,7 +166,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         },
         ...CommonProps,

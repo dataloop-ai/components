@@ -3,24 +3,9 @@
         :style="cssVars"
         :class="chartWrapperClasses"
     >
-        <dl-empty-state
-            v-if="isEmpty"
-            v-bind="emptyStateProps"
-        >
-            <template
-                v-for="(_, slot) in $slots"
-                #[slot]="props"
-            >
-                <slot
-                    :name="slot"
-                    v-bind="props"
-                />
-            </template>
-        </dl-empty-state>
-        <Bar
-            v-if="!isEmpty"
+        <DLScatter
             :id="id"
-            ref="columnChart"
+            ref="scatterChart"
             :class="chartClasses"
             :style="(chartStyles, `max-height: ${wrapperHeight}`)"
             :data="chartData"
@@ -28,7 +13,7 @@
             @mouseout="onChartLeave"
         />
         <slot
-            v-if="!isEmpty || displayLabels"
+            v-if="displayLabels"
             v-bind="{ ...labelStyles, labels: xLabels, chartWidth }"
             name="axe-x-labels"
         >
@@ -43,7 +28,7 @@
             />
         </slot>
         <slot
-            v-if="displayBrush || !isEmpty"
+            v-if="displayBrush"
             v-bind="{
                 chartWidth,
                 modelValue: brush.value,
@@ -67,7 +52,7 @@
             />
         </slot>
         <slot
-            v-if="displayLegend || !isEmpty"
+            v-if="displayLegend"
             v-bind="{
                 data: legendDatasets,
                 chartWidth,
@@ -92,24 +77,17 @@
 </template>
 
 <script lang="ts">
-import { Bar } from '../../types/typedCharts'
+import { Scatter as DLScatter } from '../../types/typedCharts'
 import {
     CommonProps,
     ColumnChartProps,
-    defaultColumnChartProps
+    defaultLineChartProps
 } from '../../types/props'
-import {
-    defineComponent,
-    reactive,
-    watch,
-    ref,
-    computed,
-    PropType
-} from 'vue-demi'
+import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
-import { updateKey } from '../../../../../utils/update-key'
+import { updateKeys } from '../../../../../utils/update-key'
 import { hexToRgbA } from '../../../../../utils'
 import {
     Chart as ChartJS,
@@ -121,22 +99,20 @@ import {
     LinearScale,
     PointElement,
     LineElement,
-    DatasetController,
-    BarControllerDatasetOptions
+    BarControllerDatasetOptions,
+    TimeScale
 } from 'chart.js'
-import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import type {
     Chart,
     ChartMeta,
     ChartDataset,
     ActiveElement,
-    ChartData
+    ChartData,
+    DatasetController,
+    ScatterControllerDatasetOptions
 } from 'chart.js'
-import { unionBy, orderBy, merge, isEqual, cloneDeep } from 'lodash'
-import { updateKeys } from '../../../../../utils/update-key'
+import { orderBy, merge, isEqual, unionBy, cloneDeep } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
-import { getMaxDatasetValue } from '../../utils'
 
 ChartJS.register(
     Title,
@@ -146,27 +122,22 @@ ChartJS.register(
     CategoryScale,
     LinearScale,
     PointElement,
-    LineElement
+    LineElement,
+    TimeScale
 )
 
 export default defineComponent({
-    name: 'DlColumnChart',
+    name: 'DlScatterChart',
     components: {
         DlBrush,
         DlChartLegend,
-        Bar,
-        DlChartLabels,
-        DlEmptyState
+        DLScatter,
+        DlChartLabels
     },
     props: {
         id: {
             type: String,
             default: null
-        },
-        isEmpty: Boolean,
-        emptyStateProps: {
-            type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
         },
         ...CommonProps,
         ...ColumnChartProps
@@ -192,25 +163,71 @@ export default defineComponent({
             }
         }
 
+        const chart = computed(() => {
+            return scatterChart.value?.chart?.value || {}
+        })
+
         const replaceColor = (key: keyof typeof variables) =>
             variables[key] || key
 
-        const columnChart = ref(null)
-
-        const chart = computed(() => {
-            return columnChart.value?.chart?.value || {}
-        })
+        const scatterChart = ref(null)
 
         const brush = reactive({
             value: {
                 min: 0,
-                max: orderBy(props.data.datasets, (o) => o.data.length)[0].data
-                    .length
+                max:
+                    props.data.datasets.length > 0
+                        ? orderBy(props.data.datasets, (o) => o.data.length)[0]
+                              .data.length - 1
+                        : 1
             }
         })
 
+        const getChartBackup = () => {
+            if (!chart.value) {
+                return {
+                    data: {},
+                    options: {}
+                }
+            }
+            const datasets: DatasetController<'scatter'> = updateKeys(
+                props.data.datasets,
+                [
+                    'backgroundColor',
+                    'pointBackgroundColor',
+                    'pointBorderColor',
+                    'borderColor',
+                    'hoverBorderColor',
+                    'hoverBackgroundColor',
+                    'pointHoverBackgroundColor',
+                    'pointHoverBorderColor'
+                ],
+                replaceColor
+            ).map((item: ScatterControllerDatasetOptions) => {
+                return {
+                    ...item,
+                    hoverBackgroundColor:
+                        item.hoverBackgroundColor ||
+                        hexToRgbA(item.backgroundColor as string, 0.2),
+                    hoverBorderColor:
+                        item.hoverBorderColor ||
+                        hexToRgbA(item.backgroundColor as string, 0.2)
+                }
+            })
+
+            const chartProps = cloneDeep({
+                options: props.options,
+                data: {
+                    ...props.data,
+                    datasets
+                }
+            })
+
+            return chartProps
+        }
+
         const chartWrapperClasses = computed(() => {
-            const classes = 'dl-column-chart-wrapper'
+            const classes = 'dl-scatter-chart-wrapper'
 
             if (props.rootClass) {
                 classes.concat(' ', props.rootClass)
@@ -220,7 +237,7 @@ export default defineComponent({
         })
 
         const chartClasses = computed(() => {
-            const classes = 'dl-column-chart'
+            const classes = 'dl-scatter-chart'
 
             if (props.chartClass) {
                 classes.concat(' ', props.chartClass)
@@ -250,38 +267,23 @@ export default defineComponent({
         })
 
         const brushProperties = computed(() => {
-            return merge(defaultColumnChartProps.brushProps, props.brushProps)
+            return merge(defaultLineChartProps.brushProps, props.brushProps)
         })
 
         const legendProperties = computed(() => {
-            return merge(defaultColumnChartProps.legendProps, props.legendProps)
+            return merge(defaultLineChartProps.legendProps, props.legendProps)
         })
 
-        const chartData = ref(
-            updateKey(
-                updateKey(props.data, 'backgroundColor', replaceColor),
-                'hoverBackgroundColor',
-                replaceColor
-            )
-        )
-
-        const legendDatasets = ref(
-            unionBy(
-                props.legendProps?.datasets || [],
-                props.data?.datasets || [],
-                'label'
-            )
-        )
-
-        const getChartBackup = () => {
-            if (!chart.value) {
-                return {
-                    data: {},
-                    options: {}
-                }
+        const cssVars = computed(() => {
+            return {
+                '--dl-brush-thumb-size':
+                    parseInt(brushProperties.value.thumbSize) / 4 + 'px'
             }
-            const datasets: DatasetController<'bar'> = updateKeys(
-                props.data.datasets,
+        })
+
+        const replaceDataColors = (data: ChartData) =>
+            updateKeys(
+                data,
                 [
                     'backgroundColor',
                     'pointBackgroundColor',
@@ -293,25 +295,17 @@ export default defineComponent({
                     'pointHoverBorderColor'
                 ],
                 replaceColor
-            ).map((item: BarControllerDatasetOptions) => {
-                return {
-                    ...item,
-                    backgroundColor:
-                        item.backgroundColor ||
-                        hexToRgbA(item.backgroundColor as string, 0.2)
-                }
-            })
+            )
 
-            const chartProps = cloneDeep({
-                options: props.options,
-                data: {
-                    ...props.data,
-                    datasets
-                }
-            })
+        const chartData = ref(replaceDataColors(props.data))
 
-            return chartProps
-        }
+        const legendDatasets = ref(
+            unionBy(
+                props.legendProps?.datasets || [],
+                props.data?.datasets || [],
+                'label'
+            )
+        )
 
         const onChartLeave = () => {
             if (chartHoverDataset.value) {
@@ -329,13 +323,15 @@ export default defineComponent({
 
                 for (const dataset of filteredItems) {
                     chart.value.data.datasets[dataset.index].backgroundColor = (
-                        backup.data as ChartData<'line'>
+                        backup.data as ChartData<'scatter'>
                     ).datasets[dataset.index].backgroundColor
+                    chart.value.data.datasets[dataset.index].borderColor = (
+                        backup.data as ChartData<'scatter'>
+                    ).datasets[dataset.index].borderColor
                 }
+                chartHoverDataset.value = null
 
                 chart.value.update()
-
-                chartHoverDataset.value = null
             }
         }
 
@@ -368,23 +364,25 @@ export default defineComponent({
                             (dataset: ChartDataset) =>
                                 dataset.label !== chartHoverDataset.value.label
                         )
-
                     const backup = getChartBackup()
                     for (const dataset of filteredItems) {
                         chartJS.data.datasets[dataset.index].backgroundColor = (
-                            backup.data as ChartData<'bar'>
+                            backup.data as ChartData<'scatter'>
                         ).datasets[dataset.index].backgroundColor
+
+                        chartJS.data.datasets[dataset.index].borderColor = (
+                            backup.data as ChartData<'scatter'>
+                        ).datasets[dataset.index].borderColor
                     }
-                    chartJS.update()
 
                     chartHoverDataset.value = null
+
+                    chartJS.update()
                 }
                 return
             } else {
                 const item = items[0]
-
                 const datasetItem = chartJS.getDatasetMeta(item.datasetIndex)
-
                 if (!chartHoverDataset.value) {
                     const filteredDatasets = chartJS.data.datasets
                         .map((d: ChartDataset, i: number) => ({
@@ -394,19 +392,21 @@ export default defineComponent({
                         .filter(
                             (ds: ChartDataset) => ds.label !== datasetItem.label
                         )
-
                     for (const dataset of filteredDatasets) {
                         chartJS.data.datasets[dataset.index].backgroundColor =
                             hexToRgbA(dataset.backgroundColor as string, 0.2)
-                    }
 
-                    chartJS.update()
+                        chart.value.data.datasets[dataset.index].borderColor =
+                            dataset?.hoverBorderColor ||
+                            hexToRgbA(dataset.backgroundColor as string, 0.2)
+                    }
 
                     chartHoverDataset.value = datasetItem
 
+                    chartJS.update()
+
                     return
                 }
-
                 if (!isEqual(chartHoverDataset.value, datasetItem)) {
                     const filteredItems = chartJS.data.datasets
                         .map((d: ChartDataset, i: number) => ({
@@ -419,15 +419,16 @@ export default defineComponent({
                         )
 
                     const backup = getChartBackup()
-
                     for (const dataset of filteredItems) {
                         chartJS.data.datasets[dataset.index].backgroundColor = (
-                            backup.data as ChartData<'bar'>
+                            backup.data as ChartData<'scatter'>
                         ).datasets[dataset.index].backgroundColor
+
+                        chartJS.data.datasets[dataset.index].borderColor = (
+                            backup.data as ChartData<'scatter'>
+                        ).datasets[dataset.index].borderColor
                     }
-
                     chartHoverDataset.value = datasetItem
-
                     const allFilteredItems = chartJS.data.datasets
                         .map((d: ChartDataset, i: number) => ({
                             ...d,
@@ -437,7 +438,6 @@ export default defineComponent({
                             (dataset: ChartDataset) =>
                                 dataset.label !== datasetItem.label
                         )
-
                     for (const dataset of allFilteredItems) {
                         chartJS.data.datasets[dataset.index].backgroundColor =
                             hexToRgbA(dataset.backgroundColor as string, 0.2)
@@ -448,23 +448,13 @@ export default defineComponent({
         }
 
         const chartOptions = reactive(
-            updateKey(
+            updateKeys(
                 merge(
-                    {
-                        onResize,
-                        onHover,
-                        scales: {
-                            y: {
-                                suggestedMax: getMaxDatasetValue(
-                                    chartData.value.datasets
-                                )
-                            }
-                        }
-                    },
-                    defaultColumnChartProps.options,
+                    { onResize, onHover },
+                    defaultLineChartProps.options,
                     props.options
                 ),
-                'color',
+                ['color'],
                 replaceColor
             )
         )
@@ -515,17 +505,16 @@ export default defineComponent({
 
             for (const dataset of filteredItems) {
                 chart.value.data.datasets[dataset.index].backgroundColor =
+                    dataset?.hoverBackgroundColor ||
+                    hexToRgbA(dataset.backgroundColor, 0.2)
+
+                chart.value.data.datasets[dataset.index].borderColor =
+                    dataset?.hoverBorderColor ||
                     hexToRgbA(dataset.backgroundColor, 0.2)
             }
+
             chart.value.update()
         }
-
-        const cssVars = computed(() => {
-            return {
-                '--dl-brush-thumb-size':
-                    parseInt(brushProperties.value.thumbSize) / 4 + 'px'
-            }
-        })
 
         const onLeaveLegend = (
             item: BarControllerDatasetOptions,
@@ -545,8 +534,12 @@ export default defineComponent({
 
             for (const dataset of filteredItems) {
                 chart.value.data.datasets[dataset.index].backgroundColor = (
-                    backup.data as ChartData<'bar'>
+                    backup.data as ChartData<'scatter'>
                 ).datasets[dataset.index].backgroundColor
+
+                chart.value.data.datasets[dataset.index].borderColor = (
+                    backup.data as ChartData<'scatter'>
+                ).datasets[dataset.index].borderColor
             }
             chart.value.update()
         }
@@ -554,9 +547,10 @@ export default defineComponent({
         const labelStyles = computed(() => {
             const options = merge(
                 {},
-                defaultColumnChartProps.options,
+                defaultLineChartProps.options,
                 props.options
             )
+
             return {
                 title: options.scales.x.title.text,
                 titleSize: `${options.scales.x.title.font.size}px`,
@@ -580,24 +574,17 @@ export default defineComponent({
         }
 
         watch(variables, () => {
-            merge(
-                chart.value.data,
-                updateKey(
-                    updateKey(props.data, 'backgroundColor', replaceColor),
-                    'hoverBackgroundColor',
-                    replaceColor
-                )
-            )
+            merge(chart.value.data, getChartBackup().data)
 
             merge(
                 chart.value.options,
-                updateKey(
+                updateKeys(
                     merge(
                         { onResize, onHover },
-                        defaultColumnChartProps.options,
+                        defaultLineChartProps.options,
                         props.options
                     ),
-                    'color',
+                    ['color'],
                     replaceColor
                 )
             )
@@ -608,13 +595,33 @@ export default defineComponent({
             chart.value.update()
         })
 
+        watch(
+            [props.data, props.options],
+            ([newData = {}, newOptions = {}]) => {
+                chartData.value = replaceDataColors(newData as ChartData)
+
+                xLabels.value = (newData as ChartData)?.labels
+
+                chartOptions.value = updateKeys(
+                    merge(
+                        { onResize, onHover },
+                        defaultLineChartProps.options,
+                        newOptions
+                    ),
+                    ['color'],
+                    replaceColor
+                )
+            },
+            { deep: true }
+        )
+
         return {
             variables,
             chartData,
             chartOptions,
             brush,
             xLabels,
-            columnChart,
+            scatterChart,
             handleBrushUpdate,
             chartWrapperClasses,
             chartClasses,
@@ -632,15 +639,12 @@ export default defineComponent({
             labelStyles,
             cssVars
         }
-    },
-    data() {
-        return {}
     }
 })
 </script>
 
 <style scoped lang="scss">
-.dl-column-chart-wrapper {
+.dl-scatter-chart-wrapper {
     display: flex;
     flex-direction: column;
     align-self: stretch;

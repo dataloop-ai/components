@@ -71,24 +71,50 @@ type Expression = {
 }
 
 const space = ' '
-const dateStartSuggestionString = '(From dd/mm/yyyy)'
-const dateEndSuggestionString = '(To dd/mm/yyyy)'
-const dateIntervalSuggestionString = '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
+const dateSuggestionPattern = '(dd/mm/yyyy)'
 
 let localSuggestions: Suggestion[] = []
 
-export const startDatePattern = new RegExp(
-    /(from\s?\d{2}\/\d{2}\/\d{4}\s?|from\s?dd\/mm\/yyyy\s?)/,
+export const datePattern = new RegExp(
+    /(\(\d{2}\/\d{2}\/\d{4}\)\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
     'gi'
 )
-export const endDatePattern = new RegExp(
-    /(to\s?\d{2}\/\d{2}\/\d{4}\s?|to\s?dd\/mm\/yyyy\s?)/,
-    'gi'
-)
-export const dateIntervalPattern = new RegExp(
-    /(from\s?\d{2}\/\d{2}\/\d{4}\s?to\s?\d{2}\/\d{2}\/\d{4})|(from\s?dd\/mm\/yyyy\s?to\s?dd\/mm\/yyyy)/,
-    'gi'
-)
+export const datePatternNoBrackets =
+    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/
+
+const mergeWords = (words: string[]) => {
+    const result: string[] = []
+    let merging = false
+    let mergeIndex = -1
+
+    for (let i = 0; i < words.length; ++i) {
+        const currentItem = words[i]
+
+        if (currentItem === 'IN' || currentItem === 'NOT-IN') {
+            merging = true
+            mergeIndex = i + 1
+            result.push(currentItem)
+            continue
+        } else if (
+            Object.values(Logical).includes(currentItem as any) ||
+            Object.values(operators).includes(currentItem as any)
+        ) {
+            merging = false
+        }
+
+        if (merging) {
+            if (!result[mergeIndex]) {
+                result[mergeIndex] = ''
+            }
+            result[mergeIndex] += ' ' + currentItem
+            continue
+        }
+
+        result.push(currentItem)
+    }
+
+    return result
+}
 
 export const useSuggestions = (
     schema: Schema,
@@ -123,7 +149,8 @@ export const useSuggestions = (
         localSuggestions = sortedSuggestions
 
         const words = splitByQuotes(input, space)
-        const expressions = mapWordsToExpressions(words)
+        const mergedWords = mergeWords(words)
+        const expressions = mapWordsToExpressions(mergedWords)
 
         for (const { field, operator, value, keyword } of expressions) {
             let matchedField: Suggestion | null = null
@@ -148,6 +175,14 @@ export const useSuggestions = (
             if (!dataType) {
                 localSuggestions = []
                 continue
+            }
+
+            if (operator && (!value || value === '')) {
+                const valueSuggestion = getValueSuggestions(dataType, operator)
+                if (valueSuggestion) {
+                    localSuggestions = valueSuggestion
+                    continue
+                }
             }
 
             const ops: string[] = Array.isArray(dataType)
@@ -183,11 +218,7 @@ export const useSuggestions = (
                 dataType === 'date' ||
                 dataType === 'time'
             ) {
-                localSuggestions = [
-                    dateIntervalSuggestionString,
-                    dateStartSuggestionString,
-                    dateEndSuggestionString
-                ]
+                localSuggestions = [dateSuggestionPattern]
 
                 if (!value) continue
 
@@ -348,11 +379,7 @@ const validateBracketValues = (value: string) => {
 }
 
 const isValidDateIntervalPattern = (str: string) => {
-    return (
-        !!str.match(dateIntervalPattern) ||
-        !!str.match(startDatePattern) ||
-        !!str.match(endDatePattern)
-    )
+    return !!str.match(datePatternNoBrackets)
 }
 
 const isValidNumber = (str: string) => {
@@ -479,4 +506,34 @@ export const removeBrackets = (str: string) => {
 
 const removeQuotes = (str: string) => {
     return str.replaceAll('"', '').replaceAll("'", '')
+}
+
+const getValueSuggestions = (dataType: string | string[], operator: string) => {
+    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+    const suggestion: string[] = []
+
+    if (Array.isArray(dataType)) {
+        suggestion.push(
+            ...dataType.filter((type) => !knownDataTypes.includes(type))
+        )
+    }
+
+    for (const type of types) {
+        switch (type) {
+            case 'boolean':
+                if (operator === '=' || operator === '!=') {
+                    suggestion.push('true', 'false')
+                }
+                break
+            case 'date':
+            case 'time':
+            case 'datetime':
+                suggestion.push(dateSuggestionPattern)
+            default:
+                // do nothing
+                break
+        }
+    }
+
+    return suggestion
 }

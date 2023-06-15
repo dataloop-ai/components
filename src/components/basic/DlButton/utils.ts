@@ -71,7 +71,7 @@ export const setTextColor = ({
         return getColor('', 'dl-color-disabled')
     }
     if (shaded && outlined) {
-        return 'var(--dl-color-text-darker-buttons)'
+        return getColor(textColor, 'dl-color-text-darker-buttons')
     }
     if (outlined) {
         return getColor(textColor, 'dl-color-secondary')

@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.17.72",
+  "version": "0.17.97",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:2": "./misc/packAndRunV2.sh",
+    "dev:2": "./misc/unpackAndRunV2.sh",
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
@@ -24,6 +24,7 @@
   "dependencies": {
     "@dataloop-ai/icons": "^3.0.6",
     "@types/lodash": "^4.14.184",
+    "@types/flat": "^5.0.2",
     "chart.js": "^3.9.1",
     "flat": "^5.0.2",
     "lodash": "^4.17.21",
@@ -47,7 +48,6 @@
     "@storybook/client-api": "^7.0.4",
     "@storybook/vue3": "^7.0.4",
     "@storybook/vue3-vite": "^7.0.4",
-    "@types/flat": "^5.0.2",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.7.18",
     "@types/resize-observer-browser": "^0.1.7",
@@ -76,7 +76,7 @@
     "storybook": "^7.0.4",
     "storybook-addon-themes": "^6.1.0",
     "typescript": "^4.5.4",
-    "vite": "^4.1.4",
+    "vite": "^4.2.3",
     "vitest": "^0.29.2",
     "vitest-canvas-mock": "^0.2.2",
     "vue": "^3.2.25",

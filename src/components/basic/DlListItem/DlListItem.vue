@@ -208,12 +208,7 @@ export default defineComponent({
     display: none;
     &--visible {
         display: block;
-        margin: 5px 0;
     }
-}
-
-.dl-list-spaced {
-    margin: 5px 0;
 }
 
 .dl-list-item-disabled {

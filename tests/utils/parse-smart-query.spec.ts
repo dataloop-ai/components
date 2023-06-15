@@ -50,6 +50,16 @@ describe('parseSmartQuery', () => {
             $or: [{ age: { $gte: 30 }, name: 'John' }, { city: 'New York' }]
         })
     })
+
+    it('should not add non value models', () => {
+        const query = 'name="John" AND test = true AND falsy = false AND age = '
+        const result = parseSmartQuery(query)
+        expect(result).toEqual({
+            name: 'John',
+            test: true,
+            falsy: false
+        })
+    })
 })
 
 describe('stringifySmartQuery', () => {

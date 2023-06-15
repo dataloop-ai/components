@@ -43,7 +43,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-list {
-    padding: 5px 0;
+    padding: 6px 0;
     background-color: var(--dl-color-panel-background);
     &--bordered {
         border: 1px solid var(--dl-color-separator);

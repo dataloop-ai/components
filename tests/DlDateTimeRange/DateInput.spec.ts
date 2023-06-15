@@ -1,5 +1,5 @@
 import { mount, VueWrapper } from '@vue/test-utils'
-import DlDateInput from '../../src/components/compound/DlDateTime/DlDateTimeRange/DlDateInput.vue'
+import DlDateInput from '../../src/components/compound/DlDateTime/DlDateTimeRange/DateInput.vue'
 import { describe, beforeAll, expect, it } from 'vitest'
 
 describe('DlDateInput', () => {
