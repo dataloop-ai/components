@@ -6,6 +6,16 @@
             :title="title"
             :links="interactiveProps.links"
         />
+        <div>Card (icon)</div>
+        <div style="display: flex; flex-direction: row; gap: 10px">
+            <DlCard
+                :icon="icon"
+                :text="text"
+                :title="title"
+                @onUpdateDescription="updateDescription"
+                @onCardActive="onCardActive"
+            />
+        </div>
         <div>Card (interactive)</div>
         <div style="display: flex; flex-direction: row; gap: 10px">
             <DlCard
@@ -85,6 +95,10 @@ export default defineComponent({
             title: 'Lorem ipsum',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
 
+            icon: {
+                src: 'icon-dl-alert-filled',
+                color: 'red'
+            },
             interactiveProps: {
                 text: 'Some text',
                 image: {
@@ -119,12 +133,27 @@ export default defineComponent({
                 tags: [
                     {
                         label: 'A',
-                        color: '#BECB5D',
+                        color: '#FFBBFF',
                         textColor: 'black'
                     },
                     {
                         label: 'Lemon',
+                        color: '#7000FF',
+                        textColor: 'black'
+                    },
+                    {
+                        label: 'B',
                         color: '#FFDA3A',
+                        textColor: 'black'
+                    },
+                    {
+                        label: 'D',
+                        color: '#00A0FF',
+                        textColor: 'black'
+                    },
+                    {
+                        label: 'X',
+                        color: '#AADC3A',
                         textColor: 'black'
                     }
                 ],
@@ -139,10 +168,7 @@ export default defineComponent({
                     }
                 ],
                 description: 'descriptiononono',
-                indicatorColor: 'dl-color-negative',
-                styles: {},
-                height: 'auto',
-                icon: ''
+                indicatorColor: 'dl-color-negative'
             }
         }
     },

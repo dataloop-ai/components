@@ -7,7 +7,18 @@
         @click="onCardClick"
     >
         <div
-            v-if="image && !isEmpty"
+            v-if="icon && !isEmpty"
+            class="card--icon"
+        >
+            <dl-icon
+                :icon="icon.src"
+                :styles="iconStyles"
+                :size="iconSize"
+                :color="iconColor"
+            />
+        </div>
+        <div
+            v-else-if="image && !isEmpty"
             class="card--image"
         >
             <div
@@ -248,7 +259,8 @@ import {
     DlCardImageType,
     DlCardLinkType,
     DlCardTagType,
-    DlCardHintType
+    DlCardHintType,
+    DlCardIconType
 } from './types'
 import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import DescriptionModal from './components/DescriptionModal.vue'
@@ -269,6 +281,10 @@ export default defineComponent({
     props: {
         image: {
             type: Object as PropType<DlCardImageType>,
+            default: null
+        },
+        icon: {
+            type: Object as PropType<DlCardIconType>,
             default: null
         },
         title: {
@@ -342,6 +358,15 @@ export default defineComponent({
         }
     },
     computed: {
+        iconStyles(): string {
+            return this.icon?.styles ?? ''
+        },
+        iconSize(): string {
+            return this.icon?.size ?? '50px'
+        },
+        iconColor(): string {
+            return this.icon?.color ?? 'var(--dl-color-darker)'
+        },
         hasImageLink(): boolean {
             return !!(this.image?.link?.icon && this.image?.link?.href)
         },
@@ -376,10 +401,7 @@ export default defineComponent({
                 : this.styles
         },
         imageStyles(): string {
-            return (
-                this.image?.styles ??
-                'height: 100%; width: 100%; object-fit: cover;'
-            )
+            return this.image?.styles ?? ''
         },
         imageAlt(): string {
             return this.image?.alt ?? ''

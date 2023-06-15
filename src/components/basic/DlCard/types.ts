@@ -17,6 +17,13 @@ export type DlCardImageType = {
     }
 }
 
+export type DlCardIconType = {
+    icon: string
+    color?: string
+    size?: string
+    styles: string
+}
+
 export type DlCardHintType = {
     icon: string
     color?: string
