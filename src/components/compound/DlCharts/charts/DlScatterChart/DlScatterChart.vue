@@ -176,8 +176,10 @@ export default defineComponent({
             value: {
                 min: 0,
                 max:
-                    orderBy(props.data.datasets, (o) => o.data.length)[0].data
-                        .length - 1
+                    props.data.datasets.length > 0
+                        ? orderBy(props.data.datasets, (o) => o.data.length)[0]
+                              .data.length - 1
+                        : 1
             }
         })
 
