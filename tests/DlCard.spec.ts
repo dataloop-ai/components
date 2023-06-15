@@ -35,61 +35,37 @@ describe('DlCard', () => {
             ).toBe('400px')
         })
     })
-    describe('Enable Shopify props', () => {
+    describe('Enable Interactive props', () => {
         let wrapper: any
 
         beforeAll(async () => {
             wrapper = mount(DlCard, {
                 props
             })
-            await wrapper.setProps({ shopify: true })
+            await wrapper.setProps({ interactive: true })
         })
-        it('should change the shopify prop value', async () => {
-            await expect(wrapper.vm.shopify).toBe(true)
+        it('should change the interactive prop value', async () => {
+            await expect(wrapper.vm.interactive).toBe(true)
         })
-        it('should have card--content__shopify-title class', async () => {
-            expect(wrapper.find('.card--content__shopify-title').exists()).toBe(
-                true
-            )
-        })
-        it('should have card--content__shopify-chips class', async () => {
-            expect(wrapper.find('.card--content__shopify-chips').exists()).toBe(
-                true
-            )
-        })
-        it('should have card__shopify-description class', async () => {
-            expect(wrapper.find('.card__shopify-description').exists()).toBe(
-                true
-            )
-        })
-        it('should have card__shopify-description__text class', async () => {
+        it('should have card--content__interactive-title class', async () => {
             expect(
-                wrapper.find('.card__shopify-description__text').exists()
+                wrapper.find('.card--content__interactive-title').exists()
             ).toBe(true)
         })
-        it('should have card--image__link-icon class', async () => {
-            const iconLink = {
-                icon: 'icon-dl-link',
-                color: 'black',
-                backgroundColor: 'grey',
-                size: '12px',
-                link: 'https://dataloop.ai/',
-                circle: {
-                    size: '20px',
-                    color: 'rgba(255, 255, 255, 0.8)'
-                }
-            }
-            await wrapper.setProps({ iconLink })
-            await expect(wrapper.vm.iconLink).toStrictEqual(iconLink)
-            expect(wrapper.find('.card--image__link-icon').exists()).toBe(true)
+        it('should have card--content__interactive-chips class', async () => {
+            expect(
+                wrapper.find('.card--content__interactive-chips').exists()
+            ).toBe(true)
         })
-        it('shouldn`t have card--image__link-icon class', async () => {
-            const iconLink = {}
-            await wrapper.setProps({ iconLink })
-            await expect(wrapper.vm.iconLink).toStrictEqual(iconLink)
-
-            expect(wrapper.classes('card')).toBe(true)
-            expect(wrapper.find('.card--image__link-icon').exists()).toBe(false)
+        it('should have card__interactive-description class', async () => {
+            expect(
+                wrapper.find('.card__interactive-description').exists()
+            ).toBe(true)
+        })
+        it('should have card__interactive-description__text class', async () => {
+            expect(
+                wrapper.find('.card__interactive-description__text').exists()
+            ).toBe(true)
         })
     })
 })
@@ -97,10 +73,20 @@ describe('DlCard', () => {
 const props = {
     text: 'Some text',
     image: {
-        src: 'https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&ssl=1'
+        src: 'https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&ssl=1',
+        link: {
+            icon: 'icon-dl-link',
+            color: 'black',
+            backgroundColor: 'grey',
+            size: '12px',
+            link: 'https://dataloop.ai/',
+            circle: {
+                size: '20px',
+                color: 'rgba(255, 255, 255, 0.8)'
+            }
+        }
     },
     title: 'Lorem ipsum',
-    keyboardShortcut: 'Shift + E',
     links: [
         {
             icon: 'icon-dl-list-view',
@@ -115,23 +101,11 @@ const props = {
             icon: 'icon-dl-code'
         }
     ],
-    shopify: false,
-    zoomMode: false,
+    interactive: false,
+    zoom: false,
     cardId: 2,
     width: '180px',
-    iconLink: {
-        icon: 'icon-dl-link',
-        color: 'black',
-        backgroundColor: 'grey',
-        size: '12px',
-        link: 'https://dataloop.ai/',
-        circle: {
-            size: '20px',
-            color: 'rgba(255, 255, 255, 0.8)'
-        }
-    },
-    shopifyTitle: 'shopifyTitle',
-    chipsItems: [
+    tags: [
         {
             label: 'A',
             color: '#BECB5D',
@@ -143,7 +117,7 @@ const props = {
             textColor: 'black'
         }
     ],
-    innerIcons: [
+    hints: [
         {
             icon: 'icon-dl-related-filled',
             color: ''
@@ -153,8 +127,8 @@ const props = {
             color: 'red'
         }
     ],
-    shopifyDescription: 'shopifyDescriptionSecond',
-    coloredStrip: 'dl-color-negative',
+    description: 'descriptioooon',
+    indicatorColor: 'dl-color-negative',
     styles: {},
     height: 'auto',
     icon: ''

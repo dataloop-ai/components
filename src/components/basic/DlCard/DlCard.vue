@@ -40,6 +40,7 @@
                     :style="imageStyles"
                     :alt="imageAlt"
                     class="card--image__image-holder__image"
+                    :onload="onImageLoad"
                     @mousemove="movePreview"
                 >
                 <div
@@ -278,7 +279,7 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        keyboardShortcut: {
+        description: {
             type: String,
             default: ''
         },
@@ -334,7 +335,6 @@ export default defineComponent({
             hasMagnifyingGlass: false,
             showImagePreview: false,
             previewOffset: { x: 0, y: 0 },
-            shopifyDescriptionValue: '',
             dlCardBorder: '1px solid var(--dl-color-separator)',
             dlCardBorderBottom: '1px solid var(--dl-color-separator)',
             boxShadow: '0px 5px 15px 0px var(--dl-color-shadow)',
@@ -376,7 +376,10 @@ export default defineComponent({
                 : this.styles
         },
         imageStyles(): string {
-            return this.image?.styles ?? ''
+            return (
+                this.image?.styles ??
+                'height: 100%; width: 100%; object-fit: cover;'
+            )
         },
         imageAlt(): string {
             return this.image?.alt ?? ''
@@ -390,6 +393,15 @@ export default defineComponent({
         }
     },
     methods: {
+        onImageLoad() {
+            if (!this.$refs.image) {
+                return
+            }
+            const holder = this.$refs.imageHolder as any
+            ;(
+                this.$refs.image as any
+            ).style = `height: ${holder.clientHeight}px; width: ${holder.clientWidth}px; object-fit: cover;`
+        },
         onCardMouseover() {
             if (!this.interactive) return
             this.dlCardBorder = '1px solid var(--dl-color-hover)'

@@ -47,7 +47,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted, watch } from 'vue-demi'
+import {
+    defineComponent,
+    ref,
+    computed,
+    onMounted,
+    watch,
+    toRef
+} from 'vue-demi'
 import { DlButton, DlTextArea } from '../../../../components'
 import DlDialogBox from '../../../compound/DlDialogBox/DlDialogBox.vue'
 import DlDialogBoxHeader from '../../../compound/DlDialogBox/components/DlDialogBoxHeader.vue'
@@ -63,7 +70,7 @@ export default defineComponent({
         DlTextArea
     },
     props: {
-        descriptionValue: {
+        description: {
             type: String,
             default: ''
         }
@@ -76,6 +83,7 @@ export default defineComponent({
         const errorMessage = ref<string>('')
         const isDisabledApplyButton = ref<boolean>(true)
         const MIN_LENGTH = 3
+        const descriptionRef = toRef(props, 'description')
 
         const openModal = (): void => {
             isOpenedModal.value = true
@@ -92,7 +100,7 @@ export default defineComponent({
         }
         const descriptionValueComputed = computed<string>({
             get() {
-                return props.descriptionValue
+                return descriptionRef.value
             },
             set(value) {
                 textAreaValue.value = value
