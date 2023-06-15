@@ -524,6 +524,8 @@ import {
 import { defineComponent, onMounted, ref, watch } from 'vue-demi'
 import { useArrowNavigation } from '../hooks/use-arrow-navigation'
 
+type ItemType = Record<string, any> | string
+
 export default defineComponent({
     name: 'DlMenuDemo',
     components: {
@@ -537,7 +539,7 @@ export default defineComponent({
     setup() {
         const showing = ref(false)
         const isMenuOpen = ref(false)
-        const arrowNavigationLabel = ref('Arrow Navigation Label')
+        const arrowNavigationLabel = ref<ItemType>('Arrow Navigation Label')
 
         const listItems = ref([
             'New tab',
@@ -560,7 +562,7 @@ export default defineComponent({
             isMenuOpen
         )
 
-        watch(selectedItem, (value: string) => {
+        watch(selectedItem, (value: ItemType | string) => {
             arrowNavigationLabel.value = value
         })
 

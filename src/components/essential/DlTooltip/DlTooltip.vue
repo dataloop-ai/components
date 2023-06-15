@@ -173,7 +173,12 @@ export default defineComponent({
 
         const { showPortal, hidePortal, portalIsActive, portalEl } = usePortal(
             vm,
-            innerRef
+            innerRef,
+            false,
+            {
+                parentId: attrs.id as string,
+                parentClass: attrs.class as string
+            }
         )
 
         const isMobile = computed(() => isMobileOrTablet())
@@ -386,7 +391,9 @@ export default defineComponent({
         Object.assign(vm!.proxy, { updatePosition })
 
         return {
-            uuid: `dl-tooltip-${v4()}`,
+            uuid: (attrs.id as string)?.length
+                ? attrs.id
+                : `dl-tooltip-${v4()}`,
             portalIsActive,
             classes: ['dl-tooltip dl-position-engine', attrs.class],
             showing,
@@ -425,7 +432,7 @@ export default defineComponent({
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 16px;
-    padding: 2px 5px;
+    padding: var(--dl-tooltip-padding, 2px 5px);
     font-size: var(--dl-font-size-small);
     line-height: 16px;
     color: var(--dl-tooltip-color);

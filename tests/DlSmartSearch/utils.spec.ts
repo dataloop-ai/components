@@ -16,7 +16,7 @@ describe('isEndOfString', () => {
         expect(isEndOfString('string!  ', /(str)/)).toBe(false)
     })
 
-    it('should retun "true" when the string does match the pattern at the end', () => {
+    it('should return "true" when the string does match the pattern at the end', () => {
         expect(isEndOfString('string!  ', /(ing!)/)).toBe(true)
     })
 })
@@ -48,7 +48,7 @@ describe('replaceDateInterval', () => {
                 }
             )
         ).toEqual(
-            'field = (From (12/12/22) To (22/12/22)) AND field = (From (02/12/2022) To (22/12/2022))'
+            'field = (From (12/12/22) To (22/12/22)) AND field = (From (02/12/2022) To (dd/mm/yyyy))'
         )
     })
 
