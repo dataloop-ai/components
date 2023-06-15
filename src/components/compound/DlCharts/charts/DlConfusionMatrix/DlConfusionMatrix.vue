@@ -188,7 +188,7 @@ import {
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import {
     getGradationValues,
@@ -237,7 +237,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         }
     },

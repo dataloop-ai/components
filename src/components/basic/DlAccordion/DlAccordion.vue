@@ -49,7 +49,7 @@
 <script lang="ts">
 import DlAccordionHeader from './components/AccordionHeader.vue'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
-import { Props } from '../DlEmptyState/types'
+import { DlEmptyStateProps } from '../DlEmptyState/types'
 import { defineComponent, PropType } from 'vue-demi'
 import { v4 } from 'uuid'
 
@@ -73,7 +73,7 @@ export default defineComponent({
         rightSide: { type: Boolean, default: false },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         }
     },

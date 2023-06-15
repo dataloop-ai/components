@@ -4,6 +4,7 @@
             :options="['one', 'two', 'three']"
             title="Title"
             required
+            fit
         />
         <dl-select
             v-model="disabledSelected"
@@ -172,7 +173,7 @@
             multiselect
             search
             capitalized-options
-            fit-container
+            fit-content
         />
         With Label and sub label
         <dl-select

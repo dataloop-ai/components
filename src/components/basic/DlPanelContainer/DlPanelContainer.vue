@@ -126,7 +126,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { DlIcon, DlTooltip } from '../../essential'
-import { Props } from '../DlEmptyState/types'
+import { DlEmptyStateProps } from '../DlEmptyState/types'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
@@ -178,7 +178,7 @@ export default defineComponent({
         modelValue: { type: Boolean, required: false, default: false },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         }
     },

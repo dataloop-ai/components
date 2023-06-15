@@ -103,7 +103,7 @@ import DlDoughnutChartLegend from './components/DlDoughnutChartLegend.vue'
 import { defaultDoughnutChartProps } from '../../types/props'
 import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 
 export default defineComponent({
     name: 'DlDoughnutChart',
@@ -129,11 +129,13 @@ export default defineComponent({
             type: Object as PropType<
                 DoughnutControllerChartOptions['animation']
             >,
+            default: () =>
+                Object as PropType<DoughnutControllerChartOptions['animation']>,
             required: false
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         }
     },

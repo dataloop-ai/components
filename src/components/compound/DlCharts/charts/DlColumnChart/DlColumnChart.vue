@@ -125,7 +125,7 @@ import {
     BarControllerDatasetOptions
 } from 'chart.js'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import type {
     Chart,
     ChartMeta,
@@ -165,7 +165,7 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
+            type: Object as PropType<DlEmptyStateProps>,
             default: () => {}
         },
         ...CommonProps,

@@ -4,10 +4,19 @@
             :image="image"
             :text="text"
             :title="title"
-            :keyboard-shortcut="keyboardShortcut"
-            :links="links"
+            :links="interactiveProps.links"
         />
-
+        <div>Card (interactive)</div>
+        <div style="display: flex; flex-direction: row; gap: 10px">
+            <DlCard
+                v-bind="interactiveProps"
+                interactive
+                zoom
+                @onUpdateDescription="updateDescription"
+                @onCardActive="onCardActive"
+            />
+        </div>
+        <div>Card empty state</div>
         <DlCard
             is-empty
             :empty-state-props="{
@@ -69,26 +78,80 @@ export default defineComponent({
     },
     data() {
         return {
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
             image: {
                 src: 'https://i0.wp.com/www.printmag.com/wp-content/uploads/2021/02/4cbe8d_f1ed2800a49649848102c68fc5a66e53mv2.gif?fit=476%2C280&ssl=1'
             },
+
             title: 'Lorem ipsum',
-            keyboardShortcut: 'Shift + E',
-            links: [
-                {
-                    icon: 'icon-dl-list-view',
-                    href: 'https://www.google.md/?hl=ru',
-                    title: 'Lorem',
-                    newtab: true,
-                    external: true
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
+
+            interactiveProps: {
+                text: 'Some text',
+                image: {
+                    src: 'https://www.shutterstock.com/image-photo/ripe-orange-isolated-on-white-260nw-606022676.jpg',
+                    styles: 'width: 200px; height: 112px',
+                    link: {
+                        icon: 'icon-dl-link',
+                        color: 'black',
+                        size: '12px',
+                        href: 'https://dataloop.ai/'
+                    }
                 },
-                {
-                    href: '#test',
-                    title: 'Developers',
-                    icon: 'icon-dl-code'
-                }
-            ]
+                title: 'Lorem ipsum',
+                links: [
+                    {
+                        icon: 'icon-dl-list-view',
+                        href: 'https://www.google.md/?hl=ru',
+                        title: 'Lorem',
+                        newtab: true,
+                        external: true
+                    },
+                    {
+                        href: '#test',
+                        title: 'Developers',
+                        icon: 'icon-dl-code'
+                    }
+                ],
+                interactive: false,
+                zoom: false,
+                cardId: 2,
+                width: '180px',
+                tags: [
+                    {
+                        label: 'A',
+                        color: '#BECB5D',
+                        textColor: 'black'
+                    },
+                    {
+                        label: 'Lemon',
+                        color: '#FFDA3A',
+                        textColor: 'black'
+                    }
+                ],
+                hints: [
+                    {
+                        icon: 'icon-dl-related-filled',
+                        color: ''
+                    },
+                    {
+                        icon: 'icon-dl-alert-filled',
+                        color: 'red'
+                    }
+                ],
+                description: 'descriptiononono',
+                indicatorColor: 'dl-color-negative',
+                styles: {},
+                height: 'auto',
+                icon: ''
+            }
+        }
+    },
+    methods: {
+        updateDescription(card) {
+            console.log('update description: ', card)
+        },
+        onCardActive(card) {
+            console.log('Card Active: ', card)
         }
     }
 })
