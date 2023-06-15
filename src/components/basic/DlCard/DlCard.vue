@@ -11,19 +11,19 @@
             class="card--image"
         >
             <div
-                v-if="interactive && image?.link?.icon"
+                v-if="interactive && hasImageLink"
                 class="card--image__link-icon"
                 @click="stopPropagationEvent"
             >
                 <DlLink
                     newtab
                     external
-                    :href="image?.link?.href"
+                    :href="image.link.href"
                 >
                     <dl-icon
-                        :icon="image?.link?.icon"
-                        :size="image?.link?.size"
-                        :color="image?.link?.color"
+                        :icon="image.link.icon"
+                        :size="image.link.size"
+                        :color="image.link.color"
                     />
                 </DlLink>
             </div>
@@ -342,6 +342,9 @@ export default defineComponent({
         }
     },
     computed: {
+        hasImageLink(): boolean {
+            return !!(this.image?.link?.icon && this.image?.link?.href)
+        },
         cssVars() {
             return {
                 '--dl-card-colored-strip': this.indicatorColor
