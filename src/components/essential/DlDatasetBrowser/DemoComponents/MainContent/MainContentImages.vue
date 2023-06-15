@@ -1,8 +1,9 @@
 <template>
     <div class="main-content-images">
+        <layout-empty-state v-if="!emptyImages.length" />
         <component
             :is="cardView"
-            :items="images"
+            :items="emptyImages"
         />
     </div>
 </template>
@@ -13,13 +14,15 @@ import { ImageMetadata, MediaTypeEnum } from '../types/imageMetadata'
 import CardViewGallery from './CardViewGallery.vue'
 import CardViewTable from './CardViewTable.vue'
 import CardView from './CardView.vue'
+import LayoutEmptyState from './EmptyState/LayoutEmptyState.vue'
 
 export default defineComponent({
     name: 'MainContentImages',
     components: {
         CardViewGallery,
         CardViewTable,
-        CardView
+        CardView,
+        LayoutEmptyState
     },
     props: {
         viewMode: {
@@ -43,6 +46,7 @@ export default defineComponent({
                     return 'CardViewGallery'
             }
         })
+        const emptyImages = ref<ImageMetadata[]>([])
         const images = ref<ImageMetadata[]>([
             {
                 url: 'https://blog.feedingwestchester.org/hubfs/blog-14-the-most-affordable-fruits-and-vegetables.jpg',
@@ -514,6 +518,7 @@ export default defineComponent({
         ])
 
         return {
+            emptyImages,
             images,
             cardView
         }
