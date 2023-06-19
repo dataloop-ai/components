@@ -104,6 +104,10 @@ export default defineComponent({
             type: Boolean as PropType<boolean>,
             default: false
         },
+        title: {
+            type: String,
+            default: null
+        },
         options: {
             type: Object as PropType<DlCodeEditorOptions>,
             default: () => ({

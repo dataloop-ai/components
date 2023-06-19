@@ -9,8 +9,7 @@
             :class="[
                 {
                     'dl-list-item': true,
-                    'dl-list-item-disabled': disabled,
-                    'dl-list-spaced': bordered
+                    'dl-list-item-disabled': disabled
                 },
                 'row'
             ]"
