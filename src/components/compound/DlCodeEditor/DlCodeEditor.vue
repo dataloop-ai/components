@@ -41,14 +41,15 @@ import {
     onBeforeUnmount,
     ref,
     watch,
-    computed
+    computed,
+    PropType
 } from 'vue-demi'
 import { DlButton } from '../../basic'
 import { DlTypography } from '../../essential'
 
 import * as monaco from 'monaco-editor'
 import { editor } from 'monaco-editor'
-import { editorProps } from './types'
+import { DlCodeEditorOptions, DlCodeEditorTheme } from './types'
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
@@ -61,10 +62,15 @@ import dlThemeDark from './theme.dark.json' // add support for this. for now its
 import IStandaloneThemeData = editor.IStandaloneThemeData
 
 monaco.editor.defineTheme(
-    'dl-theme-light',
+    DlCodeEditorTheme.DLThemeLight,
     dlThemeLight as IStandaloneThemeData
 )
-monaco.editor.setTheme('dl-theme-light')
+monaco.editor.defineTheme(
+    DlCodeEditorTheme.DLThemeDark,
+    dlThemeDark as IStandaloneThemeData
+)
+
+monaco.editor.setTheme(DlCodeEditorTheme.DLThemeLight)
 
 export default defineComponent({
     name: 'DlCodeEditor',
@@ -72,7 +78,51 @@ export default defineComponent({
         DlTypography,
         DlButton
     },
-    props: editorProps,
+    props: {
+        modelValue: {
+            type: String as PropType<string>,
+            default: ''
+        },
+        width: {
+            type: [String, Number] as PropType<string | number>,
+            default: 'auto'
+        },
+        height: {
+            type: [String, Number] as PropType<string | number>,
+            default: 'auto'
+        },
+        language: {
+            type: String as PropType<string>,
+            default: 'javascript'
+        },
+        theme: {
+            required: false,
+            type: String as PropType<DlCodeEditorTheme>,
+            default: null
+        },
+        readonly: {
+            type: Boolean as PropType<boolean>,
+            default: false
+        },
+        options: {
+            type: Object as PropType<DlCodeEditorOptions>,
+            default: () => ({
+                glyphMargin: false,
+                codeLens: false,
+                automaticLayout: false,
+                foldingStrategy: 'indentation',
+                renderLineHighlight: 'line',
+                minimap: {
+                    enabled: false
+                },
+                fontSize: 16,
+                scrollBeyondLastLine: false,
+                overviewRulerBorder: false,
+                overviewRulerLanes: 0,
+                lineNumbers: 'off'
+            })
+        }
+    },
     emits: ['update:model-value', 'change', 'editor-mounted'],
     setup(props, { emit }) {
         // @ts-ignore // needed to type the window
@@ -101,6 +151,8 @@ export default defineComponent({
         let editor: monaco.editor.IStandaloneCodeEditor
         const codeEditorBox = ref(null)
 
+        const theme = props.theme ?? 'dl-theme-light'
+
         const init = () => {
             monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions(
                 {
@@ -116,7 +168,8 @@ export default defineComponent({
             editor = monaco.editor.create(codeEditorBox.value, {
                 value: props.modelValue,
                 language: props.language,
-                theme: props.theme,
+                theme,
+                readOnly: props.readonly,
                 ...props.options
             })
 
@@ -153,6 +206,18 @@ export default defineComponent({
             },
             { deep: true }
         )
+
+        watch(
+            () => props.readonly,
+            (newValue) => {
+                editor.updateOptions({ readOnly: newValue })
+            }
+        )
+
+        // @ts-ignore
+        watch(window.DlComponents.isDark, (dark: boolean) => {
+            editor.updateOptions({ theme: dark ? 'vs-dark' : 'dl-theme-light' })
+        })
 
         watch(
             () => props.language,

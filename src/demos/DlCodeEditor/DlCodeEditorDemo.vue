@@ -1,11 +1,16 @@
 <template>
-    <div class="flex full-width text-center justify-center">
+    <div>
+        <dl-switch
+            v-model="readonly"
+            left-label="readonly"
+        />
         <dl-code-editor
             v-model="codeEditorValue"
             width="45vw"
             height="75vh"
             :language="language"
             :theme="codeEditor.theme"
+            :readonly="readonly"
             :options="codeEditor.options"
             @editor-mounted="editorMounted"
         />
@@ -14,22 +19,25 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlCodeEditor } from '../../components'
-import { CodeEditorOptions, CodeEditorTheme } from '../../components/types'
+import { DlCodeEditor, DlSwitch } from '../../components'
+import { DlCodeEditorOptions, DlCodeEditorTheme } from '../../components/types'
 
 import { editor } from 'monaco-editor'
 
 type codeEditor = {
-    theme?: CodeEditorTheme
-    options: CodeEditorOptions
+    theme?: DlCodeEditorTheme
+    options: DlCodeEditorOptions
 }
 
 export default defineComponent({
     name: 'DlCodeEditorDemo',
     components: {
+        DlSwitch,
         DlCodeEditor
     },
     setup() {
+        const readonly = ref(false)
+
         const codeEditorValue = ref(
             'import urllib3\n' +
                 'urllib3.disable_warnings()\n' +
@@ -220,7 +228,8 @@ export default defineComponent({
             codeEditorValue,
             language,
             codeEditor,
-            editorMounted
+            editorMounted,
+            readonly
         }
     }
 })
