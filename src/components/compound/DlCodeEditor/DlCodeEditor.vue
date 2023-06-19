@@ -85,11 +85,11 @@ export default defineComponent({
         },
         width: {
             type: [String, Number] as PropType<string | number>,
-            default: 'auto'
+            default: '100%'
         },
         height: {
             type: [String, Number] as PropType<string | number>,
-            default: 'auto'
+            default: '100%'
         },
         language: {
             type: String as PropType<string>,
