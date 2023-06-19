@@ -42,9 +42,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
@@ -75,9 +73,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
@@ -89,9 +85,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
@@ -104,9 +98,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
@@ -125,9 +117,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
