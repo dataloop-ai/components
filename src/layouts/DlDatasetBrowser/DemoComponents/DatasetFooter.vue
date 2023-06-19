@@ -28,8 +28,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlSlider from '../../../compound/DlSlider/DlSlider.vue'
-import DlPagination from '../../../compound/DlPagination/DlPagination.vue'
+import { DlSlider, DlPagination } from '../../../components'
 
 export default defineComponent({
     name: 'DatasetFooter',

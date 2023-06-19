@@ -36,8 +36,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
-import DlCounters from '../../../compound/DlCounters/DlCounters.vue'
+import { DlTypography, DlCounters } from '../../../components'
 
 export default defineComponent({
     name: 'NavbarKpi',

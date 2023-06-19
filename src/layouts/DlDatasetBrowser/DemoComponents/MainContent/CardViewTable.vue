@@ -70,13 +70,18 @@
 
 <script lang="ts">
 import { ref, defineComponent, PropType } from 'vue-demi'
-import DlOptionGroup from '../../../../compound/DlOptionGroup/DlOptionGroup.vue'
-import { DlTable, DlTd, DlTr, DlTh } from '../../../../compound/DlTable'
+import {
+    DlTable,
+    DlTd,
+    DlTr,
+    DlTh,
+    DlOptionGroup,
+    DlList,
+    DlMenu,
+    DlEllipsis,
+    DlButton
+} from '../../../../components'
 import { ImageMetadata } from '../types/imageMetadata'
-import DlEllipsis from '../../../../basic/DlEllipsis/DlEllipsis.vue'
-import DlButton from '../../../../basic/DlButton/DlButton.vue'
-import DlMenu from '../../../../essential/DlMenu/DlMenu.vue'
-import DlList from '../../../../essential/DlList/DlList.vue'
 
 const columns = [
     {

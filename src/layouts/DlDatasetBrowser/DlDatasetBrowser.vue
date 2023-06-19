@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlPageLayout from '../../essential/DlPageLayout/DlPageLayout.vue'
+import { DlPageLayout } from '../../../../components'
 
 export default defineComponent({
     name: 'DlDatasetBrowser',

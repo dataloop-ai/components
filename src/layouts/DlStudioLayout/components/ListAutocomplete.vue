@@ -52,21 +52,16 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref, watch, onMounted, PropType } from 'vue-demi'
+import { useArrowNavigation } from '../../../hooks/use-arrow-navigation'
 import {
-    defineComponent,
-    ref,
-    watch,
-    computed,
-    onMounted,
-    PropType
-} from 'vue-demi'
-import DlList from '../../DlList/DlList.vue'
-import DlItemSection from '../../../shared/DlItemSection/DlItemSection.vue'
-import DlListItem from '../../../basic/DlListItem/DlListItem.vue'
-import DlInput from '../../../compound/DlInput/DlInput.vue'
-import DlIcon from '../../DlIcon/DlIcon.vue'
-import DlEllipsis from '../../../basic/DlEllipsis/DlEllipsis.vue'
-import { useArrowNavigation } from '../../../../hooks/use-arrow-navigation'
+    DlList,
+    DlItemSection,
+    DlListItem,
+    DlInput,
+    DlIcon,
+    DlEllipsis
+} from '../../../components'
 
 type TListAutocomplete = {
     name: string

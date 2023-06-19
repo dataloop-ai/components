@@ -59,10 +59,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlTypography from '../../../DlTypography/DlTypography.vue'
-import DlSeparator from '../../../DlSeparator/DlSeparator.vue'
-import DlButton from '../../../../basic/DlButton/DlButton.vue'
-import DlCheckbox from '../../../DlCheckbox/DlCheckbox.vue'
+import {
+    DlButton,
+    DlCheckbox,
+    DlTypography,
+    DlSeparator
+} from '../../../../components'
 import ActionsMenu from './ActionsMenu.vue'
 import AutomationMenu from './AutomationMenu.vue'
 

@@ -86,13 +86,15 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlSmartSearch from '../../../compound/DlSearches/DlSmartSearch/DlSmartSearch.vue'
-import DlButton from '../../../basic/DlButton/DlButton.vue'
-import DlDropdownButton from '../../../compound/DlDropdownButton/DlDropdownButton.vue'
-import DlList from '../../../essential/DlList/DlList.vue'
-import DlListItem from '../../../basic/DlListItem/DlListItem.vue'
-import DlItemSection from '../../../shared/DlItemSection/DlItemSection.vue'
 import SearchFilterMenu from './SearchFilterMenu.vue'
+import {
+    DlSmartSearch,
+    DlButton,
+    DlDropdownButton,
+    DlList,
+    DlListItem,
+    DlItemSection
+} from '../../../components'
 
 export default defineComponent({
     name: 'NavbarSearch',

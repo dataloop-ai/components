@@ -41,9 +41,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue-demi'
-import DlRadio from '../../../essential/DlRadio/DlRadio.vue'
-import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
-import DlButton from '../../../basic/DlButton/DlButton.vue'
+import { DlRadio, DlTypography, DlButton } from '../../../components'
 
 export default defineComponent({
     name: 'DatasetLeftDrawer',

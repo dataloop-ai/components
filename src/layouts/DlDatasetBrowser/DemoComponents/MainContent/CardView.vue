@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { ImageMetadata } from '../types/imageMetadata'
-import DlCard from '../../../../basic/DlCard/DlCard.vue'
+import { DlCard } from '../../../../components'
 
 export default defineComponent({
     name: 'CardView',

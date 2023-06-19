@@ -65,10 +65,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlButton from '../../../../basic/DlButton/DlButton.vue'
-import DlMenu from '../../../../essential/DlMenu/DlMenu.vue'
-import DlTypography from '../../../../essential/DlTypography/DlTypography.vue'
-import DlOptionGroup from '../../../../compound/DlOptionGroup/DlOptionGroup.vue'
+import {
+    DlButton,
+    DlMenu,
+    DlTypography,
+    DlOptionGroup
+} from '../../../../components'
 
 export default defineComponent({
     name: 'AddFilter',

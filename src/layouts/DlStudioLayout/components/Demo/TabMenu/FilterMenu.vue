@@ -27,11 +27,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlButton from '../../../../../basic/DlButton/DlButton.vue'
-import DlMenu from '../../../../../essential/DlMenu/DlMenu.vue'
-import DlList from '../../../../../essential/DlList/DlList.vue'
-import DlListItem from '../../../../../basic/DlListItem/DlListItem.vue'
-import DlItemSection from '../../../../../shared/DlItemSection/DlItemSection.vue'
+import {
+    DlButton,
+    DlMenu,
+    DlList,
+    DlListItem,
+    DlItemSection
+} from '../../../../../components'
 
 export default defineComponent({
     name: 'FilterMenu',

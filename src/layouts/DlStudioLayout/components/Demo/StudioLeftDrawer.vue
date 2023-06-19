@@ -115,12 +115,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlTypography from '../../../../essential/DlTypography/DlTypography.vue'
-import DlIcon from '../../../../essential/DlIcon/DlIcon.vue'
-import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
-import ListAutocomplete from '../../../../essential/DlStudioLayout/components/ListAutocomplete.vue'
-import DlButton from '../../../../basic/DlButton/DlButton.vue'
-import DlCheckbox from '../../../../essential/DlCheckbox/DlCheckbox.vue'
+import ListAutocomplete from '../ListAutocomplete.vue'
+import {
+    DlButton,
+    DlCheckbox,
+    DlTooltip,
+    DlIcon,
+    DlTypography
+} from '../../../../components'
 
 export default defineComponent({
     name: 'StudioLeftDrawer',

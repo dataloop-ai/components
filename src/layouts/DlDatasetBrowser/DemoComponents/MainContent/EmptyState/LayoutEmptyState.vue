@@ -4,7 +4,7 @@
             <upload-data />
         </div>
         <div class="flex full-width text-center justify-center">
-            <code-editor
+            <dl-code-editor
                 v-model="codeEditorValue"
                 width="485px"
                 height="547px"
@@ -20,12 +20,13 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import UploadData from './UploadData.vue'
-import CodeEditor from './CodeEditor/CodeEditor.vue'
-import * as monaco from 'monaco-editor'
+import { DlCodeEditor } from '../../../../../components'
 import {
     CodeEditorOptions,
     CodeEditorTheme
-} from './CodeEditor/monacoEditorType'
+} from '../../../../../components/types'
+
+import { editor } from 'monaco-editor'
 
 type codeEditor = {
     theme?: CodeEditorTheme
@@ -36,7 +37,7 @@ export default defineComponent({
     name: 'LayoutEmptyState',
     components: {
         UploadData,
-        CodeEditor
+        DlCodeEditor
     },
     setup() {
         const codeEditorValue = ref(
@@ -221,7 +222,7 @@ export default defineComponent({
             }
         })
 
-        const editorMounted = (editor: monaco.editor.IStandaloneCodeEditor) => {
+        const editorMounted = (editor: editor.IStandaloneCodeEditor) => {
             console.log('editor mounted: ', editor)
         }
 

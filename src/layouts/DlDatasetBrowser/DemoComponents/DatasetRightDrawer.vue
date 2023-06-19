@@ -37,9 +37,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue-demi'
-import DlTypography from '../../../essential/DlTypography/DlTypography.vue'
-import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
-import DlButton from '../../../basic/DlButton/DlButton.vue'
+import { DlTypography, DlIcon, DlButton } from '../../../components'
 
 export default defineComponent({
     name: 'DatasetRightDrawer',

@@ -76,9 +76,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue-demi'
-import DlButton from '../../../../basic/DlButton/DlButton.vue'
-import DlAvatar from '../../../../basic/DlAvatar/DlAvatar.vue'
-import DlIcon from '../../../../essential/DlIcon/DlIcon.vue'
+import { DlButton, DlAvatar, DlIcon } from '../../../../components'
 
 export default defineComponent({
     name: 'StudioHeader',

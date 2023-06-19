@@ -52,11 +52,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlSeparator from '../../../../../essential/DlSeparator/DlSeparator.vue'
-import DlButton from '../../../../../basic/DlButton/DlButton.vue'
-import DlIcon from '../../../../../essential/DlIcon/DlIcon.vue'
-import DlInput from '../../../../../compound/DlInput/DlInput.vue'
 import FilterMenu from './FilterMenu.vue'
+import {
+    DlSeparator,
+    DlButton,
+    DlIcon,
+    DlInput
+} from '../../../../../components'
 
 export default defineComponent({
     name: 'TabMenuAnnotations',

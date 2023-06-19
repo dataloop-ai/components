@@ -65,13 +65,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlDropdownButton from '../../../../compound/DlDropdownButton/DlDropdownButton.vue'
-import DlMenu from '../../../DlMenu/DlMenu.vue'
-import DlList from '../../../DlList/DlList.vue'
-import DlListItem from '../../../../basic/DlListItem/DlListItem.vue'
-import DlItemSection from '../../../../shared/DlItemSection/DlItemSection.vue'
-import DlIcon from '../../../DlIcon/DlIcon.vue'
-
+import {
+    DlList,
+    DlMenu,
+    DlListItem,
+    DlItemSection,
+    DlIcon,
+    DlDropdownButton
+} from '../../../../components'
 export default defineComponent({
     name: 'AutomationMenu',
     components: {

@@ -76,8 +76,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlEmptyState, DlButton } from '../../../../../basic'
-import { DlTypography, DlIcon } from '../../../../../essential'
+import {
+    DlEmptyState,
+    DlButton,
+    DlTypography,
+    DlIcon
+} from '../../../../../components'
 
 export default defineComponent({
     name: 'UploadData',

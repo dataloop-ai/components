@@ -250,11 +250,9 @@
 import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor, stringStyleToRecord } from '../../../utils'
-import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
-import { DlEmptyStateProps } from '../DlEmptyState/types'
-import { DlIcon } from '../../essential/DlIcon'
-import { DlLink } from '../../essential/DlLink'
-import { DlChip, DlEllipsis } from '../../../components'
+import { DlEmptyStateProps } from '../../basic/types'
+import { DlIcon, DlLink, DlTypography, DlTooltip } from '../../essential'
+import { DlChip, DlEllipsis, DlEmptyState } from '../../basic'
 import {
     DlCardImageType,
     DlCardLinkType,
@@ -262,9 +260,7 @@ import {
     DlCardHintType,
     DlCardIconType
 } from './types'
-import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
 import DescriptionModal from './components/DescriptionModal.vue'
-import DlTypography from '../../essential/DlTypography/DlTypography.vue'
 
 export default defineComponent({
     name: 'DlCard',

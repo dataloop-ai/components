@@ -21,14 +21,16 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue-demi'
-import DlTabs from '../../../../compound/DlTabs/DlTabs.vue'
-import DlTabPanels from '../../../../compound/DlTabPanels/DlTabPanels.vue'
-import DlTabPanel from '../../../../compound/DlTabPanels/DlTabPanel.vue'
-import { DlTabDetails } from '../../../../compound/DlTabs/types'
 import TabMenuAnnotations from './TabMenu/TabMenuAnnotations.vue'
 import TabMenuItem from './TabMenu/TabMenuItem.vue'
-import DlButton from '../../../../basic/DlButton/DlButton.vue'
-import DlIcon from '../../../../essential/DlIcon/DlIcon.vue'
+import {
+    DlTabs,
+    DlTabPanels,
+    DlTabPanel,
+    DlIcon,
+    DlButton
+} from '../../../../components'
+import { DlTabDetails } from '../../../../components/types'
 
 export default defineComponent({
     name: 'StudioTabsMenu',

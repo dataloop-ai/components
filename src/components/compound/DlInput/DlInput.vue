@@ -338,10 +338,6 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        paddingProp: {
-            type: String,
-            default: '20px 20px 20px 0px'
-        },
         fitContent: Boolean,
         margin: {
             type: String,
@@ -398,11 +394,7 @@ export default defineComponent({
                 inputMargin = '0px 20px 0px 0px'
             }
             return {
-                '--dl-input-margin': inputMargin,
-                '--dl-input-border-left': this.borderLeft
-                    ? this.borderLeft
-                    : '1px solid var(--dl-color-separator)',
-                '--dl-input-padding': this.paddingProp
+                '--dl-input-margin': inputMargin
             }
         },
         bottomMessage(): boolean {
@@ -650,7 +642,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-text-input {
-    padding: var(--dl-input-padding);
     margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
@@ -718,7 +709,6 @@ export default defineComponent({
 
     &__input {
         border: 1px solid var(--dl-color-separator);
-        border-left: var(--dl-input-border-left);
         border-radius: 2px;
         color: var(--dl-color-darker);
         width: calc(100% - 20px);

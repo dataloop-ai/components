@@ -32,10 +32,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlSeparator from '../../../../../essential/DlSeparator/DlSeparator.vue'
-import DlButton from '../../../../../basic/DlButton/DlButton.vue'
-import DlIcon from '../../../../../essential/DlIcon/DlIcon.vue'
-import DlTooltip from '../../../../../essential/DlTooltip/DlTooltip.vue'
+import {
+    DlSeparator,
+    DlButton,
+    DlIcon,
+    DlTooltip
+} from '../../../../../components'
 
 export default defineComponent({
     name: 'TabMenuItem',

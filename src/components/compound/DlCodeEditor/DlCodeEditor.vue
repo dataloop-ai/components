@@ -39,18 +39,21 @@ import {
     watch,
     computed
 } from 'vue-demi'
+import { DlButton } from '../../basic'
+import { DlTypography } from '../../essential'
+
 import * as monaco from 'monaco-editor'
 import { editor } from 'monaco-editor'
-import { editorProps } from './monacoEditorType'
+import { editorProps } from './types'
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import { DlTypography } from '../../../../../../essential'
-import { DlButton } from '../../../../../../basic'
 
-import dlThemeLight from './dlThemeLight.json'
+import dlThemeLight from './theme.light.json'
+import dlThemeDark from './theme.dark.json' // add support for this. for now its a clone of the light theme.
+
 import IStandaloneThemeData = editor.IStandaloneThemeData
 
 monaco.editor.defineTheme(
@@ -60,7 +63,7 @@ monaco.editor.defineTheme(
 monaco.editor.setTheme('dl-theme-light')
 
 export default defineComponent({
-    name: 'CodeEditor',
+    name: 'DlCodeEditor',
     components: {
         DlTypography,
         DlButton
@@ -68,7 +71,8 @@ export default defineComponent({
     props: editorProps,
     emits: ['update:model-value', 'change', 'editor-mounted'],
     setup(props, { emit }) {
-        (window as any).MonacoEnvironment = {
+        // @ts-ignore // needed to type the window
+        window.MonacoEnvironment = {
             getWorker(_: any, label: string) {
                 if (label === 'json') {
                     return new JsonWorker()
