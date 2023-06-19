@@ -64,6 +64,7 @@ import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
 import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlPageLayoutDemo from './DlPageLayoutDemo.vue'
+import { DlCodeEditorDemo } from './DlCodeEditor'
 
 export default {
     AvatarDemo,
@@ -128,5 +129,6 @@ export default {
     DlVirtualScrollDemo,
     DlJsonEditorDemo,
     DlThumbnailGallery,
+    DlCodeEditorDemo,
     DlPageLayoutDemo
 }

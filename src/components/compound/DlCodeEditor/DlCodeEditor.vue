@@ -5,22 +5,26 @@
     >
         <div class="grid grid-cols-2 code-editor__sdk">
             <div class="text-left">
-                <dl-typography
-                    size="12px"
-                    color="color-dl-darker"
-                >
-                    SDK Script
-                </dl-typography>
+                <slot name="title">
+                    <dl-typography
+                        size="12px"
+                        color="color-dl-darker"
+                    >
+                        {{ title }}
+                    </dl-typography>
+                </slot>
             </div>
             <div class="text-right">
-                <DlButton
-                    flat
-                    icon="icon-dl-copy"
-                    size="20px"
-                    color="secondary"
-                    round
-                    @click="navigatorClipboard"
-                />
+                <slot name="actions">
+                    <DlButton
+                        flat
+                        icon="icon-dl-copy"
+                        size="20px"
+                        color="secondary"
+                        round
+                        @click="navigatorClipboard"
+                    />
+                </slot>
             </div>
         </div>
         <div

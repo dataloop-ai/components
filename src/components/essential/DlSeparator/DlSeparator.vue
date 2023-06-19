@@ -40,7 +40,7 @@ export default defineComponent({
                 case 'horizontal':
                     styles = {
                         backgroundColor: color,
-                        width: width ?? '300px',
+                        width: width ?? 'auto',
                         height: height ?? '1px',
                         marginTop: indent,
                         marginBottom: indent
@@ -50,7 +50,7 @@ export default defineComponent({
                     styles = {
                         backgroundColor: color,
                         width: width ?? '1px',
-                        height: height ?? '300px',
+                        height: height ?? 'auto',
                         marginLeft: indent,
                         marginRight: indent
                     }
