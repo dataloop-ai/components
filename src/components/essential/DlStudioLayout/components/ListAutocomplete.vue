@@ -35,7 +35,7 @@
                         :style="`background-color: ${activeBackground(
                             item.name
                         )}`"
-                        :is-highlighted="itemIndex === highlightedIndex"
+                        :highlighted="itemIndex === highlightedIndex"
                         @click="handleOption(item)"
                     >
                         <dl-item-section no-wrap>

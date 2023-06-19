@@ -143,7 +143,7 @@
                             :key="item"
                             clickable
                             style="font-size: 12px"
-                            :is-highlighted="suggestIndex === highlightedIndex"
+                            :highlighted="suggestIndex === highlightedIndex"
                             @click="onClick($event, item)"
                         >
                             <span

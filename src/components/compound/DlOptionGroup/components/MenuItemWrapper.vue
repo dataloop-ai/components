@@ -1,6 +1,6 @@
 <template>
     <dl-list-item
-        as="label"
+        type="label"
         clickable
         @click="emitClick"
     >
