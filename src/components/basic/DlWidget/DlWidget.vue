@@ -45,8 +45,6 @@ import { defineComponent } from 'vue-demi'
 import { DlIcon } from '../../essential'
 import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
 
-type CursorType = 'grabbing' | 'default'
-
 export default defineComponent({
     name: 'DlWidget',
     components: {
@@ -61,11 +59,7 @@ export default defineComponent({
             flexBasis: null,
             isDragging: false,
             timer: null,
-            visibleDragIcon: false,
-            widgetStyles: {
-                height: null,
-                width: null
-            }
+            visibleDragIcon: false
         }
     },
     computed: {
@@ -85,58 +79,22 @@ export default defineComponent({
         }
     },
     methods: {
-        setCursor(cursor: CursorType) {
-            document.body.style.cursor = cursor
-        },
-        hideWidgetContent() {
-            this.$refs.widget.innerHTML = ''
-        },
-        saveWidgetStyles() {
-            this.widgetStyles.width = (
-                this.$refs.widget as HTMLElement
-            ).clientWidth
-            this.widgetStyles.height = (
-                this.$refs.widget as HTMLElement
-            ).clientHeight
-        },
-        setWidgetSizes() {
-            const widgetRefs = this.$refs.widget as HTMLElement
-            widgetRefs.style.width = `${this.widgetStyles.width}px`
-            widgetRefs.style.height = `${this.widgetStyles.height}px`
-            widgetRefs.style.backgroundColor = `var(--dl-color-separator)`
-        },
         startDragging(e: MouseEvent) {
             this.isDragging = true
-            this.setCursor('grabbing')
+            document.body.style.cursor = 'grabbing'
             this.draggedWidget = getElementAbove(
                 e.target as HTMLElement,
                 'dl-widget'
             )
             if (this.draggedWidget) {
-                this.cloneDraggedWidget()
+                const clone = this.$refs.clone as HTMLElement
+                clone.appendChild(this.draggedWidget.cloneNode(true))
+                clone.style.visibility = 'visible'
+                clone.style.width = `${this.draggedWidget.offsetWidth}px`
+                clone.style.height = `${this.draggedWidget.offsetHeight}px`
+                clone.style.backgroundColor = `var(--dl-color-bg)`
             }
 
-            this.copyCanvasContent()
-            this.saveWidgetStyles()
-            this.hideWidgetContent()
-            this.setWidgetSizes()
-
-            this.moveClone(e as MouseEvent)
-
-            addMouseEnter('dl-widget', this.handleMouseEnter as any)
-
-            window.addEventListener('mousemove', this.moveClone)
-            window.addEventListener('mouseup', this.stopDragging)
-        },
-        cloneDraggedWidget() {
-            const clone = this.$refs.clone as HTMLElement
-            clone.appendChild(this.draggedWidget.cloneNode(true))
-            clone.style.visibility = 'visible'
-            clone.style.width = `${this.draggedWidget.offsetWidth}px`
-            clone.style.height = `${this.draggedWidget.offsetHeight}px`
-            clone.style.backgroundColor = `var(--dl-color-bg)`
-        },
-        copyCanvasContent() {
             const sourceCanvas = this.draggedWidget?.querySelector('canvas')
             if (sourceCanvas) {
                 const targetCanvasCtx = (this.$refs.clone as HTMLElement)
@@ -145,22 +103,11 @@ export default defineComponent({
 
                 targetCanvasCtx.drawImage(sourceCanvas, 0, 0)
             }
-        },
-        transferCanvas(from: HTMLElement, to: HTMLElement) {
-            to.appendChild(from.cloneNode(true))
-            to.innerHTML = ''
-            to.innerHTML = from.innerHTML
-            to.style.backgroundColor = `var(--dl-color-bg)`
 
-            const sourceCanvas = from?.querySelector('canvas')
-            if (sourceCanvas) {
-                const targetCanvasCtx = (to as HTMLElement)
-                    .querySelector('canvas')
-                    .getContext('2d')
+            this.moveClone(e as MouseEvent)
 
-                targetCanvasCtx.drawImage(sourceCanvas, 0, 0)
-            }
             addMouseEnter('dl-widget', this.handleMouseEnter as any)
+
             window.addEventListener('mousemove', this.moveClone)
             window.addEventListener('mouseup', this.stopDragging)
         },
@@ -172,36 +119,26 @@ export default defineComponent({
         },
         stopDragging(e: MouseEvent) {
             this.isDragging = false
-            this.setCursor('default')
+            document.body.style.cursor = 'default'
             const clone = this.$refs.clone as HTMLElement
-            const wrapper = this.$refs.wrapper as HTMLElement
-
-            this.transferCanvas(clone, wrapper)
-            this.deleteClone()
+            clone.style.visibility = 'hidden'
+            clone.innerHTML = ''
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
             const change = {
                 source: this.draggedWidget,
                 target
             }
             if (target && this.draggedWidget) {
-                this.dispatchChangePositionEvent(change)
+                const event = new CustomEvent('change-position', {
+                    detail: change
+                })
+                ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)
             setTimeout(() => {
                 removeMouseEnter('dl-widget', this.handleMouseEnter as any)
             }, 1)
-        },
-        deleteClone() {
-            const clone = this.$refs.clone as HTMLElement
-            clone.innerHTML = ''
-            clone.removeAttribute('style')
-        },
-        dispatchChangePositionEvent(change: any) {
-            const event = new CustomEvent('change-position', {
-                detail: change
-            })
-            ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
         },
         handleMouseEnter(e: MouseEvent) {
             this.hoveredWidget = e.target as HTMLElement
@@ -311,6 +248,8 @@ export default defineComponent({
 
     &__drag {
         position: relative;
+        opacity: 0.2;
+        background: var(--dl-color-separator);
         &::after {
             content: '';
             position: absolute;
@@ -318,7 +257,6 @@ export default defineComponent({
             height: 100%;
             top: 0;
             left: 0;
-            background: var(--dl-color-separator);
             border-radius: 5px;
         }
     }

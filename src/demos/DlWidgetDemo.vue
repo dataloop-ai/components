@@ -7,11 +7,11 @@
                     @change="selectLayout"
                 >
                     <option
-                        v-for="(layout, index) in layouts"
-                        :key="index"
-                        :value="index"
+                        v-for="(layoutItem, layoutIndex) in layouts"
+                        :key="layoutIndex"
+                        :value="layoutIndex"
                     >
-                        {{ layout.name }}
+                        {{ layoutItem.name }}
                     </option>
                 </select>
                 <button
