@@ -99,7 +99,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import DlListItem from '../../../basic/DlListItem/DlListItem.vue'
+import { DlListItem } from '../../../basic'
 import { DlIcon, DlCheckbox } from '../../../essential'
 import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'

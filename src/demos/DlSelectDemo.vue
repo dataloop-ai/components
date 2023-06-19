@@ -99,6 +99,7 @@
                 </div>
             </template>
         </dl-select>
+        with prepend
         <dl-select
             v-model="tasksFilter"
             multiselect

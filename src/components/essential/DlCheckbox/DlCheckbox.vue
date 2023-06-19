@@ -2,7 +2,6 @@
     <div
         :id="uuid"
         :class="identifierClass"
-        :style="cssVars"
         class="container-wrapper"
     >
         <label
@@ -99,8 +98,6 @@ export default defineComponent({
         id: { type: [String, Number], default: null },
         modelValue: { type: ValueTypes, required: false, default: null },
         label: { default: null, type: String },
-        labelColor: { default: null, type: String },
-        labelSize: { default: null, type: String },
         subLabel: { type: String, default: null },
         toggleIndeterminate: { type: Boolean, default: false },
         indeterminateValue: { type: ValueTypes, default: null },
@@ -118,14 +115,6 @@ export default defineComponent({
         }
     },
     computed: {
-        cssVars() {
-            return {
-                '--dl-checkbox-label-color': this.labelColor
-                    ? `var(--${this.labelColor})`
-                    : 'var(--dl-color-darker)',
-                '--dl-font-size-body': this.labelSize
-            }
-        },
         identifierClass(): string {
             return `dl-checkbox-${this.label ?? ''}`.replaceAll(' ', '-')
         },
@@ -303,7 +292,7 @@ input {
 
 .checkbox-label {
     font-size: var(--dl-font-size-body);
-    color: var(--dl-checkbox-label-color);
+    color: var(--dl-color-darker);
 }
 .check {
     position: absolute;

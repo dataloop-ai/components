@@ -326,7 +326,7 @@ import {
     DlItemSection,
     DlVirtualScroll
 } from '../../shared'
-import { defineComponent, isVue2, PropType, ref } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import {
     getLabel,
     getIconSize,
@@ -517,24 +517,12 @@ export default defineComponent({
             return getIconSize(this.size)
         },
         hasOptionSlot(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots.option
-            }
             return !!this.$slots.option
         },
         hasAllItemsSlot(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots['all-items']
-            }
             return !!this.$slots['all-items']
         },
         hasSelectedSlot(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots.selected
-            }
             return !!this.$slots.selected
         },
         computedPlaceholder(): string {
@@ -558,17 +546,9 @@ export default defineComponent({
                 : this.options[this.selectedIndex]
         },
         hasBeforeOptions(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots['before-options']
-            }
             return !!this.$slots['before-options']
         },
         hasAfterOptions(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots['after-options']
-            }
             return !!this.$slots['after-options']
         },
         noOptions(): boolean {
@@ -642,10 +622,6 @@ export default defineComponent({
             return this.size === InputSizes.s
         },
         hasPrepend(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots.prepend && !this.isSmall
-            }
             return !!this.$slots.prepend && !this.isSmall
         },
         chevronIconColor(): string {
