@@ -145,7 +145,7 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .tabpanel {
     margin: 0 auto;
     padding: 1rem;
