@@ -334,10 +334,6 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        borderLeft: {
-            type: String,
-            default: ''
-        },
         fitContent: Boolean,
         margin: {
             type: String,
