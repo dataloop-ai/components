@@ -117,7 +117,10 @@
             :offset="[0, 3]"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
-                <dl-date-picker @change="handleDateSelectionUpdate" />
+                <dl-date-picker
+                    :single-selection="false"
+                    @change="handleDateSelectionUpdate"
+                />
             </div>
         </dl-menu>
     </div>
