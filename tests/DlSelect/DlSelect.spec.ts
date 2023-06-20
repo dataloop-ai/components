@@ -332,11 +332,11 @@ describe('dl-select computed', () => {
             }
         })
 
-        expect(wrapper.vm.selectedIndex).toBe(0)
+        expect(wrapper.vm.selectedIndex).toBe(-1)
         await wrapper.setProps({
             emitValue: false
         })
-        expect(wrapper.vm.selectedIndex).toBe(0)
+        expect(wrapper.vm.selectedIndex).toBe(-1)
     })
 
     it('should emit the value and not the entire object', async () => {
