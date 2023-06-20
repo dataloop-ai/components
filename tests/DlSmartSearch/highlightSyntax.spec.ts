@@ -4,11 +4,6 @@ import {
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { describe, expect, it } from 'vitest'
 
-const SPAN_STYLES = `overflow: hidden;
-                     text-overflow: ellipsis;
-                     display: inline-block;
-                     max-width: 100%`
-
 const aliases = [
     {
         alias: 'Name',

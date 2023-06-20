@@ -61,9 +61,7 @@
                             class="matrix__cell"
                             :style="`background-color: ${getCellBackground(
                                 cell.value
-                            )}; color: var(--dl-color-text${
-                                cell.value < 0.5 ? '-darker' : ''
-                            }-buttons)`"
+                            )}; color: ${getCellTextColor(cell.value)}`"
                             @mouseenter="handleShowTooltip(cell, $event)"
                             @mouseleave="handleHideTooltip"
                             @mousedown="openLink(cell)"
@@ -81,10 +79,15 @@
                 <div class="x-axis">
                     <span
                         v-for="(label, index) in visibleLabels"
+                        ref="xAxis"
                         :key="index"
                         class="x-axis__element"
                         :style="`${
-                            !labelImages[0] ? 'transform: rotate(70deg);' : ''
+                            !labelImages[0]
+                                ? `transform: rotate(${
+                                    rotateXLabels ? '70' : '0'
+                                }deg);`
+                                : ''
                         }`"
                     >
                         <span class="x-axis__element--text">
@@ -140,14 +143,14 @@
         <div
             v-if="tooltipVisible"
             :style="tooltipStyles"
-            class="tooltip"
+            class="matrix-tooltip"
         >
-            <span class="tooltip__x">{{ tooltipState.xLabel }}</span>
-            <span class="tooltip__y">{{ tooltipState.yLabel }}</span>
+            <span class="matrix-tooltip__x">{{ tooltipState.xLabel }}</span>
+            <span class="matrix-tooltip__y">{{ tooltipState.yLabel }}</span>
             <span>
                 <span
                     v-if="tooltipState.value"
-                    class="tooltip__color"
+                    class="matrix-tooltip__color"
                     :style="`background-color: ${getCellBackground(
                         tooltipState.value
                     )}`"
@@ -229,6 +232,7 @@ export default defineComponent({
             max: props.matrix.length
         })
         const cellWidth = ref<number | null>(null)
+        const rotateXLabels = ref(true)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -238,12 +242,23 @@ export default defineComponent({
             const hex = object[props.color]
             return hexToRgbA(hex, value)
         }
+
+        const getCellTextColor = (value: number) => {
+            const isDark =
+                document.documentElement.getAttribute('data-theme') ===
+                'dark-mode'
+            if (isDark) return 'var(--dl-color-text-buttons)'
+            return `var(--dl-color-text${value < 0.5 ? '-darker' : ''}-buttons)`
+        }
+
         return {
             variables,
             getCellBackground,
+            getCellTextColor,
             cellWidth,
             tooltipState,
-            currentBrushState
+            currentBrushState,
+            rotateXLabels
         }
     },
     computed: {
@@ -301,6 +316,14 @@ export default defineComponent({
                 this.currentBrushState.max = value.length
                 this.resizeMatrix()
             }
+        },
+        currentBrushState() {
+            const longest = Math.max(
+                ...this.visibleLabels.map(
+                    (el: DlConfusionMatrixLabel) => el.title.length
+                )
+            )
+            this.rotateXLabels = longest * 12 > getCellWidth()
         }
     },
     mounted() {
@@ -365,8 +388,8 @@ export default defineComponent({
                     value: ctx.normalized ? cell.value : cell.unnormalizedValue,
                     xLabel: cell.xLabel,
                     yLabel: cell.yLabel,
-                    x: e.pageX,
-                    y: e.pageY,
+                    x: e.x,
+                    y: e.y,
                     visible: true
                 }
             },
@@ -416,7 +439,7 @@ export default defineComponent({
 .x-axis {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-top: 10px;
     min-height: 100px;
     max-height: 100px;
@@ -474,7 +497,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 60%;
+        font-size: 12px;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
@@ -514,7 +537,7 @@ export default defineComponent({
     }
 }
 
-.tooltip {
+.matrix-tooltip {
     position: absolute;
     border: 1px solid var(--dl-color-separator);
     padding: 8px;
@@ -522,6 +545,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     background-color: var(--dl-color-shadow);
+    color: var(--dl-color-tooltip-background);
     border-radius: 3px;
     animation: fadeIn 0.4s;
 

@@ -15,7 +15,7 @@ describe('DlWidget', () => {
                 }
             }
         })
-        expect(wrapper.vm.widgetStyles).toMatch('dl-widget__drag')
+        expect(wrapper.vm.widgetClasses).toMatch('dl-widget__drag')
     })
 
     it('should start performing drag operation', () => {

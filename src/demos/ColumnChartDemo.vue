@@ -38,6 +38,21 @@
                         <dl-avatar size="24px">
                             <img :src="url">
                         </dl-avatar>
+                        <dl-tooltip>
+                            <div
+                                style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    padding: 10px;
+                                "
+                            >
+                                <dl-avatar size="24px">
+                                    <img :src="url">
+                                </dl-avatar>
+                                <p>rotem.shaham@dataloop.com</p>
+                            </div>
+                        </dl-tooltip>
                         <div />
                     </div>
                 </div>
@@ -56,7 +71,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlAvatar, DlColumnChart } from '../components'
+import { DlAvatar, DlColumnChart, DlTooltip } from '../components'
 
 import { orderBy } from 'lodash'
 
@@ -213,7 +228,8 @@ export default defineComponent({
     name: 'DlColumnChartDemo',
     components: {
         DlColumnChart,
-        DlAvatar
+        DlAvatar,
+        DlTooltip
     },
     data() {
         return {

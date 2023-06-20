@@ -222,7 +222,6 @@
                         :selected="selected"
                         :separator="separator"
                         :draggable="draggable"
-                        class="sticky-header"
                         :filter="filter"
                         :selection="selection"
                         :dense="dense"
@@ -233,9 +232,7 @@
                         :columns="tableColumns"
                         style="height: 500px"
                         row-key="index"
-                        :pagination="{ rowsPerPage: 0 }"
                         virtual-scroll
-                        :rows-per-page-options="[0]"
                         @virtual-scroll="onScroll"
                     />
                 </div>

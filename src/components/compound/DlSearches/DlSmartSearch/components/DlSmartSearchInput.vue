@@ -66,15 +66,16 @@
                             v-if="withSaveButton"
                             class="dl-smart-search-input__save-btn-wrapper"
                         >
-                            <dl-button
-                                icon="icon-dl-save"
-                                size="16px"
-                                flat
-                                :disabled="saveStatus"
-                                @click="save"
-                            >
+                            <div>
+                                <dl-button
+                                    icon="icon-dl-save"
+                                    size="16px"
+                                    flat
+                                    :disabled="saveStatus"
+                                    @click="save"
+                                />
                                 <dl-tooltip> Save Query </dl-tooltip>
-                            </dl-button>
+                            </div>
                             <dl-button
                                 icon="icon-dl-edit"
                                 size="16px"
@@ -116,7 +117,10 @@
             :offset="[0, 3]"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
-                <dl-date-picker @change="handleDateSelectionUpdate" />
+                <dl-date-picker
+                    :single-selection="false"
+                    @change="handleDateSelectionUpdate"
+                />
             </div>
         </dl-menu>
     </div>
@@ -393,10 +397,18 @@ export default defineComponent({
         modelValue(value: string) {
             const target = this.$refs['input'] as HTMLInputElement
             value = value?.replaceAll(' ', ' ') ?? ''
-            if (!this.isTyping) target.innerHTML = value
+            /*
+             * I commented out this line because it was blocking arrow navigation
+             * */
+            // if (!this.isTyping) target.innerHTML = value
+            target.innerHTML = value
             updateEditor(this.styleModel)
             this.setMenuOffset(isEligibleToChange(target, this.expanded))
-            if (!this.isTyping) setCaret(target)
+            /*
+             * I commented out this line because it was blocking arrow navigation
+             * */
+            // if (!this.isTyping) setCaret(target)
+            setCaret(target)
             if (!this.expanded) {
                 this.isOverflow =
                     isEllipsisActive(this.$refs['input'] as Element) ||
@@ -612,7 +624,7 @@ export default defineComponent({
         }
 
         &--disabled {
-            border-color: var(--dl-color-disabled);
+            border-color: var(--dl-color-separator);
         }
     }
 
@@ -650,7 +662,7 @@ export default defineComponent({
         height: auto;
 
         min-height: 14px;
-        max-height: 100%;
+        max-height: var(--dl-smart-search-bar-wrapper-height);
         display: block;
     }
 

@@ -269,6 +269,23 @@ export default defineComponent({
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            yAlign: 'none',
+                            callbacks: {
+                                labelColor (
+                                    tooltipItem: { dataIndex: string | number },
+                                    chart: any
+                                ) {
+                                    return {
+                                        backgroundColor:
+                                            chartRefValue.value.data.datasets[0]
+                                                .hoverBackgroundColor[
+                                                tooltipItem.dataIndex
+                                            ]
+                                    }
+                                }
+                            }
                         }
                     }
                 },

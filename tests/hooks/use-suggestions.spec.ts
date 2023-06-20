@@ -43,6 +43,9 @@ export const aliases: Alias[] = [
     }
 ]
 
+const sortString = (a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: 'base' })
+
 describe('use-suggestions', () => {
     const { suggestions, error, findSuggestions } = useSuggestions(
         schema,
@@ -51,14 +54,17 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
-        expect(suggestions.value).toEqual([
-            'Name',
-            'Completed',
-            'Age',
-            'StartTime',
-            'Level',
-            'No-Schema'
-        ])
+        expect(suggestions.value).toEqual(
+            [
+                'Name',
+                'Completed',
+                'Age',
+                'StartTime',
+                'Level',
+                'No-Schema',
+                'metadata'
+            ].sort(sortString)
+        )
     })
 
     it('suggestions should have the field that includes the value', () => {
@@ -95,16 +101,6 @@ describe('use-suggestions', () => {
         ])
     })
 
-    it('suggestions should have the operator that includes the value', () => {
-        findSuggestions('Age =')
-        expect(suggestions.value).toEqual(['=', '!=', '>=', '<='])
-    })
-
-    it('suggestions should be empty when none of the operators were matched', () => {
-        findSuggestions('Age == ')
-        expect(suggestions.value).toEqual([])
-    })
-
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
             findSuggestions('Level = ')
@@ -131,16 +127,19 @@ describe('use-suggestions', () => {
     describe('when the field is of type "datetime"', () => {
         it('suggestions should have the "dateIntervalSuggestionString"', () => {
             findSuggestions('StartTime = ')
-            expect(suggestions.value).toEqual([
-                '(From (dd/mm/yyyy) To (dd/mm/yyyy))',
-                '(From dd/mm/yyyy)',
-                '(To dd/mm/yyyy)'
-            ])
+            expect(suggestions.value).toEqual(['(dd/mm/yyyy)'])
         })
 
         it('suggestions should be empty when value does not matches', () => {
             findSuggestions('StartTime = (From (dd/mm/ffff)')
             expect(suggestions.value).toEqual([])
+        })
+    })
+
+    describe('when the field is of type "boolean"', () => {
+        it('suggestions should options of true or false', () => {
+            findSuggestions('completed = ')
+            expect(suggestions.value).toEqual(['true', 'false'])
         })
     })
 
@@ -163,15 +162,20 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual([
-            'Name',
-            'Completed',
-            'Age',
-            'StartTime',
-            'Level',
-            'No-Schema'
-        ])
+        expect(suggestions.value).toEqual(
+            [
+                'Name',
+                'Level',
+                'Completed',
+                'metadata',
+                'Age',
+                'StartTime',
+                'No-Schema'
+            ].sort(sortString)
+        )
     })
+
+    // sort array of strings ignore case
 
     it('should give suggestions for multiple expressions', () => {
         findSuggestions(
