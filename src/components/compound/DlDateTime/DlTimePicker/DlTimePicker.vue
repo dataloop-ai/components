@@ -128,7 +128,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-time-picker {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     border-top: 1px solid var(--dl-color-separator);
     padding: 15px 30px;
@@ -138,7 +138,7 @@ export default defineComponent({
         display: flex;
         justify-content: center;
         align-items: center;
-        min-width: 220px;
+        min-width: 130px;
 
         span {
             font-size: 12px;
