@@ -176,10 +176,7 @@ export default defineComponent({
         getInnerDayStyle(value: Partial<CalendarDate>) {
             let style: Record<string, any> = {}
 
-            if (value.isDisabled)
-                return {
-                    cursor: 'not-allowed'
-                }
+            if (value.isDisabled) return style
 
             const disabledOpacity = 1
             const isToday = value.isSame(
