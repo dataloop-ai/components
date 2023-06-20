@@ -55,14 +55,14 @@
                 :class="selectClasses"
             >
                 <div
-                    v-show="hasPrepend || search"
+                    v-show="hasPrepend || searchable"
                     :class="[
                         ...adornmentClasses,
                         'adornment-container--pos-left'
                     ]"
                 >
                     <dl-icon
-                        v-if="search"
+                        v-if="searchable"
                         icon="icon-dl-search"
                         :size="iconSize"
                         color="dl-color-lighter"
@@ -73,7 +73,7 @@
                     />
                 </div>
                 <input
-                    v-if="search"
+                    v-if="searchable"
                     ref="searchInput"
                     class="select-search-input"
                     :style="!isExpanded ? 'display: none;' : 'width: 100%;'"
@@ -91,7 +91,7 @@
                     style="width: 100%"
                 >
                     <slot
-                        v-if="search ? !isExpanded : true"
+                        v-if="searchable ? !isExpanded : true"
                         :opt="selectedOption"
                         name="selected"
                     />
@@ -99,8 +99,8 @@
                 <template v-if="!hasSelectedSlot">
                     <span
                         v-show="
-                            (multiselect && !search) ||
-                                (multiselect && search && !isExpanded)
+                            (multiselect && !searchable) ||
+                                (multiselect && searchable && !isExpanded)
                         "
                         class="root-container--placeholder"
                     >
@@ -113,8 +113,8 @@
                     </span>
                     <span
                         v-show="
-                            (!multiselect && !search) ||
-                                (!multiselect && search && !isExpanded)
+                            (!multiselect && !searchable) ||
+                                (!multiselect && searchable && !isExpanded)
                         "
                         class="selected-label"
                     >
@@ -198,7 +198,7 @@
                     <dl-virtual-scroll
                         v-if="optionsCount > MAX_ITEMS_PER_LIST"
                         v-slot="{ item, index }"
-                        :items="options"
+                        :items="filteredOptions"
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
                         :virtual-scroll-sticky-size-end="20"
@@ -248,7 +248,7 @@
 
                     <!-- Else normal list -->
                     <dl-select-option
-                        v-for="(option, optionIndex) in options"
+                        v-for="(option, optionIndex) in filteredOptions"
                         v-else
                         :key="getKeyForOption(option)"
                         clickable
@@ -326,7 +326,7 @@ import {
     DlItemSection,
     DlVirtualScroll
 } from '../../shared'
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { defineComponent, PropType, ref, toRef } from 'vue-demi'
 import {
     getLabel,
     getIconSize,
@@ -370,7 +370,8 @@ export default defineComponent({
         width: { type: String, default: '100%' },
         withoutBorders: { type: Boolean, default: false },
         title: { type: String, default: '' },
-        search: { type: Boolean, default: false },
+        searchable: { type: Boolean, default: false },
+        customFilter: { type: Boolean, default: false },
         required: { type: Boolean, default: false },
         optional: { type: Boolean, default: false },
         fitContent: Boolean,
@@ -418,6 +419,7 @@ export default defineComponent({
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
         const isEmpty = ref(true)
+        const searchTerm = ref('')
         const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
 
         const setHighlightedIndex = (value: any) => {
@@ -446,10 +448,26 @@ export default defineComponent({
             selectedIndex,
             setHighlightedIndex,
             handleSelectedItem,
-            handleModelValueUpdate
+            handleModelValueUpdate,
+            searchTerm
         }
     },
     computed: {
+        filteredOptions(): DlSelectOptionType[] {
+            if (this.customFilter || this.searchTerm === '') {
+                return this.options
+            }
+
+            return this.options.filter((option) => {
+                const label = getLabel(option)
+                return (
+                    label &&
+                    label
+                        .toLowerCase()
+                        .includes(this.searchTerm.toLowerCase().trim())
+                )
+            })
+        },
         optionsCount(): number {
             return this.options?.length ?? 0
         },
@@ -553,7 +571,11 @@ export default defineComponent({
         },
         noOptions(): boolean {
             if (Array.isArray(this.options)) {
-                return this.options.length === 0
+                if (this.customFilter) {
+                    return this.options.length === 0
+                }
+
+                return this.filteredOptions.length === 0
             }
             return true
         },
@@ -578,7 +600,7 @@ export default defineComponent({
             if (this.withoutBorders && this.hasPrepend) {
                 classes.push('dl_select__select--without-border__with-prepend')
             }
-            if (this.hasPrepend || this.search) {
+            if (this.hasPrepend || this.searchable) {
                 classes.push('dl_select__select--prepend')
                 classes.push('dl_select__select--both-adornments')
             }
@@ -630,7 +652,7 @@ export default defineComponent({
     },
     watch: {
         isExpanded(newVal: boolean) {
-            if (this.search) {
+            if (this.searchable) {
                 if (newVal) {
                     const inputRef = this.$refs.searchInput as HTMLInputElement
                     this.$nextTick(() => {
@@ -765,7 +787,7 @@ export default defineComponent({
                     ? undefined
                     : this.options[this.selectedIndex]
 
-            if (this.search) {
+            if (this.searchable) {
                 (this.$refs.searchInput as HTMLInputElement).value =
                     typeof selectedOption === 'string'
                         ? selectedOption
@@ -781,11 +803,18 @@ export default defineComponent({
             this.handleModelValueUpdate(valueToEmit)
         },
         handleSearchInput(e: Event): void {
-            if (this.search) {
-                this.$emit(
-                    'filter',
-                    (e.target as HTMLInputElement).value.trim()
-                )
+            if (this.searchable) {
+                if (this.customFilter) {
+                    this.$emit(
+                        'filter',
+                        (e.target as HTMLInputElement).value.trim()
+                    )
+                } else {
+                    this.searchTerm = (
+                        e.target as HTMLInputElement
+                    ).value.trim()
+                }
+
                 this.showAllItems =
                     (e.target as HTMLInputElement).value.trim() === ''
 
@@ -796,7 +825,7 @@ export default defineComponent({
             this.$emit('search-input', (e.target as HTMLInputElement).value)
         },
         handleSearchBlur(e: Event): void {
-            if (this.search) {
+            if (this.searchable) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 this.$nextTick(() => {
                     inputRef?.focus({})
@@ -812,13 +841,14 @@ export default defineComponent({
             if (!this.preserveSearch) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 if (inputRef) inputRef.value = ''
+                this.searchTerm = ''
                 this.$emit('filter', '')
             }
         },
         getLabel,
         onMenuOpen(): void {
             this.$emit('before-show')
-            if (this.search) {
+            if (this.searchable) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 this.$nextTick(() => {
                     inputRef?.focus({})

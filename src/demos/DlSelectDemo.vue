@@ -117,23 +117,26 @@
                 />
             </template>
         </dl-select>
+        custom search
         <dl-select
             v-model="selectedBySearch"
             size="m"
             title="Title"
             optional
             :options="searchOptions"
-            search
+            searchable
+            custom-filter
             emit-val
             @filter="filterFn"
         />
+        normal search
         <dl-select
             v-model="selectedByFilteringSearch"
             :options="searchOptions"
             size="m"
             multiselect
             placeholder="contributors"
-            search
+            searchable
         />
 
         <dl-select
@@ -156,7 +159,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
         />
         Capitalized options
         <dl-select
@@ -164,7 +167,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
         />
         With Fit
@@ -173,7 +176,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
             fit-content
         />
