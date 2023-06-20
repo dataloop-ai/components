@@ -190,6 +190,7 @@ export default defineComponent({
                     new CustomDate(value.toString())
                 )
             ) {
+                style.cursor = 'not-allowed'
                 if (isToday && this.disabled) {
                     style.color = 'var(--dl-color-secondary)'
                     style.opacity = disabledOpacity
