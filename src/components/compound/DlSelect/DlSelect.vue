@@ -61,16 +61,14 @@
                         'adornment-container--pos-left'
                     ]"
                 >
-                    <dl-icon
-                        v-if="searchable"
-                        icon="icon-dl-search"
-                        :size="iconSize"
-                        color="dl-color-lighter"
-                    />
-                    <slot
-                        v-else
-                        name="prepend"
-                    />
+                    <slot name="prepend">
+                        <dl-icon
+                            v-if="searchable"
+                            icon="icon-dl-search"
+                            :size="iconSize"
+                            color="dl-color-lighter"
+                        />
+                    </slot>
                 </div>
                 <input
                     v-if="searchable"
@@ -186,13 +184,9 @@
                         @update:model-value="selectAll"
                         @depth-change="handleDepthChange"
                     >
-                        <slot
-                            v-if="hasAllItemsSlot"
-                            name="all-items"
-                        />
-                        <template v-else>
+                        <slot name="all-items">
                             {{ computedAllItemsLabel }}
-                        </template>
+                        </slot>
                     </dl-select-option>
                     <!-- Virtual scroll -->
                     <dl-virtual-scroll
@@ -230,11 +224,9 @@
                             @deselected="handleDeselected"
                         >
                             <slot
-                                v-if="hasOptionSlot"
-                                :opt="item"
                                 name="option"
-                            />
-                            <template v-else>
+                                :opt="item"
+                            >
                                 {{
                                     capitalizedOptions
                                         ? typeof getOptionLabel(item) ===
@@ -242,7 +234,7 @@
                                             getOptionLabel(item).toLowerCase()
                                         : getOptionLabel(item)
                                 }}
-                            </template>
+                            </slot>
                         </dl-select-option>
                     </dl-virtual-scroll>
 
@@ -276,11 +268,9 @@
                         @depth-change="handleDepthChange"
                     >
                         <slot
-                            v-if="hasOptionSlot"
-                            :opt="option"
                             name="option"
-                        />
-                        <template v-else>
+                            :opt="option"
+                        >
                             {{
                                 capitalizedOptions
                                     ? typeof getOptionLabel(option) ===
@@ -288,7 +278,7 @@
                                         getOptionLabel(option).toLowerCase()
                                     : getOptionLabel(option)
                             }}
-                        </template>
+                        </slot>
                     </dl-select-option>
                     <dl-list-item v-if="hasAfterOptions && !noOptions">
                         <dl-item-section>
