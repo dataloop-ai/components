@@ -30,11 +30,11 @@ export default defineComponent({
         },
         rowGap: {
             type: String,
-            default: '10px'
+            default: '30px'
         },
         columnGap: {
             type: String,
-            default: '10px'
+            default: '30px'
         },
         maxElementsPerRow: {
             type: Number,
@@ -79,7 +79,7 @@ export default defineComponent({
                 (this.$refs.grid as HTMLElement).children
             )
             const gridTemplate = getGridTemplate(this.modelValue)
-            if (gridElements.length !== gridTemplate.length) return
+            if (gridElements.length > gridTemplate.length) return
 
             const order = this.modelValue.flat()
             gridElements.forEach((element: Element, index: number) => {
