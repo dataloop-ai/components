@@ -401,6 +401,15 @@ export default defineComponent({
             }
             return classes
         },
+        getBorderColor(): string {
+            if (this.error) {
+                return `var(--dl-color-negative)`
+            } else if (this.warning) {
+                return `var(--dl-color-warning)`
+            } else {
+                return `var(--dl-color-secondary)`
+            }
+        },
         cssVars(): Record<string, any> {
             let inputMargin = this.margin
 
@@ -408,7 +417,8 @@ export default defineComponent({
                 inputMargin = '0px 20px 0px 0px'
             }
             return {
-                '--dl-input-margin': inputMargin
+                '--dl-input-margin': inputMargin,
+                '--dl-input-border-color-hover': this.getBorderColor
             }
         },
         inputClasses(): string[] {
@@ -746,14 +756,12 @@ export default defineComponent({
         &--error {
             border-color: var(--dl-color-negative);
             &:hover {
-                border-color: var(--dl-color-separator) !important;
             }
         }
 
         &--warning {
-            border-color: var(--dl-color-warning);
+            border-color: var(--dl-input-border-color-hover);
             &:hover {
-                border-color: var(--dl-color-separator) !important;
             }
         }
 
@@ -763,11 +771,11 @@ export default defineComponent({
         }
 
         &:hover {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dl-input-border-color-hover);
         }
 
         &:focus {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dl-input-border-color-hover);
         }
 
         &:disabled {
