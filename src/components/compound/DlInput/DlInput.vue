@@ -1,7 +1,12 @@
 <template>
     <div
         :id="uuid"
-        :class="rootContainerClasses"
+        :class="{
+            'dl-text-input': true,
+            column: true,
+            'dl-text-input--s': isSmall,
+            'dl-text-input--dense': dense
+        }"
         :style="cssVars"
     >
         <div :class="wrapperClasses">
@@ -391,16 +396,6 @@ export default defineComponent({
                 this.showCounter
             )
         },
-        rootContainerClasses(): string[] {
-            const classes = ['dl-text-input']
-            if (this.isSmall) {
-                classes.push('dl-text-input--s')
-            }
-            if (this.dense) {
-                classes.push('dl-text-input--dense')
-            }
-            return classes
-        },
         cssVars(): Record<string, any> {
             let inputMargin = this.margin
 
@@ -709,7 +704,6 @@ export default defineComponent({
         color: var(--dl-color-darker);
         width: calc(100% - 20px);
         box-sizing: content-box;
-        height: 12px;
         padding: 10px;
         outline: none;
         background: none;
@@ -719,12 +713,14 @@ export default defineComponent({
 
         &--prepend {
             padding-left: 28px;
-            width: calc(100% - 10px - 28px);
+            box-sizing: border-box;
+            width: 100%;
         }
 
         &--append {
             padding-right: 28px;
-            width: calc(100% - 10px - 28px);
+            box-sizing: border-box;
+            width: 100%;
         }
 
         &--both-adornments {

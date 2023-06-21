@@ -26,7 +26,7 @@
                 :max-length="20"
             />
             <hr>
-            <p />
+            <p>slot append</p>
             <dl-input
                 v-model="saveInputValue"
                 style="width: 220px"
@@ -38,7 +38,7 @@
                     <dl-icon
                         style="margin-bottom: 5px"
                         icon="icon-dl-save"
-                        size="12px"
+                        size="16px"
                     />
                 </template>
             </dl-input>
@@ -82,6 +82,23 @@
                 readonly
             />
             <hr>
+            <p>
+                size 'm' title error error-message + warning + warning-message +
+                info-message
+            </p>
+            <dl-input
+                v-model="errorFieldValue"
+                title="Error Example"
+                style="width: 220px"
+                placeholder="Select option"
+                size="m"
+                error
+                error-message="Error message is the strongest."
+                warning
+                warning-message="This won't show, error is true"
+                info-message="This won't show, error is true"
+            />
+            <hr>
         </div>
 
         <!-- Size S   -->
@@ -100,23 +117,7 @@
                 optional
             />
             <hr>
-            <p>
-                size 'm' title error error-message + warning + warning-message +
-                info-message
-            </p>
-            <dl-input
-                v-model="errorFieldValue"
-                title="Error Example"
-                style="width: 220px"
-                placeholder="Select option"
-                size="m"
-                error
-                error-message="Error message is the strongest."
-                warning
-                warning-message="This won't show, error is true"
-                info-message="This won't show, error is true"
-            />
-            <hr>
+
             <p>size 's' error error-message</p>
             <dl-input
                 style="width: 220px"
