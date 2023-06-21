@@ -22,27 +22,39 @@
             label="Boolean v-model"
             @update:model-value="logValue"
         />
+        <dl-checkbox
+            v-model="disabledValue"
+            disabled
+            @update:model-value="logValue"
+        >
+            Disabled with tooltip
+            <dl-tooltip>I am a tooltip</dl-tooltip>
+        </dl-checkbox>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DlCheckbox } from '../components'
+import DlTooltip from '../components/essential/DlTooltip/DlTooltip.vue'
 export default defineComponent({
     name: 'DlCheckboxDemo',
     components: {
-        DlCheckbox
+        DlCheckbox,
+        DlTooltip
     },
     setup() {
         const logValue = (newValue: any) => console.log('New value:', newValue)
         const switchValue = ref<number[]>([1, 3])
         const booleanValue = ref(true)
         const customValueCheck = ref('maybe')
+        const disabledValue = ref(false)
 
         return {
             switchValue,
             booleanValue,
             customValueCheck,
+            disabledValue,
             logValue
         }
     }
