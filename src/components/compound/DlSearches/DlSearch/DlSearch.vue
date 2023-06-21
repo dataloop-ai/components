@@ -51,13 +51,15 @@ import { DlInput } from '../../DlInput'
 
 const SearchSizes = {
     l: 'l',
-    m: 'm'
+    m: 'm',
+    s: 's'
 } as const
 type TSearchSizes = (typeof SearchSizes)[keyof typeof SearchSizes]
 
 const BUTTON_SIZES = {
     l: 'l',
-    m: 's'
+    m: 's',
+    s: 's'
 }
 
 export default defineComponent({
