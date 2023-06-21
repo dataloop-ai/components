@@ -1,7 +1,10 @@
 export const InputSizes = {
     l: 'l',
     m: 'm',
-    s: 's'
+    s: 's',
+    large: 'large',
+    medium: 'medium',
+    small: 'small'
 } as const
 
-export type TInputSizes = typeof InputSizes[keyof typeof InputSizes]
+export type TInputSizes = (typeof InputSizes)[keyof typeof InputSizes]
