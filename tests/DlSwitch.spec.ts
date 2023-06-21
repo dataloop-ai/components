@@ -7,7 +7,7 @@ import {
     calculateCircleRadius,
     calculateMargin,
     calculateWidth
-} from '../src/utils'
+} from '../src/utils/index'
 
 describe('Switch Utils', () => {
     it('should calculate switch width', () => {

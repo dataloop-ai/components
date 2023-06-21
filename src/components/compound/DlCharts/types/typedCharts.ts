@@ -14,7 +14,7 @@ import {
 import type { DlTypedChartComponent, DlChartComponentRef } from './types'
 import { CommonProps } from './props'
 import { Chart } from '../models'
-import { compatProps } from '../utils'
+import { compatProps } from '../utils/index'
 
 const template = `<Chart v-bind="{...allProps}" />`
 
