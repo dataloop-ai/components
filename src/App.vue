@@ -1,7 +1,12 @@
 <template>
     <DlThemeProvider :is-dark="darkMode">
         <div
-            style="display: flex; width: 100%; align-items: center; align-content; center;"
+            style="
+                display: flex;
+                width: 100%;
+                align-items: center;
+                align-content: center;
+            "
         >
             <dl-typography
                 color="dl-color-medium"
@@ -67,6 +72,7 @@
                         <dl-list-item
                             v-for="(demo, index) in filteredDemos"
                             :key="demo.name"
+                            tabindex="0"
                             :bordered="index !== 0"
                             :clickable="clickable"
                             :class="isSelectedDemo(demo) ? 'selected' : ''"
