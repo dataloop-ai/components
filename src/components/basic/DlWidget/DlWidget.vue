@@ -94,6 +94,7 @@ export default defineComponent({
                 clone.style.visibility = 'visible'
                 clone.style.width = `${this.draggedWidget.offsetWidth}px`
                 clone.style.height = `${this.draggedWidget.offsetHeight}px`
+                clone.style.backgroundColor = `var(--dl-color-bg)`
             }
 
             const sourceCanvas = this.draggedWidget?.querySelector('canvas')
@@ -249,6 +250,8 @@ export default defineComponent({
 
     &__drag {
         position: relative;
+        opacity: 0.2;
+        background: var(--dl-color-separator);
         &::after {
             content: '';
             position: absolute;
@@ -256,7 +259,6 @@ export default defineComponent({
             height: 100%;
             top: 0;
             left: 0;
-            background: var(--dl-color-separator);
             border-radius: 5px;
         }
     }
