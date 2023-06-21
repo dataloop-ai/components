@@ -3,7 +3,7 @@
         <!-- Size L   -->
         <p>size L</p>
         <div class="layout-grid">
-            <p />
+            <p>:top-message :info-message :auto-suggest-items</p>
             <dl-input
                 v-model="textInputValue"
                 style="width: 920px"
