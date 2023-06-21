@@ -250,7 +250,7 @@ export default defineComponent({
     cursor: not-allowed;
     color: var(--dl-color-disabled);
     & * {
-        pointer-events: none;
+        pointer-events: auto;
         color: var(--dl-color-disabled);
     }
 }
