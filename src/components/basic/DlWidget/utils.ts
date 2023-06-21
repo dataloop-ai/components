@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash'
-import { sideType } from '../DlGrid/types'
+import { DlGridSideType } from '../DlGrid/types'
 
 export function leastCommonMultiple(arr: number[]) {
     if (!arr) return
@@ -62,7 +62,7 @@ export function swapElemensInMatrix(
     layout: number[][],
     sourceIndex: any,
     targetIndex: any,
-    side: sideType,
+    side: DlGridSideType,
     maxElements: number
 ) {
     const newLayout = cloneDeep(layout)
@@ -82,14 +82,18 @@ export function swapElemensInMatrix(
         : newLayout
 }
 
-function moveElementsToNextIndex(array: number[][], maxElements: number) {
-    return array.map((currentRow, i) => {
+function moveElementsToNextIndex(template: number[][], maxElements: number) {
+    const clonedTemplate = cloneDeep(template)
+    return clonedTemplate.map((currentRow, i: number) => {
         const actualRow = currentRow.slice() // Create a shallow copy of the row
         if (currentRow.length > maxElements) {
             const overflow = currentRow.length - maxElements
             const elementsToMove = actualRow.splice(-overflow)
-            if (i + 1 < array.length) {
-                array[i + 1] = [...elementsToMove, ...array[i + 1]]
+            if (i + 1 < clonedTemplate.length) {
+                clonedTemplate[i + 1] = [
+                    ...elementsToMove,
+                    ...clonedTemplate[i + 1]
+                ]
             }
         }
         return actualRow
