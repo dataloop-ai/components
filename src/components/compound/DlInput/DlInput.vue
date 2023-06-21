@@ -466,7 +466,7 @@ export default defineComponent({
             )
         },
         hasPrepend(): boolean {
-            return !!this.$slots.prepend && !this.isSmall
+            return !!this.$slots.prepend
         },
         hasAppend(): boolean {
             return (
@@ -489,7 +489,6 @@ export default defineComponent({
                 !this.disabled &&
                 !this.readonly &&
                 !!this.modelValue
-                // this.focused
             )
         },
         showShowPassButton(): boolean {
@@ -760,9 +759,8 @@ export default defineComponent({
         }
 
         &--s {
-            padding-top: 3px;
+            padding-top: 4px;
             padding-bottom: 3px;
-            padding-left: 5px;
             padding-right: 5px;
         }
         &--small {
@@ -835,6 +833,7 @@ export default defineComponent({
         }
 
         &--s {
+            margin-top: 1px;
             height: 20px;
         }
 
