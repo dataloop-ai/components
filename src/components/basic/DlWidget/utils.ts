@@ -82,22 +82,30 @@ export function swapElemensInMatrix(
         : newLayout
 }
 
-function moveElementsToNextIndex(template: number[][], maxElements: number) {
-    const clonedTemplate = cloneDeep(template)
-    return clonedTemplate.map((currentRow, i: number) => {
-        const actualRow = currentRow.slice() // Create a shallow copy of the row
-        if (currentRow.length > maxElements) {
-            const overflow = currentRow.length - maxElements
-            const elementsToMove = actualRow.splice(-overflow)
-            if (i + 1 < clonedTemplate.length) {
-                clonedTemplate[i + 1] = [
-                    ...elementsToMove,
-                    ...clonedTemplate[i + 1]
-                ]
-            }
+function moveElementsToNextIndex(
+    template: number[][],
+    maxElements: number
+): number[][] {
+    const clonedTemplate: number[][] = cloneDeep(template)
+    let overflow: number[] = []
+
+    for (let i = 0; i < clonedTemplate.length; i++) {
+        let currentRow = clonedTemplate[i]
+        if (overflow.length > 0) {
+            currentRow = overflow.concat(currentRow)
+            overflow = []
         }
-        return actualRow
-    })
+        if (currentRow.length > maxElements) {
+            overflow = currentRow.slice(maxElements)
+            currentRow = currentRow.slice(0, maxElements)
+        }
+        clonedTemplate[i] = currentRow
+        if (i + 1 < clonedTemplate.length && overflow.length > 0) {
+            clonedTemplate[i + 1] = overflow.concat(clonedTemplate[i + 1])
+            overflow = []
+        }
+    }
+    return clonedTemplate
 }
 
 function isTooLarge(layout: number[][], max: number) {
