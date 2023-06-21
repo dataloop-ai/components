@@ -389,4 +389,30 @@ describe('dl-select computed', () => {
             expect(elem.classes()).toContain('dl-select__title-container--s')
         })
     })
+
+    describe('when setting emitValue to true', () => {
+        let wrapper: any
+
+        const options = [
+            {
+                label: '0',
+                value: 0
+            }
+        ]
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options,
+                    emitValue: true
+                }
+            })
+        })
+        it('should emit the value itself', () => {
+            wrapper.vm.selectOption(options[0])
+            expect(wrapper.emitted()['update:model-value']).toEqual([
+                [options[0].value]
+            ])
+        })
+    })
 })
