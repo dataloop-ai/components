@@ -460,7 +460,10 @@ export default defineComponent({
             ]
         },
         isSmall(): boolean {
-            return this.size === InputSizes.s
+            return (
+                this.size === (InputSizes.s as TInputSizes) ||
+                this.size === (InputSizes.small as TInputSizes)
+            )
         },
         hasPrepend(): boolean {
             return !!this.$slots.prepend && !this.isSmall
@@ -674,6 +677,9 @@ export default defineComponent({
         &--s {
             margin: 4px auto auto;
         }
+        &--small {
+            margin: 4px auto auto;
+        }
     }
 
     &__title {
@@ -704,6 +710,9 @@ export default defineComponent({
         text-align: start;
 
         &--s {
+            padding: 0px 10px;
+        }
+        &--small {
             padding: 0px 10px;
         }
     }
@@ -745,8 +754,18 @@ export default defineComponent({
             padding-top: 7px;
             padding-bottom: 7px;
         }
+        &--medium {
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
 
         &--s {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        &--small {
             padding-top: 3px;
             padding-bottom: 3px;
             padding-left: 5px;
@@ -803,11 +822,23 @@ export default defineComponent({
             height: 34px;
         }
 
+        &--large {
+            height: 34px;
+        }
+
         &--m {
             height: 28px;
         }
 
+        &--medium {
+            height: 28px;
+        }
+
         &--s {
+            height: 20px;
+        }
+
+        &--small {
             height: 20px;
         }
 
