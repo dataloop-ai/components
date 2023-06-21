@@ -229,7 +229,7 @@ import {
     createColorSchema
 } from './utils/utils'
 import { v4 } from 'uuid'
-import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
+import { parseSmartQuery, stringifySmartQuery } from '../../../../utils/index'
 import { debounce, isEqual } from 'lodash'
 
 export default defineComponent({

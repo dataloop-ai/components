@@ -43,7 +43,7 @@
 import { defineComponent } from 'vue-demi'
 import { DlSmartSearch, DlCheckbox, DlInput } from '../../components'
 import { Query } from '../../components/types'
-import { parseSmartQuery } from '../../utils'
+import { parseSmartQuery } from '../../utils/index'
 
 export default defineComponent({
     name: 'DlSmartSearchDemo',

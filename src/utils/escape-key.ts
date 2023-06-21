@@ -1,4 +1,4 @@
-import { isMobileOrTablet } from '.'
+import { isMobileOrTablet } from './index'
 import { isKeyCode } from '../utils/key-composition'
 
 const handlers: Function[] = []

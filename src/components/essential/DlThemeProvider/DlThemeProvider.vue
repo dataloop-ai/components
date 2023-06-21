@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, watch, provide, ref } from 'vue-demi'
-import { getThemeModeAttr } from '../../../utils'
+import { getThemeModeAttr } from '../../../utils/index'
 import '@dataloop-ai/icons/style.css'
 import { v4 } from 'uuid'
 

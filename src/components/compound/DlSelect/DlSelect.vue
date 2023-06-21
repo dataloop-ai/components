@@ -336,7 +336,7 @@ import {
 } from './utils'
 import DlSelectOption from './components/DlSelectOption.vue'
 import { isEqual } from 'lodash'
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 import { v4 } from 'uuid'
 
 export default defineComponent({

@@ -1,4 +1,4 @@
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 
 export interface DlChipProps {
     hasIcon: boolean

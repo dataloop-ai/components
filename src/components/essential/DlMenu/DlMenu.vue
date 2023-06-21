@@ -77,7 +77,7 @@ import {
     refocusTargetFn,
     conditionalHandler
 } from './utils'
-import { isMobileOrTablet } from '../../../utils'
+import { isMobileOrTablet } from '../../../utils/index'
 import { v4 } from 'uuid'
 import { useArrowNavigation } from '../../../hooks/use-arrow-navigation'
 

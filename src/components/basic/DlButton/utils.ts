@@ -1,4 +1,4 @@
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 import { getLighterGradient } from '../../../utils/getLighterGradient'
 
 export type ButtonSizes = 's' | 'm' | 'l' | 'xl'

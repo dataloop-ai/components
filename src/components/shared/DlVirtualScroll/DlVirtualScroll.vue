@@ -15,7 +15,7 @@ import {
     onUnmounted
 } from 'vue-demi'
 import getTableMiddle from '../../compound/DlTable/utils/getTableMiddle'
-import { listenOpts, mergeSlot } from '../../../utils'
+import { listenOpts, mergeSlot } from '../../../utils/index'
 import { getScrollTarget } from '../../../utils/scroll'
 import { DlList } from '../../essential/DlList'
 import { DlMarkupTable } from '../../basic/DlMarkupTable'

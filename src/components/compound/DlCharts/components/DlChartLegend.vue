@@ -36,7 +36,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import type { LegendItem, DatasetChartOptions } from 'chart.js'
-import { getColor } from '../../../../utils'
+import { getColor } from '../../../../utils/index'
 import { DlBadge, DlTypography } from '../../../essential'
 
 const positions = {

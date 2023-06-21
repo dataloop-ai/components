@@ -62,7 +62,7 @@ import DlStepperSidebar from './components/DlStepperSidebar.vue'
 import DlStepperContent from './components/DlStepperContent.vue'
 import { StepState } from './models/interfaces'
 import { Step } from './models'
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 import { v4 } from 'uuid'
 
 export default defineComponent({

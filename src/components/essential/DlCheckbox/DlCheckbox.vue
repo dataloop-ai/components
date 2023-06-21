@@ -80,9 +80,9 @@
 
 <script lang="ts">
 import { defineComponent, toRaw } from 'vue-demi'
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 import { v4 } from 'uuid'
-import { stopAndPrevent } from '../../../utils'
+import { stopAndPrevent } from '../../../utils/index'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function, null]
 

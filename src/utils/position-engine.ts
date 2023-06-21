@@ -1,4 +1,4 @@
-import { isMobileOrTablet } from '.'
+import { isMobileOrTablet } from './index'
 import { getScrollbarWidth } from './scroll'
 
 let vpLeft: number | undefined

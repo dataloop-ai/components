@@ -57,7 +57,7 @@ import {
     itemBorder,
     itemColor
 } from './utils'
-import { wave, waveTrigger } from '../../../utils'
+import { wave, waveTrigger } from '../../../utils/index'
 import { v4 } from 'uuid'
 
 export default defineComponent({

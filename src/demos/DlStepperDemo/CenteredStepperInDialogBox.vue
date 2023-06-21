@@ -126,7 +126,7 @@ import QualityStep from './steps/QualityStep.vue'
 import { DlButton, DlStepper, DlTypography, DlChip, DlCounters } from '../..'
 import { StepState } from '../../types'
 import { Stepper, Step } from '../../components/compound/DlStepper/models'
-import { getColor } from '../../utils'
+import { getColor } from '../../utils/index'
 
 class CustomStepper extends Stepper {
     constructor(steps: Step[]) {

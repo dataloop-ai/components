@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue-demi'
-import { includes } from '../../../utils'
+import { includes } from '../../../utils/index'
 
 export default defineComponent({
     name: 'DlSeparator',

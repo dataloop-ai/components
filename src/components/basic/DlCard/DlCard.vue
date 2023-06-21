@@ -86,7 +86,7 @@
 <script lang="ts">
 import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
-import { stringStyleToRecord } from '../../../utils'
+import { stringStyleToRecord } from '../../../utils/index'
 import { DlIcon } from '../../essential/DlIcon'
 import { DlLink } from '../../essential/DlLink'
 import { IconItem, ImageItem, LinkItem } from './types'

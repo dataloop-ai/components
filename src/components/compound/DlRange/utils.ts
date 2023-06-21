@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash'
-import { between, includes, KEY_CODE } from '../../../utils'
+import { between, includes, KEY_CODE } from '../../../utils/index'
 import { Dragging, dragType } from '../DlSlider/useSlider'
 
 type RangeValue = {

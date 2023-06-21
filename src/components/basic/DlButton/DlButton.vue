@@ -77,7 +77,7 @@ import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
 import { transformOptions } from '../../shared/types'
-import { stringStyleToRecord } from '../../../utils'
+import { stringStyleToRecord } from '../../../utils/index'
 import { textTransform } from '../../../utils/string'
 import { isString } from 'lodash'
 

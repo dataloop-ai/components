@@ -50,7 +50,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 
 export default defineComponent({
     name: 'DlProgressBar',

@@ -38,7 +38,11 @@
 import { isString } from 'lodash'
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
-import { getColor, loggerFactory, stringStyleToRecord } from '../../../utils'
+import {
+    getColor,
+    loggerFactory,
+    stringStyleToRecord
+} from '../../../utils/index'
 
 export default defineComponent({
     name: 'DlIcon',

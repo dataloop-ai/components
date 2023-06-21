@@ -49,7 +49,7 @@ import {
     ref,
     watch
 } from 'vue-demi'
-import { getColor, includes } from '../../../utils'
+import { getColor, includes } from '../../../utils/index'
 import { DlIcon } from '../../essential'
 
 type AlertType = 'info' | 'success' | 'warning' | 'error'

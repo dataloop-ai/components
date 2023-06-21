@@ -99,7 +99,7 @@ import { defineComponent } from 'vue-demi'
 import { DlSliderBase, DlSliderInput } from './components/'
 import { DlButton } from '../../basic'
 import { DlIcon, DlTooltip } from '../../essential'
-import { getColor, between } from '../../../utils'
+import { getColor, between } from '../../../utils/index'
 import { v4 } from 'uuid'
 
 export default defineComponent({

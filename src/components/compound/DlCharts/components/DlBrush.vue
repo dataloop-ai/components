@@ -64,7 +64,7 @@ import useSlider, {
     Dragging
 } from '../../../compound/DlSlider/useSlider'
 
-import { between, isMobileOrTablet, getColor } from '../../../../utils'
+import { between, isMobileOrTablet, getColor } from '../../../../utils/index'
 import BrushThumb from '../shared/BrushThumb.vue'
 import touchPanDirective from '../../../../directives/TouchPan'
 

@@ -45,7 +45,7 @@
 <script lang="ts">
 import { DlIcon, DlTooltip } from '../../../essential'
 import { defineComponent, ref } from 'vue-demi'
-import { getColor } from '../../../../utils'
+import { getColor } from '../../../../utils/index'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
 export default defineComponent({
     name: 'AccordionHeader',

@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { stopAndPrevent, getColor } from '../../../utils'
+import { stopAndPrevent, getColor } from '../../../utils/index'
 import { v4 } from 'uuid'
 
 export default defineComponent({

@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { getColor } from '../../../../utils'
+import { getColor } from '../../../../utils/index'
 import { DlIcon } from '../../../essential'
 
 export default defineComponent({

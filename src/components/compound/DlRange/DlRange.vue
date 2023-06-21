@@ -90,7 +90,7 @@ import {
     includes,
     between,
     isMobileOrTablet
-} from '../../../utils'
+} from '../../../utils/index'
 import touchPanDirective from '../../../directives/TouchPan'
 import * as rangeUtils from './utils'
 import { v4 } from 'uuid'

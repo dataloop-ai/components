@@ -76,7 +76,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, isVue2 } from 'vue-demi'
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 import { isEllipsisActive } from '../../../utils/is-ellipsis-active'
 import { DlTooltip, DlLink } from '../../essential'
 

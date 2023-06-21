@@ -8,7 +8,7 @@ import {
 
 import { useFormProps, FormProps } from '../../../hooks/useForm'
 
-import { includes, keyCodes, between, position } from '../../../utils'
+import { includes, keyCodes, between, position } from '../../../utils/index'
 
 export interface SliderProps extends FormProps {
     text: string

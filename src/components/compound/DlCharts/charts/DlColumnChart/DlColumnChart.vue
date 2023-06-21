@@ -88,7 +88,7 @@ import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
 import { updateKey } from '../../../../../utils/update-key'
-import { hexToRgbA } from '../../../../../utils'
+import { hexToRgbA } from '../../../../../utils/index'
 import {
     Chart as ChartJS,
     Title,
@@ -104,8 +104,8 @@ import {
 } from 'chart.js'
 import type {
     Chart,
-    ChartMeta,
     ChartDataset,
+    ChartMeta,
     ActiveElement,
     ChartData
 } from 'chart.js'

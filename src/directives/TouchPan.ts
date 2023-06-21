@@ -8,7 +8,7 @@ import {
     position,
     stop
 } from '../utils/events'
-import { clearSelection } from '../utils'
+import { clearSelection } from '../utils/index'
 
 type Modifiers = {
     [key: string]: boolean

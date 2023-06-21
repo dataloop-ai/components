@@ -11,7 +11,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { getColor } from '../../../utils'
+import { getColor } from '../../../utils/index'
 import { transformOptions } from '../../shared/types'
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p'

@@ -115,7 +115,7 @@ import DraggableUpper from './components/DraggableUpper.vue'
 import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
 import { isString } from 'lodash'
-import { stringStyleToRecord } from '../../../utils'
+import { stringStyleToRecord } from '../../../utils/index'
 
 export default defineComponent({
     name: 'DlPopup',

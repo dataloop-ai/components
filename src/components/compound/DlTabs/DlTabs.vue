@@ -47,7 +47,7 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { hasOverflowing } from '../../../utils'
+import { hasOverflowing } from '../../../utils/index'
 import DlTab from './components/DlTab.vue'
 import TabsWrapper from './components/TabsWrapper.vue'
 import type { DlTabDetails } from './types'

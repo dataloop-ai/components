@@ -1,4 +1,4 @@
-import { clearSelection } from '../../src/utils'
+import { clearSelection } from '../../src/utils/index'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 describe('Selection utils', () => {

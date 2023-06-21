@@ -29,7 +29,7 @@
 <script lang="ts">
 import { DlTooltip, DlIcon } from '../../../essential'
 import { defineComponent } from 'vue-demi'
-import { stopAndPrevent } from '../../../../utils'
+import { stopAndPrevent } from '../../../../utils/index'
 import { v4 } from 'uuid'
 
 export default defineComponent({

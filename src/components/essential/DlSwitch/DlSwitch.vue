@@ -55,7 +55,7 @@ import {
     calculateWidth,
     stopAndPrevent,
     getColor
-} from '../../../utils'
+} from '../../../utils/index'
 
 const Any = [Array, Boolean, String, Number, Object]
 

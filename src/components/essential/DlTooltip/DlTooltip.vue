@@ -50,7 +50,7 @@ import {
     getColor,
     isMobileOrTablet,
     stringStyleToRecord
-} from '../../../utils'
+} from '../../../utils/index'
 import {
     parsePosition,
     setPosition,

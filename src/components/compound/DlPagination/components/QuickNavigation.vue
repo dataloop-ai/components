@@ -28,7 +28,7 @@
 import { defineComponent } from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlTypography } from '../../../essential'
-import { stopAndPrevent } from '../../../../utils'
+import { stopAndPrevent } from '../../../../utils/index'
 import { admissibleKeys } from '../../../../utils/nav-keys-constants'
 
 export default defineComponent({

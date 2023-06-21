@@ -1,4 +1,4 @@
-import { isMobileOrTablet } from '.'
+import { isMobileOrTablet } from './index'
 
 const handlers: Function[] = []
 

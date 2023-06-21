@@ -58,7 +58,7 @@ import {
     DlOptionProps,
     DlSelectedValueType
 } from './types'
-import { loggerFactory } from '../../../utils'
+import { loggerFactory } from '../../../utils/index'
 import { v4 } from 'uuid'
 import { DlIcon, DlTooltip } from '../../essential'
 

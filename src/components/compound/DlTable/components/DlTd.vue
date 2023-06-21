@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
-import { getColor } from '../../../../utils'
+import { getColor } from '../../../../utils/index'
 import { DlTooltip } from '../../../essential'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
 

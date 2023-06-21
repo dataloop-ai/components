@@ -80,7 +80,11 @@ import {
 } from 'chart.js'
 import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { isEqual, merge } from 'lodash'
-import { rgba2hex, hexToRgbA, revertRGBAOpacity } from '../../../../../utils'
+import {
+    rgba2hex,
+    hexToRgbA,
+    revertRGBAOpacity
+} from '../../../../../utils/index'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 
 ChartJS.register(
