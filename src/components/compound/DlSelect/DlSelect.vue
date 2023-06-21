@@ -690,7 +690,7 @@ export default defineComponent({
                 return
             }
 
-            if (this.emitValue) {
+            if (this.emitValue && this.selectedIndex !== -1) {
                 this.selectedIndex = this.options.findIndex(
                     (
                         option:

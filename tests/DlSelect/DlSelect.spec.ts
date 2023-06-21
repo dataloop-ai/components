@@ -332,11 +332,11 @@ describe('dl-select computed', () => {
             }
         })
 
-        expect(wrapper.vm.selectedIndex).toBe(0)
+        expect(wrapper.vm.selectedIndex).toBe(-1)
         await wrapper.setProps({
             emitValue: false
         })
-        expect(wrapper.vm.selectedIndex).toBe(0)
+        expect(wrapper.vm.selectedIndex).toBe(-1)
     })
 
     it('should emit the value and not the entire object', async () => {
@@ -387,6 +387,32 @@ describe('dl-select computed', () => {
         it('should have small class', async () => {
             const elem = wrapper.get('.dl-select__title-container')
             expect(elem.classes()).toContain('dl-select__title-container--s')
+        })
+    })
+
+    describe('when setting emitValue to true', () => {
+        let wrapper: any
+
+        const options = [
+            {
+                label: '0',
+                value: 0
+            }
+        ]
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options,
+                    emitValue: true
+                }
+            })
+        })
+        it('should emit the value itself', () => {
+            wrapper.vm.selectOption(options[0])
+            expect(wrapper.emitted()['update:model-value']).toEqual([
+                [options[0].value]
+            ])
         })
     })
 })
