@@ -171,7 +171,7 @@ describe('DlSmartSearchInput', () => {
 
     it('should handle selection update', () => {
         const wrapper = mount(DlSmartSearchInput)
-        const interval = { from: new Date(), to: new Date() }
+        const interval = { from: 'date', to: 'date' }
         wrapper.vm.handleDateSelectionUpdate(interval)
         expect(wrapper.vm.datePickerSelection).toEqual(interval)
     })

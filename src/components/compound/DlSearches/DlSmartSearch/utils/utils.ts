@@ -2,7 +2,9 @@ import { ColorSchema, SyntaxColorSchema, Filters } from '../types'
 import {
     operators,
     Alias,
-    datePattern
+    startDatePattern,
+    endDatePattern,
+    dateIntervalPattern
 } from '../../../../../hooks/use-suggestions'
 
 export function getTabItems(filters: Filters) {
@@ -23,22 +25,37 @@ export function getTabItems(filters: Filters) {
 }
 
 export function replaceWithJsDates(str: string) {
-    const dates = str.match(datePattern)
+    const intervals = str.match(dateIntervalPattern)
+    const starts = str.match(startDatePattern)
+    const ends = str.match(endDatePattern)
 
-    dates?.forEach((date) => {
-        str = str.replaceAll(date, formatToNumericDate(date))
+    intervals?.forEach((interval) => {
+        str = str.replaceAll(interval, formatToDateObj(interval))
     })
-
+    starts?.forEach((start) => {
+        str = str.replaceAll(start, formatToDateObj(start))
+    })
+    ends?.forEach((end) => {
+        str = str.replaceAll(end, formatToDateObj(end))
+    })
     return str
 }
 
-function formatToNumericDate(str: string) {
-    const dateInfo = str.split('/')
-    const day = parseInt(dateInfo[0])
-    const month = parseInt(dateInfo[1])
-    const year = parseInt(dateInfo[2])
-    const newDate = new Date(year, month, day)
-    return newDate.getTime().toString()
+function formatToDateObj(str: string) {
+    const [day, month, year] = str.split(' ')[1].split('/')
+    const date = new Date(parseInt(year), parseInt(month), parseInt(day))
+    if (!isValidDate(date)) return str
+    const [toDay, toMonth, toYear] = str.split(' ')[3]?.split('/') || []
+    const toDate = new Date(
+        parseInt(toYear),
+        parseInt(toMonth),
+        parseInt(toDay)
+    )
+    if (!isValidDate(toDate)) return date.toISOString()
+    return JSON.stringify({
+        from: date.toISOString(),
+        to: toDate.toISOString()
+    })
 }
 
 function isValidDate(d: Date) {
