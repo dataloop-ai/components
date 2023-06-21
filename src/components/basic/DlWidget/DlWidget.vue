@@ -18,20 +18,22 @@
                 size="15px"
                 @mousedown="startDragging"
             />
-            <div class="dl-widget__header">
-                <div class="dl-widget__header--titles">
-                    <slot name="header" />
+            <slot>
+                <div class="dl-widget__header">
+                    <div class="dl-widget__header--titles">
+                        <slot name="header" />
+                    </div>
+                    <slot name="menu" />
                 </div>
-                <slot name="menu" />
-            </div>
 
-            <div class="dl-widget__content">
-                <slot name="content" />
-            </div>
+                <div class="dl-widget__content">
+                    <slot name="content" />
+                </div>
 
-            <div class="dl-widget__description">
-                <slot name="description" />
-            </div>
+                <div class="dl-widget__description">
+                    <slot name="description" />
+                </div>
+            </slot>
         </div>
         <div
             ref="clone"
@@ -270,7 +272,5 @@ export default defineComponent({
 
 .widget-wrapper {
     flex-basis: var(--widget-flex-basis);
-    margin: var(--row-gap) var(--column-gap);
-    padding: 15px;
 }
 </style>
