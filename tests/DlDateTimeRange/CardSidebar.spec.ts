@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlCardSidebar from '../../src/components/compound/DlDateTime/DlDateTimeRange/DlCardSidebar.vue'
+import DlCardSidebar from '../../src/components/compound/DlDateTime/DlDateTimeRange/CardSidebar.vue'
 import { describe, it, expect, afterAll, vi } from 'vitest'
 
 const daySidebar = [

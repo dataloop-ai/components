@@ -1,21 +1,20 @@
 <template>
-    <div class="dl-card-sidebar">
-        <div class="dl-card-sidebar--header">
+    <div class="card-sidebar">
+        <div class="card-sidebar--header">
             <span>Select by</span>
         </div>
-        <div class="dl-card-sidebar--content">
+        <div class="card-sidebar--content">
             <div
                 v-for="option in options"
                 :key="option.key"
-                class="dl-card-sidebar--item"
+                class="card-sidebar--item"
                 :class="{
-                    'dl-card-sidebar--item-active':
-                        option.key === currentOption,
-                    'dl-card-sidebar--item-disabled': option.disabled
+                    'card-sidebar--item-active': option.key === currentOption,
+                    'card-sidebar--item-disabled': option.disabled
                 }"
                 @click="handleClick(option)"
             >
-                <div class="dl-card-sidebar--focus_helper" />
+                <div class="card-sidebar--focus_helper" />
                 {{ capitalizeFirstLetter(option.title) }}
             </div>
         </div>
@@ -49,7 +48,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.dl-card-sidebar {
+.card-sidebar {
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -101,8 +100,8 @@ export default defineComponent({
     }
 }
 
-.dl-card-sidebar--item:not(.dl-card-sidebar--item-disabled):hover {
-    .dl-card-sidebar--focus_helper {
+.card-sidebar--item:not(.card-sidebar--item-disabled):hover {
+    .card-sidebar--focus_helper {
         opacity: 0.15;
     }
 }

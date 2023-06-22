@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.17.87",
+  "version": "0.17.97",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:2": "./misc/packAndRunV2.sh",
+    "dev:2": "./misc/unpackAndRunV2.sh",
     "build": "vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",

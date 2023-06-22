@@ -3,7 +3,7 @@
         :id="uuid"
         class="dl-date-time-range"
     >
-        <dl-date-input
+        <date-input
             :text="dateInputText"
             :input-style="dateInputStyle"
             :disabled="disabled"
@@ -20,13 +20,13 @@
                         v-if="mode === 'multi'"
                         class="dl-date-time-range--card_sidebar"
                     >
-                        <dl-card-sidebar
+                        <card-sidebar
                             v-if="typeState === 'day'"
                             :options="sidebarDayOptions"
                             :current-option="currentSidebarOption"
                             @click="handleDayTypeOptionClick"
                         />
-                        <dl-card-sidebar
+                        <card-sidebar
                             v-else
                             :options="sidebarMonthOptions"
                             :current-option="currentSidebarOption"
@@ -54,13 +54,13 @@
                     </div>
                 </div>
             </dl-menu>
-        </dl-date-input>
+        </date-input>
     </div>
 </template>
 <script lang="ts">
 import { DlTimePicker } from '../DlTimePicker'
 import { DateInterval } from '../types'
-import DlCardSidebar from './DlCardSidebar.vue'
+import CardSidebar from './CardSidebar.vue'
 import {
     DayTypeOption,
     DAY_SIDEBAR_OPTION,
@@ -70,7 +70,7 @@ import {
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
 import DlDatePicker from '../DlDatePicker/DlDatePicker.vue'
 import { CalendarDate } from '../DlDatePicker/models/CalendarDate'
-import DlDateInput from './DlDateInput.vue'
+import DateInput from './DateInput.vue'
 import { DlMenu } from '../../../essential'
 import { defineComponent, PropType } from 'vue-demi'
 import { isInRange } from '../DlDatePicker/utils'
@@ -78,10 +78,10 @@ import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
-        DlCardSidebar,
+        CardSidebar,
         DlDatePicker,
         DlTimePicker,
-        DlDateInput,
+        DateInput,
         DlMenu
     },
     model: {

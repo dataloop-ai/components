@@ -348,7 +348,7 @@ export const defaultLineChartProps = {
 }
 
 export const defaultDoughnutChartProps: TDoughnutProps = {
-    data: <TDoughnutChartData>{},
+    data: {} as TDoughnutChartData,
     isSmall: false,
     hasSummary: false,
     options: {

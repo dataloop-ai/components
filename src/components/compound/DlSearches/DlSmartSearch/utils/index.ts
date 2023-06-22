@@ -2,19 +2,10 @@ export * from './highlightSyntax'
 export * from './utils'
 
 import { DateInterval } from '../../../DlDateTime/types'
-
-const startDatePattern = new RegExp(
-    /\(from\s?\d{2}\/\d{2}\/\d{4}\s?\)|\(from\s?dd\/mm\/yyyy\s?\)/,
-    'gi'
-)
-const endDatePattern = new RegExp(
-    /\(to\s?\d{2}\/\d{2}\/\d{4}\s?\)|\(to\s?dd\/mm\/yyyy\s?\)/,
-    'gi'
-)
-const dateIntervalPattern = new RegExp(
-    /\((from\s?\(\d{2}\/\d{2}\/\d{4}\)\s?to\s?\(\d{2}\/\d{2}\/\d{4}\))\)|\((from\s?\(dd\/mm\/yyyy\)\s?to\s?\(dd\/mm\/yyyy\))\)/,
-    'gi'
-)
+import {
+    datePattern,
+    datePatternNoBrackets
+} from '../../../../../hooks/use-suggestions'
 
 export const isEndOfString = (str: string, pattern: RegExp): boolean => {
     const trimmed = str.trim()
@@ -23,40 +14,21 @@ export const isEndOfString = (str: string, pattern: RegExp): boolean => {
     if (!matches || !matches.length) return false
 
     const lastMatch = matches[matches.length - 1]
+
     return trimmed.lastIndexOf(lastMatch) + lastMatch.length === trimmed.length
 }
 
 export const isEndingWithDateIntervalPattern = (str: string) => {
-    return (
-        isEndOfString(str, dateIntervalPattern) ||
-        isEndOfString(str, startDatePattern) ||
-        isEndOfString(str, endDatePattern)
-    )
+    return isEndOfString(str, datePattern)
 }
 
-export const replaceDateInterval = (
-    str: string,
-    dateInterval: DateInterval
-) => {
-    const dateFrom = new Date(dateInterval.from)
-    const dateTo = new Date(dateInterval.to)
-    const values = str.match(/\((.*?)\)/g)
-    let newStr = ''
-    if (!values) return str
-
-    if (values.length > 1) {
-        newStr = `(From (${formatDate(dateFrom)}) To (${formatDate(dateTo)}))`
-        return replaceLastOccurrence(str, newStr, dateIntervalPattern)
-    } else if (values[0].includes('From')) {
-        newStr = `(From ${formatDate(dateFrom)})`
-        return replaceLastOccurrence(str, newStr, startDatePattern)
-    } else if (values[0].includes('To')) {
-        newStr = `(To ${formatDate(dateTo)})`
-        return replaceLastOccurrence(str, newStr, endDatePattern)
-    }
+export const replaceDateInterval = (str: string, date: DateInterval) => {
+    const newStr = `${formatDate(date.from)}`
+    return replaceLastOccurrence(str, newStr, datePatternNoBrackets)
 }
 
 const formatDate = (date: Date): string => {
+    if (!date) return
     return `${addZero(date.getDate())}/${addZero(
         date.getMonth() + 1
     )}/${date.getFullYear()}`
