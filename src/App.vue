@@ -59,7 +59,7 @@
                         margin-top: 15px;
                         min-width: 200px;
                         height: 100%;
-                        height: calc(100vh - 18vh);
+                        height: calc(100vh - 20vh);
                         overflow: auto;
                     "
                 >
