@@ -18,40 +18,42 @@
                 size="15px"
                 @mousedown="startDragging"
             />
-            <div class="dl-widget__header">
-                <div class="dl-widget__header--titles">
-                    <slot name="header" />
+            <slot>
+                <div class="dl-widget__header">
+                    <div class="dl-widget__header--titles">
+                        <slot name="header" />
+                    </div>
+                    <slot name="menu" />
                 </div>
-                <slot name="menu" />
-            </div>
 
-            <div class="dl-widget__content">
-                <dl-empty-state
-                    v-if="isEmpty"
-                    v-bind="emptyStateProps"
-                >
-                    <template
-                        v-for="(_, slot) in $slots"
-                        #[slot]="props"
+                <div class="dl-widget__content">
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
                     >
-                        <slot
-                            :name="slot"
-                            v-bind="props"
-                        />
-                    </template>
-                </dl-empty-state>
-                <slot
-                    v-if="!isEmpty"
-                    name="content"
-                />
-            </div>
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
+                    <slot
+                        v-if="!isEmpty"
+                        name="content"
+                    />
+                </div>
 
-            <div
-                v-if="!isEmpty"
-                class="dl-widget__description"
-            >
-                <slot name="description" />
-            </div>
+                <div
+                    v-if="!isEmpty"
+                    class="dl-widget__description"
+                >
+                    <slot name="description" />
+                </div>
+            </slot>
         </div>
         <div
             ref="clone"
@@ -122,6 +124,7 @@ export default defineComponent({
                 clone.style.visibility = 'visible'
                 clone.style.width = `${this.draggedWidget.offsetWidth}px`
                 clone.style.height = `${this.draggedWidget.offsetHeight}px`
+                clone.style.backgroundColor = `var(--dl-color-bg)`
             }
 
             const sourceCanvas = this.draggedWidget?.querySelector('canvas')
@@ -277,6 +280,8 @@ export default defineComponent({
 
     &__drag {
         position: relative;
+        opacity: 0.2;
+        background: var(--dl-color-separator);
         &::after {
             content: '';
             position: absolute;
@@ -284,7 +289,6 @@ export default defineComponent({
             height: 100%;
             top: 0;
             left: 0;
-            background: var(--dl-color-separator);
             border-radius: 5px;
         }
     }
@@ -298,7 +302,5 @@ export default defineComponent({
 
 .widget-wrapper {
     flex-basis: var(--widget-flex-basis);
-    margin: var(--row-gap) var(--column-gap);
-    padding: 15px;
 }
 </style>
