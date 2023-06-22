@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue-demi'
+import { defineComponent, ref, computed, onMounted } from 'vue-demi'
 import { ImageMetadata, MediaTypeEnum } from '../types/imageMetadata'
 import CardViewGallery from './CardViewGallery.vue'
 import CardViewTable from './CardViewTable.vue'
@@ -516,6 +516,12 @@ export default defineComponent({
                 state: 'Sta'
             }
         ])
+
+        onMounted(() => {
+            setTimeout(() => {
+                emptyImages.value = images.value
+            }, 2000)
+        })
 
         return {
             emptyImages,

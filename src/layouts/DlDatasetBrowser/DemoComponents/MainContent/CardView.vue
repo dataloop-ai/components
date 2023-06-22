@@ -3,6 +3,8 @@
         <DlCard
             v-for="(image, imageIndex) in items"
             :key="imageIndex"
+            interactive
+            zoom
             :image="{ src: image.url }"
             text="text"
             title="title"
@@ -11,6 +13,7 @@
                 title: 'title',
                 href: image.url
             }"
+            indicator-color="red"
         />
     </div>
 </template>

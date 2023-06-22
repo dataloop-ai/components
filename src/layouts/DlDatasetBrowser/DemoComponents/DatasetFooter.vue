@@ -9,7 +9,6 @@
         <div style="width: 100%; display: flex; padding-left: 20px">
             <dl-pagination
                 v-model="page"
-                :max="max"
                 :rows-per-page="rowsPerPage"
                 :boundary-numbers="boundaryNumbers"
                 :boundary-links="boundaryLinks"
