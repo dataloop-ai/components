@@ -281,13 +281,10 @@
                             name="option"
                         />
                         <template v-else>
-                            {{
-                                capitalizedOptions
-                                    ? typeof getOptionLabel(option) ===
-                                        'string' &&
-                                        getOptionLabel(option).toLowerCase()
-                                    : getOptionLabel(option)
-                            }}
+                            <span
+                                class="inner-option"
+                                v-html="getOptionHtml(option)"
+                            />
                         </template>
                     </dl-select-option>
                     <dl-list-item v-if="hasAfterOptions && !noOptions">
@@ -418,6 +415,7 @@ export default defineComponent({
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
         const isEmpty = ref(true)
+        const searchInputValue = ref('')
         const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
 
         const setHighlightedIndex = (value: any) => {
@@ -446,7 +444,8 @@ export default defineComponent({
             selectedIndex,
             setHighlightedIndex,
             handleSelectedItem,
-            handleModelValueUpdate
+            handleModelValueUpdate,
+            searchInputValue
         }
     },
     computed: {
@@ -814,7 +813,19 @@ export default defineComponent({
                     (this.$refs.menu as any)?.updatePosition()
                 })
             }
-            this.$emit('search-input', (e.target as HTMLInputElement).value)
+            const searchValue = (e.target as HTMLInputElement).value
+            this.searchInputValue = searchValue
+            this.$emit('search-input', searchValue)
+        },
+        getOptionHtml(option: DlSelectOptionType) {
+            return `<span>${(this.capitalizedOptions
+                ? typeof this.getOptionLabel(option) === 'string' &&
+                  this.getOptionLabel(option).toLowerCase()
+                : this.getOptionLabel(option)
+            ).replace(
+                this.searchInputValue,
+                `<span style="background: var(--dl-color-warning)">${this.searchInputValue}</span>`
+            )}</span>`
         },
         handleSearchBlur(e: Event): void {
             if (this.search) {

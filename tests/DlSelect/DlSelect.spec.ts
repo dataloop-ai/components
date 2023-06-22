@@ -415,4 +415,31 @@ describe('dl-select computed', () => {
             ])
         })
     })
+    describe('when typing in a search value', () => {
+        let wrapper: any
+
+        const options = [
+            { label: 'Option 1', value: 1 },
+            { label: 'Option 2', value: 2 }
+        ]
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options,
+                    search: true
+                }
+            })
+        })
+        it('should give a highlight color to the matching section', () => {
+            const value = '1'
+            wrapper.vm.handleSearchInput({ target: { value } })
+            expect(wrapper.vm.searchInputValue).toMatch(value)
+            expect(
+                wrapper.vm
+                    .getOptionHtml(options[0])
+                    .includes('--dl-color-warning')
+            ).toBe(true)
+        })
+    })
 })
