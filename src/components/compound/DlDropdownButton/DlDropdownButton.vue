@@ -465,7 +465,7 @@ export default defineComponent({
     &--separator {
         position: absolute;
         left: 0;
-        width: 1px;
+        width: 0.7px;
         height: 60%;
     }
 

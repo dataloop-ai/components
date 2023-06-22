@@ -635,7 +635,10 @@ export default defineComponent({
             return classes
         },
         isSmall(): boolean {
-            return this.size === InputSizes.s
+            return (
+                this.size === (InputSizes.s as TInputSizes) ||
+                this.size === (InputSizes.small as TInputSizes)
+            )
         },
         hasPrepend(): boolean {
             if (isVue2) {
@@ -881,6 +884,10 @@ export default defineComponent({
         display: flex;
         align-items: center;
     }
+    &--small {
+        display: flex;
+        align-items: center;
+    }
     &--placeholder {
         color: var(--placeholder-color);
     }
@@ -891,7 +898,7 @@ export default defineComponent({
         align-items: center;
         color: var(--dl-color-lighter);
 
-        &--s {
+        &--small {
             margin-right: 5px;
             margin-bottom: 0px;
         }
@@ -976,8 +983,19 @@ export default defineComponent({
             padding-top: 7px;
             padding-bottom: 7px;
         }
+        &--medium {
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
 
         &--s {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 5px;
+            padding-right: 5px;
+            width: calc(100% - 10px);
+        }
+        &--small {
             padding-top: 3px;
             padding-bottom: 3px;
             padding-left: 5px;
@@ -1078,11 +1096,23 @@ export default defineComponent({
             height: 34px;
         }
 
+        &--large {
+            height: 34px;
+        }
+
         &--m {
             height: 28px;
         }
 
+        &--medium {
+            height: 28px;
+        }
+
         &--s {
+            height: 20px;
+        }
+
+        &--small {
             height: 20px;
         }
 

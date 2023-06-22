@@ -7,6 +7,10 @@ on:
 
 permissions: write-all
 
+concurrency:
+  group: "version-bump"
+  cancel-in-progress: false
+
 jobs:
   bump-version:
     runs-on: ubuntu-latest
