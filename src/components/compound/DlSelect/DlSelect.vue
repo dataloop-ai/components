@@ -279,13 +279,12 @@
                             v-if="hasOptionSlot"
                             :opt="option"
                             name="option"
-                        />
-                        <template v-else>
+                        >
                             <span
                                 class="inner-option"
                                 v-html="getOptionHtml(option)"
                             />
-                        </template>
+                        </slot>
                     </dl-select-option>
                     <dl-list-item v-if="hasAfterOptions && !noOptions">
                         <dl-item-section>
