@@ -223,7 +223,7 @@ export default defineComponent({
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: var(--dl-z-index-menu);
+    z-index: var(--dl-z-index-dialog);
     overflow-x: hidden;
     overflow-y: hidden;
     text-align: start;
@@ -239,7 +239,9 @@ export default defineComponent({
     bottom: 0;
     left: 0;
     background-color: var(--dl-backdrop-color);
-    z-index: var(--dl-z-index-menu);
+    z-index: var(
+        --dl-z-index-dialog
+    ); // todo: check if this should be overlay instead.
 }
 
 .dialog-wrapper {
@@ -251,7 +253,7 @@ export default defineComponent({
     border-radius: 2px;
     display: flex;
     flex-direction: column;
-    z-index: var(--dl-z-index-menu);
+    z-index: var(--dl-z-index-dialog);
 
     &--fullscreen {
         margin: 0;
