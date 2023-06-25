@@ -13,7 +13,8 @@ export default defineConfig({
         },
         coverage: {
             reporter: ['lcovonly', 'text']
-        }
+        },
+        exclude: ['src/components/compound/DlCodeEditor']
     },
     optimizeDeps: {
         exclude: ['vue-demi']

@@ -9,29 +9,17 @@
                 width="485px"
                 height="547px"
                 :language="language"
-                :theme="codeEditor.theme"
-                :options="codeEditor.options"
-                @editor-mounted="editorMounted"
+                :theme="theme"
             />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref } from 'vue-demi'
 import UploadData from './UploadData.vue'
 import { DlCodeEditor } from '../../../../../components'
-import {
-    CodeEditorOptions,
-    CodeEditorTheme
-} from '../../../../../components/types'
-
-import { editor } from 'monaco-editor'
-
-type codeEditor = {
-    theme?: CodeEditorTheme
-    options: CodeEditorOptions
-}
+import { DlCodeEditorTheme } from '../../../../../components/types'
 
 export default defineComponent({
     name: 'LayoutEmptyState',
@@ -211,26 +199,21 @@ export default defineComponent({
                 'main()'
         )
         const language = ref('python')
-        const codeEditor = ref<codeEditor>({
-            // theme: 'dl-theme-light',
-            options: {
-                lineNumbers: 'on',
-                fontSize: 12,
-                minimap: {
-                    enabled: true
-                }
-            }
-        })
 
-        const editorMounted = (editor: editor.IStandaloneCodeEditor) => {
-            console.log('editor mounted: ', editor)
-        }
+        const theme = computed(() => {
+            if (
+                // @ts-ignore
+                window.DlComponents.isDark.value
+            ) {
+                return DlCodeEditorTheme.Dark
+            }
+            return DlCodeEditorTheme.Light
+        })
 
         return {
             codeEditorValue,
             language,
-            codeEditor,
-            editorMounted
+            theme
         }
     }
 })
