@@ -44,6 +44,7 @@
                 <dl-button
                     color="secondary"
                     flat
+                    @click="isBasicSearch = !isBasicSearch"
                 >
                     Advanced
                 </dl-button>

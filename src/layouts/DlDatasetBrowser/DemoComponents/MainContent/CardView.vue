@@ -1,13 +1,6 @@
 <template>
     <div class="card-view">
         <DlCard
-            v-bind="interactiveProps"
-            interactive
-            zoom
-            @onUpdateDescription="updateDescription"
-            @onCardActive="onCardActive"
-        />
-        <DlCard
             v-for="(image, imageIndex) in items"
             :key="imageIndex"
             interactive

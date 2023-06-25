@@ -3,6 +3,7 @@
         <layout-empty-state v-if="!emptyImages.length" />
         <component
             :is="cardView"
+            v-else
             :items="emptyImages"
         />
     </div>
