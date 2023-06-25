@@ -22,7 +22,7 @@ describe('DlList', () => {
                 separator: false,
                 padding: false,
                 clickable: false,
-                tag: 'div'
+                type: 'div'
             })
         })
         it('should right class', function () {

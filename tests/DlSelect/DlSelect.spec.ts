@@ -94,7 +94,7 @@ describe('dl-select methods', () => {
             wrapper.vm.onMenuOpen()
             wrapper.vm.$nextTick()
             await wrapper.setProps({
-                search: true
+                searchable: true
             })
             expect(wrapper.emitted()['before-show']).toBeTruthy()
         })
@@ -292,8 +292,9 @@ describe('dl-select computed', () => {
         )
 
         await wrapper.setProps({
-            search: true
+            searchable: true
         })
+
         expect(wrapper.vm.selectClasses).toContain('dl_select__select--prepend')
 
         await wrapper.setProps({
@@ -459,7 +460,7 @@ describe('dl-select computed', () => {
             wrapper = mount(DlSelect, {
                 props: {
                     options,
-                    search: true
+                    searchable: true
                 }
             })
         })

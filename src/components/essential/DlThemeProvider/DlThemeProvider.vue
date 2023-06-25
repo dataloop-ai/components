@@ -27,7 +27,7 @@ export default defineComponent({
         const isDarkTheme = ref(props.isDark)
 
         // @ts-ignore
-        window.DlComponents.setTheme(props.isDark ? 'dark' : 'light')
+        window.DlComponents?.setTheme(props.isDark ? 'dark' : 'light')
 
         provide('theme', isDarkTheme)
 
@@ -41,7 +41,7 @@ export default defineComponent({
                 ) // sets the dl data-theme attr
 
                 // @ts-ignore
-                window.DlComponents.setTheme(props.isDark ? 'dark' : 'light')
+                window.DlComponents?.setTheme(props.isDark ? 'dark' : 'light')
             }
         )
     },
