@@ -131,6 +131,13 @@ export default defineComponent({
             default: 'left',
             validator: (v: string) =>
                 ['left', 'right', 'justify', 'center'].includes(v)
+        },
+        /**
+         * the % of the parent element that triggers the tooltips visibility
+         */
+        triggerPercentage: {
+            type: Number,
+            default: 1
         }
     },
     setup(props, { emit, attrs }) {
@@ -266,9 +273,10 @@ export default defineComponent({
         }
 
         function CheckAnchorElVisiblity(domElement: any) {
+            const intersectionRatio = props.triggerPercentage ?? 1
             return new Promise((resolve) => {
                 const o = new IntersectionObserver(([entry]) => {
-                    resolve(entry.intersectionRatio === 1)
+                    resolve(entry.intersectionRatio >= intersectionRatio)
                     o.disconnect()
                 })
                 o.observe(domElement)
