@@ -1,18 +1,59 @@
 <template>
     <div class="card-view">
         <DlCard
+            v-bind="interactiveProps"
+            interactive
+            zoom
+            @onUpdateDescription="updateDescription"
+            @onCardActive="onCardActive"
+        />
+        <DlCard
             v-for="(image, imageIndex) in items"
             :key="imageIndex"
             interactive
             zoom
-            :image="{ src: image.url }"
-            text="text"
+            :image="{
+                src: image.url,
+                link: {
+                    icon: 'icon-dl-link',
+                    color: 'black',
+                    size: '12px',
+                    href: 'https://dataloop.ai/'
+                }
+            }"
+            description="text"
             title="title"
-            :keyboard-shortcut="keyboardShortcut"
             :links="{
                 title: 'title',
                 href: image.url
             }"
+            :tags="[
+                {
+                    label: 'A',
+                    color: '#FFBBFF',
+                    textColor: 'black'
+                },
+                {
+                    label: 'Lemon',
+                    color: '#7000FF',
+                    textColor: 'black'
+                },
+                {
+                    label: 'B',
+                    color: '#FFDA3A',
+                    textColor: 'black'
+                },
+                {
+                    label: 'D',
+                    color: '#00A0FF',
+                    textColor: 'black'
+                },
+                {
+                    label: 'X',
+                    color: '#AADC3A',
+                    textColor: 'black'
+                }
+            ]"
             indicator-color="red"
         />
     </div>

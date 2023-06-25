@@ -89,7 +89,13 @@
                 <slot name="header">
                     <div v-if="interactive">
                         <div class="card--content__interactive-title">
-                            <div class="full-width">
+                            <div
+                                class="full-width"
+                                style="
+                                    display: flex;
+                                    justify-content: flex-start;
+                                "
+                            >
                                 <dl-typography
                                     size="10px"
                                     color="dl-color-medium"
