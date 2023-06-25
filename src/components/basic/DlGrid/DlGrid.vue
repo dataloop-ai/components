@@ -88,13 +88,14 @@ export default defineComponent({
                 const htmlElement = element as HTMLElement
                 htmlElement.style.order = `${orderIndex}`
                 htmlElement.style.gridColumn = gridTemplate[orderIndex - 1]
-                htmlElement.addEventListener('change-position', (e) => {
+                htmlElement.addEventListener('position-changing', (e) => {
                     if (!isCustomEvent(e)) return
                     this.changePosition(e)
                 })
-                htmlElement.addEventListener('end-drag', (e) => {
-                    this.$emit('layout-changed', this.modelValue)
-                })
+                htmlElement.addEventListener(
+                    'position-changed',
+                    this.layoutChanged.bind(this)
+                )
             })
         },
         changePosition(e: CustomEvent) {
@@ -126,10 +127,14 @@ export default defineComponent({
                 side,
                 this.maxElementsPerRow
             )
+            // Update modelValue is required to trigger visualization of the changes
             this.$emit('update:modelValue', newLayout)
             if (e.detail.endDragging) {
-                this.$emit('layout-changed', newLayout)
+                this.layoutChanged()
             }
+        },
+        layoutChanged() {
+            this.$emit('layout-changed', this.modelValue)
         }
     }
 })

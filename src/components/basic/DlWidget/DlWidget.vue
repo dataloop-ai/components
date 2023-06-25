@@ -133,12 +133,12 @@ export default defineComponent({
             }
             const wrapper = this.$refs.wrapper as HTMLElement
             if (target && this.draggedWidget) {
-                const event = new CustomEvent('change-position', {
+                const event = new CustomEvent('position-changing', {
                     detail: change
                 })
                 wrapper.dispatchEvent(event)
             } else {
-                wrapper.dispatchEvent(new CustomEvent('drag-end'))
+                wrapper.dispatchEvent(new CustomEvent('position-changed'))
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)
@@ -169,7 +169,7 @@ export default defineComponent({
                 this.hoveredWidget,
                 'widget-wrapper'
             )
-            const event = new CustomEvent('change-position', {
+            const event = new CustomEvent('position-changing', {
                 detail: {
                     source: this.$refs.wrapper,
                     target: targetWidget,
