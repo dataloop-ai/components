@@ -128,13 +128,17 @@ export default defineComponent({
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
             const change = {
                 source: this.draggedWidget,
-                target
+                target,
+                endDragging: true
             }
+            const wrapper = this.$refs.wrapper as HTMLElement
             if (target && this.draggedWidget) {
                 const event = new CustomEvent('change-position', {
                     detail: change
                 })
-                ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
+                wrapper.dispatchEvent(event)
+            } else {
+                wrapper.dispatchEvent(new CustomEvent('drag-end'))
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)

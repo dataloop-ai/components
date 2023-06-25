@@ -41,7 +41,7 @@ export default defineComponent({
             default: 3
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'layout-changed'],
     computed: {
         gridStyles(): object {
             return {
@@ -92,6 +92,9 @@ export default defineComponent({
                     if (!isCustomEvent(e)) return
                     this.changePosition(e)
                 })
+                htmlElement.addEventListener('end-drag', (e) => {
+                    this.$emit('layout-changed', this.modelValue)
+                })
             })
         },
         changePosition(e: CustomEvent) {
@@ -124,6 +127,9 @@ export default defineComponent({
                 this.maxElementsPerRow
             )
             this.$emit('update:modelValue', newLayout)
+            if (e.detail.endDragging) {
+                this.$emit('layout-changed', newLayout)
+            }
         }
     }
 })
