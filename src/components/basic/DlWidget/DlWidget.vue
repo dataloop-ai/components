@@ -158,13 +158,17 @@ export default defineComponent({
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
             const change = {
                 source: this.draggedWidget,
-                target
+                target,
+                endDragging: true
             }
+            const wrapper = this.$refs.wrapper as HTMLElement
             if (target && this.draggedWidget) {
-                const event = new CustomEvent('change-position', {
+                const event = new CustomEvent('position-changing', {
                     detail: change
                 })
-                ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
+                wrapper.dispatchEvent(event)
+            } else {
+                wrapper.dispatchEvent(new CustomEvent('position-changed'))
             }
             window.removeEventListener('mousemove', this.moveClone)
             window.removeEventListener('mouseup', this.stopDragging)
@@ -195,7 +199,7 @@ export default defineComponent({
                 this.hoveredWidget,
                 'widget-wrapper'
             )
-            const event = new CustomEvent('change-position', {
+            const event = new CustomEvent('position-changing', {
                 detail: {
                     source: this.$refs.wrapper,
                     target: targetWidget,

@@ -484,7 +484,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dl-popup {
-    z-index: calc(var(--dl-z-index-menu) - 1);
+    z-index: var(--dl-z-index-popup);
     position: fixed !important;
     padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);

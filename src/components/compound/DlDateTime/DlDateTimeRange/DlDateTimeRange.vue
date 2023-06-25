@@ -416,7 +416,16 @@ export default defineComponent({
             this.$emit('set-type', value)
         },
         updateDateInterval(value: DateInterval | null) {
-            this.dateInterval = value
+            this.dateInterval = {
+                from: value.from,
+                to: new Date(
+                    value.from.getFullYear(),
+                    value.from.getMonth(),
+                    value.from.getDate(),
+                    23,
+                    59
+                )
+            }
             this.$emit('update:modelValue', value)
             this.$emit('change', value)
         },
