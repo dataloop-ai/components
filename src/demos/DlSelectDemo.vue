@@ -25,7 +25,8 @@
                     label: 'Medium',
                     value: 'medium',
                     bgColor: 'dl-color-warning',
-                    textColor: 'dl-color-darker'
+                    textColor: 'dl-color-darker',
+                    icon: 'icon-dl-search'
                 },
                 {
                     label: 'Low',
@@ -98,6 +99,7 @@
                 </div>
             </template>
         </dl-select>
+        with prepend
         <dl-select
             v-model="tasksFilter"
             multiselect
@@ -115,23 +117,26 @@
                 />
             </template>
         </dl-select>
+        custom search
         <dl-select
             v-model="selectedBySearch"
             size="m"
             title="Title"
             optional
             :options="searchOptions"
-            search
+            searchable
+            custom-filter
             emit-val
             @filter="filterFn"
         />
+        normal search
         <dl-select
             v-model="selectedByFilteringSearch"
             :options="searchOptions"
             size="m"
             multiselect
             placeholder="contributors"
-            search
+            searchable
         />
 
         <dl-select
@@ -154,7 +159,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
         />
         Capitalized options
         <dl-select
@@ -162,7 +167,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
         />
         With Fit
@@ -171,7 +176,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
             fit-content
         />

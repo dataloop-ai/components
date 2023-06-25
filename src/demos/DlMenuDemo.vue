@@ -498,7 +498,7 @@
                                 v-for="(item, index) in listItems"
                                 :key="index"
                                 clickable
-                                :is-highlighted="index === highlightedIndex"
+                                :highlighted="index === highlightedIndex"
                             >
                                 <dl-item-section>
                                     {{ item }}

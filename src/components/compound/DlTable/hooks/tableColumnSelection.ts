@@ -49,7 +49,7 @@ export function useTableColumnSelection(
 
         const updatedCols = cols.map((col) => {
             const align = col.align || 'right'
-            const alignClass = `text-${align}`
+            const alignClass = ` text-${align}`
 
             return {
                 ...col,

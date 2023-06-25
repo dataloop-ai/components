@@ -21,7 +21,7 @@
                     v-for="(item, suggestionIndex) in suggestions"
                     :key="item"
                     :clickable="true"
-                    :is-highlighted="suggestionIndex === highlightedIndex"
+                    :highlighted="suggestionIndex === highlightedIndex"
                     @click="handleOption(item)"
                 >
                     {{ item }}
