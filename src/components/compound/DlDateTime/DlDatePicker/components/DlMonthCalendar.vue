@@ -152,7 +152,8 @@ export default defineComponent({
             if (!isInRange(this.availableRange, d)) {
                 style = {
                     'border-color': 'var(--dl-color-disabled)',
-                    color: 'var(--dl-color-disabled)'
+                    color: 'var(--dl-color-disabled)',
+                    cursor: 'not-allowed'
                 }
             } else if (this.modelValue !== null) {
                 const from = new CalendarDate(this.modelValue.from)

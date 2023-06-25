@@ -30,18 +30,18 @@ export default defineComponent({
         },
         rowGap: {
             type: String,
-            default: '10px'
+            default: '30px'
         },
         columnGap: {
             type: String,
-            default: '10px'
+            default: '30px'
         },
         maxElementsPerRow: {
             type: Number,
             default: 3
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'layout-changed'],
     computed: {
         gridStyles(): object {
             return {
@@ -79,7 +79,7 @@ export default defineComponent({
                 (this.$refs.grid as HTMLElement).children
             )
             const gridTemplate = getGridTemplate(this.modelValue)
-            if (gridElements.length !== gridTemplate.length) return
+            if (gridElements.length > gridTemplate.length) return
 
             const order = this.modelValue.flat()
             gridElements.forEach((element: Element, index: number) => {
@@ -88,10 +88,14 @@ export default defineComponent({
                 const htmlElement = element as HTMLElement
                 htmlElement.style.order = `${orderIndex}`
                 htmlElement.style.gridColumn = gridTemplate[orderIndex - 1]
-                htmlElement.addEventListener('change-position', (e) => {
+                htmlElement.addEventListener('position-changing', (e) => {
                     if (!isCustomEvent(e)) return
                     this.changePosition(e)
                 })
+                htmlElement.addEventListener(
+                    'position-changed',
+                    this.layoutChanged.bind(this)
+                )
             })
         },
         changePosition(e: CustomEvent) {
@@ -123,7 +127,14 @@ export default defineComponent({
                 side,
                 this.maxElementsPerRow
             )
+            // Update modelValue is required to trigger visualization of the changes
             this.$emit('update:modelValue', newLayout)
+            if (e.detail.endDragging) {
+                this.layoutChanged()
+            }
+        },
+        layoutChanged() {
+            this.$emit('layout-changed', this.modelValue)
         }
     }
 })

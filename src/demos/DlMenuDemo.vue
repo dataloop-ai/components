@@ -507,6 +507,31 @@
                         </dl-list>
                     </dl-menu>
                 </dl-button>
+
+                <h4>With max height with alot of elements</h4>
+                <dl-button :label="arrowNavigationLabel">
+                    <dl-menu
+                        max-height="250px"
+                        self="bottom middle"
+                        anchor="top middle"
+                        :offset="[50, 5]"
+                        @show="onShow"
+                        @hide="onHide"
+                    >
+                        <dl-list style="min-width: 100px">
+                            <dl-list-item
+                                v-for="(item, index) in alotOfListItems"
+                                :key="index"
+                                clickable
+                                :is-highlighted="index === highlightedIndex"
+                            >
+                                <dl-item-section>
+                                    {{ item }}
+                                </dl-item-section>
+                            </dl-list-item>
+                        </dl-list>
+                    </dl-menu>
+                </dl-button>
             </div>
         </div>
     </div>
@@ -551,6 +576,109 @@ export default defineComponent({
             'Help & Feedback'
         ])
 
+        const alotOfListItems = ref([
+            'New tab0',
+            'New incognito tab1',
+            'Recent tabs2',
+            'History3',
+            'Downloads4',
+            'Settings5',
+            'Help & Feedback6',
+            'New tab7',
+            'New incognito tab8',
+            'Recent tabs9',
+            'History10',
+            'Downloads11',
+            'Settings12',
+            'Help & Feedback13',
+            'New tab14',
+            'New incognito tab15',
+            'Recent tabs16',
+            'History17',
+            'Downloads18',
+            'Settings19',
+            'Help & Feedback20',
+            'New tab21',
+            'New incognito tab22',
+            'Recent tabs23',
+            'History24',
+            'Downloads25',
+            'Settings26',
+            'Help & Feedback27',
+            'New tab28',
+            'New incognito tab29',
+            'Recent tabs30',
+            'History31',
+            'Downloads32',
+            'Settings33',
+            'Help & Feedback34',
+            'New tab35',
+            'New incognito tab36',
+            'Recent tabs37',
+            'History38',
+            'Downloads39',
+            'Settings40',
+            'Help & Feedback41',
+            'New tab42',
+            'New incognito tab43',
+            'Recent tabs44',
+            'History45',
+            'Downloads46',
+            'Settings47',
+            'Help & Feedback48',
+            'New tab49',
+            'New incognito tab50',
+            'Recent tabs51',
+            'History52',
+            'Downloads53',
+            'Settings54',
+            'Help & Feedback55',
+            'New tab56',
+            'New incognito tab57',
+            'Recent tabs58',
+            'History59',
+            'Downloads60',
+            'Settings61',
+            'Help & Feedback62',
+            'New tab63',
+            'New incognito tab64',
+            'Recent tabs65',
+            'History66',
+            'Downloads67',
+            'Settings68',
+            'Help & Feedback69',
+            'New tab70',
+            'New incognito tab71',
+            'Recent tabs72',
+            'History73',
+            'Downloads74',
+            'Settings75',
+            'Help & Feedback76',
+            'New tab77',
+            'New incognito tab78',
+            'Recent tabs79',
+            'History80',
+            'Downloads81',
+            'Settings82',
+            'Help & Feedback83',
+            'New tab84',
+            'New incognito tab85',
+            'Recent tabs86',
+            'History87',
+            'Downloads88',
+            'Settings89',
+            'Help & Feedback90',
+            'New tab91',
+            'New incognito tab92',
+            'Recent tabs93',
+            'History94',
+            'Downloads95',
+            'Settings96',
+            'Help & Feedback97',
+            'New tab98',
+            'New incognito tab99'
+        ])
+
         const onShow = (value: any) => {
             isMenuOpen.value = !!value
         }
@@ -578,7 +706,8 @@ export default defineComponent({
             isMenuOpen,
             selectedItem,
             highlightedIndex,
-            arrowNavigationLabel
+            arrowNavigationLabel,
+            alotOfListItems
         }
     }
 })

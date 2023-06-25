@@ -383,16 +383,6 @@ export default defineComponent({
         }
     },
     computed: {
-        cssVars(): Record<string, string> {
-            let inputMargin = this.margin
-
-            if (!this.margin && this.isSmall) {
-                inputMargin = '0px 20px 0px 0px'
-            }
-            return {
-                '--dl-input-margin': inputMargin
-            }
-        },
         bottomMessage(): boolean {
             return (
                 !!this.infoMessage?.length ||
@@ -410,6 +400,26 @@ export default defineComponent({
                 classes.push('dl-text-input--dense')
             }
             return classes
+        },
+        getBorderColor(): string {
+            if (this.error) {
+                return `var(--dl-color-negative)`
+            } else if (this.warning) {
+                return `var(--dl-color-warning)`
+            } else {
+                return `var(--dl-color-secondary)`
+            }
+        },
+        cssVars(): Record<string, any> {
+            let inputMargin = this.margin
+
+            if (!this.margin && this.isSmall) {
+                inputMargin = '0px 20px 0px 0px'
+            }
+            return {
+                '--dl-input-margin': inputMargin,
+                '--dl-input-border-color-hover': this.getBorderColor
+            }
         },
         inputClasses(): string[] {
             const classes = [
@@ -450,10 +460,13 @@ export default defineComponent({
             ]
         },
         isSmall(): boolean {
-            return this.size === InputSizes.s
+            return (
+                this.size === (InputSizes.s as TInputSizes) ||
+                this.size === (InputSizes.small as TInputSizes)
+            )
         },
         hasPrepend(): boolean {
-            return !!this.$slots.prepend && !this.isSmall
+            return !!this.$slots.prepend
         },
         hasAppend(): boolean {
             return (
@@ -476,7 +489,6 @@ export default defineComponent({
                 !this.disabled &&
                 !this.readonly &&
                 !!this.modelValue
-                // this.focused
             )
         },
         showShowPassButton(): boolean {
@@ -664,6 +676,9 @@ export default defineComponent({
         &--s {
             margin: 4px auto auto;
         }
+        &--small {
+            margin: 4px auto auto;
+        }
     }
 
     &__title {
@@ -694,6 +709,9 @@ export default defineComponent({
         text-align: start;
 
         &--s {
+            padding: 0px 10px;
+        }
+        &--small {
             padding: 0px 10px;
         }
     }
@@ -735,8 +753,17 @@ export default defineComponent({
             padding-top: 7px;
             padding-bottom: 7px;
         }
+        &--medium {
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
 
         &--s {
+            padding-top: 4px;
+            padding-bottom: 3px;
+            padding-right: 5px;
+        }
+        &--small {
             padding-top: 3px;
             padding-bottom: 3px;
             padding-left: 5px;
@@ -746,14 +773,12 @@ export default defineComponent({
         &--error {
             border-color: var(--dl-color-negative);
             &:hover {
-                border-color: var(--dl-color-separator) !important;
             }
         }
 
         &--warning {
-            border-color: var(--dl-color-warning);
+            border-color: var(--dl-input-border-color-hover);
             &:hover {
-                border-color: var(--dl-color-separator) !important;
             }
         }
 
@@ -763,11 +788,11 @@ export default defineComponent({
         }
 
         &:hover {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dl-input-border-color-hover);
         }
 
         &:focus {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dl-input-border-color-hover);
         }
 
         &:disabled {
@@ -795,11 +820,24 @@ export default defineComponent({
             height: 34px;
         }
 
+        &--large {
+            height: 34px;
+        }
+
         &--m {
             height: 28px;
         }
 
+        &--medium {
+            height: 28px;
+        }
+
         &--s {
+            margin-top: 1px;
+            height: 20px;
+        }
+
+        &--small {
             height: 20px;
         }
 
