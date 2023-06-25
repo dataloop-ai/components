@@ -1,5 +1,6 @@
 import { DlCodeEditor } from '..'
 import { Meta, StoryObj } from '@storybook/vue3'
+import { DlCodeEditorTheme } from '../types'
 
 type Story = StoryObj<typeof DlCodeEditor>
 
@@ -18,7 +19,7 @@ function helloWorld() {
     console.log('Hello, World!')
 }
 helloWorld()`,
-        theme: 'light',
+        theme: DlCodeEditorTheme.Light,
         height: '50vh',
         width: '25vw'
     }
@@ -31,7 +32,7 @@ def helloWorld():
     print('Hello, World!')
 
 helloWorld()`,
-        theme: 'light',
+        theme: DlCodeEditorTheme.Dark,
         height: '50vh',
         width: '25vw'
     }
