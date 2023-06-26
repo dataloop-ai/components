@@ -11,6 +11,7 @@
             @mouseleave="handleVisibleDragIcon(false)"
         >
             <dl-icon
+                v-if="draggable"
                 :style="iconStyles"
                 class="dl-widget__drag-icon"
                 icon="icon-dl-drag"
@@ -51,6 +52,12 @@ export default defineComponent({
     name: 'DlWidget',
     components: {
         DlIcon
+    },
+    props: {
+        draggable: {
+            type: Boolean,
+            default: true
+        }
     },
     data() {
         return {
@@ -193,6 +200,9 @@ export default defineComponent({
             }
         },
         handleVisibleDragIcon(val: boolean) {
+            if (!this.draggable) {
+                return
+            }
             if (!document.querySelector('.drag-clone').innerHTML.toString()) {
                 this.visibleDragIcon = val
             }
