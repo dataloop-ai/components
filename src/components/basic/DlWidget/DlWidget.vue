@@ -11,7 +11,7 @@
             @mouseleave="handleVisibleDragIcon(false)"
         >
             <dl-icon
-                v-if="isDraggable"
+                v-if="draggable"
                 :style="iconStyles"
                 class="dl-widget__drag-icon"
                 icon="icon-dl-drag"
@@ -44,7 +44,7 @@
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 import { DlIcon } from '../../essential'
 import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
 
@@ -57,12 +57,6 @@ export default defineComponent({
         draggable: {
             type: Boolean,
             default: true
-        }
-    },
-    setup(props) {
-        const isDraggable = ref(props.draggable)
-        return {
-            isDraggable
         }
     },
     data() {
@@ -206,7 +200,7 @@ export default defineComponent({
             }
         },
         handleVisibleDragIcon(val: boolean) {
-            if (!this.isDraggable) {
+            if (!this.draggable) {
                 return
             }
             if (!document.querySelector('.drag-clone').innerHTML.toString()) {
