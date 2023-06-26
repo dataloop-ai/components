@@ -81,7 +81,7 @@
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
                 >
-                <dl-tooltip v-if="disabled">
+                <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
                 </dl-tooltip>
                 <div
@@ -885,7 +885,7 @@ export default defineComponent({
         align-items: center;
     }
     &--placeholder {
-        color: var(--placeholder-color);
+        color: var(--dl-select-palceholder-color, --placeholder-color);
     }
 
     .dl-select__title-container {
@@ -901,7 +901,7 @@ export default defineComponent({
     }
 
     .selected-label {
-        color: var(--placeholder-color);
+        color: var(--dl-select-palceholder-color, --placeholder-color);
     }
 
     .dl-select__title {

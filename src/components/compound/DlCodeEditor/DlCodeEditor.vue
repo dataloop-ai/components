@@ -3,7 +3,7 @@
         class="dl-code-editor-wrapper"
         :style="cssVars"
     >
-        <CodeEditor
+        <code-editor
             v-model="code"
             class="dl-code-editor"
             :line-nums="!!options.lineNumbers"
@@ -16,8 +16,8 @@
             :width="width"
             :height="height"
             :header="!options.hideHeader"
-            :copy-code="!options.hideCopyCode"
-            border-radius="0px"
+            :display-language="!options.hideLanguage"
+            :copy-button="!options.hideCopyCode"
         />
     </div>
 </template>
@@ -25,12 +25,16 @@
 <script lang="ts">
 import { defineComponent, computed, PropType, toRef } from 'vue-demi'
 import { DlCodeEditorTheme, DlCodeEditorOptions } from './types'
-import CodeEditor from 'simple-code-editor'
+import CodeEditor from './components/CodeEditor.vue'
 
 export default defineComponent({
     name: 'DlCodeEditor',
     components: {
         CodeEditor
+    },
+    model: {
+        prop: 'modelValue',
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -118,7 +122,6 @@ export default defineComponent({
 </script>
 <style scoped lang="scss">
 .dl-code-editor-wrapper {
-    width: var(--dl-code-editor-width);
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
 }
@@ -129,6 +132,9 @@ export default defineComponent({
     .dl-code-editor {
         .header {
             border-bottom: var(--dl-code-editor-header-border-bottom);
+        }
+        textarea {
+            color: var(--dl-code-editor-text-area-color);
         }
     }
 }

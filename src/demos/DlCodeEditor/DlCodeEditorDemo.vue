@@ -1,6 +1,10 @@
 <template>
     <div>
         <dl-switch
+            v-model="isDark"
+            left-label="Dark Mode"
+        />
+        <dl-switch
             v-model="readonly"
             left-label="readonly"
         />
@@ -29,6 +33,7 @@ export default defineComponent({
     },
     setup() {
         const readonly = ref(false)
+        const isDark = ref(false)
 
         const codeEditorValue = ref(
             'import urllib3\n' +
@@ -203,13 +208,9 @@ export default defineComponent({
         const language = ref('python')
 
         const theme = computed(() => {
-            if (
-                // @ts-ignore
-                window.DlComponents.isDark.value
-            ) {
-                return DlCodeEditorTheme.Dark
-            }
-            return DlCodeEditorTheme.Light
+            return isDark.value
+                ? DlCodeEditorTheme.Dark
+                : DlCodeEditorTheme.Light
         })
 
         const options: DlCodeEditorOptions = {
@@ -219,6 +220,7 @@ export default defineComponent({
         return {
             codeEditorValue,
             language,
+            isDark,
             theme,
             readonly,
             options

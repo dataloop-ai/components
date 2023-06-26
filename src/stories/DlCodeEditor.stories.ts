@@ -19,9 +19,7 @@ function helloWorld() {
     console.log('Hello, World!')
 }
 helloWorld()`,
-        theme: DlCodeEditorTheme.Light,
-        height: '50vh',
-        width: '25vw'
+        theme: DlCodeEditorTheme.Light
     }
 }
 export const PythonCodeEditor: Story = {
@@ -32,8 +30,6 @@ def helloWorld():
     print('Hello, World!')
 
 helloWorld()`,
-        theme: DlCodeEditorTheme.Dark,
-        height: '50vh',
-        width: '25vw'
+        theme: DlCodeEditorTheme.Dark
     }
 }

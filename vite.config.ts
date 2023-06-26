@@ -23,6 +23,7 @@ export default defineConfig({
         ]
     },
     optimizeDeps: {
+        include: ['highlight.js'],
         exclude: ['vue-demi']
     },
     define: {
