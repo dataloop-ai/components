@@ -1,7 +1,8 @@
-import { computed, ComputedRef } from 'vue-demi'
-import { DlTableProps, DlTableRow } from '../types'
+import { computed, ComputedRef, ref } from 'vue-demi'
+import { DlTableProps, DlTableRow } from '../../DlTable/types'
+import { convertToNestedObject } from './convertToNestedObject'
 
-export const useTableRowSelectionProps = {
+export const useTreeTableRowSelectionProps = {
     selection: {
         type: String,
         default: 'none',
@@ -13,16 +14,18 @@ export const useTableRowSelectionProps = {
     }
 }
 
-export const useTableRowSelectionEmits = ['update:selected', 'selection']
+export const useTreeTableRowSelectionEmits = ['selection', 'selectedItems']
 
-export function useTableRowSelection(
+export function useTreeTableRowSelection(
     props: DlTableProps,
     emit: (event: string, val: any) => void,
     computedRows: ComputedRef<DlTableRow[]>,
     getRowKey: ComputedRef<(val: string | DlTableRow) => any>
 ) {
+    const propsSelected = ref<(string | DlTableRow)[]>([])
+
     const selectedKeys = computed(() => {
-        return props.selected
+        return propsSelected.value
             .map(getRowKey.value)
             .reduce((acc, key: string) => {
                 acc[key] = true
@@ -59,14 +62,14 @@ export function useTableRowSelection(
             )
     )
 
-    const rowsSelectedNumber = computed(() => props.selected.length)
+    const rowsSelectedNumber = computed(() => propsSelected.value.length)
 
-    function isRowSelected(key: string) {
-        return selectedKeys.value[key] === true
+    function isRowSelected(rowKey: string) {
+        return selectedKeys.value[rowKey] === true
     }
 
     function clearSelection() {
-        emit('update:selected', [])
+        propsSelected.value = []
     }
 
     function updateSelection(
@@ -76,7 +79,7 @@ export function useTableRowSelection(
         evt?: (event: string, val: any) => void
     ) {
         emit('selection', { rows, added, keys, evt })
-
+        /*
         const payload =
             singleSelection.value === true
                 ? added === true
@@ -86,9 +89,30 @@ export function useTableRowSelection(
                 ? props.selected.concat(rows as string[])
                 : props.selected.filter(
                       (row) => keys.includes(getRowKey.value(row)) === false
-                  )
+                  )*/
 
-        emit('update:selected', payload)
+        let payload: any
+        if (singleSelection.value === true) {
+            if (added === true) {
+                payload = rows
+            } else {
+                payload = []
+            }
+        } else {
+            if (added === true) {
+                payload = propsSelected.value.concat(rows as string[])
+            } else {
+                payload = propsSelected.value.filter(
+                    (row) => !keys.includes(getRowKey.value(row))
+                )
+            }
+        }
+
+        propsSelected.value = payload
+
+        const { selectedItems } = convertToNestedObject(payload)
+
+        emit('selectedItems', selectedItems)
     }
 
     return {

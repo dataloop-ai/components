@@ -1,6 +1,8 @@
 import { flatMapDeep } from 'lodash'
 
-const flatten = (item: Record<string, any>): Record<string, any>[] => {
+type TreeDataItem = Record<string, any>
+
+const flatten = (item: TreeDataItem): TreeDataItem[] => {
     if (!item.level) {
         item.level = 1
     }
@@ -14,5 +16,4 @@ const flatten = (item: Record<string, any>): Record<string, any>[] => {
     return [item, flatMapDeep(leveledItems, flatten)]
 }
 
-export const flatTreeData = (data: Record<string, any>[]) =>
-    flatMapDeep(data, flatten)
+export const flatTreeData = (data: TreeDataItem[]) => flatMapDeep(data, flatten)
