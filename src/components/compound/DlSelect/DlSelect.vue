@@ -3,7 +3,11 @@
         :id="uuid"
         :style="cssVars"
         class="root-container"
-        :class="{ 'root-container--s': isSmall, [identifierClass]: true }"
+        :class="{
+            'root-container--s': isSmall,
+            [identifierClass]: true,
+            'fit-content': fitContent
+        }"
     >
         <div
             v-show="!!title.length || !!tooltip.length"
@@ -1158,5 +1162,8 @@ export default defineComponent({
         text-align: left;
         padding-top: 3px;
     }
+}
+.fit-content > * {
+    max-width: fit-content;
 }
 </style>
