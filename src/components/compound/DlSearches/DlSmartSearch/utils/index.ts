@@ -14,7 +14,7 @@ import { flatten, unflatten } from 'flat'
 export const isEndOfString = (str: string, pattern: RegExp): boolean => {
     if (!str) return false
     if (!str.length) return false
-    if (str[str.length - 1] === ' ') return false
+    if (!str[str.length - 1].trim().length) return false
 
     const trimmed = str.trim()
     const matches = trimmed.match(pattern)
@@ -80,7 +80,7 @@ export function replaceStringifiedDatesWithJSDates(str: string) {
     let newStr = str
 
     for (const date of dates) {
-        newStr = newStr.replace(date, `${formatToNumericDate(date)}`)
+        newStr = newStr.replace(date, `${formatToNumericDate(date)} `)
     }
 
     return newStr

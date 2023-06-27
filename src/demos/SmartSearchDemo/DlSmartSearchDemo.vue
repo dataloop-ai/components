@@ -22,6 +22,14 @@
             style="width: 100px"
             class="props"
         />
+        createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden
+        = true
+        <br>
+        createdAt = (26/05/2023) AND dir = 'test AND test OR me Test' AND hidden
+        = true
+        <br>
+        createdAt = (26/05/2023) AND dir = 'testANDtestORmeTest' AND hidden =
+        true
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
