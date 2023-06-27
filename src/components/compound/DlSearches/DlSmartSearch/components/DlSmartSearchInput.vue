@@ -143,7 +143,7 @@ import {
     setCaret,
     updateEditor
 } from '../utils'
-import { isEligibleToChange } from '../utils/utils'
+import { isEligibleToChange } from '../utils'
 
 export default defineComponent({
     components: {
