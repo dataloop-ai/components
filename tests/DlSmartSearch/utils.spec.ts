@@ -2,7 +2,7 @@ import {
     isEndOfString,
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
-    revertAliases
+    setAliases
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { stringifySmartQuery } from '../../src/utils'
 import { describe, it, expect, beforeAll } from 'vitest'
@@ -65,7 +65,7 @@ describe('replaceDateInterval', () => {
     })
 })
 
-describe(revertAliases.name, () => {
+describe(setAliases.name, () => {
     describe('When translating back to string query from json', () => {
         const query = {
             'metadata.system.width': 25
@@ -81,7 +81,7 @@ describe(revertAliases.name, () => {
         let reverted: string = ''
 
         beforeAll(() => {
-            reverted = revertAliases(stringifySmartQuery(query), aliases)
+            reverted = setAliases(stringifySmartQuery(query), aliases)
         })
 
         it('should replace the key with the alias', () => {

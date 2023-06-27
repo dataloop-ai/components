@@ -76,7 +76,7 @@ const dateSuggestionPattern = '(dd/mm/yyyy)'
 let localSuggestions: Suggestion[] = []
 
 export const datePattern = new RegExp(
-    /(\(\d{2}\/\d{2}\/\d{4}\)\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+    /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
     'gi'
 )
 export const datePatternNoBrackets =
