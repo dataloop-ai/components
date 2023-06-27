@@ -427,10 +427,16 @@ const isValidString = (str: string) => {
 const getOperatorByDataType = (dataType: string) => {
     if (dataType === 'boolean') return ['$eq', '$neq']
 
-    return Object.keys(operatorToDataTypeMap).filter((key) => {
+    if (dataType === 'object') {
+        return []
+    }
+
+    const operators = Object.keys(operatorToDataTypeMap).filter((key) => {
         const value = operatorToDataTypeMap[key]
         return value.length === 0 || value.includes(dataType)
     })
+
+    return operators
 }
 
 const getOperators = (op: string[]) => op.map((o) => operators[o])
@@ -453,10 +459,6 @@ const getDataType = (
 
     const nestedKey = aliasedKey.split('.')
 
-    if (nestedKey.length === 1) {
-        return (schema[nestedKey[0]] as string | string[]) ?? null
-    }
-
     let value = schema[nestedKey[0]] as Schema
     if (!value) return null
 
@@ -468,6 +470,10 @@ const getDataType = (
             return 'any'
         }
         value = (value[nextKey] as Schema) ?? null
+    }
+
+    if (isObject(value) && !Array.isArray(value)) {
+        return 'object'
     }
 
     return value as unknown as string | string[] | null
