@@ -101,8 +101,8 @@ export function getAnchorProps(el: HTMLElement, offset: number[]) {
         bottom,
         width,
         height,
-        middle: left + (right - left) / 2,
-        center: top + (bottom - top) / 2
+        middle: left + (right - left) / 2 + offset[0] ?? 0,
+        center: top + (bottom - top) / 2 + offset[1] ?? 0
     }
 }
 
