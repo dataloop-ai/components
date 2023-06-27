@@ -159,15 +159,26 @@ export const useSuggestions = (
 
             if (!field) continue
 
-            localSuggestions = getMatches(localSuggestions, field)
-            matchedField = getMatch(localSuggestions, field)
+            const fieldSeparated: any = field.split('.')
+
+            if (fieldSeparated.length > 1) {
+                localSuggestions = []
+                matchedField = field
+            } else {
+                localSuggestions = getMatches(localSuggestions, field)
+                matchedField = getMatch(localSuggestions, field)
+            }
 
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions = []
                 continue
             }
 
-            if (!matchedField || !isNextCharSpace(input, matchedField)) {
+            if (
+                !matchedField ||
+                (!isNextCharSpace(input, matchedField) &&
+                    fieldSeparated.length === 1)
+            ) {
                 continue
             }
 
@@ -191,7 +202,24 @@ export const useSuggestions = (
 
             localSuggestions = getOperators(ops)
 
-            if (!operator) continue
+            if (!operator) {
+                const dotSeparated = matchedField.split('.')
+                let fieldOf = schema
+                for (const key of dotSeparated) {
+                    fieldOf = fieldOf[key] as Schema
+                }
+
+                if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
+                    const toConcat: string[] = []
+                    for (const key of Object.keys(fieldOf)) {
+                        if (key === '*') continue
+                        toConcat.push(`.${key}`)
+                    }
+                    localSuggestions = localSuggestions.concat(toConcat)
+                }
+
+                continue
+            }
 
             localSuggestions = getMatches(localSuggestions, operator)
             matchedOperator = getMatch(localSuggestions, operator)

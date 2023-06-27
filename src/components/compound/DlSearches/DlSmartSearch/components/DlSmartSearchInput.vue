@@ -277,6 +277,18 @@ export default defineComponent({
                 stringValue = stringValue.trimEnd()
             }
 
+            const specialSuggestions = props.suggestions.filter((suggestion) =>
+                suggestion.startsWith('.')
+            )
+            for (const suggestion of specialSuggestions) {
+                if (stringValue.includes(suggestion)) {
+                    stringValue = stringValue.replace(
+                        ` ${suggestion}`,
+                        suggestion
+                    )
+                }
+            }
+
             emit('update:modelValue', stringValue)
         }
 
