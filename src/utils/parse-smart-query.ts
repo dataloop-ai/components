@@ -2,6 +2,15 @@
 
 import { isBoolean, isFinite, isNumber, isObject, isString } from 'lodash'
 
+export function isDatePattern(str: string) {
+    const datePattern = new RegExp(
+        /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+        'gi'
+    )
+    const dates = str.match(datePattern) ?? []
+    return dates.length > 0
+}
+
 const GeneratePureValue = (value: any) => {
     if (value === '') {
         return null
@@ -26,6 +35,8 @@ const GeneratePureValue = (value: any) => {
     return value
 }
 
+const Operators: string[] = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+
 /**
  * Method to convert a DlSmartSearch query string to Mongo based JSON query
  *
@@ -34,10 +45,41 @@ const GeneratePureValue = (value: any) => {
  */
 export const parseSmartQuery = (query: string) => {
     const queryArr = query.split(' OR ')
+    for (let i = 0; i < queryArr.length; i++) {
+        const term: string = queryArr[i]
+        let withOperator = false
+        if (Operators.includes(term.split(' ')[1])) {
+            withOperator = true
+        }
+
+        if (!withOperator) {
+            if (i > 0) {
+                queryArr[i - 1] += ` OR ${term}`
+                queryArr.splice(i, 1)
+            }
+        }
+    }
     const orTerms: { [key: string]: any }[] = []
 
     for (const query of queryArr) {
         const andTerms = query.split(' AND ')
+        for (let i = 0; i < andTerms.length; i++) {
+            const term: string = andTerms[i]
+            let withOperator = false
+            for (const op of Operators) {
+                if (term.includes(op)) {
+                    withOperator = true
+                    break
+                }
+            }
+
+            if (!withOperator) {
+                if (i > 0) {
+                    andTerms[i - 1] += ` AND ${term}`
+                    andTerms.splice(i, 1)
+                }
+            }
+        }
 
         const andQuery: { [key: string]: any } = {}
         let queryValue: any
@@ -240,6 +282,8 @@ export const stringifySmartQuery = (query: { [key: string]: any }) => {
             result += `${key} = ${value}`
         } else if (isBoolean(value)) {
             result += `${key} = ${value}`
+        } else if (isDatePattern(value)) {
+            result += `${key} = (${value})`
         } else {
             result += `${key} = '${value}'`
         }
