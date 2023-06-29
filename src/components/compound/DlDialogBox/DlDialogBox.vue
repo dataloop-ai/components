@@ -113,7 +113,11 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: () => ({} as DlEmptyStateProps)
+        },
+        zIndex: {
+            type: [Number, String],
+            default: 'var(--dl-z-index-dialog)'
         }
     },
     emits: ['update:modelValue', 'hide', 'show'],
@@ -155,7 +159,9 @@ export default defineComponent({
                     typeof this.width === 'string'
                         ? parseInt(this.width)
                         : this.width / 2
-                }px`
+                }px`,
+                '--dialog-z-index':
+                    `${this.zIndex}` ?? 'var(--dl-z-index-dialog)'
             }
         },
         iconStyles(): Record<string, string> {
@@ -247,7 +253,7 @@ export default defineComponent({
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: var(--dl-z-index-dialog);
+    z-index: var(--dialog-z-index);
     overflow-x: hidden;
     overflow-y: hidden;
     text-align: start;
@@ -264,7 +270,7 @@ export default defineComponent({
     left: 0;
     background-color: var(--dl-backdrop-color);
     z-index: var(
-        --dl-z-index-dialog
+        --dialog-z-index
     ); // todo: check if this should be overlay instead.
 }
 
@@ -277,7 +283,7 @@ export default defineComponent({
     border-radius: 2px;
     display: flex;
     flex-direction: column;
-    z-index: var(--dl-z-index-dialog);
+    z-index: var(--dialog-z-index);
 
     &--fullscreen {
         margin: 0;

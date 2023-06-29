@@ -172,8 +172,11 @@
         />
         With Fit
         <dl-select
-            v-model="selectedWithChildrenCapitalized"
-            :options="treeOptions"
+            :options="[
+                { label: 'Option 1', value: 1 },
+                { label: 'Option 2, longer one', value: 2 },
+                { label: 'Option 3', value: 3 }
+            ]"
             size="m"
             multiselect
             searchable
