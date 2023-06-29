@@ -10,6 +10,7 @@ import {
     removeBrackets
 } from '../../../../../hooks/use-suggestions'
 import { flatten, unflatten } from 'flat'
+import moment from 'moment'
 
 export const isEndOfString = (
     str: string,
@@ -41,15 +42,8 @@ export const replaceDateInterval = (str: string, date: DateInterval) => {
     return replaced
 }
 
-const formatDate = (date: Date): string => {
-    if (!date) return
-    return `${addZero(date.getDate())}/${addZero(
-        date.getMonth() + 1
-    )}/${date.getFullYear()}`
-}
-
-const addZero = (value: number): string => {
-    return value < 10 ? `0${value}` : value.toString()
+const formatDate = (date: Date | string | number): string => {
+    return moment(date).format('DD/MM/YYYY')
 }
 
 const replaceLastOccurrence = (
@@ -94,18 +88,13 @@ export function replaceStringifiedDatesWithJSDates(str: string) {
 
 export function formatToNumericDate(str: string) {
     const dateString = str.replace(/['"\(\)]+/g, '')
-    const dateInfo = dateString.split('/')
-    const day = parseInt(dateInfo[0])
-    const month = parseInt(dateInfo[1])
-    const year = parseInt(dateInfo[2])
-    const newDate = new Date(year, month - 1, day)
-    const ms = newDate.getTime()
+    const newDate = moment(dateString, 'DD/MM/YYYY')
+    const ms = newDate.toDate().getTime()
     return ms
 }
 
 export function formatToStringDate(time: string | number) {
-    const date = new Date(Number(time))
-    const formattedDate = formatDate(date)
+    const formattedDate = formatDate(time)
     const noBrackets = removeBrackets(formattedDate)
     return noBrackets
 }

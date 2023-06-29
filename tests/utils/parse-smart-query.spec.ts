@@ -7,6 +7,7 @@ import {
     replaceStringifiedDatesWithJSDates,
     replaceJSDatesWithStringifiedDates
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
+import moment from 'moment'
 
 describe('parseSmartQuery', () => {
     it('should return the correct query for a single key-value pair', () => {
