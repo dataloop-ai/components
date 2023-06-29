@@ -136,7 +136,7 @@ describe('stringifySmartQuery', () => {
         expect(parsed).toEqual(query)
     })
 
-    it.only(' should not replace with alias non fitting words', () => {
+    it('should not replace with alias non fitting words', () => {
         const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
