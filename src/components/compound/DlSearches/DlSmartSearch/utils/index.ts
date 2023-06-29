@@ -11,10 +11,15 @@ import {
 } from '../../../../../hooks/use-suggestions'
 import { flatten, unflatten } from 'flat'
 
-export const isEndOfString = (str: string, pattern: RegExp): boolean => {
+export const isEndOfString = (
+    str: string,
+    pattern: RegExp,
+    options: { checkWhiteSpace?: boolean } = {}
+): boolean => {
+    const { checkWhiteSpace } = options
     if (!str) return false
     if (!str.length) return false
-    if (!str[str.length - 1].trim().length) return false
+    if (checkWhiteSpace && !str[str.length - 1].trim().length) return false
 
     const trimmed = str.trim()
     const matches = trimmed.match(pattern)
@@ -27,7 +32,7 @@ export const isEndOfString = (str: string, pattern: RegExp): boolean => {
 }
 
 export const isEndingWithDateIntervalPattern = (str: string) => {
-    return isEndOfString(str, datePattern)
+    return isEndOfString(str, datePattern, { checkWhiteSpace: true })
 }
 
 export const replaceDateInterval = (str: string, date: DateInterval) => {
@@ -38,7 +43,7 @@ export const replaceDateInterval = (str: string, date: DateInterval) => {
 const formatDate = (date: Date): string => {
     if (!date) return
     return `${addZero(date.getDate())}/${addZero(
-        date.getMonth() + 1
+        date.getMonth()
     )}/${date.getFullYear()}`
 }
 
@@ -87,7 +92,7 @@ export function replaceStringifiedDatesWithJSDates(str: string) {
 }
 
 function formatToNumericDate(str: string) {
-    const dateString = str.replace(/['"]+/g, '')
+    const dateString = str.replace(/['"\(\)]+/g, '')
     const dateInfo = dateString.split('/')
     const day = parseInt(dateInfo[0])
     const month = parseInt(dateInfo[1])
@@ -99,15 +104,21 @@ function formatToNumericDate(str: string) {
 
 function formatToStringDate(time: string | number) {
     const date = new Date(Number(time))
-    const formatedDate = formatDate(date)
-    const noBrackets = removeBrackets(formatedDate)
+    const formattedDate = formatDate(date)
+    const noBrackets = removeBrackets(formattedDate)
     return noBrackets
 }
 
 export function replaceJSDatesWithStringifiedDates(
     json: { [key: string]: any },
     dateKeys: string[] = []
-) {
+): {
+    [key: string]: any
+} {
+    if (!dateKeys.length) {
+        return json
+    }
+
     const flat: { [key: string]: any } = flatten(json)
     for (const key of Object.keys(flat)) {
         const value = flat[key]
@@ -117,7 +128,10 @@ export function replaceJSDatesWithStringifiedDates(
             flat[key] = formatToStringDate(value)
         }
     }
-    return unflatten(flat)
+
+    return unflatten(flat) as {
+        [key: string]: any
+    }
 }
 
 export function replaceAliases(json: string, aliases: Alias[]) {

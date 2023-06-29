@@ -2,6 +2,15 @@
 
 import { isBoolean, isFinite, isNumber, isObject, isString } from 'lodash'
 
+export function isDatePattern(str: string) {
+    const datePattern = new RegExp(
+        /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+        'gi'
+    )
+    const dates = str.match(datePattern) ?? []
+    return dates.length > 0
+}
+
 const GeneratePureValue = (value: any) => {
     if (value === '') {
         return null
@@ -273,6 +282,8 @@ export const stringifySmartQuery = (query: { [key: string]: any }) => {
             result += `${key} = ${value}`
         } else if (isBoolean(value)) {
             result += `${key} = ${value}`
+        } else if (isDatePattern(value)) {
+            result += `${key} = (${value})`
         } else {
             result += `${key} = '${value}'`
         }

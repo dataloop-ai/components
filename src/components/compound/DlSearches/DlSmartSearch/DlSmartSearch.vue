@@ -588,8 +588,10 @@ export default defineComponent({
         handleJsonSearchButton() {
             this.jsonEditorModel = false
             this.activeQuery.query = this.jsonEditorQuery
-            this.setQueryInput()
-            this.$emit('search-query', this.activeQuery, this.stringQuery)
+            nextTick(() => {
+                this.setQueryInput()
+                this.$emit('search-query', this.activeQuery, this.stringQuery)
+            })
         },
         handleFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
