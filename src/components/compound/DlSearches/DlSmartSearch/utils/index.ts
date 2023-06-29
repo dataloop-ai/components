@@ -153,7 +153,7 @@ export function setAliases(str: string, aliases: Alias[]) {
         return aliases[index].alias
     }
 
-    const regex = new RegExp(`\\b(?<!\\S)(${words.join('|')})\\b(?!\S)`, 'gi')
+    const regex = new RegExp(`\\b(?<!\\S)(${words.join('|')})\\b(?!\\S)`, 'gi')
     return str.replace(regex, replacement)
 }
 
