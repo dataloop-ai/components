@@ -1,11 +1,11 @@
 export function clearSelection() {
-    if (window.getSelection !== void 0) {
+    if (window.getSelection) {
         const selection = window.getSelection()
         if (!selection) return
 
-        if (selection.empty !== void 0) {
+        if (selection.empty) {
             selection.empty()
-        } else if (selection.removeAllRanges !== void 0) {
+        } else if (selection.removeAllRanges) {
             selection.removeAllRanges()
             if ('ontouchstart' in window) {
                 selection.addRange(document.createRange())

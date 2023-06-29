@@ -104,7 +104,8 @@ import {
     watch,
     ref,
     computed,
-    PropType
+    PropType,
+    Component
 } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
@@ -166,12 +167,12 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: null
         },
         ...CommonProps,
         ...ColumnChartProps
     },
-    setup(props, { slots }) {
+    setup(props) {
         const { variables } = useThemeVariables()
 
         const chartWidth = ref('100%')
@@ -182,7 +183,7 @@ export default defineComponent({
 
         const onResize = (
             chart: Chart,
-            size: { height: number; width: number }
+            _size: { height: number; width: number }
         ) => {
             if (chart?.scales?.x?.width) {
                 chartWidth.value = `${
@@ -500,7 +501,7 @@ export default defineComponent({
         const xLabels = ref(props.data.labels)
 
         const onHoverLegend = (
-            item: BarControllerDatasetOptions,
+            _item: BarControllerDatasetOptions,
             index: number
         ) => {
             const filteredItems = chart.value.data.datasets
@@ -528,7 +529,7 @@ export default defineComponent({
         })
 
         const onLeaveLegend = (
-            item: BarControllerDatasetOptions,
+            _item: BarControllerDatasetOptions,
             index: number
         ) => {
             const filteredItems = chart.value.data.datasets
@@ -636,7 +637,7 @@ export default defineComponent({
     data() {
         return {}
     }
-})
+}) as any as Component<typeof ColumnChartProps>
 </script>
 
 <style scoped lang="scss">

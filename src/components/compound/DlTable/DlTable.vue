@@ -623,7 +623,7 @@ export default defineComponent({
         },
         virtualScrollTarget: {
             type: Object as PropType<HTMLElement>,
-            default: void 0
+            default: null
         },
         titleClass: {
             type: [String, Array, Object],
@@ -649,7 +649,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: null
         },
         scrollDebounce: {
             type: Number,
@@ -1124,7 +1124,7 @@ export default defineComponent({
                 typeof col.field === 'function'
                     ? col.field(row)
                     : row[col.field]
-            return col.format !== void 0 ? col.format(val, row) : val
+            return col.format ? col.format(val, row) : val
         }
 
         function resetVirtualScroll() {
@@ -1256,7 +1256,7 @@ export default defineComponent({
             return data
         }
 
-        const hasLoadingSlot = computed(() => slots['loading'] !== void 0)
+        const hasLoadingSlot = computed(() => slots['loading'])
 
         const paginationState = computed(() => {
             return {

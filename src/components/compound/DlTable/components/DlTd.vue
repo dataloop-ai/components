@@ -27,7 +27,7 @@ export default defineComponent({
         DlTooltip
     },
     props: {
-        props: { type: Object, default: () => {} },
+        props: { type: Object, default: null },
         autoWidth: Boolean,
         noHover: Boolean,
         bgColor: {
@@ -43,7 +43,7 @@ export default defineComponent({
         const { hasEllipsis } = useSizeObserver(tableTd)
 
         const hasOptionalProps = computed(() => {
-            return props.props !== void 0
+            return !!props.props
         })
 
         const tdClasses = computed(() => {
@@ -74,11 +74,11 @@ export default defineComponent({
         const column = computed(() => {
             const name = vm.vnode.key as string
 
-            return (
-                (props.props.colsMap !== void 0
-                    ? props.props.colsMap[name]
-                    : null) || props.props.col
-            )
+            const colmap = props.props?.colsMap
+                ? props.props.colsMap[name]
+                : null
+
+            return colmap ?? props.props?.col
         })
 
         if (!hasOptionalProps.value) {
@@ -90,7 +90,7 @@ export default defineComponent({
             }
         }
 
-        if (column.value === void 0) {
+        if (!column.value) {
             return
         }
 

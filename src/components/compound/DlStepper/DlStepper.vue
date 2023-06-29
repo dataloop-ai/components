@@ -113,7 +113,7 @@ export default defineComponent({
         },
         state: {
             type: Object as PropType<StepState>,
-            default: () => {}
+            default: null
         },
         modelValue: {
             type: Boolean,
@@ -157,7 +157,8 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            required: false,
+            default: null
         }
     },
     emits: ['update:modelValue', 'done', 'next', 'prev', 'set-step', 'close'],

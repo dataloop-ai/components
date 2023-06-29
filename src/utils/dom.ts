@@ -12,15 +12,15 @@ export function css(element: HTMLElement, css: Record<string, string>) {
 export function getElement(
     el: HTMLElement | Ref<HTMLElement> | Element | null | string
 ) {
-    if (el === void 0 || el === null) {
-        return void 0
+    if (!el) {
+        return null
     }
 
     if (typeof el === 'string') {
         try {
-            return document.querySelector(el) || void 0
+            return document.querySelector(el) || null
         } catch (err) {
-            return void 0
+            return null
         }
     }
 
@@ -33,7 +33,7 @@ export function getElement(
 
 // internal
 export function childHasFocus(el: HTMLElement, focusedEl: Node) {
-    if (el === void 0 || el === null || el.contains(focusedEl) === true) {
+    if (!el || el.contains(focusedEl) === true) {
         return true
     }
 

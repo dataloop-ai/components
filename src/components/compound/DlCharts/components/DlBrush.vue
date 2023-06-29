@@ -239,14 +239,14 @@ export default defineComponent({
             width: 0.5 * parseInt(props.thumbSize) + 'px',
             height: props.thumbSize,
             left: `${100 * ratioMin.value}%`,
-            zIndex: state.focus.value === 'min' ? 2 : void 0
+            zIndex: state.focus.value === 'min' ? 2 : null
         }))
 
         const maxThumbStyle = computed(() => ({
             width: 0.5 * parseInt(props.thumbSize) + 'px',
             height: props.thumbSize,
             left: `${100 * ratioMax.value}%`,
-            zIndex: state.focus.value === 'max' ? 2 : void 0
+            zIndex: state.focus.value === 'max' ? 2 : null
         }))
 
         function updateValue(change = false) {

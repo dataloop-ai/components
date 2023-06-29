@@ -7,7 +7,7 @@ import { portalList } from '../utils/portal'
 function isOnGlobalDialog(vm: any) {
     vm = vm.parent
 
-    while (vm !== void 0 && vm !== null) {
+    while (vm) {
         if (vm.type.name === 'DlGlobalDialog') {
             return true
         }
@@ -24,7 +24,7 @@ function isOnGlobalDialog(vm: any) {
 // Warning!
 // You MUST specify "inheritAttrs: false" in your component
 
-export default function (
+export default function usePortal(
     vm: ComponentInternalInstance | null,
     innerRef: Ref<HTMLElement | null>,
     checkGlobalDialog = false,

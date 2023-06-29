@@ -125,7 +125,7 @@ export default defineComponent({
 
         scrollTarget: {
             type: String as PropType<Element | string>,
-            default: void 0
+            default: null
         },
 
         touchPosition: Boolean,
@@ -267,7 +267,7 @@ export default defineComponent({
             showPortal()
             configureScrollTarget()
 
-            absoluteOffset = void 0
+            absoluteOffset = null
 
             const offsetOnShow = setOffsetOnShow(evt as TouchEvent, {
                 contextMenu: props.contextMenu,
@@ -278,7 +278,7 @@ export default defineComponent({
 
             absoluteOffset = offsetOnShow as Record<any, any> | undefined
 
-            if (unwatchPosition === void 0) {
+            if (!unwatchPosition) {
                 unwatchPosition = watch(() => screen, updatePosition, {
                     deep: true
                 })
@@ -321,7 +321,7 @@ export default defineComponent({
         }
 
         function anchorCleanup(hiding: boolean) {
-            absoluteOffset = void 0
+            absoluteOffset = null
 
             unwatchPosition = updateUnwatchPosition(unwatchPosition)
 
@@ -337,7 +337,7 @@ export default defineComponent({
         }
 
         function configureScrollTarget() {
-            if (anchorEl.value !== null || props.scrollTarget !== void 0) {
+            if (anchorEl.value !== null || props.scrollTarget) {
                 (localScrollTarget as Ref<any>).value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget

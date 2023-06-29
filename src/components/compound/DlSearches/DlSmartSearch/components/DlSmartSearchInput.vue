@@ -165,7 +165,7 @@ export default defineComponent({
         },
         styleModel: {
             type: Object as PropType<SyntaxColorSchema>,
-            default: () => {}
+            default: null
         },
         placeholder: {
             type: String,

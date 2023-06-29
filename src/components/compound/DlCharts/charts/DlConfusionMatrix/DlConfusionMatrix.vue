@@ -18,7 +18,7 @@
             </template>
         </dl-empty-state>
         <div
-            v-if="isValidMatrix && !isEmpty"
+            v-else-if="isValidMatrix"
             ref="wrapper"
             :style="matrixStyles"
             class="wrapper"
@@ -149,7 +149,7 @@
             </div>
         </div>
         <div
-            v-if="!isValidMatrix && !isEmpty"
+            v-else
             class="invalid"
         >
             The given props cannot create a valid matrix.
@@ -238,15 +238,18 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: null
         }
     },
     setup(props) {
         const { variables } = useThemeVariables()
 
         const tooltipState = ref<{
-            x: string
-            y: string
+            value?: number
+            xLabel?: string
+            yLabel?: string
+            x?: number
+            y?: number
             visible?: boolean
         } | null>(null)
         const currentBrushState = ref<{ min: number; max: number }>({
@@ -313,14 +316,14 @@ export default defineComponent({
         flattenedMatrix(): DlConfusionMatrixCell[] {
             return flattenConfusionMatrix(this.matrix, this.labelStrings)
         },
-        matrixStyles(): object {
+        matrixStyles(): Record<string, string | number> {
             return {
                 '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
                 '--general-color': this.getCellBackground()
             }
         },
-        tooltipStyles(): object {
+        tooltipStyles(): Record<string, string> {
             return {
                 left: `${this.tooltipState?.x + 10}px`,
                 top: `${this.tooltipState?.y + 15}px`
@@ -394,7 +397,7 @@ export default defineComponent({
             const yAxis = this.$refs.yAxis as HTMLElement
             yAxis.style.height = `${getCellWidth() * this.matrix.length}px`
         },
-        handleMatrixScroll(e: MouseEvent) {
+        handleMatrixScroll(e: MouseEvent | UIEvent) {
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },

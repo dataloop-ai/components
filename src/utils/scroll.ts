@@ -14,8 +14,8 @@ export function getScrollTarget(
 ) {
     let target = getElement(targetEl)
 
-    if (target === void 0) {
-        if (el === void 0 || el === null) {
+    if (!target) {
+        if (!el) {
             return window
         }
 
