@@ -44,7 +44,7 @@
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import { computed, defineComponent, ref, toRef } from 'vue-demi'
 import { DlIcon } from '../../essential'
 import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
 
@@ -59,153 +59,208 @@ export default defineComponent({
             default: true
         }
     },
-    data() {
-        return {
-            uuid: `dl-widget-${v4()}`,
-            draggedWidget: null,
-            hoveredWidget: null,
-            isLeftSide: false,
-            flexBasis: null,
-            isDragging: false,
-            timer: null,
-            visibleDragIcon: false
-        }
-    },
-    computed: {
-        widgetClasses() {
-            return `${this.isDragging ? 'dl-widget__drag' : 'dl-widget'}`
-        },
-        iconStyles() {
+    setup(props) {
+        const uuid = ref(`dl-widget-${v4()}`)
+        const draggedWidget = ref<HTMLElement>(null)
+        const hoveredWidget = ref(null)
+        const isLeftSide = ref(false)
+        const flexBasis = ref(null)
+        const isDragging = ref(false)
+        const timer = ref(null)
+        const visibleDragIcon = ref(false)
+        const wrapper = ref<HTMLDivElement>(null)
+        const widget = ref<HTMLDivElement>(null)
+        const clone = ref<HTMLDivElement>(null)
+        const draggableRef = toRef(props, 'draggable')
+
+        const widgetClasses = computed(() => {
+            return `${isDragging.value ? 'dl-widget__drag' : 'dl-widget'}`
+        })
+        const iconStyles = computed(() => {
             return {
                 '--dl-widget-drag-icon-left': `${
-                    (this.$refs.widget as HTMLElement)?.offsetWidth / 2
+                    (widget.value as HTMLElement)?.offsetWidth / 2
                 }px`,
                 visibility:
-                    this.visibleDragIcon && !this.isDragging
+                    visibleDragIcon.value && !isDragging.value
                         ? 'visible'
                         : 'hidden'
             }
-        }
-    },
-    methods: {
-        startDragging(e: MouseEvent) {
-            this.isDragging = true
+        })
+
+        const startDragging = (e: MouseEvent) => {
+            isDragging.value = true
             document.body.style.cursor = 'grabbing'
-            this.draggedWidget = getElementAbove(
+            draggedWidget.value = getElementAbove(
                 e.target as HTMLElement,
                 'dl-widget'
             )
-            if (this.draggedWidget) {
-                const clone = this.$refs.clone as HTMLElement
-                clone.appendChild(this.draggedWidget.cloneNode(true))
-                clone.style.visibility = 'visible'
-                clone.style.width = `${this.draggedWidget.offsetWidth}px`
-                clone.style.height = `${this.draggedWidget.offsetHeight}px`
-                clone.style.backgroundColor = `var(--dl-color-bg)`
+            if (draggedWidget.value && clone.value) {
+                clone.value.appendChild(draggedWidget.value.cloneNode(true))
+                clone.value.style.visibility = 'visible'
+                clone.value.style.width = `${draggedWidget.value.offsetWidth}px`
+                clone.value.style.height = `${draggedWidget.value.offsetHeight}px`
+                clone.value.style.backgroundColor = `var(--dl-color-bg)`
             }
 
-            const sourceCanvas = this.draggedWidget?.querySelector('canvas')
-            if (sourceCanvas) {
-                const targetCanvasCtx = (this.$refs.clone as HTMLElement)
+            const sourceCanvas = draggedWidget.value?.querySelector('canvas')
+            if (sourceCanvas && clone.value) {
+                const targetCanvasCtx = clone.value
                     .querySelector('canvas')
                     .getContext('2d')
 
                 targetCanvasCtx.drawImage(sourceCanvas, 0, 0)
             }
 
-            this.moveClone(e as MouseEvent)
+            moveClone(e as MouseEvent)
 
-            addMouseEnter('dl-widget', this.handleMouseEnter as any)
+            addMouseEnter('dl-widget', handleMouseEnter as any)
 
-            window.addEventListener('mousemove', this.moveClone)
-            window.addEventListener('mouseup', this.stopDragging)
-        },
-        moveClone(e: MouseEvent) {
-            if (!this.isDragging) return
-            const clone = this.$refs.clone as HTMLElement
-            clone.style.left = `${e.pageX - clone.offsetWidth / 2 - 5}px`
-            clone.style.top = `${e.pageY + 10}px`
-        },
-        stopDragging(e: MouseEvent) {
-            this.isDragging = false
+            window.addEventListener('mousemove', moveClone)
+            window.addEventListener('mouseup', stopDragging)
+        }
+
+        const moveClone = (e: MouseEvent) => {
+            if (!isDragging.value || !clone.value) return
+            clone.value.style.left = `${
+                e.pageX - clone.value.offsetWidth / 2 - 5
+            }px`
+            clone.value.style.top = `${e.pageY + 10}px`
+        }
+
+        const stopDragging = (e: MouseEvent) => {
+            isDragging.value = false
             document.body.style.cursor = 'default'
-            const clone = this.$refs.clone as HTMLElement
-            clone.style.visibility = 'hidden'
-            clone.innerHTML = ''
+            if (!clone.value || !draggedWidget.value || !wrapper.value) {
+                return
+            }
+            clone.value.style.visibility = 'hidden'
+            clone.value.innerHTML = ''
             const target = getElementAbove(e.target as HTMLElement, 'dl-widget')
             const change = {
-                source: this.draggedWidget,
+                source: draggedWidget.value,
                 target,
                 endDragging: true
             }
-            const wrapper = this.$refs.wrapper as HTMLElement
-            if (target && this.draggedWidget) {
+            if (target && draggedWidget.value) {
                 const event = new CustomEvent('position-changing', {
                     detail: change
                 })
-                wrapper.dispatchEvent(event)
+                wrapper.value.dispatchEvent(event)
             } else {
-                wrapper.dispatchEvent(new CustomEvent('position-changed'))
+                wrapper.value.dispatchEvent(new CustomEvent('position-changed'))
             }
-            window.removeEventListener('mousemove', this.moveClone)
-            window.removeEventListener('mouseup', this.stopDragging)
+            window.removeEventListener('mousemove', moveClone)
+            window.removeEventListener('mouseup', stopDragging)
             setTimeout(() => {
-                removeMouseEnter('dl-widget', this.handleMouseEnter as any)
+                removeMouseEnter('dl-widget', handleMouseEnter as any)
             }, 1)
-        },
-        handleMouseEnter(e: MouseEvent) {
-            this.hoveredWidget = e.target as HTMLElement
-            const mouseOffsetInside = e.clientX - this.hoveredWidget.offsetLeft
-            this.isLeftSide =
-                mouseOffsetInside < this.hoveredWidget.offsetWidth / 2
-            this.hoveredWidget.addEventListener(
+        }
+
+        const handleMouseEnter = (e: MouseEvent) => {
+            hoveredWidget.value = e.target as HTMLElement
+            if (!hoveredWidget.value) {
+                return
+            }
+
+            const mouseOffsetInside = e.clientX - hoveredWidget.value.offsetLeft
+
+            isLeftSide.value =
+                mouseOffsetInside < hoveredWidget.value.offsetWidth / 2
+
+            hoveredWidget.value.addEventListener(
                 'mousemove',
-                this.handleMouseInsideWidget
+                handleMouseInsideWidget
             )
-            this.hoveredWidget.addEventListener('mouseleave', () => {
-                clearTimeout(this.timer)
-                this.hoveredWidget.removeEventListener(
+
+            hoveredWidget.value.addEventListener('mouseleave', () => {
+                if (timer.value) {
+                    clearTimeout(timer.value)
+                    timer.value = null
+                }
+                hoveredWidget.value.removeEventListener(
                     'mousemove',
-                    this.handleMouseInsideWidget
+                    handleMouseInsideWidget
                 )
             })
-            this.timer = setTimeout(this.insertWidget, 200)
-        },
-        insertWidget() {
+
+            timer.value = setTimeout(insertWidget, 200)
+        }
+
+        const insertWidget = () => {
+            if (!hoveredWidget.value || !wrapper.value) {
+                return
+            }
+
             const targetWidget = getElementAbove(
-                this.hoveredWidget,
+                hoveredWidget.value,
                 'widget-wrapper'
             )
             const event = new CustomEvent('position-changing', {
                 detail: {
-                    source: this.$refs.wrapper,
+                    source: wrapper.value,
                     target: targetWidget,
-                    side: this.isLeftSide ? 'left' : 'right'
+                    side: isLeftSide.value ? 'left' : 'right'
                 }
             })
-            ;(this.$refs.wrapper as HTMLElement).dispatchEvent(event)
-            window.clearTimeout(this.timer)
-            this.hoveredWidget.removeEventListener(
-                'mousemove',
-                this.handleMouseInsideWidget
-            )
-        },
-        handleMouseInsideWidget(e: MouseEvent) {
-            const mouseOffsetInside = e.clientX - this.hoveredWidget.offsetLeft
-            const isLeftSide =
-                mouseOffsetInside < this.hoveredWidget.offsetWidth / 2
-            if (this.isLeftSide !== isLeftSide) {
-                clearTimeout(this.timer)
-                this.handleMouseEnter(e)
+            wrapper.value.dispatchEvent(event)
+            if (timer.value) {
+                window.clearTimeout(timer.value)
+                timer.value = null
             }
-        },
-        handleVisibleDragIcon(val: boolean) {
-            if (!this.draggable) {
+            hoveredWidget.value.removeEventListener(
+                'mousemove',
+                handleMouseInsideWidget
+            )
+        }
+
+        const handleMouseInsideWidget = (e: MouseEvent) => {
+            if (!hoveredWidget.value) {
+                return
+            }
+
+            const mouseOffsetInside = e.clientX - hoveredWidget.value.offsetLeft
+            const isLeftSideCurrently =
+                mouseOffsetInside < hoveredWidget.value.offsetWidth / 2
+            if (isLeftSide.value !== isLeftSideCurrently) {
+                if (timer.value) {
+                    clearTimeout(timer.value)
+                    timer.value = null
+                }
+                handleMouseEnter(e)
+            }
+        }
+
+        const handleVisibleDragIcon = (val: boolean) => {
+            if (!draggableRef.value) {
                 return
             }
             if (!document.querySelector('.drag-clone').innerHTML.toString()) {
-                this.visibleDragIcon = val
+                visibleDragIcon.value = val
             }
+        }
+
+        return {
+            wrapper,
+            widget,
+            clone,
+            uuid,
+            draggedWidget,
+            hoveredWidget,
+            isLeftSide,
+            flexBasis,
+            isDragging,
+            timer,
+            visibleDragIcon,
+            widgetClasses,
+            iconStyles,
+            startDragging,
+            moveClone,
+            stopDragging,
+            handleMouseEnter,
+            insertWidget,
+            handleMouseInsideWidget,
+            handleVisibleDragIcon
         }
     }
 })
