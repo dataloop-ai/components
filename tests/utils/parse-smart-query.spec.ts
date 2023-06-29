@@ -67,11 +67,13 @@ describe('parseSmartQuery', () => {
     })
 
     it('should not replace with alias non fitting words', () => {
-        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const stringDate = '26/05/2023'
+        const ms = moment(stringDate, 'DD/MM/YYYY').toDate().getTime()
+        const string = `createdAt = (${stringDate}) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
                 {
-                    createdAt: 1685048400000
+                    createdAt: ms
                 },
                 {
                     dir: 'test AND test OR me Test',
@@ -138,11 +140,13 @@ describe('stringifySmartQuery', () => {
     })
 
     it(' should not replace with alias non fitting words', () => {
-        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const stringDate = '26/05/2023'
+        const ms = moment(stringDate, 'DD/MM/YYYY').toDate().getTime()
+        const string = `createdAt = (${stringDate}) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
                 {
-                    createdAt: 1685048400000
+                    createdAt: ms
                 },
                 {
                     dir: 'test AND test OR me Test',
