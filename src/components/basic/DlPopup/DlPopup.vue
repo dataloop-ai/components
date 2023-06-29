@@ -167,7 +167,11 @@ export default defineComponent({
         maxWidth: { type: String, default: 'auto' },
         height: { type: String, default: 'auto' },
         width: { type: String, default: 'auto' },
-        draggable: Boolean
+        draggable: Boolean,
+        zIndex: {
+            type: [Number, String],
+            default: 'var(--dl-z-index-popup)'
+        }
     },
     emits: [
         'close-button-click',
@@ -254,7 +258,8 @@ export default defineComponent({
                 '--popup-max-width': props.maxWidth,
                 '--popup-max-height': props.maxHeight,
                 '--popup-width': props.width,
-                '--popup-height': props.height
+                '--popup-height': props.height,
+                '--popup-z-index': props.zIndex ?? 'var(--dl-z-index-popup)'
             }
         })
 
@@ -462,7 +467,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dl-popup {
-    z-index: var(--dl-z-index-popup);
+    z-index: var(--popup-z-index);
     position: fixed !important;
     padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);

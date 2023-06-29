@@ -1,3 +1,4 @@
+import moment from 'moment'
 import {
     isEndOfString,
     isEndingWithDateIntervalPattern,
@@ -41,7 +42,7 @@ describe('isEndingWithDateIntervalPattern', () => {
 describe('formatToNumericDate', () => {
     it('should return the correct date', () => {
         const date = '(02/12/2022)'
-        const expected = new Date(2022, 11, 2)
+        const expected = moment.utc('02/12/2022', 'DD/MM/YYYY').toDate()
         const formattedDate = formatToNumericDate(date)
         const msTime = expected.getTime()
         expect(formattedDate).toEqual(msTime)

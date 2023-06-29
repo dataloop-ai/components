@@ -145,6 +145,10 @@ export default defineComponent({
         arrowNavItems: {
             type: [String, Array, Object],
             default: () => [] as any[]
+        },
+        zIndex: {
+            type: [Number, String],
+            default: 'var(--dl-z-index-menu)'
         }
     },
 
@@ -432,7 +436,13 @@ export default defineComponent({
             portalEl: isVue2 ? '[data-test-id="portal"]' : portalEl,
             portalIsActive,
             classes: 'dl-menu dl-position-engine scroll' + classes.value,
-            styles: [attrs.style, transitionStyle.value] as any,
+            styles: [
+                attrs.style,
+                transitionStyle.value,
+                {
+                    '--menu-z-index': props.zIndex ?? 'var(--dl-z-index-menu)'
+                }
+            ] as any,
             selectedItem,
             highlightedIndex
         }
@@ -457,7 +467,7 @@ export default defineComponent({
     }
     outline: 0;
     max-height: 65vh;
-    z-index: var(--dl-z-index-menu);
+    z-index: var(--menu-z-index);
 
     &--square {
         border-radius: 0;
