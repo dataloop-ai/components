@@ -22,31 +22,6 @@
             style="width: 100px"
             class="props"
         />
-        createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden
-        = true
-        <br>
-        createdAt = (26/05/2023) AND dir = 'test AND test OR me Test' AND hidden
-        = true
-        <br>
-        createdAt = (26/05/2023) AND dir = 'testANDtestORmeTest' AND hidden =
-        true
-        <br>
-        metadata.system.width = 5 AND metadata.system.height = 5
-        <br>
-
-        <code>
-            { "$or": [ { "$and": [ { "test": 1 }, { "test2": { "$eq": 1 } } ] },
-            { "test": 2 } ] }
-        </code>
-        <code>
-            { "$or": [ { "test": 1 }, { "test2": { "$eq": 1 } }, { "test": 2 } ]
-            }
-        </code>
-        <br>
-        filename = '5' OR hidden = true AND name = '5' OR name = '6' AND hidden
-        = false AND metadata.system.height = 5
-        <br>
-        Test.test.test.test = 5
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
