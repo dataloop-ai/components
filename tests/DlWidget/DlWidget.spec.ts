@@ -26,16 +26,11 @@ describe('DlWidget', () => {
     })
 
     it('should move the dragged widget clone', () => {
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    isDragging: true
-                }
-            }
-        })
+        const wrapper = mount(DlWidget, {})
+        wrapper.vm.isDragging = true
         wrapper.vm.moveClone({ pageX: 100, pageY: 100 })
-        expect(wrapper.vm.$refs.clone.style.top).toMatch('110px')
-        expect(wrapper.vm.$refs.clone.style.left).toMatch('95px')
+        expect(wrapper.vm.clone.style.top).toMatch('110px')
+        expect(wrapper.vm.clone.style.left).toMatch('95px')
     })
 
     it('should turn off dragging operation', () => {

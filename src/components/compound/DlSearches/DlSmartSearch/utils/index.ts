@@ -37,13 +37,14 @@ export const isEndingWithDateIntervalPattern = (str: string) => {
 
 export const replaceDateInterval = (str: string, date: DateInterval) => {
     const newStr = `${formatDate(date.from)}`
-    return replaceLastOccurrence(str, newStr, datePatternNoBrackets)
+    const replaced = replaceLastOccurrence(str, newStr, datePatternNoBrackets)
+    return replaced
 }
 
 const formatDate = (date: Date): string => {
     if (!date) return
     return `${addZero(date.getDate())}/${addZero(
-        date.getMonth()
+        date.getMonth() + 1
     )}/${date.getFullYear()}`
 }
 
@@ -91,18 +92,18 @@ export function replaceStringifiedDatesWithJSDates(str: string) {
     return newStr
 }
 
-function formatToNumericDate(str: string) {
+export function formatToNumericDate(str: string) {
     const dateString = str.replace(/['"\(\)]+/g, '')
     const dateInfo = dateString.split('/')
     const day = parseInt(dateInfo[0])
     const month = parseInt(dateInfo[1])
     const year = parseInt(dateInfo[2])
-    const newDate = new Date(year, month, day)
+    const newDate = new Date(year, month - 1, day)
     const ms = newDate.getTime()
     return ms
 }
 
-function formatToStringDate(time: string | number) {
+export function formatToStringDate(time: string | number) {
     const date = new Date(Number(time))
     const formattedDate = formatDate(date)
     const noBrackets = removeBrackets(formattedDate)

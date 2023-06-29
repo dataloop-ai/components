@@ -2,6 +2,7 @@ import {
     isEndOfString,
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
+    formatToNumericDate,
     setAliases
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { stringifySmartQuery } from '../../src/utils'
@@ -37,19 +38,30 @@ describe('isEndingWithDateIntervalPattern', () => {
     })
 })
 
+describe('formatToNumericDate', () => {
+    it('should return the correct date', () => {
+        const date = '(02/12/2022)'
+        const expected = new Date(2022, 11, 2)
+        const formattedDate = formatToNumericDate(date)
+        const msTime = expected.getTime()
+        expect(formattedDate).toEqual(msTime)
+    })
+})
+
 describe('replaceDateInterval', () => {
     it('should replace the last occurrence of the value that matches the "dateIntervalPattern"', () => {
-        expect(
-            replaceDateInterval(
-                'field = (From (12/12/22) To (22/12/22)) AND field = (From (dd/mm/yyyy) To (dd/mm/yyyy))',
-                {
-                    from: new Date('2022-12-02T09:40:34.633Z'),
-                    to: new Date('2022-12-22T09:40:34.633Z')
-                }
-            )
-        ).toEqual(
+        const string =
+            'field = (From (12/12/22) To (22/12/22)) AND field = (From (dd/mm/yyyy) To (dd/mm/yyyy))'
+        const toReplace = {
+            from: new Date(formatToNumericDate('(02/12/2022)')),
+            to: new Date(formatToNumericDate('(22/12/2022)'))
+        }
+        const expected =
             'field = (From (12/12/22) To (22/12/22)) AND field = (From (02/12/2022) To (dd/mm/yyyy))'
-        )
+        const replaced = replaceDateInterval(string, toReplace)
+
+        console.log(toReplace)
+        expect(replaced).toEqual(expected)
     })
 
     it('should return the original string', () => {

@@ -70,7 +70,7 @@ describe('parseSmartQuery', () => {
         const expected = {
             $or: [
                 {
-                    createdAt: 1687726800000
+                    createdAt: 1685048400000
                 },
                 {
                     dir: 'test AND test OR me Test',
@@ -141,7 +141,7 @@ describe('stringifySmartQuery', () => {
         const expected = {
             $or: [
                 {
-                    createdAt: 1687726800000
+                    createdAt: 1685048400000
                 },
                 {
                     dir: 'test AND test OR me Test',
