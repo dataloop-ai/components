@@ -8,13 +8,8 @@ describe('DlWidget', () => {
     })
 
     it('should add draggable class to widget', () => {
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    isDragging: true
-                }
-            }
-        })
+        const wrapper = mount(DlWidget)
+        wrapper.vm.isDragging = true
         expect(wrapper.vm.widgetClasses).toMatch('dl-widget__drag')
     })
 
