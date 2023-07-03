@@ -216,7 +216,7 @@
         </dl-select>
         With tooltip
         <dl-select
-            v-model="selectedOption"
+            v-model="select2"
             title="With tooltip"
             :tooltip="'Test Me'"
             :options="[
@@ -251,7 +251,7 @@
         </dl-select>
         Small size
         <dl-select
-            v-model="selectedOption"
+            v-model="select3"
             :size="'s'"
             :options="[
                 {
@@ -285,7 +285,7 @@
         </dl-select>
         Small size with tooltip
         <dl-select
-            v-model="selectedOption"
+            v-model="select4"
             :size="'s'"
             title="test"
             tooltip="test me"
@@ -322,7 +322,7 @@
 
         Select with max-height
         <dl-select
-            v-model="selectedOption"
+            v-model="select5"
             :size="'s'"
             title="test"
             dropdown-max-height="50px"
@@ -484,6 +484,10 @@ export default defineComponent({
                 bgColor: 'dl-color-error',
                 textColor: 'dl-color-white'
             },
+            select2: null,
+            select3: null,
+            select4: null,
+            select5: null,
             statusOption: {
                 label: 'Status 1',
                 value: 1,
