@@ -76,7 +76,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="x-axis">
+                <div
+                    class="x-axis"
+                    style="margin-top: 10px"
+                >
                     <span
                         v-for="(label, index) in visibleLabels"
                         ref="xAxis"
@@ -86,7 +89,9 @@
                             !labelImages[0]
                                 ? `transform: rotate(${
                                     rotateXLabels ? '70' : '0'
-                                }deg);`
+                                }deg); line-height: ${
+                                    rotateXLabels ? 100 : 10
+                                }px`
                                 : ''
                         }`"
                     >
@@ -226,6 +231,9 @@ export default defineComponent({
             x: string
             y: string
             visible?: boolean
+            value?: number
+            yLabel?: string
+            xLabel?: string
         } | null>(null)
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
@@ -291,14 +299,14 @@ export default defineComponent({
         flattenedMatrix(): DlConfusionMatrixCell[] {
             return flattenConfusionMatrix(this.matrix, this.labelStrings)
         },
-        matrixStyles(): object {
+        matrixStyles(): Record<string, number | string> {
             return {
                 '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
                 '--general-color': this.getCellBackground()
             }
         },
-        tooltipStyles(): object {
+        tooltipStyles(): Record<string, number | string> {
             return {
                 left: `${this.tooltipState?.x + 10}px`,
                 top: `${this.tooltipState?.y + 15}px`
@@ -320,7 +328,8 @@ export default defineComponent({
         currentBrushState() {
             const longest = Math.max(
                 ...this.visibleLabels.map(
-                    (el: DlConfusionMatrixLabel) => el.title.length
+                    (el: DlConfusionMatrixLabel) =>
+                        (isObject(el) ? el.title : `${el}`).length
                 )
             )
             this.rotateXLabels = longest * 12 > getCellWidth()
@@ -372,7 +381,7 @@ export default defineComponent({
             const yAxis = this.$refs.yAxis as HTMLElement
             yAxis.style.height = `${getCellWidth() * this.matrix.length}px`
         },
-        handleMatrixScroll(e: MouseEvent) {
+        handleMatrixScroll(e: MouseEvent | UIEvent) {
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },
@@ -445,7 +454,6 @@ export default defineComponent({
     max-height: 100px;
     &__element {
         width: var(--cell-dimensions);
-        line-height: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
         &--text {
