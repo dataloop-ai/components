@@ -35,50 +35,51 @@
                     type="text"
                 />
                 <div>
-                    <p>Separator</p>
-                    <DlOptionGroup
-                        v-model="separator"
-                        inline
-                        :options="[
-                            {
-                                label: 'Horizontal (default)',
-                                value: 'horizontal'
-                            },
-                            { label: 'Vertical', value: 'vertical' },
-                            { label: 'Cell', value: 'cell' },
-                            { label: 'None', value: 'none' }
-                        ]"
-                    />
-                </div>
+                    <div>
+                        <p>Separator</p>
+                        <DlOptionGroup
+                            v-model="separator"
+                            inline
+                            :options="[
+                                {
+                                    label: 'Horizontal (default)',
+                                    value: 'horizontal'
+                                },
+                                { label: 'Vertical', value: 'vertical' },
+                                { label: 'Cell', value: 'cell' },
+                                { label: 'None', value: 'none' }
+                            ]"
+                        />
+                    </div>
 
-                <div>
-                    <p>Selection</p>
-                    <DlOptionGroup
-                        v-model="selection"
-                        inline
-                        :options="[
-                            { label: 'none', value: 'none' },
-                            { label: 'single', value: 'single' },
-                            { label: 'multiple', value: 'multiple' }
-                        ]"
-                    />
-                </div>
+                    <div>
+                        <p>Selection</p>
+                        <DlOptionGroup
+                            v-model="selection"
+                            inline
+                            :options="[
+                                { label: 'none', value: 'none' },
+                                { label: 'single', value: 'single' },
+                                { label: 'multiple', value: 'multiple' }
+                            ]"
+                        />
+                    </div>
 
-                <div>
-                    <p>Loading</p>
-                    <DlOptionGroup
-                        v-model="loading"
-                        inline
-                        :options="[
-                            { label: 'True', value: true },
-                            { label: 'False', value: false }
-                        ]"
-                    />
+                    <div>
+                        <p>Loading</p>
+                        <DlOptionGroup
+                            v-model="loading"
+                            inline
+                            :options="[
+                                { label: 'True', value: true },
+                                { label: 'False', value: false }
+                            ]"
+                        />
+                    </div>
                 </div>
             </div>
             <div style="margin-top: 100px">
                 <DlTreeTable
-                    :selected="selected"
                     :separator="separator"
                     :columns="tableColumns"
                     :bordered="bordered"
@@ -96,16 +97,15 @@
                     :virtual-scroll="vScroll"
                     style="height: 500px"
                     :rows-per-page-options="rowsPerPageOptions"
-                    @row-click="log"
+                    @row-click="onRowClick"
                     @th-click="log"
-                    @update:selected="updateSeleted"
+                    @selectedItems="selectedItems"
                 />
             </div>
 
             <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
                 <DlTreeTable
-                    :selected="selected"
                     :separator="separator"
                     :columns="tableColumns"
                     :bordered="bordered"
@@ -115,11 +115,12 @@
                     :filter="filter"
                     :selection="selection"
                     :loading="loading"
-                    :rows="tableRows"
+                    :rows="tableRowsVS"
                     virtual-scroll
                     row-key="name"
                     color="dl-color-secondary"
                     style="height: 500px"
+                    @selectedItems="selectedItems"
                 />
             </div>
         </div>
@@ -474,6 +475,7 @@ export default defineComponent({
         const virtualScroll = ref([])
         const resizableState = ref([])
         const tableRows = ref(cloneDeep(rows2))
+        const tableRowsVS = ref(cloneDeep(rows2))
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const rowsPerPageOptions = ref([10, 12, 14, 16])
@@ -587,6 +589,10 @@ export default defineComponent({
             setPagination({ page: pagesNumber.value })
         }
 
+        const onRowClick = (item: any) => {
+            console.log('onRowClick: ', item)
+        }
+
         return {
             filter,
             selected,
@@ -602,6 +608,7 @@ export default defineComponent({
             virtualScroll,
             resizableState,
             tableRows,
+            tableRowsVS,
             draggable,
             tableColumns,
             rowsPerPageOptions,
@@ -615,13 +622,14 @@ export default defineComponent({
             nextPage,
             prevPage,
             isLastPage,
-            isFirstPage
+            isFirstPage,
+            onRowClick
         }
     },
 
     methods: {
-        updateSeleted(payload: any) {
-            this.selected = payload
+        selectedItems(payload: any) {
+            console.log('Demo updateSelected: ', payload)
         },
         updateBorderedState(val: boolean[]): void {
             this.borderState = val

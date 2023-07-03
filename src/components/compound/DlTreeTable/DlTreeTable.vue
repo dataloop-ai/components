@@ -194,11 +194,10 @@
                                 "
                                 @update:model-value="
                                     (adding, evt) =>
-                                        updateSelection(
-                                            [getRowKey(props.item)],
-                                            [props.item],
+                                        updateSelectionIerarchy(
                                             adding,
-                                            evt
+                                            evt,
+                                            props.item
                                         )
                                 "
                             />
@@ -391,6 +390,10 @@
                                         })
                                     "
                                 >
+                                    <!--
+                                    Here we have to change
+                                    -->
+                                    <!--
                                     <DlCheckbox
                                         :color="color"
                                         :model-value="
@@ -403,6 +406,21 @@
                                                     [row],
                                                     adding,
                                                     evt
+                                                )
+                                        "
+                                    />
+                                    -->
+                                    <DlCheckbox
+                                        :color="color"
+                                        :model-value="
+                                            isRowSelected(getRowKey(row))
+                                        "
+                                        @update:model-value="
+                                            (adding, evt) =>
+                                                updateSelectionIerarchy(
+                                                    adding,
+                                                    evt,
+                                                    row
                                                 )
                                         "
                                     />
@@ -544,10 +562,10 @@ import {
 } from '../DlTable/hooks/tableFilter'
 import { useTableSort, useTableSortProps } from '../DlTable/hooks/tableSort'
 import {
-    useTableRowSelection,
-    useTableRowSelectionProps,
-    useTableRowSelectionEmits
-} from '../DlTable/hooks/tableRowSelection'
+    useTreeTableRowSelection,
+    useTreeTableRowSelectionProps,
+    useTreeTableRowSelectionEmits
+} from './utils/treeTableRowSelection'
 import {
     useTableColumnSelection,
     useTableColumnSelectionProps
@@ -568,6 +586,8 @@ import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { flatTreeData } from './utils/flatTreeData'
 import { setTrSpacing } from './utils/trSpacing'
 import { v4 } from 'uuid'
+import { RecordStringAny } from './types'
+import { getFromChildren } from './utils/getFromChildren'
 
 export default defineComponent({
     name: 'DlTreeTable',
@@ -583,10 +603,10 @@ export default defineComponent({
         DlVirtualScroll
     },
     props: {
-        columns: { type: Array, default: () => [] as Record<string, any>[] },
+        columns: { type: Array, default: () => [] as RecordStringAny[] },
         rows: {
             type: Array,
-            default: () => [] as Record<string, any>[]
+            default: () => [] as RecordStringAny[]
         },
         rowKey: {
             type: [String, Function],
@@ -667,7 +687,7 @@ export default defineComponent({
         ...useTableFilterProps,
         ...useTableSortProps,
         ...useTableColumnSelectionProps,
-        ...useTableRowSelectionProps
+        ...useTreeTableRowSelectionProps
     },
     emits: [
         'request',
@@ -679,7 +699,7 @@ export default defineComponent({
         'row-dblclick',
         'row-contextmenu',
         ...useTableRowExpandEmits,
-        ...useTableRowSelectionEmits
+        ...useTreeTableRowSelectionEmits
     ],
     setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
@@ -693,7 +713,7 @@ export default defineComponent({
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
                 ? props.rowKey
-                : (row: Record<string, any>) => row[props.rowKey as string]
+                : (row: RecordStringAny) => row[props.rowKey as string]
         )
 
         // table slots
@@ -917,7 +937,7 @@ export default defineComponent({
             isRowSelected,
             clearSelection,
             updateSelection
-        } = useTableRowSelection(
+        } = useTreeTableRowSelection(
             props as unknown as DlTableProps,
             emit,
             computedRows,
@@ -961,6 +981,18 @@ export default defineComponent({
                 val
             )
         }
+        function updateSelectionIerarchy(
+            adding: boolean,
+            event: any,
+            row: any
+        ) {
+            const { childrenKeys, childrenCollection } = getFromChildren(
+                row,
+                props.rowKey
+            )
+
+            updateSelection(childrenKeys, childrenCollection, adding, event)
+        }
 
         const hasTopSelectionMode = computed(() => {
             return (
@@ -994,7 +1026,7 @@ export default defineComponent({
             filteredSortedRowsNumber
         )
 
-        function getHeaderScope(data: Record<string, any>) {
+        function getHeaderScope(data: RecordStringAny) {
             Object.assign(data, {
                 cols: computedCols.value,
                 sort,
@@ -1018,10 +1050,10 @@ export default defineComponent({
         // Virtual scroll functionality
 
         const virtProps = computed(() => {
-            const acc: Record<string, any> = {}
+            const acc: RecordStringAny = {}
 
             commonVirtPropsList.forEach((p) => {
-                acc[p] = (props as Record<string, any>)[p]
+                acc[p] = (props as RecordStringAny)[p]
             })
 
             if (!acc.virtualScrollItemSize) {
@@ -1042,10 +1074,7 @@ export default defineComponent({
             lastPage
         }))
 
-        function getCellValue(
-            col: Record<string, any>,
-            row: Record<string, any>
-        ) {
+        function getCellValue(col: RecordStringAny, row: RecordStringAny) {
             const val =
                 typeof col.field === 'function'
                     ? col.field(row)
@@ -1125,7 +1154,7 @@ export default defineComponent({
             emit('row-contextmenu', evt, row, pageIndex)
         }
 
-        function injectBodyCommonScope(data: Record<string, any>) {
+        function injectBodyCommonScope(data: RecordStringAny) {
             Object.assign(data, {
                 cols: computedCols.value,
                 colsMap: computedColsMap.value,
@@ -1157,7 +1186,7 @@ export default defineComponent({
             )
         }
 
-        function getBodyScope(data: Record<string, any>) {
+        function getBodyScope(data: RecordStringAny) {
             injectBodyCommonScope(data)
 
             data.cols = data.cols.map((col: DlTableColumn) =>
@@ -1170,14 +1199,14 @@ export default defineComponent({
             return data
         }
 
-        function getBodyCellScope(data: Record<string, any>) {
+        function getBodyCellScope(data: RecordStringAny) {
             injectBodyCommonScope(data)
             injectProp(data, 'value', () => getCellValue(data.col, data.row))
 
             return data
         }
 
-        function getBodySelectionScope(data: Record<string, any>) {
+        function getBodySelectionScope(data: RecordStringAny) {
             injectBodyCommonScope(data)
             return data
         }
@@ -1257,7 +1286,8 @@ export default defineComponent({
             hasPaginationSlot,
             setTrSpacing,
             updateExpandedRow,
-            getTdStyles
+            getTdStyles,
+            updateSelectionIerarchy
         }
     }
 })
