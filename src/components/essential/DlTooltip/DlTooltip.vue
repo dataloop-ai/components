@@ -116,7 +116,7 @@ export default defineComponent({
         },
         scrollTarget: {
             type: String as PropType<Element | string>,
-            default: void 0
+            default: null
         },
         delay: {
             type: Number,
@@ -224,7 +224,7 @@ export default defineComponent({
                 configureScrollTarget()
             })
 
-            if (unwatchPosition === void 0) {
+            if (!unwatchPosition) {
                 unwatchPosition = watch(
                     () =>
                         width +
@@ -258,14 +258,14 @@ export default defineComponent({
         }
 
         function anchorCleanup() {
-            if (observer !== void 0) {
+            if (observer) {
                 observer.disconnect()
-                observer = void 0
+                observer = null
             }
 
-            if (unwatchPosition !== void 0) {
+            if (unwatchPosition) {
                 unwatchPosition()
-                unwatchPosition = void 0
+                unwatchPosition = null
             }
 
             unconfigureScrollTarget()
@@ -369,7 +369,7 @@ export default defineComponent({
         }
 
         function configureScrollTarget() {
-            if (anchorEl.value !== null || props.scrollTarget !== void 0) {
+            if (anchorEl.value !== null || props.scrollTarget) {
                 (localScrollTarget as Ref<any>).value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget as Element

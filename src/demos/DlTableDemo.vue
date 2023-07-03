@@ -408,7 +408,7 @@ import {
     DlButton
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
-import { times, cloneDeep } from 'lodash'
+import { times, cloneDeep, isNumber } from 'lodash'
 
 const columns = [
     {
@@ -653,7 +653,7 @@ export default defineComponent({
             if (p.page < 1) {
                 p.page = 1
             }
-            if (p.rowsPerPage !== void 0 && p.rowsPerPage < 1) {
+            if (isNumber(p.rowsPerPage) && p.rowsPerPage < 1) {
                 p.rowsPerPage = 0
             }
             return p

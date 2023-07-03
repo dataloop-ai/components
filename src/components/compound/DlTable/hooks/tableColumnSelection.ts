@@ -15,37 +15,38 @@ export function useTableColumnSelection(
     hasDraggableRows: ComputedRef<boolean>
 ) {
     const colList = computed(() => {
-        if (props.columns !== void 0) {
+        if (props.columns) {
             return props.columns
         }
 
         // we infer columns from first row
         const row = props.rows[0]
+        const list: DlTableColumn[] = []
+        if (row) {
+            for (const key of Object.keys(row)) {
+                list.push({
+                    name: key,
+                    label: key.toUpperCase(),
+                    field: key,
+                    align: isNumber(row[key]) ? 'right' : 'left',
+                    sortable: true
+                })
+            }
+        }
 
-        return (
-            row !== void 0
-                ? Object.keys(row).map((name) => ({
-                      name,
-                      label: name.toUpperCase(),
-                      field: name,
-                      align: isNumber(row[name]) ? 'right' : 'left',
-                      sortable: true
-                  }))
-                : []
-        ) as DlTableColumn[]
+        return list
     })
 
     const computedCols = computed(() => {
         const { sortBy, descending } = computedPagination.value
 
-        const cols =
-            props.visibleColumns !== void 0
-                ? colList.value.filter(
-                      (col) =>
-                          col.required === true ||
-                          props.visibleColumns.includes(col.name) === true
-                  )
-                : colList.value
+        const cols = props.visibleColumns
+            ? colList.value.filter(
+                  (col) =>
+                      col.required === true ||
+                      props.visibleColumns.includes(col.name) === true
+              )
+            : colList.value
 
         const updatedCols = cols.map((col) => {
             const align = col.align || 'right'
@@ -57,30 +58,24 @@ export function useTableColumnSelection(
                 iconClass: `dl-table__sort-icon dl-table__sort-icon--${align}`,
                 thClass:
                     alignClass +
-                    (col.headerClasses !== void 0
-                        ? ' ' + col.headerClasses
-                        : '') +
+                    (col.headerClasses ? ' ' + col.headerClasses : '') +
                     (col.sortable === true ? ' sortable' : '') +
                     (col.name === sortBy
                         ? ` sorted ${descending === true ? 'sort-desc' : ''}`
                         : ''),
 
-                tdStyle:
-                    col.style !== void 0
-                        ? typeof col.style !== 'function'
-                            ? () => col.style
-                            : col.style
-                        : () => '',
+                tdStyle: col.style
+                    ? typeof col.style !== 'function'
+                        ? () => col.style
+                        : col.style
+                    : () => '',
 
-                tdClass:
-                    col.classes !== void 0
-                        ? typeof col.classes !== 'function'
-                            ? () => alignClass + ' ' + col.classes
-                            : (row: DlTableRow) =>
-                                  alignClass +
-                                  ' ' +
-                                  (col.classes as Function)(row)
-                        : () => alignClass
+                tdClass: col.classes
+                    ? typeof col.classes !== 'function'
+                        ? () => alignClass + ' ' + col.classes
+                        : (row: DlTableRow) =>
+                              alignClass + ' ' + (col.classes as Function)(row)
+                    : () => alignClass
             }
         })
 
@@ -96,7 +91,7 @@ export function useTableColumnSelection(
     })
 
     const computedColspan = computed(() => {
-        return props.tableColspan !== void 0
+        return props.tableColspan
             ? props.tableColspan
             : computedCols.value.length +
                   (hasSelectionMode.value === true ? 1 : 0) +

@@ -38,7 +38,7 @@ export default defineComponent({
         DlTooltip
     },
     props: {
-        props: { type: Object, default: () => {} },
+        props: { type: Object, default: null },
         autoWidth: Boolean
     },
     emits: ['click'],

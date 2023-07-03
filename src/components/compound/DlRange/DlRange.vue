@@ -250,7 +250,7 @@ export default defineComponent({
                 props.disabled !== true
                     ? getColor(props.color, 'dl-color-secondary')
                     : 'var(--dl-color-separator)',
-            zIndex: state.focus.value === 'min' ? 2 : void 0
+            zIndex: state.focus.value === 'min' ? 2 : null
         }))
 
         const maxThumbStyle = computed(() => ({
@@ -261,7 +261,7 @@ export default defineComponent({
                 props.disabled !== true
                     ? getColor(props.color, 'dl-color-secondary')
                     : 'var(--dl-color-separator)',
-            zIndex: state.focus.value === 'max' ? 2 : void 0
+            zIndex: state.focus.value === 'max' ? 2 : null
         }))
 
         const minThumbRef = ref(null)

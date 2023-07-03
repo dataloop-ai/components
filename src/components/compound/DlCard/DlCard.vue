@@ -344,7 +344,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: null
         }
     },
     emits: ['onUpdateDescription', 'onCardActive'],

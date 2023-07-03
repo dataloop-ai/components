@@ -7,8 +7,8 @@ import {
     useTableSort
 } from '../../../src/components/compound/DlTable/hooks/tableSort'
 import {
-    TableColumn,
-    TableProps
+    DlTableColumn,
+    DlTableProps
 } from '../../../src/components/compound/DlTable/types'
 
 describe('useTableSortProps', () => {
@@ -19,8 +19,8 @@ describe('useTableSortProps', () => {
 
 const props = {
     columnSortOrder: 'asc',
-    sortMethod: void 0
-} as unknown as TableProps
+    sortMethod: null
+} as unknown as DlTableProps
 
 const pagination: TablePagination = {
     sortBy: 'field',
@@ -31,7 +31,7 @@ const pagination: TablePagination = {
     maxPages: 5
 }
 
-const colList: TableColumn[] = []
+const colList: DlTableColumn[] = []
 
 const setPagination = vi.fn()
 
@@ -44,7 +44,7 @@ describe('useTableSort', () => {
         useTableSort(
             props,
             { value: pagination } as ComputedRef<TablePagination>,
-            { value: colList } as ComputedRef<TableColumn[]>,
+            { value: colList } as ComputedRef<DlTableColumn[]>,
             setPagination
         )
     )

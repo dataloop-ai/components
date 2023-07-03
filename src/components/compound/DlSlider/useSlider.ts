@@ -215,13 +215,13 @@ export default function ({
 
     function onPan(event: any) {
         if (event.isFinal === true) {
-            if (dragging.value !== void 0) {
+            if (dragging.value) {
                 updatePosition(event.evt)
                 // only if touch, because we also have mousedown/up:
                 if (event.touch === true) {
                     updateValue(true)
                 }
-                dragging.value = void 0
+                dragging.value = null
                 emit('pan', 'end')
             }
             active.value = false
