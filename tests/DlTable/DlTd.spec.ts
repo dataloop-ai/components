@@ -7,9 +7,7 @@ describe('DlTd', () => {
         let wrapper: any
 
         beforeAll(() => {
-            wrapper = mount(DlTd, {
-                props: {}
-            })
+            wrapper = mount(DlTd)
         })
 
         it('should mount the component', async () => {

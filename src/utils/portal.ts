@@ -19,13 +19,13 @@ export function closePortalMenus(vm: any, evt: Event) {
             if (vm.$props.separateClosePopup === true) {
                 return getParentVm(vm)
             }
-        } else if (vm.__dlPortalInnerRef !== void 0) {
+        } else if (vm.__dlPortalInnerRef) {
             // treat it as point of separation if parent is DlPopupProxy
             // (so mobile matches desktop behavior)
             // and hide it too
             const parent = getParentVm(vm)
 
-            if (parent !== void 0 && parent.$options.name === 'DlPopupProxy') {
+            if (parent && parent.$options.name === 'DlPopupProxy') {
                 vm.hide(evt)
                 return parent
             } else {
@@ -34,12 +34,12 @@ export function closePortalMenus(vm: any, evt: Event) {
         }
 
         vm = getParentVm(vm)
-    } while (vm !== void 0 && vm !== null)
+    } while (vm)
 }
 
 export function closePortals(vm: any, evt: Event, depth: number) {
-    while (depth !== 0 && vm !== void 0 && vm !== null) {
-        if (vm.__dlPortalInnerRef !== void 0) {
+    while (depth !== 0 && vm) {
+        if (vm.__dlPortalInnerRef) {
             depth--
 
             if (vm.$options.name === 'DlMenu') {

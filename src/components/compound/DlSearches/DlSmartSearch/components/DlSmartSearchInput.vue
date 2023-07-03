@@ -111,7 +111,7 @@
             @set-input-value="setInputValue"
         />
         <dl-menu
-            v-if="isDatePickerVisible"
+            v-if="isDatePickerVisible && focused"
             v-model="isDatePickerVisible"
             :disabled="disabled"
             :offset="[0, 3]"
@@ -126,7 +126,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue-demi'
+import { defineComponent, ref, PropType, nextTick } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
@@ -141,9 +141,9 @@ import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
     setCaret,
-    updateEditor
+    updateEditor,
+    isEligibleToChange
 } from '../utils'
-import { isEligibleToChange } from '../utils/utils'
 
 export default defineComponent({
     components: {
@@ -165,7 +165,7 @@ export default defineComponent({
         },
         styleModel: {
             type: Object as PropType<SyntaxColorSchema>,
-            default: () => {}
+            default: null
         },
         placeholder: {
             type: String,
@@ -272,8 +272,30 @@ export default defineComponent({
                 stringValue = [value, ''].join(' ')
             }
 
+            // to handle date suggestion modal to open automatically.
+            if (stringValue.includes('(dd/mm/yyyy)')) {
+                stringValue = stringValue.trimEnd()
+            }
+
+            const specialSuggestions = props.suggestions.filter((suggestion) =>
+                suggestion.startsWith('.')
+            )
+            for (const suggestion of specialSuggestions) {
+                if (stringValue.includes(suggestion)) {
+                    stringValue = stringValue.replace(
+                        ` ${suggestion}`,
+                        suggestion
+                    )
+                }
+            }
+
             emit('update:modelValue', stringValue)
         }
+
+        const debouncedSetModal = debounce(
+            () => (suggestionModal.value = true),
+            200
+        )
 
         return {
             input,
@@ -291,7 +313,8 @@ export default defineComponent({
             focused,
             isOverflow,
             isTyping,
-            scroll
+            scroll,
+            debouncedSetModal
         }
     },
     computed: {
@@ -414,12 +437,13 @@ export default defineComponent({
                     isEllipsisActive(this.$refs['input'] as Element) ||
                     this.hasEllipsis
             }
-            if (value.length === 0) {
-                this.focus()
-            }
-            if (isEndingWithDateIntervalPattern(value)) {
+
+            if (value.length && isEndingWithDateIntervalPattern(value)) {
                 this.isDatePickerVisible = true
                 this.suggestionModal = false
+            } else {
+                this.isDatePickerVisible = false
+                this.suggestionModal = true
             }
             this.scroll = (this.$refs.input as HTMLDivElement).offsetHeight > 40
         },
@@ -431,8 +455,9 @@ export default defineComponent({
             }
 
             if (!this.suggestionModal && val.length > 0 && this.focused) {
-                const deb = debounce(() => (this.suggestionModal = true), 200)
-                deb()
+                nextTick(() => {
+                    this.suggestionModal = true
+                })
             }
         },
         expanded(value) {
@@ -445,7 +470,9 @@ export default defineComponent({
 
                 this.setMenuOffset(isEligibleToChange(element, value))
 
-                this.focus()
+                if (value) {
+                    this.focus()
+                }
             })
         },
         focused(value) {
@@ -461,9 +488,9 @@ export default defineComponent({
             if (!val) {
                 this.datePickerSelection = null
 
-                setTimeout(() => {
+                nextTick(() => {
                     this.focus()
-                }, 1)
+                })
             }
         }
     },
@@ -505,6 +532,7 @@ export default defineComponent({
                     this.focused = true
                     return
                 }
+
                 element.scrollLeft = 0
                 element.scrollTop = 0
                 this.focused = false
@@ -540,6 +568,7 @@ export default defineComponent({
         },
         handleValueChange(e: Event) {
             this.isTyping = true
+
             const text = (e.target as HTMLElement).textContent
                 .toString()
                 .replaceAll(' ', ' ')

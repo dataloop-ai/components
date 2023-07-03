@@ -13,7 +13,10 @@ export const getLabel = (option: any) => {
 const ICON_SIZES = {
     s: '12px',
     m: '14px',
-    l: '16px'
+    l: '16px',
+    small: '12px',
+    medium: '14px',
+    large: '16px'
 }
 
 export const getLabelOfSelectedOption = (

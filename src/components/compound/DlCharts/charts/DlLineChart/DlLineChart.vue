@@ -104,7 +104,8 @@ import {
     watch,
     ref,
     computed,
-    PropType
+    PropType,
+    Component
 } from 'vue-demi'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
@@ -167,7 +168,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: null
         },
         ...CommonProps,
         ...ColumnChartProps
@@ -668,7 +669,7 @@ export default defineComponent({
             cssVars
         }
     }
-})
+}) as any as Component<typeof defaultLineChartProps>
 </script>
 
 <style scoped lang="scss">

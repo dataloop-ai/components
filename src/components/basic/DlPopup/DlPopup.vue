@@ -177,7 +177,7 @@ export default defineComponent({
         },
         scrollTarget: {
             type: String as PropType<Element | string>,
-            default: void 0
+            default: null
         },
         touchPosition: Boolean,
         maxHeight: { type: String, default: 'auto' },
@@ -188,7 +188,11 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => {}
+            default: () => ({} as DlEmptyStateProps)
+        },
+        zIndex: {
+            type: [Number, String],
+            default: 'var(--dl-z-index-popup)'
         }
     },
     emits: [
@@ -276,7 +280,8 @@ export default defineComponent({
                 '--popup-max-width': props.maxWidth,
                 '--popup-max-height': props.maxHeight,
                 '--popup-width': props.width,
-                '--popup-height': props.height
+                '--popup-height': props.height,
+                '--popup-z-index': props.zIndex ?? 'var(--dl-z-index-popup)'
             }
         })
 
@@ -308,7 +313,7 @@ export default defineComponent({
 
             showPortal()
 
-            absoluteOffset = void 0
+            absoluteOffset = null
 
             const offsetOnShow = setOffsetOnShow(evt as TouchEvent, {
                 contextMenu: props.contextMenu,
@@ -319,7 +324,7 @@ export default defineComponent({
 
             absoluteOffset = offsetOnShow as Record<any, any> | undefined
 
-            if (unwatchPosition === void 0) {
+            if (!unwatchPosition) {
                 unwatchPosition = watch(() => screen, updatePosition, {
                     deep: true
                 })
@@ -354,7 +359,7 @@ export default defineComponent({
         }
 
         function anchorCleanup(hiding: boolean) {
-            absoluteOffset = void 0
+            absoluteOffset = null
 
             unwatchPosition = updateUnwatchPosition(unwatchPosition)
 
@@ -370,7 +375,7 @@ export default defineComponent({
         }
 
         function configureScrollTarget() {
-            if (anchorEl.value !== null || props.scrollTarget !== void 0) {
+            if (anchorEl.value !== null || props.scrollTarget) {
                 (localScrollTarget as Ref<any>).value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget
@@ -484,7 +489,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dl-popup {
-    z-index: calc(var(--dl-z-index-menu) - 1);
+    z-index: var(--popup-z-index);
     position: fixed !important;
     padding: var(--dl-popup-padding, 10px 0 16px 0);
     border: 1px solid var(--dl-color-separator);

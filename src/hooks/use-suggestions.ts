@@ -76,7 +76,7 @@ const dateSuggestionPattern = '(dd/mm/yyyy)'
 let localSuggestions: Suggestion[] = []
 
 export const datePattern = new RegExp(
-    /(\(\d{2}\/\d{2}\/\d{4}\)\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+    /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
     'gi'
 )
 export const datePatternNoBrackets =
@@ -159,15 +159,26 @@ export const useSuggestions = (
 
             if (!field) continue
 
-            localSuggestions = getMatches(localSuggestions, field)
-            matchedField = getMatch(localSuggestions, field)
+            const fieldSeparated: any = field.split('.')
+
+            if (fieldSeparated.length > 1) {
+                localSuggestions = []
+                matchedField = field
+            } else {
+                localSuggestions = getMatches(localSuggestions, field)
+                matchedField = getMatch(localSuggestions, field)
+            }
 
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions = []
                 continue
             }
 
-            if (!matchedField || !isNextCharSpace(input, matchedField)) {
+            if (
+                !matchedField ||
+                (!isNextCharSpace(input, matchedField) &&
+                    fieldSeparated.length === 1)
+            ) {
                 continue
             }
 
@@ -191,7 +202,24 @@ export const useSuggestions = (
 
             localSuggestions = getOperators(ops)
 
-            if (!operator) continue
+            if (!operator) {
+                const dotSeparated = matchedField.split('.')
+                let fieldOf = schema
+                for (const key of dotSeparated) {
+                    fieldOf = fieldOf[key] as Schema
+                }
+
+                if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
+                    const toConcat: string[] = []
+                    for (const key of Object.keys(fieldOf)) {
+                        if (key === '*') continue
+                        toConcat.push(`.${key}`)
+                    }
+                    localSuggestions = localSuggestions.concat(toConcat)
+                }
+
+                continue
+            }
 
             localSuggestions = getMatches(localSuggestions, operator)
             matchedOperator = getMatch(localSuggestions, operator)
@@ -399,10 +427,16 @@ const isValidString = (str: string) => {
 const getOperatorByDataType = (dataType: string) => {
     if (dataType === 'boolean') return ['$eq', '$neq']
 
-    return Object.keys(operatorToDataTypeMap).filter((key) => {
+    if (dataType === 'object') {
+        return []
+    }
+
+    const operators = Object.keys(operatorToDataTypeMap).filter((key) => {
         const value = operatorToDataTypeMap[key]
         return value.length === 0 || value.includes(dataType)
     })
+
+    return operators
 }
 
 const getOperators = (op: string[]) => op.map((o) => operators[o])
@@ -425,10 +459,6 @@ const getDataType = (
 
     const nestedKey = aliasedKey.split('.')
 
-    if (nestedKey.length === 1) {
-        return (schema[nestedKey[0]] as string | string[]) ?? null
-    }
-
     let value = schema[nestedKey[0]] as Schema
     if (!value) return null
 
@@ -440,6 +470,10 @@ const getDataType = (
             return 'any'
         }
         value = (value[nextKey] as Schema) ?? null
+    }
+
+    if (isObject(value) && !Array.isArray(value)) {
+        return 'object'
     }
 
     return value as unknown as string | string[] | null

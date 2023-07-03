@@ -7,11 +7,11 @@
                     @change="selectLayout"
                 >
                     <option
-                        v-for="(layout, index) in layouts"
-                        :key="index"
-                        :value="index"
+                        v-for="(layoutItem, layoutIndex) in layouts"
+                        :key="layoutIndex"
+                        :value="layoutIndex"
                     >
-                        {{ layout.name }}
+                        {{ layoutItem.name }}
                     </option>
                 </select>
                 <button
@@ -42,9 +42,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
@@ -75,9 +73,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
@@ -89,9 +85,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
@@ -104,9 +98,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
@@ -125,9 +117,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>

@@ -37,7 +37,7 @@ import { defineComponent, PropType } from 'vue-demi'
 import { DlTabs } from '../../../DlTabs'
 import { DlTabPanels, DlTabPanel } from '../../../DlTabPanels'
 import { Filters } from '../../../DlSearches/DlSmartSearch/types'
-import { getTabItems } from '../utils/utils'
+import { getTabItems } from '../utils'
 import FiltersQuery from './FiltersQuery.vue'
 import { v4 } from 'uuid'
 

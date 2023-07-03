@@ -1,11 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { DlListItem } from '../src'
 import { describe, it, expect, beforeAll } from 'vitest'
-import {
-    itemBorder,
-    itemColor,
-    itemCursor
-} from '../src/components/basic/DlListItem/utils'
+import { itemColor, itemCursor } from '../src/components/basic/DlListItem/utils'
 
 describe('DlListItem', () => {
     describe('When mounting', () => {
@@ -26,15 +22,9 @@ describe('DlListItem', () => {
             expect(wrapper.props()).toStrictEqual({
                 disabled: false,
                 clickable: false,
-                bordered: false,
-                isHighlighted: false,
-                as: 'div',
-                startIcon: '',
-                endIcon: '',
-                startIconColor: 'dl-color-darker',
-                endIconColor: 'dl-color-darker',
-                startIconSize: '16px',
-                endIconSize: '16px',
+                separator: false,
+                highlighted: false,
+                type: 'div',
                 withWave: false,
                 height: null,
                 padding: null
@@ -88,14 +78,10 @@ describe('DlListItem', () => {
         const cursorActionable = itemCursor(true, false)
         const cursorDisabled = itemCursor(false, true)
 
-        const borderedItem = itemBorder(true)
-
         expect(colorDisabled).toEqual('var(--dl-color-disabled)')
         expect(colorEnabled).toEqual('var(--dl-color-darker)')
 
         expect(cursorActionable).toEqual('pointer')
         expect(cursorDisabled).toEqual('not-allowed')
-
-        expect(borderedItem).toEqual('1px solid var(--dl-color-separator)')
     })
 })

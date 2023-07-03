@@ -8,6 +8,7 @@ import {
     removeClickOutside,
     ClickOutsideEvent
 } from '../../../utils/click-outside'
+import { isNumber } from 'lodash'
 
 interface ClickOutsideProps {
     persistent: boolean
@@ -62,12 +63,12 @@ export const setOffsetOnShow = (
     evt: TouchEvent,
     { contextMenu, touchPosition, anchorEl, absoluteOffset }: OffsetOnShowProps
 ) => {
-    if (evt !== void 0 && (touchPosition || contextMenu)) {
+    if (evt && (touchPosition || contextMenu)) {
         const pos = position(evt)
 
-        if (pos.top !== void 0 && pos.left !== void 0 && anchorEl.value) {
+        if (isNumber(pos.top) && isNumber(pos.left) && anchorEl.value) {
             const { top, left } = anchorEl.value.getBoundingClientRect()
-            if (top !== void 0 && left !== void 0) {
+            if (isNumber(top) && isNumber(left)) {
                 return {
                     left: pos.left - left,
                     top: pos.top - top
@@ -99,11 +100,11 @@ export const avoidAutoCloseFn = (
 export const updateUnwatchPosition = (
     unwatchPosition: Function | undefined
 ): undefined => {
-    if (unwatchPosition !== void 0) {
+    if (unwatchPosition) {
         unwatchPosition()
     }
 
-    return void 0
+    return null
 }
 
 export const refocusTargetFn = (
@@ -113,7 +114,7 @@ export const refocusTargetFn = (
     if (
         refocusTarget !== null &&
         // menu was hidden from code or ESC plugin
-        (evt === void 0 ||
+        (evt ||
             // menu was not closed from a mouse or touch clickOutside
             evt.dlClickOutside !== true)
     ) {

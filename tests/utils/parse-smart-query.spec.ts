@@ -3,6 +3,10 @@ import {
     parseSmartQuery,
     stringifySmartQuery
 } from '../../src/utils/parse-smart-query'
+import {
+    replaceStringifiedDatesWithJSDates,
+    replaceJSDatesWithStringifiedDates
+} from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 
 describe('parseSmartQuery', () => {
     it('should return the correct query for a single key-value pair', () => {
@@ -60,6 +64,25 @@ describe('parseSmartQuery', () => {
             falsy: false
         })
     })
+
+    it('should not replace with alias non fitting words', () => {
+        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const expected = {
+            $or: [
+                {
+                    createdAt: 1685059200000
+                },
+                {
+                    dir: 'test AND test OR me Test',
+                    hidden: true
+                }
+            ]
+        }
+        const replaced = replaceStringifiedDatesWithJSDates(string)
+        const result = parseSmartQuery(replaced)
+
+        expect(result).to.deep.equal(expected)
+    })
 })
 
 describe('stringifySmartQuery', () => {
@@ -111,5 +134,25 @@ describe('stringifySmartQuery', () => {
         const result = stringifySmartQuery(query)
         const parsed = parseSmartQuery(result)
         expect(parsed).toEqual(query)
+    })
+
+    it('should not replace with alias non fitting words', () => {
+        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const expected = {
+            $or: [
+                {
+                    createdAt: 1685059200000 // in utc
+                },
+                {
+                    dir: 'test AND test OR me Test',
+                    hidden: true
+                }
+            ]
+        }
+        const replaced = replaceJSDatesWithStringifiedDates(expected, [
+            'createdAt'
+        ])
+        const result = stringifySmartQuery(replaced)
+        expect(result).toEqual(string)
     })
 })

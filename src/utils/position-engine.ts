@@ -84,7 +84,7 @@ export function parsePosition(pos: string): ParsedPosition {
 export function getAnchorProps(el: HTMLElement, offset: number[]) {
     let { top, left, right, bottom, width, height } = el.getBoundingClientRect()
 
-    if (offset !== void 0) {
+    if (offset) {
         top -= offset[1]
         left -= offset[0]
         bottom += offset[1]
@@ -101,8 +101,8 @@ export function getAnchorProps(el: HTMLElement, offset: number[]) {
         bottom,
         width,
         height,
-        middle: left + (right - left) / 2,
-        center: top + (bottom - top) / 2
+        middle: left + (right - left) / 2 + offset[0] ?? 0,
+        center: top + (bottom - top) / 2 + offset[1] ?? 0
     }
 }
 
@@ -145,7 +145,7 @@ interface ElementStyle {
 export function setPosition(cfg: PositionConfig) {
     const isMobile = isMobileOrTablet()
 
-    if (isMobile && window.visualViewport !== void 0) {
+    if (isMobile && window.visualViewport) {
         // uses the dl-position-engine CSS class
 
         const el = document.body.style
@@ -169,7 +169,7 @@ export function setPosition(cfg: PositionConfig) {
     // the new positioning
     const { scrollLeft, scrollTop } = cfg.el!
 
-    if (cfg.absoluteOffset === void 0) {
+    if (!cfg.absoluteOffset) {
         anchorProps = getAnchorProps(cfg.anchorEl, cfg.offset)
     } else {
         const { top: anchorTop, left: anchorLeft } =
@@ -245,7 +245,7 @@ export function setPosition(cfg: PositionConfig) {
         left: props.left + 'px'
     }
 
-    if (props.maxHeight !== void 0) {
+    if (props.maxHeight) {
         elStyle.maxHeight = props.maxHeight + 'px'
 
         if (anchorProps.height > props.maxHeight) {
@@ -253,7 +253,7 @@ export function setPosition(cfg: PositionConfig) {
         }
     }
 
-    if (props.maxWidth !== void 0) {
+    if (props.maxWidth) {
         elStyle.maxWidth = props.maxWidth + 'px'
 
         if (anchorProps.width > props.maxWidth) {

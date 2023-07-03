@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.17.97",
+  "version": "0.17.117",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -23,14 +23,16 @@
   },
   "dependencies": {
     "@dataloop-ai/icons": "^3.0.6",
-    "@types/lodash": "^4.14.184",
     "@types/flat": "^5.0.2",
+    "@types/lodash": "^4.14.184",
     "chart.js": "^3.9.1",
     "flat": "^5.0.2",
+    "highlight.js": "^11.8.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "sass": "^1.51.0",
     "sass-loader": "^12.6.0",
+    "simple-code-editor": "^2.0.8",
     "uuid": "^8.3.2",
     "v-wave": "^1.5.0",
     "vanilla-jsoneditor": "^0.10.2",

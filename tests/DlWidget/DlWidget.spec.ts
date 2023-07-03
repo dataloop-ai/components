@@ -17,13 +17,8 @@ describe('DlWidget', () => {
         let wrapper: any
 
         beforeAll(() => {
-            wrapper = mount(DlWidget, {
-                data() {
-                    return {
-                        isDragging: true
-                    }
-                }
-            })
+            wrapper = mount(DlWidget)
+            wrapper.vm.isDragging = true
         })
         it('should add draggable class to widget', () => {
             expect(wrapper.vm.widgetClasses).toMatch('dl-widget__drag')
