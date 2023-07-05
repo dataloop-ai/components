@@ -29,42 +29,44 @@
         </div>
         <div class="dl-smart-search__buttons">
             <slot name="buttons">
-                <div
-                    style="height: 28px"
-                    class="dl-smart-search__search-btn-wrapper"
-                >
-                    <dl-button
-                        icon="icon-dl-search"
-                        :styles="{
-                            height: '28px'
-                        }"
-                        :disabled="disabled"
-                        @click="emitSearchQuery"
-                    />
-                </div>
-
-                <slot name="extra-actions" />
-
-                <dl-button
-                    class="dl-smart-search__buttons--filters"
-                    shaded
-                    outlined
-                    size="s"
-                >
-                    Saved Filters
-                    <dl-menu
-                        v-model="filtersModel"
-                        :offset="[0, 5]"
-                        anchor="bottom middle"
-                        self="top middle"
+                <div style="display: flex; align-items: center">
+                    <div
+                        style="height: 28px"
+                        class="dl-smart-search__search-btn-wrapper"
                     >
-                        <dl-smart-search-filters
-                            :filters="filters"
-                            @filters-select="handleFiltersSelect"
-                            @filters-delete="handleFiltersDelete"
+                        <dl-button
+                            icon="icon-dl-search"
+                            :styles="{
+                                height: '28px'
+                            }"
+                            :disabled="disabled"
+                            @click="emitSearchQuery"
                         />
-                    </dl-menu>
-                </dl-button>
+                    </div>
+
+                    <slot name="extra-actions" />
+
+                    <dl-button
+                        class="dl-smart-search__buttons--filters"
+                        shaded
+                        outlined
+                        size="s"
+                    >
+                        Saved Filters
+                        <dl-menu
+                            v-model="filtersModel"
+                            :offset="[0, 5]"
+                            anchor="bottom middle"
+                            self="top middle"
+                        >
+                            <dl-smart-search-filters
+                                :filters="filters"
+                                @filters-select="handleFiltersSelect"
+                                @filters-delete="handleFiltersDelete"
+                            />
+                        </dl-menu>
+                    </dl-button>
+                </div>
             </slot>
         </div>
         <dl-dialog-box
@@ -235,7 +237,7 @@ import {
     SyntaxColorSchema
 } from './types'
 import {
-    replaceAliases,
+    revertAliases,
     setAliases,
     replaceStringifiedDatesWithJSDates,
     createColorSchema,
@@ -354,9 +356,10 @@ export default defineComponent({
         )
 
         const handleInputModel = (value: string) => {
-            inputModel.value = value
+            const aliased = setAliases(value, props.aliases)
+            inputModel.value = aliased
             const bracketless = removeBrackets(value)
-            const cleanedAliases = replaceAliases(bracketless, props.aliases)
+            const cleanedAliases = revertAliases(bracketless, props.aliases)
             const json = toJSON(cleanedAliases)
             if (!isEqual(json, props.modelValue)) {
                 emit('update:modelValue', json)
@@ -364,10 +367,10 @@ export default defineComponent({
             const stringified = JSON.stringify(json)
             activeQuery.value.query = stringified
             nextTick(() => {
-                findSuggestions(value)
+                findSuggestions(aliased)
             })
             isQuerying.value = false
-            oldInputQuery.value = value
+            oldInputQuery.value = aliased
         }
 
         const debouncedInputModel = debounce(handleInputModel, 300)
@@ -548,7 +551,7 @@ export default defineComponent({
             const json = JSON.stringify(
                 this.toJSON(removeBrackets(this.inputModel))
             )
-            const newQuery = replaceAliases(json, this.aliases)
+            const newQuery = revertAliases(json, this.aliases)
             if (newQuery && newQuery !== '{}') {
                 this.jsonEditorQuery = newQuery
             }
