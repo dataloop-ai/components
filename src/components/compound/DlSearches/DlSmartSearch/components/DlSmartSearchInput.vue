@@ -1,5 +1,6 @@
 <template>
     <div
+        :id="`DlSmartSearchInput${uuid}`"
         class="dl-smart-search-input"
         :style="cssVars"
     >
@@ -19,7 +20,7 @@
                 </div>
                 <div class="dl-smart-search-input__textarea-wrapper">
                     <div
-                        id="editor"
+                        :id="`dl-smart-search-input-text-area-${uuid}`"
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
@@ -27,7 +28,7 @@
                         :contenteditable="!disabled"
                         @keypress="keyPress"
                         @input="handleValueChange"
-                        @click="focus"
+                        @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
@@ -104,6 +105,7 @@
         </div>
         <dl-suggestions-dropdown
             v-model="suggestionModal"
+            :parent-id="`${uuid}`"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
@@ -144,6 +146,7 @@ import {
     updateEditor,
     isEligibleToChange
 } from '../utils'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
@@ -298,6 +301,7 @@ export default defineComponent({
         )
 
         return {
+            uuid: v4(),
             input,
             label,
             hasEllipsis,
@@ -455,9 +459,7 @@ export default defineComponent({
             }
 
             if (!this.suggestionModal && val.length > 0 && this.focused) {
-                nextTick(() => {
-                    this.suggestionModal = true
-                })
+                this.suggestionModal = true
             }
         },
         expanded(value) {
