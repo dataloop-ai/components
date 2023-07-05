@@ -64,7 +64,10 @@ export function useTreeTableRowSelection(
 
     const rowsSelectedNumber = computed(() => propsSelected.value.length)
 
-    function isRowSelected(rowKey: string) {
+    function isRowSelected(rowKey: string | Function) {
+        if (typeof rowKey === 'function') {
+            return false
+        }
         return selectedKeys.value[rowKey] === true
     }
 

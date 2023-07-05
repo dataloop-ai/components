@@ -143,17 +143,9 @@
             </template>
             <template #default="props">
                 <DlTr
-                    v-show="
-                        props.item.isExpandedParent || props.item.level === 1
-                    "
+                    v-show="isRowVisible(props)"
                     :key="getRowKey(props.item)"
-                    :class="
-                        isRowSelected(getRowKey(props.item))
-                            ? 'selected'
-                            : hasAnyAction
-                                ? ' cursor-pointer'
-                                : ''
-                    "
+                    :class="getSelectedRowClass(props.item)"
                     :no-hover="noHover"
                     @click="onTrClick($event, props.item, props.pageIndex)"
                     @dblclick="
@@ -187,11 +179,12 @@
                                 })
                             "
                         >
+                            <!--
+                            need refactor
+                            -->
                             <DlCheckbox
                                 :color="color"
-                                :model-value="
-                                    isRowSelected(getRowKey(props.item))
-                                "
+                                :model-value="isRowSelected(getRowKey)"
                                 @update:model-value="
                                     (adding, evt) =>
                                         updateSelectionIerarchy(
@@ -229,13 +222,8 @@
                         >
                             <template #icon="{}">
                                 <DlIcon
-                                    v-if="
-                                        (props.item.children || []).length >
-                                            0 && colIndex === 0
-                                    "
-                                    :icon="`icon-dl-${
-                                        props.item.expanded ? 'down' : 'right'
-                                    }-chevron`"
+                                    v-if="hasFirstColChildren(props, colIndex)"
+                                    :icon="getExpandIcon(props.item.expanded)"
                                     @click="
                                         updateExpandedRow(
                                             !props.item.expanded,
@@ -272,7 +260,6 @@
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
                             />
-
                             <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-with"
@@ -352,124 +339,45 @@
                         "
                         name="body"
                     >
-                        <DlTrTree
-                            v-show="row.isExpandedParent || row.level === 1"
-                            :key="getRowKey(row)"
-                            :class="
-                                isRowSelected(getRowKey(row))
-                                    ? 'selected'
-                                    : hasAnyAction
-                                        ? ' cursor-pointer'
-                                        : ''
-                            "
+                        <DlTrTreeView
+                            :row="row"
+                            :is-row-selected="isRowSelected(getRowKey(row))"
+                            :has-any-action="hasAnyAction"
                             :no-hover="noHover"
-                            @click="onTrClick($event, row, pageIndex)"
-                            @dblclick="onTrDblClick($event, row, pageIndex)"
-                            @contextmenu="
-                                onTrContextMenu($event, row, pageIndex)
+                            :page-index="pageIndex"
+                            :has-draggable-rows="hasDraggableRows"
+                            :has-selection-mode="hasSelectionMode"
+                            :bind-body-selection="
+                                getBodySelectionScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex
+                                })
                             "
-                        >
-                            <td v-if="hasDraggableRows">
-                                <dl-icon
-                                    class="draggable-icon"
-                                    icon="icon-dl-drag"
-                                    size="12px"
-                                />
-                            </td>
-                            <td
-                                v-if="hasSelectionMode"
-                                class="dl-table--col-auto-with"
-                            >
-                                <slot
-                                    name="body-selection"
-                                    v-bind="
-                                        getBodySelectionScope({
-                                            key: getRowKey(row),
-                                            row,
-                                            pageIndex
-                                        })
-                                    "
-                                >
-                                    <!--
-                                    Here we have to change
-                                    -->
-                                    <!--
-                                    <DlCheckbox
-                                        :color="color"
-                                        :model-value="
-                                            isRowSelected(getRowKey(row))
-                                        "
-                                        @update:model-value="
-                                            (adding, evt) =>
-                                                updateSelection(
-                                                    [getRowKey(row)],
-                                                    [row],
-                                                    adding,
-                                                    evt
-                                                )
-                                        "
-                                    />
-                                    -->
-                                    <DlCheckbox
-                                        :color="color"
-                                        :model-value="
-                                            isRowSelected(getRowKey(row))
-                                        "
-                                        @update:model-value="
-                                            (adding, evt) =>
-                                                updateSelectionIerarchy(
-                                                    adding,
-                                                    evt,
-                                                    row
-                                                )
-                                        "
-                                    />
-                                </slot>
-                            </td>
-                            <slot
-                                v-for="(col, colIndex) in computedCols"
-                                v-bind="
-                                    getBodyCellScope({
-                                        key: getRowKey(row),
-                                        row,
-                                        pageIndex,
-                                        col
-                                    })
-                                "
-                                :name="
-                                    hasSlotByName(`body-cell-${col.name}`)
-                                        ? `body-cell-${col.name}`
-                                        : 'body-cell'
-                                "
-                            >
-                                <DlTdTree
-                                    :class="col.tdClass(row)"
-                                    :style="
-                                        col.tdStyle(row) +
-                                            getTdStyles(row, colIndex)
-                                    "
-                                >
-                                    <template #icon="{}">
-                                        <DlIcon
-                                            v-if="
-                                                (row.children || []).length >
-                                                    0 && colIndex === 0
-                                            "
-                                            :icon="`icon-dl-${
-                                                row.expanded ? 'down' : 'right'
-                                            }-chevron`"
-                                            @click="
-                                                updateExpandedRow(
-                                                    !row.expanded,
-                                                    getRowKey(row)
-                                                )
-                                            "
-                                        />
-                                    </template>
-                                    {{ getCellValue(col, row) }}
-                                </DlTdTree>
-                            </slot>
-                        </DlTrTree>
+                            :bind-body-cell-scope="
+                                getBodyCellScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex,
+                                    col
+                                })
+                            "
+                            :color="color"
+                            :computed-cols="computedCols"
+                            :model-value="isRowSelected(getRowKey(row))"
+                            :slot-name="slotNames"
+                            :computed-rows="computedRows"
+                            @update:model-value="
+                                (adding, evt) =>
+                                    updateSelectionIerarchy(adding, evt, row)
+                            "
+                            @rowClick="onTrClick"
+                            @rowDoubleClick="onTrDblClick"
+                            @rowContextMenu="onTrContextMenu"
+                            @updateExpandedRow="
+                                updateExpandedRow(!row.expanded, getRowKey(row))
+                            "
+                        />
                     </slot>
                     <slot
                         name="bottom-row"
@@ -506,8 +414,8 @@
                     </div>
 
                     <slot
-                        v-bind="marginalsScope"
                         name="pagination"
+                        v-bind="marginalsScope"
                     >
                         <dl-pagination
                             v-if="displayPagination"
@@ -588,6 +496,7 @@ import { setTrSpacing } from './utils/trSpacing'
 import { v4 } from 'uuid'
 import { RecordStringAny } from './types'
 import { getFromChildren } from './utils/getFromChildren'
+import DlTrTreeView from './views/DlTrTreeView.vue'
 
 export default defineComponent({
     name: 'DlTreeTable',
@@ -600,7 +509,8 @@ export default defineComponent({
         DlCheckbox,
         DlTrTree,
         DlTdTree,
-        DlVirtualScroll
+        DlVirtualScroll,
+        DlTrTreeView
     },
     props: {
         columns: { type: Array, default: () => [] as RecordStringAny[] },
@@ -820,7 +730,7 @@ export default defineComponent({
 
         const tableRows = ref(props.rows)
 
-        const filteredSortedRows = computed(() => {
+        const filteredSortedRows = computed<DlTableRow[]>(() => {
             let rows = tableRows.value as DlTableRow[]
 
             if (tableRows.value.length === 0) {
@@ -888,7 +798,7 @@ export default defineComponent({
             () => filteredSortedRows.value.length
         )
 
-        const computedRows = computed(() => {
+        const computedRows = computed<DlTableRow[]>(() => {
             let rows = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
@@ -1236,6 +1146,33 @@ export default defineComponent({
             lastPage
         })
 
+        const isRowVisible = (props: any) => {
+            return props.item.isExpandedParent || props.item.level === 1
+        }
+        const hasChildren = (props: any) => {
+            return (props.item.children || []).length > 0
+        }
+
+        const isFirstColumn = (index: number) => index === 0
+
+        const getExpandIcon = (isExpanded: boolean) => {
+            return `icon-dl-${isExpanded ? 'down' : 'right'}-chevron`
+        }
+
+        const getSelectedRowClass = () => {
+            const cursor = hasAnyAction ? ' cursor-pointer' : ''
+
+            return isRowSelected(getRowKey.value) ? 'selected' : cursor
+        }
+
+        const slotNames = computed(() => {
+            return slots.length ? slots.map((slot: any) => slot.name) : null
+        })
+
+        const hasFirstColChildren = (props: any, colIndex: number) => {
+            return hasChildren(props) && isFirstColumn(colIndex)
+        }
+
         return {
             uuid: `dl-table-${v4()}`,
             rootRef,
@@ -1287,7 +1224,14 @@ export default defineComponent({
             setTrSpacing,
             updateExpandedRow,
             getTdStyles,
-            updateSelectionIerarchy
+            updateSelectionIerarchy,
+            isRowVisible,
+            hasChildren,
+            isFirstColumn,
+            getExpandIcon,
+            getSelectedRowClass,
+            slotNames,
+            hasFirstColChildren
         }
     }
 })
