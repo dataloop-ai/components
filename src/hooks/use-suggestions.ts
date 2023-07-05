@@ -203,7 +203,7 @@ export const useSuggestions = (
             localSuggestions = getOperators(ops)
 
             if (!operator) {
-                const dotSeparated = matchedField.split('.')
+                const dotSeparated = matchedField.split('.').filter((el) => el)
                 let fieldOf = schema
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
@@ -457,7 +457,7 @@ const getDataType = (
 ): string | string[] | null => {
     const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
 
-    const nestedKey = aliasedKey.split('.')
+    const nestedKey = aliasedKey.split('.').filter((el) => el)
 
     let value = schema[nestedKey[0]] as Schema
     if (!value) return null

@@ -97,7 +97,7 @@ export default defineComponent({
          * The color of the button
          */
         color: {
-            type: String! as PropType<keyof typeof colorNames>,
+            type: String! as PropType<keyof typeof colorNames | string>,
             default: ''
         },
         /**

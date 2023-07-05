@@ -25,6 +25,7 @@ interface AnchorElements {
 
 export const useAnchorProps = {
     target: {
+        type: [String, Boolean],
         default: true
     },
     noParentEvent: Boolean,
@@ -142,7 +143,6 @@ export default function useAnchor({
             setAnchorEl(proxy.$el.parentNode as HTMLElement)
         } else {
             let el = props.target
-
             if (typeof props.target === 'string') {
                 try {
                     el = document.querySelector(props.target)

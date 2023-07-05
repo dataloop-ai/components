@@ -10,6 +10,7 @@
             fit-container
             :model-value="modelValue"
             :arrow-nav-items="suggestions"
+            :auto-close="false"
             @update:modelValue="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
@@ -31,7 +32,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlMenu, DlList } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
 
@@ -46,6 +47,10 @@ export default defineComponent({
         event: 'update:modelValue'
     },
     props: {
+        parentId: {
+            type: String,
+            required: true
+        },
         expanded: {
             type: Boolean,
             default: false
@@ -91,7 +96,12 @@ export default defineComponent({
             emit('set-input-value', item)
         }
 
+        const defaultTarget = computed(() => {
+            return `#dl-smart-search-input-text-area-${props.parentId}`
+        })
+
         return {
+            defaultTarget,
             setHighlightedIndex,
             handleSelectedItem,
             highlightedIndex,
@@ -99,11 +109,6 @@ export default defineComponent({
             onHide,
             emitModelValue,
             handleOption
-        }
-    },
-    computed: {
-        defaultTarget() {
-            return '.dl-smart-search-input__textarea'
         }
     }
 })

@@ -9,6 +9,7 @@
             class="dl-smart-search__input-wrapper"
         >
             <dl-smart-search-input
+                ref="smartSearchInput"
                 :status="computedStatus"
                 :style-model="defineStyleModel"
                 :with-save-button="true"
@@ -27,40 +28,44 @@
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div
-                style="height: 28px"
-                class="dl-smart-search__search-btn-wrapper"
-            >
-                <dl-button
-                    icon="icon-dl-search"
-                    :styles="{
-                        height: '28px'
-                    }"
-                    :disabled="disabled"
-                    @click="emitSearchQuery"
-                />
-            </div>
-
-            <dl-button
-                class="dl-smart-search__buttons--filters"
-                shaded
-                outlined
-                size="s"
-            >
-                Saved Filters
-                <dl-menu
-                    v-model="filtersModel"
-                    :offset="[0, 5]"
-                    anchor="bottom middle"
-                    self="top middle"
+            <slot name="buttons">
+                <div
+                    style="height: 28px"
+                    class="dl-smart-search__search-btn-wrapper"
                 >
-                    <dl-smart-search-filters
-                        :filters="filters"
-                        @filters-select="handleFiltersSelect"
-                        @filters-delete="handleFiltersDelete"
+                    <dl-button
+                        icon="icon-dl-search"
+                        :styles="{
+                            height: '28px'
+                        }"
+                        :disabled="disabled"
+                        @click="emitSearchQuery"
                     />
-                </dl-menu>
-            </dl-button>
+                </div>
+
+                <slot name="extra-actions" />
+
+                <dl-button
+                    class="dl-smart-search__buttons--filters"
+                    shaded
+                    outlined
+                    size="s"
+                >
+                    Saved Filters
+                    <dl-menu
+                        v-model="filtersModel"
+                        :offset="[0, 5]"
+                        anchor="bottom middle"
+                        self="top middle"
+                    >
+                        <dl-smart-search-filters
+                            :filters="filters"
+                            @filters-select="handleFiltersSelect"
+                            @filters-delete="handleFiltersDelete"
+                        />
+                    </dl-menu>
+                </dl-button>
+            </slot>
         </div>
         <dl-dialog-box
             v-model="jsonEditorModel"
@@ -222,7 +227,13 @@ import {
     Alias,
     removeBrackets
 } from '../../../../hooks/use-suggestions'
-import { Filters, Query, ColorSchema, SearchStatus } from './types'
+import {
+    Filters,
+    Query,
+    ColorSchema,
+    SearchStatus,
+    SyntaxColorSchema
+} from './types'
 import {
     replaceAliases,
     setAliases,
@@ -480,11 +491,8 @@ export default defineComponent({
                 '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): Record<string, string> {
-            return createColorSchema(
-                this.colorSchema,
-                this.aliases
-            ) as any as Record<string, string>
+        defineStyleModel(): SyntaxColorSchema {
+            return createColorSchema(this.colorSchema, this.aliases)
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
