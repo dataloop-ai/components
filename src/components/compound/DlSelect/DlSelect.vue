@@ -192,6 +192,7 @@
                             {{ computedAllItemsLabel }}
                         </slot>
                     </dl-select-option>
+
                     <!-- Virtual scroll -->
                     <dl-virtual-scroll
                         v-if="optionsCount > MAX_ITEMS_PER_LIST"
@@ -241,43 +242,47 @@
                             </slot>
                         </dl-select-option>
                     </dl-virtual-scroll>
-
                     <!-- Else normal list -->
-                    <dl-select-option
-                        v-for="(option, optionIndex) in filteredOptions"
-                        v-else
-                        :key="getKeyForOption(option)"
-                        clickable
-                        :multiselect="multiselect"
-                        :class="{
-                            selected:
-                                option === selectedOption && highlightSelected
-                        }"
-                        :style="
-                            optionIndex === highlightedIndex
-                                ? 'background-color: var(--dl-color-fill)'
-                                : ''
-                        "
-                        :with-wave="withWave"
-                        :model-value="modelValue"
-                        :value="getOptionValue(option)"
-                        :highlight-selected="highlightSelected"
-                        :count="getOptionCount(option)"
-                        :children="getOptionChildren(option)"
-                        :capitalized="capitalizedOptions"
-                        @update:model-value="handleModelValueUpdate"
-                        @click="selectOption(option)"
-                        @selected="handleSelected"
-                        @deselected="handleDeselected"
-                        @depth-change="handleDepthChange"
-                    >
-                        <slot name="option">
-                            <span
-                                class="inner-option"
-                                v-html="getOptionHtml(option)"
-                            />
-                        </slot>
-                    </dl-select-option>
+                    <div v-else>
+                        <dl-select-option
+                            v-for="(option, optionIndex) in filteredOptions"
+                            :key="getKeyForOption(option)"
+                            clickable
+                            :multiselect="multiselect"
+                            :class="{
+                                selected:
+                                    option === selectedOption &&
+                                    highlightSelected
+                            }"
+                            :style="
+                                optionIndex === highlightedIndex
+                                    ? 'background-color: var(--dl-color-fill)'
+                                    : ''
+                            "
+                            :with-wave="withWave"
+                            :model-value="modelValue"
+                            :value="getOptionValue(option)"
+                            :highlight-selected="highlightSelected"
+                            :count="getOptionCount(option)"
+                            :children="getOptionChildren(option)"
+                            :capitalized="capitalizedOptions"
+                            @update:model-value="handleModelValueUpdate"
+                            @click="selectOption(option)"
+                            @selected="handleSelected"
+                            @deselected="handleDeselected"
+                            @depth-change="handleDepthChange"
+                        >
+                            <slot
+                                :opt="option"
+                                name="option"
+                            >
+                                <span
+                                    class="inner-option"
+                                    v-html="getOptionHtml(option)"
+                                />
+                            </slot>
+                        </dl-select-option>
+                    </div>
                     <dl-list-item v-if="hasAfterOptions && !noOptions">
                         <dl-item-section>
                             <slot name="after-options" />
@@ -781,7 +786,8 @@ export default defineComponent({
                     : this.options[this.selectedIndex]
 
             if (this.searchable) {
-                (this.$refs.searchInput as HTMLInputElement).value =
+                const searchInput = this.$refs.searchInput as HTMLInputElement
+                searchInput.value =
                     typeof selectedOption === 'string'
                         ? selectedOption
                         : (selectedOption as Record<string, any>)?.label
@@ -812,7 +818,8 @@ export default defineComponent({
                     (e.target as HTMLInputElement).value.trim() === ''
 
                 this.$nextTick(() => {
-                    (this.$refs.menu as any)?.updatePosition()
+                    const menu = this.$refs.menu as any
+                    menu?.updatePosition()
                 })
             }
             const searchValue = (e.target as HTMLInputElement).value
@@ -820,14 +827,18 @@ export default defineComponent({
             this.$emit('search-input', searchValue)
         },
         getOptionHtml(option: DlSelectOptionType) {
-            return `<span>${(this.capitalizedOptions
-                ? typeof this.getOptionLabel(option) === 'string' &&
-                  this.getOptionLabel(option).toLowerCase()
-                : this.getOptionLabel(option)
-            ).replace(
+            let label = `${this.getOptionLabel(option)}`
+            if (this.capitalizedOptions) {
+                label = label.toLowerCase()
+            }
+
+            const highlightedHtml = label.replace(
                 this.searchInputValue,
                 `<span style="background: var(--dl-color-warning)">${this.searchInputValue}</span>`
-            )}</span>`
+            )
+            const html = `<span>${highlightedHtml}</span>`
+
+            return html
         },
         handleSearchBlur(e: Event): void {
             if (this.searchable) {
