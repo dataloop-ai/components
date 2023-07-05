@@ -22,7 +22,7 @@
     <div
         v-else
         :id="uuid"
-        style="display: inline"
+        :style="[inlineStyles, computedStyles]"
         @click="$emit('click', $event)"
         @mousedown="$emit('mousedown', $event)"
         @mouseup="$emit('mouseup', $event)"
@@ -156,7 +156,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-icon {
-    display: inline-block;
+    display: inline-flex;
     color: var(--dl-icon-color);
     font-size: var(--dl-icon-font-size);
 }
