@@ -96,7 +96,9 @@ import { Bar } from '../../types/typedCharts'
 import {
     CommonProps,
     ColumnChartProps,
-    defaultColumnChartProps
+    defaultColumnChartProps,
+    CommonPropsType,
+    ColumnChartPropsType
 } from '../../types/props'
 import {
     defineComponent,
@@ -105,7 +107,8 @@ import {
     ref,
     computed,
     PropType,
-    Component
+    Component,
+    ComponentPropsOptions
 } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
@@ -150,6 +153,13 @@ ChartJS.register(
     LineElement
 )
 
+type ComponentType = {
+    id: string
+    isEmpty: boolean
+    emptyStateProps: DlEmptyStateProps
+} & CommonPropsType &
+    ColumnChartPropsType
+
 export default defineComponent({
     name: 'DlColumnChart',
     components: {
@@ -171,7 +181,7 @@ export default defineComponent({
         },
         ...CommonProps,
         ...ColumnChartProps
-    },
+    } as { [key: string]: any },
     setup(props) {
         const { variables } = useThemeVariables()
 
@@ -637,7 +647,7 @@ export default defineComponent({
     data() {
         return {}
     }
-}) as any as Component<typeof ColumnChartProps>
+})
 </script>
 
 <style scoped lang="scss">
