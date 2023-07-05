@@ -1,6 +1,9 @@
 import { computed, ComputedRef, ref } from 'vue-demi'
 import { DlTableProps, DlTableRow } from '../../DlTable/types'
 import { convertToNestedObject } from './convertToNestedObject'
+import { RecordStringAny } from '../types'
+
+type booleanStringPartial = boolean | 'partial'
 
 export const useTreeTableRowSelectionProps = {
     selection: {
@@ -22,10 +25,11 @@ export function useTreeTableRowSelection(
     computedRows: ComputedRef<DlTableRow[]>,
     getRowKey: ComputedRef<(val: string | DlTableRow) => any>
 ) {
-    const propsSelected = ref<(string | DlTableRow)[]>([])
+    const selectedRows = ref<(string | DlTableRow)[]>([])
+    const selectedItemsNested = ref([])
 
     const selectedKeys = computed(() => {
-        return propsSelected.value
+        return selectedRows.value
             .map(getRowKey.value)
             .reduce((acc, key: string) => {
                 acc[key] = true
@@ -35,6 +39,7 @@ export function useTreeTableRowSelection(
     })
 
     const hasSelectionMode = computed(() => {
+        console.log('test')
         return props.selection !== 'none'
     })
 
@@ -62,14 +67,14 @@ export function useTreeTableRowSelection(
             )
     )
 
-    const rowsSelectedNumber = computed(() => propsSelected.value.length)
+    const rowsSelectedNumber = computed(() => selectedRows.value.length)
 
-    function isRowSelected(rowKey: string) {
-        return selectedKeys.value[rowKey] === true
+    function getRowByKey(rowKey: string) {
+        selectedItemsNested.value.findIndex((item) => item[rowKey] === rowKey)
     }
 
     function clearSelection() {
-        propsSelected.value = []
+        selectedRows.value = []
     }
 
     function updateSelection(
@@ -100,19 +105,69 @@ export function useTreeTableRowSelection(
             }
         } else {
             if (added === true) {
-                payload = propsSelected.value.concat(rows as string[])
+                payload = selectedRows.value.concat(rows as string[])
             } else {
-                payload = propsSelected.value.filter(
+                payload = selectedRows.value.filter(
                     (row) => !keys.includes(getRowKey.value(row))
                 )
             }
         }
 
-        propsSelected.value = payload
+        selectedRows.value = payload
 
         const { selectedItems } = convertToNestedObject(payload)
+        selectedItemsNested.value = selectedItems
 
         emit('selectedItems', selectedItems)
+    }
+
+    function isIncludedInSelectedNestedItems(
+        row: any,
+        rowKey: string
+    ): boolean {
+        const index = selectedItemsNested.value.findIndex(
+            (item) => item[rowKey] === row[rowKey]
+        )
+
+        return index > -1
+    }
+
+    function isRowSelected(
+        rowKey: string | Function,
+        rowKeyValue: string
+    ): booleanStringPartial {
+        let getOriginalRowByRowKey: any
+        let getSelectedRowByRowKey: RecordStringAny
+
+        if (typeof rowKey === 'string') {
+            const originalRows = selectedRows.value.filter((item) =>
+                isIncludedInSelectedNestedItems(item, rowKey)
+            )
+            getOriginalRowByRowKey = originalRows.find(
+                (originalItem: any) => originalItem[rowKey] === rowKeyValue
+            )
+            getSelectedRowByRowKey = selectedItemsNested.value.find(
+                (selectedItem: any) => {
+                    if (getOriginalRowByRowKey) {
+                        return (
+                            selectedItem[rowKey] ===
+                            getOriginalRowByRowKey[rowKey]
+                        )
+                    }
+                    return false
+                }
+            )
+        }
+        if (getSelectedRowByRowKey && getOriginalRowByRowKey) {
+            if (
+                getOriginalRowByRowKey.children?.length !==
+                getSelectedRowByRowKey.children?.length
+            ) {
+                return 'partial'
+            }
+        }
+
+        return selectedKeys.value[rowKeyValue] === true
     }
 
     return {

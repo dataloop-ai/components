@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlPageLayout } from '../../../../components'
+import { DlPageLayout } from '../../components'
 
 export default defineComponent({
     name: 'DlStudioLayout',

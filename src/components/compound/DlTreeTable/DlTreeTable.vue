@@ -94,6 +94,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="
@@ -148,7 +149,7 @@
                     "
                     :key="getRowKey(props.item)"
                     :class="
-                        isRowSelected(getRowKey(props.item))
+                        isRowSelected(rowKey, getRowKey(props.item))
                             ? 'selected'
                             : hasAnyAction
                                 ? ' cursor-pointer'
@@ -188,10 +189,14 @@
                             "
                         >
                             <DlCheckbox
+                                style="padding-left: 10px"
                                 :color="color"
                                 :model-value="
-                                    isRowSelected(getRowKey(props.item))
+                                    isRowSelected(rowKey, getRowKey(props.item))
                                 "
+                                :indeterminate-value="true"
+                                :false-value="false"
+                                :true-value="true"
                                 @update:model-value="
                                     (adding, evt) =>
                                         updateSelectionIerarchy(
@@ -288,6 +293,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
@@ -345,7 +351,7 @@
                                 key: getRowKey(row),
                                 row,
                                 pageIndex,
-                                trClass: isRowSelected(getRowKey(row))
+                                trClass: isRowSelected(rowKey, getRowKey(row))
                                     ? 'selected'
                                     : ''
                             })
@@ -356,7 +362,7 @@
                             v-show="row.isExpandedParent || row.level === 1"
                             :key="getRowKey(row)"
                             :class="
-                                isRowSelected(getRowKey(row))
+                                isRowSelected(rowKey, getRowKey(row))
                                     ? 'selected'
                                     : hasAnyAction
                                         ? ' cursor-pointer'
@@ -393,28 +399,19 @@
                                     <!--
                                     Here we have to change
                                     -->
-                                    <!--
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="
-                                            isRowSelected(getRowKey(row))
+                                            isRowSelected(
+                                                rowKey,
+                                                getRowKey(row)
+                                            )
                                         "
-                                        @update:model-value="
-                                            (adding, evt) =>
-                                                updateSelection(
-                                                    [getRowKey(row)],
-                                                    [row],
-                                                    adding,
-                                                    evt
-                                                )
-                                        "
-                                    />
-                                    -->
-                                    <DlCheckbox
-                                        :color="color"
-                                        :model-value="
-                                            isRowSelected(getRowKey(row))
-                                        "
+                                        toggle-indeterminate
+                                        :indeterminate-value="true"
+                                        :false-value="false"
+                                        :true-value="true"
                                         @update:model-value="
                                             (adding, evt) =>
                                                 updateSelectionIerarchy(
@@ -963,7 +960,7 @@ export default defineComponent({
             someRowsSelected.value === true ? null : allRowsSelected.value
         )
 
-        const selectionCheckboxIndeterminateVal = computed(
+        const selectionCheckboxIndeterminateVal = computed<boolean>(
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
@@ -1169,7 +1166,7 @@ export default defineComponent({
                 injectProp(
                     data,
                     'selected',
-                    () => isRowSelected(data.key),
+                    () => isRowSelected(props.rowKey, data.key),
                     (adding: boolean, evt: any) => {
                         updateSelection([data.key], [data.row], adding, evt)
                     }
