@@ -15,13 +15,19 @@ describe('DlSliderInput', () => {
         const _sliderInput = 'input[type="number"]'
 
         expect(wrapper.find(_sliderInput).exists()).toBe(true)
+        // @ts-ignore
+        await window.delay(300)
 
         const sliderInput = wrapper.find(_sliderInput)
 
         await sliderInput.setValue('')
+        // @ts-ignore
+        await window.delay(300)
         expect(wrapper.emitted()['update:model-value']).not.toBeDefined()
 
         await sliderInput.setValue('1')
+        // @ts-ignore
+        await window.delay(300)
 
         expect(wrapper.emitted()['update:model-value'][0]).toEqual([1])
     })

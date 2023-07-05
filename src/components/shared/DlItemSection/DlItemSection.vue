@@ -53,6 +53,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-item__section {
+    display: flex;
     padding-left: 0;
     padding-right: 0;
     font-size: var(--dl-font-size-body);

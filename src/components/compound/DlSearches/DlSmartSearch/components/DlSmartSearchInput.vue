@@ -453,14 +453,15 @@ export default defineComponent({
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
+            nextTick(() => {
+                if (!val.length) {
+                    this.suggestionModal = false
+                }
 
-            if (!val.length) {
-                this.suggestionModal = false
-            }
-
-            if (!this.suggestionModal && val.length > 0 && this.focused) {
-                this.suggestionModal = true
-            }
+                if (!this.suggestionModal && val.length > 0 && this.focused) {
+                    this.suggestionModal = true
+                }
+            })
         },
         expanded(value) {
             this.$nextTick(() => {
