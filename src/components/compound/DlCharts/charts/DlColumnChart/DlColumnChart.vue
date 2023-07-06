@@ -281,7 +281,7 @@ export default defineComponent({
                 props.legendProps?.datasets || [],
                 props.data?.datasets || [],
                 'label'
-            )
+            ) as { [key: string]: any }[]
         )
 
         const getChartBackup = () => {
