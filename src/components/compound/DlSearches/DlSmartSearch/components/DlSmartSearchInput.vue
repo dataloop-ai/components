@@ -1,5 +1,6 @@
 <template>
     <div
+        :id="`DlSmartSearchInput${uuid}`"
         class="dl-smart-search-input"
         :style="cssVars"
     >
@@ -19,7 +20,7 @@
                 </div>
                 <div class="dl-smart-search-input__textarea-wrapper">
                     <div
-                        id="editor"
+                        :id="`dl-smart-search-input-text-area-${uuid}`"
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
@@ -27,7 +28,7 @@
                         :contenteditable="!disabled"
                         @keypress="keyPress"
                         @input="handleValueChange"
-                        @click="focus"
+                        @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
@@ -104,6 +105,7 @@
         </div>
         <dl-suggestions-dropdown
             v-model="suggestionModal"
+            :parent-id="`${uuid}`"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
@@ -144,6 +146,7 @@ import {
     updateEditor,
     isEligibleToChange
 } from '../utils'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
@@ -265,11 +268,25 @@ export default defineComponent({
                         .join(' ')
                         .replace('  ', ' ')
                 } else {
-                    query.splice(-1)
+                    if (query[query.length - 1].endsWith('.')) {
+                        query[query.length - 1] = query[
+                            query.length - 1
+                        ].replace('.', '')
+                    } else {
+                        query.splice(-1)
+                    }
                     stringValue = [...query, value, ''].join(' ')
                 }
             } else {
-                stringValue = [value, ''].join(' ')
+                if (query[query.length - 1].endsWith('.')) {
+                    query[query.length - 1] = query[query.length - 1].replace(
+                        '.',
+                        ''
+                    )
+                    stringValue = [...query, value, ''].join(' ')
+                } else {
+                    stringValue = [value, ''].join(' ')
+                }
             }
 
             // to handle date suggestion modal to open automatically.
@@ -280,6 +297,7 @@ export default defineComponent({
             const specialSuggestions = props.suggestions.filter((suggestion) =>
                 suggestion.startsWith('.')
             )
+
             for (const suggestion of specialSuggestions) {
                 if (stringValue.includes(suggestion)) {
                     stringValue = stringValue.replace(
@@ -298,6 +316,7 @@ export default defineComponent({
         )
 
         return {
+            uuid: v4(),
             input,
             label,
             hasEllipsis,
@@ -449,16 +468,15 @@ export default defineComponent({
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
+            nextTick(() => {
+                if (!val.length) {
+                    this.suggestionModal = false
+                }
 
-            if (!val.length) {
-                this.suggestionModal = false
-            }
-
-            if (!this.suggestionModal && val.length > 0 && this.focused) {
-                nextTick(() => {
+                if (!this.suggestionModal && val.length > 0 && this.focused) {
                     this.suggestionModal = true
-                })
-            }
+                }
+            })
         },
         expanded(value) {
             this.$nextTick(() => {

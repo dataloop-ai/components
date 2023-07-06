@@ -96,7 +96,9 @@ import { Line as DlLine } from '../../types/typedCharts'
 import {
     CommonProps,
     ColumnChartProps,
-    defaultLineChartProps
+    defaultLineChartProps,
+    ColumnChartPropsType,
+    CommonPropsType
 } from '../../types/props'
 import {
     defineComponent,
@@ -150,6 +152,12 @@ ChartJS.register(
     LineElement,
     TimeScale
 )
+type ComponentType = {
+    id: string
+    isEmpty: boolean
+    emptyStateProps: DlEmptyStateProps
+} & CommonPropsType &
+    ColumnChartPropsType
 
 export default defineComponent({
     name: 'DlLineChart',
@@ -172,7 +180,7 @@ export default defineComponent({
         },
         ...CommonProps,
         ...ColumnChartProps
-    },
+    } as { [key: string]: any },
     setup(props, { slots }) {
         const { variables } = useThemeVariables()
 
@@ -669,7 +677,7 @@ export default defineComponent({
             cssVars
         }
     }
-}) as any as Component<typeof defaultLineChartProps>
+})
 </script>
 
 <style scoped lang="scss">
