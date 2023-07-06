@@ -58,6 +58,7 @@ import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
+import DlTreeTableDemo from './DlTreeTableDemo.vue'
 import DlGridDemo from './DlGridDemo.vue'
 import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
@@ -87,6 +88,7 @@ export default {
     DlThDemo,
     DlTdDemo,
     DlTableDemo,
+    DlTreeTableDemo,
     DlPaginationDemo,
     DlDateTimeRangeDemo,
     DlSmartSearchDemo,

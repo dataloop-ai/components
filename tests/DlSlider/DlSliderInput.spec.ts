@@ -7,7 +7,7 @@ describe('DlSliderInput', () => {
         let wrapper: any
         const _sliderInput = 'input[type="number"]'
 
-        beforeAll(() => {
+        beforeAll(async () => {
             wrapper = mount(DlSliderInput, {
                 props: {
                     min: -10,
