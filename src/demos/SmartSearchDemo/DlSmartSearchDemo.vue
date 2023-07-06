@@ -22,6 +22,7 @@
             style="width: 100px"
             class="props"
         />
+        { "metadata.system.width": 5 }
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
@@ -44,7 +45,7 @@
         <br>
         Test second if they work on same page..
         <dl-smart-search
-            v-model="queryObject"
+            v-model="queryObject2"
             :aliases="[]"
             :schema="schema2"
             :color-schema="colorSchema"
@@ -180,6 +181,7 @@ export default defineComponent({
             strictState: false,
             isLoading: false,
             queryObject: {},
+            queryObject2: {},
             textQuery: '',
             filters
         }

@@ -1,6 +1,6 @@
 export const getInputValue = (value: string, min: number, max: number) => {
-    if (parseInt(value) > max || parseInt(value) < min) {
-        return { value: (parseInt(value) > max ? max : min).toString() }
+    if (parseFloat(value) > max || parseFloat(value) < min) {
+        return { value: (parseFloat(value) > max ? max : min).toString() }
     }
 
     return { value }

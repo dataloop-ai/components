@@ -109,26 +109,29 @@ export function replaceJSDatesWithStringifiedDates(
         return json
     }
 
-    const flat: { [key: string]: any } = flatten(json)
-    for (const key of Object.keys(flat)) {
-        const value = flat[key]
+    for (const key of Object.keys(json)) {
+        if (typeof json[key] === 'object') {
+            json[key] = replaceJSDatesWithStringifiedDates(json[key], dateKeys)
+            continue
+        }
+
+        const value = json[key]
         const keyToCheck = key.split('.').pop()
 
         if (dateKeys.includes(keyToCheck)) {
-            flat[key] = formatToStringDate(value)
+            json[key] = formatToStringDate(value)
         }
     }
 
-    return unflatten(flat) as {
-        [key: string]: any
-    }
+    return json
 }
 
-export function replaceAliases(json: string, aliases: Alias[]) {
+export function revertAliases(json: string, aliases: Alias[]) {
     let newJson = json
-    aliases.forEach((alias) => {
-        newJson = newJson.replaceAll(alias.alias, alias.key)
-    })
+    for (const alias of aliases) {
+        const regex = new RegExp(`${alias.alias}`, 'gi')
+        newJson = newJson.replace(regex, alias.key)
+    }
     return newJson
 }
 

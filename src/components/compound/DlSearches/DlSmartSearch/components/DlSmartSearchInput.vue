@@ -268,11 +268,25 @@ export default defineComponent({
                         .join(' ')
                         .replace('  ', ' ')
                 } else {
-                    query.splice(-1)
+                    if (query[query.length - 1].endsWith('.')) {
+                        query[query.length - 1] = query[
+                            query.length - 1
+                        ].replace('.', '')
+                    } else {
+                        query.splice(-1)
+                    }
                     stringValue = [...query, value, ''].join(' ')
                 }
             } else {
-                stringValue = [value, ''].join(' ')
+                if (query[query.length - 1].endsWith('.')) {
+                    query[query.length - 1] = query[query.length - 1].replace(
+                        '.',
+                        ''
+                    )
+                    stringValue = [...query, value, ''].join(' ')
+                } else {
+                    stringValue = [value, ''].join(' ')
+                }
             }
 
             // to handle date suggestion modal to open automatically.
@@ -283,6 +297,7 @@ export default defineComponent({
             const specialSuggestions = props.suggestions.filter((suggestion) =>
                 suggestion.startsWith('.')
             )
+
             for (const suggestion of specialSuggestions) {
                 if (stringValue.includes(suggestion)) {
                     stringValue = stringValue.replace(
@@ -453,14 +468,15 @@ export default defineComponent({
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
+            nextTick(() => {
+                if (!val.length) {
+                    this.suggestionModal = false
+                }
 
-            if (!val.length) {
-                this.suggestionModal = false
-            }
-
-            if (!this.suggestionModal && val.length > 0 && this.focused) {
-                this.suggestionModal = true
-            }
+                if (!this.suggestionModal && val.length > 0 && this.focused) {
+                    this.suggestionModal = true
+                }
+            })
         },
         expanded(value) {
             this.$nextTick(() => {
