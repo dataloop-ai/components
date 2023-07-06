@@ -188,7 +188,8 @@ export default defineComponent({
 }
 input {
     position: absolute;
-    opacity: 0;
+    // to deal with quasar conflicts.
+    opacity: 0 !important;
     margin: 0;
     width: 100%;
     height: 100%;
