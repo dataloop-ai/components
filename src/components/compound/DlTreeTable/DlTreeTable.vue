@@ -94,6 +94,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="
@@ -145,7 +146,7 @@
                 <DlTr
                     v-show="isRowVisible(props)"
                     :key="getRowKey(props.item)"
-                    :class="getSelectedRowClass(props.item)"
+                    :class="getSelectedRowClass(rowKey, props.item)"
                     :no-hover="noHover"
                     @click="onTrClick($event, props.item, props.pageIndex)"
                     @dblclick="
@@ -179,12 +180,15 @@
                                 })
                             "
                         >
-                            <!--
-                            need refactor
-                            -->
                             <DlCheckbox
+                                style="padding-left: 10px"
                                 :color="color"
-                                :model-value="isRowSelected(getRowKey)"
+                                :model-value="
+                                    isRowSelected(rowKey, getRowKey(props.item))
+                                "
+                                :indeterminate-value="true"
+                                :false-value="false"
+                                :true-value="true"
                                 @update:model-value="
                                     (adding, evt) =>
                                         updateSelectionIerarchy(
@@ -275,6 +279,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
@@ -332,7 +337,7 @@
                                 key: getRowKey(row),
                                 row,
                                 pageIndex,
-                                trClass: isRowSelected(getRowKey(row))
+                                trClass: isRowSelected(rowKey, getRowKey(row))
                                     ? 'selected'
                                     : ''
                             })
@@ -364,7 +369,7 @@
                             "
                             :color="color"
                             :computed-cols="computedCols"
-                            :model-value="isRowSelected(getRowKey(row))"
+                            :model-value="isRowSelected(rowKey, getRowKey(row))"
                             :slot-name="slotNames"
                             :computed-rows="computedRows"
                             @update:model-value="
@@ -873,7 +878,7 @@ export default defineComponent({
             someRowsSelected.value === true ? null : allRowsSelected.value
         )
 
-        const selectionCheckboxIndeterminateVal = computed(
+        const selectionCheckboxIndeterminateVal = computed<boolean>(
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
@@ -1079,7 +1084,7 @@ export default defineComponent({
                 injectProp(
                     data,
                     'selected',
-                    () => isRowSelected(data.key),
+                    () => isRowSelected(props.rowKey, data.key),
                     (adding: boolean, evt: any) => {
                         updateSelection([data.key], [data.row], adding, evt)
                     }
