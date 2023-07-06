@@ -28,6 +28,9 @@
                 <DlCheckbox
                     :color="color"
                     :model-value="modelValue"
+                    :indeterminate-value="true"
+                    :false-value="false"
+                    :true-value="true"
                     @update:model-value="
                         (adding, evt) => emitUpdateModelValue(adding, evt)
                     "

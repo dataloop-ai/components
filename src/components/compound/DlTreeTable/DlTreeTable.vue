@@ -191,7 +191,7 @@
                                 :true-value="true"
                                 @update:model-value="
                                     (adding, evt) =>
-                                        updateSelectionIerarchy(
+                                        updateSelectionHierarchy(
                                             adding,
                                             evt,
                                             props.item
@@ -346,7 +346,9 @@
                     >
                         <DlTrTreeView
                             :row="row"
-                            :is-row-selected="isRowSelected(getRowKey(row))"
+                            :is-row-selected="
+                                isRowSelected(rowKey, getRowKey(row))
+                            "
                             :has-any-action="hasAnyAction"
                             :no-hover="noHover"
                             :page-index="pageIndex"
@@ -374,7 +376,7 @@
                             :computed-rows="computedRows"
                             @update:model-value="
                                 (adding, evt) =>
-                                    updateSelectionIerarchy(adding, evt, row)
+                                    updateSelectionHierarchy(adding, evt, row)
                             "
                             @rowClick="onTrClick"
                             @rowDoubleClick="onTrDblClick"
@@ -896,7 +898,7 @@ export default defineComponent({
                 val
             )
         }
-        function updateSelectionIerarchy(
+        function updateSelectionHierarchy(
             adding: boolean,
             event: any,
             row: any
@@ -1167,7 +1169,9 @@ export default defineComponent({
         const getSelectedRowClass = () => {
             const cursor = hasAnyAction ? ' cursor-pointer' : ''
 
-            return isRowSelected(getRowKey.value) ? 'selected' : cursor
+            return isRowSelected(props.rowKey, getRowKey.value)
+                ? 'selected'
+                : cursor
         }
 
         const slotNames = computed(() => {
@@ -1229,7 +1233,7 @@ export default defineComponent({
             setTrSpacing,
             updateExpandedRow,
             getTdStyles,
-            updateSelectionIerarchy,
+            updateSelectionHierarchy,
             isRowVisible,
             hasChildren,
             isFirstColumn,

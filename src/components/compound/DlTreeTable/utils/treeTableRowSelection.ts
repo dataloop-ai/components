@@ -133,7 +133,7 @@ export function useTreeTableRowSelection(
 
     function isRowSelected(
         rowKey: string | Function,
-        rowKeyValue: string
+        rowKeyValue: string | Function
     ): booleanStringPartial {
         let getOriginalRowByRowKey: any
         let getSelectedRowByRowKey: RecordStringAny
