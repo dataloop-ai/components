@@ -1,3 +1,4 @@
+import { isUndefined } from 'lodash'
 import { ref, watch } from 'vue-demi'
 
 function getVal(val: string[]) {
@@ -25,7 +26,7 @@ export function useTableRowExpand(props: any, emit: Function) {
     }
 
     function setExpanded(val: string[]) {
-        if (props.expanded !== void 0) {
+        if (props.expanded !== null && !isUndefined(props.expanded)) {
             emit('update:expanded', val)
         } else {
             innerExpanded.value = val

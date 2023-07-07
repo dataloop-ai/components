@@ -250,7 +250,7 @@ export default defineComponent({
     cursor: not-allowed;
     color: var(--dl-color-disabled);
     & * {
-        pointer-events: none;
+        pointer-events: auto;
         color: var(--dl-color-disabled);
     }
 }
@@ -279,7 +279,7 @@ input {
 }
 
 .sub-text {
-    padding-left: 30px;
+    padding-left: var(--dl-checkbox-sub-label-left-padding, 20px);
     width: 80%;
     color: var(--dl-color-medium);
     word-break: break-all;

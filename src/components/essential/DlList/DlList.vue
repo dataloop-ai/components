@@ -1,6 +1,6 @@
 <template>
     <component
-        :is="tag"
+        :is="type"
         :id="uuid"
         :class="classes"
     >
@@ -18,7 +18,7 @@ export default defineComponent({
         separator: Boolean,
         padding: Boolean,
         clickable: Boolean,
-        tag: {
+        type: {
             type: String,
             default: 'div'
         }

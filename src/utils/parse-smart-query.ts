@@ -2,7 +2,20 @@
 
 import { isBoolean, isFinite, isNumber, isObject, isString } from 'lodash'
 
+export function isDatePattern(str: string) {
+    const datePattern = new RegExp(
+        /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+        'gi'
+    )
+    const dates = str.match(datePattern) ?? []
+    return dates.length > 0
+}
+
 const GeneratePureValue = (value: any) => {
+    if (value === '') {
+        return null
+    }
+
     if (typeof value === 'string') {
         if (value === 'true') {
             return true
@@ -22,6 +35,8 @@ const GeneratePureValue = (value: any) => {
     return value
 }
 
+const Operators: string[] = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+
 /**
  * Method to convert a DlSmartSearch query string to Mongo based JSON query
  *
@@ -30,42 +45,100 @@ const GeneratePureValue = (value: any) => {
  */
 export const parseSmartQuery = (query: string) => {
     const queryArr = query.split(' OR ')
+    for (let i = 0; i < queryArr.length; i++) {
+        const term: string = queryArr[i]
+        let withOperator = false
+        if (Operators.includes(term.split(' ')[1])) {
+            withOperator = true
+        }
+
+        if (!withOperator) {
+            if (i > 0) {
+                queryArr[i - 1] += ` OR ${term}`
+                queryArr.splice(i, 1)
+            }
+        }
+    }
     const orTerms: { [key: string]: any }[] = []
 
     for (const query of queryArr) {
         const andTerms = query.split(' AND ')
+        for (let i = 0; i < andTerms.length; i++) {
+            const term: string = andTerms[i]
+            let withOperator = false
+            for (const op of Operators) {
+                if (term.includes(op)) {
+                    withOperator = true
+                    break
+                }
+            }
+
+            if (!withOperator) {
+                if (i > 0) {
+                    andTerms[i - 1] += ` AND ${term}`
+                    andTerms.splice(i, 1)
+                }
+            }
+        }
 
         const andQuery: { [key: string]: any } = {}
         let queryValue: any
 
         let key: string
         let value: string | number | object
+        let pureValue:
+            | string
+            | number
+            | object
+            | boolean
+            | null
+            | (string | number | object | boolean)[]
 
         for (const term of andTerms) {
+            pureValue = null
+
             switch (true) {
                 case term.includes('>='):
                     [key, value] = term.split('>=').map((x) => x.trim())
-                    andQuery[key] = { $gte: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue !== null) {
+                        andQuery[key] = { $gte: pureValue }
+                    }
                     break
                 case term.includes('<='):
                     [key, value] = term.split('<=').map((x) => x.trim())
-                    andQuery[key] = { $lte: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue !== null) {
+                        andQuery[key] = { $lte: pureValue }
+                    }
                     break
                 case term.includes('>'):
                     [key, value] = term.split('>').map((x) => x.trim())
-                    andQuery[key] = { $gt: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue !== null) {
+                        andQuery[key] = { $gt: pureValue }
+                    }
                     break
                 case term.includes('<'):
                     [key, value] = term.split('<').map((x) => x.trim())
-                    andQuery[key] = { $lt: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue !== null) {
+                        andQuery[key] = { $lt: pureValue }
+                    }
                     break
                 case term.includes('!='):
                     [key, value] = term.split('!=').map((x) => x.trim())
-                    andQuery[key] = { $ne: GeneratePureValue(value) }
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue !== null) {
+                        andQuery[key] = { $ne: pureValue }
+                    }
                     break
                 case term.includes('='):
                     [key, value] = term.split('=').map((x) => x.trim())
-                    andQuery[key] = GeneratePureValue(value)
+                    pureValue = GeneratePureValue(value)
+                    if (pureValue !== null) {
+                        andQuery[key] = pureValue
+                    }
                     break
                 case term.includes('IN'):
                     [key, value] = term.split('IN').map((x) => x.trim())
@@ -78,14 +151,24 @@ export const parseSmartQuery = (query: string) => {
                             .map((x) => x.trim())[1]
                             .split(',')
                             .map((x) => GeneratePureValue(x.trim()))
-                        andQuery[key] = { $nin: GeneratePureValue(queryValue) }
+                            .filter((x) => x)
+
+                        pureValue = GeneratePureValue(queryValue)
+                        if (pureValue !== null && Array.isArray(pureValue)) {
+                            andQuery[key] = { $nin: pureValue }
+                        }
                     } else {
                         queryValue = term
                             .split('IN')
                             .map((x) => x.trim())[1]
                             .split(',')
                             .map((x) => GeneratePureValue(x.trim()))
-                        andQuery[key] = { $in: GeneratePureValue(queryValue) }
+                            .filter((x) => x)
+
+                        pureValue = GeneratePureValue(queryValue)
+                        if (pureValue !== null && Array.isArray(pureValue)) {
+                            andQuery[key] = { $in: pureValue }
+                        }
                     }
                     break
             }
@@ -199,6 +282,8 @@ export const stringifySmartQuery = (query: { [key: string]: any }) => {
             result += `${key} = ${value}`
         } else if (isBoolean(value)) {
             result += `${key} = ${value}`
+        } else if (isDatePattern(value)) {
+            result += `${key} = (${value})`
         } else {
             result += `${key} = '${value}'`
         }

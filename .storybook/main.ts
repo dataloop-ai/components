@@ -18,6 +18,9 @@ module.exports = {
             build: {
                 minify: false,
                 sourcemap: false
+            },
+            optimizeDeps: {
+                include: ['highlight.js']
             }
         })
     },

@@ -200,7 +200,7 @@ export default {
             }
         },
         flat: {
-            name: 'falt',
+            name: 'flat',
             defaultValue: false,
             control: 'boolean',
             description: 'The button will be transparent and have no outline',

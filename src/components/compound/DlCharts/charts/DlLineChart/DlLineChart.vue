@@ -96,7 +96,9 @@ import { Line as DlLine } from '../../types/typedCharts'
 import {
     CommonProps,
     ColumnChartProps,
-    defaultLineChartProps
+    defaultLineChartProps,
+    ColumnChartPropsType,
+    CommonPropsType
 } from '../../types/props'
 import {
     defineComponent,
@@ -104,10 +106,11 @@ import {
     watch,
     ref,
     computed,
-    PropType
+    PropType,
+    Component
 } from 'vue-demi'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -149,6 +152,12 @@ ChartJS.register(
     LineElement,
     TimeScale
 )
+type ComponentType = {
+    id: string
+    isEmpty: boolean
+    emptyStateProps: DlEmptyStateProps
+} & CommonPropsType &
+    ColumnChartPropsType
 
 export default defineComponent({
     name: 'DlLineChart',
@@ -166,12 +175,12 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
-            default: () => {}
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
         },
         ...CommonProps,
         ...ColumnChartProps
-    },
+    } as { [key: string]: any },
     setup(props, { slots }) {
         const { variables } = useThemeVariables()
 
@@ -332,7 +341,7 @@ export default defineComponent({
                 props.legendProps?.datasets || [],
                 props.data?.datasets || [],
                 'label'
-            )
+            ) as { [key: string]: any }[]
         )
 
         const onChartLeave = () => {

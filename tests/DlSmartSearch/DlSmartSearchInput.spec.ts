@@ -58,7 +58,7 @@ describe('DlSmartSearchInput', () => {
     })
 
     it('Will update the v-model', async () => {
-        const wrapper = mount(DlSmartSearchInput, {
+        const wrapper = mount(DlSmartSearchInput as any, {
             props: {
                 modelValue: 'a',
                 styleModel: { fields: { values: '', color: 'red' } }
@@ -68,7 +68,8 @@ describe('DlSmartSearchInput', () => {
         // @ts-ignore // handled in jest setup
         await window.delay(500)
         await wrapper.vm.$nextTick()
-        expect(wrapper.vm.$refs.input.innerHTML).toBe('search')
+        const inputRef = wrapper.vm.$refs.input as HTMLInputElement
+        expect(inputRef.innerHTML).toBe('search')
     })
 
     it('will show suggestions', async () => {
@@ -147,14 +148,22 @@ describe('DlSmartSearchInput', () => {
                 modelValue: 'model'
             }
         })
-        wrapper.vm.keyPress({ key: 'backspace', preventDefault: vi.fn() })
-        wrapper.vm.keyPress({ key: 'Enter', preventDefault: vi.fn() })
+        wrapper.vm.keyPress({
+            key: 'backspace',
+            preventDefault: vi.fn()
+        } as any as KeyboardEvent)
+        wrapper.vm.keyPress({
+            key: 'Enter',
+            preventDefault: vi.fn()
+        } as any as KeyboardEvent)
         expect(wrapper.emitted().search).toEqual([['model']])
     })
 
     it('should handle value change', () => {
         const wrapper = mount(DlSmartSearchInput)
-        wrapper.vm.handleValueChange({ target: { textContent: 'text' } })
+        wrapper.vm.handleValueChange({
+            target: { textContent: 'text' }
+        } as any as Event)
         expect(wrapper.emitted()['update:modelValue']).toEqual([['text']])
     })
 
@@ -171,7 +180,7 @@ describe('DlSmartSearchInput', () => {
 
     it('should handle selection update', () => {
         const wrapper = mount(DlSmartSearchInput)
-        const interval = { from: 'date', to: 'date' }
+        const interval = { from: new Date(), to: new Date() }
         wrapper.vm.handleDateSelectionUpdate(interval)
         expect(wrapper.vm.datePickerSelection).toEqual(interval)
     })

@@ -1,62 +1,34 @@
 <template>
     <component
-        :is="as"
+        :is="type"
         :id="uuid"
         class="list-item-wrapper"
     >
-        <hr
-            class="separator"
-            :class="{ 'separator--visible': bordered }"
-        >
         <div
             v-wave="!disabled && withWave"
             :class="[
                 {
                     'dl-list-item': true,
-                    'dl-list-item-disabled': disabled,
-                    'dl-list-spaced': bordered
+                    'dl-list-item-disabled': disabled
                 },
                 'row'
             ]"
             :style="cssItemVars"
             @click="onClick"
         >
-            <dl-item-section
-                v-if="startIcon"
-                side
-            >
-                <dl-icon
-                    :icon="startIcon"
-                    :color="startIconColor"
-                    :size="startIconSize"
-                />
-            </dl-item-section>
+            <slot name="prefix" />
             <slot />
-            <dl-item-section
-                v-if="endIcon"
-                side
-            >
-                <dl-icon
-                    :icon="endIcon"
-                    :color="endIconColor"
-                    :size="endIconSize"
-                />
-            </dl-item-section>
+            <slot name="suffix" />
         </div>
+        <dl-separator v-if="separator" />
     </component>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlItemSection } from '../../shared'
-import { DlIcon } from '../../essential'
-import {
-    itemHoverColor,
-    itemActiveColor,
-    itemCursor,
-    itemBorder,
-    itemColor
-} from './utils'
+import { DlIcon, DlSeparator } from '../../essential'
+import { itemHoverColor, itemActiveColor, itemCursor, itemColor } from './utils'
 import { wave, waveTrigger } from '../../../utils'
 import { v4 } from 'uuid'
 
@@ -64,6 +36,7 @@ export default defineComponent({
     name: 'DlListItem',
     components: {
         DlItemSection,
+        DlSeparator,
         DlIcon
     },
     directives: {
@@ -73,35 +46,15 @@ export default defineComponent({
     props: {
         disabled: Boolean,
         clickable: Boolean,
-        bordered: Boolean,
+        separator: Boolean,
         withWave: Boolean,
-        startIcon: { type: String, required: false, default: '' },
-        endIcon: { type: String, required: false, default: '' },
-        as: {
+        type: {
             type: String,
             default: 'div'
         },
-        startIconColor: {
-            type: String,
-            required: false,
-            default: 'dl-color-darker'
-        },
-        endIconColor: {
-            type: String,
-            required: false,
-            default: 'dl-color-darker'
-        },
-        startIconSize: {
-            type: String,
-            default: '16px'
-        },
-        endIconSize: {
-            type: String,
-            default: '16px'
-        },
         height: { type: String, default: null, required: false },
         padding: { type: String, default: null, required: false },
-        isHighlighted: {
+        highlighted: {
             type: Boolean
         }
     },
@@ -123,11 +76,10 @@ export default defineComponent({
                     this.isClickable,
                     this.disabled
                 ),
-                '--dl-list-item-border': itemBorder(this.bordered),
                 '--dl-list-item-color': itemColor(this.disabled),
                 '--dl-list-item-height': this.height ?? '28px',
                 '--dl-list-item-padding': this.padding ?? '0px 10px',
-                '--dl-list-item-bg-color': this.isHighlighted
+                '--dl-list-item-bg-color': this.highlighted
                     ? 'var(--dl-color-fill-hover)'
                     : 'transparent'
             }
@@ -146,6 +98,8 @@ export default defineComponent({
 <style scoped lang="scss">
 .list-item-wrapper {
     width: 100%;
+    border-left: var(--dl-list-item-border-left);
+    margin-bottom: 4px;
 }
 
 .dl-list-item {

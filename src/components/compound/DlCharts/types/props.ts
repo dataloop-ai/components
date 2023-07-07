@@ -33,6 +33,8 @@ export const CommonProps = {
     }
 } as const
 
+export type CommonPropsType = typeof CommonProps
+
 export const Props = {
     type: {
         type: String as PropType<ChartType>,
@@ -99,6 +101,8 @@ export const ColumnChartProps = {
         })
     }
 }
+
+export type ColumnChartPropsType = typeof ColumnChartProps
 
 export const defaultColumnChartProps = {
     brushProps: {
@@ -348,7 +352,7 @@ export const defaultLineChartProps = {
 }
 
 export const defaultDoughnutChartProps: TDoughnutProps = {
-    data: <TDoughnutChartData>{},
+    data: {} as TDoughnutChartData,
     isSmall: false,
     hasSummary: false,
     options: {

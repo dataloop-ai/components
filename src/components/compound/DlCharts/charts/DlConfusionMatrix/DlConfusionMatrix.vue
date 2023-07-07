@@ -18,7 +18,7 @@
             </template>
         </dl-empty-state>
         <div
-            v-if="isValidMatrix && !isEmpty"
+            v-else-if="isValidMatrix"
             ref="wrapper"
             :style="matrixStyles"
             class="wrapper"
@@ -90,13 +90,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="x-axis">
+                <div
+                    class="x-axis"
+                    style="margin-top: 10px"
+                >
                     <span
                         v-for="(label, index) in visibleLabels"
+                        ref="xAxis"
                         :key="index"
                         class="x-axis__element"
                         :style="`${
-                            !labelImages[0] ? 'transform: rotate(70deg);' : ''
+                            !labelImages[0]
+                                ? `transform: rotate(${
+                                    rotateXLabels ? '70' : '0'
+                                }deg); line-height: ${
+                                    rotateXLabels ? 100 : 10
+                                }px`
+                                : ''
                         }`"
                     >
                         <span class="x-axis__element--text">
@@ -144,7 +154,7 @@
             </div>
         </div>
         <div
-            v-if="!isValidMatrix && !isEmpty"
+            v-else
             class="invalid"
         >
             The given props cannot create a valid matrix.
@@ -183,7 +193,7 @@ import {
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import {
     getGradationValues,
@@ -232,16 +242,19 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
-            default: () => {}
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
         }
     },
     setup(props) {
         const { variables } = useThemeVariables()
 
         const tooltipState = ref<{
-            x: string
-            y: string
+            value?: number
+            xLabel?: string
+            yLabel?: string
+            x?: number
+            y?: number
             visible?: boolean
         } | null>(null)
         const currentBrushState = ref<{ min: number; max: number }>({
@@ -249,6 +262,7 @@ export default defineComponent({
             max: props.matrix.length
         })
         const cellWidth = ref<number | null>(null)
+        const rotateXLabels = ref(true)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -273,7 +287,8 @@ export default defineComponent({
             getCellTextColor,
             cellWidth,
             tooltipState,
-            currentBrushState
+            currentBrushState,
+            rotateXLabels
         }
     },
     computed: {
@@ -306,14 +321,14 @@ export default defineComponent({
         flattenedMatrix(): DlConfusionMatrixCell[] {
             return flattenConfusionMatrix(this.matrix, this.labelStrings)
         },
-        matrixStyles(): object {
+        matrixStyles(): Record<string, number | string> {
             return {
                 '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
                 '--general-color': this.getCellBackground()
             }
         },
-        tooltipStyles(): object {
+        tooltipStyles(): Record<string, number | string> {
             return {
                 left: `${this.tooltipState?.x + 10}px`,
                 top: `${this.tooltipState?.y + 15}px`
@@ -331,6 +346,15 @@ export default defineComponent({
                 this.currentBrushState.max = value.length
                 this.resizeMatrix()
             }
+        },
+        currentBrushState() {
+            const longest = Math.max(
+                ...this.visibleLabels.map(
+                    (el: DlConfusionMatrixLabel) =>
+                        (isObject(el) ? el.title : `${el}`).length
+                )
+            )
+            this.rotateXLabels = longest * 12 > getCellWidth()
         }
     },
     mounted() {
@@ -379,7 +403,7 @@ export default defineComponent({
             const yAxis = this.$refs.yAxis as HTMLElement
             yAxis.style.height = `${getCellWidth() * this.matrix.length}px`
         },
-        handleMatrixScroll(e: MouseEvent) {
+        handleMatrixScroll(e: MouseEvent | UIEvent) {
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },
@@ -446,13 +470,12 @@ export default defineComponent({
 .x-axis {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-top: 10px;
     min-height: 100px;
     max-height: 100px;
     &__element {
         width: var(--cell-dimensions);
-        line-height: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
         &--text {
@@ -504,7 +527,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 60%;
+        font-size: 12px;
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;

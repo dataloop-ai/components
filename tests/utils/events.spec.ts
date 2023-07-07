@@ -13,8 +13,8 @@ describe('events utils', () => {
     describe('stopAndPrevent', () => {
         const event: Partial<Event> = {
             cancelable: true,
-            preventDefault: vi.fn().mockImplementation(),
-            stopPropagation: vi.fn().mockImplementation()
+            preventDefault: vi.fn().mockImplementation(() => {}),
+            stopPropagation: vi.fn().mockImplementation(() => {})
         }
 
         describe('when event is cancelable', () => {
@@ -28,8 +28,8 @@ describe('events utils', () => {
         describe('otherwise', () => {
             const event: Partial<Event> = {
                 cancelable: false,
-                preventDefault: vi.fn().mockImplementation(),
-                stopPropagation: vi.fn().mockImplementation()
+                preventDefault: vi.fn().mockImplementation(() => {}),
+                stopPropagation: vi.fn().mockImplementation(() => {})
             }
             it('should call only the stopPropagation method', () => {
                 stopAndPrevent(event as Event)
@@ -134,7 +134,7 @@ describe('events utils', () => {
 
     describe('stop', () => {
         const e: Partial<Event> = {
-            stopPropagation: vi.fn().mockImplementation()
+            stopPropagation: vi.fn().mockImplementation(() => {})
         }
 
         it('should call the "stopPropagation" method', () => {
@@ -147,7 +147,7 @@ describe('events utils', () => {
         describe('when "cancelable" is true', () => {
             const e: Partial<Event> = {
                 cancelable: true,
-                preventDefault: vi.fn().mockImplementation()
+                preventDefault: vi.fn().mockImplementation(() => {})
             }
 
             it('should call the "preventDefault" method', () => {
@@ -159,7 +159,7 @@ describe('events utils', () => {
         describe('otherwise', () => {
             const e: Partial<Event> = {
                 cancelable: false,
-                preventDefault: vi.fn().mockImplementation()
+                preventDefault: vi.fn().mockImplementation(() => {})
             }
 
             it('should do nothing', () => {
@@ -179,8 +179,8 @@ describe('events utils', () => {
         describe('when the context "name" property is set', () => {
             const ctx = {
                 name: '_dl_test_evt',
-                mousemove: vi.fn().mockImplementation(),
-                move: vi.fn().mockImplementation()
+                mousemove: vi.fn().mockImplementation(() => {}),
+                move: vi.fn().mockImplementation(() => {})
             }
 
             it('should attach the events to the context', () => {
@@ -191,8 +191,8 @@ describe('events utils', () => {
 
         describe('otherwise', () => {
             const ctx = {
-                mousemove: vi.fn().mockImplementation(),
-                move: vi.fn().mockImplementation()
+                mousemove: vi.fn().mockImplementation(() => {}),
+                move: vi.fn().mockImplementation(() => {})
             }
             it('should use the event from the params', () => {
                 addEvt(ctx, 'test', evt)
@@ -213,13 +213,13 @@ describe('events utils', () => {
         describe('when the context "name" property is set', () => {
             const ctx = {
                 name: '__dl_test_evt',
-                mousemove: vi.fn().mockImplementation(),
-                move: vi.fn().mockImplementation(),
+                mousemove: vi.fn().mockImplementation(() => {}),
+                move: vi.fn().mockImplementation(() => {}),
                 ['__dl_test_evt']: [
                     [
                         div,
-                        vi.fn().mockImplementation(),
-                        vi.fn().mockImplementation()
+                        vi.fn().mockImplementation(() => {}),
+                        vi.fn().mockImplementation(() => {})
                     ]
                 ]
             }
@@ -227,14 +227,14 @@ describe('events utils', () => {
             it('should remove the listeners', () => {
                 cleanEvt(ctx, 'test')
                 expect(spy).toHaveBeenCalled()
-                expect(ctx['__dl_test_evt']).not.toBeDefined()
+                expect(ctx['__dl_test_evt']).to.be.null
             })
         })
 
         describe('otherwise', () => {
             const ctx = {
-                mousemove: vi.fn().mockImplementation(),
-                move: vi.fn().mockImplementation()
+                mousemove: vi.fn().mockImplementation(() => {}),
+                move: vi.fn().mockImplementation(() => {})
             }
             it('should use the event from the params', () => {
                 cleanEvt(ctx, 'test')

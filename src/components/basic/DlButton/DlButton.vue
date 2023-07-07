@@ -97,7 +97,7 @@ export default defineComponent({
          * The color of the button
          */
         color: {
-            type: String! as PropType<keyof typeof colorNames>,
+            type: String! as PropType<keyof typeof colorNames | string>,
             default: ''
         },
         /**
@@ -213,11 +213,7 @@ export default defineComponent({
             return setIconSize(this.$props.size)
         },
         hasLabel(): boolean {
-            return (
-                this.label !== void 0 &&
-                this.label !== null &&
-                this.label !== ''
-            )
+            return !!this.label
         },
         buttonLabel(): string {
             return textTransform(this.label)
@@ -380,7 +376,7 @@ export default defineComponent({
         },
         onMouseDown(e: Event) {
             if (this.isActionable) {
-                if (e !== void 0) {
+                if (e) {
                     if (e.defaultPrevented === true) {
                         return
                     }

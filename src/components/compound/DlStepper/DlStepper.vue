@@ -79,7 +79,7 @@ import DlStepperFooter from './components/DlStepperFooter.vue'
 import DlStepperSidebar from './components/DlStepperSidebar.vue'
 import DlStepperContent from './components/DlStepperContent.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { StepState } from './models/interfaces'
 import { Step } from './models'
 import { getColor } from '../../../utils'
@@ -113,7 +113,7 @@ export default defineComponent({
         },
         state: {
             type: Object as PropType<StepState>,
-            default: () => {}
+            default: null
         },
         modelValue: {
             type: Boolean,
@@ -156,8 +156,9 @@ export default defineComponent({
         sidebarNavigation: { type: Boolean, default: true },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
-            default: () => {}
+            type: Object as PropType<DlEmptyStateProps>,
+            required: false,
+            default: null
         }
     },
     emits: ['update:modelValue', 'done', 'next', 'prev', 'set-step', 'close'],

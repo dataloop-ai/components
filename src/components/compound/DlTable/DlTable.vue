@@ -63,6 +63,7 @@
             :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
+            :scroll-debounce="scrollDebounce"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -546,7 +547,7 @@ import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
 
 const commonVirtPropsObj = {} as Record<string, any>
@@ -622,7 +623,7 @@ export default defineComponent({
         },
         virtualScrollTarget: {
             type: Object as PropType<HTMLElement>,
-            default: void 0
+            default: null
         },
         titleClass: {
             type: [String, Array, Object],
@@ -647,8 +648,12 @@ export default defineComponent({
         noHover: Boolean,
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
-            default: () => {}
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
         },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
@@ -1119,7 +1124,7 @@ export default defineComponent({
                 typeof col.field === 'function'
                     ? col.field(row)
                     : row[col.field]
-            return col.format !== void 0 ? col.format(val, row) : val
+            return col.format ? col.format(val, row) : val
         }
 
         function resetVirtualScroll() {
@@ -1251,7 +1256,7 @@ export default defineComponent({
             return data
         }
 
-        const hasLoadingSlot = computed(() => slots['loading'] !== void 0)
+        const hasLoadingSlot = computed(() => slots['loading'])
 
         const paginationState = computed(() => {
             return {

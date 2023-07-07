@@ -2,7 +2,8 @@ import { isObject } from 'lodash'
 import { DlConfusionMatrixCell, DlConfusionMatrixLabel } from '../../types'
 
 export function getCellWidth() {
-    return document.querySelector('.matrix__cell').getBoundingClientRect().width
+    return document.querySelector('.matrix__cell')?.getBoundingClientRect()
+        .width
 }
 
 export function setZoom(zoom: number, el: HTMLElement) {

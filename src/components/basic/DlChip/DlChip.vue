@@ -106,11 +106,7 @@ export default defineComponent({
     },
     computed: {
         hasLabel(): boolean {
-            return (
-                this.label !== void 0 &&
-                this.label !== null &&
-                this.label !== ''
-            )
+            return !!this.label
         },
         hasLabelSlot(): boolean {
             return !!this.$slots['default']

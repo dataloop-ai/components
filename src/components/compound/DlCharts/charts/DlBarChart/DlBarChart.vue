@@ -106,7 +106,7 @@ import type { Chart, ChartMeta, ChartDataset, ActiveElement } from 'chart.js'
 import { isEqual, merge } from 'lodash'
 import { rgba2hex, hexToRgbA, revertRGBAOpacity } from '../../../../../utils'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 
 ChartJS.register(
@@ -140,8 +140,8 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
-            default: () => {}
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
         }
     },
     setup(props) {

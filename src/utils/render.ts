@@ -18,7 +18,7 @@ export const createElement = (
  * so it's merged with the possible slot
  */
 export function mergeSlot(slot: any, source: any) {
-    return slot !== void 0 ? source.concat(slot()) : source
+    return slot ? source.concat(slot()) : source
 }
 
 export const hSlot = (

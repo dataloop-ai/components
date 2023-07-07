@@ -116,7 +116,7 @@ export default defineComponent({
          */
         overlayOpacity: {
             type: Number,
-            default: 0.5
+            default: 0.3
         }
     },
     emits: ['update:modelValue', 'selected'],
@@ -163,7 +163,7 @@ export default defineComponent({
             return {
                 outline:
                     image === this.modelValue?.src
-                        ? '3px solid var(--dl-color-secondary)'
+                        ? '2px solid var(--dl-color-secondary)'
                         : '1px solid var(--dl-color-separator)'
             }
         },
@@ -233,6 +233,7 @@ export default defineComponent({
             transition: 0.1s;
             &:hover {
                 transform: scale(1.1);
+                outline: 1px solid var(--dl-color-hover) !important;
             }
             cursor: pointer;
             background-color: var(--dl-color-text-buttons);
@@ -240,6 +241,7 @@ export default defineComponent({
         }
         &--image img {
             pointer-events: none;
+            border-radius: 3px;
             width: 100%;
             height: 100%;
             object-fit: var(--img-object-fit);
@@ -259,6 +261,7 @@ export default defineComponent({
     top: 0;
     left: 0;
     background-color: #ffffff;
+    border-radius: 3px;
     opacity: var(--overlay-opacity);
 }
 </style>

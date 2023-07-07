@@ -94,7 +94,7 @@ describe('dl-select methods', () => {
             wrapper.vm.onMenuOpen()
             wrapper.vm.$nextTick()
             await wrapper.setProps({
-                search: true
+                searchable: true
             })
             expect(wrapper.emitted()['before-show']).toBeTruthy()
         })
@@ -292,8 +292,9 @@ describe('dl-select computed', () => {
         )
 
         await wrapper.setProps({
-            search: true
+            searchable: true
         })
+
         expect(wrapper.vm.selectClasses).toContain('dl_select__select--prepend')
 
         await wrapper.setProps({
@@ -364,11 +365,11 @@ describe('dl-select computed', () => {
             }
         })
 
-        expect(wrapper.vm.selectedIndex).toBe(0)
+        expect(wrapper.vm.selectedIndex).toBe(-1)
         await wrapper.setProps({
             emitValue: false
         })
-        expect(wrapper.vm.selectedIndex).toBe(0)
+        expect(wrapper.vm.selectedIndex).toBe(-1)
     })
 
     it('should emit the value and not the entire object', async () => {
@@ -419,6 +420,59 @@ describe('dl-select computed', () => {
         it('should have small class', async () => {
             const elem = wrapper.get('.dl-select__title-container')
             expect(elem.classes()).toContain('dl-select__title-container--s')
+        })
+    })
+
+    describe('when setting emitValue to true', () => {
+        let wrapper: any
+
+        const options = [
+            {
+                label: '0',
+                value: 0
+            }
+        ]
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options,
+                    emitValue: true
+                }
+            })
+        })
+        it('should emit the value itself', () => {
+            wrapper.vm.selectOption(options[0])
+            expect(wrapper.emitted()['update:model-value']).toEqual([
+                [options[0].value]
+            ])
+        })
+    })
+    describe('when typing in a search value', () => {
+        let wrapper: any
+
+        const options = [
+            { label: 'Option 1', value: 1 },
+            { label: 'Option 2', value: 2 }
+        ]
+
+        beforeAll(() => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options,
+                    searchable: true
+                }
+            })
+        })
+        it('should give a highlight color to the matching section', () => {
+            const value = '1'
+            wrapper.vm.handleSearchInput({ target: { value } })
+            expect(wrapper.vm.searchInputValue).toMatch(value)
+            expect(
+                wrapper.vm
+                    .getOptionHtml(options[0])
+                    .includes('--dl-color-warning')
+            ).toBe(true)
         })
     })
 })

@@ -12,10 +12,17 @@
                 label="Strict"
             />
         </div>
+        <dl-input
+            v-model="textQuery"
+            style="width: 220px"
+            placeholder="Select option"
+            size="m"
+        />
         <div
             style="width: 100px"
             class="props"
         />
+        { "metadata.system.width": 5 }
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
@@ -30,19 +37,34 @@
             @search-query="handleSearchQuery"
         />
         {{ queryObject }}
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        Test second if they work on same page..
+        <dl-smart-search
+            v-model="queryObject2"
+            :aliases="[]"
+            :schema="schema2"
+            :color-schema="colorSchema"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlSmartSearch, DlCheckbox } from '../../components'
-import { Query } from '../../components/types'
+import { DlSmartSearch, DlCheckbox, DlInput } from '../../components'
+import { DlSmartSearchFilters, Query } from '../../components/types'
+import { parseSmartQuery } from '../../utils'
 
 export default defineComponent({
     name: 'DlSmartSearchDemo',
     components: {
         DlSmartSearch,
-        DlCheckbox
+        DlCheckbox,
+        DlInput
     },
     data() {
         const schema: any = {
@@ -68,6 +90,43 @@ export default defineComponent({
                 '*': 'any'
             }
         }
+        const schema2: any = {
+            type: [
+                'class',
+                'point',
+                'line',
+                'box',
+                'cube',
+                'segment',
+                'ellipse',
+                'binary',
+                'note',
+                'polyline',
+                'comparison',
+                'recording',
+                'subtitle',
+                'item_description',
+                'text_mark',
+                'pose',
+                'cube_3d',
+                'semantic_3d',
+                'polyline_3d',
+                'string'
+            ],
+            label: 'string',
+            itemId: 'string',
+            creator: 'string',
+            parentId: ['null', 'string'],
+            attributes: ['string', 'number', 'object', 'boolean'],
+            metadata: {
+                system: {
+                    attributes: ['string', 'number', 'object', 'boolean'],
+                    status: 'string',
+                    '*': 'any'
+                },
+                '*': 'any'
+            }
+        }
 
         const colorSchema: any = {
             fields: 'var(--dl-color-secondary)',
@@ -90,36 +149,46 @@ export default defineComponent({
             }
         ]
 
+        const filters: DlSmartSearchFilters = {
+            saved: [
+                {
+                    name: 'Query 1',
+                    query: '{"q": 1}'
+                },
+                {
+                    name: 'Query 2',
+                    query: '{"query2": "query2"}'
+                },
+                {
+                    name: 'Query 3',
+                    query: '{"query3": "query3"}'
+                },
+                {
+                    name: 'Query 4',
+                    query: '{"age": 12, "name": "john"}'
+                }
+            ],
+            recent: [],
+            suggested: []
+        }
+
         return {
             schema,
+            schema2,
             aliases,
             colorSchema,
             switchState: false,
             strictState: false,
             isLoading: false,
             queryObject: {},
-            filters: {
-                saved: [
-                    {
-                        name: 'Query 1',
-                        query: '{"q": 1}'
-                    },
-                    {
-                        name: 'Query 2',
-                        query: '{"query2": "query2"}'
-                    },
-                    {
-                        name: 'Query 3',
-                        query: '{"query3": "query3"}'
-                    },
-                    {
-                        name: 'Query 4',
-                        query: '{"age": 12, "name": "john"}'
-                    }
-                ],
-                recent: [],
-                suggested: []
-            } as { [key: string]: Query[] }
+            queryObject2: {},
+            textQuery: '',
+            filters
+        }
+    },
+    watch: {
+        textQuery(query: string) {
+            this.queryObject = parseSmartQuery(query)
         }
     },
     methods: {
@@ -148,7 +217,6 @@ export default defineComponent({
                 this.filters[type].push(query)
             }
         },
-
         handleRemoveQuery(query: Query, type: string) {
             this.filters[type] = this.filters[type].filter(
                 (q: Query) => q.name !== query.name

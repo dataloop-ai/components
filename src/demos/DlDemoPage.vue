@@ -67,7 +67,7 @@
                         <dl-list-item
                             v-for="(demo, index) in filteredDemos"
                             :key="demo.name"
-                            :bordered="index !== 0"
+                            :separator="index !== filteredDemos.length - 1"
                             :clickable="clickable"
                             :class="isSelectedDemo(demo) ? 'selected' : ''"
                             style="text-transform: capitalize"

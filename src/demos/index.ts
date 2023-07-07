@@ -49,6 +49,7 @@ import DlSwitchDemo from './DlSwitchDemo.vue'
 import DlToastDemo from './DlToastDemo.vue'
 import DlChartDoughnutDemo from './DlChartDoughnutDemo.vue'
 import DlLineChartDemo from './DlLineChartDemo.vue'
+import DlScatterChartDemo from './DlScatterChartDemo.vue'
 import DlSpinner from './DlSpinnerDemo.vue'
 import DlEmptyStateDemo from './DlEmptyStateDemo.vue'
 import DlConfusionMatrix from './DlConfusionMatrixDemo.vue'
@@ -57,11 +58,14 @@ import DlKpiDemo from './DlKpiDemo.vue'
 import DlEllipsisDemo from './DlEllipsisDemo.vue'
 import DlSeparatorDemo from './DlSeparatorDemo.vue'
 import DlCardDemo from './DlCardDemo.vue'
+import DlTreeTableDemo from './DlTreeTableDemo.vue'
 import DlGridDemo from './DlGridDemo.vue'
 import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
 import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
+import DlPageLayoutDemo from './DlPageLayoutDemo.vue'
+import { DlCodeEditorDemo } from './DlCodeEditor'
 
 export default {
     AvatarDemo,
@@ -84,6 +88,7 @@ export default {
     DlThDemo,
     DlTdDemo,
     DlTableDemo,
+    DlTreeTableDemo,
     DlPaginationDemo,
     DlDateTimeRangeDemo,
     DlSmartSearchDemo,
@@ -112,6 +117,7 @@ export default {
     DlChartDoughnutDemo,
     DlBarChartDemo,
     DlLineChartDemo,
+    DlScatterChartDemo,
     DlSpinner,
     DlEmptyStateDemo,
     DlEllipsisDemo,
@@ -124,5 +130,7 @@ export default {
     DlMarkupTableDemo,
     DlVirtualScrollDemo,
     DlJsonEditorDemo,
-    DlThumbnailGallery
+    DlThumbnailGallery,
+    DlCodeEditorDemo,
+    DlPageLayoutDemo
 }

@@ -96,7 +96,9 @@ import { Bar } from '../../types/typedCharts'
 import {
     CommonProps,
     ColumnChartProps,
-    defaultColumnChartProps
+    defaultColumnChartProps,
+    CommonPropsType,
+    ColumnChartPropsType
 } from '../../types/props'
 import {
     defineComponent,
@@ -104,7 +106,9 @@ import {
     watch,
     ref,
     computed,
-    PropType
+    PropType,
+    Component,
+    ComponentPropsOptions
 } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
@@ -125,7 +129,7 @@ import {
     BarControllerDatasetOptions
 } from 'chart.js'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
-import { Props } from '../../../../basic/DlEmptyState/types'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import type {
     Chart,
     ChartMeta,
@@ -149,6 +153,13 @@ ChartJS.register(
     LineElement
 )
 
+type ComponentType = {
+    id: string
+    isEmpty: boolean
+    emptyStateProps: DlEmptyStateProps
+} & CommonPropsType &
+    ColumnChartPropsType
+
 export default defineComponent({
     name: 'DlColumnChart',
     components: {
@@ -165,13 +176,13 @@ export default defineComponent({
         },
         isEmpty: Boolean,
         emptyStateProps: {
-            type: Object as PropType<Props>,
-            default: () => {}
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
         },
         ...CommonProps,
         ...ColumnChartProps
-    },
-    setup(props, { slots }) {
+    } as { [key: string]: any },
+    setup(props) {
         const { variables } = useThemeVariables()
 
         const chartWidth = ref('100%')
@@ -182,7 +193,7 @@ export default defineComponent({
 
         const onResize = (
             chart: Chart,
-            size: { height: number; width: number }
+            _size: { height: number; width: number }
         ) => {
             if (chart?.scales?.x?.width) {
                 chartWidth.value = `${
@@ -270,7 +281,7 @@ export default defineComponent({
                 props.legendProps?.datasets || [],
                 props.data?.datasets || [],
                 'label'
-            )
+            ) as { [key: string]: any }[]
         )
 
         const getChartBackup = () => {
@@ -500,7 +511,7 @@ export default defineComponent({
         const xLabels = ref(props.data.labels)
 
         const onHoverLegend = (
-            item: BarControllerDatasetOptions,
+            _item: BarControllerDatasetOptions,
             index: number
         ) => {
             const filteredItems = chart.value.data.datasets
@@ -528,7 +539,7 @@ export default defineComponent({
         })
 
         const onLeaveLegend = (
-            item: BarControllerDatasetOptions,
+            _item: BarControllerDatasetOptions,
             index: number
         ) => {
             const filteredItems = chart.value.data.datasets

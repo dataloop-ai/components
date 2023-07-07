@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash'
+import { DlGridSideType } from '../DlGrid/types'
 
 export function leastCommonMultiple(arr: number[]) {
     if (!arr) return
@@ -61,11 +62,9 @@ export function swapElemensInMatrix(
     layout: number[][],
     sourceIndex: any,
     targetIndex: any,
-    side: string,
+    side: DlGridSideType,
     maxElements: number
 ) {
-    if (targetIndex.column === sourceIndex.column + 1 && side === 'left')
-        return layout
     const newLayout = cloneDeep(layout)
 
     const removedElement = newLayout[sourceIndex.row].splice(
@@ -78,7 +77,35 @@ export function swapElemensInMatrix(
         removedElement[0]
     )
 
-    return isTooLarge(newLayout, maxElements) ? layout : newLayout
+    return isTooLarge(newLayout, maxElements)
+        ? moveElementsToNextIndex(newLayout, maxElements)
+        : newLayout
+}
+
+function moveElementsToNextIndex(
+    template: number[][],
+    maxElements: number
+): number[][] {
+    const clonedTemplate: number[][] = cloneDeep(template)
+    let overflow: number[] = []
+
+    for (let i = 0; i < clonedTemplate.length; i++) {
+        let currentRow = clonedTemplate[i]
+        if (overflow.length > 0) {
+            currentRow = overflow.concat(currentRow)
+            overflow = []
+        }
+        if (currentRow.length > maxElements) {
+            overflow = currentRow.slice(maxElements)
+            currentRow = currentRow.slice(0, maxElements)
+        }
+        clonedTemplate[i] = currentRow
+        if (i + 1 < clonedTemplate.length && overflow.length > 0) {
+            clonedTemplate[i + 1] = overflow.concat(clonedTemplate[i + 1])
+            overflow = []
+        }
+    }
+    return clonedTemplate
 }
 
 function isTooLarge(layout: number[][], max: number) {

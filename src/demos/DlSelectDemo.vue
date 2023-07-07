@@ -4,6 +4,7 @@
             :options="['one', 'two', 'three']"
             title="Title"
             required
+            fit
         />
         <dl-select
             v-model="disabledSelected"
@@ -24,7 +25,8 @@
                     label: 'Medium',
                     value: 'medium',
                     bgColor: 'dl-color-warning',
-                    textColor: 'dl-color-darker'
+                    textColor: 'dl-color-darker',
+                    icon: 'icon-dl-search'
                 },
                 {
                     label: 'Low',
@@ -64,19 +66,23 @@
                 {
                     label: 'Status 1',
                     value: 1,
-                    badgeColor: 'dl-color-disabled'
+                    badgeColor: 'var(--dl-color-disabled)'
                 },
                 {
                     label: 'Status 2',
                     value: 2,
-                    badgeColor: 'dl-color-secondary'
+                    badgeColor: 'var(--dl-color-secondary)'
                 },
                 {
                     label: 'Status 3',
                     value: 3,
-                    badgeColor: 'dl-color-positive'
+                    badgeColor: 'var(--dl-color-positive)'
                 },
-                { label: 'Status 4', value: 4, badgeColor: 'dl-color-warning' }
+                {
+                    label: 'Status 4',
+                    value: 4,
+                    badgeColor: 'var(--dl-color-warning)'
+                }
             ]"
             required
         >
@@ -93,6 +99,7 @@
                 </div>
             </template>
         </dl-select>
+        with prepend
         <dl-select
             v-model="tasksFilter"
             multiselect
@@ -110,24 +117,26 @@
                 />
             </template>
         </dl-select>
+        custom search
         <dl-select
             v-model="selectedBySearch"
             size="m"
             title="Title"
             optional
             :options="searchOptions"
-            search
+            searchable
+            custom-filter
             emit-val
             @filter="filterFn"
         />
+        normal search
         <dl-select
             v-model="selectedByFilteringSearch"
             :options="searchOptions"
             size="m"
             multiselect
-            style="background-color: beige"
             placeholder="contributors"
-            search
+            searchable
         />
 
         <dl-select
@@ -150,7 +159,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
         />
         Capitalized options
         <dl-select
@@ -158,18 +167,21 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
         />
         With Fit
         <dl-select
-            v-model="selectedWithChildrenCapitalized"
-            :options="treeOptions"
+            :options="[
+                { label: 'Option 1', value: 1 },
+                { label: 'Option 2, longer one', value: 2 },
+                { label: 'Option 3', value: 3 }
+            ]"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
-            fit-container
+            fit-content
         />
         With Label and sub label
         <dl-select
@@ -179,34 +191,42 @@
                     subLabel: 'not so high',
                     label: 'High',
                     value: 'high',
-                    bgColor: 'dl-color-negative'
+                    labelColor: 'var(--dl-color-darker)',
+                    subLabelColor: 'var(--dl-color-lighter)'
                 },
                 {
                     subLabel: 'not so medium',
                     label: 'Medium',
                     value: 'medium',
-                    bgColor: 'dl-color-warning',
-                    textColor: 'dl-color-darker'
+                    labelColor: 'var(--dl-color-darker)',
+                    subLabelColor: 'var(--dl-color-lighter)'
                 },
                 {
                     subLabel: 'not so low',
                     label: 'Low',
                     value: 'low',
-                    bgColor: 'dl-color-positive',
-                    textColor: 'dl-color-darker'
+                    labelColor: 'var(--dl-color-darker)',
+                    subLabelColor: 'var(--dl-color-lighter)'
                 }
             ]"
         >
             <template #option="scope">
                 <div style="padding: 5px 0px">
-                    <div>{{ scope.opt.label }}</div>
-                    <div>{{ scope.opt.subLabel }}</div>
+                    <div :style="`color: ${scope.opt.labelColor}`">
+                        {{ scope.opt.label }}
+                    </div>
+                    <div
+                        :style="`color: ${scope.opt.subLabelColor}; font-size: 10px`"
+                    >
+                        {{ scope.opt.subLabel }}
+                    </div>
                 </div>
             </template>
         </dl-select>
         With tooltip
         <dl-select
-            v-model="selectedOption"
+            v-model="select2"
+            title="With tooltip"
             :tooltip="'Test Me'"
             :options="[
                 {
@@ -240,7 +260,7 @@
         </dl-select>
         Small size
         <dl-select
-            v-model="selectedOption"
+            v-model="select3"
             :size="'s'"
             :options="[
                 {
@@ -274,7 +294,7 @@
         </dl-select>
         Small size with tooltip
         <dl-select
-            v-model="selectedOption"
+            v-model="select4"
             :size="'s'"
             title="test"
             tooltip="test me"
@@ -311,7 +331,7 @@
 
         Select with max-height
         <dl-select
-            v-model="selectedOption"
+            v-model="select5"
             :size="'s'"
             title="test"
             dropdown-max-height="50px"
@@ -473,6 +493,10 @@ export default defineComponent({
                 bgColor: 'dl-color-error',
                 textColor: 'dl-color-white'
             },
+            select2: null,
+            select3: null,
+            select4: null,
+            select5: null,
             statusOption: {
                 label: 'Status 1',
                 value: 1,
@@ -523,6 +547,9 @@ export default defineComponent({
         },
         handleInput(e: Event) {
             return (e.target as HTMLInputElement).value
+        },
+        log(e: any) {
+            console.log(e)
         }
     }
 })

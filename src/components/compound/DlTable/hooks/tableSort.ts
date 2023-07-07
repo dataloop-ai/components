@@ -4,6 +4,7 @@ import { sortDate } from '../../../../utils/sort'
 import { isNumber, isDate, isObject } from '../../../../utils/is'
 import { DlTableProps, DlTableColumn, DlTableSortMethod } from '../types'
 import { TablePagination } from './tablePagination'
+import { isUndefined } from 'lodash'
 
 export const useTableSortProps = {
     sortMethod: Function,
@@ -29,52 +30,56 @@ export function useTableSort(
             : null
     })
 
-    const computedSortMethod = computed(() =>
-        props.sortMethod !== void 0
-            ? props.sortMethod
-            : (((data, sortBy, descending) => {
-                  const col = colList.value.find((def) => def.name === sortBy)
-                  if (col === void 0 || col.field === void 0) {
-                      return data
-                  }
+    const computedSortMethod = computed(() => {
+        if (props.sortMethod) {
+            return props.sortMethod
+        }
 
-                  const dir = descending === true ? -1 : 1
-                  const val =
-                      typeof col.field === 'function'
-                          ? (v: string) => (col.field as Function)(v)
-                          : (v: Record<string, any>) => v[col.field as string]
+        const sortMethod: DlTableSortMethod = (data, sortBy, descending) => {
+            const col = colList.value.find((def) => def.name === sortBy)
+            if (isUndefined(col) || isUndefined(col.field)) {
+                return data
+            }
 
-                  return data.sort((a: any, b: any) => {
-                      let A = val(a)
-                      let B = val(b)
+            const dir = descending === true ? -1 : 1
+            const val =
+                typeof col.field === 'function'
+                    ? (v: string) => (col.field as Function)(v)
+                    : (v: Record<string, any>) => v[col.field as string]
 
-                      if (A === null || A === void 0) {
-                          return -1 * dir
-                      }
-                      if (B === null || B === void 0) {
-                          return 1 * dir
-                      }
-                      if (col.sort !== void 0) {
-                          return col.sort(A, B, a, b) * dir
-                      }
-                      if (isNumber(A) === true && isNumber(B) === true) {
-                          return (A - B) * dir
-                      }
-                      if (isDate(A) === true && isDate(B) === true) {
-                          return sortDate(A, B) * dir
-                      }
-                      if (typeof A === 'boolean' && typeof B === 'boolean') {
-                          return (Number(A) - Number(B)) * dir
-                      }
+            return data.sort((a: any, b: any) => {
+                let A = val(a)
+                let B = val(b)
 
-                      [A, B] = [A, B].map((s) =>
-                          (s + '').toLocaleString().toLowerCase()
-                      )
+                if (A === null || isUndefined(A)) {
+                    return -1 * dir
+                }
+                if (B === null || isUndefined(B)) {
+                    return 1 * dir
+                }
+                if (col.sort) {
+                    return col.sort(A, B, a, b) * dir
+                }
+                if (isNumber(A) === true && isNumber(B) === true) {
+                    return (A - B) * dir
+                }
+                if (isDate(A) === true && isDate(B) === true) {
+                    return sortDate(A, B) * dir
+                }
+                if (typeof A === 'boolean' && typeof B === 'boolean') {
+                    return (Number(A) - Number(B)) * dir
+                }
 
-                      return A < B ? -1 * dir : A === B ? 0 : dir
-                  })
-              }) as DlTableSortMethod)
-    )
+                [A, B] = [A, B].map((s) =>
+                    (s + '').toLocaleString().toLowerCase()
+                )
+
+                return A < B ? -1 * dir : A === B ? 0 : dir
+            })
+        }
+
+        return sortMethod
+    })
 
     function sort(col: string | DlTableColumn) {
         let sortOrder: DlTableProps['columnSortOrder'] = props.columnSortOrder
@@ -87,7 +92,7 @@ export function useTableSort(
             col = (col as DlTableColumn).name
         } else {
             const def = colList.value.find((def) => def.name === col)
-            if (def !== void 0 && def.sortOrder) {
+            if (def && def.sortOrder) {
                 sortOrder = def.sortOrder
             }
         }
