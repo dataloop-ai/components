@@ -1253,7 +1253,9 @@ export default defineComponent({
         }
 
         function getBodySelectionScope(data: Record<string, any>) {
+            console.log('getBodySelectionScope: ', data)
             injectBodyCommonScope(data)
+
             return data
         }
 
@@ -1280,6 +1282,10 @@ export default defineComponent({
             prevPage,
             nextPage,
             lastPage
+        })
+
+        const slotNames = computed(() => {
+            return slots.length ? slots.map((slot: any) => slot.name) : null
         })
 
         return {
@@ -1329,7 +1335,8 @@ export default defineComponent({
             onTrDblClick,
             onThClick,
             onTrContextMenu,
-            hasPaginationSlot
+            hasPaginationSlot,
+            slotNames
         }
     }
 })

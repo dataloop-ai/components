@@ -27,7 +27,7 @@
             <template #body="props">
                 <!--
                 <pre>
-                {{ $refs.RefTreeTableSelection }}
+                {{ $refs.RefTreeTableSelection.getBodySelectionScope }}
                 </pre>
                 -->
                 <!--
@@ -41,6 +41,7 @@
                 </pre>
                 -->
                 <DlTrTreeView
+                    v-if="$refs.RefTreeTableSelection"
                     :row="props.row"
                     :is-row-selected="props.trClass === 'selected'"
                     :has-any-action="props.hasAnyAction"
@@ -49,11 +50,15 @@
                     :has-draggable-rows="RefHasDraggableRows"
                     :has-selection-mode="RefHasSelectionMode"
                     :bind-body-selection="
-                        refGetBodySelectionScope(props.row, props.pageIndex)
+                        $refs.RefTreeTableSelection.getBodySelectionScope(
+                            props.key,
+                            props.row,
+                            props.pageIndex
+                        )
                     "
                     :bind-body-cell-scope="
                         refGetBodyCellScope(
-                            props.row.key,
+                            props.key,
                             props.row,
                             props.pageIndex
                         )
@@ -61,8 +66,8 @@
                     :color="props.color"
                     :computed-cols="refComputedCols"
                     :model-value="props.trClass === 'selected'"
-                    :slot-name="RefTreeTableSelection.slotNames"
-                    :computed-rows="$refs.RefTreeTableSelection.computedRows"
+                    :slot-name="RefSlotNames"
+                    :computed-rows="RefComputedRows"
                     @update:model-value="
                         (adding, evt) =>
                             RefTreeTableSelection.updateSelectionHierarchy(
@@ -448,15 +453,35 @@ export default defineComponent({
                 row.key
             )
         },
-        refGetBodySelectionScope(row: DlTableRow, pageIndex: number) {
-            (this.$refs.RefTreeTableSelection as any)?.getBodySelectionScope({
-                key: row.key,
+        refGetBodySelectionScope(
+            key: string,
+            row: DlTableRow,
+            pageIndex: number
+        ) {
+            // console.log('key: ', key)
+            // console.log('row: ', row)
+            // console.log('pageIndex: ', pageIndex)
+            console.log(
+                'this.$refs.RefTreeTableSelection: ',
+                this.$refs.RefTreeTableSelection
+            )
+            const bodySelection = (
+                this.$refs.RefTreeTableSelection as any
+            ).getBodySelectionScope({
+                key,
                 row,
                 pageIndex
             })
+            console.log('bodySelection: ', bodySelection)
+            // return bodySelection
+            return {
+                key,
+                row,
+                pageIndex
+            }
         },
         refGetBodyCellScope(row: DlTableRow, pageIndex: number) {
-            (this.$refs.RefTreeTableSelection as any)?.getBodyCellScope({
+            return (this.$refs.RefTreeTableSelection as any)?.getBodyCellScope({
                 key: row.key,
                 row,
                 pageIndex
@@ -470,6 +495,12 @@ export default defineComponent({
         },
         RefHasSelectionMode() {
             return (this.$refs.RefTreeTableSelection as any)?.hasSelectionMode
+        },
+        RefSlotNames() {
+            return (this.$refs.RefTreeTableSelection as any)?.slotNames
+        },
+        RefComputedRows() {
+            return (this.$refs.RefTreeTableSelection as any)?.computedRows
         },
         addRowPerPage() {
             this.rowsPerPageOptions.push(
