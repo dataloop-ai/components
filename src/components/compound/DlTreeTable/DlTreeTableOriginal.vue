@@ -63,7 +63,6 @@
             :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
-            :scroll-debounce="scrollDebounce"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -74,7 +73,7 @@
                         name="header"
                         v-bind="getHeaderScope({ header: true })"
                     >
-                        <DlTr>
+                        <DlTrTree>
                             <th
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
@@ -95,6 +94,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="
@@ -123,7 +123,7 @@
                                     {{ col.label }}
                                 </DlTh>
                             </slot>
-                        </DlTr>
+                        </DlTrTree>
 
                         <tr
                             v-if="loading && !hasLoadingSlot"
@@ -144,14 +144,9 @@
             </template>
             <template #default="props">
                 <DlTr
+                    v-show="isRowVisible(props)"
                     :key="getRowKey(props.item)"
-                    :class="
-                        isRowSelected(getRowKey(props.item))
-                            ? 'selected'
-                            : hasAnyAction
-                                ? ' cursor-pointer'
-                                : ''
-                    "
+                    :class="getSelectedRowClass(rowKey, props.item)"
                     :no-hover="noHover"
                     @click="onTrClick($event, props.item, props.pageIndex)"
                     @dblclick="
@@ -186,24 +181,27 @@
                             "
                         >
                             <DlCheckbox
+                                style="padding-left: 10px"
                                 :color="color"
                                 :model-value="
-                                    isRowSelected(getRowKey(props.item))
+                                    isRowSelected(rowKey, getRowKey(props.item))
                                 "
+                                :indeterminate-value="true"
+                                :false-value="false"
+                                :true-value="true"
                                 @update:model-value="
                                     (adding, evt) =>
-                                        updateSelection(
-                                            [getRowKey(props.item)],
-                                            [props.item],
+                                        updateSelectionHierarchy(
                                             adding,
-                                            evt
+                                            evt,
+                                            props.item
                                         )
                                 "
                             />
                         </slot>
                     </td>
                     <slot
-                        v-for="col in computedCols"
+                        v-for="(col, colIndex) in computedCols"
                         v-bind="
                             getBodyCellScope({
                                 key: getRowKey(props.item),
@@ -218,13 +216,28 @@
                                 : 'body-cell'
                         "
                     >
-                        <DlTd
+                        <DlTdTree
                             :class="col.tdClass(props.item)"
-                            :style="col.tdStyle(props.item)"
+                            :style="
+                                col.tdStyle(props.item) +
+                                    getTdStyles(props.item, colIndex)
+                            "
                             :no-hover="noHover"
                         >
+                            <template #icon="{}">
+                                <DlIcon
+                                    v-if="hasFirstColChildren(props, colIndex)"
+                                    :icon="getExpandIcon(props.item.expanded)"
+                                    @click="
+                                        updateExpandedRow(
+                                            !props.item.expanded,
+                                            getRowKey(props.item)
+                                        )
+                                    "
+                                />
+                            </template>
                             {{ getCellValue(col, props.item) }}
-                        </DlTd>
+                        </DlTdTree>
                     </slot>
                 </DlTr>
             </template>
@@ -266,6 +279,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
+                                        style="padding-left: 10px"
                                         :color="color"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
@@ -323,114 +337,55 @@
                                 key: getRowKey(row),
                                 row,
                                 pageIndex,
-                                trClass: isRowSelected(getRowKey(row))
+                                trClass: isRowSelected(rowKey, getRowKey(row))
                                     ? 'selected'
                                     : ''
                             })
                         "
-                        :has-any-action="hasAnyAction"
                         name="body"
                     >
-                        <DlTr
-                            v-if="!isEmpty"
-                            :key="getRowKey(row)"
-                            :class="
-                                isRowSelected(getRowKey(row))
-                                    ? 'selected'
-                                    : hasAnyAction
-                                        ? ' cursor-pointer'
-                                        : ''
+                        <DlTrTreeView
+                            :row="row"
+                            :is-row-selected="
+                                isRowSelected(rowKey, getRowKey(row))
                             "
+                            :has-any-action="hasAnyAction"
                             :no-hover="noHover"
-                            @click="onTrClick($event, row, pageIndex)"
-                            @dblclick="onTrDblClick($event, row, pageIndex)"
-                            @contextmenu="
-                                onTrContextMenu($event, row, pageIndex)
+                            :page-index="pageIndex"
+                            :has-draggable-rows="hasDraggableRows"
+                            :has-selection-mode="hasSelectionMode"
+                            :bind-body-selection="
+                                getBodySelectionScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex
+                                })
                             "
-                        >
-                            <td
-                                v-if="hasDraggableRows"
-                                class="dl-table__drag-icon"
-                            >
-                                <dl-icon
-                                    class="draggable-icon"
-                                    icon="icon-dl-drag"
-                                    size="12px"
-                                />
-                            </td>
-                            <td
-                                v-if="hasSelectionMode"
-                                class="dl-table--col-auto-with"
-                            >
-                                <slot
-                                    name="body-selection"
-                                    v-bind="
-                                        getBodySelectionScope({
-                                            key: getRowKey(row),
-                                            row,
-                                            pageIndex
-                                        })
-                                    "
-                                >
-                                    <DlCheckbox
-                                        :color="color"
-                                        :model-value="
-                                            isRowSelected(getRowKey(row))
-                                        "
-                                        @update:model-value="
-                                            (adding, evt) =>
-                                                updateSelection(
-                                                    [getRowKey(row)],
-                                                    [row],
-                                                    adding,
-                                                    evt
-                                                )
-                                        "
-                                    />
-                                </slot>
-                            </td>
-                            <slot
-                                v-for="col in computedCols"
-                                v-bind="
-                                    getBodyCellScope({
-                                        key: getRowKey(row),
-                                        row,
-                                        pageIndex,
-                                        col
-                                    })
-                                "
-                                :name="
-                                    hasSlotByName(`body-cell-${col.name}`)
-                                        ? `body-cell-${col.name}`
-                                        : 'body-cell'
-                                "
-                            >
-                                <DlTd
-                                    :class="col.tdClass(row)"
-                                    :style="col.tdStyle(row)"
-                                >
-                                    {{ getCellValue(col, row) }}
-                                </DlTd>
-                            </slot>
-                        </DlTr>
+                            :bind-body-cell-scope="
+                                getBodyCellScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex,
+                                    col
+                                })
+                            "
+                            :color="color"
+                            :computed-cols="computedCols"
+                            :model-value="isRowSelected(rowKey, getRowKey(row))"
+                            :slot-name="slotNames"
+                            :computed-rows="computedRows"
+                            @update:model-value="
+                                (adding, evt) =>
+                                    updateSelectionHierarchy(adding, evt, row)
+                            "
+                            @rowClick="onTrClick"
+                            @rowDoubleClick="onTrDblClick"
+                            @rowContextMenu="onTrContextMenu"
+                            @updateExpandedRow="
+                                updateExpandedRow(!row.expanded, getRowKey(row))
+                            "
+                        />
                     </slot>
-                    <DlTr v-if="isEmpty">
-                        <DlTd colspan="100%">
-                            <div class="flex justify-center">
-                                <dl-empty-state v-bind="emptyStateProps">
-                                    <template
-                                        v-for="(_, slot) in $slots"
-                                        #[slot]="props"
-                                    >
-                                        <slot
-                                            :name="slot"
-                                            v-bind="props"
-                                        />
-                                    </template>
-                                </dl-empty-state>
-                            </div>
-                        </DlTd>
-                    </DlTr>
                     <slot
                         name="bottom-row"
                         :cols="computedCols"
@@ -443,18 +398,15 @@
             v-if="!hideBottom"
             :class="bottomClasses"
         >
-            <div
-                v-if="nothingToDisplay && !hideNoData"
-                class="dl-table__control"
-            >
-                <slot name="no-data">
-                    {{ noDataMessage }}
+            <div class="dl-table__control">
+                <slot
+                    v-if="nothingToDisplay && !hideNoData"
+                    name="no-data"
+                >
+                    {{ bottomMessage }}
                 </slot>
             </div>
-            <div
-                v-else
-                class="dl-table__control"
-            >
+            <div class="dl-table__control">
                 <slot
                     name="bottom"
                     v-bind="marginalsScope"
@@ -475,7 +427,6 @@
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
-                            :total-items="rows.length"
                             @update:rowsPerPage="
                                 (v) => setPagination({ rowsPerPage: v })
                             "
@@ -503,77 +454,76 @@ import {
     PropType,
     watch,
     getCurrentInstance,
-    ComputedRef,
-    onMounted,
-    toRef
+    ComputedRef
 } from 'vue-demi'
 import {
     useTablePagination,
     useTablePaginationState,
     useTablePaginationProps
-} from './hooks/tablePagination'
-import DlTr from './components/DlTr.vue'
-import DlTh from './components/DlTh.vue'
-import DlTd from './components/DlTd.vue'
+} from '../DlTable/hooks/tablePagination'
+import DlTr from '../DlTable/components/DlTr.vue'
+import DlTh from '../DlTable/components/DlTh.vue'
+import DlTrTree from './components/DlTrTree.vue'
+import DlTdTree from './components/DlTdTree.vue'
 import {
     commonVirtPropsList,
     commonVirtScrollProps,
     ScrollDetails
 } from '../../shared/DlVirtualScroll/useVirtualScroll'
 import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
-import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
-import { useTableSort, useTableSortProps } from './hooks/tableSort'
 import {
-    useTableRowSelection,
-    useTableRowSelectionProps,
-    useTableRowSelectionEmits
-} from './hooks/tableRowSelection'
+    useTableFilter,
+    useTableFilterProps
+} from '../DlTable/hooks/tableFilter'
+import { useTableSort, useTableSortProps } from '../DlTable/hooks/tableSort'
+import {
+    useTreeTableRowSelection,
+    useTreeTableRowSelectionProps,
+    useTreeTableRowSelectionEmits
+} from './utils/treeTableRowSelection'
 import {
     useTableColumnSelection,
     useTableColumnSelectionProps
-} from './hooks/tableColumnSelection'
+} from '../DlTable/hooks/tableColumnSelection'
 import {
     useTableRowExpand,
     useTableRowExpandProps,
     useTableRowExpandEmits
-} from './hooks/tableRowExpand'
-import { useTableActionsProps, useTableActions } from './hooks/tableActions'
+} from '../DlTable/hooks/tableRowExpand'
 import {
-    applyDraggableRows,
-    applyDraggableColumns
-} from '../../../utils/draggable-table'
+    useTableActionsProps,
+    useTableActions
+} from '../DlTable/hooks/tableActions'
 import { injectProp } from '../../../utils/inject-object-prop'
-import { DlTableRow, DlTableProps, DlTableColumn } from './types'
+import { DlTableRow, DlTableProps, DlTableColumn } from '../DlTable/types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
-import { ResizableManager } from './utils'
-import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
-import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
+import { flatTreeData } from './utils/flatTreeData'
+import { setTrSpacing } from './utils/trSpacing'
 import { v4 } from 'uuid'
-
-const commonVirtPropsObj = {} as Record<string, any>
-commonVirtPropsList.forEach((p) => {
-    commonVirtPropsObj[p] = {}
-})
+import { RecordStringAny } from './types'
+import { getFromChildren } from './utils/getFromChildren'
+import DlTrTreeView from './views/DlTrTreeView.vue'
 
 export default defineComponent({
-    name: 'DlTable',
+    name: 'DlTreeTableOriginal',
     components: {
         DlTr,
         DlTh,
-        DlTd,
-        DlVirtualScroll,
         DlPagination,
         DlProgressBar,
         DlIcon,
         DlCheckbox,
-        DlEmptyState
+        DlTrTree,
+        DlTdTree,
+        DlVirtualScroll,
+        DlTrTreeView
     },
     props: {
-        columns: { type: Array, default: () => [] as Record<string, any>[] },
+        columns: { type: Array, default: () => [] as RecordStringAny[] },
         rows: {
             type: Array,
-            default: () => [] as Record<string, any>[]
+            default: () => [] as RecordStringAny[]
         },
         rowKey: {
             type: [String, Function],
@@ -624,7 +574,7 @@ export default defineComponent({
         },
         virtualScrollTarget: {
             type: Object as PropType<HTMLElement>,
-            default: null
+            default: void 0
         },
         titleClass: {
             type: [String, Array, Object],
@@ -647,15 +597,6 @@ export default defineComponent({
             default: null
         },
         noHover: Boolean,
-        isEmpty: Boolean,
-        emptyStateProps: {
-            type: Object as PropType<DlEmptyStateProps>,
-            default: null
-        },
-        scrollDebounce: {
-            type: Number,
-            default: 100
-        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -663,7 +604,7 @@ export default defineComponent({
         ...useTableFilterProps,
         ...useTableSortProps,
         ...useTableColumnSelectionProps,
-        ...useTableRowSelectionProps
+        ...useTreeTableRowSelectionProps
     },
     emits: [
         'request',
@@ -675,7 +616,7 @@ export default defineComponent({
         'row-dblclick',
         'row-contextmenu',
         ...useTableRowExpandEmits,
-        ...useTableRowSelectionEmits
+        ...useTreeTableRowSelectionEmits
     ],
     setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
@@ -689,7 +630,7 @@ export default defineComponent({
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
                 ? props.rowKey
-                : (row: Record<string, any>) => row[props.rowKey as string]
+                : (row: RecordStringAny) => row[props.rowKey as string]
         )
 
         // table slots
@@ -749,7 +690,7 @@ export default defineComponent({
         })
         //
 
-        const noDataMessage = computed(() => {
+        const bottomMessage = computed(() => {
             if (props.loading) {
                 return props.loadingLabel
             }
@@ -761,6 +702,24 @@ export default defineComponent({
             return props.noDataLabel
         })
 
+        const getTdStyles = (
+            row: (typeof computedRows.value)[number],
+            colIndex: number
+        ) => {
+            let styles = ''
+            if (colIndex === 0) {
+                styles = 'max-width: 100px; box-sizing: border-box;'
+                styles =
+                    styles +
+                    setTrSpacing({
+                        ...row,
+                        colIndex
+                    })
+            }
+
+            return styles
+        }
+
         const hasDraggableRows = computed(() =>
             ['rows', 'both'].includes(props.draggable)
         )
@@ -768,158 +727,20 @@ export default defineComponent({
             ['columns', 'both'].includes(props.draggable)
         )
 
-        let removeDraggableRows = () => {}
-        let removeDraggableColumns = () => {}
-
-        let resizableManager: ResizableManager | null = null
-        let tableEl: HTMLTableElement = null
-
-        onMounted(() => {
-            tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                'table.dl-table'
-            ) as HTMLTableElement
-            resizableManager = new ResizableManager()
-
-            if (props.resizable === true) {
-                resizableManager.addResizeCapability(tableEl)
-            }
-
-            if (hasDraggableRows.value === true) {
-                removeDraggableRows = applyDraggableRows(
-                    tableEl,
-                    vm,
-                    rootRef.value
-                )
-            }
-
-            if (hasDraggableColumns.value === true) {
-                removeDraggableColumns = applyDraggableColumns(
-                    tableEl,
-                    vm,
-                    vm.refs.dragRef as HTMLDivElement,
-                    rootRef.value
-                )
-            }
-        })
-
-        watch(
-            hasVirtScroll,
-            () => {
-                tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                    'table.dl-table'
-                ) as HTMLTableElement
-
-                if (props.resizable) {
-                    resizableManager.removeResizeCapability()
-                    resizableManager.addResizeCapability(tableEl)
-                }
-
-                if (hasDraggableRows.value === true) {
-                    removeDraggableRows()
-                    removeDraggableRows = applyDraggableRows(
-                        tableEl,
-                        vm,
-                        rootRef.value
-                    )
-                }
-
-                if (hasDraggableColumns.value === true) {
-                    removeDraggableColumns()
-                    removeDraggableColumns = applyDraggableColumns(
-                        tableEl,
-                        vm,
-                        vm.refs.dragRef as HTMLDivElement,
-                        rootRef.value
-                    )
-                }
-            },
-            {
-                flush: 'post'
-            }
-        )
-
-        watch(
-            () => props.resizable,
-            (value: boolean) => {
-                if (value) {
-                    resizableManager.addResizeCapability(tableEl)
-                } else {
-                    resizableManager.removeResizeCapability()
-                }
-            }
-        )
-
-        watch(
-            () => props.draggable,
-            () => {
-                if (tableEl) {
-                    if (hasDraggableRows.value === true) {
-                        removeDraggableRows = applyDraggableRows(
-                            tableEl,
-                            vm,
-                            rootRef.value
-                        )
-                    } else {
-                        removeDraggableRows()
-                    }
-
-                    if (hasDraggableColumns.value === true) {
-                        removeDraggableColumns = applyDraggableColumns(
-                            tableEl,
-                            vm,
-                            vm.refs.dragRef as HTMLDivElement,
-                            rootRef.value
-                        )
-                    } else {
-                        removeDraggableColumns()
-                    }
-                }
-            },
-            { immediate: true }
-        )
-
-        watch(
-            () =>
-                (props.tableStyle as string) +
-                props.tableClass +
-                props.tableHeaderStyle +
-                props.tableHeaderClass +
-                __containerClass,
-            () => {
-                if (
-                    hasVirtScroll.value === true &&
-                    virtScrollRef.value !== null
-                ) {
-                    virtScrollRef.value.reset()
-                }
-            }
-        )
-
         const { innerPagination, computedPagination, setPagination } =
             useTablePaginationState(vm, getCellValue)
 
-        watch(
-            [computedPagination, () => props.dense],
-            () => {
-                if (tableEl && props.resizable && resizableManager) {
-                    const tableHeight = tableEl.offsetHeight || 0
-
-                    resizableManager.updateResizersHeight(tableHeight)
-                }
-            },
-            { deep: true, flush: 'post' }
-        )
-
         const { computedFilterMethod } = useTableFilter(props, setPagination)
-        const rowsPropRef = toRef(props, 'rows')
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
-        const filteredSortedRows = computed(() => {
-            let rows = rowsPropRef.value as DlTableRow[]
+        const tableRows = ref(props.rows)
 
-            if (rows.length === 0) {
+        const filteredSortedRows = computed<DlTableRow[]>(() => {
+            let rows = tableRows.value as DlTableRow[]
+
+            if (tableRows.value.length === 0) {
                 return rows
             }
 
@@ -936,7 +757,7 @@ export default defineComponent({
 
             if (columnToSort.value !== null) {
                 rows = computedSortMethod.value(
-                    rowsPropRef.value === rows ? rows.slice() : rows,
+                    tableRows.value === rows ? rows.slice() : rows,
                     sortBy,
                     descending
                 )
@@ -945,17 +766,52 @@ export default defineComponent({
             return rows
         })
 
+        const updateExpandedRow = (
+            isExpanded: boolean,
+            name: string,
+            rowsArr = tableRows.value
+        ) => {
+            (rowsArr as DlTableRow[]).some((o) => {
+                if (o.name === name) {
+                    o.expanded = isExpanded
+                    updateNestedRows(o, isExpanded)
+                } else {
+                    if ((o.children || []).length > 0) {
+                        updateExpandedRow(isExpanded, name, o.children)
+                    }
+                }
+            })
+        }
+
+        const updateNestedRows = (
+            row: (typeof computedRows.value)[number],
+            isExpanded: boolean
+        ) => {
+            if ((row.children || []).length > 0) {
+                row.children.forEach(
+                    (r: (typeof computedRows.value)[number]) => {
+                        r.isExpandedParent = isExpanded
+
+                        if (!isExpanded) {
+                            r.expanded = isExpanded
+                            updateNestedRows(r, isExpanded)
+                        }
+                    }
+                )
+            }
+        }
+
         const filteredSortedRowsNumber = computed(
             () => filteredSortedRows.value.length
         )
 
-        const computedRows = computed(() => {
+        const computedRows = computed<DlTableRow[]>(() => {
             let rows = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && rowsPropRef.value !== rows) {
+                if (firstRowIndex.value === 0 && tableRows.value !== rows) {
                     if (rows.length > lastRowIndex.value) {
                         rows = rows.slice(0, lastRowIndex.value)
                     }
@@ -963,6 +819,8 @@ export default defineComponent({
                     rows = rows.slice(firstRowIndex.value, lastRowIndex.value)
                 }
             }
+
+            rows = flatTreeData(rows)
 
             return rows
         })
@@ -996,7 +854,7 @@ export default defineComponent({
             isRowSelected,
             clearSelection,
             updateSelection
-        } = useTableRowSelection(
+        } = useTreeTableRowSelection(
             props as unknown as DlTableProps,
             emit,
             computedRows,
@@ -1022,11 +880,11 @@ export default defineComponent({
             someRowsSelected.value === true ? null : allRowsSelected.value
         )
 
-        const selectionCheckboxIndeterminateVal = computed(
+        const selectionCheckboxIndeterminateVal = computed<boolean>(
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < rowsPropRef.value.length
+                computedRows.value.length < tableRows.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
@@ -1039,6 +897,18 @@ export default defineComponent({
                 computedRows.value,
                 val
             )
+        }
+        function updateSelectionHierarchy(
+            adding: boolean,
+            event: any,
+            row: any
+        ) {
+            const { childrenKeys, childrenCollection } = getFromChildren(
+                row,
+                props.rowKey
+            )
+
+            updateSelection(childrenKeys, childrenCollection, adding, event)
         }
 
         const hasTopSelectionMode = computed(() => {
@@ -1073,7 +943,7 @@ export default defineComponent({
             filteredSortedRowsNumber
         )
 
-        function getHeaderScope(data: Record<string, any>) {
+        function getHeaderScope(data: RecordStringAny) {
             Object.assign(data, {
                 cols: computedCols.value,
                 sort,
@@ -1097,11 +967,15 @@ export default defineComponent({
         // Virtual scroll functionality
 
         const virtProps = computed(() => {
-            const acc: Record<string, any> = {}
+            const acc: RecordStringAny = {}
 
             commonVirtPropsList.forEach((p) => {
-                acc[p] = (props as Record<string, any>)[p]
+                acc[p] = (props as RecordStringAny)[p]
             })
+
+            if (!acc.virtualScrollItemSize) {
+                acc.virtualScrollItemSize = props.dense === true ? 30 : 40
+            }
 
             return acc
         })
@@ -1117,15 +991,12 @@ export default defineComponent({
             lastPage
         }))
 
-        function getCellValue(
-            col: Record<string, any>,
-            row: Record<string, any>
-        ) {
+        function getCellValue(col: RecordStringAny, row: RecordStringAny) {
             const val =
                 typeof col.field === 'function'
                     ? col.field(row)
                     : row[col.field]
-            return col.format ? col.format(val, row) : val
+            return col.format !== void 0 ? col.format(val, row) : val
         }
 
         function resetVirtualScroll() {
@@ -1200,7 +1071,7 @@ export default defineComponent({
             emit('row-contextmenu', evt, row, pageIndex)
         }
 
-        function injectBodyCommonScope(data: Record<string, any>) {
+        function injectBodyCommonScope(data: RecordStringAny) {
             Object.assign(data, {
                 cols: computedCols.value,
                 colsMap: computedColsMap.value,
@@ -1215,7 +1086,7 @@ export default defineComponent({
                 injectProp(
                     data,
                     'selected',
-                    () => isRowSelected(data.key),
+                    () => isRowSelected(props.rowKey, data.key),
                     (adding: boolean, evt: any) => {
                         updateSelection([data.key], [data.row], adding, evt)
                     }
@@ -1232,7 +1103,7 @@ export default defineComponent({
             )
         }
 
-        function getBodyScope(data: Record<string, any>) {
+        function getBodyScope(data: RecordStringAny) {
             injectBodyCommonScope(data)
 
             data.cols = data.cols.map((col: DlTableColumn) =>
@@ -1245,19 +1116,19 @@ export default defineComponent({
             return data
         }
 
-        function getBodyCellScope(data: Record<string, any>) {
+        function getBodyCellScope(data: RecordStringAny) {
             injectBodyCommonScope(data)
             injectProp(data, 'value', () => getCellValue(data.col, data.row))
 
             return data
         }
 
-        function getBodySelectionScope(data: Record<string, any>) {
+        function getBodySelectionScope(data: RecordStringAny) {
             injectBodyCommonScope(data)
             return data
         }
 
-        const hasLoadingSlot = computed(() => slots['loading'])
+        const hasLoadingSlot = computed(() => slots['loading'] !== void 0)
 
         const paginationState = computed(() => {
             return {
@@ -1282,6 +1153,35 @@ export default defineComponent({
             lastPage
         })
 
+        const isRowVisible = (props: any) => {
+            return props.item.isExpandedParent || props.item.level === 1
+        }
+        const hasChildren = (props: any) => {
+            return (props.item.children || []).length > 0
+        }
+
+        const isFirstColumn = (index: number) => index === 0
+
+        const getExpandIcon = (isExpanded: boolean) => {
+            return `icon-dl-${isExpanded ? 'down' : 'right'}-chevron`
+        }
+
+        const getSelectedRowClass = () => {
+            const cursor = hasAnyAction ? ' cursor-pointer' : ''
+
+            return isRowSelected(props.rowKey, getRowKey.value)
+                ? 'selected'
+                : cursor
+        }
+
+        const slotNames = computed(() => {
+            return slots.length ? slots.map((slot: any) => slot.name) : null
+        })
+
+        const hasFirstColChildren = (props: any, colIndex: number) => {
+            return hasChildren(props) && isFirstColumn(colIndex)
+        }
+
         return {
             uuid: `dl-table-${v4()}`,
             rootRef,
@@ -1304,7 +1204,7 @@ export default defineComponent({
             bottomClasses,
             hasTopSlots,
             nothingToDisplay,
-            noDataMessage,
+            bottomMessage,
             paginationState,
             hasTopSelectionMode,
             hasBotomSelectionBanner,
@@ -1329,10 +1229,21 @@ export default defineComponent({
             onTrDblClick,
             onThClick,
             onTrContextMenu,
-            hasPaginationSlot
+            hasPaginationSlot,
+            setTrSpacing,
+            updateExpandedRow,
+            getTdStyles,
+            updateSelectionHierarchy,
+            isRowVisible,
+            hasChildren,
+            isFirstColumn,
+            getExpandIcon,
+            getSelectedRowClass,
+            slotNames,
+            hasFirstColChildren
         }
     }
 })
 </script>
 
-<style scoped src="./styles/dl-table-styles.scss" lang="scss" />
+<style scoped src="../DlTable/styles/dl-table-styles.scss" lang="scss" />
