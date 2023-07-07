@@ -15,7 +15,13 @@
             </slot>
         </div>
         <div class="dl-label__text">
-            <dl-ellipsis :text="text" />
+            <dl-ellipsis
+                v-if="text"
+                :text="text"
+            />
+            <dl-ellipsis v-else>
+                <slot name="default" />
+            </dl-ellipsis>
             <div
                 class="dl-label__suffix"
                 v-on="hasSuffix ? { mouseenter: handleMouseenterSuffix } : {}"
@@ -71,6 +77,13 @@ export default defineComponent({
         hint: {
             type: String,
             default: null
+        },
+        /**
+         * Label text color
+         */
+        color: {
+            type: String,
+            default: 'dl-color-darker'
         }
     },
     data() {
@@ -86,7 +99,8 @@ export default defineComponent({
                 '--dl-label-color': getColor(this.labelColor),
                 '--dl-label-slot-visibility': this.isExpanded
                     ? 'visible'
-                    : 'hidden'
+                    : 'hidden',
+                '--dl-label-text-color': getColor(this.color)
             }
         },
         hasSuffix() {
@@ -142,6 +156,7 @@ export default defineComponent({
         }
     }
     &__text {
+        color: var(--dl-label-text-color);
         width: 95%;
         display: flex;
     }
