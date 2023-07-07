@@ -139,7 +139,6 @@ export default defineComponent({
             background: var(--dl-color-tooltip-text);
             right: 20px;
             position: absolute;
-            // padding: 5px;
         }
     }
     &__text {
