@@ -38,7 +38,7 @@
 import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
 import { DlItemSection } from '../../../shared'
-import { DlList, DlTooltip } from '../../../essential'
+import { DlTooltip, DlList } from '../../../essential'
 import { Step } from '../models'
 
 export default defineComponent({
