@@ -42,7 +42,7 @@ import DlBadgeDemo from './DlBadgeDemo.vue'
 import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
-import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlLabel from './DlLabelDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
@@ -110,7 +110,7 @@ export default {
     DlTrendDemo,
     DlWidgetDemo,
     DlRadioDemo,
-    DlTextHolderDemo,
+    DlLabel,
     DlToastDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
