@@ -98,7 +98,8 @@
 import { defineComponent } from 'vue-demi'
 import { DlSliderBase, DlSliderInput } from './components/'
 import { DlButton } from '../../basic'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
 import { getColor, between } from '../../../utils'
 import { v4 } from 'uuid'
 

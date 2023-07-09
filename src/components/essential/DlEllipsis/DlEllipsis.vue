@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue-demi'
-import DlTooltip from '../../essential/DlTooltip/DlTooltip.vue'
+import { DlTooltip } from '../../shared'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 
 export default defineComponent({
@@ -63,7 +63,7 @@ export default defineComponent({
         splitPosition: {
             type: Number,
             default: 0.5,
-            validator: (value) => value >= 0 && value <= 1
+            validator: (value: number) => value >= 0 && value <= 1
         },
         /**
          * Tooltip to be displayed when the text is truncated

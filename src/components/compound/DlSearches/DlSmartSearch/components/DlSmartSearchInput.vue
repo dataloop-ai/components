@@ -136,7 +136,7 @@ import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
 import { SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce } from 'lodash'
-import { DlTooltip } from '../../../../essential'
+import { DlTooltip } from '../../../../shared'
 import DlSuggestionsDropdown from './DlSuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
 import {

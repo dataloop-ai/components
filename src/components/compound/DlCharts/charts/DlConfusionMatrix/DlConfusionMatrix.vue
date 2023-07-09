@@ -184,7 +184,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
-import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
+import { DlTooltip } from '../../../../shared'
 import {
     DlConfusionMatrixCell,
     DlConfusionMatrixLabel,

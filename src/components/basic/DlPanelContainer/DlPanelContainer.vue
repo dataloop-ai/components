@@ -125,8 +125,10 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
 import { DlEmptyStateProps } from '../DlEmptyState/types'
+// todo: this will cause issues
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({

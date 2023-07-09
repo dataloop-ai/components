@@ -48,8 +48,9 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { DlEllipsis } from '../../basic/DlEllipsis'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlTooltip } from '../../shared'
+// todo: this will cause issues
+import { DlIcon, DlEllipsis } from '../../essential'
 import { defineComponent } from 'vue-demi'
 import { getColor } from '../../../utils'
 
