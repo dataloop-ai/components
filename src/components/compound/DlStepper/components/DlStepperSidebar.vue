@@ -38,9 +38,8 @@
 import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
 import { DlItemSection } from '../../../shared'
-import { DlList } from '../../../essential'
+import { DlList, DlTooltip } from '../../../essential'
 import { Step } from '../models'
-import DlTooltip from '../../../essential/DlTooltip/DlTooltip.vue'
 
 export default defineComponent({
     name: 'DlStepperSidebar',
