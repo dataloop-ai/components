@@ -16,6 +16,7 @@ describe('DlLabel', () => {
         })
         it('should set props', () => {
             expect(wrapper.props()).toStrictEqual({
+                color: 'dl-color-darker',
                 text: 'test',
                 labelColor: 'red',
                 hint: 'info'
