@@ -27,7 +27,8 @@
     </div>
 </template>
 <script lang="ts">
-import { DlTooltip, DlIcon } from '../../../essential'
+import { DlTooltip } from '../../../shared'
+import { DlIcon } from '../../../essential'
 import { defineComponent } from 'vue-demi'
 import { stopAndPrevent } from '../../../../utils'
 import { v4 } from 'uuid'

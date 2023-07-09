@@ -35,8 +35,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlCheckbox } from '../components'
-import DlTooltip from '../components/essential/DlTooltip/DlTooltip.vue'
+import { DlCheckbox, DlTooltip } from '../components'
+
 export default defineComponent({
     name: 'DlCheckboxDemo',
     components: {

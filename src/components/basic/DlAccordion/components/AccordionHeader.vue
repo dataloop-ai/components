@@ -43,7 +43,8 @@
 </template>
 
 <script lang="ts">
-import { DlIcon, DlTooltip } from '../../../essential'
+import { DlTooltip } from '../../../shared'
+import { DlIcon } from '../../../essential'
 import { defineComponent, ref } from 'vue-demi'
 import { getColor } from '../../../../utils'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'

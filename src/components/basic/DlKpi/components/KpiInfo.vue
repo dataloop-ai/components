@@ -18,7 +18,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue-demi'
-import { DlTooltip, DlIcon } from '../../../essential'
+import { DlIcon } from '../../../essential'
+import { DlTooltip } from '../../../shared'
 
 export default defineComponent({
     name: 'KpiInfo',
