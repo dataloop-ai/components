@@ -27,7 +27,9 @@ describe('DlListItem', () => {
                 type: 'div',
                 withWave: false,
                 height: null,
-                padding: null
+                padding: null,
+                startIcon: null,
+                endIcon: null
             })
         })
         it('should right the class', function () {
