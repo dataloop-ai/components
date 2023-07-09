@@ -58,6 +58,19 @@ describe('DlSwitch', () => {
         expect(label).not.toBe(undefined)
     })
 
+    it('should render the given fluid prop', () => {
+        const wrapper = mount(DlSwitch, {
+            props: {
+                rightLabel: 'Switch Label',
+                fluid: true,
+                modelValue: [5, 3, 4],
+                value: 3
+            }
+        })
+
+        expect(wrapper.vm.$el.style.justifyContent).toBe('space-between')
+    })
+
     it('should apply default labelProps font size', () => {
         const wrapper = mount(DlSwitch, {
             props: {
