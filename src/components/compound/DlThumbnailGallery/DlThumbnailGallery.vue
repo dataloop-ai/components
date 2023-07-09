@@ -63,7 +63,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
 import { DlThumbnail, statusColors } from './types'
 
 export default defineComponent({

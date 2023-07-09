@@ -11,7 +11,7 @@
             class="card--icon"
         >
             <dl-icon
-                :icon="icon.src"
+                :icon="icon.icon"
                 :styles="iconStyles"
                 :size="iconSize"
                 :color="iconColor"
@@ -257,8 +257,9 @@ import { isString } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor, stringStyleToRecord } from '../../../utils'
 import { DlEmptyStateProps } from '../../basic/types'
-import { DlIcon, DlLink, DlTypography, DlTooltip } from '../../essential'
-import { DlChip, DlEllipsis, DlEmptyState } from '../../basic'
+import { DlTooltip } from '../../shared'
+import { DlIcon, DlLink, DlTypography, DlEllipsis } from '../../essential'
+import { DlChip, DlEmptyState } from '../../basic'
 import {
     DlCardImageType,
     DlCardLinkType,
