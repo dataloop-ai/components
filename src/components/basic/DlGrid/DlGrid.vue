@@ -57,20 +57,21 @@ export default defineComponent({
     },
     watch: {
         modelValue: {
-            handler(val) {
+            handler(val, oldVal) {
                 this.$nextTick(() => {
-                    if (val) this.applyGridElementStyles()
+                    if (val) {
+                        if (val.length !== oldVal?.length) {
+                            this.applyIndexesForChildren()
+                        }
+                        this.applyGridElementStyles()
+                    }
                 })
             },
             immediate: true
         }
     },
     mounted() {
-        Array.from((this.$refs.grid as HTMLElement).children).forEach(
-            (element: Element, index: number) => {
-                (element as HTMLElement).dataset.index = `${index}`
-            }
-        )
+        this.applyIndexesForChildren()
     },
     methods: {
         applyGridElementStyles() {
@@ -135,6 +136,13 @@ export default defineComponent({
         },
         layoutChanged() {
             this.$emit('layout-changed', this.modelValue)
+        },
+        applyIndexesForChildren() {
+            Array.from((this.$refs.grid as HTMLElement).children).forEach(
+                (element: Element, index: number) => {
+                    (element as HTMLElement).dataset.index = `${index}`
+                }
+            )
         }
     }
 })

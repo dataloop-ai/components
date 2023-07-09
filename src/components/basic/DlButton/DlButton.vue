@@ -53,7 +53,8 @@
 </template>
 
 <script lang="ts">
-import { DlTooltip, DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlIcon } from '../../essential'
 import {
     setPadding,
     setFontSize,

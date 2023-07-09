@@ -60,7 +60,8 @@ import {
 } from './types'
 import { loggerFactory } from '../../../utils'
 import { v4 } from 'uuid'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
 
 export default defineComponent({
     name: 'DlOptionGroup',

@@ -24,6 +24,7 @@
             <dl-item-section
                 v-if="startIcon"
                 side
+                style="display: flex"
             >
                 <dl-icon
                     :icon="startIcon"
@@ -35,6 +36,7 @@
             <dl-item-section
                 v-if="endIcon"
                 side
+                style="display: flex"
             >
                 <dl-icon
                     :icon="endIcon"
