@@ -455,14 +455,6 @@ export default defineComponent({
     pointer-events: none;
 }
 
-.dl-tooltip {
-    z-index: 9000;
-    position: fixed !important;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 2px 5px;
-}
-
 .capitalize::first-letter {
     text-transform: var(--dl-tooltip-text-transform);
 }
