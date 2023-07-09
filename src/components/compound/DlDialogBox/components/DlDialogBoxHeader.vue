@@ -1,6 +1,6 @@
 <template>
     <div class="root-container">
-        <div>
+        <div style="width: 95%; height: 100%">
             <dl-button
                 v-if="hasBackButton"
                 dense
@@ -30,6 +30,7 @@
         </div>
         <dl-button
             v-if="closeButton"
+            style="height: 100%; display: flex; align-items: start"
             class="close-button"
             icon="icon-dl-close"
             size="s"
