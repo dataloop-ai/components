@@ -55,6 +55,7 @@ import { DlIcon, DlSeparator } from '../../essential'
 import { itemHoverColor, itemActiveColor, itemCursor, itemColor } from './utils'
 import { wave, waveTrigger } from '../../../utils'
 import { v4 } from 'uuid'
+import { isObject } from 'lodash'
 
 export default defineComponent({
     name: 'DlListItem',
@@ -82,29 +83,43 @@ export default defineComponent({
             type: Boolean
         },
         startIcon: {
-            type: Object as PropType<{
-                icon: string
-                color?: string
-                size?: string
-            }>,
+            type: Object as PropType<
+                | {
+                      icon: string
+                      color?: string
+                      size?: string
+                  }
+                | string
+            >,
             default: null,
             validator: (value: any) => {
                 if (value) {
-                    return value.icon && typeof value.icon === 'string'
+                    if (isObject(value) as any) {
+                        return value.icon && typeof value.icon === 'string'
+                    } else {
+                        return typeof value === 'string'
+                    }
                 }
                 return true
             }
         },
         endIcon: {
-            type: Object as PropType<{
-                icon: string
-                color?: string
-                size?: string
-            }>,
+            type: Object as PropType<
+                | {
+                      icon: string
+                      color?: string
+                      size?: string
+                  }
+                | string
+            >,
             default: null,
             validator: (value: any) => {
                 if (value) {
-                    return value.icon && typeof value.icon === 'string'
+                    if (isObject(value) as any) {
+                        return value.icon && typeof value.icon === 'string'
+                    } else {
+                        return typeof value === 'string'
+                    }
                 }
                 return true
             }
@@ -139,13 +154,15 @@ export default defineComponent({
         startIconData(): { icon: string; color: string; size: string } {
             return Object.assign(
                 { color: 'dl-color-darker', size: '16px' },
-                this.startIcon
+                isObject(this.startIcon)
+                    ? this.startIcon
+                    : { icon: this.startIcon }
             )
         },
         endIconData(): { icon: string; color: string; size: string } {
             return Object.assign(
                 { color: 'dl-color-darker', size: '16px' },
-                this.endIcon
+                isObject(this.endIcon) ? this.endIcon : { icon: this.endIcon }
             )
         }
     },

@@ -5,9 +5,7 @@
                 v-for="(step, index) in steps"
                 :key="index"
                 :data-test-index="index"
-                :end-icon="getStepIcon(step)"
-                :end-icon-color="getStepIconColor(step)"
-                end-icon-size="16px"
+                :end-icon="endIcon(step)"
                 :clickable="sidebarNavigation"
                 :disabled="!getStepSidebarNavigation(step)"
                 :class="sidebarItemClasses(step)"
@@ -60,6 +58,13 @@ export default defineComponent({
     },
     emits: ['step-click'],
     methods: {
+        endIcon(step: Step) {
+            return {
+                icon: this.getStepIcon(step),
+                color: this.getStepIconColor(step),
+                size: '16px'
+            }
+        },
         getStepTitle(step: Step): string {
             const optional = step.optional ? ' (Optional)' : ''
             return `${this.capitalize(step.title)}${optional}`
