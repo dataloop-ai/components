@@ -112,7 +112,9 @@ import { v4 } from 'uuid'
 import { DlInfoErrorMessage } from '../../shared'
 import { defineComponent, computed, ref } from 'vue-demi'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
-import { DlIcon, DlTooltip } from '../'
+//todo: this can cause issues
+import { DlIcon } from '../'
+import { DlTooltip } from '../../shared'
 import DlButton from '../../basic/DlButton/DlButton.vue'
 
 export default defineComponent({

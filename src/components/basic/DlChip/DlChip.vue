@@ -50,7 +50,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlIcon } from '../../essential'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import {
     setTextColor,

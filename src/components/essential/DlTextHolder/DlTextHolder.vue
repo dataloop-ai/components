@@ -15,7 +15,9 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { DlEllipsis } from '../../basic/DlEllipsis'
+// todo: this causes an issue
+import { DlEllipsis } from '../../'
+
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
@@ -88,3 +90,4 @@ export default defineComponent({
     white-space: nowrap;
 }
 </style>
+../DlEllipsis

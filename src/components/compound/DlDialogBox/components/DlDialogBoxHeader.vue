@@ -16,7 +16,7 @@
                 class="title"
             >
                 <slot name="title">
-                    {{ title }}
+                    <dl-ellipsis :text="title" />
                 </slot>
             </h2>
             <p
@@ -24,7 +24,7 @@
                 class="subtitle"
             >
                 <slot name="subtitle">
-                    {{ subtitle }}
+                    <dl-ellipsis :text="subtitle" />
                 </slot>
             </p>
         </div>
@@ -43,11 +43,13 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue-demi'
 import { DlButton } from '../../../basic'
+import { DlEllipsis } from '../../../essential'
 
 export default defineComponent({
     name: 'DlDialogBoxHeader',
     components: {
-        DlButton
+        DlButton,
+        DlEllipsis
     },
     props: {
         title: { type: String, default: '' },

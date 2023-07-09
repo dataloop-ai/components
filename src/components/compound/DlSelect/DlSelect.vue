@@ -321,7 +321,8 @@
 <script lang="ts">
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { DlListItem } from '../../basic'
-import { DlTooltip, DlList, DlIcon, DlMenu } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlList, DlIcon, DlMenu } from '../../essential'
 import {
     DlInfoErrorMessage,
     DlItemSection,
