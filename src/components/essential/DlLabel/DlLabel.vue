@@ -15,6 +15,7 @@
             </slot>
         </div>
         <div class="dl-label__content">
+            <span v-if="prefix">{{ prefixPreview }}</span>
             <dl-ellipsis
                 v-if="text"
                 class="dl-label__text"
@@ -26,6 +27,7 @@
             >
                 <slot name="default" />
             </dl-ellipsis>
+            <span v-if="suffix"> {{ suffixPreview }}</span>
             <div class="dl-label__suffix">
                 <div class="dl-label__suffix-slot">
                     <slot
@@ -54,7 +56,7 @@ import { computed, defineComponent, ref, toRef, toRefs } from 'vue-demi'
 import { getColor } from '../../../utils'
 
 export default defineComponent({
-    name: 'DlTextHolder',
+    name: 'DlLabel',
     components: { DlEllipsis, DlIcon, DlTooltip },
     props: {
         /**
@@ -63,6 +65,20 @@ export default defineComponent({
         text: {
             type: String,
             default: ''
+        },
+        /**
+         * Prefix to be displayed
+         */
+        prefix: {
+            type: String,
+            default: null
+        },
+        /**
+         * Suffix to be displayed
+         */
+        suffix: {
+            type: String,
+            default: null
         },
         /**
          * Color of the left side line
@@ -88,7 +104,7 @@ export default defineComponent({
     },
     setup(props, { emit, slots }) {
         const mouseOver = ref(false)
-        const { labelColor, color } = toRefs(props)
+        const { labelColor, color, prefix, suffix } = toRefs(props)
 
         const styles = computed<Record<string, any>>(() => {
             return {
@@ -101,7 +117,21 @@ export default defineComponent({
             return !!slots['actions']
         })
 
-        return { uuid: `dl-text-holder-${v4()}`, mouseOver, styles, hasActions }
+        const prefixPreview = computed(() => {
+            return prefix.value?.trim() ?? ''
+        })
+        const suffixPreview = computed(() => {
+            return suffix.value?.trim() ?? ''
+        })
+
+        return {
+            uuid: `dl-text-holder-${v4()}`,
+            mouseOver,
+            styles,
+            hasActions,
+            prefixPreview,
+            suffixPreview
+        }
     }
 })
 </script>

@@ -53,6 +53,54 @@
                 </template>
             </dl-label>
         </div>
+        <div class="dl-text-holder-demo">
+            Label with prefix
+            <dl-label
+                label-color="dl-color-secondary"
+                hint="tooltip"
+                text="dl-labelaaaaaaaaaaaaaa"
+                prefix="%"
+            >
+                <template #actions>
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            align-items: center;
+                            height: 100%;
+                            margin-right: 5px;
+                        "
+                    >
+                        <dl-icon icon="icon-dl-add" />
+                        <dl-icon icon="icon-dl-delete" />
+                    </div>
+                </template>
+            </dl-label>
+        </div>
+        <div class="dl-text-holder-demo">
+            Label with suffix
+            <dl-label
+                label-color="dl-color-secondary"
+                hint="tooltip"
+                text="dl-labelaaaaaaaaaaaaaa"
+                suffix=".mp3"
+            >
+                <template #actions>
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            align-items: center;
+                            height: 100%;
+                            margin-right: 5px;
+                        "
+                    >
+                        <dl-icon icon="icon-dl-add" />
+                        <dl-icon icon="icon-dl-delete" />
+                    </div>
+                </template>
+            </dl-label>
+        </div>
     </div>
 </template>
 
