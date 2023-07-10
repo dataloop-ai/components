@@ -106,7 +106,7 @@ export default defineComponent({
                 textAreaValue.value = value
             }
         })
-        const stopPropagationEvent = (event: MouseEvent) => {
+        const stopPropagationEvent: any = (event: MouseEvent) => {
             event.stopPropagation()
         }
         watch(textAreaValue, (value) => {

@@ -106,9 +106,7 @@ import {
     watch,
     ref,
     computed,
-    PropType,
-    Component,
-    ComponentPropsOptions
+    PropType
 } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'

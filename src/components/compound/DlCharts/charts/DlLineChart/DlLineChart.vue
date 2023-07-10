@@ -106,8 +106,7 @@ import {
     watch,
     ref,
     computed,
-    PropType,
-    Component
+    PropType
 } from 'vue-demi'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
