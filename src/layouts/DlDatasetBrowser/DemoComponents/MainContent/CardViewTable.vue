@@ -144,7 +144,6 @@ export default defineComponent({
                     day: 'numeric',
                     year: 'numeric',
                     hour: 'numeric',
-                    hourCycle: 'h24',
                     minute: '2-digit',
                     second: '2-digit'
                 })

@@ -400,7 +400,7 @@ export default defineComponent({
 
         return {
             uuid: (attrs.id as string)?.length
-                ? attrs.id
+                ? (attrs.id as string)
                 : `dl-tooltip-${v4()}`,
             portalIsActive,
             classes: ['dl-tooltip dl-position-engine', attrs.class],

@@ -14,25 +14,24 @@
                 />
             </slot>
         </div>
-        <div class="dl-label__text">
+        <div class="dl-label__content">
             <dl-ellipsis
                 v-if="text"
+                class="dl-label__text"
                 :text="text"
             />
-            <dl-ellipsis v-else>
+            <dl-ellipsis
+                v-else
+                class="dl-label__text"
+            >
                 <slot name="default" />
             </dl-ellipsis>
-            <div
-                class="dl-label__suffix"
-                v-on="hasSuffix ? { mouseenter: handleMouseenterSuffix } : {}"
-            >
+            <div class="dl-label__suffix">
                 <div class="dl-label__suffix-slot">
                     <slot
-                        v-if="isExpanded && hasSuffix"
-                        name="suffix"
-                    >
-                        <slot name="actions" />
-                    </slot>
+                        v-if="mouseOver"
+                        name="actions"
+                    />
                 </div>
                 <dl-icon
                     v-if="hint"
@@ -90,38 +89,26 @@ export default defineComponent({
     data() {
         return {
             uuid: `dl-text-holder-${v4()}`,
-            isExpanded: false,
-            timer: null
+            mouseOver: false
         }
     },
     computed: {
-        styles() {
+        styles(): Record<string, any> {
             return {
                 '--dl-label-color': getColor(this.labelColor),
-                '--dl-label-slot-visibility': this.isExpanded
-                    ? 'visible'
-                    : 'hidden',
                 '--dl-label-text-color': getColor(this.color)
             }
         },
-        hasSuffix() {
-            return !!this.$slots.suffix
+        hasActions() {
+            return !!this.$slots['actions']
         }
     },
     methods: {
         handleMouseleave() {
-            this.timer = window.setTimeout(() => {
-                this.isExpanded = false
-                this.timer = null
-            }, 800)
+            this.mouseOver = false
         },
         handleMouseenter() {
-            if (this.timer) {
-                window.clearTimeout(this.timer)
-            }
-        },
-        handleMouseenterSuffix() {
-            this.isExpanded = true
+            this.mouseOver = true
         }
     }
 })
@@ -142,24 +129,24 @@ export default defineComponent({
         margin-right: 5px;
     }
     &__suffix {
-        width: 16px;
+        height: 100%;
         margin-left: 5px;
-        position: relative;
+        display: flex;
+        align-items: center;
         &-icon {
             cursor: pointer;
         }
-        &-slot {
-            border-radius: 3px;
-            visibility: var(--dl-label-slot-visibility);
-            background: var(--dl-color-tooltip-text);
-            right: 20px;
-            position: absolute;
-        }
+    }
+    &__content {
+        color: var(--dl-label-text-color);
+        display: flex;
+        width: 100%;
     }
     &__text {
-        color: var(--dl-label-text-color);
-        width: 95%;
-        display: flex;
+        flex-grow: 100;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 </style>
