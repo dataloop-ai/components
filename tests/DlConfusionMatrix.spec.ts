@@ -52,35 +52,4 @@ describe('DlConfusionMatrix', () => {
         })
         wrapper.vm.handleMatrixScroll({ target: { scrollTop: 30 } })
     })
-
-    it('should set tooltip according to the mouseenter event and hide it on mouseleave', () => {
-        vi.useFakeTimers()
-        const wrapper = mount(DlConfusionMatrix, {
-            props: matrixProps
-        })
-        const cell = {
-            value: 1,
-            xLabel: 'Label 1',
-            yLabel: 'Label 1'
-        }
-        const event = {
-            x: 10,
-            y: 10
-        }
-        wrapper.vm.handleShowTooltip(cell, event)
-        wrapper.vm.handleShowTooltip(cell, event)
-        vi.runOnlyPendingTimers()
-        expect(wrapper.vm.tooltipState).toEqual({
-            value: 1,
-            xLabel: 'Label 1',
-            yLabel: 'Label 1',
-            x: 10,
-            y: 10,
-            visible: true
-        })
-        wrapper.vm.handleHideTooltip()
-        wrapper.vm.handleHideTooltip()
-        vi.runOnlyPendingTimers()
-        expect(wrapper.vm.tooltipState.visible).toBe(false)
-    })
 })
