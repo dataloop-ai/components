@@ -17,19 +17,19 @@ describe('dom utils', () => {
 
     describe('getElement', () => {
         describe('get element by prop', () => {
-            it('should return undefined on empty string', () => {
-                expect(getElement('div')).toBe(undefined)
+            it('should return null on empty string', () => {
+                expect(getElement('div')).toBe(null)
             })
 
-            it('should return undefined on undefined prop', () => {
-                expect(getElement(null)).toBe(undefined)
+            it('should return null on undefined prop', () => {
+                expect(getElement(null)).toBe(null)
             })
         })
     })
 
     describe('childHasFocus', () => {
         describe('get element by prop', () => {
-            it('should return undefined on empty string', () => {
+            it('should return null on empty string', () => {
                 expect(
                     childHasFocus(
                         null as unknown as HTMLElement,

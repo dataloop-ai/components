@@ -3,8 +3,22 @@
         :style="`max-width: ${maxWidth}`"
         class="confusion-matrix-container"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <div
-            v-if="isValidMatrix"
+            v-else-if="isValidMatrix"
             ref="wrapper"
             :style="matrixStyles"
             class="wrapper"
@@ -72,6 +86,7 @@
                                     : null
                             }}
                             <dl-tooltip
+                                id="MatrixTooltip"
                                 class="matrix-tooltip"
                                 background-color="dl-color-shadow"
                                 color="dl-color-tooltip-background"
@@ -105,7 +120,7 @@
                 >
                     <span
                         v-for="(label, index) in visibleLabels"
-                        ref="xAxis"
+                        :ref="`xAxis-${index}`"
                         :key="index"
                         class="x-axis__element"
                         :style="`${
@@ -128,7 +143,10 @@
                                 {{ label }}
                             </span>
                         </span>
-                        <dl-tooltip self="top middle">
+                        <dl-tooltip
+                            self="top middle"
+                            :offset="calculateXAxisElOffset(index)"
+                        >
                             {{ labelStrings[index] }}</dl-tooltip>
                     </span>
                 </div>
@@ -182,6 +200,8 @@ import {
 } from '../../types'
 import { hexToRgbA } from '../../../../../utils/colors'
 import { colorNames } from '../../../../../utils/css-color-names'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import {
     getGradationValues,
@@ -194,7 +214,8 @@ import { debounce, isObject } from 'lodash'
 export default defineComponent({
     components: {
         DlBrush,
-        DlTooltip
+        DlTooltip,
+        DlEmptyState
     },
     props: {
         labels: {
@@ -226,18 +247,23 @@ export default defineComponent({
         maxWidth: {
             type: String,
             default: '800px'
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
         }
     },
     setup(props) {
         const { variables } = useThemeVariables()
 
         const tooltipState = ref<{
-            x: string
-            y: string
-            visible?: boolean
             value?: number
-            yLabel?: string
             xLabel?: string
+            yLabel?: string
+            x?: number
+            y?: number
+            visible?: boolean
         } | null>(null)
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
@@ -245,6 +271,7 @@ export default defineComponent({
         })
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
+        const resizeObserver = ref<ResizeObserver>(null)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -264,6 +291,7 @@ export default defineComponent({
         }
 
         return {
+            resizeObserver,
             variables,
             getCellBackground,
             getCellTextColor,
@@ -327,16 +355,43 @@ export default defineComponent({
                 )
             )
             this.rotateXLabels = longest * 12 > getCellWidth()
+        },
+        isEmpty(val) {
+            this.handleResizeObserver({ dispose: !val })
         }
     },
     mounted() {
         if (!this.isValidMatrix) return
-        this.resizeMatrix()
-        const resizeObserver = new ResizeObserver(this.resizeMatrix)
-        resizeObserver.observe(this.$refs.wrapper as Element)
-        window.onresize = this.resizeMatrix
+        if (this.isEmpty) return
+
+        this.handleResizeObserver()
     },
     methods: {
+        calculateXAxisElOffset(index: number): number[] {
+            let el = this.$refs[`xAxis-${index}`] as HTMLElement
+            if (!el) return null
+            if (Array.isArray(el)) {
+                el = el[0]
+            }
+            const height = el.clientHeight
+            const offsetHeight = -1 * (height / 2)
+            return [0, offsetHeight]
+        },
+        handleResizeObserver(options: { dispose?: boolean } = {}) {
+            const { dispose } = options
+            if (dispose && this.resizeObserver) {
+                this.resizeObserver.unobserve(this.$refs.wrapper as Element)
+                this.resizeObserver.disconnect()
+                this.resizeObserver = null
+            } else {
+                this.resizeMatrix()
+                if (!this.resizeObserver) {
+                    this.resizeObserver = new ResizeObserver(this.resizeMatrix)
+                    this.resizeObserver.observe(this.$refs.wrapper as Element)
+                    window.onresize = this.resizeMatrix
+                }
+            }
+        },
         resizeMatrix() {
             const colorSpectrum = this.$refs.colorSpectrum as HTMLElement
             const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
@@ -517,9 +572,11 @@ export default defineComponent({
     }
 }
 
-.matrix-tooltip {
-    --dl-tooltip-padding: 0px;
+#MatrixTooltip {
+    padding: 0;
+}
 
+.matrix-tooltip {
     &__body {
         border: 1px solid var(--dl-color-separator);
         padding: 8px;

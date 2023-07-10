@@ -1,6 +1,13 @@
-import { ref, computed, watch, nextTick, Ref } from 'vue-demi'
+import { computed, watch, nextTick, Ref } from 'vue-demi'
 
 export const useTransitionProps = {
+    /**
+     * The duration of the transition in milliseconds.
+     * @default 300
+     * @type {number}
+     *
+     * Disabled for Vue2
+     */
     transitionDuration: {
         type: Number,
         default: 300
@@ -13,11 +20,10 @@ export default function (
     },
     showing: Ref<boolean>
 ) {
-    const transitionState = ref(showing.value)
-
     watch(showing, (val) => {
         nextTick(() => {
-            transitionState.value = val
+            if (showing.value === val) return
+            showing.value = val
         })
     })
 

@@ -50,7 +50,7 @@ describe('DlMenu', () => {
             offset: [0, 0],
             'onUpdate:modelValue': undefined,
             persistent: false,
-            scrollTarget: undefined,
+            scrollTarget: null,
             self: 'top left',
             square: false,
             target: true,

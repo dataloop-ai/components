@@ -1,6 +1,9 @@
 <template>
     <div class="stepper-content">
-        <slot name="header">
+        <slot
+            v-if="!hide"
+            name="header"
+        >
             <div class="stepper-content--header">
                 <dl-typography
                     size="h3"
@@ -53,7 +56,8 @@ export default defineComponent({
             type: String,
             default: ''
         },
-        completed: Boolean
+        completed: Boolean,
+        hide: Boolean
     },
     emits: ['next', 'prev']
 })

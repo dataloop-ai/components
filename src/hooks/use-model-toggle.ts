@@ -41,7 +41,7 @@ export interface AnchorEvent extends KeyboardEvent {
 
 // handleShow/handleHide -> removeTick(), self (& emit show)
 
-export default function ({
+export default function useModelToggle({
     showing,
     canShow, // optional
     handleShow, // optional
@@ -70,16 +70,15 @@ export default function ({
     function show(evt: AnchorEvent) {
         if (
             props.disabled === true ||
-            (evt !== void 0 && evt.dlAnchorHandled === true) ||
-            (canShow !== void 0 && canShow(evt) !== true)
+            (evt && evt.dlAnchorHandled === true) ||
+            (canShow && canShow(evt) !== true)
         ) {
             return
         }
 
         const listener =
-            props[`onUpdate:${modelValueNaming}`] !== void 0 ||
-            (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`] !==
-                void 0
+            props[`onUpdate:${modelValueNaming}`] ||
+            (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`]
 
         if (listener === true) {
             emit(`update:${modelValueNaming}`, true)
@@ -87,7 +86,7 @@ export default function ({
 
             nextTick(() => {
                 if (payload === evt) {
-                    payload = void 0
+                    payload = null
                 }
             })
         }
@@ -106,7 +105,7 @@ export default function ({
 
         emit('before-show', evt)
 
-        if (handleShow !== void 0) {
+        if (handleShow) {
             handleShow(evt)
         } else {
             emit('show', evt)
@@ -119,16 +118,15 @@ export default function ({
         }
 
         const listener =
-            props[`onUpdate:${modelValueNaming}`] !== void 0 ||
-            (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`] !==
-                void 0
+            props[`onUpdate:${modelValueNaming}`] ||
+            (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`]
 
         if (listener === true) {
             emit(`update:${modelValueNaming}`, false)
             payload = evt
             nextTick(() => {
                 if (payload === evt) {
-                    payload = void 0
+                    payload = null
                 }
             })
         }
@@ -147,7 +145,7 @@ export default function ({
 
         emit('before-hide', evt)
 
-        if (handleHide !== void 0) {
+        if (handleHide) {
             handleHide(evt)
         } else {
             emit('hide', evt)
@@ -156,7 +154,7 @@ export default function ({
 
     function processModelChange(val: boolean) {
         if (props.disabled === true && val === true) {
-            if (props[`onUpdate:${modelValueNaming}`] !== void 0) {
+            if (props[`onUpdate:${modelValueNaming}`]) {
                 emit(`update:${modelValueNaming}`, false)
             }
         } else if ((val === true) !== showing.value) {

@@ -94,12 +94,16 @@ function restoreSelection(
 function renderText(text: string) {
     const words = text?.split(/(\s+)/)
     const output = words?.map((word) => {
-        if (styleModel.keywords.values.includes(word)) {
-            return `<strong style='${SPAN_STYLES}; color:${styleModel.keywords.color}'>${word}</strong>`
-        } else if (styleModel.fields.values.includes(word)) {
-            return `<span style='color:${styleModel.fields.color}; ${SPAN_STYLES}'>${word}</span>`
-        } else if (styleModel.operators.values.includes(word)) {
-            return `<span style='color:${styleModel.operators.color}; ${SPAN_STYLES}'>${word}</span>`
+        if (styleModel) {
+            if (styleModel.keywords.values.includes(word)) {
+                return `<strong style='${SPAN_STYLES}; color:${styleModel.keywords.color}'>${word}</strong>`
+            } else if (styleModel.fields.values.includes(word)) {
+                return `<span style='color:${styleModel.fields.color}; ${SPAN_STYLES}'>${word}</span>`
+            } else if (styleModel.operators.values.includes(word)) {
+                return `<span style='color:${styleModel.operators.color}; ${SPAN_STYLES}'>${word}</span>`
+            } else {
+                return `<span style='${SPAN_STYLES}'>${word}</span>`
+            }
         } else {
             return `<span style='${SPAN_STYLES}'>${word}</span>`
         }

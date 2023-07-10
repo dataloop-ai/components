@@ -16,6 +16,7 @@
             <dl-stepper-sidebar
                 :steps="steps"
                 :bg-color="bgColor"
+                :hide="hide"
                 :disabled="disabled"
                 @step-click="$emit('set-step', $event)"
             />
@@ -24,18 +25,35 @@
                     v-if="state"
                     :title="contentTitle"
                     :error="state.error"
+                    :hide="hide"
                     :completed="state.completed"
                 >
                     <template #header>
                         <slot
+                            v-if="!isEmpty"
                             name="content-header"
                             :state="state"
                         />
                     </template>
                     <slot
+                        v-if="!isEmpty"
                         :name="state.value"
                         :state="state"
                     />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </dl-stepper-content>
                 <dl-stepper-footer
                     :finished="isDone"
@@ -62,6 +80,8 @@ import DlStepperHeader from './components/DlStepperHeader.vue'
 import DlStepperFooter from './components/DlStepperFooter.vue'
 import DlStepperSidebar from './components/DlStepperSidebar.vue'
 import DlStepperContent from './components/DlStepperContent.vue'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { StepState } from './models/interfaces'
 import { Step } from './models'
 import { getColor } from '../../../utils'
@@ -73,7 +93,8 @@ export default defineComponent({
         DlStepperFooter,
         DlStepperSidebar,
         DlStepperContent,
-        DlStepperContainer
+        DlStepperContainer,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
@@ -94,7 +115,7 @@ export default defineComponent({
         },
         state: {
             type: Object as PropType<StepState>,
-            default: () => {}
+            default: null
         },
         modelValue: {
             type: Boolean,
@@ -134,7 +155,13 @@ export default defineComponent({
         disabledPrevStep: Boolean,
         isDone: Boolean,
         hideCloseButton: Boolean,
-        disabled: { type: Boolean, default: false }
+        disabled: { type: Boolean, default: false },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            required: false,
+            default: null
+        }
     },
     emits: ['update:modelValue', 'done', 'next', 'prev', 'set-step', 'close'],
     data() {
@@ -144,6 +171,9 @@ export default defineComponent({
         }
     },
     computed: {
+        hide(): boolean {
+            return this.isEmpty
+        },
         nextButtonLabel(): string {
             return this.nextStep?.title ?? null
         },

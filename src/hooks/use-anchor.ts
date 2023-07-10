@@ -15,6 +15,14 @@ interface AnchorEvent extends KeyboardEvent {
     dlAnchorHandled?: boolean
 }
 
+interface AnchorElements {
+    hide: Function
+    toggle?: Function
+    toggleKey: Function
+    contextClick: Function
+    prevent: Function
+}
+
 export const useAnchorProps = {
     target: {
         type: [String, Boolean],
@@ -24,7 +32,7 @@ export const useAnchorProps = {
     contextMenu: Boolean
 }
 
-export default function ({
+export default function useAnchor({
     configureAnchorEl
 }: {
     configureAnchorEl?: Function
@@ -39,22 +47,12 @@ export default function ({
         // abort with no parent configured or on multi-touch
         return anchorEl?.value === null
             ? false
-            : evt === void 0 ||
-                  evt.touches === void 0 ||
-                  evt.touches.length <= 1
-    }
-
-    interface AnchorElements {
-        hide: Function
-        toggle?: Function
-        toggleKey: Function
-        contextClick: Function
-        prevent: Function
+            : !evt || !evt.touches || evt.touches.length <= 1
     }
 
     const anchorEvents: Partial<AnchorElements> = {}
 
-    if (configureAnchorEl === void 0 && proxy) {
+    if (!configureAnchorEl && proxy) {
         // default configureAnchorEl is designed for
         // DlMenu & DlPopupProxy (which is why it's handled here)
 
@@ -71,7 +69,7 @@ export default function ({
             },
 
             toggleKey(evt: AnchorEvent) {
-                if (isKeyCode(evt, 13) && anchorEvents.toggle !== void 0) {
+                if (isKeyCode(evt, 13) && anchorEvents.toggle) {
                     anchorEvents.toggle(evt)
                 }
             },
@@ -149,11 +147,11 @@ export default function ({
                 try {
                     el = document.querySelector(props.target)
                 } catch (err) {
-                    el = void 0
+                    el = null
                 }
             }
 
-            if (el !== void 0 && el !== null) {
+            if (el) {
                 anchorEl.value = (el as any).$el || el // cannot use VUE type to work on both vue versions, so let it be any
                 if (configureAnchorEl) {
                     configureAnchorEl()

@@ -1,3 +1,4 @@
+import { isNumber } from 'lodash'
 import {
     ref,
     computed,
@@ -33,7 +34,7 @@ function fixPagination(p: TablePagination) {
     if (p.page < 1) {
         p.page = 1
     }
-    if (p.rowsPerPage !== void 0 && p.rowsPerPage < 1) {
+    if (isNumber(p.rowsPerPage) && p.rowsPerPage < 1) {
         p.rowsPerPage = 0
     }
     return p
@@ -92,13 +93,12 @@ export function useTablePaginationState(
     )
 
     const computedPagination = computed(() => {
-        const pag =
-            props['onUpdate:pagination'] !== void 0
-                ? {
-                      ...innerPagination.value,
-                      ...props.pagination
-                  }
-                : innerPagination.value
+        const pag = props['onUpdate:pagination']
+            ? {
+                  ...innerPagination.value,
+                  ...props.pagination
+              }
+            : innerPagination.value
 
         return fixPagination(pag)
     })
@@ -123,10 +123,7 @@ export function useTablePaginationState(
             return
         }
 
-        if (
-            props.pagination !== void 0 &&
-            props['onUpdate:pagination'] !== void 0
-        ) {
+        if (props.pagination && props['onUpdate:pagination']) {
             emit('update:pagination', newPagination)
         } else {
             innerPagination.value = newPagination
@@ -224,7 +221,7 @@ export function useTablePagination(
         }
     })
 
-    if (props['onUpdate:pagination'] !== void 0) {
+    if (props['onUpdate:pagination']) {
         emit('update:pagination', { ...computedPagination.value })
     }
 

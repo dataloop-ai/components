@@ -11,9 +11,9 @@ export function createGlobalNode(id: string | null = null) {
         el.id = id
     }
 
-    if (globalConfig.globalNodes !== void 0) {
+    if (globalConfig.globalNodes) {
         const cls = globalConfig.globalNodes.class
-        if (cls !== void 0) {
+        if (cls) {
             el.className = cls
         }
     }

@@ -350,12 +350,12 @@ export default defineComponent({
         },
         onPan(event: any): void {
             if (event.isFinal === true) {
-                if (this.dragging !== void 0) {
+                if (this.dragging) {
                     this.updatePosition(event.evt)
                     if (event.touch === true) {
                         this.updateValue(true)
                     }
-                    this.dragging = void 0
+                    this.dragging = null
                     this.$emit('pan', 'end')
                 }
                 this.active = false

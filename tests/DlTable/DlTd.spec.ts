@@ -1,27 +1,58 @@
 import { mount } from '@vue/test-utils'
 import { DlTd } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlTd', () => {
-    it('should compute right class name', async () => {
-        const wrapper = mount(DlTd, {
-            props: {}
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlTd)
         })
 
-        expect(wrapper.vm.classes).toBe('dl-td')
-        expect(wrapper.vm.styles).toBe('')
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
+        })
 
-        await wrapper.setProps({ autoWidth: true })
-        expect(wrapper.vm.classes).toBe('dl-td dl-table--col-auto-width')
+        it('should have the right classes', () => {
+            expect(wrapper.vm.classes).toBe('dl-td')
+        })
+        it('should have the right styles', () => {
+            expect(wrapper.vm.styles).toBe('')
+        })
+        it('should the right ellipsis prop', () => {
+            expect(wrapper.vm.hasEllipsis).toBe(false)
+        })
+        describe('When change autoWidth prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ autoWidth: true })
+            })
 
-        await wrapper.setProps({ noHover: true })
-        expect(wrapper.vm.classes).toBe(
-            'dl-td dl-table--col-auto-width dl-td--no-hover'
-        )
+            it('should have the right classes', () => {
+                expect(wrapper.vm.classes).toBe(
+                    'dl-td dl-table--col-auto-width'
+                )
+            })
+        })
+        describe('When change noHover prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ noHover: true })
+            })
 
-        await wrapper.setProps({ bgColor: 'red' })
-        expect(wrapper.vm.styles).toBe('background: red')
+            it('should have the right classes', () => {
+                expect(wrapper.vm.classes).toBe(
+                    'dl-td dl-table--col-auto-width dl-td--no-hover'
+                )
+            })
+        })
+        describe('When change bgColor prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ bgColor: 'red' })
+            })
 
-        expect(wrapper.vm.hasEllipsis).toBe(false)
+            it('should have the right styles', () => {
+                expect(wrapper.vm.styles).toBe('background: red')
+            })
+        })
     })
 })

@@ -1,8 +1,8 @@
 <template>
     <div
         :id="uuid"
-        :class="rootContainerClasses"
         :style="cssVars"
+        :class="rootContainerClasses"
     >
         <div :class="wrapperClasses">
             <div
@@ -143,7 +143,7 @@
                             :key="item"
                             clickable
                             style="font-size: 12px"
-                            :is-highlighted="suggestIndex === highlightedIndex"
+                            :highlighted="suggestIndex === highlightedIndex"
                             @click="onClick($event, item)"
                         >
                             <span

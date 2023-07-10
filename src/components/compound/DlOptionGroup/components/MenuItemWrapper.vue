@@ -1,6 +1,6 @@
 <template>
     <dl-list-item
-        as="label"
+        type="label"
         clickable
         @click="emitClick"
     >
@@ -37,7 +37,7 @@ export default defineComponent({
 .menu-item-wrapper-section {
     display: flex;
     flex-direction: row-reverse;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
 }
 

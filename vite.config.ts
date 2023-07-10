@@ -13,9 +13,17 @@ export default defineConfig({
         },
         coverage: {
             reporter: ['lcovonly', 'text']
-        }
+        },
+        exclude: [
+            'node_modules/**/*.spec.js',
+            'node_modules/**/*.spec.ts',
+            'node_modules/**/*.test.js',
+            'node_modules/**/*.test.ts',
+            'misc'
+        ]
     },
     optimizeDeps: {
+        include: ['highlight.js'],
         exclude: ['vue-demi']
     },
     define: {

@@ -1,15 +1,13 @@
 <template>
     <div class="sidebar">
-        <dl-list>
+        <dl-list v-if="!hide">
             <dl-list-item
                 v-for="(step, index) in steps"
                 :key="index"
                 :data-test-index="index"
-                :end-icon="getStepIcon(step)"
-                :end-icon-color="getStepIconColor(step)"
-                end-icon-size="16px"
+                :end-icon="endIcon(step)"
                 :clickable="!disabled"
-                :disabled="isStepDisabled(step)"
+                :disabled="!isStepDisabled(step)"
                 :class="sidebarItemClasses(step)"
                 @click="handleStepClick(step, index)"
             >
@@ -59,10 +57,18 @@ export default defineComponent({
             required: false,
             default: 'dl-color-fill-third'
         },
-        disabled: { type: Boolean, default: false }
+        disabled: { type: Boolean, default: false },
+        hide: { type: Boolean, default: false }
     },
     emits: ['step-click'],
     methods: {
+        endIcon(step: Step) {
+            return {
+                icon: this.getStepIcon(step),
+                color: this.getStepIconColor(step),
+                size: '16px'
+            }
+        },
         getStepTitle(step: Step): string {
             const optional = step.optional ? ' (Optional)' : ''
             return `${this.capitalize(step.title)}${optional}`

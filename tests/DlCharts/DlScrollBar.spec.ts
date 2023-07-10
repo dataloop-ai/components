@@ -1,57 +1,73 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import { mount, shallowMount } from '@vue/test-utils'
 import DlChartsScrollBar from '../../src/components/compound/DlCharts/components/DlChartScrollBar.vue'
 
 describe('DlScrollBar', () => {
-    it('should trigger the drag functionality', () => {
-        const wrapper = mount(DlChartsScrollBar, {
-            props: {
-                itemCount: 20,
-                itemsInView: 6,
-                height: '700px',
-                position: 0
-            }
-        })
-        wrapper.vm.startDragging({ clientY: 400 })
-        expect(wrapper.vm.isDragging).toBeTruthy()
-        expect(wrapper.vm.mouseOffsetTop).toBe(400)
-    })
+    describe('When trigger drag', () => {
+        let wrapper: any
 
-    it('should turn off dragging', () => {
-        const wrapper = mount(DlChartsScrollBar, {
-            data() {
-                return {
-                    isDragging: true
+        beforeAll(() => {
+            wrapper = mount(DlChartsScrollBar, {
+                props: {
+                    itemCount: 20,
+                    itemsInView: 6,
+                    height: '700px',
+                    position: 0
                 }
-            },
-            props: {
-                height: '700px'
-            }
+            })
+            wrapper.vm.startDragging({ clientY: 400 })
         })
-        wrapper.vm.stopDragging()
-        expect(wrapper.vm.isDragging).toBeFalsy()
+        it('should trigger the drag functionality', function () {
+            expect(wrapper.vm.isDragging).toBeTruthy()
+        })
+        it('should the right offset', function () {
+            expect(wrapper.vm.mouseOffsetTop).toBe(400)
+        })
     })
+    describe('When turn off dragging', () => {
+        let wrapper: any
 
-    it('should move the scrollbar while dragging', async () => {
-        const wrapper = shallowMount(DlChartsScrollBar, {
-            props: {
-                itemCount: 20,
-                itemsInView: 6,
-                height: '700px',
-                position: 0
-            },
-            data() {
-                return {
-                    isDragging: true,
-                    maxHeight: 700
+        beforeAll(() => {
+            wrapper = mount(DlChartsScrollBar, {
+                data() {
+                    return {
+                        isDragging: true
+                    }
+                },
+                props: {
+                    height: '700px'
                 }
-            }
+            })
+            wrapper.vm.stopDragging()
         })
+        it('should off dragging', function () {
+            expect(wrapper.vm.isDragging).toBeFalsy()
+        })
+    })
+    describe('When move the scrollbar while dragging', () => {
+        let wrapper: any
 
-        wrapper.vm.moveScrollBar({ clientY: 200 })
+        beforeAll(async () => {
+            wrapper = shallowMount(DlChartsScrollBar, {
+                props: {
+                    itemCount: 20,
+                    itemsInView: 6,
+                    height: '700px',
+                    position: 0
+                },
+                data() {
+                    return {
+                        isDragging: true,
+                        maxHeight: 700
+                    }
+                }
+            })
+            wrapper.vm.moveScrollBar({ clientY: 200 })
 
-        await wrapper.vm.$nextTick()
-
-        expect(wrapper.emitted()['position-update']).toBeTruthy()
+            await wrapper.vm.$nextTick()
+        })
+        it('should updated position', function () {
+            expect(wrapper.emitted()['position-update']).toBeTruthy()
+        })
     })
 })

@@ -1,11 +1,16 @@
 import { mount } from '@vue/test-utils'
 import { DlSaturation } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlColorPicker DlSaturation component', () => {
-    it('should mount the component', async () => {
-        const wrapper = mount(DlSaturation)
+    describe('When mounting', () => {
+        let wrapper: any
 
-        expect(wrapper.exists()).toBe(true)
+        beforeAll(() => {
+            wrapper = mount(DlSaturation)
+        })
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
+        })
     })
 })

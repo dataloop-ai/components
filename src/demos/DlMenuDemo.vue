@@ -40,10 +40,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors
@@ -149,10 +147,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors
@@ -263,10 +259,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors
@@ -498,7 +492,7 @@
                                 v-for="(item, index) in listItems"
                                 :key="index"
                                 clickable
-                                :is-highlighted="index === highlightedIndex"
+                                :highlighted="index === highlightedIndex"
                             >
                                 <dl-item-section>
                                     {{ item }}
@@ -707,7 +701,12 @@ export default defineComponent({
             selectedItem,
             highlightedIndex,
             arrowNavigationLabel,
-            alotOfListItems
+            alotOfListItems,
+            menuStartIcon: {
+                icon: 'icon-dl-search',
+                color: 'dl-color-positive'
+            },
+            menuEndIcon: { icon: 'icon-dl-id', color: 'dl-color-secondary' }
         }
     }
 })

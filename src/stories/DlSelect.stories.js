@@ -37,10 +37,22 @@ export default {
                 defaultValue: { summary: false }
             }
         },
-        search: {
-            name: 'search',
+        searchable: {
+            name: 'searchable',
             defaultValue: false,
-            description: 'Have a search icon inside the select',
+            description:
+                'Makes the select searchable using a naive search where it checks if the search value is contained in the option label',
+            control: 'boolean',
+            table: {
+                type: { summary: Boolean },
+                defaultValue: { summary: false }
+            }
+        },
+        customFilter: {
+            name: 'customFilter',
+            defaultValue: false,
+            description:
+                'Use a custom filter function - this will trigger a filter event with the value of the search input',
             control: 'boolean',
             table: {
                 type: { summary: Boolean },
@@ -526,7 +538,8 @@ const SearchTemplate = (args) => ({
     template: `
     <div style='padding: 50px'>
       <dl-select
-          search
+          searchable
+          custom-filter
           v-model="selectedBySearch"
           :options="searchOptions"
           @filter="filterFn"

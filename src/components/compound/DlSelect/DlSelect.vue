@@ -59,25 +59,23 @@
                 :class="selectClasses"
             >
                 <div
-                    v-show="hasPrepend || search"
+                    v-show="hasPrepend || searchable"
                     :class="[
                         ...adornmentClasses,
                         'adornment-container--pos-left'
                     ]"
                 >
-                    <dl-icon
-                        v-if="search"
-                        icon="icon-dl-search"
-                        :size="iconSize"
-                        color="dl-color-lighter"
-                    />
-                    <slot
-                        v-else
-                        name="prepend"
-                    />
+                    <slot name="prepend">
+                        <dl-icon
+                            v-if="searchable"
+                            icon="icon-dl-search"
+                            :size="iconSize"
+                            color="dl-color-lighter"
+                        />
+                    </slot>
                 </div>
                 <input
-                    v-if="search"
+                    v-if="searchable"
                     ref="searchInput"
                     class="select-search-input"
                     :style="!isExpanded ? 'display: none;' : 'width: 100%;'"
@@ -87,7 +85,7 @@
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
                 >
-                <dl-tooltip v-if="disabled">
+                <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
                 </dl-tooltip>
                 <div
@@ -95,7 +93,7 @@
                     style="width: 100%"
                 >
                     <slot
-                        v-if="search ? !isExpanded : true"
+                        v-if="searchable ? !isExpanded : true"
                         :opt="selectedOption"
                         name="selected"
                     />
@@ -103,8 +101,8 @@
                 <template v-if="!hasSelectedSlot">
                     <span
                         v-show="
-                            (multiselect && !search) ||
-                                (multiselect && search && !isExpanded)
+                            (multiselect && !searchable) ||
+                                (multiselect && searchable && !isExpanded)
                         "
                         class="root-container--placeholder"
                     >
@@ -117,8 +115,8 @@
                     </span>
                     <span
                         v-show="
-                            (!multiselect && !search) ||
-                                (!multiselect && search && !isExpanded)
+                            (!multiselect && !searchable) ||
+                                (!multiselect && searchable && !isExpanded)
                         "
                         class="selected-label"
                     >
@@ -190,20 +188,16 @@
                         @update:model-value="selectAll"
                         @depth-change="handleDepthChange"
                     >
-                        <slot
-                            v-if="hasAllItemsSlot"
-                            name="all-items"
-                        />
-                        <template v-else>
+                        <slot name="all-items">
                             {{ computedAllItemsLabel }}
-                        </template>
+                        </slot>
                     </dl-select-option>
 
                     <!-- Virtual scroll -->
                     <dl-virtual-scroll
                         v-if="optionsCount > MAX_ITEMS_PER_LIST"
                         v-slot="{ item, index }"
-                        :items="options"
+                        :items="filteredOptions"
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
                         :virtual-scroll-sticky-size-end="20"
@@ -235,11 +229,9 @@
                             @deselected="handleDeselected"
                         >
                             <slot
-                                v-if="hasOptionSlot"
-                                :opt="item"
                                 name="option"
-                            />
-                            <template v-else>
+                                :opt="item"
+                            >
                                 {{
                                     capitalizedOptions
                                         ? typeof getOptionLabel(item) ===
@@ -247,13 +239,13 @@
                                             getOptionLabel(item).toLowerCase()
                                         : getOptionLabel(item)
                                 }}
-                            </template>
+                            </slot>
                         </dl-select-option>
                     </dl-virtual-scroll>
                     <!-- Else normal list -->
                     <div v-else>
                         <dl-select-option
-                            v-for="(option, optionIndex) in options"
+                            v-for="(option, optionIndex) in filteredOptions"
                             :key="getKeyForOption(option)"
                             clickable
                             :multiselect="multiselect"
@@ -328,7 +320,7 @@ import {
     DlItemSection,
     DlVirtualScroll
 } from '../../shared'
-import { defineComponent, isVue2, PropType, ref } from 'vue-demi'
+import { defineComponent, PropType, ref } from 'vue-demi'
 import {
     getLabel,
     getIconSize,
@@ -372,7 +364,8 @@ export default defineComponent({
         width: { type: String, default: '100%' },
         withoutBorders: { type: Boolean, default: false },
         title: { type: String, default: '' },
-        search: { type: Boolean, default: false },
+        searchable: { type: Boolean, default: false },
+        customFilter: { type: Boolean, default: false },
         required: { type: Boolean, default: false },
         optional: { type: Boolean, default: false },
         fitContent: Boolean,
@@ -420,6 +413,7 @@ export default defineComponent({
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
         const isEmpty = ref(true)
+        const searchTerm = ref('')
         const searchInputValue = ref('')
         const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
 
@@ -450,10 +444,26 @@ export default defineComponent({
             setHighlightedIndex,
             handleSelectedItem,
             handleModelValueUpdate,
+            searchTerm, // todo: merge this sometime
             searchInputValue
         }
     },
     computed: {
+        filteredOptions(): DlSelectOptionType[] {
+            if (this.customFilter || this.searchTerm === '') {
+                return this.options
+            }
+
+            return this.options.filter((option) => {
+                const label = getLabel(option)
+                return (
+                    label &&
+                    label
+                        .toLowerCase()
+                        .includes(this.searchTerm.toLowerCase().trim())
+                )
+            })
+        },
         optionsCount(): number {
             return this.options?.length ?? 0
         },
@@ -521,24 +531,12 @@ export default defineComponent({
             return getIconSize(this.size)
         },
         hasOptionSlot(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots.option
-            }
             return !!this.$slots.option
         },
         hasAllItemsSlot(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots['all-items']
-            }
             return !!this.$slots['all-items']
         },
         hasSelectedSlot(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots.selected
-            }
             return !!this.$slots.selected
         },
         computedPlaceholder(): string {
@@ -562,22 +560,18 @@ export default defineComponent({
                 : this.options[this.selectedIndex]
         },
         hasBeforeOptions(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots['before-options']
-            }
             return !!this.$slots['before-options']
         },
         hasAfterOptions(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots['after-options']
-            }
             return !!this.$slots['after-options']
         },
         noOptions(): boolean {
             if (Array.isArray(this.options)) {
-                return this.options.length === 0
+                if (this.customFilter) {
+                    return this.options.length === 0
+                }
+
+                return this.filteredOptions.length === 0
             }
             return true
         },
@@ -599,7 +593,10 @@ export default defineComponent({
             if (this.withoutBorders) {
                 classes.push('dl_select__select--without-border')
             }
-            if (this.hasPrepend || this.search) {
+            if (this.withoutBorders && this.hasPrepend) {
+                classes.push('dl_select__select--without-border__with-prepend')
+            }
+            if (this.hasPrepend || this.searchable) {
                 classes.push('dl_select__select--prepend')
                 classes.push('dl_select__select--both-adornments')
             }
@@ -646,10 +643,6 @@ export default defineComponent({
             )
         },
         hasPrepend(): boolean {
-            if (isVue2) {
-                // @ts-ignore
-                return !!this.$scopedSlots.prepend && !this.isSmall
-            }
             return !!this.$slots.prepend && !this.isSmall
         },
         chevronIconColor(): string {
@@ -658,7 +651,7 @@ export default defineComponent({
     },
     watch: {
         isExpanded(newVal: boolean) {
-            if (this.search) {
+            if (this.searchable) {
                 if (newVal) {
                     const inputRef = this.$refs.searchInput as HTMLInputElement
                     this.$nextTick(() => {
@@ -793,7 +786,7 @@ export default defineComponent({
                     ? undefined
                     : this.options[this.selectedIndex]
 
-            if (this.search) {
+            if (this.searchable) {
                 const searchInput = this.$refs.searchInput as HTMLInputElement
                 searchInput.value =
                     typeof selectedOption === 'string'
@@ -810,11 +803,18 @@ export default defineComponent({
             this.handleModelValueUpdate(valueToEmit)
         },
         handleSearchInput(e: Event): void {
-            if (this.search) {
-                this.$emit(
-                    'filter',
-                    (e.target as HTMLInputElement).value.trim()
-                )
+            if (this.searchable) {
+                if (this.customFilter) {
+                    this.$emit(
+                        'filter',
+                        (e.target as HTMLInputElement).value.trim()
+                    )
+                } else {
+                    this.searchTerm = (
+                        e.target as HTMLInputElement
+                    ).value.trim()
+                }
+
                 this.showAllItems =
                     (e.target as HTMLInputElement).value.trim() === ''
 
@@ -842,7 +842,7 @@ export default defineComponent({
             return html
         },
         handleSearchBlur(e: Event): void {
-            if (this.search) {
+            if (this.searchable) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 this.$nextTick(() => {
                     inputRef?.focus({})
@@ -858,13 +858,14 @@ export default defineComponent({
             if (!this.preserveSearch) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 if (inputRef) inputRef.value = ''
+                this.searchTerm = ''
                 this.$emit('filter', '')
             }
         },
         getLabel,
         onMenuOpen(): void {
             this.$emit('before-show')
-            if (this.search) {
+            if (this.searchable) {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 this.$nextTick(() => {
                     inputRef?.focus({})
@@ -900,7 +901,7 @@ export default defineComponent({
         align-items: center;
     }
     &--placeholder {
-        color: var(--placeholder-color);
+        color: var(--dl-select-palceholder-color, --placeholder-color);
     }
 
     .dl-select__title-container {
@@ -916,7 +917,7 @@ export default defineComponent({
     }
 
     .selected-label {
-        color: var(--placeholder-color);
+        color: var(--dl-select-palceholder-color, --placeholder-color);
     }
 
     .dl-select__title {
@@ -1030,6 +1031,13 @@ export default defineComponent({
                 height: 100%;
             }
             height: auto;
+
+            &__with-prepend {
+                padding-left: 30px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                width: calc(80% - var(--dl-select-expand-icon-width));
+            }
         }
 
         &::placeholder {

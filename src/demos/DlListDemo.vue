@@ -56,10 +56,8 @@
             </dl-list-item>
             <dl-list-item
                 clickable
-                start-icon="icon-dl-search"
-                end-icon="icon-dl-id"
-                start-icon-color="dl-color-positive"
-                end-icon-color="dl-color-secondary"
+                :start-icon="menuStartIcon"
+                :end-icon="menuEndIcon"
                 @click="log"
             >
                 <dl-item-section no-wrap>
@@ -132,10 +130,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                         @click="log"
                     >
                         <dl-item-section no-wrap>
@@ -171,7 +167,14 @@ export default defineComponent({
     },
     setup() {
         const log = (e: Event) => console.log(e)
-        return { log }
+        return {
+            log,
+            menuStartIcon: {
+                icon: 'icon-dl-search',
+                color: 'dl-color-positive'
+            },
+            menuEndIcon: { icon: 'icon-dl-id', color: 'dl-color-secondary' }
+        }
     }
 })
 </script>
