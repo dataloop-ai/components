@@ -13,33 +13,31 @@ export default meta
 export const Primary: Story = {
     args: {
         text: 'dl-label',
-        labelColor: 'blue',
-        hint: 'info'
+        labelColor: 'blue'
     }
 }
 
-export const WithSlot: Story = {
+export const WithActions: Story = {
     args: {
         text: 'dl-label',
         labelColor: 'blue',
-        hint: 'info'
-    },
-    render: (args) => {
-        return {
-            components: { DlLabel, DlIcon },
-            setup() {
-                return { args }
-            },
-            template: ` 
-               <div>
-                <dl-label v-bind="args">
-                 <template #suffix>
-                  <dl-icon icon="icon-dl-info"/>
-                  <dl-icon icon="icon-dl-info"/>
-                 </template>
-                </dl-label>
-               </div>
-            `
-        }
+        actions: 'Actions'
+    }
+}
+
+export const WithHint: Story = {
+    args: {
+        text: 'dl-label',
+        labelColor: 'blue',
+        hint: 'Hi there!'
+    }
+}
+
+export const WithHintAndActions: Story = {
+    args: {
+        text: 'dl-label',
+        labelColor: 'blue',
+        hint: 'Hi there!',
+        actions: 'Actions'
     }
 }
