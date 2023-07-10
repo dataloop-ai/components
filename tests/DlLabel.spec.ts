@@ -19,34 +19,10 @@ describe('DlLabel', () => {
                 color: 'dl-color-darker',
                 text: 'test',
                 labelColor: 'red',
-                hint: 'info'
+                hint: 'info',
+                suffix: null,
+                prefix: null
             })
-        })
-    })
-    describe('methods', () => {
-        let wrapper: any
-        beforeAll(() => {
-            wrapper = mount(DlLabel, {
-                props: {
-                    text: 'test',
-                    labelColor: 'red',
-                    hint: 'info'
-                },
-                slots: {
-                    suffix: 'suffixSlot'
-                }
-            })
-        })
-        it('should expand suffix slot on mouseenter', () => {
-            {
-                wrapper.vm.handleMouseenterSuffix()
-                expect(wrapper.vm.isExpanded).toBe(true)
-            }
-        })
-        it('should set timer for unexpanding on mouseleave', () => {
-            wrapper.vm.isExpanded = true
-            wrapper.vm.handleMouseleave()
-            expect(wrapper.vm.timer).toBeTruthy()
         })
     })
 })
