@@ -108,7 +108,7 @@
             top: top + 'px',
             left: left + 'px',
             fontSize: fontSize,
-            padding: !header ? padding : lineNumsRef ? '10px ' + padding + ' ' + padding : '0 ' + padding + ' ' + padding,
+            padding: !header ? padding : lineNums ? '10px ' + padding + ' ' + padding : '0 ' + padding + ' ' + padding,
           }"
 />
       </pre>
@@ -122,14 +122,13 @@ import hljs from 'highlight.js'
 import {
     computed,
     defineComponent,
-    isVue2,
     nextTick,
     onBeforeUnmount,
     onMounted,
     onUpdated,
     PropType,
     ref,
-    toRef,
+    toRefs,
     watch
 } from 'vue-demi'
 import { DlButton } from '../../../basic'
@@ -137,7 +136,6 @@ import { DlSelect } from '../../DlSelect'
 import { DlToast } from '../../DlToast'
 import '../styles/themes.css'
 import '../styles/themes-base16.css'
-import { text } from 'stream/consumers'
 
 export default defineComponent({
     name: 'CodeEditor',
@@ -253,6 +251,16 @@ export default defineComponent({
         }
     },
     setup(props: any, { emit }) {
+        const {
+            lineNums,
+            wrap,
+            tabSpaces,
+            modelValue,
+            height,
+            fontSize,
+            header,
+            padding
+        } = toRefs(props)
         const scrollBarWidth = ref(0)
         const scrollBarHeight = ref(0)
         const top = ref(0)
@@ -270,10 +278,8 @@ export default defineComponent({
         const lineNumsWidth = ref(0)
         const scrolling = ref(false)
         const textareaHeight = ref(0)
-        const lineNumsRef = toRef(props, 'lineNums')
-        const wrapRef = toRef(props, 'wrap')
         const showLineNums = computed(() => {
-            return wrapRef.value ? false : !!lineNumsRef.value
+            return wrap.value ? false : !!lineNums.value
         })
         const languagesOptions = computed(() => {
             return props.languages.map((lang: string[]) => {
@@ -284,29 +290,26 @@ export default defineComponent({
             })
         })
         const selectedLanguage = ref(languagesOptions.value[0])
-        const tabWidthRef = toRef(props, 'tabSpaces')
-        const modelRef = toRef(props, 'modelValue')
-        const heightRef = toRef(props, 'height')
         const code = ref<HTMLElement>(null as any)
         const textarea = ref<HTMLTextAreaElement>(null as any)
         const lineNumsEl = ref<HTMLDivElement>(null as any)
 
         const tabWidth = computed(() => {
             let result = ''
-            for (let i = 0; i < tabWidthRef.value; i++) {
+            for (let i = 0; i < tabSpaces.value; i++) {
                 result += ' '
             }
             return result
         })
 
         const contentValue = computed(() => {
-            return !modelRef.value && modelRef.value !== ''
+            return !modelValue.value && modelValue.value !== ''
                 ? content.value + '\n'
                 : props.modelValue + '\n'
         })
 
         const scroll = computed(() => {
-            return heightRef.value == 'auto' ? false : true
+            return height.value == 'auto' ? false : true
         })
 
         watch(contentValue, () => {
@@ -375,7 +378,7 @@ export default defineComponent({
                 Math.round(textareaHeight.value / singleLineHeight) - 1
             // displayed lineNum
             lineNum.value =
-                heightRef.value == 'auto'
+                height.value == 'auto'
                     ? localLineNum
                     : localLineNum > heightNum
                     ? localLineNum
@@ -416,7 +419,7 @@ export default defineComponent({
                 } else {
                     disposeLineNumsResizer()
                 }
-                if (lineNumsRef.value) {
+                if (lineNums.value) {
                     if (scrolling.value) {
                         scrolling.value = false
                     } else {
@@ -472,18 +475,14 @@ export default defineComponent({
             }
         }
 
-        const fontSizeRef = toRef(props, 'fontSize')
-        const headerRef = toRef(props, 'header')
-        const paddingRef = toRef(props, 'padding')
-
         const textAreaStyle = computed<Record<string, any>>(() => {
-            const padding = lineNumsRef.value
-                ? '10px ' + paddingRef.value + ' ' + paddingRef.value
-                : '0 ' + paddingRef.value + ' ' + paddingRef.value
+            const paddingVal = lineNums.value
+                ? '10px ' + padding.value + ' ' + padding.value
+                : '0 ' + padding.value + ' ' + padding.value
 
             return {
-                fontSize: fontSizeRef.value,
-                padding: !headerRef.value ? paddingRef.value : padding,
+                fontSize: fontSize.value,
+                padding: !header.value ? padding.value : paddingVal,
                 marginLeft: showLineNums.value
                     ? lineNumsWidth.value + 'px'
                     : '0',
@@ -516,7 +515,6 @@ export default defineComponent({
             code,
             textarea,
             lineNumsEl,
-            lineNumsRef,
             copy,
             calcScrollDistance,
             tab,
