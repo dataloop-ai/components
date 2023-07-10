@@ -424,7 +424,8 @@ export default defineComponent({
                     '--dl-tooltip-text-align': props.textAlignment,
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
-                        : 'none'
+                        : 'none',
+                    '--dl-tooltip-padding': '--dl-tooltip-padding'
                 }
             ] as any
         }
@@ -453,14 +454,6 @@ export default defineComponent({
     white-space: break-spaces;
     word-break: break-word;
     pointer-events: none;
-}
-
-.dl-tooltip {
-    z-index: 9000;
-    position: fixed !important;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 2px 5px;
 }
 
 .capitalize::first-letter {

@@ -6,8 +6,8 @@
                 :key="index"
                 :data-test-index="index"
                 :end-icon="endIcon(step)"
-                :clickable="sidebarNavigation"
-                :disabled="!getStepSidebarNavigation(step)"
+                :clickable="!disabled"
+                :disabled="!isStepDisabled(step)"
                 :class="sidebarItemClasses(step)"
                 @click="handleStepClick(step, index)"
             >
@@ -22,6 +22,9 @@
                                 {{ getStepSubtitle(step) }}
                             </span>
                         </div>
+                        <dl-tooltip v-if="isStepDisabled(step)">
+                            {{ getStepDisabledTooltip(step) }}
+                        </dl-tooltip>
                     </span>
                 </dl-item-section>
             </dl-list-item>
@@ -32,7 +35,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
-import { DlItemSection } from '../../../shared'
+import { DlItemSection, DlTooltip } from '../../../shared'
 import { DlList } from '../../../essential'
 import { Step } from '../models'
 
@@ -41,7 +44,8 @@ export default defineComponent({
     components: {
         DlList,
         DlListItem,
-        DlItemSection
+        DlItemSection,
+        DlTooltip
     },
     props: {
         steps: {
@@ -53,8 +57,8 @@ export default defineComponent({
             required: false,
             default: 'dl-color-fill-third'
         },
-        sidebarNavigation: { type: Boolean, default: true },
-        hide: Boolean
+        disabled: { type: Boolean, default: false },
+        hide: { type: Boolean, default: false }
     },
     emits: ['step-click'],
     methods: {
@@ -110,8 +114,11 @@ export default defineComponent({
                 ? 'dl-color-positive'
                 : 'dl-color-transparent'
         },
-        getStepSidebarNavigation(step: Step): boolean {
-            return step.sidebarNavigation ?? true
+        isStepDisabled(step: Step): boolean {
+            return step.disabled ?? false
+        },
+        getStepDisabledTooltip(step: Step): string {
+            return step.disabledTooltip ?? ''
         }
     }
 })

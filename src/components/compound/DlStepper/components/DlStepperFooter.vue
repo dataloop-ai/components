@@ -4,6 +4,7 @@
             <div class="dl-stepper-footer__left-actions">
                 <dl-button
                     :disabled="disabledPrevStep"
+                    :tooltip="prevStepDisabledTooltip"
                     outlined
                     :colors-object="prevButtonColorsObject"
                     :label="prevLabel"
@@ -11,6 +12,7 @@
                 />
                 <dl-button
                     :disabled="disabledNextStep"
+                    :tooltip="nextStepDisabledTooltip"
                     class="justify-end"
                     outlined
                     :label="nextLabel"
@@ -51,6 +53,16 @@ export default defineComponent({
             default: ''
         },
         nextButtonLabel: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        nextStepDisabledTooltip: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        prevStepDisabledTooltip: {
             type: String,
             required: false,
             default: ''
