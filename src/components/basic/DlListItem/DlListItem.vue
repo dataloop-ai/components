@@ -83,7 +83,7 @@ export default defineComponent({
             type: Boolean
         },
         startIcon: {
-            type: Object as PropType<
+            type: [Object, String] as PropType<
                 | {
                       icon: string
                       color?: string
@@ -104,7 +104,7 @@ export default defineComponent({
             }
         },
         endIcon: {
-            type: Object as PropType<
+            type: [Object, String] as PropType<
                 | {
                       icon: string
                       color?: string

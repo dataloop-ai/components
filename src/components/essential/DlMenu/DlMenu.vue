@@ -291,18 +291,21 @@ export default defineComponent({
                 { continuous: true }
             )
 
-            registerTimeout(() => {
-                // required in order to avoid the "double-tap needed" issue
-                avoidAutoClose = avoidAutoCloseFn(isMobile.value, {
-                    avoidAutoClose,
-                    autoClose: props.autoClose,
-                    innerRef
-                })
+            registerTimeout(
+                () => {
+                    // required in order to avoid the "double-tap needed" issue
+                    avoidAutoClose = avoidAutoCloseFn(isMobile.value, {
+                        avoidAutoClose,
+                        autoClose: props.autoClose,
+                        innerRef
+                    })
 
-                updatePosition()
-                showPortal(true) // done showing portal
-                emit('show', evt)
-            }, props.transitionDuration)
+                    updatePosition()
+                    showPortal(true) // done showing portal
+                    emit('show', evt)
+                },
+                isVue2 ? 5 : props.transitionDuration
+            )
         }
 
         function handleHide(evt: ClickOutsideEvent) {
@@ -314,10 +317,13 @@ export default defineComponent({
             anchorCleanup(true)
             refocusTarget = refocusTargetFn(evt, refocusTarget as HTMLElement)
 
-            registerTimeout(() => {
-                hidePortal(true) // done hiding, now destroy
-                emit('hide', evt)
-            }, props.transitionDuration)
+            registerTimeout(
+                () => {
+                    hidePortal(true) // done hiding, now destroy
+                    emit('hide', evt)
+                },
+                isVue2 ? 5 : props.transitionDuration
+            )
         }
 
         function anchorCleanup(hiding: boolean) {
