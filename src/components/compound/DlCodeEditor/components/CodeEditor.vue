@@ -130,7 +130,7 @@
 
 <script lang="ts">
 import hljs from 'highlight.js'
-import { computed, defineComponent, nextTick, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, isVue2, PropType, ref } from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlSelect } from '../../DlSelect'
 import { DlToast } from '../../DlToast'
@@ -143,32 +143,15 @@ export default defineComponent({
         DlSelect,
         DlButton
     },
-    directives: {
-        highlight: {
-            mounted(el, binding) {
-                nextTick(() => {
-                    el.textContent = binding.value
-                    hljs.highlightElement(el)
-                })
-            },
-            updated(el, binding) {
-                if (el.scrolling) {
-                    el.scrolling = false
-                } else {
-                    el.textContent = binding.value
-                    hljs.highlightElement(el)
-                }
-            }
-        }
-    },
     model: {
         prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {
         modelValue: {
-            required: true,
-            type: String
+            required: false,
+            type: String,
+            default: null
         },
         value: {
             type: String,
@@ -332,20 +315,28 @@ export default defineComponent({
             return this.height == 'auto' ? false : true
         }
     },
+    watch: {
+        contentValue() {
+            this.$nextTick(() => {
+                const code = this.$refs.code as HTMLElement
+                code.textContent = this.contentValue
+                hljs.highlightElement(code)
+            })
+        }
+    },
     mounted() {
         this.$emit('lang', this.languages[0][0])
         this.$emit('content', this.content)
         this.$emit('textarea', this.$refs.textarea)
         this.resizer()
-        ;(this.$refs.code as HTMLElement).textContent = this.contentValue
-        hljs.highlightElement(this.$refs.code as HTMLElement)
+        const code = this.$refs.code as HTMLElement
+        code.textContent = this.contentValue
+        hljs.highlightElement(code)
     },
     updated() {
         if (this.insertTab) {
-            (this.$refs.textarea as HTMLTextAreaElement).setSelectionRange(
-                this.cursorPosition,
-                this.cursorPosition
-            )
+            const textArea = this.$refs.textarea as HTMLTextAreaElement
+            textArea.setSelectionRange(this.cursorPosition, this.cursorPosition)
             this.insertTab = false
         }
         if (this.lineNums) {
@@ -358,10 +349,10 @@ export default defineComponent({
     },
     methods: {
         updateValue(e: any) {
-            if (this.modelValue == undefined) {
+            if (!this.modelValue && this.modelValue !== '') {
                 this.content = e.target.value
             } else {
-                this.$emit('update:modelValue', e.target.value)
+                this.$emit('update:model-value', e.target.value)
             }
         },
         changeLang(lang: string[][]) {
@@ -385,7 +376,8 @@ export default defineComponent({
             }
         },
         calcScrollDistance(e: any) {
-            (this.$refs.code as any).scrolling = true
+            const code = this.$refs.code as any
+            code.scrolling = true
             this.scrolling = true
             this.top = -e.target.scrollTop
             this.left = -e.target.scrollLeft

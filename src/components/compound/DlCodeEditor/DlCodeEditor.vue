@@ -10,14 +10,14 @@
             :languages="[[language, languageTitle]]"
             :read-only="readonly"
             :theme="theme"
-            :font-size="options.fontSize ? options.fontSize : dlFontSize"
+            :font-size="styleFontSize"
             :tab-spaces="options.tabSpaces ? options.tabSpaces : 4"
             :wrap="!!options.textWrapping"
-            :width="width"
-            :height="height"
+            :width="styleWidth"
+            :height="styleHeight"
             :header="!options.hideHeader"
             :display-language="!options.hideLanguage"
-            :copy-button="!options.hideCopyCode"
+            :copy-button="!options.hideCopyButton"
         />
     </div>
 </template>
@@ -113,10 +113,41 @@ export default defineComponent({
                     ?.lineNumbers
                     ? `1px solid var(--dl-color-separator)`
                     : `none`
-            }
+            } as Record<string, any>
         })
 
-        return { code, languageTitle, dlFontSize, cssVars }
+        const styleWidth = computed(() => {
+            if (typeof props.width === 'number') {
+                return `${props.width}px`
+            }
+            return props.width
+        })
+        const styleHeight = computed(() => {
+            if (typeof props.height === 'number') {
+                return `${props.height}px`
+            }
+            return props.height
+        })
+        const styleFontSize = computed(() => {
+            if (!props.options.fontSize) {
+                return dlFontSize
+            }
+            const frontSize = props.options.fontSize
+            if (typeof frontSize === 'number') {
+                return `${frontSize}px`
+            }
+            return frontSize
+        })
+
+        return {
+            code,
+            languageTitle,
+            dlFontSize,
+            cssVars,
+            styleHeight,
+            styleWidth,
+            styleFontSize
+        }
     }
 })
 </script>

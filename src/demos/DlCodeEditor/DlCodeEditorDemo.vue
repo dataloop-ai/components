@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref, watch } from 'vue-demi'
 import { DlCodeEditor, DlSwitch } from '../../components'
 import { DlCodeEditorOptions, DlCodeEditorTheme } from '../../components/types'
 
@@ -216,6 +216,10 @@ export default defineComponent({
         const options: DlCodeEditorOptions = {
             lineNumbers: true
         }
+
+        watch(codeEditorValue, (val) => {
+            console.log('@@@', val)
+        })
 
         return {
             codeEditorValue,

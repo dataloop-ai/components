@@ -424,8 +424,7 @@ export default defineComponent({
                     '--dl-tooltip-text-align': props.textAlignment,
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
-                        : 'none',
-                    '--dl-tooltip-padding': '--dl-tooltip-padding'
+                        : 'none'
                 }
             ] as any
         }

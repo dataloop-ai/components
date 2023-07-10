@@ -86,6 +86,7 @@
                                     : null
                             }}
                             <dl-tooltip
+                                id="MatrixTooltip"
                                 class="matrix-tooltip"
                                 background-color="dl-color-shadow"
                                 color="dl-color-tooltip-background"
@@ -119,7 +120,7 @@
                 >
                     <span
                         v-for="(label, index) in visibleLabels"
-                        ref="xAxis"
+                        :ref="`xAxis-${index}`"
                         :key="index"
                         class="x-axis__element"
                         :style="`${
@@ -142,7 +143,10 @@
                                 {{ label }}
                             </span>
                         </span>
-                        <dl-tooltip self="top middle">
+                        <dl-tooltip
+                            self="top middle"
+                            :offset="calculateXAxisElOffset(index)"
+                        >
                             {{ labelStrings[index] }}</dl-tooltip>
                     </span>
                 </div>
@@ -363,6 +367,16 @@ export default defineComponent({
         this.handleResizeObserver()
     },
     methods: {
+        calculateXAxisElOffset(index: number): number[] {
+            let el = this.$refs[`xAxis-${index}`] as HTMLElement
+            if (!el) return null
+            if (Array.isArray(el)) {
+                el = el[0]
+            }
+            const height = el.clientHeight
+            const offsetHeight = -1 * (height / 2)
+            return [0, offsetHeight]
+        },
         handleResizeObserver(options: { dispose?: boolean } = {}) {
             const { dispose } = options
             if (dispose && this.resizeObserver) {
@@ -558,9 +572,11 @@ export default defineComponent({
     }
 }
 
-.matrix-tooltip {
-    --dl-tooltip-padding: 0px;
+#MatrixTooltip {
+    padding: 0;
+}
 
+.matrix-tooltip {
     &__body {
         border: 1px solid var(--dl-color-separator);
         padding: 8px;
