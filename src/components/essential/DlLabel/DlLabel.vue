@@ -3,8 +3,8 @@
         :id="uuid"
         class="dl-label"
         :style="styles"
-        @mouseleave="handleMouseleave"
-        @mouseenter="handleMouseenter"
+        @mouseenter="mouseOver = true"
+        @mouseleave="mouseOver = false"
     >
         <div class="dl-label__prefix">
             <slot name="prefix">
@@ -50,7 +50,7 @@ import { v4 } from 'uuid'
 import { DlTooltip } from '../../shared'
 // todo: this will cause issues
 import { DlIcon, DlEllipsis } from '../../essential'
-import { defineComponent } from 'vue-demi'
+import { computed, defineComponent, ref, toRef, toRefs } from 'vue-demi'
 import { getColor } from '../../../utils'
 
 export default defineComponent({
@@ -86,30 +86,22 @@ export default defineComponent({
             default: 'dl-color-darker'
         }
     },
-    data() {
-        return {
-            uuid: `dl-text-holder-${v4()}`,
-            mouseOver: false
-        }
-    },
-    computed: {
-        styles(): Record<string, any> {
+    setup(props, { emit, slots }) {
+        const mouseOver = ref(false)
+        const { labelColor, color } = toRefs(props)
+
+        const styles = computed<Record<string, any>>(() => {
             return {
-                '--dl-label-color': getColor(this.labelColor),
-                '--dl-label-text-color': getColor(this.color)
+                '--dl-label-color': getColor(labelColor.value),
+                '--dl-label-text-color': getColor(color.value)
             }
-        },
-        hasActions() {
-            return !!this.$slots['actions']
-        }
-    },
-    methods: {
-        handleMouseleave() {
-            this.mouseOver = false
-        },
-        handleMouseenter() {
-            this.mouseOver = true
-        }
+        })
+
+        const hasActions = computed(() => {
+            return !!slots['actions']
+        })
+
+        return { uuid: `dl-text-holder-${v4()}`, mouseOver, styles, hasActions }
     }
 })
 </script>
