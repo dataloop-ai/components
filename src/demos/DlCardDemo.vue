@@ -96,7 +96,7 @@ export default defineComponent({
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. consectetur adipiscing elit. Egestas volutpat quam blandit integer mattis. ',
 
             icon: {
-                src: 'icon-dl-alert-filled',
+                icon: 'icon-dl-alert-filled',
                 color: 'red'
             },
             interactiveProps: {

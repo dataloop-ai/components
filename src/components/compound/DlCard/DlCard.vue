@@ -406,7 +406,7 @@ export default defineComponent({
                     ?.backgroundColor
                     ? image.value?.link?.backgroundColor
                     : 'rgba(255, 255, 255, 0.8)',
-                '--dl-card-width': interactive.value ? '180px' : width,
+                '--dl-card-width': interactive.value ? '180px' : width.value,
                 '--dl-card-image-width': interactive.value ? '180px' : '200px',
                 '--dl-card-image-height': interactive.value ? '112px' : '100px'
             }
