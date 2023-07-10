@@ -90,13 +90,8 @@
                                         />
                                         {{
                                             normalized
-                                                ? 'Normalized'
-                                                : 'Unnormalized'
-                                        }}
-                                        {{
-                                            normalized
-                                                ? cell.value
-                                                : cell.unnormalizedValue
+                                                ? `Normalized ${cell.value}`
+                                                : `Unnormalized ${cell.unnormalizedValue}`
                                         }}
                                     </span>
                                 </div>
