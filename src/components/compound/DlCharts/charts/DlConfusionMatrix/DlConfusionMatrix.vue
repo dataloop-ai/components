@@ -62,8 +62,6 @@
                             :style="`background-color: ${getCellBackground(
                                 cell.value
                             )}; color: ${getCellTextColor(cell.value)}`"
-                            @mouseenter="handleShowTooltip(cell, $event)"
-                            @mouseleave="handleHideTooltip"
                             @mousedown="openLink(cell)"
                         >
                             {{
@@ -73,6 +71,31 @@
                                         : cell.unnormalizedValue
                                     : null
                             }}
+                            <dl-tooltip
+                                class="matrix-tooltip"
+                                background-color="dl-color-shadow"
+                                color="dl-color-tooltip-background"
+                                :offset="[5, 5]"
+                            >
+                                <div class="matrix-tooltip__body">
+                                    <span>{{ cell.xLabel }}</span>
+                                    <span>{{ cell.yLabel }}</span>
+                                    <span class="matrix-tooltip__value">
+                                        <span
+                                            v-if="cell.value"
+                                            class="matrix-tooltip__color"
+                                            :style="`background-color: ${getCellBackground(
+                                                cell.value
+                                            )}`"
+                                        />
+                                        {{
+                                            normalized
+                                                ? `Normalized ${cell.value}`
+                                                : `Unnormalized ${cell.unnormalizedValue}`
+                                        }}
+                                    </span>
+                                </div>
+                            </dl-tooltip>
                         </div>
                     </div>
                 </div>
@@ -144,25 +167,6 @@
             class="invalid"
         >
             The given props cannot create a valid matrix.
-        </div>
-        <div
-            v-if="tooltipVisible"
-            :style="tooltipStyles"
-            class="matrix-tooltip"
-        >
-            <span class="matrix-tooltip__x">{{ tooltipState.xLabel }}</span>
-            <span class="matrix-tooltip__y">{{ tooltipState.yLabel }}</span>
-            <span>
-                <span
-                    v-if="tooltipState.value"
-                    class="matrix-tooltip__color"
-                    :style="`background-color: ${getCellBackground(
-                        tooltipState.value
-                    )}`"
-                />
-                {{ normalized ? 'Normalized' : 'Unnormalized' }}
-                {{ tooltipState.value }}
-            </span>
         </div>
     </div>
 </template>
@@ -264,15 +268,11 @@ export default defineComponent({
             getCellBackground,
             getCellTextColor,
             cellWidth,
-            tooltipState,
             currentBrushState,
             rotateXLabels
         }
     },
     computed: {
-        tooltipVisible(): boolean {
-            return this.tooltipState?.visible
-        },
         visibleLabels(): DlConfusionMatrixLabel[] {
             if (this.labels[0]) {
                 const arr = this.labels as DlConfusionMatrixLabel[]
@@ -304,12 +304,6 @@ export default defineComponent({
                 '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
                 '--general-color': this.getCellBackground()
-            }
-        },
-        tooltipStyles(): Record<string, number | string> {
-            return {
-                left: `${this.tooltipState?.x + 10}px`,
-                top: `${this.tooltipState?.y + 15}px`
             }
         },
         gradationValues(): number[] {
@@ -385,28 +379,6 @@ export default defineComponent({
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },
-        handleShowTooltip(cell: DlConfusionMatrixCell, e: MouseEvent) {
-            this.showTooltip(this, cell, e)
-        },
-        handleHideTooltip() {
-            this.hideTooltip(this)
-        },
-        showTooltip: debounce(
-            (ctx: any, cell: DlConfusionMatrixCell, e: MouseEvent) => {
-                ctx.tooltipState = {
-                    value: ctx.normalized ? cell.value : cell.unnormalizedValue,
-                    xLabel: cell.xLabel,
-                    yLabel: cell.yLabel,
-                    x: e.x,
-                    y: e.y,
-                    visible: true
-                }
-            },
-            200
-        ),
-        hideTooltip: debounce((ctx: any) => {
-            if (ctx?.tooltipState) ctx.tooltipState.visible = false
-        }, 200),
         openLink(cell: DlConfusionMatrixCell) {
             if (!cell.link) return
             window.open(cell.link, '_blank')
@@ -546,16 +518,22 @@ export default defineComponent({
 }
 
 .matrix-tooltip {
-    position: absolute;
-    border: 1px solid var(--dl-color-separator);
-    padding: 8px;
-    font-size: 0.8em;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--dl-color-shadow);
-    color: var(--dl-color-tooltip-background);
-    border-radius: 3px;
-    animation: fadeIn 0.4s;
+    --dl-tooltip-padding: 0px;
+
+    &__body {
+        border: 1px solid var(--dl-color-separator);
+        padding: 8px;
+        font-size: 10px;
+        line-height: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__value {
+        display: flex;
+        align-items: center;
+    }
 
     &__color {
         display: inline-block;
