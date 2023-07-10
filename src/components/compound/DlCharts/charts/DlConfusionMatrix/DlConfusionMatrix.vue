@@ -267,6 +267,7 @@ export default defineComponent({
         })
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
+        const resizeObserver = ref<ResizeObserver>(null)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -286,6 +287,7 @@ export default defineComponent({
         }
 
         return {
+            resizeObserver,
             variables,
             getCellBackground,
             getCellTextColor,
@@ -349,16 +351,33 @@ export default defineComponent({
                 )
             )
             this.rotateXLabels = longest * 12 > getCellWidth()
+        },
+        isEmpty(val) {
+            this.handleResizeObserver({ dispose: !val })
         }
     },
     mounted() {
         if (!this.isValidMatrix) return
-        this.resizeMatrix()
-        const resizeObserver = new ResizeObserver(this.resizeMatrix)
-        resizeObserver.observe(this.$refs.wrapper as Element)
-        window.onresize = this.resizeMatrix
+        if (this.isEmpty) return
+
+        this.handleResizeObserver()
     },
     methods: {
+        handleResizeObserver(options: { dispose?: boolean } = {}) {
+            const { dispose } = options
+            if (dispose && this.resizeObserver) {
+                this.resizeObserver.unobserve(this.$refs.wrapper as Element)
+                this.resizeObserver.disconnect()
+                this.resizeObserver = null
+            } else {
+                this.resizeMatrix()
+                if (!this.resizeObserver) {
+                    this.resizeObserver = new ResizeObserver(this.resizeMatrix)
+                    this.resizeObserver.observe(this.$refs.wrapper as Element)
+                    window.onresize = this.resizeMatrix
+                }
+            }
+        },
         resizeMatrix() {
             const colorSpectrum = this.$refs.colorSpectrum as HTMLElement
             const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
