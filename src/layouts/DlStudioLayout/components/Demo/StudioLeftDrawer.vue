@@ -61,13 +61,15 @@
                     :key="iconMenuIndex"
                     flat
                     :style="`background-color: ${
-                        iconMenu.id === selectedIconMenu?.id
+                        selectedIconMenu && iconMenu.id === selectedIconMenu.id
                             ? 'var(--dl-color-fill)'
                             : ''
                     }`"
                     :icon-color="
-                        iconMenu.id === selectedIconMenu?.id
-                            ? selectedItem?.color
+                        selectedIconMenu &&
+                            selectedItem &&
+                            iconMenu.id === selectedIconMenu.id
+                            ? selectedItem.color
                             : 'dl-color-darker'
                     "
                     size="l"
@@ -144,7 +146,7 @@ export default defineComponent({
             { name: 'C', color: 'purple' },
             { name: 'D', color: 'yellow' }
         ]
-        const selectedItem = ref('')
+        const selectedItem = ref<any>('')
 
         const handleOption = (item: any) => {
             console.log('handle option demo: ', item)
