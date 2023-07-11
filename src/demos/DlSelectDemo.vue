@@ -172,6 +172,7 @@
         />
         With Fit
         <dl-select
+            v-model="selectedWithFit"
             :options="[
                 { label: 'Option 1', value: 1 },
                 { label: 'Option 2, longer one', value: 2 },
@@ -182,10 +183,12 @@
             searchable
             capitalized-options
             fit-content
+            @change="logEvent"
         />
         With Label and sub label
         <dl-select
             v-model="selectedOption"
+            searchable
             :options="[
                 {
                     subLabel: 'not so high',
@@ -487,6 +490,7 @@ export default defineComponent({
     components: { DlSelect, DlIcon, DlChip, DlBadge },
     data() {
         return {
+            selectedWithFit: [],
             selectedOption: {
                 label: 'High',
                 value: 'high',
@@ -537,6 +541,9 @@ export default defineComponent({
         }
     },
     methods: {
+        logEvent(e: any) {
+            console.log(e)
+        },
         filterFn(val: string) {
             this.searchOptions = defaultOptions.filter(
                 (v: { label: string; value: string } | undefined) =>
