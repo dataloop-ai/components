@@ -525,6 +525,32 @@
                 </dl-button>
             </div>
         </div>
+
+        <h4>With model as button: {{ isOpen }}</h4>
+        <dl-button label="test">
+            <dl-menu
+                v-model="isOpen"
+                max-height="250px"
+                self="bottom middle"
+                anchor="top middle"
+                :offset="[50, 5]"
+                @show="onShow"
+                @hide="onHide"
+            >
+                <dl-list style="min-width: 100px">
+                    <dl-list-item
+                        v-for="(item, index) in alotOfListItems"
+                        :key="index"
+                        clickable
+                        :is-highlighted="index === highlightedIndex"
+                    >
+                        <dl-item-section>
+                            {{ item }}
+                        </dl-item-section>
+                    </dl-list-item>
+                </dl-list>
+            </dl-menu>
+        </dl-button>
     </div>
 </template>
 
@@ -556,6 +582,7 @@ export default defineComponent({
         const showing = ref(false)
         const isMenuOpen = ref(false)
         const arrowNavigationLabel = ref<ItemType>('Arrow Navigation Label')
+        const isOpen = ref(false)
 
         const listItems = ref([
             'New tab',
@@ -694,6 +721,7 @@ export default defineComponent({
             listItems,
             onShow,
             onHide,
+            isOpen,
             isMenuOpen,
             selectedItem,
             highlightedIndex,
