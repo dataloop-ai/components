@@ -7,7 +7,7 @@
                 :data-test-index="index"
                 :end-icon="endIcon(step)"
                 :clickable="!disabled"
-                :disabled="!isStepDisabled(step)"
+                :disabled="isStepDisabled(step)"
                 :class="sidebarItemClasses(step)"
                 @click="handleStepClick(step, index)"
             >
