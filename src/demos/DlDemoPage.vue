@@ -221,7 +221,7 @@ export default defineComponent({
     margin: 0 auto;
     flex-direction: column;
     justify-content: center;
-    width: 950px;
+    min-width: 950px;
     resize: both;
     box-shadow: var(--dl-menu-shadow);
 }

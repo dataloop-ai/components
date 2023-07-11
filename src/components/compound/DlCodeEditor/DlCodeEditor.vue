@@ -154,6 +154,8 @@ export default defineComponent({
 .dl-code-editor-wrapper {
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
+    width: fit-content;
+    height: fit-content;
 }
 </style>
 

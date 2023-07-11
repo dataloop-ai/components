@@ -333,7 +333,7 @@
                 flex-direction: column;
             "
         >
-            V-model {{ showing }}
+            With model V-model {{ showing }}
             <div>
                 <dl-button
                     color="primary"
@@ -357,10 +357,7 @@
             >
                 Click me
 
-                <dl-menu
-                    v-model="showing"
-                    :value="false"
-                >
+                <dl-menu v-model="showing">
                     <dl-list style="min-width: 100px">
                         <dl-list-item clickable>
                             <dl-item-section>New tab</dl-item-section>
