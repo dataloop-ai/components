@@ -30,7 +30,7 @@
                 <template #rightDrawer>
                     <studio-tabs-menu />
                 </template>
-                <template #mainContent>
+                <template #body>
                     <studio-main-content />
                 </template>
                 <template #footer>
@@ -62,7 +62,7 @@
                 <template #rightDrawer>
                     <dataset-right-drawer />
                 </template>
-                <template #mainContent>
+                <template #body>
                     <dataset-main-content />
                 </template>
                 <template #footer>
@@ -70,12 +70,52 @@
                 </template>
             </dl-dataset-browser>
         </div>
+
+        <dl-button @click="isOpenPageLayoutModal = true">
+            Page Layout
+        </dl-button>
+        <div
+            v-if="isOpenPageLayoutModal"
+            class="fullscreen-template"
+        >
+            <div class="fullscreen-template__close">
+                <dl-button
+                    icon="icon-dl-close"
+                    flat
+                    @click="isOpenPageLayoutModal = false"
+                />
+            </div>
+            <dl-page-layout
+                title="test title"
+                :counters="[
+                    {
+                        value: 200,
+                        text: 'All dataset items'
+                    },
+                    {
+                        value: 100,
+                        text: 'Selected items'
+                    },
+                    {
+                        value: 12,
+                        text: 'Annotated items'
+                    },
+                    {
+                        value: 17,
+                        text: 'Annotations'
+                    }
+                ]"
+            >
+                <div>This is a body</div>
+            </dl-page-layout>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DlButton } from '../components'
+import { DlPageLayout } from '../layouts/DlPageLayout'
 import DlStudioLayout from '../layouts/DlStudioLayout/DlStudioLayout.vue'
 import StudioHeader from '../layouts/DlStudioLayout/components/Demo/StudioHeader.vue'
 import StudioMainContent from '../layouts/DlStudioLayout/components/Demo/StudioMainContent.vue'
@@ -93,6 +133,7 @@ import DatasetFooter from '../layouts/DlDatasetBrowser/DemoComponents/DatasetFoo
 export default defineComponent({
     name: 'DlLayoutDemo',
     components: {
+        DlPageLayout,
         DlButton,
         DlStudioLayout,
         StudioHeader,
@@ -112,6 +153,7 @@ export default defineComponent({
         const expandLeftDrawer = ref(false)
         const isOpenedDatasetBrowserModal = ref(false)
         const isOpenedStudioModal = ref(false)
+        const isOpenPageLayoutModal = ref(false)
 
         const handleExpandLeftDrawer = (value: any) => {
             expandLeftDrawer.value = value
@@ -121,7 +163,8 @@ export default defineComponent({
             expandLeftDrawer,
             handleExpandLeftDrawer,
             isOpenedDatasetBrowserModal,
-            isOpenedStudioModal
+            isOpenedStudioModal,
+            isOpenPageLayoutModal
         }
     }
 })

@@ -10,8 +10,8 @@
             <template #rightDrawer>
                 <slot name="rightDrawer" />
             </template>
-            <template #mainContent>
-                <slot name="mainContent" />
+            <template #body>
+                <slot name="body" />
             </template>
             <template #footer>
                 <slot name="footer" />

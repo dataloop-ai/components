@@ -13,7 +13,7 @@
             <slot name="rightDrawer" />
         </div>
         <div class="dl-layout__content">
-            <slot name="mainContent" />
+            <slot name="body" />
         </div>
         <div class="dl-layout__footer">
             <slot name="footer" />
