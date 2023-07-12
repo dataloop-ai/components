@@ -1,9 +1,6 @@
 <template>
     <div class="dl-studio-layout">
         <dl-layout :template="template">
-            <template #header>
-                <slot name="header" />
-            </template>
             <template #leftDrawer>
                 <slot name="leftDrawer" />
             </template>

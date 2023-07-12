@@ -53,12 +53,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import FilterMenu from './FilterMenu.vue'
-import {
-    DlSeparator,
-    DlButton,
-    DlIcon,
-    DlInput
-} from '../../../../../components'
+import { DlSeparator, DlButton, DlIcon, DlInput } from '../../../../components'
 
 export default defineComponent({
     name: 'TabMenuAnnotations',

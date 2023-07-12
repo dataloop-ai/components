@@ -1,43 +1,6 @@
 <template>
     <div style="height: 100px; width: 100%">
-        <dl-button @click="isOpenedStudioModal = true">
-            Studio Layout
-        </dl-button>
-        <div
-            v-if="isOpenedStudioModal"
-            class="fullscreen-template"
-        >
-            <div class="fullscreen-template__close">
-                <dl-button
-                    flat
-                    icon="icon-dl-close"
-                    @click="isOpenedStudioModal = false"
-                />
-            </div>
-            <DlStudioLayout>
-                <template #header>
-                    <studio-header
-                        :expand-left-drawer="expandLeftDrawer"
-                        @update:expand-left-drawer="handleExpandLeftDrawer"
-                    />
-                </template>
-                <template #left-menu>
-                    <left-menu-content />
-                </template>
-                <template #leftDrawer>
-                    <studio-left-drawer />
-                </template>
-                <template #rightDrawer>
-                    <studio-tabs-menu />
-                </template>
-                <template #body>
-                    <studio-main-content />
-                </template>
-                <template #footer>
-                    <studio-footer />
-                </template>
-            </DlStudioLayout>
-        </div>
+        <DlStudioLayoutDemo />
         <dl-button @click="isOpenedDatasetBrowserModal = true">
             Dataset Browser
         </dl-button>
@@ -116,13 +79,7 @@
 import { defineComponent, ref } from 'vue-demi'
 import { DlButton } from '../components'
 import { DlPageLayout } from '../layouts/DlPageLayout'
-import DlStudioLayout from '../layouts/DlStudioLayout/DlStudioLayout.vue'
-import StudioHeader from '../layouts/DlStudioLayout/components/Demo/StudioHeader.vue'
-import StudioMainContent from '../layouts/DlStudioLayout/components/Demo/StudioMainContent.vue'
-import LeftMenuContent from '../layouts/DlStudioLayout/components/Demo/LeftMenuContent.vue'
-import StudioTabsMenu from '../layouts/DlStudioLayout/components/Demo/StudioTabsMenu.vue'
-import StudioLeftDrawer from '../layouts/DlStudioLayout/components/Demo/StudioLeftDrawer.vue'
-import StudioFooter from '../layouts/DlStudioLayout/components/Demo/StudioFooter.vue'
+import { DlStudioLayoutDemo } from './DlStudioLayoutDemo'
 import DlDatasetBrowser from '../layouts/DlDatasetBrowser/DlDatasetBrowser.vue'
 import DatasetHeader from '../layouts/DlDatasetBrowser/DemoComponents/DatasetHeader.vue'
 import DatasetMainContent from '../layouts/DlDatasetBrowser/DemoComponents/DatasetMainContent.vue'
@@ -135,13 +92,7 @@ export default defineComponent({
     components: {
         DlPageLayout,
         DlButton,
-        DlStudioLayout,
-        StudioHeader,
-        StudioMainContent,
-        StudioTabsMenu,
-        StudioLeftDrawer,
-        StudioFooter,
-        LeftMenuContent,
+        DlStudioLayoutDemo,
         DlDatasetBrowser,
         DatasetHeader,
         DatasetLeftDrawer,

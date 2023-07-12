@@ -29,8 +29,8 @@ import {
     DlTabPanel,
     DlIcon,
     DlButton
-} from '../../../../components'
-import { DlTabDetails } from '../../../../components/types'
+} from '../../../components'
+import { DlTabDetails } from '../../../components/types'
 
 export default defineComponent({
     name: 'StudioTabsMenu',
