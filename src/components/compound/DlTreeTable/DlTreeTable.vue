@@ -1,557 +1,479 @@
 <template>
     <div>
         <DlTable
-            ref="RefTreeTableSelection"
+            ref="dlTableRef"
             :selected="selected"
             :separator="separator"
             :columns="tableColumns"
             :bordered="bordered"
             :draggable="draggable"
             :dense="dense"
-            class="sticky-header"
             :filter="filter"
             :selection="selection"
             :loading="loading"
             :rows="tableRows"
             :resizable="resizable"
-            row-key="name"
-            color="dl-color-secondary"
-            title="Table Title"
-            :virtual-scroll="vScroll"
-            style="height: 500px"
+            :row-key="rowKey"
+            :color="color"
+            :title="title"
+            :virtual-scroll="virtualScroll"
             :rows-per-page-options="rowsPerPageOptions"
             @row-click="log"
             @th-click="log"
             @update:selected="updateSeleted"
         >
-            <template #body="props">
-                <!--
-                <pre>
-                {{ $refs.RefTreeTableSelection.getBodySelectionScope }}
-                </pre>
-                -->
-                <!--
-                <pre>
-                    props: {{ props }}
-                </pre>
-                -->
-                <!--
-                <pre>
-                   RefTreeTableSelection:  {{ RefTreeTableSelection }}
-                </pre>
-                -->
-                <DlTrTreeView
-                    v-if="$refs.RefTreeTableSelection"
-                    :row="props.row"
-                    :is-row-selected="props.trClass === 'selected'"
-                    :has-any-action="props.hasAnyAction"
-                    :no-hover="props.noHover"
-                    :page-index="props.pageIndex"
-                    :has-draggable-rows="RefHasDraggableRows"
-                    :has-selection-mode="RefHasSelectionMode"
-                    :bind-body-selection="
-                        $refs.RefTreeTableSelection.getBodySelectionScope(
-                            props.key,
-                            props.row,
-                            props.pageIndex
-                        )
-                    "
-                    :bind-body-cell-scope="
-                        refGetBodyCellScope(
-                            props.key,
-                            props.row,
-                            props.pageIndex
-                        )
-                    "
-                    :color="props.color"
-                    :computed-cols="refComputedCols"
-                    :model-value="props.trClass === 'selected'"
-                    :slot-name="RefSlotNames"
-                    :computed-rows="RefComputedRows"
-                    @update:model-value="
-                        (adding, evt) =>
-                            RefTreeTableSelection.updateSelectionHierarchy(
-                                adding,
-                                evt,
-                                row
-                            )
-                    "
-                    @rowClick="refOnTrClick($event, props.row, props.pageIndex)"
-                    @rowDoubleClick="
-                        refOnTrDblClick($event, props.row, props.pageIndex)
-                    "
-                    @rowContextMenu="
-                        refOnTrContextMenu($event, props.row, props.pageIndex)
-                    "
-                    @updateExpandedRow="refUpdateExpandedRow(row)"
+            <template #header-selection>
+                <DlCheckbox
+                    style="padding-left: 10px"
+                    :color="color"
+                    :model-value="headerSelectedValue"
+                    :indeterminate-value="true"
+                    @update:model-value="onMultipleSelectionSet"
                 />
+            </template>
+            <template #body="props">
+                <template v-if="virtualScroll">
+                    <DlTrTreeView
+                        :row="props.item"
+                        :is-row-selected="
+                            isRowSelected(rowKey, getRowKey(props.item))
+                                ? 'selected'
+                                : ''
+                        "
+                        :has-any-action="dlTableRef.hasAnyAction"
+                        :no-hover="dlTableRef.noHover"
+                        :page-index="props.index"
+                        :has-draggable-rows="dlTableRef.hasDraggableRows"
+                        :has-selection-mode="dlTableRef.hasSelectionMode"
+                        :bind-body-selection="
+                            dlTableRef.getBodySelectionScope({
+                                key: getRowKey(props.item),
+                                row: props.item,
+                                pageIndex: props.index
+                            })
+                        "
+                        :bind-body-cell-scope="
+                            dlTableRef.getBodyCellScope({
+                                key: getRowKey(props.item),
+                                row: props.item,
+                                pageIndex: props.index
+                            })
+                        "
+                        :color="color"
+                        :computed-cols="dlTableRef.computedCols"
+                        :slot-name="dlTableRef.slotNames"
+                        :computed-rows="computedRows"
+                        :model-value="
+                            isRowSelected(rowKey, getRowKey(props.item))
+                        "
+                        @update:model-value="
+                            (adding, evt) =>
+                                updateSelectionHierarchy(
+                                    adding,
+                                    evt,
+                                    props.item
+                                )
+                        "
+                        @rowClick="
+                            dlTableRef.onTrClick(
+                                $event,
+                                props.item,
+                                props.index
+                            )
+                        "
+                        @rowDoubleClick="
+                            dlTableRef.onTrDblClick(
+                                $event,
+                                props.item,
+                                props.index
+                            )
+                        "
+                        @rowContextMenu="
+                            dlTableRef.onTrContextMenu(
+                                $event,
+                                props.item,
+                                props.index
+                            )
+                        "
+                        @updateExpandedRow="
+                            updateExpandedRow(
+                                !props.item.expanded,
+                                getRowKey(props.item)
+                            )
+                        "
+                    />
+                </template>
+                <template v-else>
+                    <template v-if="dlTableRef">
+                        <!--
+                        <pre>
+                            {{ computedRows }}
+                        </pre>
+                        -->
+                        <DlTrTreeView
+                            v-for="(row, pageIndex) in computedRows"
+                            :row="row"
+                            :is-row-selected="
+                                isRowSelected(rowKey, getRowKey(row))
+                                    ? 'selected'
+                                    : ''
+                            "
+                            :has-any-action="dlTableRef.hasAnyAction"
+                            :no-hover="dlTableRef.noHover"
+                            :page-index="pageIndex"
+                            :has-draggable-rows="dlTableRef.hasDraggableRows"
+                            :has-selection-mode="dlTableRef.hasSelectionMode"
+                            :bind-body-selection="
+                                dlTableRef.getBodySelectionScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex
+                                })
+                            "
+                            :bind-body-cell-scope="
+                                dlTableRef.getBodyCellScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex
+                                })
+                            "
+                            :color="color"
+                            :computed-cols="dlTableRef.computedCols"
+                            :slot-name="dlTableRef.slotNames"
+                            :computed-rows="computedRows"
+                            :model-value="isRowSelected(rowKey, getRowKey(row))"
+                            @update:model-value="
+                                (adding, evt) =>
+                                    updateSelectionHierarchy(adding, evt, row)
+                            "
+                            @rowClick="
+                                dlTableRef.onTrClick($event, row, pageIndex)
+                            "
+                            @rowDoubleClick="
+                                dlTableRef.onTrDblClick($event, row, pageIndex)
+                            "
+                            @rowContextMenu="
+                                dlTableRef.onTrContextMenu(
+                                    $event,
+                                    row,
+                                    pageIndex
+                                )
+                            "
+                            @updateExpandedRow="
+                                updateExpandedRow(!row.expanded, getRowKey(row))
+                            "
+                        />
+                    </template>
+                    <template v-else>
+                        no data
+                    </template>
+                </template>
             </template>
         </DlTable>
     </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref } from 'vue-demi'
+import {
+    computed,
+    ComputedRef,
+    defineComponent,
+    nextTick,
+    PropType,
+    ref
+} from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { cloneDeep, isNumber, times } from 'lodash'
-import { DlTableRow } from '../DlTable/types'
-
-const columns = [
-    {
-        name: 'name',
-        required: true,
-        label: 'Dessert (100g serving)',
-        align: 'left',
-        field: 'name',
-        sortable: true
-    },
-    {
-        name: 'calories',
-        align: 'center',
-        label: 'Calories',
-        field: 'calories',
-        sortable: true
-    },
-    { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-    { name: 'protein', label: 'Protein (g)', field: 'protein' },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-    {
-        name: 'calcium',
-        label: 'Calcium (%)',
-        field: 'calcium',
-        sortable: true,
-        sort: (a: string | number, b: string | number) =>
-            parseInt(a as string, 10) - parseInt(b as string, 10)
-    },
-    {
-        name: 'iron',
-        label: 'Iron (%)',
-        field: 'iron',
-        sortable: true,
-        sort: (a: string | number, b: string | number) =>
-            parseInt(a as string, 10) - parseInt(b as string, 10)
-    }
-]
-
-const rows = [
-    {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-    },
-    {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%'
-    },
-    {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%'
-    },
-    {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%'
-    },
-    {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%'
-    },
-    {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%'
-    },
-    {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%'
-    },
-    {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%'
-    },
-    {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%'
-    },
-    {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    },
-    ...times(100, (index) => ({
-        name: 'KitKat' + index,
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    }))
-]
-
-type Rows = (typeof rows)[0]
-
-interface RowsWithIndex extends Rows {
-    index?: number
-}
+import { DlTableProps, DlTableRow } from '../DlTable/types'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
+import { useTableActionsProps } from '../DlTable/hooks/tableActions'
+import { commonVirtScrollProps } from '../../shared/DlVirtualScroll/useVirtualScroll'
+import {
+    useTableRowExpandEmits,
+    useTableRowExpandProps
+} from '../DlTable/hooks/tableRowExpand'
+import { useTablePaginationProps } from '../DlTable/hooks/tablePagination'
+import { useTableFilterProps } from '../DlTable/hooks/tableFilter'
+import { useTableSortProps } from '../DlTable/hooks/tableSort'
+import { useTableColumnSelectionProps } from '../DlTable/hooks/tableColumnSelection'
+import { useTableRowSelectionProps } from '../DlTable/hooks/tableRowSelection'
+import {
+    useTreeTableRowSelection,
+    useTreeTableRowSelectionEmits
+} from './utils/treeTableRowSelection'
+import { RecordStringAny } from './types'
+import { flatTreeData } from './utils/flatTreeData'
+import { getFromChildren } from './utils/getFromChildren'
+import DlCheckbox from '../../essential/DlCheckbox/DlCheckbox.vue'
 
 export default defineComponent({
     name: 'DlTreeTable',
     components: {
         DlTable,
-        DlTrTreeView
+        DlTrTreeView,
+        DlCheckbox
     },
-    setup() {
-        const RefTreeTableSelection = ref(null)
-        const filter = ref('')
+    props: {
+        columns: { type: Array, default: () => [] as Record<string, any>[] },
+        rows: {
+            type: Array,
+            default: () => [] as Record<string, any>[]
+        },
+        rowKey: {
+            type: [String, Function],
+            default: 'id'
+        },
+        bordered: Boolean,
+        separator: {
+            type: String,
+            default: 'horizontal',
+            validator: (v: string) =>
+                ['horizontal', 'vertical', 'cell', 'none'].includes(v)
+        },
+        draggable: {
+            type: String,
+            default: 'none',
+            validator: (v: string) =>
+                ['rows', 'columns', 'none', 'both'].includes(v)
+        },
+        title: { type: String, default: null },
+        color: {
+            type: String,
+            default: 'dl-color-darker'
+        },
+        loading: {
+            type: Boolean,
+            default: false
+        },
+        dense: {
+            type: Boolean,
+            default: false
+        },
+        resizable: {
+            type: Boolean,
+            default: false
+        },
+        hideNoData: {
+            type: Boolean,
+            default: false
+        },
+        hideHeader: {
+            type: Boolean,
+            default: false
+        },
+        hideBottom: {
+            type: Boolean,
+            default: false
+        },
+        virtualScroll: {
+            type: Boolean,
+            default: false
+        },
+        hidePagination: {
+            type: Boolean,
+            default: false
+        },
+        hideSelectedBanner: {
+            type: Boolean,
+            default: false
+        },
+        selectedRowsLabel: {
+            type: Function,
+            default: (val: number) => `${val} records selected`
+        },
+        loadingLabel: {
+            type: String,
+            default: 'Loading...'
+        },
+        noResultsLabel: {
+            type: String,
+            default: 'There are no results to display'
+        },
+        noDataLabel: {
+            type: String,
+            default: 'No data available'
+        },
+        virtualScrollTarget: {
+            type: Object as PropType<HTMLElement>,
+            default: null
+        },
+        titleClass: {
+            type: [String, Array, Object],
+            default: null
+        },
+        tableStyle: {
+            type: [String, Array, Object],
+            default: null
+        },
+        tableClass: {
+            type: [String, Array, Object],
+            default: null
+        },
+        tableHeaderStyle: {
+            type: [String, Array, Object],
+            default: null
+        },
+        tableHeaderClass: {
+            type: [String, Array, Object],
+            default: null
+        },
+        noHover: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
+        },
+        ...useTableActionsProps,
+        ...commonVirtScrollProps,
+        ...useTableRowExpandProps,
+        ...useTablePaginationProps,
+        ...useTableFilterProps,
+        ...useTableSortProps,
+        ...useTableColumnSelectionProps,
+        ...useTableRowSelectionProps
+    },
+    emits: [
+        'request',
+        'virtual-scroll',
+        'row-reorder',
+        'col-reorder',
+        'row-click',
+        'th-click',
+        'row-dblclick',
+        'row-contextmenu',
+        ...useTableRowExpandEmits,
+        ...useTreeTableRowSelectionEmits
+    ],
+    setup(props, { emit }) {
+        const dlTableRef = ref(null)
         const selected = ref([])
-        const selection = ref('none')
-        const separator = ref('horizontal')
-        const bordered = ref(false)
-        const loading = ref(false)
-        const dense = ref(false)
         const vScroll = ref(false)
-        const resizable = ref(false)
         const borderState = ref([])
         const denseState = ref([])
-        const virtualScroll = ref([])
         const resizableState = ref([])
-        const tableRows = ref(cloneDeep(rows))
-        const draggable = ref('both')
-        const tableColumns = ref(columns)
-        const rowsPerPageOptions = ref([10, 12, 14, 16])
+        const tableRows = ref(cloneDeep(props.rows))
+        const tableColumns = ref(props.columns)
 
-        const infiniteLoading = ref(false)
-
-        const nextPageNumber = ref(2)
-
-        let allRows: RowsWithIndex[] = []
-        for (let i = 0; i < 100; i++) {
-            allRows = allRows.concat(
-                cloneDeep(rows)
-                    .slice(0)
-                    .map((r) => ({ ...r }))
-            )
-        }
-        allRows.forEach((row, index) => {
-            row.index = index
+        const computedRows = computed(() => {
+            return flatTreeData(dlTableRef.value.computedRows)
         })
 
-        const pageSize = 50
-        const lastPageNumber = Math.ceil(allRows.length / pageSize)
-
-        const computedRows = computed(() =>
-            allRows.slice(0, pageSize * (nextPageNumber.value - 1))
+        const getRowKey = computed(() =>
+            typeof props.rowKey === 'function'
+                ? props.rowKey
+                : (row: RecordStringAny) => row[props.rowKey as string]
         )
 
-        const onScroll = ({ to, ref }: { to: number; ref: any }) => {
-            const lastIndex = computedRows.value.length - 1
+        const {
+            hasSelectionMode,
+            singleSelection,
+            multipleSelection,
+            allRowsSelected,
+            someRowsSelected,
+            rowsSelectedNumber,
 
-            if (
-                infiniteLoading.value !== true &&
-                nextPageNumber.value < lastPageNumber &&
-                to === lastIndex
-            ) {
-                infiniteLoading.value = true
+            isRowSelected,
+            clearSelection,
+            updateSelection
+        } = useTreeTableRowSelection(
+            props as unknown as DlTableProps,
+            emit,
+            computedRows,
+            getRowKey as ComputedRef<(val: string | DlTableRow) => any>
+        )
 
-                setTimeout(() => {
-                    nextPageNumber.value++
-                    nextTick(() => {
-                        ref.refresh()
-                        infiniteLoading.value = false
-                    })
-                }, 500)
-            }
-        }
-
-        const pagination = ref({
-            sortBy: 'desc',
-            descending: false,
-            page: 2,
-            rowsPerPage: 3
-            // rowsNumber: xx if getting data from a server
-        })
-
-        const pagesNumber = computed(() => {
-            return Math.ceil(rows.length / pagination.value.rowsPerPage)
-        })
-
-        function fixPagination(p: typeof pagination.value) {
-            if (p.page < 1) {
-                p.page = 1
-            }
-            if (isNumber(p.rowsPerPage) && p.rowsPerPage < 1) {
-                p.rowsPerPage = 0
-            }
-            return p
-        }
-
-        const lastRowIndex = computed(() => {
-            const { page, rowsPerPage } = pagination.value
-            return page * rowsPerPage
-        })
-
-        const setPagination = (val: Partial<typeof pagination.value>) => {
-            pagination.value = fixPagination({
-                ...pagination.value,
-                ...val
+        const updateExpandedRow = (
+            isExpanded: boolean,
+            name: string,
+            rowsArr = tableRows.value
+        ) => {
+            (rowsArr as DlTableRow[]).some((o) => {
+                if (o.name === name) {
+                    o.expanded = isExpanded
+                    updateNestedRows(o, isExpanded)
+                } else {
+                    if ((o.children || []).length > 0) {
+                        updateExpandedRow(isExpanded, name, o.children)
+                    }
+                }
             })
         }
 
-        function firstPage() {
-            setPagination({ page: 1 })
-        }
+        const updateNestedRows = (
+            row: (typeof computedRows.value)[number],
+            isExpanded: boolean
+        ) => {
+            if ((row.children || []).length > 0) {
+                row.children.forEach(
+                    (r: (typeof computedRows.value)[number]) => {
+                        r.isExpandedParent = isExpanded
 
-        function prevPage() {
-            const { page } = pagination.value
-            if (page > 1) {
-                setPagination({ page: page - 1 })
+                        if (!isExpanded) {
+                            r.expanded = isExpanded
+                            updateNestedRows(r, isExpanded)
+                        }
+                    }
+                )
             }
         }
+        const updateSelectionHierarchy = (
+            adding: boolean,
+            event: any,
+            row: any
+        ) => {
+            const { childrenKeys, childrenCollection } = getFromChildren(
+                row,
+                props.rowKey
+            )
 
-        function nextPage() {
-            const { page, rowsPerPage } = pagination.value
-
-            if (
-                lastRowIndex.value > 0 &&
-                page * rowsPerPage < tableRows.value.length
-            ) {
-                setPagination({ page: page + 1 })
-            }
+            updateSelection(childrenKeys, childrenCollection, adding, event)
         }
 
-        const isLastPage = computed(
-            () => pagination.value.page >= pagesNumber.value
+        const headerSelectedValue = computed(() =>
+            someRowsSelected.value === true ? null : allRowsSelected.value
         )
 
-        const isFirstPage = computed(() => pagination.value.page === 1)
+        const onMultipleSelectionSet = (val: boolean) => {
+            if (someRowsSelected.value === true) {
+                val = false
+            }
 
-        function lastPage() {
-            setPagination({ page: pagesNumber.value })
+            updateSelection(
+                computedRows.value.map(getRowKey.value as any),
+                computedRows.value,
+                val
+            )
         }
 
         return {
-            RefTreeTableSelection,
-            filter,
+            dlTableRef,
             selected,
-            selection,
-            separator,
-            bordered,
-            loading,
-            dense,
             vScroll,
-            resizable,
             denseState,
             borderState,
-            virtualScroll,
             resizableState,
             tableRows,
-            draggable,
             tableColumns,
-            rowsPerPageOptions,
-            onScroll,
             computedRows,
-            infiniteLoading,
-            pagination,
-            pagesNumber,
-            firstPage,
-            lastPage,
-            nextPage,
-            prevPage,
-            isLastPage,
-            isFirstPage
+            isRowSelected,
+            getRowKey,
+            updateExpandedRow,
+            updateSelection,
+            updateSelectionHierarchy,
+            headerSelectedValue,
+            onMultipleSelectionSet
         }
     },
     methods: {
-        refOnTrClick(event: MouseEvent, row: DlTableRow, pageIndex: number) {
-            (this.$refs.RefTreeTableSelection as any)?.onTrClick(
-                event,
-                row,
-                pageIndex
-            )
-        },
-        refOnTrDblClick(event: MouseEvent, row: DlTableRow, pageIndex: number) {
-            (this.$refs.RefTreeTableSelection as any)?.onTrDblClick(
-                event,
-                row,
-                pageIndex
-            )
-        },
-        refOnTrContextMenu(
-            event: MouseEvent,
-            row: DlTableRow,
-            pageIndex: number
-        ) {
-            (this.$refs.RefTreeTableSelection as any)?.onTrContextMenu(
-                event,
-                row,
-                pageIndex
-            )
-        },
-        refUpdateExpandedRow(row: DlTableRow) {
-            (this.$refs.RefTreeTableSelection as any)?.updateExpandedRow(
-                !row.expanded,
-                row.key
-            )
-        },
-        refGetBodySelectionScope(
-            key: string,
-            row: DlTableRow,
-            pageIndex: number
-        ) {
-            // console.log('key: ', key)
-            // console.log('row: ', row)
-            // console.log('pageIndex: ', pageIndex)
-            console.log(
-                'this.$refs.RefTreeTableSelection: ',
-                this.$refs.RefTreeTableSelection
-            )
-            const bodySelection = (
-                this.$refs.RefTreeTableSelection as any
-            ).getBodySelectionScope({
-                key,
-                row,
-                pageIndex
-            })
-            console.log('bodySelection: ', bodySelection)
-            // return bodySelection
-            return {
-                key,
-                row,
-                pageIndex
-            }
-        },
-        refGetBodyCellScope(row: DlTableRow, pageIndex: number) {
-            return (this.$refs.RefTreeTableSelection as any)?.getBodyCellScope({
-                key: row.key,
-                row,
-                pageIndex
-            })
-        },
-        refComputedCols() {
-            return (this.$refs.RefTreeTableSelection as any)?.computedCols
-        },
-        RefHasDraggableRows() {
-            return (this.$refs.RefTreeTableSelection as any)?.hasDraggableRows
-        },
-        RefHasSelectionMode() {
-            return (this.$refs.RefTreeTableSelection as any)?.hasSelectionMode
-        },
-        RefSlotNames() {
-            return (this.$refs.RefTreeTableSelection as any)?.slotNames
-        },
-        RefComputedRows() {
-            return (this.$refs.RefTreeTableSelection as any)?.computedRows
-        },
-        addRowPerPage() {
-            this.rowsPerPageOptions.push(
-                this.rowsPerPageOptions[this.rowsPerPageOptions.length - 1] + 2
-            )
-        },
         updateSeleted(payload: any) {
             this.selected = payload
         },
-        updateBorderedState(val: boolean[]): void {
-            this.borderState = val
-
-            this.bordered = val.length !== 0
-        },
-        updateVirtualScrollState(val: boolean[]): void {
-            this.virtualScroll = val
-
-            this.vScroll = val.length !== 0
-        },
-        updateDenseState(val: boolean[]): void {
-            this.denseState = val
-
-            this.dense = val.length !== 0
-        },
-        updateResizableState(val: boolean[]): void {
-            this.resizableState = val
-
-            this.resizable = val.length !== 0
-        },
-        log(...args: any[]) {
-            console.log(...args)
-        },
-        filterMethod(
-            rows: Record<string, any>[],
-            filterTerms: string | Record<string, any>,
-            cols: Record<string, any>[],
-            cellValue: Function
-        ) {
-            const lowerTerms = filterTerms ? filterTerms.toLowerCase() : ''
-            return rows.filter(
-                (row) =>
-                    !cols.some((col) => {
-                        const val = cellValue(col, row) + ''
-                        const haystack =
-                            val === 'undefined' || val === 'null'
-                                ? ''
-                                : val.toLowerCase()
-                        return haystack.indexOf(lowerTerms) > -1
-                    })
-            )
-        }
+        log(...args: any[]) {}
     }
 })
 </script>

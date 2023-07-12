@@ -26,6 +26,7 @@
                 v-bind="bindBodySelection"
             >
                 <DlCheckbox
+                    style="padding-left: 10px"
                     :color="color"
                     :model-value="modelValue"
                     :indeterminate-value="true"
@@ -66,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef, defineComponent } from 'vue-demi'
+import { ComputedRef, defineComponent, PropType } from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
 import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
@@ -88,52 +89,68 @@ export default defineComponent({
     },
     props: {
         row: {
-            type: Object
+            type: Object as PropType<Record<string, any>>,
+            default: () => ({})
         },
         isRowSelected: {
-            type: Boolean
+            type: Boolean,
+            default: false
         },
         hasAnyAction: {
-            type: Boolean
+            type: Boolean,
+            defalut: false
         },
         noHover: {
-            type: Boolean
+            type: Boolean,
+            default: false
         },
         pageIndex: {
-            type: Number
+            type: Number,
+            default: null
         },
         hasDraggableRows: {
-            type: Boolean
+            type: Boolean,
+            default: false
         },
         hasSelectionMode: {
-            type: Boolean
+            type: Boolean,
+            default: false
         },
         bindBodySelection: {
-            type: Object
+            type: Object as PropType<Record<string, any>>,
+            default: () => ({})
         },
         bindBodyCellScope: {
-            type: Object
+            type: Object as PropType<Record<string, any>>,
+            default: () => ({})
         },
         color: {
-            type: String
+            type: String,
+            default: null
         },
         computedCols: {
-            type: [Object, Array]
+            type: Array,
+            default: () => [] as Record<string, any>[]
         },
         modelValue: {
-            type: String
+            type: String,
+            default: null
         },
         slotName: {
-            type: String
+            type: String,
+            default: null
         },
         computedRows: {
-            type: Object //DlTableRow[]
+            type: Object as PropType<Record<string, any>>, //DlTableRow[]
+            default: () => ({})
         },
         cellValue: {
-            type: String
+            type: String,
+            default: null
         },
         slotsProps: {
-            type: Object
+            type: Object as PropType<Record<string, any>>,
+            default: () => ({})
         }
     },
     emit: [
@@ -201,7 +218,7 @@ export default defineComponent({
         }
 
         const hasSlotByName = (name: string) => {
-            if (!props.slotsProps?.length) {
+            if (!Object.values(props.slotsProps)?.length) {
                 return false
             }
 

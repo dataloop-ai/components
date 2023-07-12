@@ -68,8 +68,6 @@ export default defineComponent({
         const tdStyles = computed(() => {
             let styles = ''
 
-            console.log(props)
-
             if (props.bgColor) {
                 styles = styles.concat(
                     `background: ${getColor(props.bgColor, '')};`
