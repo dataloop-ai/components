@@ -64,7 +64,7 @@ import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
 import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
-import DlPageLayoutDemo from './DlPageLayoutDemo.vue'
+import DlLayoutDemo from './DlLayoutDemo.vue'
 import { DlCodeEditorDemo } from './DlCodeEditor'
 
 export default {
@@ -132,5 +132,5 @@ export default {
     DlJsonEditorDemo,
     DlThumbnailGallery,
     DlCodeEditorDemo,
-    DlPageLayoutDemo
+    DlLayoutDemo
 }

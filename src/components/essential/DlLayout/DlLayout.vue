@@ -1,21 +1,21 @@
 <template>
     <div
-        class="dl-page-layout"
+        class="dl-layout"
         :style="cssVars"
     >
-        <div class="dl-page-layout__main-head">
+        <div class="dl-layout__main-head">
             <slot name="header" />
         </div>
-        <div class="dl-page-layout__left-drawer">
+        <div class="dl-layout__left-drawer">
             <slot name="leftDrawer" />
         </div>
-        <div class="dl-page-layout__right-drawer">
+        <div class="dl-layout__right-drawer">
             <slot name="rightDrawer" />
         </div>
-        <div class="dl-page-layout__content">
+        <div class="dl-layout__content">
             <slot name="mainContent" />
         </div>
-        <div class="dl-page-layout__footer">
+        <div class="dl-layout__footer">
             <slot name="footer" />
         </div>
     </div>
@@ -24,7 +24,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue-demi'
 export default defineComponent({
-    name: 'DlPageLayout',
+    name: 'DlLayout',
     props: {
         template: {
             type: String,
@@ -34,7 +34,7 @@ export default defineComponent({
     setup(props) {
         const cssVars = computed(() => {
             return {
-                '--dl-page-layout-template': props.template
+                '--dl-layout-template': props.template
             }
         })
         return {
@@ -45,11 +45,11 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.dl-page-layout {
+.dl-layout {
     height: 100vh;
     width: 100%;
     display: grid;
-    grid-template-areas: var(--dl-page-layout-template);
+    grid-template-areas: var(--dl-layout-template);
     grid-template-rows: auto 1fr auto;
     grid-template-columns: auto 1fr auto;
     box-shadow: 1px 1px 1px var(--dl-color-separator);

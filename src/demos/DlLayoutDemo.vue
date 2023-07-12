@@ -91,7 +91,7 @@ import DatasetRightDrawer from '../layouts/DlDatasetBrowser/DemoComponents/Datas
 import DatasetFooter from '../layouts/DlDatasetBrowser/DemoComponents/DatasetFooter.vue'
 
 export default defineComponent({
-    name: 'DlPageLayoutDemo',
+    name: 'DlLayoutDemo',
     components: {
         DlButton,
         DlStudioLayout,

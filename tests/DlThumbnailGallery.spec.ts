@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeAll } from 'vitest'
 import { DlThumbnailGallery } from '../src'
-import { DlThumbnail } from '../src/components/compound/DlThumbnailGallery/types'
+import { DlThumbnail } from '../src/components/types'
 
 const images: DlThumbnail[] = []
 for (let i = 0; i < 20; i++) {
