@@ -198,7 +198,8 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .layout-wrapper {
-    display: flex;
+    display: grid;
+    grid-template-columns: 12% 85%;
 }
 
 .sidebar {
