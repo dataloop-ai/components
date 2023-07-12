@@ -93,16 +93,18 @@
                                 <slot
                                     name="header-selection"
                                     v-bind="getHeaderScope({})"
-                                />
-                                <DlCheckbox
-                                    v-if="!$slots['header-selection']"
-                                    :color="color"
-                                    :model-value="headerSelectedValue"
-                                    :indeterminate-value="
-                                        selectionCheckboxIndeterminateVal
-                                    "
-                                    @update:model-value="onMultipleSelectionSet"
-                                />
+                                >
+                                    <DlCheckbox
+                                        :color="color"
+                                        :model-value="headerSelectedValue"
+                                        :indeterminate-value="
+                                            selectionCheckboxIndeterminateVal
+                                        "
+                                        @update:model-value="
+                                            onMultipleSelectionSet
+                                        "
+                                    />
+                                </slot>
                             </th>
 
                             <slot
@@ -262,14 +264,16 @@
                                 <slot
                                     name="header-selection"
                                     v-bind="getHeaderScope({})"
-                                />
-                                <DlCheckbox
-                                    v-if="!$slots['header-selection']"
-                                    :color="color"
-                                    :model-value="headerSelectedValue"
-                                    :indeterminate-value="true"
-                                    @update:model-value="onMultipleSelectionSet"
-                                />
+                                >
+                                    <DlCheckbox
+                                        :color="color"
+                                        :model-value="headerSelectedValue"
+                                        :indeterminate-value="true"
+                                        @update:model-value="
+                                            onMultipleSelectionSet
+                                        "
+                                    />
+                                </slot>
                             </th>
 
                             <slot
@@ -313,24 +317,23 @@
                         :cols="computedCols"
                     />
                     <slot
+                        v-for="(row, pageIndex) in computedRows"
+                        v-bind="
+                            getBodyScope({
+                                key: getRowKey(row),
+                                row,
+                                pageIndex,
+                                trClass: isRowSelected(getRowKey(row))
+                                    ? 'selected'
+                                    : ''
+                            })
+                        "
+                        :has-any-action="hasAnyAction"
                         name="body"
-                        :computed-rows="computedRows"
-                    />
-                    <template v-if="!isEmpty && !$slots.body">
+                    >
                         <DlTr
-                            v-for="(row, pageIndex) in computedRows"
-                            v-bind="
-                                getBodyScope({
-                                    key: getRowKey(row),
-                                    row,
-                                    pageIndex,
-                                    trClass: isRowSelected(getRowKey(row))
-                                        ? 'selected'
-                                        : ''
-                                })
-                            "
+                            v-if="!isEmpty"
                             :key="getRowKey(row)"
-                            :has-any-action="hasAnyAction"
                             :class="
                                 isRowSelected(getRowKey(row))
                                     ? 'selected'
@@ -410,7 +413,7 @@
                                 </DlTd>
                             </slot>
                         </DlTr>
-                    </template>
+                    </slot>
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
