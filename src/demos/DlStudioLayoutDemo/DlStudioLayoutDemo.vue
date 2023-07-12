@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100px; width: 100%">
+    <div>
         <dl-button @click="isOpenedStudioModal = true">
             Studio Layout
         </dl-button>
