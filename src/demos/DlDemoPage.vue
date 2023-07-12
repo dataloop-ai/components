@@ -139,11 +139,13 @@ export default defineComponent({
         const demos: {
             name: string
             component: any
-        }[] = names.map((n: string) => ({
-            name: n,
-            // @ts-ignore
-            component: Demos[n]
-        }))
+        }[] = names
+            .map((n: string) => ({
+                name: n,
+                // @ts-ignore
+                component: Demos[n]
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name))
 
         const filteredDemos = computed(() => {
             if (!filterTerm.value || !filterTerm.value.length) {
