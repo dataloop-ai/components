@@ -1,13 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { DlChip } from '../components'
-
-const transformOptions = [
-    'none',
-    'capitalize',
-    'uppercase',
-    'lowercase',
-    'first-letter-capitalized'
-]
+import { DlTransformOptions } from '../components/types'
 
 export default {
     title: 'Library/Components/DlChip',
@@ -116,10 +109,10 @@ export default {
             name: 'transform',
             defaultValue: 'lowercase',
             description: 'The text transform options for the chip',
-            options: transformOptions,
+            options: DlTransformOptions,
             control: { type: 'radio' },
             table: {
-                type: { summary: transformOptions },
+                type: { summary: DlTransformOptions },
                 defaultValue: { summary: 'lowercase' }
             }
         },

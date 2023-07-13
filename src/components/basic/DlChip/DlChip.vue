@@ -63,7 +63,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -87,7 +87,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         overflow: { type: Boolean, default: false },
         fit: { type: Boolean, default: false }

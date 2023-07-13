@@ -25,7 +25,11 @@
         <div
             ref="dlAccordionContent"
             class="accordion-content"
-            :class="{ closed: !isOpen, 'right-side': rightSide }"
+            :class="{
+                closed: !isOpen,
+                'right-side': rightSide,
+                'accordion-content__border': separator
+            }"
         >
             <slot v-if="isOpen && !isEmpty" />
             <dl-empty-state
@@ -75,7 +79,8 @@ export default defineComponent({
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
             default: null
-        }
+        },
+        separator: { type: Boolean, default: false }
     },
     emits: ['update:model-value', 'hide', 'show'],
     data() {
@@ -116,9 +121,11 @@ export default defineComponent({
     line-height: 16px;
     padding: 0 16px 15px 38px;
     color: var(--dl-color-darker);
-    border-bottom: 1px solid var(--dl-color-separator);
     max-height: fit-content;
     overflow: hidden;
+    &__border {
+        border-bottom: 1px solid var(--dl-color-separator);
+    }
     &.right-side {
         padding: 0 38px 16px 16px;
     }
