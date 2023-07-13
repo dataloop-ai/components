@@ -36,11 +36,18 @@
                 <div
                     ref="yAxis"
                     class="y-axis"
+                    style="min-height: 100%"
                 >
                     <div
                         v-for="(label, index) in labels"
                         :key="index"
                         class="y-axis__element"
+                        style="
+                            display: flex;
+                            flex-grow: 1;
+                            align-items: center;
+                            justify-content: center;
+                        "
                     >
                         <img
                             v-if="labelImages[0]"
@@ -118,43 +125,54 @@
                     class="x-axis"
                     style="margin-top: 10px"
                 >
-                    <span
+                    <div
                         v-for="(label, index) in visibleLabels"
-                        :ref="`xAxis-${index}`"
                         :key="index"
-                        class="x-axis__element"
-                        :style="`${
-                            !labelImages[0]
-                                ? `transform: rotate(${
-                                    rotateXLabels ? '70' : '0'
-                                }deg); line-height: ${
-                                    rotateXLabels ? 100 : 10
-                                }px`
-                                : ''
-                        }`"
+                        style="
+                            display: flex;
+                            flex-grow: 100;
+                            width: 100%;
+                            justify-content: center;
+                        "
                     >
-                        <span class="x-axis__element--text">
-                            <img
-                                v-if="labelImages[0]"
-                                class="legend-avatar"
-                                :src="labelImages[index]"
-                            >
-                            <span v-else>
-                                {{ label }}
-                            </span>
-                        </span>
-                        <dl-tooltip
-                            self="top middle"
-                            :offset="calculateXAxisElOffset(index)"
+                        <span
+                            :ref="`xAxis-${index}`"
+                            class="x-axis__element"
+                            :style="`
+                                justify-content: center;
+                                display: flex;${
+                                !labelImages[0]
+                                    ? `transform: rotate(${
+                                        rotateXLabels ? '70' : '0'
+                                    }deg); line-height: ${
+                                        rotateXLabels ? 100 : 10
+                                    }px`
+                                    : ''
+                            };`"
                         >
-                            {{ labelStrings[index] }}</dl-tooltip>
-                    </span>
+                            <span class="x-axis__element--text">
+                                <img
+                                    v-if="labelImages[0]"
+                                    class="legend-avatar"
+                                    :src="labelImages[index]"
+                                >
+                                <span v-else>
+                                    {{ label }}
+                                </span>
+                            </span>
+                            <dl-tooltip
+                                self="top middle"
+                                :offset="debouncedCalculateXAxisElOffset(index)"
+                            >
+                                {{ labelStrings[index] }}</dl-tooltip>
+                        </span>
+                    </div>
                 </div>
                 <dl-brush
                     track-size="18px"
                     thumb-size="20px"
                     :max="matrix.length"
-                    :max-range="2"
+                    :min-range="2"
                     :selection-color="getCellBackground(0.1)"
                     :color="getCellBackground()"
                     :step="1"
@@ -190,7 +208,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { defineComponent, getCurrentInstance, PropType, ref } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import { DlTooltip } from '../../../../shared'
 import {
@@ -255,16 +273,8 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const vm = getCurrentInstance()
         const { variables } = useThemeVariables()
-
-        const tooltipState = ref<{
-            value?: number
-            xLabel?: string
-            yLabel?: string
-            x?: number
-            y?: number
-            visible?: boolean
-        } | null>(null)
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
             max: props.matrix.length
@@ -290,6 +300,22 @@ export default defineComponent({
             return `var(--dl-color-text${value < 0.5 ? '-darker' : ''}-buttons)`
         }
 
+        const calculateXAxisElOffset = (index: number): number[] => {
+            let el = vm.refs[`xAxis-${index}`] as HTMLElement
+            if (!el) return null
+            if (Array.isArray(el)) {
+                el = el[0]
+            }
+            const height = el.clientHeight
+            const offsetHeight = -1 * (height / 2)
+            return [0, offsetHeight]
+        }
+
+        const debouncedCalculateXAxisElOffset = debounce(
+            calculateXAxisElOffset,
+            100
+        )
+
         return {
             resizeObserver,
             variables,
@@ -297,7 +323,9 @@ export default defineComponent({
             getCellTextColor,
             cellWidth,
             currentBrushState,
-            rotateXLabels
+            rotateXLabels,
+            calculateXAxisElOffset,
+            debouncedCalculateXAxisElOffset
         }
     },
     computed: {
@@ -343,18 +371,14 @@ export default defineComponent({
     watch: {
         matrix: {
             handler(value) {
-                this.currentBrushState.max = value.length
-                this.resizeMatrix()
+                this.currentBrushState.max = Math.min(10, value.length)
+                this.$nextTick(() => {
+                    this.resizeMatrix()
+                })
             }
         },
         currentBrushState() {
-            const longest = Math.max(
-                ...this.visibleLabels.map(
-                    (el: DlConfusionMatrixLabel) =>
-                        (isObject(el) ? el.title : `${el}`).length
-                )
-            )
-            this.rotateXLabels = longest * 12 > getCellWidth()
+            this.calculateRotatedXLabels()
         },
         isEmpty(val) {
             this.handleResizeObserver({ dispose: !val })
@@ -365,17 +389,25 @@ export default defineComponent({
         if (this.isEmpty) return
 
         this.handleResizeObserver()
+        this.$nextTick(() => {
+            setTimeout(() => {
+                this.calculateRotatedXLabels()
+                this.updateBrush(this, this.currentBrushState)
+            }, 300)
+        })
+    },
+    beforeUnmount() {
+        this.handleResizeObserver({ dispose: true })
     },
     methods: {
-        calculateXAxisElOffset(index: number): number[] {
-            let el = this.$refs[`xAxis-${index}`] as HTMLElement
-            if (!el) return null
-            if (Array.isArray(el)) {
-                el = el[0]
-            }
-            const height = el.clientHeight
-            const offsetHeight = -1 * (height / 2)
-            return [0, offsetHeight]
+        calculateRotatedXLabels() {
+            const longest = Math.max(
+                ...this.visibleLabels.map(
+                    (el: DlConfusionMatrixLabel) =>
+                        (isObject(el) ? el.title : `${el}`).length
+                )
+            )
+            this.rotateXLabels = longest * 12 > getCellWidth()
         },
         handleResizeObserver(options: { dispose?: boolean } = {}) {
             const { dispose } = options
@@ -481,6 +513,7 @@ export default defineComponent({
     max-height: 100px;
     &__element {
         width: var(--cell-dimensions);
+        max-width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
         &--text {
@@ -532,7 +565,7 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 12px;
+        font-size: max(calc(var(--cell-dimensions) * 0.1), 12px);
         cursor: pointer;
         border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
