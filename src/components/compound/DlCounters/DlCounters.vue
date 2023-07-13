@@ -34,12 +34,7 @@ import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { DlKpi } from '../../basic'
 import { DlKpiCounterFormat } from '../../types'
-
-interface CounterItem {
-    value?: number
-    text: string
-    subtext?: string
-}
+import { DlCounterItem } from './types'
 
 export default defineComponent({
     name: 'DlCounters',
@@ -52,9 +47,9 @@ export default defineComponent({
             default: false
         },
         items: {
-            type: Array as PropType<CounterItem[]>,
-            default: (): CounterItem[] => [],
-            validator(value: CounterItem[]): boolean {
+            type: Array as PropType<DlCounterItem[]>,
+            default: (): DlCounterItem[] => [],
+            validator(value: DlCounterItem[]): boolean {
                 return value.length <= 8
             }
         },

@@ -117,14 +117,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import ListAutocomplete from '../ListAutocomplete.vue'
+import ListAutocomplete from './ListAutocomplete.vue'
 import {
     DlButton,
     DlCheckbox,
     DlTooltip,
     DlIcon,
     DlTypography
-} from '../../../../components'
+} from '../../../components'
 
 export default defineComponent({
     name: 'StudioLeftDrawer',
