@@ -32,6 +32,21 @@ export const useAnchorProps = {
     contextMenu: Boolean
 }
 
+export function CheckAnchorElVisibility(
+    domElement: any,
+    options: { triggerPercentage?: number } = {}
+) {
+    const { triggerPercentage } = options
+    const intersectionRatio = triggerPercentage ?? 1
+    return new Promise((resolve) => {
+        const o = new IntersectionObserver(([entry]) => {
+            resolve(entry.intersectionRatio >= intersectionRatio)
+            o.disconnect()
+        })
+        o.observe(domElement)
+    })
+}
+
 export default function useAnchor({
     configureAnchorEl
 }: {

@@ -34,7 +34,10 @@ import {
     PropType,
     onMounted
 } from 'vue-demi'
-import useAnchor, { useAnchorProps } from '../../../hooks/use-anchor'
+import useAnchor, {
+    CheckAnchorElVisibility,
+    useAnchorProps
+} from '../../../hooks/use-anchor'
 import useModelToggle, { AnchorEvent } from '../../../hooks/use-model-toggle'
 import usePortal from '../../../hooks/use-portal'
 import useScrollTarget from '../../../hooks/use-scroll-target'
@@ -272,17 +275,6 @@ export default defineComponent({
             cleanEvt(anchorEvents, 'tooltipTemp')
         }
 
-        function CheckAnchorElVisiblity(domElement: any) {
-            const intersectionRatio = props.triggerPercentage ?? 1
-            return new Promise((resolve) => {
-                const o = new IntersectionObserver(([entry]) => {
-                    resolve(entry.intersectionRatio >= intersectionRatio)
-                    o.disconnect()
-                })
-                o.observe(domElement)
-            })
-        }
-
         async function updatePosition() {
             const el = innerRef.value
 
@@ -290,8 +282,11 @@ export default defineComponent({
                 return
             }
 
-            const isAnchorElVisible = await CheckAnchorElVisiblity(
-                anchorEl.value
+            const isAnchorElVisible = await CheckAnchorElVisibility(
+                anchorEl.value,
+                {
+                    triggerPercentage: props.triggerPercentage
+                }
             )
             if (!isAnchorElVisible) {
                 hide()

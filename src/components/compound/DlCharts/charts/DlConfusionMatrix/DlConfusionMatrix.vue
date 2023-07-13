@@ -282,6 +282,7 @@ export default defineComponent({
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
         const resizeObserver = ref<ResizeObserver>(null)
+        const isDisposed = ref(false)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -306,6 +307,9 @@ export default defineComponent({
             if (Array.isArray(el)) {
                 el = el[0]
             }
+            if (!el) {
+                return [0, 0]
+            }
             const height = el.clientHeight
             const offsetHeight = -1 * (height / 2)
             return [0, offsetHeight]
@@ -325,7 +329,8 @@ export default defineComponent({
             currentBrushState,
             rotateXLabels,
             calculateXAxisElOffset,
-            debouncedCalculateXAxisElOffset
+            debouncedCalculateXAxisElOffset,
+            isDisposed
         }
     },
     computed: {
@@ -385,18 +390,21 @@ export default defineComponent({
         }
     },
     mounted() {
+        this.isDisposed = false
         if (!this.isValidMatrix) return
         if (this.isEmpty) return
 
         this.handleResizeObserver()
         this.$nextTick(() => {
             setTimeout(() => {
+                if (this.isDisposed) return
                 this.calculateRotatedXLabels()
                 this.updateBrush(this, this.currentBrushState)
             }, 300)
         })
     },
     beforeUnmount() {
+        this.isDisposed = true
         this.handleResizeObserver({ dispose: true })
     },
     methods: {
@@ -410,6 +418,7 @@ export default defineComponent({
             this.rotateXLabels = longest * 12 > getCellWidth()
         },
         handleResizeObserver(options: { dispose?: boolean } = {}) {
+            if (this.isDisposed) return
             const { dispose } = options
             if (dispose && this.resizeObserver) {
                 this.resizeObserver.unobserve(this.$refs.wrapper as Element)
@@ -425,6 +434,7 @@ export default defineComponent({
             }
         },
         resizeMatrix() {
+            if (this.isDisposed) return
             const colorSpectrum = this.$refs.colorSpectrum as HTMLElement
             const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
             const labelY = this.$refs.labelY as HTMLElement

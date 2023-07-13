@@ -155,6 +155,7 @@
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
                 :max-height="dropdownMaxHeight"
+                :trigger-percentage="triggerPercentage"
                 @show="onMenuOpen"
                 @hide="closeMenu"
                 @highlightedIndex="setHighlightedIndex"
@@ -389,7 +390,14 @@ export default defineComponent({
         clearButtonTooltip: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
         preserveSearch: { type: Boolean, default: false },
-        disabledTooltip: { type: String, default: 'Disabled' }
+        disabledTooltip: { type: String, default: 'Disabled' },
+        /**
+         * the % of the select element to display the menu
+         */
+        triggerPercentage: {
+            type: Number,
+            default: 1
+        }
     },
     emits: [
         'search-focus',
