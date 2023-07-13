@@ -101,6 +101,86 @@
                 </template>
             </dl-label>
         </div>
+        <div
+            class="dl-text-holder-demo"
+            style="width: 500px"
+        >
+            Label with suffix in a large container
+            <dl-label
+                label-color="dl-color-secondary"
+                hint="tooltip"
+                text="dl-labelaaaaaaaaaaaaaa"
+                suffix=".mp3"
+            >
+                <template #actions>
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            align-items: center;
+                            height: 100%;
+                            margin-right: 5px;
+                        "
+                    >
+                        <dl-icon icon="icon-dl-add" />
+                        <dl-icon icon="icon-dl-delete" />
+                    </div>
+                </template>
+            </dl-label>
+        </div>
+        <div
+            class="dl-text-holder-demo"
+            style="width: 500px"
+        >
+            Label with suffix in a large container and fluid
+            <dl-label
+                label-color="dl-color-secondary"
+                hint="tooltip"
+                text="dl-labelaaaaaaaaaaaaaa"
+                suffix=".mp3"
+                fluid
+            >
+                <template #actions>
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            align-items: center;
+                            height: 100%;
+                            margin-right: 5px;
+                        "
+                    >
+                        <dl-icon icon="icon-dl-add" />
+                        <dl-icon icon="icon-dl-delete" />
+                    </div>
+                </template>
+            </dl-label>
+        </div>
+        <div class="dl-text-holder-demo">
+            Label with suffix and fluid
+            <dl-label
+                label-color="dl-color-secondary"
+                hint="tooltip"
+                text="dl-labelaaaaaaaaaaaaaa"
+                suffix=".mp3"
+                fluid
+            >
+                <template #actions>
+                    <div
+                        style="
+                            display: flex;
+                            gap: 5px;
+                            align-items: center;
+                            height: 100%;
+                            margin-right: 5px;
+                        "
+                    >
+                        <dl-icon icon="icon-dl-add" />
+                        <dl-icon icon="icon-dl-delete" />
+                    </div>
+                </template>
+            </dl-label>
+        </div>
     </div>
 </template>
 

@@ -19,6 +19,7 @@
             <dl-ellipsis
                 v-if="text"
                 class="dl-label__text"
+                :class="!suffix && fluid ? 'dl-label__fluid' : ''"
                 :text="text"
             />
             <dl-ellipsis
@@ -27,7 +28,11 @@
             >
                 <slot name="default" />
             </dl-ellipsis>
-            <span v-if="suffix"> {{ suffixPreview }}</span>
+            <span
+                v-if="suffix"
+                :class="fluid ? 'dl-label__fluid' : ''"
+            >
+                {{ suffixPreview }}</span>
             <div class="dl-label__suffix">
                 <div class="dl-label__suffix-slot">
                     <slot
@@ -100,6 +105,13 @@ export default defineComponent({
         color: {
             type: String,
             default: 'dl-color-darker'
+        },
+        /**
+         * Will fill the container size its given
+         */
+        fluid: {
+            type: Boolean,
+            default: false
         }
     },
     setup(props, { emit, slots }) {
@@ -162,13 +174,17 @@ export default defineComponent({
     &__content {
         color: var(--dl-label-text-color);
         display: flex;
-        width: 100%;
+        width: 95%;
     }
     &__text {
-        flex-grow: 100;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    &__fluid {
+        flex-grow: 100;
+        max-width: 100%;
     }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <dl-page-layout :template="template">
+        <dl-layout :template="template">
             <template #header>
                 <slot name="header" />
             </template>
@@ -10,24 +10,24 @@
             <template #rightDrawer>
                 <slot name="rightDrawer" />
             </template>
-            <template #mainContent>
-                <slot name="mainContent" />
+            <template #body>
+                <slot name="body" />
             </template>
             <template #footer>
                 <slot name="footer" />
             </template>
-        </dl-page-layout>
+        </dl-layout>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlPageLayout } from '../../components'
+import { DlLayout } from '../../components'
 
 export default defineComponent({
     name: 'DlDatasetBrowser',
     components: {
-        DlPageLayout
+        DlLayout
     },
     setup() {
         const template = '"h h h" "l p r" "f f f"'

@@ -37,7 +37,7 @@ import {
     DlButton,
     DlIcon,
     DlTooltip
-} from '../../../../../components'
+} from '../../../../components'
 
 export default defineComponent({
     name: 'TabMenuItem',

@@ -232,13 +232,10 @@
                                 name="option"
                                 :opt="item"
                             >
-                                {{
-                                    capitalizedOptions
-                                        ? typeof getOptionLabel(item) ===
-                                            'string' &&
-                                            getOptionLabel(item).toLowerCase()
-                                        : getOptionLabel(item)
-                                }}
+                                <span
+                                    class="inner-option"
+                                    v-html="getOptionHtml(item)"
+                                />
                             </slot>
                         </dl-select-option>
                     </dl-virtual-scroll>

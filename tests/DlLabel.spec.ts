@@ -21,7 +21,8 @@ describe('DlLabel', () => {
                 labelColor: 'red',
                 hint: 'info',
                 suffix: null,
-                prefix: null
+                prefix: null,
+                fluid: false
             })
         })
     })

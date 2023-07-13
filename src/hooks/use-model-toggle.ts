@@ -80,7 +80,7 @@ export default function useModelToggle({
             props[`onUpdate:${modelValueNaming}`] ||
             (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`]
 
-        if (listener === true) {
+        if (listener) {
             emit(`update:${modelValueNaming}`, true)
             payload = evt
 
@@ -91,7 +91,7 @@ export default function useModelToggle({
             })
         }
 
-        if (!props.modelValue || listener === false) {
+        if (!props.modelValue || !listener) {
             processShow(evt)
         }
     }
@@ -121,7 +121,7 @@ export default function useModelToggle({
             props[`onUpdate:${modelValueNaming}`] ||
             (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`]
 
-        if (listener === true) {
+        if (listener) {
             emit(`update:${modelValueNaming}`, false)
             payload = evt
             nextTick(() => {
@@ -131,7 +131,7 @@ export default function useModelToggle({
             })
         }
 
-        if (!props.modelValue || listener === false) {
+        if (!props.modelValue || !listener) {
             processHide(evt)
         }
     }

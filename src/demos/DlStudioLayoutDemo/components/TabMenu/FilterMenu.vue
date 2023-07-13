@@ -33,7 +33,7 @@ import {
     DlList,
     DlListItem,
     DlItemSection
-} from '../../../../../components'
+} from '../../../../components'
 
 export default defineComponent({
     name: 'FilterMenu',

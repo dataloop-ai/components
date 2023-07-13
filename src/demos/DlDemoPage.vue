@@ -139,11 +139,13 @@ export default defineComponent({
         const demos: {
             name: string
             component: any
-        }[] = names.map((n: string) => ({
-            name: n,
-            // @ts-ignore
-            component: Demos[n]
-        }))
+        }[] = names
+            .map((n: string) => ({
+                name: n,
+                // @ts-ignore
+                component: Demos[n]
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name))
 
         const filteredDemos = computed(() => {
             if (!filterTerm.value || !filterTerm.value.length) {
@@ -198,7 +200,8 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .layout-wrapper {
-    display: flex;
+    display: grid;
+    grid-template-columns: 12% 85%;
 }
 
 .sidebar {
@@ -221,7 +224,7 @@ export default defineComponent({
     margin: 0 auto;
     flex-direction: column;
     justify-content: center;
-    width: 950px;
+    min-width: 950px;
     resize: both;
     box-shadow: var(--dl-menu-shadow);
 }

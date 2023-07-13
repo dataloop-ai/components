@@ -8,15 +8,7 @@
             'read-only': readOnly,
             wrap: wrap
         }"
-        :style="{
-            width: width,
-            height: height,
-            zIndex: zIndex,
-            maxWidth: maxWidth,
-            minWidth: minWidth,
-            maxHeight: maxHeight,
-            minHeight: minHeight
-        }"
+        :style="editorStyle"
     >
         <div
             class="hljs"
@@ -211,7 +203,7 @@ export default defineComponent({
         },
         borderRadius: {
             type: String,
-            default: '12px'
+            default: '0px'
         },
         languages: {
             type: Array as PropType<string[][]>,
@@ -259,7 +251,13 @@ export default defineComponent({
             height,
             fontSize,
             header,
-            padding
+            padding,
+            width,
+            zIndex,
+            minHeight,
+            maxHeight,
+            minWidth,
+            maxWidth
         } = toRefs(props)
         const scrollBarWidth = ref(0)
         const scrollBarHeight = ref(0)
@@ -310,6 +308,18 @@ export default defineComponent({
 
         const scroll = computed(() => {
             return height.value == 'auto' ? false : true
+        })
+
+        const editorStyle = computed<Record<string, any>>(() => {
+            return {
+                width: width.value,
+                height: height.value,
+                zIndex: zIndex.value,
+                maxWidth: maxWidth.value,
+                minWidth: minWidth.value,
+                maxHeight: maxHeight.value,
+                minHeight: minHeight.value
+            }
         })
 
         watch(contentValue, () => {
@@ -520,7 +530,8 @@ export default defineComponent({
             tab,
             changeLang,
             updateValue,
-            textAreaStyle
+            textAreaStyle,
+            editorStyle
         }
     }
 })
