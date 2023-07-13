@@ -37,7 +37,10 @@ import {
 } from 'vue-demi'
 
 import useWindowSize from '../../../hooks/use-window-size'
-import useAnchor, { useAnchorProps } from '../../../hooks/use-anchor'
+import useAnchor, {
+    CheckAnchorElVisibility,
+    useAnchorProps
+} from '../../../hooks/use-anchor'
 import useScrollTarget from '../../../hooks/use-scroll-target'
 import useModelToggle, {
     useModelToggleProps,
@@ -149,6 +152,13 @@ export default defineComponent({
         zIndex: {
             type: [Number, String],
             default: 'var(--dl-z-index-menu)'
+        },
+        /**
+         * the % of the parent element that triggers the tooltips visibility
+         */
+        triggerPercentage: {
+            type: Number,
+            default: 1
         }
     },
 
@@ -373,16 +383,6 @@ export default defineComponent({
             hide(evt)
         }
 
-        function CheckAnchorElVisiblity(domElement: any) {
-            return new Promise((resolve) => {
-                const o = new IntersectionObserver(([entry]) => {
-                    resolve(entry.intersectionRatio === 1)
-                    o.disconnect()
-                })
-                o.observe(domElement)
-            })
-        }
-
         const updatePosition = async () => {
             const el = innerRef.value
 
@@ -390,8 +390,11 @@ export default defineComponent({
                 return
             }
 
-            const isAnchorElVisible = await CheckAnchorElVisiblity(
-                anchorEl.value
+            const isAnchorElVisible = await CheckAnchorElVisibility(
+                anchorEl.value,
+                {
+                    triggerPercentage: props.triggerPercentage
+                }
             )
 
             if (!isAnchorElVisible) {

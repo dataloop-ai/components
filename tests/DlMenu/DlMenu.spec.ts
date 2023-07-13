@@ -57,7 +57,8 @@ describe('DlMenu', () => {
             touchPosition: false,
             transitionDuration: 300,
             arrowNavItems: [],
-            zIndex: 'var(--dl-z-index-menu)'
+            zIndex: 'var(--dl-z-index-menu)',
+            triggerPercentage: 1
         })
         expect(wrapper.vm.showing).toBe(false)
     })
