@@ -47,7 +47,7 @@ export default defineComponent({
     },
     emits: ['update:model-value', 'change'],
     setup(props, { emit }) {
-        const modelRef = toRef(props, 'model-value')
+        const modelRef = toRef(props, 'modelValue')
 
         const handleChange = (evt: any) => {
             const val = evt.target.value

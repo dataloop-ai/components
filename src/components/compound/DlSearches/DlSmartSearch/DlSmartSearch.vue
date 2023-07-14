@@ -445,7 +445,7 @@ export default defineComponent({
             }
         }
 
-        const modelRef = toRef(props, 'model-value')
+        const modelRef = toRef(props, 'modelValue')
 
         watch(modelRef, (val: any) => {
             readModelValue(val)
