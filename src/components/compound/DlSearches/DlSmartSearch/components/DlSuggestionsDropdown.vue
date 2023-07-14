@@ -11,7 +11,7 @@
             :model-value="modelValue"
             :arrow-nav-items="suggestions"
             :auto-close="false"
-            @update:modelValue="emitModelValue($event)"
+            @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
             @highlightedIndex="setHighlightedIndex"
