@@ -29,7 +29,7 @@ describe('DlDatePicker', () => {
         it('should update the model value', () => {
             const dateInterval = { from: date, to: date2 }
             wrapper.vm.updateModelValue(dateInterval)
-            expect(wrapper.emitted('update:modelValue')).toEqual([
+            expect(wrapper.emitted('update:model-value')).toEqual([
                 [dateInterval]
             ])
         })
@@ -72,7 +72,7 @@ describe('DlDatePicker', () => {
 
         it('should emit the currently selected state on mouseup', () => {
             wrapper.vm.handleMouseup()
-            expect(wrapper.emitted()['update:modelValue']).toEqual([
+            expect(wrapper.emitted()['update:model-value']).toEqual([
                 [
                     {
                         from: date,

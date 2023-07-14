@@ -35,13 +35,13 @@ describe('Time picker', () => {
 
         it('should have the right model value', function () {
             wrapper.vm.handleFromTimeChange(from)
-            expect(wrapper.emitted()['update:modelValue'][0]).toEqual([
+            expect(wrapper.emitted()['update:model-value'][0]).toEqual([
                 { from: date, to: date2 }
             ])
         })
         it('should have the right model value', function () {
             wrapper.vm.handleToTimeChange(to)
-            expect(wrapper.emitted()['update:modelValue'][1]).toEqual([
+            expect(wrapper.emitted()['update:model-value'][1]).toEqual([
                 { from: date, to: date2 }
             ])
         })

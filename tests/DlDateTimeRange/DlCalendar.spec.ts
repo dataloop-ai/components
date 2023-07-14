@@ -78,7 +78,7 @@ describe('DlCalendar', () => {
                 wrapper.vm.handleClick(customDate)
             })
             it('should the right model value data', function () {
-                expect(wrapper.emitted()['update:modelValue']).toEqual([
+                expect(wrapper.emitted()['update:model-value']).toEqual([
                     [
                         {
                             from: date,

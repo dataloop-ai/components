@@ -32,7 +32,7 @@ describe('QuickNavigation', () => {
                 input.trigger('keyup', { key: 'Enter' })
             })
             it('should emitted modelValue', function () {
-                expect(wrapper.emitted()['update:modelValue'][0]).toBeTruthy()
+                expect(wrapper.emitted()['update:model-value'][0]).toBeTruthy()
             })
         })
         describe('When handle values bigger than MAX and smaller than MIN', () => {
@@ -40,14 +40,14 @@ describe('QuickNavigation', () => {
                 wrapper.vm.inputValue = '999'
                 wrapper.vm.handleNavigation()
                 expect(
-                    (wrapper.emitted()['update:modelValue'][1] as any[])[0]
+                    (wrapper.emitted()['update:model-value'][1] as any[])[0]
                 ).toBe(MAX)
             })
             it('should have the MIN modelValue', function () {
                 wrapper.vm.inputValue = '-10'
                 wrapper.vm.handleNavigation()
                 expect(
-                    (wrapper.emitted()['update:modelValue'][2] as any[])[0]
+                    (wrapper.emitted()['update:model-value'][2] as any[])[0]
                 ).toBe(MIN)
             })
         })
