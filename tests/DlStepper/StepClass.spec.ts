@@ -1,5 +1,5 @@
 import { Step } from '../../src/components/compound/DlStepper/models/Step'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('Step', () => {
     const step = new Step({
@@ -13,48 +13,66 @@ describe('Step', () => {
         active: false,
         subtitle: 'First',
         completed: true,
-        sidebarNavigation: true,
+        disabled: false,
+        disabledTooltip: '',
         optional: false,
         warning: '',
         error: '',
         value: '1',
         title: 'One'
     }
+    describe('When mounted', () => {
+        it('should have initial values', () => {
+            expect(step.state).toEqual(initialState)
+        })
 
-    it('should have initial values', async () => {
-        expect(step.state).toEqual(initialState)
+        it('should get fields values', () => {
+            expect(step.value).toBe('1')
+            expect(step.title).toBe('One')
+            expect(step.subtitle).toBe('First')
+        })
     })
-
-    it('should get fields values', async () => {
-        expect(step.value).toBe('1')
-        expect(step.title).toBe('One')
-        expect(step.subtitle).toBe('First')
+    describe('When set step error', () => {
+        beforeAll(() => {
+            step.error = 'error message'
+        })
+        it('should the right error', () => {
+            expect(step.error).toBe('error message')
+        })
+        it('should not completed the step', function () {
+            expect(step.completed).toBe(false)
+        })
     })
-
-    it('should set the error', () => {
-        step.error = 'error message'
-        expect(step.error).toBe('error message')
-        expect(step.completed).toBe(false)
+    describe('When set the step as completed', () => {
+        beforeAll(() => {
+            step.completed = true
+        })
+        it('should completed the step', () => {
+            expect(step.completed).toBe(true)
+        })
     })
-
-    it('should set the step as completed', () => {
-        step.completed = true
-        expect(step.completed).toBe(true)
+    describe('When set the step as active', () => {
+        beforeAll(() => {
+            step.active = true
+        })
+        it('should active the step', () => {
+            expect(step.active).toBe(true)
+        })
     })
-
-    it('should set the step as active', () => {
-        step.active = true
-        expect(step.active).toBe(true)
+    describe('When set the step as optional', () => {
+        beforeAll(() => {
+            step.optional = true
+        })
+        it('should optional the step', () => {
+            expect(step.optional).toBe(true)
+        })
     })
-
-    it('should set the step as optional', () => {
-        step.optional = true
-        expect(step.optional).toBe(true)
-    })
-
-    it('should reset the state', () => {
-        step.reset()
-
-        expect(step.state).toEqual({ ...initialState, active: true })
+    describe('When reset the step', () => {
+        beforeAll(() => {
+            step.reset()
+        })
+        it('should reset the state', () => {
+            expect(step.state).toEqual({ ...initialState, active: true })
+        })
     })
 })

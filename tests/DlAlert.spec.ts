@@ -1,43 +1,42 @@
 import { mount } from '@vue/test-utils'
 import { DlAlert } from '../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlAlert', () => {
-    const _closeButton = '[data-test="close-button-icon"]'
+    const _closeBtn = '[data-test="close-button-icon"]'
     const _root = '[data-test="root"]'
 
-    it('should render the given text prop', () => {
-        const wrapper = mount(DlAlert, {
-            props: {
-                type: 'success',
-                text: 'Alert'
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlAlert, {
+                props: {
+                    type: 'success',
+                    text: 'Alert',
+                    closable: true
+                }
+            })
         })
-
-        expect(wrapper.text()).toContain('Alert')
-    })
-
-    it('should render the close icon', () => {
-        const wrapper = mount(DlAlert, {
-            props: {
-                type: 'success',
-                text: 'Alert',
-                closable: true
-            }
+        it('should mount the component', function () {
+            expect(wrapper.exists()).toBe(true)
         })
+        it('should the right text', function () {
+            expect(wrapper.text()).toContain('Alert')
+        })
+        it('should accept only valid "type" properties', () => {
+            const validator = DlAlert.props.type.validator
 
-        expect(wrapper.get(_root)).toBeDefined()
-        expect(wrapper.get(_closeButton)).toBeDefined()
+            expect(validator('info')).toBe(true)
+            expect(validator('text')).toBe(false)
+        })
+        it('should render the close icon', () => {
+            expect(wrapper.get(_root)).toBeDefined()
+            expect(wrapper.get(_closeBtn)).toBeDefined()
+        })
     })
 
-    it('should accept only valid "type" properties', () => {
-        const validator = DlAlert.props.type.validator
-
-        expect(validator('info')).toBe(true)
-        expect(validator('text')).toBe(false)
-    })
-
-    describe('when the props are updated', () => {
+    describe('When the props are updated', () => {
         it('should adapt the styling accordingly', async () => {
             const wrapper = mount(DlAlert, {
                 props: {
@@ -54,7 +53,7 @@ describe('DlAlert', () => {
         })
     })
 
-    describe('when the close icon is clicked', () => {
+    describe('When the close icon is clicked', () => {
         it('should trigger the "update:model-value" event and close hide the component', async () => {
             const wrapper = mount(DlAlert, {
                 props: {
@@ -64,8 +63,8 @@ describe('DlAlert', () => {
                 }
             })
 
-            const closeButton = await wrapper.find(_closeButton)
-            closeButton.trigger('click')
+            const closeBtn = await wrapper.find(_closeBtn)
+            closeBtn.trigger('click')
             await wrapper.vm.$nextTick()
             expect(wrapper.emitted()).toHaveProperty('update:model-value')
             let error: any

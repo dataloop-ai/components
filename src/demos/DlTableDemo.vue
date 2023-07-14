@@ -123,6 +123,69 @@
                     :separator="separator"
                     :columns="tableColumns"
                     :bordered="bordered"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    hide-pagination
+                    is-empty
+                    :empty-state-props="{
+                        responsive: false,
+                        style: 'min-height: 350px; width: 300px;',
+                        bgSize: '130px',
+                        bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                        title: 'Lorem ipsum',
+                        subtitle:
+                            'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                        info: 'To learn more about this analytics, read our documentation.'
+                    }"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #links="">
+                        <div style="display: flex; gap: 5px; padding: 0 20px">
+                            <dl-button
+                                padding="0px"
+                                icon="icon-dl-sdk-documentation"
+                                flat
+                                uppercase
+                                label="SDK"
+                            />
+                            <div class="break" />
+                            <dl-button
+                                padding="0px"
+                                icon="icon-dl-file"
+                                flat
+                                label="Documentation"
+                            />
+                            <div class="break" />
+                            <dl-button
+                                padding="0px"
+                                icon="icon-dl-youtube"
+                                flat
+                                label="Video"
+                            />
+                        </div>
+                    </template>
+                </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
                     :draggable="draggable"
                     :pagination="pagination"
                     :dense="dense"
@@ -345,7 +408,7 @@ import {
     DlButton
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
-import { times, cloneDeep } from 'lodash'
+import { times, cloneDeep, isNumber } from 'lodash'
 
 const columns = [
     {
@@ -590,7 +653,7 @@ export default defineComponent({
             if (p.page < 1) {
                 p.page = 1
             }
-            if (p.rowsPerPage !== void 0 && p.rowsPerPage < 1) {
+            if (isNumber(p.rowsPerPage) && p.rowsPerPage < 1) {
                 p.rowsPerPage = 0
             }
             return p

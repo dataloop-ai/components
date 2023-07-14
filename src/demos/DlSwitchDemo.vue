@@ -9,6 +9,18 @@
         />
         Switch with value not updating
         <dl-switch v-model="switchValue" />
+        Switch with left-label
+        <dl-switch
+            v-model="switchValue"
+            left-label="Left label"
+        />
+        <div style="width: 500px">
+            <dl-switch
+                v-model="switchValue"
+                left-label="Left label"
+                fluid
+            />
+        </div>
     </div>
 </template>
 

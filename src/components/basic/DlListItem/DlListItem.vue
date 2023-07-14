@@ -1,69 +1,67 @@
 <template>
     <component
-        :is="as"
+        :is="type"
         :id="uuid"
         class="list-item-wrapper"
     >
-        <hr
-            class="separator"
-            :class="{ 'separator--visible': bordered }"
-        >
         <div
             v-wave="!disabled && withWave"
             :class="[
                 {
                     'dl-list-item': true,
-                    'dl-list-item-disabled': disabled,
-                    'dl-list-spaced': bordered
+                    'dl-list-item-disabled': disabled
                 },
                 'row'
             ]"
             :style="cssItemVars"
             @click="onClick"
         >
-            <dl-item-section
-                v-if="startIcon"
-                side
-            >
-                <dl-icon
-                    :icon="startIcon"
-                    :color="startIconColor"
-                    :size="startIconSize"
-                />
-            </dl-item-section>
+            <slot name="prefix">
+                <dl-item-section
+                    v-if="startIcon"
+                    side
+                    style="display: flex"
+                >
+                    <dl-icon
+                        :icon="startIconData.icon"
+                        :color="startIconData.color"
+                        :size="startIconData.size"
+                    />
+                </dl-item-section>
+            </slot>
             <slot />
-            <dl-item-section
-                v-if="endIcon"
-                side
-            >
-                <dl-icon
-                    :icon="endIcon"
-                    :color="endIconColor"
-                    :size="endIconSize"
-                />
-            </dl-item-section>
+            <slot name="suffix">
+                <dl-item-section
+                    v-if="endIcon"
+                    side
+                    style="display: flex"
+                >
+                    <dl-icon
+                        :icon="endIconData.icon"
+                        :color="endIconData.color"
+                        :size="endIconData.size"
+                    />
+                </dl-item-section>
+            </slot>
         </div>
+        <dl-separator v-if="separator" />
     </component>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { PropType, defineComponent } from 'vue-demi'
 import { DlItemSection } from '../../shared'
-import { DlIcon } from '../../essential'
-import {
-    itemHoverColor,
-    itemActiveColor,
-    itemCursor,
-    itemBorder,
-    itemColor
-} from './utils'
+import { DlIcon, DlSeparator } from '../../essential'
+import { itemHoverColor, itemActiveColor, itemCursor, itemColor } from './utils'
 import { wave, waveTrigger } from '../../../utils'
 import { v4 } from 'uuid'
+import { isObject } from 'lodash'
 
 export default defineComponent({
     name: 'DlListItem',
     components: {
         DlItemSection,
+        DlSeparator,
         DlIcon
     },
     directives: {
@@ -73,36 +71,58 @@ export default defineComponent({
     props: {
         disabled: Boolean,
         clickable: Boolean,
-        bordered: Boolean,
+        separator: Boolean,
         withWave: Boolean,
-        startIcon: { type: String, required: false, default: '' },
-        endIcon: { type: String, required: false, default: '' },
-        as: {
+        type: {
             type: String,
             default: 'div'
         },
-        startIconColor: {
-            type: String,
-            required: false,
-            default: 'dl-color-darker'
-        },
-        endIconColor: {
-            type: String,
-            required: false,
-            default: 'dl-color-darker'
-        },
-        startIconSize: {
-            type: String,
-            default: '16px'
-        },
-        endIconSize: {
-            type: String,
-            default: '16px'
-        },
         height: { type: String, default: null, required: false },
         padding: { type: String, default: null, required: false },
-        isHighlighted: {
+        highlighted: {
             type: Boolean
+        },
+        startIcon: {
+            type: [Object, String] as PropType<
+                | {
+                      icon: string
+                      color?: string
+                      size?: string
+                  }
+                | string
+            >,
+            default: null,
+            validator: (value: any) => {
+                if (value) {
+                    if (isObject(value) as any) {
+                        return value.icon && typeof value.icon === 'string'
+                    } else {
+                        return typeof value === 'string'
+                    }
+                }
+                return true
+            }
+        },
+        endIcon: {
+            type: [Object, String] as PropType<
+                | {
+                      icon: string
+                      color?: string
+                      size?: string
+                  }
+                | string
+            >,
+            default: null,
+            validator: (value: any) => {
+                if (value) {
+                    if (isObject(value) as any) {
+                        return value.icon && typeof value.icon === 'string'
+                    } else {
+                        return typeof value === 'string'
+                    }
+                }
+                return true
+            }
         }
     },
     emits: ['click'],
@@ -123,14 +143,27 @@ export default defineComponent({
                     this.isClickable,
                     this.disabled
                 ),
-                '--dl-list-item-border': itemBorder(this.bordered),
                 '--dl-list-item-color': itemColor(this.disabled),
                 '--dl-list-item-height': this.height ?? '28px',
                 '--dl-list-item-padding': this.padding ?? '0px 10px',
-                '--dl-list-item-bg-color': this.isHighlighted
+                '--dl-list-item-bg-color': this.highlighted
                     ? 'var(--dl-color-fill-hover)'
                     : 'transparent'
             }
+        },
+        startIconData(): { icon: string; color: string; size: string } {
+            return Object.assign(
+                { color: 'dl-color-darker', size: '16px' },
+                isObject(this.startIcon)
+                    ? this.startIcon
+                    : { icon: this.startIcon }
+            )
+        },
+        endIconData(): { icon: string; color: string; size: string } {
+            return Object.assign(
+                { color: 'dl-color-darker', size: '16px' },
+                isObject(this.endIcon) ? this.endIcon : { icon: this.endIcon }
+            )
         }
     },
     methods: {
@@ -146,6 +179,8 @@ export default defineComponent({
 <style scoped lang="scss">
 .list-item-wrapper {
     width: 100%;
+    border-left: var(--dl-list-item-border-left);
+    margin-bottom: 4px;
 }
 
 .dl-list-item {

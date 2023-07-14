@@ -98,7 +98,6 @@ export function useTableRowSelection(
         allRowsSelected,
         someRowsSelected,
         rowsSelectedNumber,
-
         isRowSelected,
         clearSelection,
         updateSelection

@@ -43,7 +43,21 @@
                     </template>
                 </popup-header>
                 <div class="popup-content">
-                    <slot />
+                    <slot v-if="!isEmpty" />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </div>
                 <div
                     v-if="hasFooterSlot"
@@ -115,14 +129,17 @@ import DraggableUpper from './components/DraggableUpper.vue'
 import PopupHeader from './components/PopupHeader.vue'
 import { v4 } from 'uuid'
 import { isString } from 'lodash'
+import { DlEmptyStateProps } from '../DlEmptyState/types'
 import { stringStyleToRecord } from '../../../utils'
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
     name: 'DlPopup',
     components: {
         DlTeleport,
         PopupHeader,
-        DraggableUpper
+        DraggableUpper,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
@@ -160,7 +177,7 @@ export default defineComponent({
         },
         scrollTarget: {
             type: String as PropType<Element | string>,
-            default: void 0
+            default: null
         },
         touchPosition: Boolean,
         maxHeight: { type: String, default: 'auto' },
@@ -168,6 +185,11 @@ export default defineComponent({
         height: { type: String, default: 'auto' },
         width: { type: String, default: 'auto' },
         draggable: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () => ({} as DlEmptyStateProps)
+        },
         zIndex: {
             type: [Number, String],
             default: 'var(--dl-z-index-popup)'
@@ -291,7 +313,7 @@ export default defineComponent({
 
             showPortal()
 
-            absoluteOffset = void 0
+            absoluteOffset = null
 
             const offsetOnShow = setOffsetOnShow(evt as TouchEvent, {
                 contextMenu: props.contextMenu,
@@ -302,7 +324,7 @@ export default defineComponent({
 
             absoluteOffset = offsetOnShow as Record<any, any> | undefined
 
-            if (unwatchPosition === void 0) {
+            if (!unwatchPosition) {
                 unwatchPosition = watch(() => screen, updatePosition, {
                     deep: true
                 })
@@ -337,7 +359,7 @@ export default defineComponent({
         }
 
         function anchorCleanup(hiding: boolean) {
-            absoluteOffset = void 0
+            absoluteOffset = null
 
             unwatchPosition = updateUnwatchPosition(unwatchPosition)
 
@@ -353,7 +375,7 @@ export default defineComponent({
         }
 
         function configureScrollTarget() {
-            if (anchorEl.value !== null || props.scrollTarget !== void 0) {
+            if (anchorEl.value !== null || props.scrollTarget) {
                 (localScrollTarget as Ref<any>).value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget

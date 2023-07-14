@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlTooltip } from '../../essential'
+import { DlTooltip } from '../../shared'
 import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
 

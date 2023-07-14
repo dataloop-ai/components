@@ -1,8 +1,8 @@
 <template>
     <div
         :id="uuid"
-        :class="rootContainerClasses"
         :style="cssVars"
+        :class="rootContainerClasses"
     >
         <div :class="wrapperClasses">
             <div
@@ -143,7 +143,7 @@
                             :key="item"
                             clickable
                             style="font-size: 12px"
-                            :is-highlighted="suggestIndex === highlightedIndex"
+                            :highlighted="suggestIndex === highlightedIndex"
                             @click="onClick($event, item)"
                         >
                             <span
@@ -210,9 +210,9 @@
 <script lang="ts">
 import { debounce } from 'lodash'
 import { computed, defineComponent, PropType, ref } from 'vue-demi'
-import { DlInfoErrorMessage } from '../../shared'
+import { DlInfoErrorMessage, DlTooltip } from '../../shared'
 import { DlListItem } from '../../basic'
-import { DlMenu, DlIcon, DlList, DlTooltip } from '../../essential'
+import { DlMenu, DlIcon, DlList } from '../../essential'
 import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { v4 } from 'uuid'

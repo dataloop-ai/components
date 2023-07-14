@@ -2,7 +2,7 @@ import { mount, VueWrapper } from '@vue/test-utils'
 import { ComponentOptionsBase, ComponentPublicInstance } from 'vue'
 import { DlRange } from '../../src/components'
 import touchPanDirective from '../../src/directives/TouchPan'
-import { describe, it, expect, beforeEach } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 const _resetButton = '[data-test="reset-button"]'
 const _sliderBar = '[data-test="slider-bar"]'
@@ -10,54 +10,60 @@ const _trackContainer = '[data-test="track-container"]'
 const _minThumb = '[data-test="min-thumb"]'
 
 describe('DlRange', () => {
-    it('should behave accordingly', async () => {
-        const wrapper = mount(DlRange, {
-            props: {
-                width: '500px',
-                color: 'red',
-                textColor: 'orange',
-                min: 0,
-                max: 100,
-                step: 10,
-                text: 'test range'
-            },
-            attachTo: document.body,
-            global: {
-                directives: {
-                    touchPan: touchPanDirective as any
+    describe('When behave accordingly', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlRange, {
+                props: {
+                    width: '500px',
+                    color: 'red',
+                    textColor: 'orange',
+                    min: 0,
+                    max: 100,
+                    step: 10,
+                    text: 'test range'
+                },
+                attachTo: document.body,
+                global: {
+                    directives: {
+                        touchPan: touchPanDirective as any
+                    }
                 }
-            }
+            })
+            await wrapper.setProps({
+                modelValue: {
+                    min: 5,
+                    max: 20
+                }
+            })
+
+            await wrapper.setProps({
+                disabled: true
+            })
         })
-
-        await wrapper.setProps({
-            modelValue: {
-                min: 5,
-                max: 20
-            }
+        it('should have the right aria-disabled flag', function () {
+            expect(wrapper.find(_sliderBar).attributes()['aria-disabled']).toBe(
+                'true'
+            )
         })
+        it('should have the right aria-readonly flag', async function () {
+            await wrapper.setProps({
+                disabled: false,
+                readonly: true
+            })
 
-        await wrapper.setProps({
-            disabled: true
+            expect(wrapper.find(_sliderBar).attributes()['aria-readonly']).toBe(
+                'true'
+            )
         })
+        it('should unmount wrapper', async function () {
+            await wrapper.setProps({
+                disabled: false
+            })
 
-        expect(wrapper.find(_sliderBar).attributes()['aria-disabled']).toBe(
-            'true'
-        )
-
-        await wrapper.setProps({
-            disabled: false,
-            readonly: true
+            wrapper.unmount()
         })
-
-        expect(wrapper.find(_sliderBar).attributes()['aria-readonly']).toBe(
-            'true'
-        )
-
-        await wrapper.setProps({
-            disabled: false
-        })
-
-        wrapper.unmount()
     })
 })
 

@@ -42,7 +42,7 @@ export default defineComponent({
 
         const style = computed(() => {
             return {
-                verticalAlign: props.align !== void 0 ? props.align : null,
+                verticalAlign: props.align ? props.align : null,
                 aspectRatio: hasSlot.value || props.label ? '' : '1/1',
                 padding:
                     hasSlot.value || props.label
@@ -66,10 +66,10 @@ export default defineComponent({
                 }-line` +
                 (props.outline === true
                     ? ' dl-badge--outline'
-                    : props.color !== void 0
+                    : props.color
                     ? ` bg-${props.color}`
                     : '') +
-                (text !== void 0 ? ` text-${text}` : '') +
+                (text ? ` text-${text}` : '') +
                 (props.floating === true ? ' dl-badge--floating' : '') +
                 (props.rounded === true ? ' dl-badge--rounded' : '') +
                 (props.transparent === true ? ' dl-badge--transparent' : '')

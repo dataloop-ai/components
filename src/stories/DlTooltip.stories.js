@@ -96,7 +96,7 @@ export default {
         scrollTarget: {
             name: 'scroll-target',
             type: String,
-            defaultValue: void 0,
+            defaultValue: null,
             description:
                 'CSS selector or DOM element to be used as a custom scroll container instead of the auto detected one'
         },

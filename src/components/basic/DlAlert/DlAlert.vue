@@ -51,24 +51,23 @@ import {
 } from 'vue-demi'
 import { getColor, includes } from '../../../utils'
 import { DlIcon } from '../../essential'
+import { DlAlertType } from './types'
 
-type AlertType = 'info' | 'success' | 'warning' | 'error'
-
-const typeToIconMap: Record<AlertType, string> = {
+const typeToIconMap: Record<DlAlertType, string> = {
     info: 'icon-dl-info-filled',
     success: 'icon-dl-approve-filled',
     warning: 'icon-dl-alert-filled',
     error: 'icon-dl-error-filled'
 }
 
-const typeToIconColorMap: Record<AlertType, string> = {
+const typeToIconColorMap: Record<DlAlertType, string> = {
     info: 'dl-color-info',
     success: 'dl-color-positive',
     warning: 'dl-color-warning',
     error: 'dl-color-negative'
 }
 
-const typeToBackgroundMap: Record<AlertType, string> = {
+const typeToBackgroundMap: Record<DlAlertType, string> = {
     info: 'dl-color-info-background',
     success: 'dl-color-positive-background',
     warning: 'dl-color-warning-background',
@@ -115,7 +114,7 @@ export default defineComponent({
     emits: ['update:model-value'],
     setup(props, { emit }) {
         const show = ref(props.modelValue)
-        const type = props.type as AlertType
+        const type = props.type as DlAlertType
         const typeIcon = typeToIconMap[type]
         const icon = computed(() => typeToIconMap[type])
         const iconColor = computed(() => typeToIconColorMap[type])

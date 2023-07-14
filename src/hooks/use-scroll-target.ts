@@ -8,10 +8,8 @@ export default function (props: any, configureScrollTarget: Function) {
     let scrollFn: Function | undefined
 
     function changeScrollEvent(scrollTarget: any, fn: Function = () => {}) {
-        const fnProp: string = `${
-            fn !== void 0 ? 'add' : 'remove'
-        }EventListener`
-        const fnHandler = fn !== void 0 ? fn : scrollFn
+        const fnProp: string = `${fn ? 'add' : 'remove'}EventListener`
+        const fnHandler = fn ? fn : scrollFn
 
         if (scrollTarget !== window) {
             scrollTarget[fnProp]('scroll', fnHandler, listenOpts.passive)

@@ -11,7 +11,8 @@ export class Step {
             subtitle: '',
             completed: false,
             optional: false,
-            sidebarNavigation: true,
+            disabled: false,
+            disabledTooltip: '',
             error: '',
             warning: '',
             ...state
@@ -90,12 +91,20 @@ export class Step {
         set(this._state, 'active', value)
     }
 
-    public get sidebarNavigation() {
-        return this._state.sidebarNavigation
+    public get disabled() {
+        return this._state.disabled
     }
 
-    public set sidebarNavigation(value: boolean) {
-        set(this._state, 'sidebarNavigation', value)
+    public set disabled(value: boolean) {
+        set(this._state, 'disabled', value)
+    }
+
+    public get disabledTooltip() {
+        return this._state.disabledTooltip
+    }
+
+    public set disabledTooltip(value: string) {
+        set(this._state, 'disabledTooltip', value)
     }
 
     public clearError() {

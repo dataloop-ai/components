@@ -66,12 +66,60 @@
             :options="options[0]"
             style="width: 100%"
         />
+
+        <dl-column-chart
+            :brush-props="brushProps"
+            :display-brush="false"
+            :display-labels="false"
+            :display-legend="false"
+            :legend-props="legendProps"
+            :data="data[0]"
+            :options="options[0]"
+            style="width: 50%"
+            is-empty
+            :empty-state-props="{
+                responsive: true,
+                style: 'min-height: 350px;',
+                bgSize: '130px',
+                bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                title: 'Lorem ipsum',
+                subtitle:
+                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                info: 'To learn more about this analytics, read our documentation.'
+            }"
+        >
+            <template #links="">
+                <div style="display: flex; gap: 5px; padding: 0 20px">
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-sdk-documentation"
+                        flat
+                        uppercase
+                        label="SDK"
+                    />
+                    <div class="break" />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-file"
+                        flat
+                        label="Documentation"
+                    />
+                    <div class="break" />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-youtube"
+                        flat
+                        label="Video"
+                    />
+                </div>
+            </template>
+        </dl-column-chart>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlAvatar, DlColumnChart, DlTooltip } from '../components'
+import { DlAvatar, DlColumnChart, DlTooltip, DlButton } from '../components'
 
 import { orderBy } from 'lodash'
 
@@ -229,7 +277,8 @@ export default defineComponent({
     components: {
         DlColumnChart,
         DlAvatar,
-        DlTooltip
+        DlTooltip,
+        DlButton
     },
     data() {
         return {

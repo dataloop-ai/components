@@ -27,7 +27,7 @@ function globalHandler(evt: ClickOutsideEvent | TouchOutsideEvent) {
     const target = evt.target as HTMLElement
 
     if (
-        target === void 0 ||
+        !target ||
         target.nodeType === 8 ||
         target.classList.contains('no-pointer-events') === true
     ) {
