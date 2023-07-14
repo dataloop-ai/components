@@ -1263,7 +1263,7 @@ export default defineComponent({
                 ...computedPagination.value,
                 'update:rowsPerPage': (rowsPerPage: number) =>
                     setPagination({ rowsPerPage }),
-                'update:modelValue': (page: number) => setPagination({ page }),
+                'update:model-value': (page: number) => setPagination({ page }),
                 modelValue: computedPagination.value.page,
                 totalItems: computedRowsNumber.value
             }

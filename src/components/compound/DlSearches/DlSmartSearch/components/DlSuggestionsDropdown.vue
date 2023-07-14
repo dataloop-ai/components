@@ -44,7 +44,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         parentId: {
@@ -72,7 +72,7 @@ export default defineComponent({
             default: () => [0, 0]
         }
     },
-    emits: ['set-input-value', 'update:modelValue'],
+    emits: ['set-input-value', 'update:model-value'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -90,7 +90,7 @@ export default defineComponent({
             handleOption(value)
         }
         const emitModelValue = (event: any) => {
-            emit('update:modelValue', event)
+            emit('update:model-value', event)
         }
         const handleOption = (item: any) => {
             emit('set-input-value', item)

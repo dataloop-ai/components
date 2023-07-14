@@ -257,7 +257,7 @@ export default defineComponent({
     },
     emits: [
         'update:model-value',
-        'update:modelValue',
+        'update:model-value',
         'click',
         'before-show',
         'show',
@@ -293,7 +293,7 @@ export default defineComponent({
 
         const menuModel = computed({
             get: () => props.modelValue,
-            set: (val) => emit('update:modelValue', val)
+            set: (val) => emit('update:model-value', val)
         })
 
         const iconClass = computed(() => {
@@ -344,7 +344,7 @@ export default defineComponent({
 
         function onShow(e: Event) {
             emit('show', e)
-            emit('update:modelValue', true)
+            emit('update:model-value', true)
         }
 
         function onBeforeHide(e: Event) {
@@ -354,7 +354,7 @@ export default defineComponent({
 
         function onHide(e: Event) {
             emit('hide', e)
-            emit('update:modelValue', false)
+            emit('update:model-value', false)
         }
 
         function onClick(e: Event) {

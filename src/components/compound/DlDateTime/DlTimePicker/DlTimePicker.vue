@@ -49,7 +49,7 @@ export default defineComponent({
         },
         disabled: Boolean
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value'],
     data() {
         return {
             uuid: `dl-time-picker-${v4()}`
@@ -104,7 +104,7 @@ export default defineComponent({
             newFrom.hours(parseInt(value.hour)).minutes(parseInt(value.minute))
 
             if (newFrom.isBefore(new CustomDate(this.modelValue.to))) {
-                this.$emit('update:modelValue', {
+                this.$emit('update:model-value', {
                     from: newFrom.toDate(),
                     to: this.modelValue.to
                 })
@@ -116,7 +116,7 @@ export default defineComponent({
             newTo.hours(parseInt(value.hour)).minutes(parseInt(value.minute))
 
             if (newTo.isAfter(new CustomDate(this.modelValue.from))) {
-                this.$emit('update:modelValue', {
+                this.$emit('update:model-value', {
                     from: this.modelValue.from,
                     to: newTo.toDate()
                 })

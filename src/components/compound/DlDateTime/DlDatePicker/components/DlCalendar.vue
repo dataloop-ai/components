@@ -72,7 +72,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         title: {
@@ -96,7 +96,7 @@ export default defineComponent({
         disabled: Boolean
     },
     emits: [
-        'update:modelValue',
+        'update:model-value',
         'change',
         'mousedown',
         'mouseenter',
@@ -127,7 +127,7 @@ export default defineComponent({
                 to: value.toDate()
             }
 
-            this.$emit('update:modelValue', newDate)
+            this.$emit('update:model-value', newDate)
             this.$emit('change', newDate)
         },
         getDayStyle(value: Partial<CalendarDate>) {

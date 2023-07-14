@@ -88,7 +88,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -110,7 +110,7 @@ export default defineComponent({
         normalizeCalendars: Boolean,
         disabled: Boolean
     },
-    emits: ['update:modelValue', 'change'],
+    emits: ['update:model-value', 'change'],
     data(): {
         uuid: string
         timeout: number | null
@@ -193,7 +193,7 @@ export default defineComponent({
         },
         updateModelValue(value: DateInterval) {
             if (this.disabled) return
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
             this.$emit('change', value)
         },
 

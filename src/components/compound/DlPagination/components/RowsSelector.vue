@@ -35,7 +35,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         options: {
@@ -52,7 +52,7 @@ export default defineComponent({
         },
         disabled: Boolean
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value'],
     computed: {
         hasSingeValue(): boolean {
             return this.options.length <= 1
@@ -60,7 +60,7 @@ export default defineComponent({
     },
     methods: {
         setSelectedItem(val: number) {
-            this.$emit('update:modelValue', val)
+            this.$emit('update:model-value', val)
         }
     }
 })

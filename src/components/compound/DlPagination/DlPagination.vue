@@ -68,7 +68,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -124,7 +124,7 @@ export default defineComponent({
         withRowsPerPage: Boolean,
         withLegend: Boolean
     },
-    emits: ['update:modelValue', 'update:rowsPerPage'],
+    emits: ['update:model-value', 'update:rowsPerPage'],
     data() {
         return {
             uuid: `dl-pagination-${v4()}`,
@@ -167,7 +167,7 @@ export default defineComponent({
     methods: {
         setValue(value: number) {
             this.value = value
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
         }
     }
 })

@@ -219,7 +219,7 @@ export default function useAnchor({
         pickAnchorEl()
 
         if (props.modelValue === true && anchorEl.value === null) {
-            emit('update:modelValue', false)
+            emit('update:model-value', false)
         }
     })
 

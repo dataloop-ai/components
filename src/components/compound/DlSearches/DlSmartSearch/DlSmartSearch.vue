@@ -262,7 +262,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -321,7 +321,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query', 'update:modelValue'],
+    emits: ['save-query', 'remove-query', 'search-query', 'update:model-value'],
     setup(props, { emit }) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
@@ -362,7 +362,7 @@ export default defineComponent({
             const cleanedAliases = revertAliases(bracketless, props.aliases)
             const json = toJSON(cleanedAliases)
             if (!isEqual(json, props.modelValue)) {
-                emit('update:modelValue', json)
+                emit('update:model-value', json)
             }
             const stringified = JSON.stringify(json)
             activeQuery.value.query = stringified
