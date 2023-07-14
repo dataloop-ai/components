@@ -382,7 +382,10 @@ export default defineComponent({
     watch: {
         matrix: {
             handler(value) {
-                this.currentBrushState.max = Math.min(10, value.length)
+                this.currentBrushState.max = Math.min(
+                    this.cellDisplayLimit,
+                    value.length
+                )
                 this.$nextTick(() => {
                     this.resizeMatrix()
                 })
