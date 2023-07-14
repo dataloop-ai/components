@@ -70,7 +70,7 @@ export default defineComponent({
         DlInput
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

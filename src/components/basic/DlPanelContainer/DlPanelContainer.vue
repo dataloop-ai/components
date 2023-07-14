@@ -139,7 +139,7 @@ export default defineComponent({
         DlEmptyState
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

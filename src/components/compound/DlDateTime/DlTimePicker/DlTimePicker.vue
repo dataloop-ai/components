@@ -11,7 +11,7 @@
             <dl-time-picker-input
                 :disabled="disableInput"
                 :model-value="formatedFromValue"
-                @update:modelValue="handleFromTimeChange"
+                @update:model-value="handleFromTimeChange"
             />
         </div>
         <div class="dl-time-picker--dash">
@@ -25,7 +25,7 @@
             <dl-time-picker-input
                 :disabled="disableInput"
                 :model-value="formatedToValue"
-                @update:modelValue="handleToTimeChange"
+                @update:model-value="handleToTimeChange"
             />
         </div>
     </div>

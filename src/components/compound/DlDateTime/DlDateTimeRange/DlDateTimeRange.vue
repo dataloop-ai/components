@@ -43,13 +43,15 @@
                             :available-range="availableRange"
                             :disabled="isInputDisabled"
                             :normalize-calendars="normalizeCalendars"
-                            @update:modelValue="updateDateIntervalWithAutoClose"
+                            @update:model-value="
+                                updateDateIntervalWithAutoClose
+                            "
                         />
                         <dl-time-picker
                             v-if="showTime && typeState === 'day'"
                             :disabled="isInputDisabled"
                             :model-value="dateInterval"
-                            @update:modelValue="updateDateInterval"
+                            @update:model-value="updateDateInterval"
                         />
                     </div>
                 </div>
@@ -85,7 +87,7 @@ export default defineComponent({
         DlMenu
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

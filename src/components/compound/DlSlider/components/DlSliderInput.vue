@@ -20,7 +20,7 @@ import { getInputValue } from '../utils'
 export default defineComponent({
     name: 'DlSliderInput',
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {
@@ -47,7 +47,7 @@ export default defineComponent({
     },
     emits: ['update:model-value', 'change'],
     setup(props, { emit }) {
-        const modelRef = toRef(props, 'modelValue')
+        const modelRef = toRef(props, 'model-value')
 
         const handleChange = (evt: any) => {
             const val = evt.target.value

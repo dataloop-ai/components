@@ -23,7 +23,7 @@
                 :default-width="width"
                 @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
-                @update:modelValue="debouncedInputModel"
+                @update:model-value="debouncedInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
             />
         </div>
@@ -261,7 +261,7 @@ export default defineComponent({
         DlSelect
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {
@@ -445,7 +445,7 @@ export default defineComponent({
             }
         }
 
-        const modelRef = toRef(props, 'modelValue')
+        const modelRef = toRef(props, 'model-value')
 
         watch(modelRef, (val: any) => {
             readModelValue(val)

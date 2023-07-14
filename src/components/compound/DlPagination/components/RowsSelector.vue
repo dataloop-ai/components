@@ -34,7 +34,7 @@ export default defineComponent({
         DlTypography
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

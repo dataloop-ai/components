@@ -512,7 +512,7 @@
                             @update:rowsPerPage="
                                 (v) => setPagination({ rowsPerPage: v })
                             "
-                            @update:modelValue="
+                            @update:model-value="
                                 (v) => setPagination({ page: v })
                             "
                         />

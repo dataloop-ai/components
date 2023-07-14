@@ -28,7 +28,7 @@
                     :active-color="activeColor"
                     :text-color="textColor"
                     :active-text-color="activeTextColor"
-                    @update:modelValue="setValue"
+                    @update:model-value="setValue"
                 />
                 <quick-navigation
                     v-if="withQuickNavigation"
@@ -36,7 +36,7 @@
                     :max="max"
                     :min="min"
                     :disabled="disabled"
-                    @update:modelValue="setValue"
+                    @update:model-value="setValue"
                 />
             </div>
             <pagination-legend
@@ -67,7 +67,7 @@ export default defineComponent({
         PaginationLegend
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {
