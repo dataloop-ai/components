@@ -4,11 +4,10 @@ import {
     onMounted,
     getCurrentInstance,
     Ref,
-    PropType,
-    isVue2
+    PropType
 } from 'vue-demi'
 
-const modelValueNaming = isVue2 ? 'model-value' : 'modelValue'
+const modelValueNaming = 'model-value'
 
 const staticUseModelToggleProps: any = {
     modelValue: {
