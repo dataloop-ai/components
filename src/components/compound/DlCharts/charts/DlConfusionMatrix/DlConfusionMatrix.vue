@@ -173,7 +173,7 @@
                     thumb-size="20px"
                     :max="matrix.length"
                     :min-range="2"
-                    :max-range="10"
+                    :max-range="cellDisplayLimit"
                     :selection-color="getCellBackground(0.1)"
                     :color="getCellBackground()"
                     :step="1"
@@ -252,6 +252,10 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
+        cellDisplayLimit: {
+            type: Number,
+            default: 10
+        },
         color: {
             type: String,
             default: '--dl-color-secondary'
@@ -279,7 +283,10 @@ export default defineComponent({
         const { variables } = useThemeVariables()
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
-            max: props.matrix.length <= 10 ? props.matrix.length : 10
+            max:
+                props.matrix.length <= props.cellDisplayLimit
+                    ? props.matrix.length
+                    : props.cellDisplayLimit
         })
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
