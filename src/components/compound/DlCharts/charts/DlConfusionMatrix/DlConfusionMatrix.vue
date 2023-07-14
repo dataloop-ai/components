@@ -283,10 +283,7 @@ export default defineComponent({
         const { variables } = useThemeVariables()
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
-            max:
-                props.matrix.length <= props.cellDisplayLimit
-                    ? props.matrix.length
-                    : props.cellDisplayLimit
+            max: Math.min(props.matrix.length, props.cellDisplayLimit)
         })
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
