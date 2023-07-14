@@ -173,10 +173,12 @@
                     thumb-size="20px"
                     :max="matrix.length"
                     :min-range="2"
+                    :max-range="cellDisplayLimit"
                     :selection-color="getCellBackground(0.1)"
                     :color="getCellBackground()"
                     :step="1"
                     drag-range
+                    :model-value="currentBrushState"
                     @update:model-value="handleBrushUpdate"
                 />
                 <span class="label-tag x"> {{ bottomLabel }} </span>
@@ -250,6 +252,10 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
+        cellDisplayLimit: {
+            type: Number,
+            default: 10
+        },
         color: {
             type: String,
             default: '--dl-color-secondary'
@@ -277,7 +283,7 @@ export default defineComponent({
         const { variables } = useThemeVariables()
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
-            max: props.matrix.length
+            max: Math.min(props.matrix.length, props.cellDisplayLimit)
         })
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
@@ -376,7 +382,10 @@ export default defineComponent({
     watch: {
         matrix: {
             handler(value) {
-                this.currentBrushState.max = Math.min(10, value.length)
+                this.currentBrushState.max = Math.min(
+                    this.cellDisplayLimit,
+                    value.length
+                )
                 this.$nextTick(() => {
                     this.resizeMatrix()
                 })
@@ -442,7 +451,7 @@ export default defineComponent({
             const width = verticalWrapper?.offsetWidth
 
             labelY.style.marginTop = `-${this.leftLabel.length * 16}px`
-            this.cellWidth = width / this.matrix.length
+            this.cellWidth = Math.round(width / this.matrix.length)
             colorSpectrum.style.height = `${width}px`
             yAxisOuter.style.height = `${width}px`
         },
@@ -460,7 +469,7 @@ export default defineComponent({
                     ctx.matrix.length / (brush.max - brush.min),
                     ctx.$refs.matrix
                 )
-                const scroll = brush.min * (getCellWidth() - 2)
+                const scroll = brush.min * getCellWidth()
                 const container = ctx.$refs.matrixWrapper
                 container.scroll(scroll, 0)
                 ctx.currentBrushState = brush
@@ -524,7 +533,6 @@ export default defineComponent({
     &__element {
         width: var(--cell-dimensions);
         max-width: 100px;
-        overflow: hidden;
         text-overflow: ellipsis;
         &--text {
             font-size: 12px;
@@ -575,9 +583,8 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: max(calc(var(--cell-dimensions) * 0.1), 12px);
+        font-size: calc(var(--cell-dimensions) * 0.33);
         cursor: pointer;
-        border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
         width: var(--cell-dimensions);
         height: var(--cell-dimensions);
