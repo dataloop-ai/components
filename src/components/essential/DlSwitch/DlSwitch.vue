@@ -64,7 +64,7 @@ const Any = [Array, Boolean, String, Number, Object]
 export default defineComponent({
     name: 'DlSwitch',
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

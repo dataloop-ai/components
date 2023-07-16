@@ -28,7 +28,7 @@ describe('RowsSelector', () => {
             })
 
             it('should emitted modelValue event', function () {
-                expect(wrapper.emitted()['update:modelValue'][0]).toBeTruthy()
+                expect(wrapper.emitted()['update:model-value'][0]).toBeTruthy()
             })
         })
     })

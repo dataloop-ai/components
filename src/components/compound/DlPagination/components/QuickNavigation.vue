@@ -38,8 +38,8 @@ export default defineComponent({
         DlButton
     },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         modelValue: { type: Number, required: true },
@@ -47,7 +47,7 @@ export default defineComponent({
         max: { type: Number, required: true },
         disabled: Boolean
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value'],
     data() {
         return {
             inputValue: this.modelValue.toString(),
@@ -71,7 +71,7 @@ export default defineComponent({
                 this.inputValue = this.max.toString()
             }
 
-            this.$emit('update:modelValue', Number(this.inputValue))
+            this.$emit('update:model-value', Number(this.inputValue))
         },
         handleKeyDown(e: KeyboardEvent) {
             if (

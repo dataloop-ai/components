@@ -43,7 +43,7 @@ export default defineComponent({
         DlListItem
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {
@@ -90,6 +90,7 @@ export default defineComponent({
             handleOption(value)
         }
         const emitModelValue = (event: any) => {
+            console.log('emit suggestion model change')
             emit('update:model-value', event)
         }
         const handleOption = (item: any) => {

@@ -182,7 +182,7 @@ const Template = (args) => ({
     template: `
     <div style="padding: 50px">
         <div style="display: flex; flex-direction: column; gap: 1rem">
-            <dl-switch v-model="value" @update:modelValue="change" right-label="active switch" v-bind="args" />
+            <dl-switch v-model="value" @update:model-value="change" right-label="active switch" v-bind="args" />
             <dl-switch right-label="inactive switch" v-bind="args" disabled />
         </div>
     </div>

@@ -91,8 +91,8 @@ export default defineComponent({
     name: 'DlDialogBox',
     components: { DlIcon, DlEmptyState },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         width: { type: [Number, String], default: 400 },
@@ -120,7 +120,7 @@ export default defineComponent({
             default: 'var(--dl-z-index-dialog)'
         }
     },
-    emits: ['update:modelValue', 'hide', 'show'],
+    emits: ['update:model-value', 'hide', 'show'],
     data(): {
         uuid: string
         show: boolean
@@ -224,7 +224,7 @@ export default defineComponent({
                 (this.$el as HTMLElement).blur()
             }
             this.show = false
-            this.$emit('update:modelValue', false)
+            this.$emit('update:model-value', false)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'auto'
             }
@@ -234,7 +234,7 @@ export default defineComponent({
         },
         openModal() {
             this.show = true
-            this.$emit('update:modelValue', true)
+            this.$emit('update:model-value', true)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'hidden'
             }

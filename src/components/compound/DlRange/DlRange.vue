@@ -114,7 +114,7 @@ export default defineComponent({
         touchPan: touchPanDirective as any // force any type cause of the vue version
     },
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

@@ -12,8 +12,8 @@ import { debounce } from 'lodash'
 
 export default defineComponent({
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         /**
@@ -32,7 +32,7 @@ export default defineComponent({
             default: null
         }
     },
-    emits: ['update:modelValue', 'update-prevent', 'align-text'],
+    emits: ['update:model-value', 'update-prevent', 'align-text'],
     data() {
         return {
             jsonEditor: {} as JSONEditor,
@@ -62,7 +62,7 @@ export default defineComponent({
                             this.preventOnChange = false
                             return
                         }
-                        this.$emit('update:modelValue', updatedContent.text)
+                        this.$emit('update:model-value', updatedContent.text)
                         if (this.preventUpdate !== null) {
                             this.$emit('update-prevent', true)
                         }

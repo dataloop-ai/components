@@ -53,8 +53,8 @@ export default defineComponent({
         DlIcon
     },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         title: {
@@ -74,7 +74,7 @@ export default defineComponent({
         disabled: Boolean
     },
     emits: [
-        'update:modelValue',
+        'update:model-value',
         'change',
         'mousedown',
         'mouseenter',
@@ -109,7 +109,7 @@ export default defineComponent({
                 from: date,
                 to: date
             }
-            this.$emit('update:modelValue', newDate)
+            this.$emit('update:model-value', newDate)
             this.$emit('change', newDate)
         },
 

@@ -68,7 +68,7 @@ import { v4 } from 'uuid'
 export default defineComponent({
     name: 'DlRadio',
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {

@@ -112,8 +112,8 @@ export default defineComponent({
         DlIcon
     },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -155,7 +155,7 @@ export default defineComponent({
             default: 'dl-color-text-buttons'
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value'],
     data() {
         return {
             value: this.modelValue,
@@ -229,7 +229,7 @@ export default defineComponent({
         },
         setPage(value: number) {
             this.set(value)
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
         },
         updateState() {
             this.ellipsesStart = false

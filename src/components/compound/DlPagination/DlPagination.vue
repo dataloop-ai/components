@@ -28,7 +28,7 @@
                     :active-color="activeColor"
                     :text-color="textColor"
                     :active-text-color="activeTextColor"
-                    @update:modelValue="setValue"
+                    @update:model-value="setValue"
                 />
                 <quick-navigation
                     v-if="withQuickNavigation"
@@ -36,7 +36,7 @@
                     :max="max"
                     :min="min"
                     :disabled="disabled"
-                    @update:modelValue="setValue"
+                    @update:model-value="setValue"
                 />
             </div>
             <pagination-legend
@@ -67,8 +67,8 @@ export default defineComponent({
         PaginationLegend
     },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -124,7 +124,7 @@ export default defineComponent({
         withRowsPerPage: Boolean,
         withLegend: Boolean
     },
-    emits: ['update:modelValue', 'update:rowsPerPage'],
+    emits: ['update:model-value', 'update:rowsPerPage'],
     data() {
         return {
             uuid: `dl-pagination-${v4()}`,
@@ -167,7 +167,7 @@ export default defineComponent({
     methods: {
         setValue(value: number) {
             this.value = value
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
         }
     }
 })

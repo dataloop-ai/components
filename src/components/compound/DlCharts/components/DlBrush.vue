@@ -77,8 +77,8 @@ export default defineComponent({
         BrushThumb
     },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         ...useSliderProps,

@@ -73,8 +73,8 @@ export default defineComponent({
         DlTooltip
     },
     model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+        prop: 'model-value',
+        event: 'update:model-value'
     },
     props: {
         /**
@@ -120,7 +120,7 @@ export default defineComponent({
             default: 0.3
         }
     },
-    emits: ['update:modelValue', 'selected'],
+    emits: ['update:model-value', 'selected'],
     data() {
         return {
             currentList: { first: 0, last: this.visibleThumbnails }
@@ -186,7 +186,7 @@ export default defineComponent({
                 : 'slider__arrow--icon--invisible'
         },
         handleThumbnailMousedown(image: string) {
-            this.$emit('update:modelValue', image)
+            this.$emit('update:model-value', image)
             this.$emit('selected', image)
         }
     }

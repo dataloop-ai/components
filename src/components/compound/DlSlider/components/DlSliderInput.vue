@@ -20,7 +20,7 @@ import { getInputValue } from '../utils'
 export default defineComponent({
     name: 'DlSliderInput',
     model: {
-        prop: 'modelValue',
+        prop: 'model-value',
         event: 'update:model-value'
     },
     props: {
