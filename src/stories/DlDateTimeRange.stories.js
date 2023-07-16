@@ -7,7 +7,7 @@ export default {
     component: DlDateTimeRange,
     argTypes: {
         modelValue: {
-            name: 'modelValue',
+            name: 'model-value',
             defaultValue: null,
             control: 'object',
             description: 'A DateInterval object',
@@ -192,7 +192,7 @@ const Template = (args) => {
                 v-bind="args"
                 :available-range="availableRange"
                 @set-type="handleSetType"
-                @update:modelValue="updateModelValue"
+                @update:model-value="updateModelValue"
             />
         </div>
     </div>

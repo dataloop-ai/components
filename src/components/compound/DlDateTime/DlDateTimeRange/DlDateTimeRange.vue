@@ -43,13 +43,15 @@
                             :available-range="availableRange"
                             :disabled="isInputDisabled"
                             :normalize-calendars="normalizeCalendars"
-                            @update:modelValue="updateDateIntervalWithAutoClose"
+                            @update:model-value="
+                                updateDateIntervalWithAutoClose
+                            "
                         />
                         <dl-time-picker
                             v-if="showTime && typeState === 'day'"
                             :disabled="isInputDisabled"
                             :model-value="dateInterval"
-                            @update:modelValue="updateDateInterval"
+                            @update:model-value="updateDateInterval"
                         />
                     </div>
                 </div>
@@ -86,7 +88,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -118,7 +120,7 @@ export default defineComponent({
             default: 'Set Due Date'
         }
     },
-    emits: ['update:modelValue', 'set-type', 'change'],
+    emits: ['update:model-value', 'set-type', 'change'],
     data(): {
         uuid: string
         dateInterval: DateInterval | null
@@ -426,7 +428,7 @@ export default defineComponent({
                     59
                 )
             }
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
             this.$emit('change', value)
         },
         updateDateIntervalWithAutoClose(value: DateInterval) {

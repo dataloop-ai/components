@@ -11,7 +11,7 @@
             :model-value="modelValue"
             :arrow-nav-items="suggestions"
             :auto-close="false"
-            @update:modelValue="emitModelValue($event)"
+            @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
             @highlightedIndex="setHighlightedIndex"
@@ -44,7 +44,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         parentId: {
@@ -72,7 +72,7 @@ export default defineComponent({
             default: () => [0, 0]
         }
     },
-    emits: ['set-input-value', 'update:modelValue'],
+    emits: ['set-input-value', 'update:model-value'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -90,7 +90,8 @@ export default defineComponent({
             handleOption(value)
         }
         const emitModelValue = (event: any) => {
-            emit('update:modelValue', event)
+            console.log('emit suggestion model change')
+            emit('update:model-value', event)
         }
         const handleOption = (item: any) => {
             emit('set-input-value', item)

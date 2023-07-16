@@ -129,6 +129,23 @@
             size="m"
             readonly
         />
+
+        <p>input in a limited size and action slot</p>
+        <div style="align-items: center; width: 250px">
+            <dl-input
+                class="input-parts"
+                placeholder="Select option"
+            >
+                <template #action>
+                    <dl-button
+                        dense
+                        flat
+                        icon="icon-dl-add"
+                        size="m"
+                    />
+                </template>
+            </dl-input>
+        </div>
     </div>
 </template>
 <script lang="ts">

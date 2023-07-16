@@ -39,7 +39,6 @@ describe('DlDropdownButton', () => {
                 menuSelf: 'top end',
                 modelValue: false,
                 noIconAnimation: false,
-                'onUpdate:modelValue': undefined,
                 outlined: false,
                 persistent: false,
                 size: 'm',
