@@ -667,6 +667,9 @@ export default defineComponent({
         },
         modelValue() {
             this.setSelectedIndex()
+        },
+        emitValue() {
+            this.setSelectedIndex()
         }
     },
     beforeMount() {
@@ -695,7 +698,7 @@ export default defineComponent({
                 return
             }
 
-            if (this.emitValue && this.selectedIndex !== -1) {
+            if (this.emitValue) {
                 this.selectedIndex = this.options.findIndex(
                     (
                         option:
