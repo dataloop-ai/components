@@ -4,203 +4,238 @@
         :style="cssVars"
         :class="rootContainerClasses"
     >
-        <div :class="wrapperClasses">
+        <div class="row">
             <div
-                v-show="!!title.length || !!tooltip.length"
-                :class="{
-                    'dl-text-input__title-container': true,
-                    'dl-text-input__title-container--s': isSmall
-                }"
+                :class="`${
+                    isSmall ? 'col' : 'row  full-width  full-height'
+                } top`"
+                :style="`${isSmall ? 'flex-grow: 0; max-width: 25%;' : ''}`"
             >
-                <label
-                    v-show="!!title.length"
-                    class="dl-text-input__title"
-                >
-                    {{ title
-                    }}<span
-                        v-show="required"
-                        :class="asteriskClasses"
-                    > *</span>
-                    {{ !required && optional ? ' (Optional)' : null }}
-                </label>
-                <span v-show="!!tooltip.length">
-                    <dl-icon
-                        class="dl-text-input__tooltip-icon"
-                        icon="icon-dl-info"
-                        size="12px"
-                    />
-                    <dl-tooltip>
-                        {{ tooltip }}
-                    </dl-tooltip>
-                </span>
-            </div>
-            <div
-                v-if="!!topMessage.length && !isSmall"
-                class="break"
-            />
-            <div
-                v-show="!!topMessage.length"
-                :class="{
-                    'dl-text-input__top-message-container': true,
-                    'dl-text-input__top-message-container--s': isSmall
-                }"
-            >
-                <dl-info-error-message
-                    v-show="!!topMessage.length"
-                    position="above"
-                    :value="topMessage"
-                />
-            </div>
-            <div class="dl-text-input__input-wrapper">
-                <input
-                    ref="input"
-                    :value="modelValue"
-                    :class="inputClasses"
-                    :placeholder="placeholder"
-                    :maxlength="maxLength"
-                    :type="showPass ? 'text' : type"
-                    :disabled="disabled"
-                    :readonly="readonly"
-                    @input="onChange"
-                    @focus="onFocus"
-                    @blur="debouncedBlur()"
-                    @keyup.enter="onKeyPress"
-                >
                 <div
-                    v-show="hasPrepend"
-                    :class="[
-                        ...adornmentClasses,
-                        'dl-text-input__adornment-container--pos-left'
-                    ]"
+                    v-if="!!title.length || !!tooltip.length"
+                    :class="{
+                        'dl-text-input__title-container': true,
+                        'dl-text-input__title-container--s': isSmall
+                    }"
                 >
-                    <slot name="prepend" />
-                </div>
-                <div
-                    v-show="hasAppend"
-                    :class="[
-                        ...adornmentClasses,
-                        'dl-text-input__adornment-container--pos-right'
-                    ]"
-                >
-                    <slot name="append" />
-                    <span v-show="showClearButton">
-                        <dl-button
-                            ref="input-clear-button"
-                            icon="icon-dl-close"
-                            size="s"
-                            text-color="dl-color-darker"
-                            flat
-                            fluid
-                            @click="onClear"
-                        />
-                        <dl-tooltip v-if="clearButtonTooltip">
-                            Remove text
-                        </dl-tooltip>
-                    </span>
-                    <span v-show="showShowPassButton">
-                        <dl-button
-                            ref="input-show-pass-button"
-                            :icon="passShowIcon"
-                            size="s"
-                            text-color="dl-color-darker"
-                            flat
-                            fluid
-                            @click="onPassShowClick"
+                    <label
+                        v-if="!!title.length"
+                        class="dl-text-input__title"
+                        :style="`${isSmall ? 'width: 90%' : 'width: 100%'}`"
+                    >
+                        <dl-ellipsis>
+                            {{ title
+                            }}<span
+                                v-if="required"
+                                :class="asteriskClasses"
+                            >
+                                *</span>
+                            {{ !required && optional ? ' (Optional)' : null }}
+                        </dl-ellipsis>
+                    </label>
+                    <span v-if="!!tooltip.length">
+                        <dl-icon
+                            class="dl-text-input__tooltip-icon"
+                            icon="icon-dl-info"
+                            size="12px"
                         />
                         <dl-tooltip>
-                            {{ showPass ? 'Hide' : 'Show' }}
+                            {{ tooltip }}
                         </dl-tooltip>
                     </span>
                 </div>
                 <div
-                    v-show="hasAction"
-                    :class="[
-                        ...adornmentClasses,
-                        'dl-text-input__adornment-container--pos-right-out'
-                    ]"
-                >
-                    <slot name="action" />
-                </div>
-                <dl-menu
-                    v-if="showSuggestItems"
-                    v-model="isMenuOpen"
-                    auto-close
-                    no-focus
-                    :offset="[0, 3]"
-                    fit-container
-                    :fit-content="fitContent"
-                    :arrow-nav-items="suggestItems"
-                    @click="onMenuShow"
-                    @highlightedIndex="setHighlightedIndex"
-                    @handleSelectedItem="handleSelectedItem"
-                >
-                    <dl-list
-                        bordered
-                        :style="{ maxWidth: suggestMenuWidth }"
-                    >
-                        <dl-list-item
-                            v-for="(item, suggestIndex) in suggestItems"
-                            :key="item"
-                            clickable
-                            style="font-size: 12px"
-                            :highlighted="suggestIndex === highlightedIndex"
-                            @click="onClick($event, item)"
-                        >
-                            <span
-                                v-for="(word, index) in getSuggestWords(
-                                    item,
-                                    modelValue
-                                )"
-                                :key="JSON.stringify(word) + index"
-                                :class="{
-                                    'dl-text-input__suggestion--highlighted':
-                                        word.highlighted
-                                }"
-                            >
-                                <span v-show="word.value[0] === ' '">&nbsp;</span>
-                                {{ word.value }}
-                                <span
-                                    v-show="
-                                        word.value[word.value.length - 1] ===
-                                            ' '
-                                    "
-                                >&nbsp;</span>
-                            </span>
-                        </dl-list-item>
-                    </dl-list>
-                </dl-menu>
+                    v-if="!!topMessage.length && !isSmall"
+                    class="break"
+                />
                 <div
-                    v-if="bottomMessage"
-                    class="dl-text-input__bottom-message-container"
+                    v-if="!!topMessage.length"
+                    :class="{
+                        'dl-text-input__top-message-container': true,
+                        'dl-text-input__top-message-container--s': isSmall
+                    }"
                 >
                     <dl-info-error-message
-                        v-if="!!infoMessage.length && !error && !warning"
-                        position="below"
-                        :value="infoMessage"
+                        v-if="!!topMessage.length"
+                        position="above"
+                        :value="topMessage"
                     />
-                    <dl-info-error-message
-                        v-if="error && !!errorMessage && !!errorMessage.length"
-                        position="below"
-                        error
-                        :value="errorMessage"
-                    />
-                    <dl-info-error-message
-                        v-if="
-                            warning &&
-                                !!warningMessage &&
-                                !!warningMessage.length &&
-                                !error
+                </div>
+            </div>
+            <div
+                :class="`${
+                    isSmall ? 'col' : 'row'
+                } bottom-section full-width full-height`"
+            >
+                <div class="row center full-width full-height">
+                    <div style="flex-grow: 1; height: 100%; position: relative">
+                        <input
+                            ref="input"
+                            :value="modelValue"
+                            :class="inputClasses"
+                            :placeholder="placeholder"
+                            :maxlength="maxLength"
+                            :type="showPass ? 'text' : type"
+                            :disabled="disabled"
+                            :readonly="readonly"
+                            @input="onChange"
+                            @focus="onFocus"
+                            @blur="debouncedBlur"
+                            @keyup.enter="onKeyPress"
+                        >
+                        <div
+                            v-if="hasPrepend"
+                            :class="[
+                                ...adornmentClasses,
+                                'dl-text-input__adornment-container--pos-left'
+                            ]"
+                        >
+                            <slot name="prepend" />
+                        </div>
+                        <div
+                            v-if="hasAppend"
+                            :class="[
+                                ...adornmentClasses,
+                                'dl-text-input__adornment-container--pos-right'
+                            ]"
+                        >
+                            <slot name="append" />
+                            <span v-if="showClearButton && focused">
+                                <dl-button
+                                    ref="input-clear-button"
+                                    icon="icon-dl-close"
+                                    size="s"
+                                    text-color="dl-color-darker"
+                                    flat
+                                    fluid
+                                    @click="onClear"
+                                />
+                                <dl-tooltip v-if="clearButtonTooltip">
+                                    Remove text
+                                </dl-tooltip>
+                            </span>
+                            <span v-if="showShowPassButton">
+                                <dl-button
+                                    ref="input-show-pass-button"
+                                    :icon="passShowIcon"
+                                    size="s"
+                                    text-color="dl-color-darker"
+                                    flat
+                                    fluid
+                                    @click="onPassShowClick"
+                                />
+                                <dl-tooltip>
+                                    {{ showPass ? 'Hide' : 'Show' }}
+                                </dl-tooltip>
+                            </span>
+                        </div>
+                    </div>
+                    <div
+                        v-if="hasAction"
+                        style="
+                            width: fit-content;
+                            display: flex;
+                            align-items: center;
+                            margin-left: 10px;
                         "
-                        position="below"
-                        warning
-                        :value="warningMessage"
-                    />
-                    <span
-                        v-if="showCounter && maxLength && maxLength > 0"
-                        class="dl-text-input__counter"
                     >
-                        {{ characterCounter }}
-                    </span>
+                        <slot name="action" />
+                    </div>
+                    <dl-menu
+                        v-if="showSuggestItems"
+                        v-model="isMenuOpen"
+                        auto-close
+                        no-focus
+                        :offset="[0, 3]"
+                        fit-container
+                        :fit-content="fitContent"
+                        :arrow-nav-items="suggestItems"
+                        @click="onMenuShow"
+                        @highlightedIndex="setHighlightedIndex"
+                        @handleSelectedItem="handleSelectedItem"
+                    >
+                        <dl-list
+                            bordered
+                            :style="{ maxWidth: suggestMenuWidth }"
+                        >
+                            <dl-list-item
+                                v-for="(item, suggestIndex) in suggestItems"
+                                :key="item"
+                                clickable
+                                style="font-size: 12px"
+                                :highlighted="suggestIndex === highlightedIndex"
+                                @click="onClick($event, item)"
+                            >
+                                <span
+                                    v-for="(word, index) in getSuggestWords(
+                                        item,
+                                        modelValue
+                                    )"
+                                    :key="JSON.stringify(word) + index"
+                                    :class="{
+                                        'dl-text-input__suggestion--highlighted':
+                                            word.highlighted
+                                    }"
+                                >
+                                    <span v-if="word.value[0] === ' '">&nbsp;</span>
+                                    {{ word.value }}
+                                    <span
+                                        v-if="
+                                            word.value[
+                                                word.value.length - 1
+                                            ] === ' '
+                                        "
+                                    >&nbsp;</span>
+                                </span>
+                            </dl-list-item>
+                        </dl-list>
+                    </dl-menu>
+                </div>
+                <div class="row bottom full-width full-height">
+                    <div
+                        v-if="bottomMessage"
+                        class="row full-width dl-text-input__bottom-message-container"
+                        style="justify-content: space-between"
+                    >
+                        <div>
+                            <dl-info-error-message
+                                v-if="
+                                    !!infoMessage.length && !error && !warning
+                                "
+                                position="below"
+                                :value="infoMessage"
+                            />
+                            <dl-info-error-message
+                                v-else-if="
+                                    error &&
+                                        !!errorMessage &&
+                                        !!errorMessage.length
+                                "
+                                position="below"
+                                error
+                                :value="errorMessage"
+                            />
+                            <dl-info-error-message
+                                v-else-if="
+                                    warning &&
+                                        !!warningMessage &&
+                                        !!warningMessage.length &&
+                                        !error
+                                "
+                                position="below"
+                                warning
+                                :value="warningMessage"
+                            />
+                        </div>
+                        <div>
+                            <span
+                                v-if="showCounter && maxLength && maxLength > 0"
+                                class="dl-text-input__counter"
+                            >
+                                {{ characterCounter }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,7 +247,7 @@ import { debounce } from 'lodash'
 import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlInfoErrorMessage, DlTooltip } from '../../shared'
 import { DlListItem } from '../../basic'
-import { DlMenu, DlIcon, DlList } from '../../essential'
+import { DlMenu, DlIcon, DlList, DlEllipsis } from '../../essential'
 import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { v4 } from 'uuid'
@@ -226,7 +261,8 @@ export default defineComponent({
         DlInfoErrorMessage,
         DlMenu,
         DlList,
-        DlListItem
+        DlListItem,
+        DlEllipsis
     },
     model: {
         prop: 'modelValue',
@@ -714,11 +750,6 @@ export default defineComponent({
         &--small {
             padding: 0px 10px;
         }
-    }
-
-    &__input-wrapper {
-        position: relative;
-        width: 100%;
     }
 
     &__input {
