@@ -21,7 +21,6 @@
             show-counter
             :max-length="20"
         />
-
         <dl-input
             v-model="saveInputValue"
             style="width: 220px"
@@ -31,13 +30,11 @@
         >
             <template #append>
                 <dl-icon
-                    style="margin-bottom: 5px"
                     icon="icon-dl-save"
                     size="12px"
                 />
             </template>
         </dl-input>
-
         <dl-input
             v-model="passFieldValue"
             title="Password"
@@ -60,6 +57,8 @@
             info-message="This won't show, error is true"
             optional
         />
+
+        <p>size S with long text</p>
         <dl-input
             v-model="warningFieldValue"
             title="Warning Example"
@@ -92,7 +91,6 @@
             error
             error-message="Error message is the strongest."
         />
-
         <dl-input
             style="width: 440px"
             placeholder="Select option"
@@ -121,7 +119,6 @@
                 size="m"
             />
         </div>
-
         <dl-input
             title="Readonly"
             style="width: 220px"
@@ -130,8 +127,8 @@
             readonly
         />
 
-        <p>input in a limited size and action slot</p>
-        <div style="align-items: center; width: 250px">
+        <p>input in a limited size and action slot size m</p>
+        <div style="align-items: center; width: 250px; overflow: hidden">
             <dl-input
                 class="input-parts"
                 placeholder="Select option"
