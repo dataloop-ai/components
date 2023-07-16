@@ -80,7 +80,7 @@
                             :readonly="readonly"
                             @input="onChange"
                             @focus="onFocus"
-                            @blur="debouncedBlur()"
+                            @blur="debouncedBlur"
                             @keyup.enter="onKeyPress"
                         >
                         <div
@@ -206,7 +206,7 @@
                                 :value="infoMessage"
                             />
                             <dl-info-error-message
-                                v-if="
+                                v-else-if="
                                     error &&
                                         !!errorMessage &&
                                         !!errorMessage.length
@@ -216,7 +216,7 @@
                                 :value="errorMessage"
                             />
                             <dl-info-error-message
-                                v-if="
+                                v-else-if="
                                     warning &&
                                         !!warningMessage &&
                                         !!warningMessage.length &&
