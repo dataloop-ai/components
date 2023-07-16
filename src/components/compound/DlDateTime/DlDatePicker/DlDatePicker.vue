@@ -87,7 +87,7 @@ export default defineComponent({
         DlMonthCalendar
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

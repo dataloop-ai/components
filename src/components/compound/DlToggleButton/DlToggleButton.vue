@@ -43,7 +43,7 @@ export default defineComponent({
     name: 'DlToggleButton',
     components: { DlButton },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

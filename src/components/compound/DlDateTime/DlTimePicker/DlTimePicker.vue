@@ -42,6 +42,10 @@ export default defineComponent({
     components: {
         DlTimePickerInput
     },
+    model: {
+        prop: 'modelValue',
+        event: 'update:model-value'
+    },
     props: {
         modelValue: {
             type: Object as PropType<DateInterval | null>,

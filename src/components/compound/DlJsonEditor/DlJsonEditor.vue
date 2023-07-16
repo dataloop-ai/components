@@ -12,7 +12,7 @@ import { debounce } from 'lodash'
 
 export default defineComponent({
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

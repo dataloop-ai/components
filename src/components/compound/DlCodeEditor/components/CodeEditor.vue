@@ -136,7 +136,7 @@ export default defineComponent({
         DlButton
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

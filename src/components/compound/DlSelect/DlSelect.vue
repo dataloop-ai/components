@@ -344,7 +344,7 @@ export default defineComponent({
         DlVirtualScroll
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

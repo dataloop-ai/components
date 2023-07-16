@@ -33,7 +33,7 @@ export default defineComponent({
         CodeEditor
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

@@ -87,6 +87,10 @@ export default defineComponent({
         DlTimeCounter,
         DlMenu
     },
+    model: {
+        prop: 'modelValue',
+        event: 'update:model-value'
+    },
     props: {
         modelValue: {
             type: Object as PropType<Time>,

@@ -116,7 +116,7 @@ export default defineComponent({
         DlIcon
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

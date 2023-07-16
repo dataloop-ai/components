@@ -199,11 +199,10 @@ export default defineComponent({
         ButtonGroup
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {
-        'onUpdate:modelValue': [Function, Array],
         modelValue: Boolean,
         split: Boolean,
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },

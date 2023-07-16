@@ -91,7 +91,7 @@ export default defineComponent({
     name: 'DlDialogBox',
     components: { DlIcon, DlEmptyState },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

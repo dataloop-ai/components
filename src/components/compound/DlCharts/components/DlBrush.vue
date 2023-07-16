@@ -77,7 +77,7 @@ export default defineComponent({
         BrushThumb
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

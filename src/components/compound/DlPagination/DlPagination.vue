@@ -67,7 +67,7 @@ export default defineComponent({
         PaginationLegend
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

@@ -73,7 +73,7 @@ export default defineComponent({
         DlTooltip
     },
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {

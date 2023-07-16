@@ -89,7 +89,7 @@ const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 export default defineComponent({
     name: 'DlCheckbox',
     model: {
-        prop: 'model-value',
+        prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {
