@@ -752,11 +752,6 @@ export default defineComponent({
         }
     }
 
-    &__input-wrapper {
-        position: relative;
-        width: 100%;
-    }
-
     &__input {
         border: 1px solid var(--dl-color-separator);
         border-radius: 2px;
