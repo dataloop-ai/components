@@ -218,7 +218,7 @@ export default defineComponent({
         }
 
         const hasSlotByName = (name: string) => {
-            if (!props.slotsProps?.length) {
+            if (!Object.values(props.slotsProps)?.length) {
                 return false
             }
 

@@ -141,90 +141,96 @@
                 </thead>
             </template>
             <template #default="props">
-                <DlTr
-                    :key="getRowKey(props.item)"
-                    :class="
-                        isRowSelected(getRowKey(props.item))
-                            ? 'selected'
-                            : hasAnyAction
-                                ? ' cursor-pointer'
-                                : ''
-                    "
-                    :no-hover="noHover"
-                    @click="onTrClick($event, props.item, props.pageIndex)"
-                    @dblclick="
-                        onTrDblClick($event, props.item, props.pageIndex)
-                    "
-                    @contextmenu="
-                        onTrContextMenu($event, props.item, props.pageIndex)
-                    "
-                >
-                    <td
-                        v-if="hasDraggableRows"
-                        class="dl-table__drag-icon"
+                <slot
+                    name="body"
+                    v-bind="props"
+                />
+                <template v-if="!isEmpty && !$slots['body']">
+                    <DlTr
+                        :key="getRowKey(props.item)"
+                        :class="
+                            isRowSelected(getRowKey(props.item))
+                                ? 'selected'
+                                : hasAnyAction
+                                    ? ' cursor-pointer'
+                                    : ''
+                        "
+                        :no-hover="noHover"
+                        @click="onTrClick($event, props.item, props.pageIndex)"
+                        @dblclick="
+                            onTrDblClick($event, props.item, props.pageIndex)
+                        "
+                        @contextmenu="
+                            onTrContextMenu($event, props.item, props.pageIndex)
+                        "
                     >
-                        <dl-icon
-                            class="draggable-icon"
-                            icon="icon-dl-drag"
-                            size="12px"
-                        />
-                    </td>
-                    <td
-                        v-if="hasSelectionMode"
-                        class="dl-table--col-auto-with"
-                    >
+                        <td
+                            v-if="hasDraggableRows"
+                            class="dl-table__drag-icon"
+                        >
+                            <dl-icon
+                                class="draggable-icon"
+                                icon="icon-dl-drag"
+                                size="12px"
+                            />
+                        </td>
+                        <td
+                            v-if="hasSelectionMode"
+                            class="dl-table--col-auto-with"
+                        >
+                            <slot
+                                name="body-selection"
+                                v-bind="
+                                    getBodySelectionScope({
+                                        key: getRowKey(props.item),
+                                        row: props.item,
+                                        pageIndex: props.pageIndex
+                                    })
+                                "
+                            >
+                                <DlCheckbox
+                                    :color="color"
+                                    :model-value="
+                                        isRowSelected(getRowKey(props.item))
+                                    "
+                                    @update:model-value="
+                                        (adding, evt) =>
+                                            updateSelection(
+                                                [getRowKey(props.item)],
+                                                [props.item],
+                                                adding,
+                                                evt
+                                            )
+                                    "
+                                />
+                            </slot>
+                        </td>
                         <slot
-                            name="body-selection"
+                            v-for="col in computedCols"
                             v-bind="
-                                getBodySelectionScope({
+                                getBodyCellScope({
                                     key: getRowKey(props.item),
                                     row: props.item,
-                                    pageIndex: props.pageIndex
+                                    pageIndex: props.pageIndex,
+                                    col
                                 })
                             "
+                            :name="
+                                hasSlotByName(`body-cell-${col.name}`)
+                                    ? `body-cell-${col.name}`
+                                    : 'body-cell'
+                            "
                         >
-                            <DlCheckbox
-                                :color="color"
-                                :model-value="
-                                    isRowSelected(getRowKey(props.item))
-                                "
-                                @update:model-value="
-                                    (adding, evt) =>
-                                        updateSelection(
-                                            [getRowKey(props.item)],
-                                            [props.item],
-                                            adding,
-                                            evt
-                                        )
-                                "
-                            />
+                            <DlTd
+                                :class="col.tdClass(props.item)"
+                                :style="col.tdStyle(props.item)"
+                                :no-hover="noHover"
+                            >
+                                {{ getCellValue(col, props.item) }}
+                            </DlTd>
                         </slot>
-                    </td>
-                    <slot
-                        v-for="col in computedCols"
-                        v-bind="
-                            getBodyCellScope({
-                                key: getRowKey(props.item),
-                                row: props.item,
-                                pageIndex: props.pageIndex,
-                                col
-                            })
-                        "
-                        :name="
-                            hasSlotByName(`body-cell-${col.name}`)
-                                ? `body-cell-${col.name}`
-                                : 'body-cell'
-                        "
-                    >
-                        <DlTd
-                            :class="col.tdClass(props.item)"
-                            :style="col.tdStyle(props.item)"
-                            :no-hover="noHover"
-                        >
-                            {{ getCellValue(col, props.item) }}
-                        </DlTd>
-                    </slot>
-                </DlTr>
+                    </DlTr>
+                </template>
             </template>
         </DlVirtualScroll>
         <!--  -->
@@ -947,6 +953,9 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
+            /*if(props.virtualScrollRows.length) {
+                return props.virtualScrollRows
+            }*/
             let rows = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
@@ -1250,7 +1259,6 @@ export default defineComponent({
         }
 
         function getBodySelectionScope(data: Record<string, any>) {
-            console.log('getBodySelectionScope: ', data)
             injectBodyCommonScope(data)
 
             return data
