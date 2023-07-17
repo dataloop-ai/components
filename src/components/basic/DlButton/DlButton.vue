@@ -77,7 +77,7 @@ import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 import { stringStyleToRecord } from '../../../utils'
 import { textTransform } from '../../../utils/string'
 import { isString } from 'lodash'
@@ -153,7 +153,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         /**
          * Doesn't allow the button's text to be wrapped along multiple rows

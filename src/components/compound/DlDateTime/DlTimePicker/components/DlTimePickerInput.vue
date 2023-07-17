@@ -87,6 +87,10 @@ export default defineComponent({
         DlTimeCounter,
         DlMenu
     },
+    model: {
+        prop: 'modelValue',
+        event: 'update:model-value'
+    },
     props: {
         modelValue: {
             type: Object as PropType<Time>,
@@ -97,7 +101,7 @@ export default defineComponent({
         },
         disabled: Boolean
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value'],
     data(): {
         options: Time[]
     } {
@@ -230,14 +234,14 @@ export default defineComponent({
         },
 
         handleHourChange(value: string) {
-            this.$emit('update:modelValue', {
+            this.$emit('update:model-value', {
                 hour: value,
                 minute: this.modelValue.minute
             })
         },
 
         handleMinuteChange(value: string) {
-            this.$emit('update:modelValue', {
+            this.$emit('update:model-value', {
                 hour: this.modelValue.hour,
                 minute: value
             })

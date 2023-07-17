@@ -27,7 +27,13 @@ describe('DlInput component', () => {
                 'dl-text-input__input--error'
             )
 
-            await wrapper.setProps({ redAsterisk: true })
+            await wrapper.setProps({
+                redAsterisk: true,
+                required: true,
+                title: 'test'
+            })
+
+            console.log(wrapper.vm.asteriskClasses)
             expect(
                 wrapper.find('.dl-text-input__asterisk').classes()
             ).toContain('dl-text-input__asterisk--red')
@@ -80,6 +86,13 @@ describe('DlInput component', () => {
             expect(showPass).toEqual(true)
         })
         it('should working the clear button', async () => {
+            await wrapper.setProps({ type: 'text', modelValue: 'test' })
+            await wrapper.find('input').trigger('focus')
+
+            // @ts-ignore // handled in jest setup
+            await window.delay(50)
+            await wrapper.vm.$nextTick()
+
             await wrapper
                 .findComponent({ ref: 'input-clear-button' })
                 .find('.dl-button')

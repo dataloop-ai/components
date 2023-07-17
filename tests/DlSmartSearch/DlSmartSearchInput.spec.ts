@@ -139,7 +139,7 @@ describe('DlSmartSearchInput', () => {
             }
         })
         wrapper.vm.clearValue()
-        expect(wrapper.emitted()['update:modelValue']).toEqual([['']])
+        expect(wrapper.emitted()['update:model-value']).toEqual([['']])
     })
 
     it('should handle keyboard input', () => {
@@ -164,7 +164,7 @@ describe('DlSmartSearchInput', () => {
         wrapper.vm.handleValueChange({
             target: { textContent: 'text' }
         } as any as Event)
-        expect(wrapper.emitted()['update:modelValue']).toEqual([['text']])
+        expect(wrapper.emitted()['update:model-value']).toEqual([['text']])
     })
 
     it('should handle screen button click', () => {

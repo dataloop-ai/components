@@ -159,7 +159,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         status: {
@@ -224,7 +224,7 @@ export default defineComponent({
         }
     },
     emits: [
-        'update:modelValue',
+        'update:model-value',
         'update:expanded',
         'save',
         'search',
@@ -307,7 +307,7 @@ export default defineComponent({
                 }
             }
 
-            emit('update:modelValue', stringValue)
+            emit('update:model-value', stringValue)
         }
 
         const debouncedSetModal = debounce(
@@ -570,7 +570,7 @@ export default defineComponent({
         },
         clearValue() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
-            this.$emit('update:modelValue', '')
+            this.$emit('update:model-value', '')
             if (!this.focused) {
                 this.focus()
             }
@@ -591,7 +591,7 @@ export default defineComponent({
                 .toString()
                 .replaceAll(' ', ' ')
 
-            this.$emit('update:modelValue', text)
+            this.$emit('update:model-value', text)
         },
         handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
@@ -604,7 +604,7 @@ export default defineComponent({
             this.datePickerSelection = val
 
             this.$emit(
-                'update:modelValue',
+                'update:model-value',
                 replaceDateInterval(this.modelValue, val)
             )
         }

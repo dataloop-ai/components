@@ -12,7 +12,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor } from '../../../utils'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p'
 
@@ -35,7 +35,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         bold: Boolean,
         color: {

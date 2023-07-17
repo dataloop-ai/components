@@ -43,14 +43,27 @@
                             :available-range="availableRange"
                             :disabled="isInputDisabled"
                             :normalize-calendars="normalizeCalendars"
-                            @update:modelValue="updateDateIntervalWithAutoClose"
+                            @update:model-value="
+                                updateDateIntervalWithAutoClose
+                            "
                         />
                         <dl-time-picker
                             v-if="showTime && typeState === 'day'"
                             :disabled="isInputDisabled"
                             :model-value="dateInterval"
-                            @update:modelValue="updateDateInterval"
+                            @update:model-value="updateDateInterval"
                         />
+
+                        <dl-button
+                            size="s"
+                            outlined
+                            class="dl-date-time-range--button"
+                            @click="handleClearAction"
+                        >
+                            <span style="text-transform: capitalize">
+                                Clear
+                            </span>
+                        </dl-button>
                     </div>
                 </div>
             </dl-menu>
@@ -72,6 +85,7 @@ import DlDatePicker from '../DlDatePicker/DlDatePicker.vue'
 import { CalendarDate } from '../DlDatePicker/models/CalendarDate'
 import DateInput from './DateInput.vue'
 import { DlMenu } from '../../../essential'
+import { DlButton } from '../../../basic'
 import { defineComponent, PropType } from 'vue-demi'
 import { isInRange } from '../DlDatePicker/utils'
 import { v4 } from 'uuid'
@@ -82,11 +96,12 @@ export default defineComponent({
         DlDatePicker,
         DlTimePicker,
         DateInput,
-        DlMenu
+        DlMenu,
+        DlButton
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -118,7 +133,7 @@ export default defineComponent({
             default: 'Set Due Date'
         }
     },
-    emits: ['update:modelValue', 'set-type', 'change'],
+    emits: ['update:model-value', 'set-type', 'change'],
     data(): {
         uuid: string
         dateInterval: DateInterval | null
@@ -405,6 +420,11 @@ export default defineComponent({
         }
     },
     methods: {
+        handleClearAction() {
+            this.currentSidebarOption = DAY_SIDEBAR_OPTION.custom
+            this.isInputDisabled = false
+            this.updateDateInterval(null)
+        },
         handleTypeChange(value: 'day' | 'month') {
             this.isInputDisabled = false
             this.currentSidebarOption =
@@ -416,17 +436,21 @@ export default defineComponent({
             this.$emit('set-type', value)
         },
         updateDateInterval(value: DateInterval | null) {
-            this.dateInterval = {
-                from: value.from,
-                to: new Date(
-                    value.from.getFullYear(),
-                    value.from.getMonth(),
-                    value.from.getDate(),
-                    23,
-                    59
-                )
+            if (value === null) {
+                this.dateInterval = null
+            } else {
+                this.dateInterval = {
+                    from: value.from,
+                    to: new Date(
+                        value.from.getFullYear(),
+                        value.from.getMonth(),
+                        value.from.getDate(),
+                        23,
+                        59
+                    )
+                }
             }
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
             this.$emit('change', value)
         },
         updateDateIntervalWithAutoClose(value: DateInterval) {
@@ -482,10 +506,19 @@ export default defineComponent({
         z-index: 1;
         display: flex;
         border-radius: 2px;
+        border-radius: 2px;
     }
 
     &--card_content {
         width: var(--card-content-width);
+    }
+
+    &--button {
+        display: flex;
+        margin-left: auto;
+        width: fit-content;
+        margin-right: 16px;
+        margin-bottom: 16px;
     }
 }
 </style>

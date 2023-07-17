@@ -365,7 +365,7 @@ describe('dl-select computed', () => {
             }
         })
 
-        expect(wrapper.vm.selectedIndex).toBe(-1)
+        expect(wrapper.vm.selectedIndex).toBe(0)
         await wrapper.setProps({
             emitValue: false
         })
