@@ -102,7 +102,6 @@
                     @selectedItems="selectedItems"
                 />
             </div>
-            <!--
             <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
                 <DlTreeTable
@@ -123,7 +122,6 @@
                     @selectedItems="selectedItems"
                 />
             </div>
-            -->
         </div>
     </div>
 </template>

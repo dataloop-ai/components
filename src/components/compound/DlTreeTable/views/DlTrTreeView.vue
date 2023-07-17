@@ -2,9 +2,7 @@
     <DlTrTree
         v-show="row.isExpandedParent || row.level === 1"
         :key="getRowKey(row)"
-        :class="
-            isRowSelected ? 'selected' : hasAnyAction ? ' cursor-pointer' : ''
-        "
+        :class="rowClass"
         :no-hover="noHover"
         @click="emitRowClick($event, row, pageIndex)"
         @dblclick="onTrDoubleClick($event, row, pageIndex)"
@@ -98,7 +96,7 @@ export default defineComponent({
         },
         hasAnyAction: {
             type: Boolean,
-            defalut: false
+            default: false
         },
         noHover: {
             type: Boolean,
@@ -228,6 +226,16 @@ export default defineComponent({
 
             return !!slotName
         }
+        const rowClass = (): string => {
+            if (props.isRowSelected) {
+                return 'selected'
+            }
+            if (props.hasAnyAction) {
+                return ' cursor-pointer'
+            }
+
+            return ''
+        }
 
         return {
             getRowKey,
@@ -238,7 +246,8 @@ export default defineComponent({
             getTdStyles,
             emitUpdateExpandedRow,
             getCellValue,
-            hasSlotByName
+            hasSlotByName,
+            rowClass
         }
     }
 })
