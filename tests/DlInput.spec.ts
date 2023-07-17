@@ -3,87 +3,107 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import { DlInput } from '../src/components'
 
 describe('DlInput component', () => {
-    it('should mount the component', () => {
-        const wrapper = mount(DlInput)
-
-        expect(wrapper.exists()).toBe(true)
-    })
-
-    it('should have the correct classes', async () => {
-        const wrapper = mount(DlInput, {
-            slots: {
-                prepend: '<p>Slot</p>'
-            },
-            props: {
-                size: 'l'
-            }
+    describe('When mounting', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlInput, {
+                slots: {
+                    prepend: '<p>Slot</p>'
+                },
+                props: {
+                    size: 'l'
+                }
+            })
         })
+        it('should exist the component', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should have the correct classes', async () => {
+            expect(wrapper.find('input').classes()).toContain(
+                'dl-text-input__input--prepend'
+            )
+            await wrapper.setProps({ error: true })
+            expect(wrapper.find('input').classes()).toContain(
+                'dl-text-input__input--error'
+            )
 
-        expect(wrapper.find('input').classes()).toContain(
-            'dl-text-input__input--prepend'
-        )
+            await wrapper.setProps({
+                redAsterisk: true,
+                required: true,
+                title: 'test'
+            })
 
-        await wrapper.setProps({ error: true })
-        expect(wrapper.find('input').classes()).toContain(
-            'dl-text-input__input--error'
-        )
-
-        await wrapper.setProps({ redAsterisk: true })
-        expect(wrapper.find('.dl-text-input__asterisk').classes()).toContain(
-            'dl-text-input__asterisk--red'
-        )
-
-        await wrapper.setProps({ type: 'password' })
-        await wrapper
-            .findComponent({ ref: 'input-show-pass-button' })
-            .find('.dl-button')
-            .trigger('click')
-
-        const showPass = wrapper.vm.$data.showPass
-
-        expect(showPass).toEqual(true)
+            console.log(wrapper.vm.asteriskClasses)
+            expect(
+                wrapper.find('.dl-text-input__asterisk').classes()
+            ).toContain('dl-text-input__asterisk--red')
+        })
     })
+    describe('when trigger the events', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlInput)
+        })
+        it('should trigger right input event', async () => {
+            await wrapper.find('input').trigger('input')
 
-    it('should trigger the correct events', async () => {
-        const wrapper = mount(DlInput)
+            const inputEvent: any = wrapper.emitted('input')
+            expect(inputEvent).toHaveLength(1)
+        })
+        it('should trigger right blur event', async () => {
+            await wrapper.find('input').trigger('blur')
+            // @ts-ignore // handled in jest setup
+            await window.delay(50)
+            await wrapper.vm.$nextTick()
 
-        await wrapper.find('input').trigger('input')
+            const blurEvent: any = wrapper.emitted('blur')
+            expect(blurEvent).toHaveLength(1)
+        })
+        it('should trigger right focus event', async () => {
+            await wrapper.find('input').trigger('focus')
+            // @ts-ignore // handled in jest setup
+            await window.delay(50)
+            await wrapper.vm.$nextTick()
 
-        const inputEvent: any = wrapper.emitted('input')
-        expect(inputEvent).toHaveLength(1)
+            const focusEvent: any = wrapper.emitted('focus')
+            expect(focusEvent).toHaveLength(1)
+        })
+        it('should trigger right enter event', async () => {
+            await wrapper.find('input').trigger('keyup.enter')
 
-        await wrapper.find('input').trigger('blur')
-        // @ts-ignore // handled in jest setup
-        await window.delay(50)
-        await wrapper.vm.$nextTick()
+            const enterEvent: any = wrapper.emitted('enter')
+            expect(enterEvent).toHaveLength(1)
+        })
+        it('should working the show pass button', async () => {
+            await wrapper.setProps({ type: 'password' })
+            await wrapper
+                .findComponent({ ref: 'input-show-pass-button' })
+                .find('.dl-button')
+                .trigger('click')
 
-        const blurEvent: any = wrapper.emitted('blur')
-        expect(blurEvent).toHaveLength(1)
+            const showPass = wrapper.vm.$data.showPass
 
-        await wrapper.find('input').trigger('focus')
-        // @ts-ignore // handled in jest setup
-        await window.delay(50)
-        await wrapper.vm.$nextTick()
+            expect(showPass).toEqual(true)
+        })
+        it('should working the clear button', async () => {
+            await wrapper.setProps({ type: 'text', modelValue: 'test' })
+            await wrapper.find('input').trigger('focus')
 
-        const focusEvent: any = wrapper.emitted('focus')
-        expect(focusEvent).toHaveLength(1)
+            // @ts-ignore // handled in jest setup
+            await window.delay(50)
+            await wrapper.vm.$nextTick()
 
-        await wrapper.find('input').trigger('keyup.enter')
+            await wrapper
+                .findComponent({ ref: 'input-clear-button' })
+                .find('.dl-button')
+                .trigger('click')
 
-        const enterEvent: any = wrapper.emitted('enter')
-        expect(enterEvent).toHaveLength(1)
-
-        await wrapper
-            .findComponent({ ref: 'input-clear-button' })
-            .find('.dl-button')
-            .trigger('click')
-
-        const clearEvent: any = wrapper.emitted('clear')
-        expect(clearEvent).toHaveLength(1)
-        const clearButtonInputEvent: any = wrapper.emitted('input')
-        expect(clearButtonInputEvent).toHaveLength(2)
+            const clearEvent: any = wrapper.emitted('clear')
+            expect(clearEvent).toHaveLength(1)
+            const clearBtnInputEvent: any = wrapper.emitted('input')
+            expect(clearBtnInputEvent).toHaveLength(2)
+        })
     })
-
     describe(`When there's a warning`, () => {
         const wrapper = mount(DlInput, { props: { warning: true } })
 

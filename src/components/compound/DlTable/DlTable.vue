@@ -63,6 +63,7 @@
             :table-colspan="computedColspan"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
+            :scroll-debounce="scrollDebounce"
             v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
@@ -330,6 +331,7 @@
                         name="body"
                     >
                         <DlTr
+                            v-if="!isEmpty"
                             :key="getRowKey(row)"
                             :class="
                                 isRowSelected(getRowKey(row))
@@ -411,6 +413,23 @@
                             </slot>
                         </DlTr>
                     </slot>
+                    <DlTr v-if="isEmpty">
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center">
+                                <dl-empty-state v-bind="emptyStateProps">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="props"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="props"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
+                        </DlTd>
+                    </DlTr>
                     <slot
                         name="bottom-row"
                         :cols="computedCols"
@@ -459,7 +478,7 @@
                             @update:rowsPerPage="
                                 (v) => setPagination({ rowsPerPage: v })
                             "
-                            @update:modelValue="
+                            @update:model-value="
                                 (v) => setPagination({ page: v })
                             "
                         />
@@ -527,6 +546,8 @@ import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
 
 const commonVirtPropsObj = {} as Record<string, any>
@@ -544,7 +565,8 @@ export default defineComponent({
         DlPagination,
         DlProgressBar,
         DlIcon,
-        DlCheckbox
+        DlCheckbox,
+        DlEmptyState
     },
     props: {
         columns: { type: Array, default: () => [] as Record<string, any>[] },
@@ -601,7 +623,7 @@ export default defineComponent({
         },
         virtualScrollTarget: {
             type: Object as PropType<HTMLElement>,
-            default: void 0
+            default: null
         },
         titleClass: {
             type: [String, Array, Object],
@@ -624,6 +646,15 @@ export default defineComponent({
             default: null
         },
         noHover: Boolean,
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -1093,7 +1124,7 @@ export default defineComponent({
                 typeof col.field === 'function'
                     ? col.field(row)
                     : row[col.field]
-            return col.format !== void 0 ? col.format(val, row) : val
+            return col.format ? col.format(val, row) : val
         }
 
         function resetVirtualScroll() {
@@ -1225,14 +1256,14 @@ export default defineComponent({
             return data
         }
 
-        const hasLoadingSlot = computed(() => slots['loading'] !== void 0)
+        const hasLoadingSlot = computed(() => slots['loading'])
 
         const paginationState = computed(() => {
             return {
                 ...computedPagination.value,
                 'update:rowsPerPage': (rowsPerPage: number) =>
                     setPagination({ rowsPerPage }),
-                'update:modelValue': (page: number) => setPagination({ page }),
+                'update:model-value': (page: number) => setPagination({ page }),
                 modelValue: computedPagination.value.page,
                 totalItems: computedRowsNumber.value
             }

@@ -49,7 +49,24 @@
                         'content--fullheight': fullHeight
                     }"
                 >
-                    <slot name="body" />
+                    <slot
+                        v-if="!isEmpty"
+                        name="body"
+                    />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </div>
                 <div
                     v-if="hasFooter"
@@ -66,14 +83,16 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import DlIcon from '../../essential/DlIcon/DlIcon.vue'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { throttle } from 'lodash'
 
 export default defineComponent({
     name: 'DlDialogBox',
-    components: { DlIcon },
+    components: { DlIcon, DlEmptyState },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         width: { type: [Number, String], default: 400 },
@@ -90,9 +109,18 @@ export default defineComponent({
         draggable: {
             type: Boolean,
             default: false
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () => ({} as DlEmptyStateProps)
+        },
+        zIndex: {
+            type: [Number, String],
+            default: 'var(--dl-z-index-dialog)'
         }
     },
-    emits: ['update:modelValue', 'hide', 'show'],
+    emits: ['update:model-value', 'hide', 'show'],
     data(): {
         uuid: string
         show: boolean
@@ -131,7 +159,9 @@ export default defineComponent({
                     typeof this.width === 'string'
                         ? parseInt(this.width)
                         : this.width / 2
-                }px`
+                }px`,
+                '--dialog-z-index':
+                    `${this.zIndex}` ?? 'var(--dl-z-index-dialog)'
             }
         },
         iconStyles(): Record<string, string> {
@@ -194,7 +224,7 @@ export default defineComponent({
                 (this.$el as HTMLElement).blur()
             }
             this.show = false
-            this.$emit('update:modelValue', false)
+            this.$emit('update:model-value', false)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'auto'
             }
@@ -204,7 +234,7 @@ export default defineComponent({
         },
         openModal() {
             this.show = true
-            this.$emit('update:modelValue', true)
+            this.$emit('update:model-value', true)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'hidden'
             }
@@ -223,7 +253,7 @@ export default defineComponent({
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: var(--dl-z-index-menu);
+    z-index: var(--dialog-z-index);
     overflow-x: hidden;
     overflow-y: hidden;
     text-align: start;
@@ -239,7 +269,9 @@ export default defineComponent({
     bottom: 0;
     left: 0;
     background-color: var(--dl-backdrop-color);
-    z-index: var(--dl-z-index-menu);
+    z-index: var(
+        --dialog-z-index
+    ); // todo: check if this should be overlay instead.
 }
 
 .dialog-wrapper {
@@ -251,7 +283,7 @@ export default defineComponent({
     border-radius: 2px;
     display: flex;
     flex-direction: column;
-    z-index: var(--dl-z-index-menu);
+    z-index: var(--dialog-z-index);
 
     &--fullscreen {
         margin: 0;

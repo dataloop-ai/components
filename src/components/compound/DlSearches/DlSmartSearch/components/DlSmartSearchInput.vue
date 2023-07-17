@@ -1,5 +1,6 @@
 <template>
     <div
+        :id="`DlSmartSearchInput${uuid}`"
         class="dl-smart-search-input"
         :style="cssVars"
     >
@@ -19,7 +20,7 @@
                 </div>
                 <div class="dl-smart-search-input__textarea-wrapper">
                     <div
-                        id="editor"
+                        :id="`dl-smart-search-input-text-area-${uuid}`"
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
@@ -27,7 +28,7 @@
                         :contenteditable="!disabled"
                         @keypress="keyPress"
                         @input="handleValueChange"
-                        @click="focus"
+                        @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
@@ -104,6 +105,7 @@
         </div>
         <dl-suggestions-dropdown
             v-model="suggestionModal"
+            :parent-id="`${uuid}`"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
@@ -111,19 +113,22 @@
             @set-input-value="setInputValue"
         />
         <dl-menu
-            v-if="isDatePickerVisible"
+            v-if="isDatePickerVisible && focused"
             v-model="isDatePickerVisible"
             :disabled="disabled"
             :offset="[0, 3]"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
-                <dl-date-picker @change="handleDateSelectionUpdate" />
+                <dl-date-picker
+                    :single-selection="false"
+                    @change="handleDateSelectionUpdate"
+                />
             </div>
         </dl-menu>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue-demi'
+import { defineComponent, ref, PropType, nextTick } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
@@ -131,16 +136,17 @@ import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
 import { SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce } from 'lodash'
-import { DlTooltip } from '../../../../essential'
+import { DlTooltip } from '../../../../shared'
 import DlSuggestionsDropdown from './DlSuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
     setCaret,
-    updateEditor
+    updateEditor,
+    isEligibleToChange
 } from '../utils'
-import { isEligibleToChange } from '../utils/utils'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
@@ -153,7 +159,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         status: {
@@ -162,7 +168,7 @@ export default defineComponent({
         },
         styleModel: {
             type: Object as PropType<SyntaxColorSchema>,
-            default: () => {}
+            default: null
         },
         placeholder: {
             type: String,
@@ -218,7 +224,7 @@ export default defineComponent({
         }
     },
     emits: [
-        'update:modelValue',
+        'update:model-value',
         'update:expanded',
         'save',
         'search',
@@ -262,17 +268,55 @@ export default defineComponent({
                         .join(' ')
                         .replace('  ', ' ')
                 } else {
-                    query.splice(-1)
+                    if (query[query.length - 1].endsWith('.')) {
+                        query[query.length - 1] = query[
+                            query.length - 1
+                        ].replace('.', '')
+                    } else {
+                        query.splice(-1)
+                    }
                     stringValue = [...query, value, ''].join(' ')
                 }
             } else {
-                stringValue = [value, ''].join(' ')
+                if (query[query.length - 1].endsWith('.')) {
+                    query[query.length - 1] = query[query.length - 1].replace(
+                        '.',
+                        ''
+                    )
+                    stringValue = [...query, value, ''].join(' ')
+                } else {
+                    stringValue = [value, ''].join(' ')
+                }
             }
 
-            emit('update:modelValue', stringValue)
+            // to handle date suggestion modal to open automatically.
+            if (stringValue.includes('(dd/mm/yyyy)')) {
+                stringValue = stringValue.trimEnd()
+            }
+
+            const specialSuggestions = props.suggestions.filter((suggestion) =>
+                suggestion.startsWith('.')
+            )
+
+            for (const suggestion of specialSuggestions) {
+                if (stringValue.includes(suggestion)) {
+                    stringValue = stringValue.replace(
+                        ` ${suggestion}`,
+                        suggestion
+                    )
+                }
+            }
+
+            emit('update:model-value', stringValue)
         }
 
+        const debouncedSetModal = debounce(
+            () => (suggestionModal.value = true),
+            200
+        )
+
         return {
+            uuid: v4(),
             input,
             label,
             hasEllipsis,
@@ -288,7 +332,8 @@ export default defineComponent({
             focused,
             isOverflow,
             isTyping,
-            scroll
+            scroll,
+            debouncedSetModal
         }
     },
     computed: {
@@ -394,35 +439,44 @@ export default defineComponent({
         modelValue(value: string) {
             const target = this.$refs['input'] as HTMLInputElement
             value = value?.replaceAll(' ', ' ') ?? ''
-            if (!this.isTyping) target.innerHTML = value
+            /*
+             * I commented out this line because it was blocking arrow navigation
+             * */
+            // if (!this.isTyping) target.innerHTML = value
+            target.innerHTML = value
             updateEditor(this.styleModel)
             this.setMenuOffset(isEligibleToChange(target, this.expanded))
-            if (!this.isTyping) setCaret(target)
+            /*
+             * I commented out this line because it was blocking arrow navigation
+             * */
+            // if (!this.isTyping) setCaret(target)
+            setCaret(target)
             if (!this.expanded) {
                 this.isOverflow =
                     isEllipsisActive(this.$refs['input'] as Element) ||
                     this.hasEllipsis
             }
-            if (value.length === 0) {
-                this.focus()
-            }
-            if (isEndingWithDateIntervalPattern(value)) {
+
+            if (value.length && isEndingWithDateIntervalPattern(value)) {
                 this.isDatePickerVisible = true
                 this.suggestionModal = false
+            } else {
+                this.isDatePickerVisible = false
+                this.suggestionModal = true
             }
             this.scroll = (this.$refs.input as HTMLDivElement).offsetHeight > 40
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
+            nextTick(() => {
+                if (!val.length) {
+                    this.suggestionModal = false
+                }
 
-            if (!val.length) {
-                this.suggestionModal = false
-            }
-
-            if (!this.suggestionModal && val.length > 0 && this.focused) {
-                const deb = debounce(() => (this.suggestionModal = true), 200)
-                deb()
-            }
+                if (!this.suggestionModal && val.length > 0 && this.focused) {
+                    this.suggestionModal = true
+                }
+            })
         },
         expanded(value) {
             this.$nextTick(() => {
@@ -434,7 +488,9 @@ export default defineComponent({
 
                 this.setMenuOffset(isEligibleToChange(element, value))
 
-                this.focus()
+                if (value) {
+                    this.focus()
+                }
             })
         },
         focused(value) {
@@ -450,9 +506,9 @@ export default defineComponent({
             if (!val) {
                 this.datePickerSelection = null
 
-                setTimeout(() => {
+                nextTick(() => {
                     this.focus()
-                }, 1)
+                })
             }
         }
     },
@@ -494,6 +550,7 @@ export default defineComponent({
                     this.focused = true
                     return
                 }
+
                 element.scrollLeft = 0
                 element.scrollTop = 0
                 this.focused = false
@@ -513,7 +570,7 @@ export default defineComponent({
         },
         clearValue() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
-            this.$emit('update:modelValue', '')
+            this.$emit('update:model-value', '')
             if (!this.focused) {
                 this.focus()
             }
@@ -529,11 +586,12 @@ export default defineComponent({
         },
         handleValueChange(e: Event) {
             this.isTyping = true
+
             const text = (e.target as HTMLElement).textContent
                 .toString()
                 .replaceAll(' ', ' ')
 
-            this.$emit('update:modelValue', text)
+            this.$emit('update:model-value', text)
         },
         handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
@@ -546,7 +604,7 @@ export default defineComponent({
             this.datePickerSelection = val
 
             this.$emit(
-                'update:modelValue',
+                'update:model-value',
                 replaceDateInterval(this.modelValue, val)
             )
         }

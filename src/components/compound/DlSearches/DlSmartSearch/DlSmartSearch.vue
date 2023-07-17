@@ -9,6 +9,7 @@
             class="dl-smart-search__input-wrapper"
         >
             <dl-smart-search-input
+                ref="smartSearchInput"
                 :status="computedStatus"
                 :style-model="defineStyleModel"
                 :with-save-button="true"
@@ -22,45 +23,51 @@
                 :default-width="width"
                 @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
-                @update:modelValue="debouncedInputModel"
+                @update:model-value="debouncedInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div
-                style="height: 28px"
-                class="dl-smart-search__search-btn-wrapper"
-            >
-                <dl-button
-                    icon="icon-dl-search"
-                    :styles="{
-                        height: '28px'
-                    }"
-                    :disabled="disabled"
-                    @click="emitSearchQuery"
-                />
-            </div>
+            <slot name="buttons">
+                <div style="display: flex; align-items: center">
+                    <div
+                        style="height: 28px"
+                        class="dl-smart-search__search-btn-wrapper"
+                    >
+                        <dl-button
+                            icon="icon-dl-search"
+                            :styles="{
+                                height: '28px'
+                            }"
+                            :disabled="disabled"
+                            @click="emitSearchQuery"
+                        />
+                    </div>
 
-            <dl-button
-                class="dl-smart-search__buttons--filters"
-                shaded
-                outlined
-                size="s"
-            >
-                Saved Filters
-                <dl-menu
-                    v-model="filtersModel"
-                    :offset="[0, 5]"
-                    anchor="bottom middle"
-                    self="top middle"
-                >
-                    <dl-smart-search-filters
-                        :filters="filters"
-                        @filters-select="handleFiltersSelect"
-                        @filters-delete="handleFiltersDelete"
-                    />
-                </dl-menu>
-            </dl-button>
+                    <slot name="extra-actions" />
+
+                    <dl-button
+                        class="dl-smart-search__buttons--filters"
+                        shaded
+                        outlined
+                        size="s"
+                    >
+                        Saved Filters
+                        <dl-menu
+                            v-model="filtersModel"
+                            :offset="[0, 5]"
+                            anchor="bottom middle"
+                            self="top middle"
+                        >
+                            <dl-smart-search-filters
+                                :filters="filters"
+                                @filters-select="handleFiltersSelect"
+                                @filters-delete="handleFiltersDelete"
+                            />
+                        </dl-menu>
+                    </dl-button>
+                </div>
+            </slot>
         </div>
         <dl-dialog-box
             v-model="jsonEditorModel"
@@ -203,7 +210,8 @@ import {
     nextTick,
     toRef,
     onMounted,
-    watch
+    watch,
+    computed
 } from 'vue-demi'
 import { DlTypography, DlMenu } from '../../../essential'
 import { DlButton } from '../../../basic'
@@ -221,13 +229,20 @@ import {
     Alias,
     removeBrackets
 } from '../../../../hooks/use-suggestions'
-import { Filters, Query, ColorSchema, SearchStatus } from './types'
 import {
-    replaceWithAliases,
+    Filters,
+    Query,
+    ColorSchema,
+    SearchStatus,
+    SyntaxColorSchema
+} from './types'
+import {
     revertAliases,
-    replaceWithJsDates,
-    createColorSchema
-} from './utils/utils'
+    setAliases,
+    replaceStringifiedDatesWithJSDates,
+    createColorSchema,
+    replaceJSDatesWithStringifiedDates
+} from './utils'
 import { v4 } from 'uuid'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../utils'
 import { debounce, isEqual } from 'lodash'
@@ -247,7 +262,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -306,7 +321,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query', 'update:modelValue'],
+    emits: ['save-query', 'remove-query', 'search-query', 'update:model-value'],
     setup(props, { emit }) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
@@ -341,25 +356,60 @@ export default defineComponent({
         )
 
         const handleInputModel = (value: string) => {
-            inputModel.value = value
-            const json = toJSON(removeBrackets(value))
-            emit('update:modelValue', json)
+            const aliased = setAliases(value, props.aliases)
+            inputModel.value = aliased
+            const bracketless = removeBrackets(value)
+            const cleanedAliases = revertAliases(bracketless, props.aliases)
+            const json = toJSON(cleanedAliases)
+            if (!isEqual(json, props.modelValue)) {
+                emit('update:model-value', json)
+            }
             const stringified = JSON.stringify(json)
-            const newQuery = replaceWithAliases(stringified, props.aliases)
-            activeQuery.value.query = newQuery
+            activeQuery.value.query = stringified
             nextTick(() => {
-                findSuggestions(value)
+                findSuggestions(aliased)
             })
             isQuerying.value = false
-            oldInputQuery.value = value
+            oldInputQuery.value = aliased
         }
 
         const debouncedInputModel = debounce(handleInputModel, 300)
 
+        const isValidJSON = (item: string | Object): boolean => {
+            let value = typeof item !== 'string' ? JSON.stringify(item) : item
+            try {
+                value = JSON.parse(value)
+            } catch (e) {
+                return false
+            }
+
+            return typeof value === 'object' && value !== null
+        }
+
         const toJSON = (value: string) => {
-            return parseSmartQuery(
-                replaceWithJsDates(value) ?? inputModel.value
+            const json = parseSmartQuery(
+                replaceStringifiedDatesWithJSDates(value) ?? inputModel.value
             )
+
+            return isValidJSON(json) ? json : inputModel.value
+        }
+
+        const schemaRef = toRef(props, 'schema')
+        const dateKeys = computed(() => {
+            return Object.keys(schemaRef.value).filter(
+                (key) => schemaRef.value[key] === 'date'
+            )
+        })
+
+        const fromJSON = (value: { [key: string]: any }) => {
+            const replacedDate = replaceJSDatesWithStringifiedDates(
+                value,
+                dateKeys.value
+            )
+
+            const stringQuery = stringifySmartQuery(replacedDate)
+            const aliased = setAliases(stringQuery, props.aliases)
+            return aliased
         }
 
         const setFocused = (value: boolean) => {
@@ -375,22 +425,35 @@ export default defineComponent({
             }
         }
 
-        const modelRef: any = toRef(props, 'modelValue')
-        watch(modelRef, (val: any) => {
+        const readModelValue = (val: { [key: string]: any }) => {
             if (val) {
-                const currModel = parseSmartQuery(activeQuery.value.query)
+                const currModel = JSON.parse(
+                    activeQuery.value.query && activeQuery.value.query.length
+                        ? activeQuery.value.query
+                        : '{}'
+                )
+
                 if (isEqual(val, currModel)) {
                     return
                 }
-                const stringQuery = stringifySmartQuery(val)
-                debouncedInputModel(stringQuery)
+
+                const aliased = fromJSON(val)
+
+                if (aliased !== inputModel.value.trim()) {
+                    debouncedInputModel(aliased)
+                }
             }
+        }
+
+        const modelRef = toRef(props, 'modelValue')
+
+        watch(modelRef, (val: any) => {
+            readModelValue(val)
         })
 
         onMounted(() => {
             if (props.modelValue) {
-                const stringQuery = stringifySmartQuery(props.modelValue)
-                debouncedInputModel(stringQuery)
+                readModelValue(props.modelValue)
             }
         })
 
@@ -418,7 +481,8 @@ export default defineComponent({
             debouncedInputModel,
             setFocused,
             findSuggestions,
-            toJSON
+            toJSON,
+            fromJSON
         }
     },
     computed: {
@@ -430,11 +494,8 @@ export default defineComponent({
                 '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): Record<string, string> {
-            return createColorSchema(
-                this.colorSchema,
-                this.aliases
-            ) as any as Record<string, string>
+        defineStyleModel(): SyntaxColorSchema {
+            return createColorSchema(this.colorSchema, this.aliases)
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
@@ -490,7 +551,7 @@ export default defineComponent({
             const json = JSON.stringify(
                 this.toJSON(removeBrackets(this.inputModel))
             )
-            const newQuery = replaceWithAliases(json, this.aliases)
+            const newQuery = revertAliases(json, this.aliases)
             if (newQuery && newQuery !== '{}') {
                 this.jsonEditorQuery = newQuery
             }
@@ -501,7 +562,7 @@ export default defineComponent({
                 this.activeQuery.name === 'New Query' ||
                 this.activeQuery.name === ''
             ) {
-                this.newQuery = val
+                this.newQuery = this.fromJSON(JSON.parse(val))
             }
         }
     },
@@ -524,7 +585,7 @@ export default defineComponent({
             if (performSearch === true) {
                 this.emitSaveQuery()
                 this.emitSearchQuery()
-                const newQuery = revertAliases(
+                const newQuery = setAliases(
                     stringifySmartQuery(JSON.parse(this.activeQuery.query)),
                     this.aliases
                 )
@@ -538,8 +599,10 @@ export default defineComponent({
         handleJsonSearchButton() {
             this.jsonEditorModel = false
             this.activeQuery.query = this.jsonEditorQuery
-            this.setQueryInput()
-            this.$emit('search-query', this.activeQuery, this.stringQuery)
+            nextTick(() => {
+                this.setQueryInput()
+                this.$emit('search-query', this.activeQuery, this.stringQuery)
+            })
         },
         handleFiltersDelete(currentTab: string, query: Query) {
             this.activeQuery = query
@@ -549,7 +612,7 @@ export default defineComponent({
         },
         handleFiltersSelect(currentTab: string, query: Query) {
             this.activeQuery = { ...query }
-            const stringQuery = revertAliases(
+            const stringQuery = setAliases(
                 stringifySmartQuery(JSON.parse(query.query)),
                 this.aliases
             )
@@ -590,11 +653,8 @@ export default defineComponent({
             this.newQueryName = ''
         },
         setQueryInput(query?: string) {
-            const stringQuery = revertAliases(
-                stringifySmartQuery(
-                    JSON.parse(query || this.activeQuery.query)
-                ),
-                this.aliases
+            const stringQuery = this.fromJSON(
+                JSON.parse(query || this.activeQuery.query)
             )
             this.inputModel = stringQuery
             this.oldInputQuery = stringQuery

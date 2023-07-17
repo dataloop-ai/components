@@ -1,91 +1,88 @@
 import { mount } from '@vue/test-utils'
 import { DlWidget } from '../../src/components'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlWidget', () => {
-    it('should mount the widget component', () => {
-        const wrapper = mount(DlWidget)
-    })
+    describe('When mounting', () => {
+        let wrapper: any
 
-    it('should add draggable class to widget', () => {
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    isDragging: true
-                }
-            }
+        beforeAll(() => {
+            wrapper = mount(DlWidget)
         })
-        expect(wrapper.vm.widgetClasses).toMatch('dl-widget__drag')
-    })
-
-    it('should start performing drag operation', () => {
-        const wrapper = mount(DlWidget)
-        const div = document.createElement('div')
-        wrapper.vm.startDragging({ target: div })
-        expect(wrapper.vm.isDragging).toBe(true)
-    })
-
-    it('should move the dragged widget clone', () => {
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    isDragging: true
-                }
-            }
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
         })
-        wrapper.vm.moveClone({ pageX: 100, pageY: 100 })
-        expect(wrapper.vm.$refs.clone.style.top).toMatch('110px')
-        expect(wrapper.vm.$refs.clone.style.left).toMatch('95px')
     })
+    describe('When draggable widget', () => {
+        let wrapper: any
 
-    it('should turn off dragging operation', () => {
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    isDragging: true
-                }
-            }
+        beforeAll(() => {
+            wrapper = mount(DlWidget)
+            wrapper.vm.isDragging = true
         })
-        const div = document.createElement('div')
-        wrapper.vm.stopDragging({ target: div })
-        expect(wrapper.vm.isDragging).toBe(false)
-    })
-
-    it('should handle mouseenter', () => {
-        const wrapper = mount(DlWidget)
-        const div = document.createElement('div')
-        wrapper.vm.handleMouseEnter({ target: div })
-        expect(wrapper.vm.hoveredWidget).toEqual(div)
-    })
-
-    it('should insert widget before or after', () => {
-        const parent = document.createElement('div')
-        parent.classList.add('widget-wrapper')
-        const child = document.createElement('div')
-        parent.appendChild(child)
-        document.body.appendChild(parent)
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    hoveredWidget: child
-                }
-            }
+        it('should add draggable class to widget', () => {
+            expect(wrapper.vm.widgetClasses).toMatch('dl-widget__drag')
         })
-        wrapper.vm.insertWidget()
-    })
-
-    it('should handle mouse move inside widget', () => {
-        const div = document.createElement('div')
-        div.style.left = '100px'
-        div.style.width = '30px'
-        const wrapper = mount(DlWidget, {
-            data() {
-                return {
-                    hoveredWidget: div
-                }
-            }
+        it('should start performing drag operation', () => {
+            const div = document.createElement('div')
+            wrapper.vm.startDragging({ target: div })
+            expect(wrapper.vm.isDragging).toBe(true)
         })
-        wrapper.vm.handleMouseInsideWidget({ clientX: 100 })
-        expect(wrapper.vm.isLeftSide).toBe(false)
+        it('should move the dragged widget clone', () => {
+            wrapper.vm.moveClone({ pageX: 100, pageY: 100 })
+            expect(wrapper.vm.$refs.clone.style.top).toMatch('110px')
+            expect(wrapper.vm.$refs.clone.style.left).toMatch('95px')
+        })
+        it('should turn off dragging operation', () => {
+            const div = document.createElement('div')
+            wrapper.vm.stopDragging({ target: div })
+            expect(wrapper.vm.isDragging).toBe(false)
+        })
+    })
+    describe('When mouse move inside widget', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            const div = document.createElement('div')
+            div.style.left = '100px'
+            div.style.width = '30px'
+            wrapper = mount(DlWidget, {
+                data() {
+                    return {
+                        hoveredWidget: div
+                    }
+                }
+            })
+        })
+        it('should handle mouseenter', () => {
+            const div = document.createElement('div')
+            wrapper.vm.handleMouseEnter({ target: div })
+            expect(wrapper.vm.hoveredWidget).toEqual(div)
+        })
+        it('should handle mouse move inside widget', () => {
+            wrapper.vm.handleMouseInsideWidget({ clientX: 100 })
+            expect(wrapper.vm.isLeftSide).toBe(false)
+        })
+    })
+    describe('When insert widget before or after', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            const parent = document.createElement('div')
+            parent.classList.add('widget-wrapper')
+            const child = document.createElement('div')
+            parent.appendChild(child)
+            document.body.appendChild(parent)
+            wrapper = mount(DlWidget, {
+                data() {
+                    return {
+                        hoveredWidget: child
+                    }
+                }
+            })
+        })
+        it('should insert widget', function () {
+            wrapper.vm.insertWidget()
+        })
     })
 })

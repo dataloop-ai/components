@@ -4,6 +4,7 @@
             :options="['one', 'two', 'three']"
             title="Title"
             required
+            fit
         />
         <dl-select
             v-model="disabledSelected"
@@ -24,7 +25,8 @@
                     label: 'Medium',
                     value: 'medium',
                     bgColor: 'dl-color-warning',
-                    textColor: 'dl-color-darker'
+                    textColor: 'dl-color-darker',
+                    icon: 'icon-dl-search'
                 },
                 {
                     label: 'Low',
@@ -97,6 +99,7 @@
                 </div>
             </template>
         </dl-select>
+        with prepend
         <dl-select
             v-model="tasksFilter"
             multiselect
@@ -114,23 +117,26 @@
                 />
             </template>
         </dl-select>
+        custom search
         <dl-select
             v-model="selectedBySearch"
             size="m"
             title="Title"
             optional
             :options="searchOptions"
-            search
+            searchable
+            custom-filter
             emit-val
             @filter="filterFn"
         />
+        normal search
         <dl-select
             v-model="selectedByFilteringSearch"
             :options="searchOptions"
             size="m"
             multiselect
             placeholder="contributors"
-            search
+            searchable
         />
 
         <dl-select
@@ -153,7 +159,7 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
         />
         Capitalized options
         <dl-select
@@ -161,22 +167,28 @@
             :options="treeOptions"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
         />
         With Fit
         <dl-select
-            v-model="selectedWithChildrenCapitalized"
-            :options="treeOptions"
+            v-model="selectedWithFit"
+            :options="[
+                { label: 'Option 1', value: 1 },
+                { label: 'Option 2, longer one', value: 2 },
+                { label: 'Option 3', value: 3 }
+            ]"
             size="m"
             multiselect
-            search
+            searchable
             capitalized-options
-            fit-container
+            fit-content
+            @change="logEvent"
         />
         With Label and sub label
         <dl-select
             v-model="selectedOption"
+            searchable
             :options="[
                 {
                     subLabel: 'not so high',
@@ -216,7 +228,7 @@
         </dl-select>
         With tooltip
         <dl-select
-            v-model="selectedOption"
+            v-model="select2"
             title="With tooltip"
             :tooltip="'Test Me'"
             :options="[
@@ -251,7 +263,7 @@
         </dl-select>
         Small size
         <dl-select
-            v-model="selectedOption"
+            v-model="select3"
             :size="'s'"
             :options="[
                 {
@@ -285,7 +297,7 @@
         </dl-select>
         Small size with tooltip
         <dl-select
-            v-model="selectedOption"
+            v-model="select4"
             :size="'s'"
             title="test"
             tooltip="test me"
@@ -322,7 +334,7 @@
 
         Select with max-height
         <dl-select
-            v-model="selectedOption"
+            v-model="select5"
             :size="'s'"
             title="test"
             dropdown-max-height="50px"
@@ -478,12 +490,17 @@ export default defineComponent({
     components: { DlSelect, DlIcon, DlChip, DlBadge },
     data() {
         return {
+            selectedWithFit: [],
             selectedOption: {
                 label: 'High',
                 value: 'high',
                 bgColor: 'dl-color-error',
                 textColor: 'dl-color-white'
             },
+            select2: null,
+            select3: null,
+            select4: null,
+            select5: null,
             statusOption: {
                 label: 'Status 1',
                 value: 1,
@@ -524,6 +541,9 @@ export default defineComponent({
         }
     },
     methods: {
+        logEvent(e: any) {
+            console.log(e)
+        },
         filterFn(val: string) {
             this.searchOptions = defaultOptions.filter(
                 (v: { label: string; value: string } | undefined) =>

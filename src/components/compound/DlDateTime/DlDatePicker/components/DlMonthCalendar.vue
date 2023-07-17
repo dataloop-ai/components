@@ -54,7 +54,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         title: {
@@ -74,7 +74,7 @@ export default defineComponent({
         disabled: Boolean
     },
     emits: [
-        'update:modelValue',
+        'update:model-value',
         'change',
         'mousedown',
         'mouseenter',
@@ -109,7 +109,7 @@ export default defineComponent({
                 from: date,
                 to: date
             }
-            this.$emit('update:modelValue', newDate)
+            this.$emit('update:model-value', newDate)
             this.$emit('change', newDate)
         },
 
@@ -152,7 +152,8 @@ export default defineComponent({
             if (!isInRange(this.availableRange, d)) {
                 style = {
                     'border-color': 'var(--dl-color-disabled)',
-                    color: 'var(--dl-color-disabled)'
+                    color: 'var(--dl-color-disabled)',
+                    cursor: 'not-allowed'
                 }
             } else if (this.modelValue !== null) {
                 const from = new CalendarDate(this.modelValue.from)

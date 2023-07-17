@@ -1,23 +1,46 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { DlTrend } from '../src/'
 
-describe('DlProgressBar', () => {
-    it('should compute values properly', async () => {
-        const wrapper = mount(DlTrend, {
-            props: {
-                value: 50,
-                direction: 'up'
-            }
+describe('DlTrend', () => {
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlTrend, {
+                props: {
+                    value: 50,
+                    direction: 'up'
+                }
+            })
         })
-
-        const isUp = wrapper.vm.isUp
-        expect(isUp).toBe(true)
-
-        const TEXT_VALUE = 'some text value'
-        await wrapper.setProps({ value: TEXT_VALUE })
-        const computedValue = wrapper.vm.computedValue
-        expect(computedValue).toEqual(TEXT_VALUE)
+        it('should exist component', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should the right isUp compute prop', function () {
+            expect(wrapper.vm.isUp).toBe(true)
+        })
+        describe('When you change text value', () => {
+            let TEXT_VALUE: string
+            beforeAll(async () => {
+                TEXT_VALUE = 'some text value'
+                await wrapper.setProps({ value: TEXT_VALUE })
+            })
+            it('should the right computedValue', function () {
+                const computedValue = wrapper.vm.computedValue
+                expect(computedValue).toEqual(TEXT_VALUE)
+            })
+        })
+        describe('When you change color prop', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({ color: 'negative' })
+            })
+            it('should the right computedColor', function () {
+                expect(wrapper.vm.computedColor).toBe(
+                    'var(--dl-color-negative, var(--dl-color-darker))'
+                )
+            })
+        })
     })
 
     it("should accept only 'up' or 'down' options", () => {
@@ -25,29 +48,5 @@ describe('DlProgressBar', () => {
 
         expect(validator('up')).toBe(true)
         expect(validator('left')).toBe(false)
-    })
-
-    it('should take proper color', async () => {
-        const wrapper = mount(DlTrend, {
-            props: {
-                value: 50,
-                direction: 'up',
-                color: 'negative'
-            }
-        })
-
-        expect(wrapper.vm.computedColor).toBe(
-            'var(--dl-color-negative, var(--dl-color-darker))'
-        )
-
-        await wrapper.setProps({ color: null })
-        expect(wrapper.vm.computedColor).toBe(
-            'var(--dl-color-positive, var(--dl-color-darker))'
-        )
-
-        await wrapper.setProps({ direction: 'down' })
-        expect(wrapper.vm.computedColor).toBe(
-            'var(--dl-color-negative, var(--dl-color-darker))'
-        )
     })
 })

@@ -3,8 +3,22 @@
         ref="dlDoughnutChartWidgetRef"
         class="dl_doughnut"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <div
-            v-if="itemsCount"
+            v-if="itemsCount && !isEmpty"
             class="dl_doughnut__wrapper"
             :class="classFlexLg"
         >
@@ -52,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div v-else>
+        <div v-else-if="!itemsCount && !isEmpty">
             No data
         </div>
     </div>
@@ -88,12 +102,15 @@ import { updateNestedArrayValues } from '../../../../../utils/update-key'
 import DlDoughnutChartLegend from './components/DlDoughnutChartLegend.vue'
 import { defaultDoughnutChartProps } from '../../types/props'
 import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 
 export default defineComponent({
     name: 'DlDoughnutChart',
     components: {
         Doughnut,
-        DlDoughnutChartLegend
+        DlDoughnutChartLegend,
+        DlEmptyState
     },
     props: {
         data: {
@@ -112,7 +129,14 @@ export default defineComponent({
             type: Object as PropType<
                 DoughnutControllerChartOptions['animation']
             >,
+            default: () =>
+                Object as PropType<DoughnutControllerChartOptions['animation']>,
             required: false
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
         }
     },
     setup(props) {
@@ -273,7 +297,7 @@ export default defineComponent({
                         tooltip: {
                             yAlign: 'none',
                             callbacks: {
-                                labelColor (
+                                labelColor(
                                     tooltipItem: { dataIndex: string | number },
                                     chart: any
                                 ) {

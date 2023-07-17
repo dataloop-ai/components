@@ -71,24 +71,50 @@ type Expression = {
 }
 
 const space = ' '
-const dateStartSuggestionString = '(From dd/mm/yyyy)'
-const dateEndSuggestionString = '(To dd/mm/yyyy)'
-const dateIntervalSuggestionString = '(From (dd/mm/yyyy) To (dd/mm/yyyy))'
+const dateSuggestionPattern = '(dd/mm/yyyy)'
 
 let localSuggestions: Suggestion[] = []
 
-export const startDatePattern = new RegExp(
-    /(from\s?\d{2}\/\d{2}\/\d{4}\s?|from\s?dd\/mm\/yyyy\s?)/,
+export const datePattern = new RegExp(
+    /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
     'gi'
 )
-export const endDatePattern = new RegExp(
-    /(to\s?\d{2}\/\d{2}\/\d{4}\s?|to\s?dd\/mm\/yyyy\s?)/,
-    'gi'
-)
-export const dateIntervalPattern = new RegExp(
-    /(from\s?\d{2}\/\d{2}\/\d{4}\s?to\s?\d{2}\/\d{2}\/\d{4})|(from\s?dd\/mm\/yyyy\s?to\s?dd\/mm\/yyyy)/,
-    'gi'
-)
+export const datePatternNoBrackets =
+    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/
+
+const mergeWords = (words: string[]) => {
+    const result: string[] = []
+    let merging = false
+    let mergeIndex = -1
+
+    for (let i = 0; i < words.length; ++i) {
+        const currentItem = words[i]
+
+        if (currentItem === 'IN' || currentItem === 'NOT-IN') {
+            merging = true
+            mergeIndex = i + 1
+            result.push(currentItem)
+            continue
+        } else if (
+            Object.values(Logical).includes(currentItem as any) ||
+            Object.values(operators).includes(currentItem as any)
+        ) {
+            merging = false
+        }
+
+        if (merging) {
+            if (!result[mergeIndex]) {
+                result[mergeIndex] = ''
+            }
+            result[mergeIndex] += ' ' + currentItem
+            continue
+        }
+
+        result.push(currentItem)
+    }
+
+    return result
+}
 
 export const useSuggestions = (
     schema: Schema,
@@ -123,7 +149,8 @@ export const useSuggestions = (
         localSuggestions = sortedSuggestions
 
         const words = splitByQuotes(input, space)
-        const expressions = mapWordsToExpressions(words)
+        const mergedWords = mergeWords(words)
+        const expressions = mapWordsToExpressions(mergedWords)
 
         for (const { field, operator, value, keyword } of expressions) {
             let matchedField: Suggestion | null = null
@@ -132,15 +159,26 @@ export const useSuggestions = (
 
             if (!field) continue
 
-            localSuggestions = getMatches(localSuggestions, field)
-            matchedField = getMatch(localSuggestions, field)
+            const fieldSeparated: any = field.split('.')
+
+            if (fieldSeparated.length > 1) {
+                localSuggestions = []
+                matchedField = field
+            } else {
+                localSuggestions = getMatches(localSuggestions, field)
+                matchedField = getMatch(localSuggestions, field)
+            }
 
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions = []
                 continue
             }
 
-            if (!matchedField || !isNextCharSpace(input, matchedField)) {
+            if (
+                !matchedField ||
+                (!isNextCharSpace(input, matchedField) &&
+                    fieldSeparated.length === 1)
+            ) {
                 continue
             }
 
@@ -164,7 +202,24 @@ export const useSuggestions = (
 
             localSuggestions = getOperators(ops)
 
-            if (!operator) continue
+            if (!operator) {
+                const dotSeparated = matchedField.split('.').filter((el) => el)
+                let fieldOf = schema
+                for (const key of dotSeparated) {
+                    fieldOf = fieldOf[key] as Schema
+                }
+
+                if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
+                    const toConcat: string[] = []
+                    for (const key of Object.keys(fieldOf)) {
+                        if (key === '*') continue
+                        toConcat.push(`.${key}`)
+                    }
+                    localSuggestions = localSuggestions.concat(toConcat)
+                }
+
+                continue
+            }
 
             localSuggestions = getMatches(localSuggestions, operator)
             matchedOperator = getMatch(localSuggestions, operator)
@@ -191,11 +246,7 @@ export const useSuggestions = (
                 dataType === 'date' ||
                 dataType === 'time'
             ) {
-                localSuggestions = [
-                    dateIntervalSuggestionString,
-                    dateStartSuggestionString,
-                    dateEndSuggestionString
-                ]
+                localSuggestions = [dateSuggestionPattern]
 
                 if (!value) continue
 
@@ -356,11 +407,7 @@ const validateBracketValues = (value: string) => {
 }
 
 const isValidDateIntervalPattern = (str: string) => {
-    return (
-        !!str.match(dateIntervalPattern) ||
-        !!str.match(startDatePattern) ||
-        !!str.match(endDatePattern)
-    )
+    return !!str.match(datePatternNoBrackets)
 }
 
 const isValidNumber = (str: string) => {
@@ -380,10 +427,16 @@ const isValidString = (str: string) => {
 const getOperatorByDataType = (dataType: string) => {
     if (dataType === 'boolean') return ['$eq', '$neq']
 
-    return Object.keys(operatorToDataTypeMap).filter((key) => {
+    if (dataType === 'object') {
+        return []
+    }
+
+    const operators = Object.keys(operatorToDataTypeMap).filter((key) => {
         const value = operatorToDataTypeMap[key]
         return value.length === 0 || value.includes(dataType)
     })
+
+    return operators
 }
 
 const getOperators = (op: string[]) => op.map((o) => operators[o])
@@ -404,11 +457,7 @@ const getDataType = (
 ): string | string[] | null => {
     const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
 
-    const nestedKey = aliasedKey.split('.')
-
-    if (nestedKey.length === 1) {
-        return (schema[nestedKey[0]] as string | string[]) ?? null
-    }
+    const nestedKey = aliasedKey.split('.').filter((el) => el)
 
     let value = schema[nestedKey[0]] as Schema
     if (!value) return null
@@ -421,6 +470,10 @@ const getDataType = (
             return 'any'
         }
         value = (value[nextKey] as Schema) ?? null
+    }
+
+    if (isObject(value) && !Array.isArray(value)) {
+        return 'object'
     }
 
     return value as unknown as string | string[] | null
@@ -509,11 +562,7 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'date':
             case 'time':
             case 'datetime':
-                suggestion.push(
-                    dateIntervalSuggestionString,
-                    dateStartSuggestionString,
-                    dateEndSuggestionString
-                )
+                suggestion.push(dateSuggestionPattern)
             default:
                 // do nothing
                 break

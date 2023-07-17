@@ -84,7 +84,7 @@ import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
 import { stopAndPrevent } from '../../../utils'
 
-const ValueTypes = [Array, Boolean, String, Number, Object, Function, null]
+const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
 export default defineComponent({
     name: 'DlCheckbox',
@@ -116,7 +116,7 @@ export default defineComponent({
     },
     computed: {
         identifierClass(): string {
-            return `dl-checkbox-${this.label ?? ''}`.replaceAll(' ', '-')
+            return `dl-checkbox-${this.label ?? ''}`.replace(/ /g, '-')
         },
         computedId(): string {
             return `${this.id || v4()}`
@@ -155,7 +155,8 @@ export default defineComponent({
         },
         cssSvgVars(): Record<string, string> {
             return {
-                '--dl-active-color': this.getCurrentColor()
+                '--dl-active-color': this.getCurrentColor(),
+                'min-width': '12px'
             }
         },
         hasLabel(): boolean {
@@ -250,7 +251,7 @@ export default defineComponent({
     cursor: not-allowed;
     color: var(--dl-color-disabled);
     & * {
-        pointer-events: none;
+        pointer-events: auto;
         color: var(--dl-color-disabled);
     }
 }
@@ -293,6 +294,8 @@ input {
 .checkbox-label {
     font-size: var(--dl-font-size-body);
     color: var(--dl-color-darker);
+    overflow-wrap: break-word;
+    width: 100%;
 }
 .check {
     position: absolute;

@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import DlEllipsis from '../../../../../basic/DlEllipsis/DlEllipsis.vue'
+import { DlEllipsis } from '../../../../../essential'
 import { TDoughnutChartData } from '../types/TDoughnutChartData'
 
 enum EBadgeText {
@@ -99,7 +99,7 @@ export default defineComponent({
             ]
         },
         itemsCount(): number | undefined {
-            return this.data?.datasets[0]?.data?.length
+            return (this.data?.datasets?.[0]?.data || []).length
         }
     },
     mounted(): void {

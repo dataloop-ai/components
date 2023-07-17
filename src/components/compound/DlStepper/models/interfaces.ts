@@ -7,5 +7,6 @@ export interface StepState {
     optional?: boolean
     error?: string
     warning?: string
-    sidebarNavigation?: boolean
+    disabled?: boolean
+    disabledTooltip?: string
 }

@@ -65,7 +65,7 @@ export function addEvt(
 ) {
     const name = `__dl_${targetName}_evt`
 
-    ctx[name] = ctx[name] !== void 0 ? ctx[name].concat(events) : events
+    ctx[name] = ctx[name] ? ctx[name].concat(events) : events
 
     events.forEach((evt: any[]) => {
         evt[0].addEventListener(evt[1], ctx[evt[2]], listenOpts[evt[3]])
@@ -75,10 +75,10 @@ export function addEvt(
 export function cleanEvt(ctx: Record<string, any>, targetName: string) {
     const name = `__dl_${targetName}_evt`
 
-    if (ctx[name] !== void 0) {
+    if (ctx[name]) {
         ctx[name].forEach((evt: any[]) => {
             evt[0].removeEventListener(evt[1], ctx[evt[2]], listenOpts[evt[3]])
         })
-        ctx[name] = void 0
+        ctx[name] = null
     }
 }

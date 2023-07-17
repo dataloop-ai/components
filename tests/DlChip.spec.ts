@@ -1,73 +1,81 @@
-import { DOMWrapper, VueWrapper, mount } from '@vue/test-utils'
+import { DOMWrapper, mount } from '@vue/test-utils'
 import { DlChip } from '../src/'
-import { describe, it, expect, beforeAll } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('DlChip', () => {
-    it('testing DlChip functionality', async () => {
-        const wrapper = mount(DlChip, {
-            props: {
+    describe('When mounting', () => {
+        let wrapper: any
+
+        beforeAll(() => {
+            wrapper = mount(DlChip, {
+                props: {
+                    filled: true,
+                    label: 'Filled chip',
+                    disabled: false,
+                    removable: true
+                }
+            })
+        })
+        it('should exist the component', function () {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should right props', () => {
+            expect(wrapper.props()).toStrictEqual({
                 filled: true,
                 label: 'Filled chip',
+                color: 'dl-color-secondary',
                 disabled: false,
-                removable: true
-            }
+                outlined: false,
+                iconColor: '',
+                removable: true,
+                maxWidth: '',
+                tabIndex: '',
+                icon: '',
+                textColor: '',
+                transform: 'default',
+                overflow: false,
+                fit: false
+            })
         })
-
-        expect(wrapper.exists()).toBe(true)
-        expect(wrapper.props()).toStrictEqual({
-            filled: true,
-            label: 'Filled chip',
-            color: 'dl-color-secondary',
-            disabled: false,
-            outlined: false,
-            iconColor: '',
-            removable: true,
-            maxWidth: '',
-            tabIndex: '',
-            icon: '',
-            textColor: '',
-            transform: 'default',
-            overflow: false,
-            fit: false
+        it('should compute right hasIcon flag', () => {
+            expect(wrapper.vm.hasIcon).toBe(false)
         })
-
-        expect(wrapper.vm.hasIcon).toBe(false)
-        expect(wrapper.vm.computedIconColor).toBe('dl-color-white')
-
-        await wrapper.setProps({
-            filled: false,
-            label: 'Outlined chip',
-            disabled: false,
-            outlined: true,
-            textColor: ''
+        it('should compute right icon color', function () {
+            expect(wrapper.vm.computedIconColor).toBe('dl-color-white')
         })
+    })
+    describe('When updating props', () => {
+        let wrapper: any
 
-        expect(wrapper.vm.computedIconColor).toBe('dl-color-secondary')
-
-        await wrapper.setProps({
-            filled: false,
-            label: 'Outlined chip',
-            disabled: false,
-            outlined: true,
-            textColor: '',
-            iconColor: 'dl-color-black'
+        beforeAll(async () => {
+            wrapper = mount(DlChip, {
+                props: {
+                    filled: true,
+                    label: 'Filled chip',
+                    disabled: false,
+                    removable: true
+                }
+            })
+            await wrapper.setProps({
+                filled: false,
+                label: 'Outlined chip',
+                disabled: false,
+                outlined: true,
+                textColor: '',
+                removable: true,
+                iconColor: 'dl-color-black'
+            })
         })
-
-        expect(wrapper.vm.computedIconColor).toBe('dl-color-black')
-
-        await wrapper.setProps({
-            filled: false,
-            label: 'Outlined chip',
-            disabled: false,
-            outlined: true,
-            textColor: '',
-            removable: true,
-            iconColor: 'dl-color-black'
+        it('should right class', async () => {
+            expect(
+                await wrapper
+                    .find('span')
+                    .classes('dl-chip-remove-icon-container')
+            ).toBe(true)
         })
-
-        expect(
-            await wrapper.find('span').classes('dl-chip-remove-icon-container')
-        ).toBe(true)
+        it('should compute right icon color', () => {
+            expect(wrapper.vm.computedIconColor).toBe('dl-color-black')
+        })
     })
     describe('When passing a dl-chip with fit property', () => {
         let chip: DOMWrapper<HTMLDivElement>

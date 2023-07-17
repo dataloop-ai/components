@@ -7,11 +7,11 @@
                     @change="selectLayout"
                 >
                     <option
-                        v-for="(layout, index) in layouts"
-                        :key="index"
-                        :value="index"
+                        v-for="(layoutItem, layoutIndex) in layouts"
+                        :key="layoutIndex"
+                        :value="layoutIndex"
                     >
-                        {{ layout.name }}
+                        {{ layoutItem.name }}
                     </option>
                 </select>
                 <button
@@ -42,9 +42,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
@@ -75,9 +73,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
@@ -89,9 +85,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
                 </template>
@@ -104,9 +98,7 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
@@ -125,11 +117,52 @@
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="6"
                     />
+                </template>
+            </dl-widget>
+
+            <dl-widget
+                is-empty
+                :empty-state-props="{
+                    responsive: true,
+                    style: 'min-height: 350px;',
+                    bgSize: '130px',
+                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                    title: 'Lorem ipsum',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                    info: 'To learn more about this analytics, read our documentation.'
+                }"
+            >
+                <template #header>
+                    <span>Widget 5</span>
+                </template>
+                <template #links="">
+                    <div style="display: flex; gap: 5px; padding: 0 20px">
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-sdk-documentation"
+                            flat
+                            uppercase
+                            label="SDK"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-file"
+                            flat
+                            label="Documentation"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-youtube"
+                            flat
+                            label="Video"
+                        />
+                    </div>
                 </template>
             </dl-widget>
         </dl-grid>
@@ -143,7 +176,8 @@ import {
     DlGrid,
     DlBarChart,
     DlGridLayout,
-    DlIcon
+    DlIcon,
+    DlButton
 } from '../components'
 
 const labelsFn = () => {
@@ -203,12 +237,13 @@ export default defineComponent({
         DlGrid,
         DlWidget,
         DlBarChart,
-        DlIcon
+        DlIcon,
+        DlButton
     },
     setup() {
         const layout = ref([
             [1, 5, 2],
-            [3, 4]
+            [3, 4, 6]
         ])
 
         const layouts = ref<DlGridLayout[]>([

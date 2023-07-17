@@ -29,7 +29,8 @@
 <script lang="ts">
 import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
-import { DlIcon, DlTooltip } from '../../../essential'
+import { DlIcon } from '../../../essential'
+import { DlTooltip } from '../../../shared'
 
 export default defineComponent({
     name: 'DlTh',
@@ -38,7 +39,7 @@ export default defineComponent({
         DlTooltip
     },
     props: {
-        props: { type: Object, default: () => {} },
+        props: { type: Object, default: null },
         autoWidth: Boolean
     },
     emits: ['click'],

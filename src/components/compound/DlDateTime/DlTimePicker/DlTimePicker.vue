@@ -11,7 +11,7 @@
             <dl-time-picker-input
                 :disabled="disableInput"
                 :model-value="formatedFromValue"
-                @update:modelValue="handleFromTimeChange"
+                @update:model-value="handleFromTimeChange"
             />
         </div>
         <div class="dl-time-picker--dash">
@@ -25,7 +25,7 @@
             <dl-time-picker-input
                 :disabled="disableInput"
                 :model-value="formatedToValue"
-                @update:modelValue="handleToTimeChange"
+                @update:model-value="handleToTimeChange"
             />
         </div>
     </div>
@@ -42,6 +42,10 @@ export default defineComponent({
     components: {
         DlTimePickerInput
     },
+    model: {
+        prop: 'modelValue',
+        event: 'update:model-value'
+    },
     props: {
         modelValue: {
             type: Object as PropType<DateInterval | null>,
@@ -49,7 +53,7 @@ export default defineComponent({
         },
         disabled: Boolean
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value'],
     data() {
         return {
             uuid: `dl-time-picker-${v4()}`
@@ -104,7 +108,7 @@ export default defineComponent({
             newFrom.hours(parseInt(value.hour)).minutes(parseInt(value.minute))
 
             if (newFrom.isBefore(new CustomDate(this.modelValue.to))) {
-                this.$emit('update:modelValue', {
+                this.$emit('update:model-value', {
                     from: newFrom.toDate(),
                     to: this.modelValue.to
                 })
@@ -116,7 +120,7 @@ export default defineComponent({
             newTo.hours(parseInt(value.hour)).minutes(parseInt(value.minute))
 
             if (newTo.isAfter(new CustomDate(this.modelValue.from))) {
-                this.$emit('update:modelValue', {
+                this.$emit('update:model-value', {
                     from: this.modelValue.from,
                     to: newTo.toDate()
                 })
@@ -128,7 +132,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-time-picker {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     border-top: 1px solid var(--dl-color-separator);
     padding: 15px 30px;
@@ -138,7 +142,7 @@ export default defineComponent({
         display: flex;
         justify-content: center;
         align-items: center;
-        min-width: 220px;
+        min-width: 130px;
 
         span {
             font-size: 12px;

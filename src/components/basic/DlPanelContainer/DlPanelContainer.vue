@@ -80,7 +80,7 @@
                 />
             </div>
             <div
-                v-if="hasHeader === true"
+                v-if="hasHeader === true && !isEmpty"
                 class="header"
                 :style="headerStyles"
             >
@@ -93,10 +93,24 @@
                 :style="contentStyle"
             >
                 <div class="column" />
-                <slot />
+                <dl-empty-state
+                    v-if="isEmpty"
+                    v-bind="emptyStateProps"
+                >
+                    <template
+                        v-for="(_, slot) in $slots"
+                        #[slot]="props"
+                    >
+                        <slot
+                            :name="slot"
+                            v-bind="props"
+                        />
+                    </template>
+                </dl-empty-state>
+                <slot v-if="!isEmpty" />
             </div>
             <div
-                v-if="hasFooter === true"
+                v-if="hasFooter === true && !isEmpty"
                 class="footer"
                 :style="footerStyles"
             >
@@ -110,14 +124,19 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
-import { DlIcon, DlTooltip } from '../../essential'
+import { defineComponent, PropType } from 'vue-demi'
+import { DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlEmptyStateProps } from '../DlEmptyState/types'
+// todo: this will cause issues
+import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
 export default defineComponent({
     name: 'DlPanelContainer',
     components: {
         DlIcon,
-        DlTooltip
+        DlTooltip,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
@@ -158,7 +177,12 @@ export default defineComponent({
             type: String,
             default: '70px'
         },
-        modelValue: { type: Boolean, required: false, default: false }
+        modelValue: { type: Boolean, required: false, default: false },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: null
+        }
     },
     emits: ['update:model-value'],
     data() {

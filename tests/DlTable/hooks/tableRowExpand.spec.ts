@@ -30,7 +30,7 @@ describe('useTableRowExpand', () => {
 
         it('should remove element from target & update the inner state', () => {
             const localwrapper = mountComposition(() =>
-                useTableRowExpand({ expanded: void 0 }, emitFn)
+                useTableRowExpand({ expanded: null }, emitFn)
             )
             localwrapper.result.current!.updateExpanded('key', true)
             localwrapper.result.current!.updateExpanded('key', false)

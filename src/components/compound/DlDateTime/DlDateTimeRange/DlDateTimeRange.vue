@@ -3,7 +3,7 @@
         :id="uuid"
         class="dl-date-time-range"
     >
-        <dl-date-input
+        <date-input
             :text="dateInputText"
             :input-style="dateInputStyle"
             :disabled="disabled"
@@ -20,13 +20,13 @@
                         v-if="mode === 'multi'"
                         class="dl-date-time-range--card_sidebar"
                     >
-                        <dl-card-sidebar
+                        <card-sidebar
                             v-if="typeState === 'day'"
                             :options="sidebarDayOptions"
                             :current-option="currentSidebarOption"
                             @click="handleDayTypeOptionClick"
                         />
-                        <dl-card-sidebar
+                        <card-sidebar
                             v-else
                             :options="sidebarMonthOptions"
                             :current-option="currentSidebarOption"
@@ -43,13 +43,15 @@
                             :available-range="availableRange"
                             :disabled="isInputDisabled"
                             :normalize-calendars="normalizeCalendars"
-                            @update:modelValue="updateDateIntervalWithAutoClose"
+                            @update:model-value="
+                                updateDateIntervalWithAutoClose
+                            "
                         />
                         <dl-time-picker
                             v-if="showTime && typeState === 'day'"
                             :disabled="isInputDisabled"
                             :model-value="dateInterval"
-                            @update:modelValue="updateDateInterval"
+                            @update:model-value="updateDateInterval"
                         />
                     </div>
                 </div>
@@ -62,13 +64,13 @@
                     <span style="text-transform: capitalize"> Clear </span>
                 </dl-button>
             </dl-menu>
-        </dl-date-input>
+        </date-input>
     </div>
 </template>
 <script lang="ts">
 import { DlTimePicker } from '../DlTimePicker'
 import { DateInterval } from '../types'
-import DlCardSidebar from './DlCardSidebar.vue'
+import CardSidebar from './CardSidebar.vue'
 import {
     DayTypeOption,
     DAY_SIDEBAR_OPTION,
@@ -78,7 +80,7 @@ import {
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
 import DlDatePicker from '../DlDatePicker/DlDatePicker.vue'
 import { CalendarDate } from '../DlDatePicker/models/CalendarDate'
-import DlDateInput from './DlDateInput.vue'
+import DateInput from './DateInput.vue'
 import { DlMenu } from '../../../essential'
 import { defineComponent, PropType } from 'vue-demi'
 import { isInRange } from '../DlDatePicker/utils'
@@ -87,16 +89,16 @@ import { DlButton } from '../../../basic'
 
 export default defineComponent({
     components: {
-        DlCardSidebar,
+        CardSidebar,
         DlDatePicker,
         DlTimePicker,
-        DlDateInput,
+        DateInput,
         DlMenu,
         DlButton
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -128,7 +130,7 @@ export default defineComponent({
             default: 'Set Due Date'
         }
     },
-    emits: ['update:modelValue', 'set-type', 'change'],
+    emits: ['update:model-value', 'set-type', 'change'],
     data(): {
         uuid: string
         dateInterval: DateInterval | null
@@ -426,8 +428,17 @@ export default defineComponent({
             this.$emit('set-type', value)
         },
         updateDateInterval(value: DateInterval | null) {
-            this.dateInterval = value
-            this.$emit('update:modelValue', value)
+            this.dateInterval = {
+                from: value.from,
+                to: new Date(
+                    value.from.getFullYear(),
+                    value.from.getMonth(),
+                    value.from.getDate(),
+                    23,
+                    59
+                )
+            }
+            this.$emit('update:model-value', value)
             this.$emit('change', value)
         },
         updateDateIntervalWithAutoClose(value: DateInterval) {

@@ -22,6 +22,57 @@
                 </template>
             </dl-popup>
         </dl-button>
+        <dl-button label="Open Empty State Popup">
+            <dl-popup
+                title="Edit Item Description"
+                additional-info="Some additional information"
+                subtitle="Some text for better explanation."
+                with-close-button
+                is-empty
+                :empty-state-props="{
+                    responsive: true,
+                    style: 'min-height: 200px; max-width: 300px;',
+                    bgSize: '130px',
+                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                    title: 'Lorem ipsum',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                    info: 'To learn more about this analytics, read our documentation.'
+                }"
+                @close-button-click="handleClear"
+            >
+                <template #links="">
+                    <div style="display: flex; gap: 5px; padding: 0 20px">
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-sdk-documentation"
+                            flat
+                            uppercase
+                            label="SDK"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-file"
+                            flat
+                            label="Documentation"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-youtube"
+                            flat
+                            label="Video"
+                        />
+                    </div>
+                </template>
+                <template #footer>
+                    <dl-button fluid>
+                        Save
+                    </dl-button>
+                </template>
+            </dl-popup>
+        </dl-button>
         <dl-button label="Open Popup persistent">
             <dl-popup
                 title="Edit Item Description"

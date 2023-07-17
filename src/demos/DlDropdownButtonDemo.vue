@@ -286,7 +286,6 @@
                     :label="arrowNavigationLabel"
                     main-button-style="width: 150px;"
                     :overflow="true"
-                    disabled
                     :no-wrap="true"
                     tooltip="Tooltip message"
                     :arrow-nav-items="listItems"
@@ -299,7 +298,7 @@
                             v-for="(item, index) in listItems"
                             :key="index"
                             clickable
-                            :is-highlighted="index === highlightedIndex"
+                            :highlighted="index === highlightedIndex"
                         >
                             <dl-item-section>
                                 {{ item }}

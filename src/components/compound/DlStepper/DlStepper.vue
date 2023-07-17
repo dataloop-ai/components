@@ -16,7 +16,8 @@
             <dl-stepper-sidebar
                 :steps="steps"
                 :bg-color="bgColor"
-                :sidebar-navigation="sidebarNavigation"
+                :hide="hide"
+                :disabled="disabled"
                 @step-click="$emit('set-step', $event)"
             />
             <div class="dl-stepper-content dl-stepper-content--slot">
@@ -24,18 +25,35 @@
                     v-if="state"
                     :title="contentTitle"
                     :error="state.error"
+                    :hide="hide"
                     :completed="state.completed"
                 >
                     <template #header>
                         <slot
+                            v-if="!isEmpty"
                             name="content-header"
                             :state="state"
                         />
                     </template>
                     <slot
+                        v-if="!isEmpty"
                         :name="state.value"
                         :state="state"
                     />
+                    <dl-empty-state
+                        v-if="isEmpty"
+                        v-bind="emptyStateProps"
+                    >
+                        <template
+                            v-for="(_, slot) in $slots"
+                            #[slot]="props"
+                        >
+                            <slot
+                                :name="slot"
+                                v-bind="props"
+                            />
+                        </template>
+                    </dl-empty-state>
                 </dl-stepper-content>
                 <dl-stepper-footer
                     :finished="isDone"
@@ -44,6 +62,8 @@
                     :prev-button-label="prevButtonLabel"
                     :disabled-next-step="disabledNextStep"
                     :disabled-prev-step="disabledPrevStep"
+                    :prev-step-disabled-tooltip="prevStepDisabledTooltip"
+                    :next-step-disabled-tooltip="nextStepDisabledTooltip"
                     @next="$emit('next')"
                     @prev="$emit('prev')"
                     @done="$emit('done')"
@@ -60,6 +80,8 @@ import DlStepperHeader from './components/DlStepperHeader.vue'
 import DlStepperFooter from './components/DlStepperFooter.vue'
 import DlStepperSidebar from './components/DlStepperSidebar.vue'
 import DlStepperContent from './components/DlStepperContent.vue'
+import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
+import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { StepState } from './models/interfaces'
 import { Step } from './models'
 import { getColor } from '../../../utils'
@@ -71,11 +93,12 @@ export default defineComponent({
         DlStepperFooter,
         DlStepperSidebar,
         DlStepperContent,
-        DlStepperContainer
+        DlStepperContainer,
+        DlEmptyState
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         steps: {
@@ -92,7 +115,7 @@ export default defineComponent({
         },
         state: {
             type: Object as PropType<StepState>,
-            default: () => {}
+            default: null
         },
         modelValue: {
             type: Boolean,
@@ -132,9 +155,15 @@ export default defineComponent({
         disabledPrevStep: Boolean,
         isDone: Boolean,
         hideCloseButton: Boolean,
-        sidebarNavigation: { type: Boolean, default: true }
+        disabled: { type: Boolean, default: false },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            required: false,
+            default: null
+        }
     },
-    emits: ['update:modelValue', 'done', 'next', 'prev', 'set-step', 'close'],
+    emits: ['update:model-value', 'done', 'next', 'prev', 'set-step', 'close'],
     data() {
         return {
             uuid: `dl-stepper-${v4()}`,
@@ -142,11 +171,24 @@ export default defineComponent({
         }
     },
     computed: {
+        hide(): boolean {
+            return this.isEmpty
+        },
         nextButtonLabel(): string {
             return this.nextStep?.title ?? null
         },
         prevButtonLabel(): string {
             return this.prevStep?.title ?? null
+        },
+        nextStepDisabledTooltip(): string {
+            return this.disabledNextStep
+                ? this.nextStep?.disabledTooltip ?? ''
+                : ''
+        },
+        prevStepDisabledTooltip(): string {
+            return this.disabledPrevStep
+                ? this.prevStep?.disabledTooltip ?? ''
+                : ''
         },
         cssVars(): Record<string, string | number> {
             return {
@@ -165,7 +207,7 @@ export default defineComponent({
     methods: {
         closeStepper() {
             this.$emit('close')
-            this.$emit('update:modelValue', false)
+            this.$emit('update:model-value', false)
         }
     }
 })

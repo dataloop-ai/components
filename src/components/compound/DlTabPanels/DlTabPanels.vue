@@ -6,7 +6,8 @@ import { textSlot } from '../../../utils/render'
 export default defineComponent({
     name: 'DlTabPanels',
     model: {
-        prop: 'modelValue'
+        prop: 'modelValue',
+        event: 'update:model-value'
     },
     props: {
         modelValue: { type: String, required: true }

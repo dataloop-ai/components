@@ -53,7 +53,8 @@
 </template>
 
 <script lang="ts">
-import { DlTooltip, DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlIcon } from '../../essential'
 import {
     setPadding,
     setFontSize,
@@ -76,7 +77,7 @@ import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 import { stringStyleToRecord } from '../../../utils'
 import { textTransform } from '../../../utils/string'
 import { isString } from 'lodash'
@@ -97,7 +98,7 @@ export default defineComponent({
          * The color of the button
          */
         color: {
-            type: String! as PropType<keyof typeof colorNames>,
+            type: String! as PropType<keyof typeof colorNames | string>,
             default: ''
         },
         /**
@@ -152,7 +153,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         /**
          * Doesn't allow the button's text to be wrapped along multiple rows
@@ -213,11 +214,7 @@ export default defineComponent({
             return setIconSize(this.$props.size)
         },
         hasLabel(): boolean {
-            return (
-                this.label !== void 0 &&
-                this.label !== null &&
-                this.label !== ''
-            )
+            return !!this.label
         },
         buttonLabel(): string {
             return textTransform(this.label)
@@ -380,7 +377,7 @@ export default defineComponent({
         },
         onMouseDown(e: Event) {
             if (this.isActionable) {
-                if (e !== void 0) {
+                if (e) {
                     if (e.defaultPrevented === true) {
                         return
                     }

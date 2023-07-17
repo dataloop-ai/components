@@ -60,7 +60,7 @@ export default defineComponent({
             required: true
         }
     },
-    emits: ['update:modelValue', 'change'],
+    emits: ['update:model-value', 'change'],
     data: () => ({
         scopedValue: null as string | number,
         hoverButton: null as string | number
@@ -79,7 +79,7 @@ export default defineComponent({
                     buttonValue = null
                 }
                 this.scopedValue = buttonValue
-                this.$emit('update:modelValue', buttonValue)
+                this.$emit('update:model-value', buttonValue)
             }
         },
         toggleButtons(): DlToggleButtonOption[] {

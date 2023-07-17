@@ -1,20 +1,35 @@
 import { mount } from '@vue/test-utils'
 import RowsSelector from '../../src/components/compound/DlPagination/components/RowsSelector.vue'
-import { describe, it, expect } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('RowsSelector', () => {
-    const wrapper = mount(RowsSelector, {
-        props: {
-            modelValue: 10,
-            options: [10, 25, 50],
-            itemsName: 'items'
-        }
-    })
+    describe('When mounting', () => {
+        let wrapper: any
 
-    it('should emit update of model value after option change', async () => {
-        expect(wrapper.text()).toContain('items per page:')
+        beforeAll(() => {
+            wrapper = mount(RowsSelector, {
+                props: {
+                    modelValue: 10,
+                    options: [10, 25, 50],
+                    itemsName: 'items'
+                }
+            })
+        })
 
-        wrapper.vm.setSelectedItem(25)
-        expect(wrapper.emitted()['update:modelValue'][0]).toBeTruthy()
+        it('should mount the component', async () => {
+            expect(wrapper.exists()).toBe(true)
+        })
+        it('should have the right text', function () {
+            expect(wrapper.text()).toContain('items per page:')
+        })
+        describe('When set selected item', () => {
+            beforeAll(() => {
+                wrapper.vm.setSelectedItem(25)
+            })
+
+            it('should emitted modelValue event', function () {
+                expect(wrapper.emitted()['update:model-value'][0]).toBeTruthy()
+            })
+        })
     })
 })

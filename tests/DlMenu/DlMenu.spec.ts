@@ -50,13 +50,15 @@ describe('DlMenu', () => {
             offset: [0, 0],
             'onUpdate:modelValue': undefined,
             persistent: false,
-            scrollTarget: undefined,
+            scrollTarget: null,
             self: 'top left',
             square: false,
             target: true,
             touchPosition: false,
             transitionDuration: 300,
-            arrowNavItems: []
+            arrowNavItems: [],
+            zIndex: 'var(--dl-z-index-menu)',
+            triggerPercentage: 1
         })
         expect(wrapper.vm.showing).toBe(false)
     })

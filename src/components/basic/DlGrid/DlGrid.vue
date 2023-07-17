@@ -21,7 +21,7 @@ import {
 export default defineComponent({
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -30,18 +30,18 @@ export default defineComponent({
         },
         rowGap: {
             type: String,
-            default: '10px'
+            default: '30px'
         },
         columnGap: {
             type: String,
-            default: '10px'
+            default: '30px'
         },
         maxElementsPerRow: {
             type: Number,
             default: 3
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:model-value', 'layout-changed'],
     computed: {
         gridStyles(): object {
             return {
@@ -57,20 +57,21 @@ export default defineComponent({
     },
     watch: {
         modelValue: {
-            handler(val) {
+            handler(val, oldVal) {
                 this.$nextTick(() => {
-                    if (val) this.applyGridElementStyles()
+                    if (val) {
+                        if (val.length !== oldVal?.length) {
+                            this.applyIndexesForChildren()
+                        }
+                        this.applyGridElementStyles()
+                    }
                 })
             },
             immediate: true
         }
     },
     mounted() {
-        Array.from((this.$refs.grid as HTMLElement).children).forEach(
-            (element: Element, index: number) => {
-                (element as HTMLElement).dataset.index = `${index}`
-            }
-        )
+        this.applyIndexesForChildren()
     },
     methods: {
         applyGridElementStyles() {
@@ -79,7 +80,7 @@ export default defineComponent({
                 (this.$refs.grid as HTMLElement).children
             )
             const gridTemplate = getGridTemplate(this.modelValue)
-            if (gridElements.length !== gridTemplate.length) return
+            if (gridElements.length > gridTemplate.length) return
 
             const order = this.modelValue.flat()
             gridElements.forEach((element: Element, index: number) => {
@@ -88,10 +89,14 @@ export default defineComponent({
                 const htmlElement = element as HTMLElement
                 htmlElement.style.order = `${orderIndex}`
                 htmlElement.style.gridColumn = gridTemplate[orderIndex - 1]
-                htmlElement.addEventListener('change-position', (e) => {
+                htmlElement.addEventListener('position-changing', (e) => {
                     if (!isCustomEvent(e)) return
                     this.changePosition(e)
                 })
+                htmlElement.addEventListener(
+                    'position-changed',
+                    this.layoutChanged.bind(this)
+                )
             })
         },
         changePosition(e: CustomEvent) {
@@ -123,7 +128,21 @@ export default defineComponent({
                 side,
                 this.maxElementsPerRow
             )
-            this.$emit('update:modelValue', newLayout)
+            // Update modelValue is required to trigger visualization of the changes
+            this.$emit('update:model-value', newLayout)
+            if (e.detail.endDragging) {
+                this.layoutChanged()
+            }
+        },
+        layoutChanged() {
+            this.$emit('layout-changed', this.modelValue)
+        },
+        applyIndexesForChildren() {
+            Array.from((this.$refs.grid as HTMLElement).children).forEach(
+                (element: Element, index: number) => {
+                    (element as HTMLElement).dataset.index = `${index}`
+                }
+            )
         }
     }
 })

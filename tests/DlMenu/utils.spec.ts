@@ -141,7 +141,7 @@ describe('DlMenu utils', () => {
         describe('updateUnwatchPosition', () => {
             describe('function prop is given', () => {
                 it('should be called prop function', () => {
-                    expect(updateUnwatchPosition(vi.fn())).toBe(undefined)
+                    expect(updateUnwatchPosition(vi.fn())).toBe(null)
                 })
             })
         })
