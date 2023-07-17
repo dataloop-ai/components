@@ -553,6 +553,7 @@ import { ResizableManager } from './utils'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
+import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -658,6 +659,10 @@ export default defineComponent({
         scrollDebounce: {
             type: Number,
             default: 100
+        },
+        flatTreeData: {
+            type: Boolean,
+            default: false
         },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
@@ -970,7 +975,7 @@ export default defineComponent({
                 }
             }
 
-            return rows
+            return props.flatTreeData ? flatTreeData(rows) : rows
         })
 
         const additionalClasses = computed(() => {

@@ -12,15 +12,16 @@
             :selection="selection"
             :loading="loading"
             :rows="tableRows"
+            :flat-tree-data="hasFlatTreeData"
             :resizable="resizable"
             :row-key="rowKey"
             :color="color"
             :title="title"
             :virtual-scroll="virtualScroll"
             :rows-per-page-options="rowsPerPageOptions"
-            @row-click="log"
-            @th-click="log"
-            @update:selected="updateSeleted"
+            @row-click="emitRowClick"
+            @th-click="emitThClick"
+            @update:selected="updateSelected"
         >
             <template #header-selection>
                 <DlCheckbox
@@ -358,10 +359,9 @@ export default defineComponent({
         const resizableState = ref([])
         const tableRows = ref(cloneDeep(props.rows))
         const tableColumns = ref(props.columns)
+        const hasFlatTreeData = true
 
-        const computedRows = computed(() => {
-            return flatTreeData(dlTableRef.value.computedRows)
-        })
+        const computedRows = computed(() => dlTableRef.value.computedRows)
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
@@ -449,31 +449,43 @@ export default defineComponent({
                 val
             )
         }
+        const updateSelected = (payload: any) => {
+            selected.value = payload
+            emitSelectedItems(payload)
+        }
+        const emitSelectedItems = (payload: any) => {
+            emit('selectedItems', payload)
+        }
+        const emitRowClick = (payload: any) => {
+            emit('row-click', payload)
+        }
+        const emitThClick = (payload: any) => {
+            emit('th-click', payload)
+        }
 
         return {
             dlTableRef,
-            selected,
+            isRowSelected,
+            hasFlatTreeData,
             vScroll,
+            headerSelectedValue,
+            selected,
             denseState,
             borderState,
             resizableState,
             tableRows,
             tableColumns,
             computedRows,
-            isRowSelected,
             getRowKey,
-            updateExpandedRow,
             updateSelection,
+            updateExpandedRow,
             updateSelectionHierarchy,
-            headerSelectedValue,
-            onMultipleSelectionSet
+            onMultipleSelectionSet,
+            updateSelected,
+            emitSelectedItems,
+            emitRowClick,
+            emitThClick
         }
-    },
-    methods: {
-        updateSeleted(payload: any) {
-            this.selected = payload
-        },
-        log(...args: any[]) {}
     }
 })
 </script>
