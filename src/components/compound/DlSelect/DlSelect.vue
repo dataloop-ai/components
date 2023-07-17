@@ -324,7 +324,8 @@ import {
     getIconSize,
     optionsValidator,
     DlSelectOptionType,
-    getLabelOfSelectedOption
+    getLabelOfSelectedOption,
+    getCaseInsensitiveInput
 } from './utils'
 import DlSelectOption from './components/DlSelectOption.vue'
 import { isEqual } from 'lodash'
@@ -833,14 +834,15 @@ export default defineComponent({
             this.$emit('search-input', searchValue)
         },
         getOptionHtml(option: DlSelectOptionType) {
-            let label = `${this.getOptionLabel(option)}`
-            if (this.capitalizedOptions) {
-                label = label.toLowerCase()
-            }
+            const label = `${this.getOptionLabel(option)}`
+            const toReplace = new RegExp(this.searchInputValue, 'gi')
 
             const highlightedHtml = label.replace(
-                this.searchInputValue,
-                `<span style="background: var(--dl-color-warning)">${this.searchInputValue}</span>`
+                toReplace,
+                `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                    label,
+                    this.searchInputValue
+                )}</span>`
             )
             const html = `<span>${highlightedHtml}</span>`
 
