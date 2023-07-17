@@ -44,3 +44,9 @@ export const optionsValidator = (opts: DlSelectOptionType[]) => {
         return keys.includes('value') && keys.includes('label')
     })
 }
+
+export const getCaseInsensitiveInput = (label: string, input: string) => {
+    const inputRegexp = new RegExp(input, 'gi')
+    const position = label.search(inputRegexp)
+    return label.slice(position, input.length)
+}
