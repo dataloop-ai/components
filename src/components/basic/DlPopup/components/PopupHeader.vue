@@ -95,7 +95,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .popup-header {
     max-width: 100%;
-    padding: 16px 10px 20px 16px;
+    padding: 16px 10px 16px 16px;
 }
 
 .header-content {
