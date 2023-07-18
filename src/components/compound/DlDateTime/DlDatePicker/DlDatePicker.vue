@@ -249,7 +249,7 @@ export default defineComponent({
 
             this.dateInterval = { from: date, to: date }
 
-            if (this.singleSelection) {
+            if (!this.singleSelection) {
                 this.isSelectionMode = true
             } else {
                 this.updateModelValue(this.dateInterval)
@@ -297,7 +297,10 @@ export default defineComponent({
                 }
             }
 
-            this.dateInterval = { from: this.dateInterval.from, to: date }
+            this.dateInterval = {
+                from: this.dateInterval.from,
+                to: date
+            }
         }
     }
 })
