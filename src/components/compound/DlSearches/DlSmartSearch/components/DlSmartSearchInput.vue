@@ -120,7 +120,7 @@
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
-                    :single-selection="false"
+                    :single-selection="true"
                     @change="handleDateSelectionUpdate"
                 />
             </div>
