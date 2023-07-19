@@ -168,6 +168,9 @@ export default defineComponent({
         textarea {
             color: var(--dl-code-editor-text-area-color);
         }
+        .line-nums {
+            flex-grow: 1;
+        }
     }
 }
 </style>
