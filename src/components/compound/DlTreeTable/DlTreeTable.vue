@@ -2,6 +2,7 @@
     <div>
         <DlTable
             ref="dlTableRef"
+            :rows="treeTableRows"
             :selected="selected"
             :separator="separator"
             :columns="tableColumns"
@@ -10,11 +11,10 @@
             :dense="dense"
             :filter="filter"
             :selection="selection"
-            :loading="loading"
-            :rows="tableRows"
+            :loading="treeTableLoader"
             :flat-tree-data="hasFlatTreeData"
             :resizable="resizable"
-            :row-key="rowKey"
+            :row-key="dynamicRowKey"
             :color="color"
             :title="title"
             :virtual-scroll="virtualScroll"
@@ -22,6 +22,7 @@
             @row-click="emitRowClick"
             @th-click="emitThClick"
             @update:selected="updateSelected"
+            @virtual-scroll="onScroll"
         >
             <template #header-selection>
                 <DlCheckbox
@@ -106,11 +107,6 @@
                 </template>
                 <template v-else>
                     <template v-if="dlTableRef">
-                        <!--
-                        <pre>
-                            {{ computedRows }}
-                        </pre>
-                        -->
                         <DlTrTreeView
                             v-for="(row, pageIndex) in computedRows"
                             :row="row"
@@ -179,13 +175,14 @@ import {
     computed,
     ComputedRef,
     defineComponent,
-    nextTick,
+    onMounted,
     PropType,
-    ref
+    ref,
+    watch
 } from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
-import { cloneDeep, isNumber, times } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { DlTableProps, DlTableRow } from '../DlTable/types'
 import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { useTableActionsProps } from '../DlTable/hooks/tableActions'
@@ -204,9 +201,9 @@ import {
     useTreeTableRowSelectionEmits
 } from './utils/treeTableRowSelection'
 import { RecordStringAny } from './types'
-import { flatTreeData } from './utils/flatTreeData'
 import { getFromChildren } from './utils/getFromChildren'
 import DlCheckbox from '../../essential/DlCheckbox/DlCheckbox.vue'
+import { useTableVirtualScroll } from './utils/useTableVirtualScroll'
 
 export default defineComponent({
     name: 'DlTreeTable',
@@ -358,15 +355,54 @@ export default defineComponent({
         const denseState = ref([])
         const resizableState = ref([])
         const tableRows = ref(cloneDeep(props.rows))
+        const allTableRows = ref(cloneDeep(props.rows))
+        const allRows = ref<RecordStringAny[]>([])
+        const propsRowsComputed = computed(() => cloneDeep(props.rows))
+
+        const addIndexToRows = () => {
+            if (!propsRowsComputed.value?.length) {
+                return
+            }
+
+            tableRows.value = propsRowsComputed.value.map((item, index) => {
+                const row: RecordStringAny = item
+                row.index = index
+                return row
+            })
+
+            return
+        }
+        onMounted(() => {
+            // addIndexToRows()
+        })
+
+        watch(
+            propsRowsComputed,
+            (value) => {
+                if (value?.length) {
+                    addIndexToRows()
+                }
+            },
+            {
+                deep: true
+            }
+        )
+
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
 
+        // const rowsRef = computed(() => dlTableRef.value.computedRows)
         const computedRows = computed(() => dlTableRef.value.computedRows)
+        // const computedTreeRows = ref(null)
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
                 ? props.rowKey
                 : (row: RecordStringAny) => row[props.rowKey as string]
+        )
+
+        const dynamicRowKey = computed(() =>
+            props.virtualScroll ? 'index' : props.rowKey
         )
 
         const {
@@ -449,6 +485,45 @@ export default defineComponent({
                 val
             )
         }
+
+        // const isLoading = ref(false)
+        /*
+        const infiniteLoading = computed({
+            get(){
+                return props.loading
+            },
+            set(value){
+                isLoading.value = value
+            }
+        })
+        */
+
+        const treeTableLoader = ref(false)
+        const getLoader = computed(() => props.loading)
+        watch(getLoader, (value) => {
+            treeTableLoader.value = value
+        })
+
+        const treeTableRows = ref(cloneDeep(props.rows))
+        const getRows = computed(() => props.rows)
+        watch(getRows, (value) => {
+            treeTableRows.value = value
+        })
+
+        const onScroll = (data: any) => {
+            if (!props.virtualScroll) {
+                return
+            }
+
+            const { loading, rows, scroll } = useTableVirtualScroll(
+                props.rows,
+                treeTableLoader.value
+            )
+
+            scroll(data)
+            treeTableLoader.value = loading.value
+            treeTableRows.value = rows.value
+        }
         const updateSelected = (payload: any) => {
             selected.value = payload
             emitSelectedItems(payload)
@@ -476,15 +551,19 @@ export default defineComponent({
             tableRows,
             tableColumns,
             computedRows,
+            treeTableRows,
             getRowKey,
             updateSelection,
+            treeTableLoader,
+            dynamicRowKey,
             updateExpandedRow,
             updateSelectionHierarchy,
             onMultipleSelectionSet,
             updateSelected,
             emitSelectedItems,
             emitRowClick,
-            emitThClick
+            emitThClick,
+            onScroll
         }
     }
 })

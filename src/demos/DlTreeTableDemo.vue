@@ -80,6 +80,7 @@
             </div>
             <div style="margin-top: 100px">
                 <DlTreeTable
+                    :rows="tableRows"
                     :separator="separator"
                     :columns="tableColumns"
                     :bordered="bordered"
@@ -89,7 +90,6 @@
                     :filter="filter"
                     :selection="selection"
                     :loading="loading"
-                    :rows="tableRows"
                     :resizable="resizable"
                     row-key="name"
                     color="dl-color-secondary"
@@ -104,7 +104,9 @@
             </div>
             <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
+                <!--
                 <DlTreeTable
+                    virtual-scroll
                     :separator="separator"
                     :columns="tableColumns"
                     :bordered="bordered"
@@ -115,10 +117,31 @@
                     :selection="selection"
                     :loading="loading"
                     :rows="tableRowsVS"
-                    virtual-scroll
                     row-key="name"
                     color="dl-color-secondary"
                     style="height: 500px"
+                    @selectedItems="selectedItems"
+                    @virtual-scroll="onScroll"
+                />
+                -->
+                <DlTreeTable
+                    virtual-scroll
+                    :rows="tableRows"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    style="height: 500px"
+                    @row-click="onRowClick"
+                    @th-click="log"
                     @selectedItems="selectedItems"
                 />
             </div>

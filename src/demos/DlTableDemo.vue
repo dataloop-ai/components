@@ -311,7 +311,7 @@
                     :rows="tableRows"
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"
@@ -346,7 +346,7 @@
                 <DlTable
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"
@@ -409,6 +409,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
+import { useTableVirtualScroll } from '../components/compound/DlTreeTable/utils/useTableVirtualScroll'
 
 const columns = [
     {
@@ -596,8 +597,6 @@ export default defineComponent({
 
         const infiniteLoading = ref(false)
 
-        const nextPageNumber = ref(2)
-
         let allRows: RowsWithIndex[] = []
         for (let i = 0; i < 100; i++) {
             allRows = allRows.concat(
@@ -610,31 +609,17 @@ export default defineComponent({
             row.index = index
         })
 
-        const pageSize = 50
-        const lastPageNumber = Math.ceil(allRows.length / pageSize)
+        const computedRows = ref([])
 
-        const computedRows = computed(() =>
-            allRows.slice(0, pageSize * (nextPageNumber.value - 1))
-        )
+        const onScroll = (data: any) => {
+            const { loading, rows, scroll } = useTableVirtualScroll(
+                allRows,
+                infiniteLoading.value
+            )
 
-        const onScroll = ({ to, ref }: { to: number; ref: any }) => {
-            const lastIndex = computedRows.value.length - 1
-
-            if (
-                infiniteLoading.value !== true &&
-                nextPageNumber.value < lastPageNumber &&
-                to === lastIndex
-            ) {
-                infiniteLoading.value = true
-
-                setTimeout(() => {
-                    nextPageNumber.value++
-                    nextTick(() => {
-                        ref.refresh()
-                        infiniteLoading.value = false
-                    })
-                }, 500)
-            }
+            scroll(data)
+            infiniteLoading.value = loading.value
+            computedRows.value = rows.value
         }
 
         const pagination = ref({
