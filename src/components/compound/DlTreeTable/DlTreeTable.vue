@@ -2,7 +2,7 @@
     <div>
         <DlTable
             ref="dlTableRef"
-            :selected="selected"
+            :selected="selectedData"
             :separator="separator"
             :columns="tableColumns"
             :bordered="bordered"
@@ -102,17 +102,29 @@
                                 getRowKey(props.item)
                             )
                         "
-                    />
+                    >
+                        <template
+                            v-for="templateCol in dlTableRef.computedCols"
+                            #[getSlotByName(templateCol.name)]
+                        >
+                            <slot
+                                :name="getSlotByName(templateCol.name)"
+                                v-bind="
+                                    dlTableRef.getBodyCellScope({
+                                        key: getRowKey(props.item),
+                                        row: props.item,
+                                        pageIndex: props.index
+                                    })
+                                "
+                            />
+                        </template>
+                    </DlTrTreeView>
                 </template>
                 <template v-else>
                     <template v-if="dlTableRef">
-                        <!--
-                        <pre>
-                            {{ computedRows }}
-                        </pre>
-                        -->
                         <DlTrTreeView
                             v-for="(row, pageIndex) in computedRows"
+                            :key="pageIndex"
                             :row="row"
                             :is-row-selected="
                                 isRowSelected(rowKey, getRowKey(row))
@@ -163,7 +175,23 @@
                             @updateExpandedRow="
                                 updateExpandedRow(!row.expanded, getRowKey(row))
                             "
-                        />
+                        >
+                            <template
+                                v-for="templateCol in dlTableRef.computedCols"
+                                #[getSlotByName(templateCol.name)]
+                            >
+                                <slot
+                                    :name="getSlotByName(templateCol.name)"
+                                    v-bind="
+                                        dlTableRef.getBodySelectionScope({
+                                            key: getRowKey(row),
+                                            row,
+                                            pageIndex
+                                        })
+                                    "
+                                />
+                            </template>
+                        </DlTrTreeView>
                     </template>
                     <template v-else>
                         no data
@@ -181,7 +209,8 @@ import {
     defineComponent,
     nextTick,
     PropType,
-    ref
+    ref,
+    onMounted
 } from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
@@ -350,9 +379,9 @@ export default defineComponent({
         ...useTableRowExpandEmits,
         ...useTreeTableRowSelectionEmits
     ],
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
         const dlTableRef = ref(null)
-        const selected = ref([])
+        const selectedData = ref([])
         const vScroll = ref(false)
         const borderState = ref([])
         const denseState = ref([])
@@ -450,7 +479,7 @@ export default defineComponent({
             )
         }
         const updateSelected = (payload: any) => {
-            selected.value = payload
+            selectedData.value = payload
             emitSelectedItems(payload)
         }
         const emitSelectedItems = (payload: any) => {
@@ -463,13 +492,21 @@ export default defineComponent({
             emit('th-click', payload)
         }
 
+        const hasSlotByName = (name: string) => !!slots[name]
+
+        const getSlotByName = (name: string) => {
+            if (hasSlotByName(`body-cell-${name}`)) {
+                return `body-cell-${name}`
+            }
+        }
+
         return {
             dlTableRef,
             isRowSelected,
             hasFlatTreeData,
             vScroll,
             headerSelectedValue,
-            selected,
+            selectedData,
             denseState,
             borderState,
             resizableState,
@@ -484,7 +521,9 @@ export default defineComponent({
             updateSelected,
             emitSelectedItems,
             emitRowClick,
-            emitThClick
+            emitThClick,
+            hasSlotByName,
+            getSlotByName
         }
     }
 })

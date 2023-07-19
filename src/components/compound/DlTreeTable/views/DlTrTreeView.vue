@@ -1,13 +1,15 @@
 <template>
     <DlTrTree
         v-show="row.isExpandedParent || row.level === 1"
-        :key="getRowKey(row)"
         :class="rowClass"
         :no-hover="noHover"
         @click="emitRowClick($event, row, pageIndex)"
         @dblclick="onTrDoubleClick($event, row, pageIndex)"
         @contextmenu="onTrContextMenu($event, row, pageIndex)"
     >
+        <!--
+        :key="getRowKey(row)"
+        -->
         <td v-if="hasDraggableRows">
             <dl-icon
                 class="draggable-icon"
@@ -36,36 +38,40 @@
                 />
             </slot>
         </td>
-        <slot
+        <!--
+        Here we have to include dynamic slots
+        <td v-for="(col, colIndex) in computedCols">
+            <slot ... />
+        </td>
+        -->
+        <DlTdTree
             v-for="(col, colIndex) in computedCols"
-            v-bind="bindBodyCellScope"
-            :name="
-                hasSlotByName(`body-cell-${col.name}`)
-                    ? `body-cell-${col.name}`
-                    : 'body-cell'
-            "
+            :key="colIndex"
+            :class="col.tdClass(row)"
+            :style="col.tdStyle(row) + getTdStyles(row, colIndex)"
         >
-            <DlTdTree
-                :class="col.tdClass(row)"
-                :style="col.tdStyle(row) + getTdStyles(row, colIndex)"
-            >
-                <template #icon="{}">
-                    <DlIcon
-                        v-if="(row.children || []).length > 0 && colIndex === 0"
-                        :icon="`icon-dl-${
-                            row.expanded ? 'down' : 'right'
-                        }-chevron`"
-                        @click="emitUpdateExpandedRow"
-                    />
-                </template>
+            <template #icon="{}">
+                <DlIcon
+                    v-if="(row.children || []).length > 0 && colIndex === 0"
+                    :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
+                    @click="emitUpdateExpandedRow"
+                />
+            </template>
+            <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
                 {{ getCellValue(col, row) }}
-            </DlTdTree>
-        </slot>
+            </template>
+            <span v-else>
+                <slot
+                    v-bind="bindBodyCellScope"
+                    :name="getSlotByName(col.name)"
+                />
+            </span>
+        </DlTdTree>
     </DlTrTree>
 </template>
 
 <script lang="ts">
-import { ComputedRef, defineComponent, PropType } from 'vue-demi'
+import { ComputedRef, defineComponent, PropType, onMounted } from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
 import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
@@ -131,7 +137,7 @@ export default defineComponent({
             default: () => [] as Record<string, any>[]
         },
         modelValue: {
-            type: String,
+            type: [String, Boolean],
             default: null
         },
         slotName: {
@@ -139,8 +145,8 @@ export default defineComponent({
             default: null
         },
         computedRows: {
-            type: Object as PropType<Record<string, any>>, //DlTableRow[]
-            default: () => ({})
+            type: Array as PropType<Record<string, any>[]>, //DlTableRow[]
+            default: () => [] as Record<string, any>[]
         },
         cellValue: {
             type: String,
@@ -208,24 +214,24 @@ export default defineComponent({
             context.emit('updateExpandedRow')
         }
         const getCellValue = (col: RecordStringAny, row: RecordStringAny) => {
+            if (!col) {
+                return
+            }
             const val =
-                typeof col.field === 'function'
+                typeof col?.field === 'function'
                     ? col.field(row)
                     : row[col.field]
-            return col.format !== void 0 ? col.format(val, row) : val
+            return col?.format !== void 0 ? col.format(val, row) : val
         }
 
-        const hasSlotByName = (name: string) => {
-            if (!Object.values(props.slotsProps)?.length) {
-                return false
-            }
+        const hasSlotByName = (name: string) => !!context.slots[name]
 
-            const slotName = props.slotsProps.filter(
-                (propName: string) => propName === name
-            )
-
-            return !!slotName
+        const getSlotByName = (name: string) => {
+            return hasSlotByName(`body-cell-${name}`)
+                ? `body-cell-${name}`
+                : 'body-cell'
         }
+
         const rowClass = (): string => {
             if (props.isRowSelected) {
                 return 'selected'
@@ -247,7 +253,8 @@ export default defineComponent({
             emitUpdateExpandedRow,
             getCellValue,
             hasSlotByName,
-            rowClass
+            rowClass,
+            getSlotByName
         }
     }
 })

@@ -311,7 +311,7 @@
                     :rows="tableRows"
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"
@@ -346,7 +346,7 @@
                 <DlTable
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"

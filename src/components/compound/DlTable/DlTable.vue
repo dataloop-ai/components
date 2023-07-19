@@ -1132,11 +1132,14 @@ export default defineComponent({
             col: Record<string, any>,
             row: Record<string, any>
         ) {
+            if (!col) {
+                return
+            }
             const val =
-                typeof col.field === 'function'
-                    ? col.field(row)
+                typeof col?.field === 'function'
+                    ? col?.field(row)
                     : row[col.field]
-            return col.format ? col.format(val, row) : val
+            return col?.format ? col.format(val, row) : val
         }
 
         function resetVirtualScroll() {

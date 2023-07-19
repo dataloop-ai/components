@@ -111,6 +111,9 @@ export const refocusTargetFn = (
     evt: ClickOutsideEvent,
     refocusTarget: HTMLElement | null
 ): null => {
+    if (!evt) {
+        return null
+    }
     if (
         refocusTarget !== null &&
         // menu was hidden from code or ESC plugin
