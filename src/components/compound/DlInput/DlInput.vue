@@ -100,7 +100,12 @@
                             ]"
                         >
                             <slot name="append" />
-                            <span v-if="showClearButton && focused">
+                            <span
+                                v-if="showClearButton"
+                                v-show="focused || mouseOverClear"
+                                @mouseenter="mouseOverClear = true"
+                                @mouseleave="mouseOverClear = false"
+                            >
                                 <dl-button
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
@@ -378,6 +383,7 @@ export default defineComponent({
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     setup(props, { emit }) {
+        const mouseOverClear = ref(false)
         const highlightedIndex = ref(-1)
         const isMenuOpen = ref(false)
         const suggestItems = computed<string[]>(() => {
@@ -408,7 +414,8 @@ export default defineComponent({
             onAutoSuggestClick,
             isMenuOpen,
             setHighlightedIndex,
-            handleSelectedItem
+            handleSelectedItem,
+            mouseOverClear
         }
     },
     data() {
