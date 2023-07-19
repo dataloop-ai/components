@@ -13,7 +13,7 @@
                 :style="iconStyle"
                 :icon="icon"
                 :color="iconColor"
-                size="24px"
+                :size="iconSize"
             />
             <span
                 class="text"
@@ -97,6 +97,10 @@ export default defineComponent({
         textColor: {
             type: String,
             default: 'dl-color-darker'
+        },
+        iconSize: {
+            type: String,
+            default: '16px'
         },
         fluid: {
             type: Boolean,
