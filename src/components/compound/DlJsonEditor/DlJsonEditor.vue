@@ -134,6 +134,7 @@ export default defineComponent({
                 jsonEditor.value?.set({
                     text: formatted
                 })
+                emit('align-text')
             } catch (e) {
                 console.warn('[DlJsonEditor] Failed to format document', e)
                 return
@@ -155,17 +156,19 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .json-editor {
+    width: 100%;
+    height: 100%;
+
     --jse-text-color: var(--dl-color-tooltip-background);
     --jse-delimiter-color: var(--dl-color-tooltip-background);
-    --jse-key-color: var(--dl-color-negative);
-    --jse-background-color: var(--dl-color-secondary-opaque);
-    --jse-value-color-boolean: #ae6307;
-    --jse-value-color-string: #337433;
-    --jse-panel-background: var(--dl-color-fill);
+    --jse-key-color: var(--dl-json-editor-key-color);
+    --jse-background-color: var(--dl-json-editor-background-color);
+    --jse-value-color-boolean: var(--dl-json-editor-value-color-boolean);
+    --jse-value-color-string: var(--dl-json-editor-value-color-string);
+    --jse-panel-background: var(--dl-json-editor-panel-background);
     --jse-panel-border: var(--dl-color-separator);
     --jse-main-border: 1px solid var(--dl-color-separator);
 
-    height: 100%;
     .jse-error {
         display: none !important;
     }
