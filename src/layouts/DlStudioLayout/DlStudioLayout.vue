@@ -1,20 +1,21 @@
 <template>
-    <div class="dl-studio-layout">
-        <dl-layout :template="template">
-            <template #leftDrawer>
-                <slot name="leftDrawer" />
-            </template>
-            <template #rightDrawer>
-                <slot name="rightDrawer" />
-            </template>
-            <template #body>
-                <slot name="body" />
-            </template>
-            <template #footer>
-                <slot name="footer" />
-            </template>
-        </dl-layout>
-    </div>
+    <dl-layout
+        class="dl-studio-layout"
+        :template="template"
+    >
+        <template #leftDrawer>
+            <slot name="leftDrawer" />
+        </template>
+        <template #rightDrawer>
+            <slot name="rightDrawer" />
+        </template>
+        <template #body>
+            <slot name="body" />
+        </template>
+        <template #footer>
+            <slot name="footer" />
+        </template>
+    </dl-layout>
 </template>
 
 <script lang="ts">

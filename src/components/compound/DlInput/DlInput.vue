@@ -78,7 +78,7 @@
                             :type="showPass ? 'text' : type"
                             :disabled="disabled"
                             :readonly="readonly"
-                            @input="onChange"
+                            @input="debouncedInput"
                             @focus="onFocus"
                             @blur="debouncedBlur"
                             @keyup.enter="onKeyPress"
@@ -379,6 +379,10 @@ export default defineComponent({
         margin: {
             type: String,
             default: null
+        },
+        debounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
@@ -566,6 +570,10 @@ export default defineComponent({
             }
 
             return classes
+        },
+        debouncedInput(): any {
+            const debounced = debounce(this.onChange.bind(this), this.debounce)
+            return debounced
         }
     },
     methods: {

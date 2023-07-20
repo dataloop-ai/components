@@ -128,6 +128,7 @@ import { DlSelect } from '../../DlSelect'
 import { DlToast } from '../../DlToast'
 import '../styles/themes.css'
 import '../styles/themes-base16.css'
+import { debounce } from 'lodash'
 
 export default defineComponent({
     name: 'CodeEditor',
@@ -369,31 +370,26 @@ export default defineComponent({
             lineNumsResizer.value = null as any
         }
 
-        const getLineNum = () => {
+        const getLinesCount = () => {
             if (!lineNumsEl.value) return
 
             // lineNum
             const str = textarea.value.value
-            let localLineNum = 0
-            let position = str.indexOf('\n')
-            while (position !== -1) {
-                localLineNum++
-                position = str.indexOf('\n', position + 1)
-            }
-            // heightNum
-            const singleLineHeight = (
-                lineNumsEl.value.firstChild as HTMLElement
-            ).offsetHeight
-            const heightNum =
-                Math.round(textareaHeight.value / singleLineHeight) - 1
+            const matches = str.match(/(\r\n|\r|\n)/gim)
+            const localLineNum = matches.length
+
+            // // disabling the current behavior of highlighting entire dock
+            // const singleLineHeight = (
+            //     lineNumsEl.value.firstChild as HTMLElement
+            // ).offsetHeight
+            // const heightNum =
+            //     Math.round(textareaHeight.value / singleLineHeight) - 1
+
             // displayed lineNum
-            lineNum.value =
-                height.value == 'auto'
-                    ? localLineNum
-                    : localLineNum > heightNum
-                    ? localLineNum
-                    : heightNum
+            lineNum.value = localLineNum
         }
+
+        const debouncedGetLinesCount = debounce(getLinesCount, 100)
 
         onMounted(() => {
             emit('lang', props.languages[0][0])
@@ -404,6 +400,13 @@ export default defineComponent({
                 setupLineNumsResizer()
             }
             code.value.textContent = contentValue.value
+            if (lineNums.value) {
+                if (scrolling.value) {
+                    scrolling.value = false
+                } else {
+                    debouncedGetLinesCount()
+                }
+            }
             hljs.highlightElement(code.value)
         })
 
@@ -429,14 +432,25 @@ export default defineComponent({
                 } else {
                     disposeLineNumsResizer()
                 }
+
                 if (lineNums.value) {
                     if (scrolling.value) {
                         scrolling.value = false
                     } else {
-                        getLineNum()
+                        debouncedGetLinesCount()
                     }
                 }
             })
+        })
+
+        watch(modelValue, () => {
+            if (lineNums.value) {
+                if (scrolling.value) {
+                    scrolling.value = false
+                } else {
+                    debouncedGetLinesCount()
+                }
+            }
         })
 
         const copy = async () => {

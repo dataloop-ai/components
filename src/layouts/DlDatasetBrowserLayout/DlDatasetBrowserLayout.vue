@@ -1,23 +1,21 @@
 <template>
-    <div>
-        <dl-layout :template="template">
-            <template #header>
-                <slot name="header" />
-            </template>
-            <template #leftDrawer>
-                <slot name="leftDrawer" />
-            </template>
-            <template #rightDrawer>
-                <slot name="rightDrawer" />
-            </template>
-            <template #body>
-                <slot name="body" />
-            </template>
-            <template #footer>
-                <slot name="footer" />
-            </template>
-        </dl-layout>
-    </div>
+    <dl-layout :template="template">
+        <template #header>
+            <slot name="header" />
+        </template>
+        <template #leftDrawer>
+            <slot name="leftDrawer" />
+        </template>
+        <template #rightDrawer>
+            <slot name="rightDrawer" />
+        </template>
+        <template #body>
+            <slot name="body" />
+        </template>
+        <template #footer>
+            <slot name="footer" />
+        </template>
+    </dl-layout>
 </template>
 
 <script lang="ts">
