@@ -47,6 +47,10 @@ describe('DlInput component', () => {
         it('should trigger right input event', async () => {
             await wrapper.find('input').trigger('input')
 
+            // @ts-ignore // handled in jest setup
+            await window.delay(100)
+            await wrapper.vm.$nextTick()
+
             const inputEvent: any = wrapper.emitted('input')
             expect(inputEvent).toHaveLength(1)
         })
