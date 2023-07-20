@@ -15,6 +15,7 @@
                 class="alert"
                 :type="type"
                 :closable="closable"
+                icon-size="24px"
                 :dark-mode="false"
                 close-button-position="center"
                 style="position: relative"
