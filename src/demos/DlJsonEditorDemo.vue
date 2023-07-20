@@ -6,8 +6,20 @@
             justify-content: space-between;
         "
     >
+        <dl-button
+            label="Align Text"
+            @click="jsonEditorEl.format()"
+        />
+        <dl-switch
+            v-model="readonly"
+            left-label="read only"
+        />
         <div style="height: 200px; width: 500px">
-            <dl-json-editor v-model="jsonModel" />
+            <dl-json-editor
+                ref="jsonEditorEl"
+                v-model="jsonModel"
+                :readonly="readonly"
+            />
         </div>
         <span>JSON: {{ jsonModel }}</span>
 
@@ -41,18 +53,29 @@ import {
     DlJsonEditor,
     DlDialogBox,
     DlDialogBoxHeader,
-    DlButton
+    DlButton,
+    DlSwitch
 } from '../components'
 export default defineComponent({
-    components: { DlJsonEditor, DlDialogBox, DlDialogBoxHeader, DlButton },
+    components: {
+        DlJsonEditor,
+        DlDialogBox,
+        DlDialogBoxHeader,
+        DlButton,
+        DlSwitch
+    },
     setup() {
         const jsonModel = ref('')
         const dialogJsonModel = ref('')
         const dialogState = ref(false)
+        const jsonEditorEl = ref(null)
+        const readonly = ref(false)
         return {
             jsonModel,
             dialogState,
-            dialogJsonModel
+            dialogJsonModel,
+            jsonEditorEl,
+            readonly
         }
     }
 })
