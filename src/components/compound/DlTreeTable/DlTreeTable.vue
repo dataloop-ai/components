@@ -181,7 +181,9 @@ import {
     defineComponent,
     nextTick,
     PropType,
-    ref
+    ref,
+    isVue2,
+    set
 } from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
@@ -394,7 +396,12 @@ export default defineComponent({
         ) => {
             (rowsArr as DlTableRow[]).some((o) => {
                 if (o.name === name) {
-                    o.expanded = isExpanded
+                    if (isVue2) {
+                        set(o, 'expanded', isExpanded)
+                    } else {
+                        o.expanded = isExpanded
+                    }
+                    // o.expanded = isExpanded
                     updateNestedRows(o, isExpanded)
                 } else {
                     if ((o.children || []).length > 0) {
@@ -411,10 +418,22 @@ export default defineComponent({
             if ((row.children || []).length > 0) {
                 row.children.forEach(
                     (r: (typeof computedRows.value)[number]) => {
-                        r.isExpandedParent = isExpanded
+                        // r.isExpandedParent = isExpanded
+
+                        if (isVue2) {
+                            set(r, 'isExpandedParent', isExpanded)
+                        } else {
+                            r.isExpandedParent = isExpanded
+                        }
 
                         if (!isExpanded) {
-                            r.expanded = isExpanded
+                            if (isVue2) {
+                                set(r, 'isExpandedParent', isExpanded)
+                            } else {
+                                r.isExpandedParent = isExpanded
+                            }
+
+                            // r.expanded = isExpanded
                             updateNestedRows(r, isExpanded)
                         }
                     }
