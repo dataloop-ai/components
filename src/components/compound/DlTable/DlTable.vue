@@ -95,7 +95,7 @@
                                     v-bind="getHeaderScope({})"
                                 />
                                 <DlCheckbox
-                                    v-if="!$slots['header-selection']"
+                                    v-if="!hasSlotHeaderSelection"
                                     :color="color"
                                     :model-value="headerSelectedValue"
                                     :indeterminate-value="
@@ -145,7 +145,7 @@
                     name="body"
                     v-bind="props"
                 />
-                <template v-if="!isEmpty && !$slots['body']">
+                <template v-if="!isEmpty && !hasSlotBody">
                     <DlTr
                         :key="getRowKey(props.item)"
                         :class="
@@ -322,7 +322,7 @@
                         name="body"
                         :computed-rows="computedRows"
                     />
-                    <template v-if="!isEmpty && !$slots.body">
+                    <template v-if="!isEmpty && !hasSlotBody">
                         <DlTr
                             v-for="(row, pageIndex) in computedRows"
                             v-bind="
@@ -1284,6 +1284,10 @@ export default defineComponent({
                 totalItems: computedRowsNumber.value
             }
         })
+        const hasSlotBody = computed(() => !!slots['body'])
+        const hasSlotHeaderSelection = computed(
+            () => !!slots['header-selection']
+        )
 
         // expose public methods and needed computed props
         Object.assign(vm.proxy, {
@@ -1349,7 +1353,9 @@ export default defineComponent({
             onThClick,
             onTrContextMenu,
             hasPaginationSlot,
-            slotNames
+            slotNames,
+            hasSlotBody,
+            hasSlotHeaderSelection
         }
     }
 })

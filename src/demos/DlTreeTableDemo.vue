@@ -176,11 +176,9 @@
 
 <script lang="ts">
 import {
-    DlTable,
     DlOptionGroup,
     DlSwitch,
     DlInput,
-    DlButton,
     DlTreeTable,
     DlIcon
 } from '../components'

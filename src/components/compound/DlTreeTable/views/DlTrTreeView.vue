@@ -1,7 +1,6 @@
 <template>
     <DlTrTree
         v-show="row.isExpandedParent || row.level === 1"
-        :key="getRowKey(row)"
         :class="rowClass"
         :no-hover="noHover"
         @click="emitRowClick($event, row, pageIndex)"
@@ -98,8 +97,8 @@ export default defineComponent({
             default: () => ({})
         },
         isRowSelected: {
-            type: Boolean,
-            default: false
+            type: [Boolean, String],
+            default: null
         },
         hasAnyAction: {
             type: Boolean,
