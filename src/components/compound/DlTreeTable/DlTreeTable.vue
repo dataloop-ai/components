@@ -428,9 +428,9 @@ export default defineComponent({
 
                         if (!isExpanded) {
                             if (isVue2) {
-                                set(r, 'isExpandedParent', isExpanded)
+                                set(r, 'expanded', isExpanded)
                             } else {
-                                r.isExpandedParent = isExpanded
+                                r.expanded = isExpanded
                             }
 
                             // r.expanded = isExpanded
