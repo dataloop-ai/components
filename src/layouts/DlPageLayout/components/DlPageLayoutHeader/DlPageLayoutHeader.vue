@@ -6,14 +6,19 @@
                     color="dl-color-lighter"
                     size="10px"
                 >
-                    {{ subTitle }}
+                    <slot name="subtitle">
+                        {{ subTitle }}
+                    </slot>
                 </dl-typography>
                 <dl-typography
                     color="dl-color-darker"
                     size="30px"
                 >
-                    {{ title }}
+                    <slot name="title">
+                        {{ title }}
+                    </slot>
                 </dl-typography>
+                <slot name="actions" />
             </div>
         </div>
         <div
