@@ -15,6 +15,17 @@
             :items-in-view="6"
         />
 
+        <div>
+            NO DATA
+            <dl-bar-chart
+                id="example-one"
+                :data="{ labels: [], datasets: [] }"
+                :options="options"
+                :items-in-view="6"
+                style="width: 100%"
+            />
+        </div>
+
         <dl-bar-chart
             :legend-props="legendProps"
             :data="data"

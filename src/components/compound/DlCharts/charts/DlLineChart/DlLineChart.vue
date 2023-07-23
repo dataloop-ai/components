@@ -104,7 +104,8 @@ import {
     watch,
     ref,
     computed,
-    PropType
+    PropType,
+    toRefs
 } from 'vue-demi'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
@@ -173,6 +174,7 @@ export default defineComponent({
         ...ColumnChartProps
     } as { [key: string]: any },
     setup(props, { slots }) {
+        const { data, options } = toRefs(props)
         const { variables } = useThemeVariables()
 
         const chartWidth = ref('100%')
@@ -205,9 +207,10 @@ export default defineComponent({
         const brush = reactive({
             value: {
                 min: 0,
-                max:
-                    orderBy(props.data.datasets, (o) => o.data.length)[0].data
-                        .length - 1
+                max: data.value.datasets.length
+                    ? orderBy(data.value.datasets, (o) => o.data.length)[0].data
+                          .length - 1 //todo:checkit
+                    : 0
             }
         })
 
@@ -219,7 +222,7 @@ export default defineComponent({
                 }
             }
             const datasets: DatasetController<'line'> = updateKeys(
-                props.data.datasets,
+                data.value.datasets,
                 [
                     'backgroundColor',
                     'pointBackgroundColor',
@@ -244,9 +247,9 @@ export default defineComponent({
             })
 
             const chartProps = cloneDeep({
-                options: props.options,
+                options: options.value,
                 data: {
-                    ...props.data,
+                    ...data.value,
                     datasets
                 }
             })
@@ -325,12 +328,12 @@ export default defineComponent({
                 replaceColor
             )
 
-        const chartData = ref(replaceDataColors(props.data))
+        const chartData = ref(replaceDataColors(data.value))
 
         const legendDatasets = ref(
             unionBy(
                 props.legendProps?.datasets || [],
-                props.data?.datasets || [],
+                data.value?.datasets || [],
                 'label'
             ) as { [key: string]: any }[]
         )
@@ -480,7 +483,7 @@ export default defineComponent({
                 merge(
                     { onResize, onHover },
                     defaultLineChartProps.options,
-                    props.options
+                    options.value
                 ),
                 ['color'],
                 replaceColor
@@ -515,7 +518,7 @@ export default defineComponent({
             chart.value.update()
         }
 
-        const xLabels = ref(props.data.labels)
+        const xLabels = ref(data.value.labels)
 
         const onHoverLegend = (
             item: BarControllerDatasetOptions,
@@ -573,18 +576,18 @@ export default defineComponent({
         }
 
         const labelStyles = computed(() => {
-            const options = merge(
+            const styleOptions = merge(
                 {},
                 defaultLineChartProps.options,
-                props.options
+                options.value
             )
 
             return {
-                title: options.scales.x.title.text,
-                titleSize: `${options.scales.x.title.font.size}px`,
-                titleColor: options.scales.x.title.color.replace('--', ''),
-                labelColor: options.scales.x.ticks.color.replace('--', ''),
-                fontSize: `${options.scales.x.ticks.font.size}px`
+                title: styleOptions.scales.x.title.text,
+                titleSize: `${styleOptions.scales.x.title.font.size}px`,
+                titleColor: styleOptions.scales.x.title.color.replace('--', ''),
+                labelColor: styleOptions.scales.x.ticks.color.replace('--', ''),
+                fontSize: `${styleOptions.scales.x.ticks.font.size}px`
             }
         })
 
@@ -610,7 +613,7 @@ export default defineComponent({
                     merge(
                         { onResize, onHover },
                         defaultLineChartProps.options,
-                        props.options
+                        options.value
                     ),
                     ['color'],
                     replaceColor
@@ -624,7 +627,7 @@ export default defineComponent({
         })
 
         watch(
-            [props.data, props.options],
+            [data, options],
             ([newData = {}, newOptions = {}]) => {
                 chartData.value = replaceDataColors(newData as ChartData)
 

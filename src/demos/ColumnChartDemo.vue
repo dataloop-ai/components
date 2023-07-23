@@ -59,6 +59,16 @@
             </template>
         </dl-column-chart>
 
+        <div>
+            NO DATA
+            <dl-column-chart
+                id="example-one"
+                :data="{ labels: [], datasets: [] }"
+                :options="options"
+                style="width: 100%"
+            />
+        </div>
+
         <dl-column-chart
             :brush-props="brushProps"
             :legend-props="legendProps"

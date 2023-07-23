@@ -16,6 +16,15 @@
                     :has-summary="true"
                 />
             </div>
+
+            <div>
+                NO DATA
+                <dl-scatter-chart
+                    id="example-one"
+                    :data="{ labels: [], datasets: [] }"
+                    style="width: 100%"
+                />
+            </div>
             <div class="grid grid-cols-3">
                 <div>
                     <DlDoughnutChart
@@ -70,7 +79,6 @@
                     is-empty
                     :empty-state-props="{
                         responsive: true,
-                        style: 'min-height: 350px;',
                         bgSize: '130px',
                         bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
                         title: 'Lorem ipsum',

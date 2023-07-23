@@ -35,14 +35,15 @@
             style="width: 100%"
         />
 
-        <dl-line-chart
-            id="example-two"
-            :brush-props="brushProps"
-            :legend-props="legendProps"
-            :data="noPointsData"
-            :options="options"
-            style="width: 50%"
-        />
+        <div>
+            NO DATA
+            <dl-line-chart
+                id="example-one"
+                :data="{ labels: [], datasets: [] }"
+                :options="options"
+                style="width: 100%"
+            />
+        </div>
 
         <dl-line-chart
             id="example-three"

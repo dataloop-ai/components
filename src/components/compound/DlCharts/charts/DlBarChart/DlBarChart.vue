@@ -132,7 +132,8 @@ export default defineComponent({
         ...BarChartProps,
         itemsInView: {
             type: Number,
-            required: true
+            required: false,
+            default: null
         },
         id: {
             type: String,
@@ -153,7 +154,12 @@ export default defineComponent({
             value: null
         }
 
-        const thisItemsInView = computed(() => props.itemsInView - 1)
+        const thisItemsInView = computed(() =>
+            Math.max(
+                (props.itemsInView ?? props.data.datasets?.length ?? 0) - 1,
+                0
+            )
+        )
 
         const onResize = (
             chart: Chart,

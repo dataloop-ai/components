@@ -171,7 +171,6 @@ export default defineComponent({
 
         const setActiveDemo = (demo: { name: string; component: any }) => {
             activeDemo.value = demo
-            filterTerm.value = ''
             window.localStorage.setItem('dl-active-demo', demo.name)
         }
 
