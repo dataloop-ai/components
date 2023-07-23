@@ -111,7 +111,9 @@ export default defineComponent({
                 '--dl-code-editor-header-border-bottom': !options.value
                     ?.lineNumbers
                     ? `1px solid var(--dl-color-separator)`
-                    : `none`
+                    : `none`,
+                '--dl-colde-editor-width': styleWidth.value,
+                '--dl-colde-editor-height': styleHeight.value
             } as Record<string, any>
         })
 
@@ -154,8 +156,8 @@ export default defineComponent({
 .dl-code-editor-wrapper {
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
-    width: fit-content;
-    height: fit-content;
+    width: var(--dl-colde-editor-width, fit-content);
+    height: var(--dl-colde-editor-height, fit-content);
 }
 </style>
 

@@ -1,4 +1,3 @@
-export interface Query {
-    name: string
-    query: string | null
-}
+import { Mode as DlJsonEditorModes } from 'vanilla-jsoneditor'
+
+export { DlJsonEditorModes }
