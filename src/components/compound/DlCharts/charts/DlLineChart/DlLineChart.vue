@@ -96,9 +96,7 @@ import { Line as DlLine } from '../../types/typedCharts'
 import {
     CommonProps,
     ColumnChartProps,
-    defaultLineChartProps,
-    ColumnChartPropsType,
-    CommonPropsType
+    defaultLineChartProps
 } from '../../types/props'
 import {
     defineComponent,
