@@ -115,7 +115,7 @@ export default defineComponent({
             const initialAttrs: JSONEditorPropsOptional = {
                 onChange: debouncedHandleJSONChange,
                 indentation: indentation.value,
-                mode: Mode.text,
+                mode: mode.value,
                 mainMenuBar: false,
                 navigationBar: false,
                 statusBar: false
