@@ -3,7 +3,7 @@
         <div class="page-layout-header__title">
             <dl-typography
                 color="dl-color-lighter"
-                size="10px"
+                variant="h6"
             >
                 <slot name="subtitle">
                     {{ subTitle }}
@@ -11,7 +11,7 @@
             </dl-typography>
             <dl-typography
                 color="dl-color-darker"
-                size="30px"
+                variant="h1"
                 style="padding-bottom: 10px"
             >
                 <slot name="title">
