@@ -15,10 +15,18 @@
             left-label="read only"
         />
         <div style="height: 200px; width: 500px">
+            <dl-select
+                v-model="mode"
+                :options="['text', 'tree']"
+                title="Mode"
+            />
+        </div>
+        <div style="height: 200px; width: 500px">
             <dl-json-editor
                 ref="jsonEditorEl"
                 v-model="jsonModel"
                 :readonly="readonly"
+                :mode="mode"
             />
         </div>
         <span>JSON: {{ jsonModel }}</span>
@@ -54,15 +62,18 @@ import {
     DlDialogBox,
     DlDialogBoxHeader,
     DlButton,
-    DlSwitch
+    DlSwitch,
+    DlSelect
 } from '../components'
+import { DlJsonEditorModes } from '../components/compound/DlJsonEditor/types'
 export default defineComponent({
     components: {
         DlJsonEditor,
         DlDialogBox,
         DlDialogBoxHeader,
         DlButton,
-        DlSwitch
+        DlSwitch,
+        DlSelect
     },
     setup() {
         const jsonModel = ref('')
@@ -70,12 +81,15 @@ export default defineComponent({
         const dialogState = ref(false)
         const jsonEditorEl = ref(null)
         const readonly = ref(false)
+        const mode = ref(DlJsonEditorModes.text)
+
         return {
             jsonModel,
             dialogState,
             dialogJsonModel,
             jsonEditorEl,
-            readonly
+            readonly,
+            mode
         }
     }
 })

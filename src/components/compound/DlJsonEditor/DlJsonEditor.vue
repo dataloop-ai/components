@@ -6,7 +6,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, toRefs, watch } from 'vue-demi'
+import {
+    defineComponent,
+    onMounted,
+    PropType,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
 import {
     Content,
     ContentParseError,
@@ -41,11 +48,16 @@ export default defineComponent({
             required: false,
             type: Boolean,
             default: false
+        },
+        mode: {
+            required: false,
+            type: String as PropType<Mode>,
+            default: Mode.text
         }
     },
     emits: ['update:model-value', 'align-text', 'change'],
     setup(props, { emit }) {
-        const { modelValue, indentation, readonly } = toRefs(props)
+        const { modelValue, indentation, readonly, mode } = toRefs(props)
 
         const jsonEditorRef = ref(null)
         const jsonEditor = ref<JSONEditor>(null as any)
@@ -59,6 +71,13 @@ export default defineComponent({
 
             jsonEditor.value?.set({
                 text: val
+            })
+        })
+
+        watch(mode, (val) => {
+            jsonEditor.value?.updateProps({
+                mode: val,
+                readOnly: val === Mode.tree
             })
         })
 
@@ -165,6 +184,7 @@ export default defineComponent({
     --jse-background-color: var(--dl-json-editor-background-color);
     --jse-value-color-boolean: var(--dl-json-editor-value-color-boolean);
     --jse-value-color-string: var(--dl-json-editor-value-color-string);
+    --jse-value-color-number: var(--dl-json-editor-value-color-number);
     --jse-panel-background: var(--dl-json-editor-panel-background);
     --jse-panel-border: var(--dl-color-separator);
     --jse-main-border: 1px solid var(--dl-color-separator);
