@@ -18,9 +18,9 @@ const isProxy = (obj: any) => {
 }
 
 export const compatProps = isVue2
-    ? <I extends {}, T extends {}>(internals: I, props: T) =>
+    ? <I extends object, T extends object>(internals: I, props: T) =>
           Object.assign(internals, props) as unknown as I & T
-    : <I extends {}, T extends {}>(internals: I, props: T) =>
+    : <I extends object, T extends object>(internals: I, props: T) =>
           Object.assign(internals, props)
 
 export function toRawIfProxy<T>(obj: T) {
