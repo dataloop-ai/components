@@ -17,6 +17,7 @@
             <dl-page-layout>
                 <template #header>
                     <dl-page-layout-header
+                        title="testsetest"
                         :counters="[
                             {
                                 value: 200,
@@ -36,12 +37,12 @@
                             }
                         ]"
                     >
-                        <template #title>
-                            test title
+                        <template #actions>
                             <dl-button
-                                label="testsetests"
                                 outlined
-                                dense
+                                style="margin-left: 10px"
+                                padding="5px"
+                                label="Switch to Basic Browser"
                             />
                         </template>
                         <template #subtitle>

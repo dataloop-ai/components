@@ -1,6 +1,6 @@
 <template>
     <div class="page-layout-header">
-        <div class="page-layout-header__title">
+        <div class="page-layout-header__title-container">
             <dl-typography
                 color="dl-color-lighter"
                 variant="h6"
@@ -9,15 +9,17 @@
                     {{ subTitle }}
                 </slot>
             </dl-typography>
-            <dl-typography
-                color="dl-color-darker"
-                variant="h1"
-                style="padding-bottom: 10px"
-            >
-                <slot name="title">
-                    {{ title }}
-                </slot>
-            </dl-typography>
+            <div class="page-layout-header__title">
+                <dl-typography
+                    color="dl-color-darker"
+                    variant="h1"
+                >
+                    <slot name="title">
+                        {{ title }}
+                    </slot>
+                </dl-typography>
+                <slot name="actions" />
+            </div>
         </div>
         <div
             v-if="counters.length > 0"
@@ -69,7 +71,7 @@ export default defineComponent({
     justify-content: center;
     background-color: var(--dl-color-body-background);
 
-    &__title {
+    &__title-container {
         display: flex;
         height: 100%;
         padding-left: 25px;
@@ -78,11 +80,17 @@ export default defineComponent({
         flex-grow: 1;
     }
 
+    &__title {
+        padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
     &__counters {
         display: flex;
         height: 100%;
         align-items: center;
-        justify-content: end;
+        justify-content: flex-end;
         padding-right: 10px;
     }
 }
