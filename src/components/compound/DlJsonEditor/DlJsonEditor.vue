@@ -116,6 +116,7 @@ export default defineComponent({
                 onChange: debouncedHandleJSONChange,
                 indentation: indentation.value,
                 mode: mode.value,
+                readOnly: readonly.value || mode.value === Mode.tree,
                 mainMenuBar: false,
                 navigationBar: false,
                 statusBar: false
@@ -138,7 +139,7 @@ export default defineComponent({
 
         watch(readonly, (val) => {
             jsonEditor.value?.updateProps({
-                readOnly: val
+                readOnly: val || mode.value === Mode.tree
             })
         })
 
