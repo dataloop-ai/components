@@ -151,12 +151,6 @@ ChartJS.register(
     LineElement,
     TimeScale
 )
-type ComponentType = {
-    id: string
-    isEmpty: boolean
-    emptyStateProps: DlEmptyStateProps
-} & CommonPropsType &
-    ColumnChartPropsType
 
 export default defineComponent({
     name: 'DlLineChart',

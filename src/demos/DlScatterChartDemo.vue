@@ -8,6 +8,24 @@
             gap: 0;
         "
     >
+        <div>
+            <button @click="setResolution('hour')">
+                Hour
+            </button>
+            <button @click="setResolution('day')">
+                Day
+            </button>
+            <button @click="setResolution('week')">
+                Week
+            </button>
+            <button @click="setResolution('month')">
+                Month
+            </button>
+            <button @click="setResolution('year')">
+                Year
+            </button>
+        </div>
+
         <dl-scatter-chart
             id="example-one"
             :brush-props="brushProps"
@@ -16,111 +34,240 @@
             :options="options"
             style="width: 100%"
         />
+
+        <dl-scatter-chart
+            id="example-two"
+            :brush-props="brushProps"
+            :legend-props="legendProps"
+            :data="noPointsData"
+            :options="options"
+            style="width: 50%"
+        />
+
+        <dl-scatter-chart
+            id="example-three"
+            :brush-props="brushProps"
+            :legend-props="legendProps"
+            :data="tensionLineData"
+            :options="tensionOptions"
+            style="width: 50%"
+        />
+        <dl-scatter-chart
+            id="example-three"
+            :brush-props="brushProps"
+            :display-brush="false"
+            :display-labels="false"
+            :display-legend="false"
+            :data="tensionLineData"
+            :options="tensionOptions"
+            style="width: 100%"
+            is-empty
+            :empty-state-props="{
+                responsive: true,
+                style: 'min-height: 450px;',
+                bgSize: '130px',
+                bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                title: 'Lorem ipsum',
+                subtitle:
+                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                info: 'To learn more about this analytics, read our documentation.'
+            }"
+        >
+            <template #links="">
+                <div style="display: flex; gap: 5px; padding: 0 20px">
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-sdk-documentation"
+                        flat
+                        uppercase
+                        label="SDK"
+                    />
+                    <div class="break" />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-file"
+                        flat
+                        label="Documentation"
+                    />
+                    <div class="break" />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-youtube"
+                        flat
+                        label="Video"
+                    />
+                </div>
+            </template>
+        </dl-scatter-chart>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlScatterChart } from '../components'
+import { DlLineChart, DlButton } from '../components'
 import { orderBy } from 'lodash'
+import DlScatterChart from '../components/compound/DlCharts/charts/DlScatterChart/DlScatterChart.vue'
+
+function randomIntFromInterval(min: number, max: number, amount = 10) {
+    return Array.from(Array(amount), (_, index) => ({
+        x: index,
+        y: Math.floor(Math.random() * (max - min + 1) + min)
+    }))
+}
+
+const resolutionLabels = {
+    hour: [
+        { title: '8:00', subtitle: 'Feb 27' },
+        { title: '8:00', subtitle: 'Feb 28' },
+        { title: '8:00', subtitle: 'Mar 1' },
+        { title: '8:00', subtitle: 'Mar 2' },
+        { title: '8:00', subtitle: 'Mar 3' },
+        { title: '8:00', subtitle: 'Mar 4' },
+        { title: '8:00', subtitle: 'Mar 5' },
+        { title: '8:00', subtitle: 'Mar 6' },
+        { title: '8:00', subtitle: 'Mar 7' },
+        { title: '8:00', subtitle: 'Mar 8' },
+        { title: '8:00', subtitle: 'Mar 9' },
+        { title: '8:00 long title', subtitle: 'Mar 10 long title' },
+        { title: '8:00', subtitle: 'Mar 11' },
+        { title: '8:00', subtitle: 'Mar 12' },
+        { title: '8:00', subtitle: 'Mar 13' },
+        { title: '8:00', subtitle: 'Mar 14' },
+        { title: '8:00', subtitle: 'Mar 15' },
+        { title: '8:00', subtitle: 'Mar 16' }
+    ],
+    day: [
+        'Jan 1',
+        'Jan 2',
+        'Jan 3',
+        'Jan 4',
+        'Jan 5',
+        'Jan 6',
+        'Jan 7',
+        'Jan 8',
+        'Jan 9',
+        'Jan 10',
+        'Jan 11',
+        'Jan 12',
+        'Jan 13',
+        'Jan 14',
+        'Jan 15',
+        'Jan 16',
+        'Jan 17',
+        'Jan 18'
+    ],
+    week: [
+        'Week 1',
+        'Week 2',
+        'Week 3',
+        'Week 4',
+        'Week 5',
+        'Week 6',
+        'Week 7',
+        'Week 8',
+        'Week 9',
+        'Week 10',
+        'Week 11',
+        'Week 12',
+        'Week 13',
+        'Week 14',
+        'Week 15',
+        'Week 16',
+        'Week 17',
+        'Week 18'
+    ],
+    month: [
+        { title: 'Ian', subtitle: '2022' },
+        { title: 'Feb', subtitle: '' },
+        { title: 'Mar', subtitle: '' },
+        { title: 'Apr', subtitle: '' },
+        { title: 'May', subtitle: '' },
+        { title: 'Jun', subtitle: '' },
+        { title: 'Jul', subtitle: '' },
+        { title: 'Aug', subtitle: '' },
+        { title: 'Sep', subtitle: '' },
+        { title: 'Oct', subtitle: '' },
+        { title: 'Nov', subtitle: '' },
+        { title: 'Dec', subtitle: '' },
+        { title: 'Ian', subtitle: '2023' },
+        { title: 'Feb', subtitle: '' },
+        { title: 'Mar', subtitle: '' },
+        { title: 'Apr', subtitle: '' },
+        { title: 'May', subtitle: '' },
+        { title: 'Jun', subtitle: '' }
+    ],
+    year: [
+        '1998',
+        '1999',
+        '2000',
+        '2001',
+        '2002',
+        '2003',
+        '2004',
+        '2005',
+        '2006',
+        '2007',
+        '2008',
+        '2009',
+        '2010',
+        '2011',
+        '2012',
+        '2013',
+        '2014',
+        '2015'
+    ]
+}
 
 const data = {
-    labels: [
-        {
-            title: '0.1'
-        },
-        {
-            title: '0.2'
-        },
-        {
-            title: '0.3'
-        },
-        {
-            title: '0.4'
-        },
-        {
-            title: '0.5'
-        },
-        {
-            title: '0.6'
-        },
-        {
-            title: '0.7'
-        },
-        {
-            title: '0.8'
-        },
-        {
-            title: '0.9'
-        },
-        {
-            title: '1'
-        }
-    ],
+    labels: Array.from(Array(10), (_, index) => index / 10),
     datasets: [
         {
-            label: 'Scatter Dataset',
-            data: [
-                { x: 0.1, y: 0.1 },
-                { x: 0.2, y: 0.1 },
-                { x: 0.3, y: 0.2 },
-                { x: 0.4, y: 0.3 },
-                { x: 0.5, y: 0.35 },
-                { x: 0.6, y: 0.39 },
-                { x: 0.7, y: 0.4 },
-                { x: 0.8, y: 0.8 },
-                { x: 0.9, y: 0.8 }
-            ],
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            pointRadius: 5,
-            showLine: true
+            label: 'Discarded',
+            backgroundColor: '--dl-color-chart-7',
+            borderColor: '--dl-color-chart-7',
+            pointRadius: 6,
+            showLine: true,
+            data: randomIntFromInterval(0, 4)
         },
         {
-            label: 'Dataset 2',
-            data: [
-                { x: 0.2, y: 0.1 },
-                { x: 0.2, y: 0.2 },
-                { x: 0.4, y: 0.2 },
-                { x: 0.4, y: 0.3 },
-                { x: 0.6, y: 0.65 },
-                { x: 0.6, y: 0.85 },
-                { x: 0.8, y: 0.6 },
-                { x: 0.8, y: 0.7 },
-                { x: 0.9, y: 0.8 }
-            ],
-            backgroundColor: 'rgba(45, 162, 50, 1)',
-            borderColor: 'rgba(45, 162, 50, 1)',
-            pointRadius: 5,
-            showLine: true
+            label: 'Undiscarded',
+            backgroundColor: '--dl-color-chart-1',
+            borderColor: '--dl-color-chart-1',
+            pointRadius: 2,
+            data: randomIntFromInterval(2, 6)
+        },
+        {
+            label: 'Completed',
+            backgroundColor: '--dl-color-chart-14',
+            borderColor: '--dl-color-chart-14',
+            pointRadius: 4,
+            data: randomIntFromInterval(1, 5)
+        },
+        {
+            label: 'Uncompleted',
+            backgroundColor: '--dl-color-secondary',
+            borderColor: '--dl-color-secondary',
+            pointRadius: 4,
+            data: randomIntFromInterval(0, 5)
         }
     ]
 }
 
 const brushProps = {
     min: 0,
-    max: orderBy(data.datasets, (o) => o.data.length)[0].data.length - 1
+    max: Math.max(...data.datasets.map((o) => o.data.length - 1))
 }
 
 const options = {
+    plugins: {
+        legend: {
+            display: true,
+            position: 'top'
+        }
+    },
     scales: {
-        x: {
-            type: 'linear',
-            position: 'bottom',
-            axis: 'Recall',
-            scaleLabel: {
-                display: true,
-                labelString: 'Recall'
-            }
-        },
         y: {
-            type: 'linear',
-            position: 'left',
-            axis: 'Precision',
-            scaleLabel: {
-                display: true,
-                labelString: 'Precision'
-            }
+            suggestedMax: 9
         }
     }
 }
@@ -130,9 +277,10 @@ const legendProps = {
 }
 
 export default defineComponent({
-    name: 'DlScatterChartDemo',
+    name: 'DlLineChartDemo',
     components: {
-        DlScatterChart
+        DlScatterChart,
+        DlButton
     },
     data() {
         return {
@@ -154,7 +302,17 @@ export default defineComponent({
             tensionOptions: { ...options, tension: 0.5 }
         }
     },
-    methods: {}
+    methods: {
+        setResolution(string: 'hour' | 'day' | 'week' | 'month' | 'year') {
+            this.resolution = string
+            // this.data.labels = resolutionLabels[string] as any
+
+            this.data.datasets = this.data.datasets.map((dataset, i) => ({
+                ...dataset,
+                data: randomIntFromInterval(i + 1, 6)
+            }))
+        }
+    }
 })
 </script>
 
