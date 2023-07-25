@@ -1,6 +1,6 @@
 <template>
     <DlTrTree
-        v-show="row.isExpandedParent || row.level === 1"
+        v-if="row.isExpandedParent || row.level === 1"
         :class="rowClass"
         :no-hover="noHover"
         @click="emitRowClick($event, row, pageIndex)"
