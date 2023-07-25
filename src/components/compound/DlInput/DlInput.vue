@@ -78,7 +78,7 @@
                             :type="showPass ? 'text' : type"
                             :disabled="disabled"
                             :readonly="readonly"
-                            @input="onChange"
+                            @input="debouncedInput"
                             @focus="onFocus"
                             @blur="debouncedBlur"
                             @keyup.enter="onKeyPress"
@@ -100,7 +100,12 @@
                             ]"
                         >
                             <slot name="append" />
-                            <span v-if="showClearButton && focused">
+                            <span
+                                v-if="showClearButton"
+                                v-show="focused || mouseOverClear"
+                                @mouseenter="mouseOverClear = true"
+                                @mouseleave="mouseOverClear = false"
+                            >
                                 <dl-button
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
@@ -374,10 +379,15 @@ export default defineComponent({
         margin: {
             type: String,
             default: null
+        },
+        debounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     setup(props, { emit }) {
+        const mouseOverClear = ref(false)
         const highlightedIndex = ref(-1)
         const isMenuOpen = ref(false)
         const suggestItems = computed<string[]>(() => {
@@ -408,7 +418,8 @@ export default defineComponent({
             onAutoSuggestClick,
             isMenuOpen,
             setHighlightedIndex,
-            handleSelectedItem
+            handleSelectedItem,
+            mouseOverClear
         }
     },
     data() {
@@ -559,6 +570,10 @@ export default defineComponent({
             }
 
             return classes
+        },
+        debouncedInput(): any {
+            const debounced = debounce(this.onChange.bind(this), this.debounce)
+            return debounced
         }
     },
     methods: {

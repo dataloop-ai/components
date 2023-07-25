@@ -442,9 +442,9 @@ export default defineComponent({
                 this.dateInterval = {
                     from: value.from,
                     to: new Date(
-                        value.from.getFullYear(),
-                        value.from.getMonth(),
-                        value.from.getDate(),
+                        value.to.getFullYear(),
+                        value.to.getMonth(),
+                        value.to.getDate(),
                         23,
                         59
                     )

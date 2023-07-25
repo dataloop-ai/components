@@ -46,7 +46,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-layout {
-    height: 100vh;
+    height: 100%;
     width: 100%;
     display: grid;
     grid-template-areas: var(--dl-layout-template);

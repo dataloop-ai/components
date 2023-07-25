@@ -139,6 +139,7 @@ body {
     --dl-color-white: #fff;
     --dl-color-black: #000;
     --dl-color-bg: #fff;
+    --dl-color-background: var(--dl-color-bg);
     --dl-color-transparent: transparent;
 
     // fontSizes
@@ -199,6 +200,15 @@ body {
     --dl-date-picker-shadow: 0px 3px 6px #101e7326;
     --dl-date-picker-selected-strip: rgb(52, 82, 255, 0.2);
     --dl-date-picker-selected-date: #8FA0FF;
+
+
+    // DlJsonEditor based on atom one themes
+    --dl-json-editor-key-color: #a626a4;
+    --dl-json-editor-background-color: #fafafa;
+    --dl-json-editor-panel-background: #fafafa;
+    --dl-json-editor-value-color-boolean: #0184bb;
+    --dl-json-editor-value-color-number: #c18401;
+    --dl-json-editor-value-color-string: #50a14f;
 }
 
 /* Define styles for the root window with dark - mode preference */
@@ -249,6 +259,13 @@ body {
     --dl-date-picker-shadow: 0px 3px 6px #292e3580;
     --dl-date-picker-selected-strip: rgb(124, 140, 255, 0.2);
     --dl-date-picker-selected-date: #535E96;
+
+    --dl-json-editor-key-color: #c678dd;
+    --dl-json-editor-background-color: #282c34;
+    --dl-json-editor-panel-background: #282c34;
+    --dl-json-editor-value-color-boolean: #56b6c2;
+    --dl-json-editor-value-color-number: #d19a66;
+    --dl-json-editor-value-color-string: #98c379;
 }
 
 // scrollbar

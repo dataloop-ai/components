@@ -14,27 +14,42 @@
                     @click="isOpenPageLayoutModal = false"
                 />
             </div>
-            <dl-page-layout
-                title="test title"
-                :counters="[
-                    {
-                        value: 200,
-                        text: 'All dataset items'
-                    },
-                    {
-                        value: 100,
-                        text: 'Selected items'
-                    },
-                    {
-                        value: 12,
-                        text: 'Annotated items'
-                    },
-                    {
-                        value: 17,
-                        text: 'Annotations'
-                    }
-                ]"
-            >
+            <dl-page-layout>
+                <template #header>
+                    <dl-page-layout-header
+                        title="testsetest"
+                        :counters="[
+                            {
+                                value: 200,
+                                text: 'All dataset items'
+                            },
+                            {
+                                value: 100,
+                                text: 'Selected items'
+                            },
+                            {
+                                value: 12,
+                                text: 'Annotated items'
+                            },
+                            {
+                                value: 17,
+                                text: 'Annotations'
+                            }
+                        ]"
+                    >
+                        <template #actions>
+                            <dl-button
+                                outlined
+                                style="margin-left: 10px"
+                                padding="5px"
+                                label="Switch to Basic Browser"
+                            />
+                        </template>
+                        <template #subtitle>
+                            testestse
+                        </template>
+                    </dl-page-layout-header>
+                </template>
                 <div>This is a body</div>
             </dl-page-layout>
         </div>
@@ -44,13 +59,14 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
 import { DlButton } from '../../components'
-import { DlPageLayout } from '../../layouts'
+import { DlPageLayout, DlPageLayoutHeader } from '../../layouts'
 
 export default defineComponent({
     name: 'DlLayoutDemo',
     components: {
         DlButton,
-        DlPageLayout
+        DlPageLayout,
+        DlPageLayoutHeader
     },
     setup() {
         const isOpenPageLayoutModal = ref(false)

@@ -45,6 +45,8 @@ describe('DlSliderInput', () => {
 
                     // @ts-ignore
                     await window.delay(300)
+                    // todo: this became flaky... need to investigate
+                    await wrapper.vm.$nextTick()
                 })
 
                 it('should have the right model value', function () {

@@ -27,20 +27,37 @@
             icon="icon-dl-search"
             @click.stop="onClick"
         />
+
+        <dl-input
+            v-model="inputValue"
+            style="margin-top: 10px"
+            title="Custom Label"
+        />
+        <DlIcon
+            size="50px"
+            :icon="inputValue"
+        />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
-import { DlIcon } from '../components'
+import { defineComponent, ref } from 'vue-demi'
+import { DlIcon, DlInput } from '../components'
 export default defineComponent({
     name: 'DlIconDemo',
     components: {
-        DlIcon
+        DlIcon,
+        DlInput
     },
-    methods: {
-        onClick() {
+    setup() {
+        const inputValue = ref('icon-dl-search')
+
+        const onClick = () => {
             console.log('clicked')
+        }
+        return {
+            onClick,
+            inputValue
         }
     }
 })
