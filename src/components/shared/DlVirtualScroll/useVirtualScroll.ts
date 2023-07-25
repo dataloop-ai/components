@@ -880,6 +880,9 @@ export function useVirtualScroll({
                 tag,
                 {
                     id: 'draggable',
+                    attrs: {
+                        id: 'draggable'
+                    },
                     class: 'dl-virtual-scroll__content',
                     key: 'content',
                     ref: contentRef,

@@ -277,9 +277,11 @@ export function applyDraggableColumns(
         if (!mouseDrag) return
 
         Array.from(table.rows).forEach((row) => {
-            row.cells[
-                newColIndex === -1 ? colIndex : newColIndex
-            ].classList.remove('dl-table__selected')
+            const index = newColIndex === -1 ? colIndex : newColIndex
+            if (!row.cells[index]) {
+                return
+            }
+            row.cells[index].classList.remove('dl-table__selected')
         })
 
         vm.emit('col-reorder', colIndex, newColIndex)
@@ -381,6 +383,9 @@ export function applyDraggableColumns(
     const moveBefore = (index: number) => {
         requestAnimationFrame(() => {
             Array.from(table.rows).forEach((row) => {
+                if (!row.cells[newColIndex]) {
+                    return
+                }
                 row.insertBefore(row.cells[newColIndex], row.cells[index])
             })
 
@@ -391,6 +396,9 @@ export function applyDraggableColumns(
     const moveAfter = (index: number) => {
         requestAnimationFrame(() => {
             Array.from(table.rows).forEach((row) => {
+                if (!row.cells[index]) {
+                    return
+                }
                 row.insertBefore(row.cells[index], row.cells[newColIndex])
             })
 

@@ -156,10 +156,12 @@
                     :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
+                    :resizable="resizable"
                     :dense="dense"
                     class="sticky-header"
                     :loading="loading"
                     :rows="tableRowsVS"
+                    :selection="selection"
                     virtual-scroll
                     row-key="name"
                     color="dl-color-secondary"

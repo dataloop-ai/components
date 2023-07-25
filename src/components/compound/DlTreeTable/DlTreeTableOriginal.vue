@@ -1166,8 +1166,12 @@ export default defineComponent({
             return `icon-dl-${isExpanded ? 'down' : 'right'}-chevron`
         }
 
-        const getSelectedRowClass = () => {
+        const getSelectedRowClass = (): string => {
             const cursor = hasAnyAction ? ' cursor-pointer' : ''
+
+            if (typeof getRowKey.value !== 'string') {
+                return ''
+            }
 
             return isRowSelected(props.rowKey, getRowKey.value)
                 ? 'selected'
