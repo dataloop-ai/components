@@ -1,106 +1,158 @@
 <template>
-    <div>
-        <DlTable
-            ref="dlTableRef"
-            :selected="selectedData"
-            :separator="separator"
-            :columns="tableColumns"
-            :bordered="bordered"
-            :draggable="draggable"
-            :dense="dense"
-            :filter="filter"
-            :selection="selection"
-            :loading="loading"
-            :rows="tableRows"
-            :flat-tree-data="hasFlatTreeData"
-            :resizable="resizable"
-            :row-key="rowKey"
-            :color="color"
-            :title="title"
-            :virtual-scroll="virtualScroll"
-            :rows-per-page-options="rowsPerPageOptions"
-            @row-click="emitRowClick"
-            @th-click="emitThClick"
-            @update:selected="updateSelected"
-        >
-            <template #header-selection>
-                <DlCheckbox
-                    style="padding-left: 10px"
+    <DlTable
+        ref="dlTableRef"
+        :selected="selectedData"
+        :separator="separator"
+        :columns="tableColumns"
+        :bordered="bordered"
+        :draggable="draggable"
+        :dense="dense"
+        :filter="filter"
+        :selection="selection"
+        :loading="loading"
+        :rows="tableRows"
+        :flat-tree-data="hasFlatTreeData"
+        :resizable="resizable"
+        :row-key="rowKey"
+        :color="color"
+        :title="title"
+        :virtual-scroll="virtualScroll"
+        :rows-per-page-options="rowsPerPageOptions"
+        @row-click="emitRowClick"
+        @th-click="emitThClick"
+        @update:selected="updateSelected"
+    >
+        <template #header-selection>
+            <DlCheckbox
+                style="padding-left: 10px"
+                :color="color"
+                :model-value="headerSelectedValue"
+                :indeterminate-value="true"
+                @update:model-value="onMultipleSelectionSet"
+            />
+        </template>
+        <template #body="props">
+            <template v-if="virtualScroll">
+                <DlTrTreeView
+                    :row="props.item"
+                    :is-row-selected="
+                        isRowSelected(rowKey, getRowKey(props.item))
+                            ? 'selected'
+                            : ''
+                    "
+                    :has-any-action="dlTableRef.hasAnyAction"
+                    :no-hover="dlTableRef.noHover"
+                    :page-index="props.index"
+                    :has-draggable-rows="dlTableRef.hasDraggableRows"
+                    :has-selection-mode="dlTableRef.hasSelectionMode"
+                    :bind-body-selection="
+                        dlTableRef.getBodySelectionScope({
+                            key: getRowKey(props.item),
+                            row: props.item,
+                            pageIndex: props.index
+                        })
+                    "
+                    :bind-body-cell-scope="
+                        dlTableRef.getBodyCellScope({
+                            key: getRowKey(props.item),
+                            row: props.item,
+                            pageIndex: props.index
+                        })
+                    "
                     :color="color"
-                    :model-value="headerSelectedValue"
-                    :indeterminate-value="true"
-                    @update:model-value="onMultipleSelectionSet"
-                />
+                    :computed-cols="dlTableRef.computedCols"
+                    :slot-name="dlTableRef.slotNames"
+                    :computed-rows="computedRows"
+                    :model-value="isRowSelected(rowKey, getRowKey(props.item))"
+                    @update:model-value="
+                        (adding, evt) =>
+                            updateSelectionHierarchy(adding, evt, props.item)
+                    "
+                    @rowClick="
+                        dlTableRef.onTrClick($event, props.item, props.index)
+                    "
+                    @rowDoubleClick="
+                        dlTableRef.onTrDblClick($event, props.item, props.index)
+                    "
+                    @rowContextMenu="
+                        dlTableRef.onTrContextMenu(
+                            $event,
+                            props.item,
+                            props.index
+                        )
+                    "
+                    @updateExpandedRow="
+                        updateExpandedRow(
+                            !props.item.expanded,
+                            getRowKey(props.item)
+                        )
+                    "
+                >
+                    <template
+                        v-for="templateCol in dlTableRef.computedCols"
+                        #[getSlotByName(templateCol.name)]
+                    >
+                        <slot
+                            :name="getSlotByName(templateCol.name)"
+                            v-bind="
+                                dlTableRef.getBodyCellScope({
+                                    key: getRowKey(props.item),
+                                    row: props.item,
+                                    pageIndex: props.index
+                                })
+                            "
+                        />
+                    </template>
+                </DlTrTreeView>
             </template>
-            <template #body="props">
-                <template v-if="virtualScroll">
+            <template v-else>
+                <template v-if="dlTableRef">
                     <DlTrTreeView
-                        :row="props.item"
+                        v-for="(row, pageIndex) in computedRows"
+                        :key="pageIndex"
+                        :row="row"
                         :is-row-selected="
-                            isRowSelected(rowKey, getRowKey(props.item))
+                            isRowSelected(rowKey, getRowKey(row))
                                 ? 'selected'
                                 : ''
                         "
                         :has-any-action="dlTableRef.hasAnyAction"
                         :no-hover="dlTableRef.noHover"
-                        :page-index="props.index"
+                        :page-index="pageIndex"
                         :has-draggable-rows="dlTableRef.hasDraggableRows"
                         :has-selection-mode="dlTableRef.hasSelectionMode"
                         :bind-body-selection="
                             dlTableRef.getBodySelectionScope({
-                                key: getRowKey(props.item),
-                                row: props.item,
-                                pageIndex: props.index
+                                key: getRowKey(row),
+                                row,
+                                pageIndex
                             })
                         "
                         :bind-body-cell-scope="
                             dlTableRef.getBodyCellScope({
-                                key: getRowKey(props.item),
-                                row: props.item,
-                                pageIndex: props.index
+                                key: getRowKey(row),
+                                row,
+                                pageIndex
                             })
                         "
                         :color="color"
                         :computed-cols="dlTableRef.computedCols"
                         :slot-name="dlTableRef.slotNames"
                         :computed-rows="computedRows"
-                        :model-value="
-                            isRowSelected(rowKey, getRowKey(props.item))
-                        "
+                        :model-value="isRowSelected(rowKey, getRowKey(row))"
                         @update:model-value="
                             (adding, evt) =>
-                                updateSelectionHierarchy(
-                                    adding,
-                                    evt,
-                                    props.item
-                                )
+                                updateSelectionHierarchy(adding, evt, row)
                         "
-                        @rowClick="
-                            dlTableRef.onTrClick(
-                                $event,
-                                props.item,
-                                props.index
-                            )
-                        "
+                        @rowClick="dlTableRef.onTrClick($event, row, pageIndex)"
                         @rowDoubleClick="
-                            dlTableRef.onTrDblClick(
-                                $event,
-                                props.item,
-                                props.index
-                            )
+                            dlTableRef.onTrDblClick($event, row, pageIndex)
                         "
                         @rowContextMenu="
-                            dlTableRef.onTrContextMenu(
-                                $event,
-                                props.item,
-                                props.index
-                            )
+                            dlTableRef.onTrContextMenu($event, row, pageIndex)
                         "
                         @updateExpandedRow="
-                            updateExpandedRow(
-                                !props.item.expanded,
-                                getRowKey(props.item)
-                            )
+                            updateExpandedRow(!row.expanded, getRowKey(row))
                         "
                     >
                         <template
@@ -110,10 +162,10 @@
                             <slot
                                 :name="getSlotByName(templateCol.name)"
                                 v-bind="
-                                    dlTableRef.getBodyCellScope({
-                                        key: getRowKey(props.item),
-                                        row: props.item,
-                                        pageIndex: props.index
+                                    dlTableRef.getBodySelectionScope({
+                                        key: getRowKey(row),
+                                        row,
+                                        pageIndex
                                     })
                                 "
                             />
@@ -121,85 +173,11 @@
                     </DlTrTreeView>
                 </template>
                 <template v-else>
-                    <template v-if="dlTableRef">
-                        <DlTrTreeView
-                            v-for="(row, pageIndex) in computedRows"
-                            :key="pageIndex"
-                            :row="row"
-                            :is-row-selected="
-                                isRowSelected(rowKey, getRowKey(row))
-                                    ? 'selected'
-                                    : ''
-                            "
-                            :has-any-action="dlTableRef.hasAnyAction"
-                            :no-hover="dlTableRef.noHover"
-                            :page-index="pageIndex"
-                            :has-draggable-rows="dlTableRef.hasDraggableRows"
-                            :has-selection-mode="dlTableRef.hasSelectionMode"
-                            :bind-body-selection="
-                                dlTableRef.getBodySelectionScope({
-                                    key: getRowKey(row),
-                                    row,
-                                    pageIndex
-                                })
-                            "
-                            :bind-body-cell-scope="
-                                dlTableRef.getBodyCellScope({
-                                    key: getRowKey(row),
-                                    row,
-                                    pageIndex
-                                })
-                            "
-                            :color="color"
-                            :computed-cols="dlTableRef.computedCols"
-                            :slot-name="dlTableRef.slotNames"
-                            :computed-rows="computedRows"
-                            :model-value="isRowSelected(rowKey, getRowKey(row))"
-                            @update:model-value="
-                                (adding, evt) =>
-                                    updateSelectionHierarchy(adding, evt, row)
-                            "
-                            @rowClick="
-                                dlTableRef.onTrClick($event, row, pageIndex)
-                            "
-                            @rowDoubleClick="
-                                dlTableRef.onTrDblClick($event, row, pageIndex)
-                            "
-                            @rowContextMenu="
-                                dlTableRef.onTrContextMenu(
-                                    $event,
-                                    row,
-                                    pageIndex
-                                )
-                            "
-                            @updateExpandedRow="
-                                updateExpandedRow(!row.expanded, getRowKey(row))
-                            "
-                        >
-                            <template
-                                v-for="templateCol in dlTableRef.computedCols"
-                                #[getSlotByName(templateCol.name)]
-                            >
-                                <slot
-                                    :name="getSlotByName(templateCol.name)"
-                                    v-bind="
-                                        dlTableRef.getBodySelectionScope({
-                                            key: getRowKey(row),
-                                            row,
-                                            pageIndex
-                                        })
-                                    "
-                                />
-                            </template>
-                        </DlTrTreeView>
-                    </template>
-                    <template v-else>
-                        no data
-                    </template>
+                    no data
                 </template>
             </template>
-        </DlTable>
-    </div>
+        </template>
+    </DlTable>
 </template>
 
 <script lang="ts">

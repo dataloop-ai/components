@@ -148,7 +148,7 @@
                     </template>
                 </DlTreeTable>
             </div>
-            <!--
+
             <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
                 <DlTreeTable
@@ -158,18 +158,14 @@
                     :draggable="draggable"
                     :dense="dense"
                     class="sticky-header"
-                    :filter="filter"
-                    :selection="selection"
                     :loading="loading"
                     :rows="tableRowsVS"
                     virtual-scroll
                     row-key="name"
                     color="dl-color-secondary"
                     style="height: 500px"
-                    @selectedItems="selectedItems"
                 />
             </div>
-            -->
         </div>
     </div>
 </template>
