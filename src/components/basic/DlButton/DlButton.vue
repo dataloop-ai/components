@@ -14,6 +14,7 @@
             style="pointer-events: auto"
             :class="buttonClass"
             @click="onClick"
+            @dblclick="onDblClick"
             @mousedown="onMouseDown"
         >
             <dl-tooltip
@@ -176,7 +177,7 @@ export default defineComponent({
         shaded: { type: Boolean, default: false },
         outlined: Boolean
     },
-    emits: ['click', 'mousedown'],
+    emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
@@ -373,6 +374,17 @@ export default defineComponent({
                 }
 
                 this.$emit('click', e)
+            }
+        },
+        onDblClick(e: Event) {
+            if (this.isActionable) {
+                if (!e) {
+                    if (e.defaultPrevented === true) {
+                        return
+                    }
+                }
+
+                this.$emit('dblclick', e)
             }
         },
         onMouseDown(e: Event) {
