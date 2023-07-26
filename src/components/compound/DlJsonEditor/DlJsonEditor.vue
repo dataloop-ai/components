@@ -7,6 +7,7 @@
 
 <script lang="ts">
 import {
+    computed,
     defineComponent,
     onMounted,
     PropType,
@@ -166,9 +167,21 @@ export default defineComponent({
             emit('align-text')
         })
 
+        const toObject = (): Object | null => {
+            try {
+                const parsed = JSON.parse(modelValue.value)
+                return parsed
+            } catch (e) {
+                console.warn('[DlJsonEditor] Failed to format document', e)
+                return null
+            }
+        }
+
         return {
             jsonEditorRef,
-            format
+            format,
+            toObject,
+            content: modelValue.value
         }
     }
 })
