@@ -354,7 +354,7 @@
                         name="body"
                         :computed-rows="computedRows"
                     >
-                        <template v-if="!isEmpty && !hasSlotBody">
+                        <template v-if="!isEmpty">
                             <DlTr
                                 v-for="(row, pageIndex) in computedRows"
                                 v-bind="
