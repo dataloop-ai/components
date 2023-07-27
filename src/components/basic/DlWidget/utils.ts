@@ -65,6 +65,9 @@ export function swapElemensInMatrix(
     side: DlGridSideType,
     maxElements: number
 ) {
+    if (!sourceIndex || !targetIndex) {
+        return layout
+    }
     const newLayout = cloneDeep(layout)
 
     const removedElement = newLayout[sourceIndex.row].splice(
