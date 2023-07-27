@@ -212,8 +212,6 @@ import {
     useTreeTableRowSelection,
     useTreeTableRowSelectionEmits
 } from './utils/treeTableRowSelection'
-import { RecordStringAny } from './types'
-import { flatTreeData } from './utils/flatTreeData'
 import { getFromChildren } from './utils/getFromChildren'
 import DlCheckbox from '../../essential/DlCheckbox/DlCheckbox.vue'
 
@@ -375,7 +373,7 @@ export default defineComponent({
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
                 ? props.rowKey
-                : (row: RecordStringAny) => row[props.rowKey as string]
+                : (row: Record<string, any>) => row[props.rowKey as string]
         )
 
         const {
