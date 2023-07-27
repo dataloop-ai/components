@@ -159,20 +159,18 @@ export default defineComponent({
                     `${this.zIndex}` ?? 'var(--dl-z-index-dialog)'
             }
         },
-        wrapperStyles() {
-            return {
-                ...{
-                    width: Number(this.width) ? `${this.width}px` : this.width,
-                    height: Number(this.height)
-                        ? `${this.height}px`
-                        : this.height,
-                    maxHeight:
-                        !this.fullscreen && !this.fullHeight ? '90vh' : ''
-                },
-                ...(this.draggable && {
-                    transform: `translate(${this.draggableOptions.draggableX}px, ${this.draggableOptions.draggableY}px)`
-                })
+        wrapperStyles(): Record<string, string | number> {
+            const styles: Record<string, string | number> = {
+                width: Number(this.width) ? `${this.width}px` : this.width,
+                height: Number(this.height) ? `${this.height}px` : this.height,
+                maxHeight: !this.fullscreen && !this.fullHeight ? '90vh' : ''
             }
+
+            if (this.draggable) {
+                styles.transform = `translate(${this.draggableOptions.draggableX}px, ${this.draggableOptions.draggableY}px)`
+            }
+
+            return styles
         },
         iconStyles(): Record<string, string> {
             return {
@@ -183,7 +181,7 @@ export default defineComponent({
         hasParent(): boolean {
             const parentClassList = (this?.$el?.parentNode as HTMLElement)
                 ?.classList
-            return parentClassList?.contains('content')
+            return !!parentClassList?.contains('content')
         },
         hasHeader(): boolean {
             return !!this.$slots.header
@@ -230,8 +228,9 @@ export default defineComponent({
             this.draggableOptions.draggableCursor = 'pointer'
         },
         closeModal() {
-            if ((this.$el as HTMLElement)?.blur) {
-                (this.$el as HTMLElement).blur()
+            const el = this.$el as HTMLElement
+            if (el?.blur) {
+                el.blur()
             }
             this.show = false
             this.$emit('update:model-value', false)
