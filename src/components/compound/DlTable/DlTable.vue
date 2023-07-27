@@ -93,16 +93,18 @@
                                 <slot
                                     name="header-selection"
                                     v-bind="getHeaderScope({})"
-                                />
-                                <DlCheckbox
-                                    v-if="!hasSlotHeaderSelection"
-                                    :color="color"
-                                    :model-value="headerSelectedValue"
-                                    :indeterminate-value="
-                                        selectionCheckboxIndeterminateVal
-                                    "
-                                    @update:model-value="onMultipleSelectionSet"
-                                />
+                                >
+                                    <DlCheckbox
+                                        :color="color"
+                                        :model-value="headerSelectedValue"
+                                        :indeterminate-value="
+                                            selectionCheckboxIndeterminateVal
+                                        "
+                                        @update:model-value="
+                                            onMultipleSelectionSet
+                                        "
+                                    />
+                                </slot>
                             </th>
 
                             <slot
@@ -296,14 +298,16 @@
                                 <slot
                                     name="header-selection"
                                     v-bind="getHeaderScope({})"
-                                />
-                                <DlCheckbox
-                                    v-if="!$slots['header-selection']"
-                                    :color="color"
-                                    :model-value="headerSelectedValue"
-                                    :indeterminate-value="true"
-                                    @update:model-value="onMultipleSelectionSet"
-                                />
+                                >
+                                    <DlCheckbox
+                                        :color="color"
+                                        :model-value="headerSelectedValue"
+                                        :indeterminate-value="true"
+                                        @update:model-value="
+                                            onMultipleSelectionSet
+                                        "
+                                    />
+                                </slot>
                             </th>
 
                             <slot
