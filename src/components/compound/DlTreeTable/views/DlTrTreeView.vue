@@ -85,7 +85,7 @@ export default defineComponent({
     props: {
         row: {
             type: Object as PropType<Record<string, any>>,
-            default: () => ({})
+            default: () => ({} as Record<string, any>)
         },
         isRowSelected: {
             type: [Boolean, String],
@@ -124,7 +124,7 @@ export default defineComponent({
             default: null
         },
         computedCols: {
-            type: Array,
+            type: Array as PropType<Record<string, any>[]>,
             default: () => [] as Record<string, any>[]
         },
         modelValue: {
