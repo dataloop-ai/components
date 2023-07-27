@@ -121,6 +121,9 @@ export default defineComponent({
                 targetIndex
             )
 
+            if (!sourceMatrixIndex || !targetMatrixIndex) {
+                return
+            }
             const newLayout = swapElemensInMatrix(
                 this.modelValue,
                 sourceMatrixIndex,

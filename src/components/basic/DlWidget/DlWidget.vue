@@ -126,6 +126,7 @@ export default defineComponent({
             if (draggedWidget.value && clone.value) {
                 clone.value.appendChild(draggedWidget.value.cloneNode(true))
                 clone.value.style.visibility = 'visible'
+                clone.value.style.position = 'fixed'
                 clone.value.style.width = `${draggedWidget.value.offsetWidth}px`
                 clone.value.style.height = `${draggedWidget.value.offsetHeight}px`
                 clone.value.style.backgroundColor = `var(--dl-color-bg)`
