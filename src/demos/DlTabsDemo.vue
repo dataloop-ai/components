@@ -65,7 +65,7 @@
         <dl-tabs
             v-model="selectedTab"
             :items="tabItems"
-            style="margin-top: 100px; max-width: 60%"
+            style="margin-top: 100px; width: 100%"
             font-size="14px"
             @update:model-value="handleModelValueUpdate"
         >

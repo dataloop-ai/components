@@ -150,6 +150,9 @@ export default defineComponent({
         },
         initTabs() {
             const element = this.$refs.dlTabsRef as HTMLElement
+            if (!element) {
+                return
+            }
 
             Array.from(element.children).forEach((children: Element) => {
                 this.children.push(children as HTMLElement)
@@ -173,6 +176,9 @@ export default defineComponent({
         },
         updatePosition() {
             const element = this.$refs.dlTabsRef as HTMLElement
+            if (!element) {
+                return
+            }
 
             const lastLeft = this.children.findIndex((child, index) => {
                 return child.offsetLeft >= element.scrollLeft
@@ -221,7 +227,6 @@ export default defineComponent({
     display: flex;
     flex-grow: 1;
     border-bottom: var(--dl-empty-space-border);
-    max-height: calc(100% - 1px);
 }
 
 .dl-tabs-container {
