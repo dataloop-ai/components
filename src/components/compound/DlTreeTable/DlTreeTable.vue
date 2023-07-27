@@ -185,16 +185,14 @@ import {
     computed,
     ComputedRef,
     defineComponent,
-    nextTick,
     PropType,
     isVue2,
     set,
-    ref,
-    onMounted
+    ref
 } from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
-import { cloneDeep, isNumber, times } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { DlTableProps, DlTableRow } from '../DlTable/types'
 import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { useTableActionsProps } from '../DlTable/hooks/tableActions'

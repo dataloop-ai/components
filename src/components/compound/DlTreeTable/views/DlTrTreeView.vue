@@ -65,16 +65,13 @@
 </template>
 
 <script lang="ts">
-import { ComputedRef, defineComponent, PropType, onMounted } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
 import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
 import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
 import { getRowKey } from '../utils/getRowKey'
-import { useTreeTableRowSelection } from '../utils/treeTableRowSelection'
-import { DlTableProps, DlTableRow } from '../../DlTable/types'
-import { RecordStringAny } from '../types'
-import { injectProp } from '../../../../utils/inject-object-prop'
+import { DlTableRow } from '../../DlTable/types'
 import { setTrSpacing } from '../utils/trSpacing'
 
 export default defineComponent({
@@ -161,7 +158,7 @@ export default defineComponent({
     setup(props, context) {
         const emitRowClick = (
             event: MouseEvent,
-            row: RecordStringAny,
+            row: Record<string, any>,
             pageIndex: number
         ) => {
             context.emit('rowClick', event, row, pageIndex)
@@ -207,7 +204,10 @@ export default defineComponent({
         const emitUpdateExpandedRow = () => {
             context.emit('updateExpandedRow')
         }
-        const getCellValue = (col: RecordStringAny, row: RecordStringAny) => {
+        const getCellValue = (
+            col: Record<string, any>,
+            row: Record<string, any>
+        ) => {
             if (!col) {
                 return
             }

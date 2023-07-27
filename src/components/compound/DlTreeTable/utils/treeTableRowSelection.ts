@@ -1,7 +1,6 @@
 import { computed, ComputedRef, ref } from 'vue-demi'
 import { DlTableProps, DlTableRow } from '../../DlTable/types'
 import { convertToNestedObject } from './convertToNestedObject'
-import { RecordStringAny } from '../types'
 
 type booleanStringPartial = boolean | 'partial'
 
@@ -136,7 +135,7 @@ export function useTreeTableRowSelection(
         rowKeyValue: string
     ): booleanStringPartial {
         let getOriginalRowByRowKey: any
-        let getSelectedRowByRowKey: RecordStringAny
+        let getSelectedRowByRowKey: Record<string, any>
 
         if (typeof rowKey === 'string') {
             const originalRows = selectedRows.value.filter((item) =>
