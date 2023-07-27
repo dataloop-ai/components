@@ -351,22 +351,26 @@
                         :cols="computedCols"
                     />
                     <slot
-                        name="body"
+                        name="table-body"
                         :computed-rows="computedRows"
                     >
-                        <template v-if="!isEmpty">
+                        <slot
+                            v-for="(row, pageIndex) in computedRows"
+                            v-bind="
+                                getBodyScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex,
+                                    trClass: isRowSelected(getRowKey(row))
+                                        ? 'selected'
+                                        : ''
+                                })
+                            "
+                            :has-any-action="hasAnyAction"
+                            name="row-body"
+                        >
                             <DlTr
-                                v-for="(row, pageIndex) in computedRows"
-                                v-bind="
-                                    getBodyScope({
-                                        key: getRowKey(row),
-                                        row,
-                                        pageIndex,
-                                        trClass: isRowSelected(getRowKey(row))
-                                            ? 'selected'
-                                            : ''
-                                    })
-                                "
+                                v-if="!isEmpty"
                                 :key="getRowKey(row)"
                                 :has-any-action="hasAnyAction"
                                 :class="
@@ -448,7 +452,7 @@
                                     </DlTd>
                                 </slot>
                             </DlTr>
-                        </template>
+                        </slot>
                     </slot>
 
                     <DlTr v-if="isEmpty">

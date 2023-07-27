@@ -31,7 +31,7 @@
                 @update:model-value="onMultipleSelectionSet"
             />
         </template>
-        <template #body="props">
+        <template #table-body="props">
             <template v-if="virtualScroll">
                 <DlTrTreeView
                     :row="props.item"
