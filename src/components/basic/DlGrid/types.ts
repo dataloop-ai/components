@@ -1,5 +1,5 @@
 export interface DlGridLayout {
     name: string
-    value: number[][]
+    value: string[][]
 }
 export type DlGridSideType = 'left' | 'right'

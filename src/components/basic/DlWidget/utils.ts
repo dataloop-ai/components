@@ -1,29 +1,19 @@
 import { cloneDeep } from 'lodash'
 import { DlGridSideType } from '../DlGrid/types'
 
-export function leastCommonMultiple(arr: number[]) {
-    if (!arr) return
-    const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b)
-    const lcm = (a: number, b: number): number => (a * b) / gcd(a, b)
-    return arr.reduce(lcm)
-}
+export function getGridTemplate(layout_: string[], widgetsPerRow: number) {
+    if (!layout_) return
 
-export function getGridTemplate(layout: number[][]) {
-    if (!layout) return
-    const flatLayout = layout.map((el) => el.length)
-    const template = []
-    const lcm = leastCommonMultiple(flatLayout)
-    for (let i = 0; i < flatLayout.length; i++) {
-        const columns = flatLayout[i]
-        let columnTrack = 1
-        for (let j = 0; j < columns; j++) {
-            let gridSpan = lcm / columns
-            template.push(`${columnTrack} / ${gridSpan + columnTrack}`)
-            columnTrack += gridSpan
-            gridSpan += gridSpan
-        }
+    const layout: string[][] = []
+    let index = 0
+
+    while (index < layout_.length) {
+        const row = layout_.slice(index, index + widgetsPerRow)
+        layout.push(row)
+        index += widgetsPerRow
     }
-    return template
+
+    return layout
 }
 
 export function getElementAbove(el: HTMLElement, className: string) {
@@ -59,30 +49,33 @@ export function findIndexInMatrix(matrix: number[][], nr: number) {
 }
 
 export function swapElemensInMatrix(
-    layout: number[][],
-    sourceIndex: any,
-    targetIndex: any,
+    layout: string[][],
+    sourceEl: HTMLElement,
+    targetEl: HTMLElement,
     side: DlGridSideType,
-    maxElements: number
+    maxElements: number,
+    gridElements: Element[]
 ) {
-    if (!sourceIndex || !targetIndex) {
+    if (!sourceEl || !targetEl) {
         return layout
     }
-    const newLayout = cloneDeep(layout)
+    const newLayout = cloneDeep(layout).flat(1)
 
-    const removedElement = newLayout[sourceIndex.row].splice(
-        sourceIndex.column,
-        1
-    )
-    newLayout[targetIndex.row].splice(
-        side === 'right' ? targetIndex.column + 1 : targetIndex.column,
-        0,
-        removedElement[0]
-    )
+    // Insert source element into target position and push all other elements to the 'side' value
+    const sourceIndex = newLayout.indexOf(sourceEl.id)
+    const targetIndex = newLayout.indexOf(targetEl.id)
+    newLayout.splice(sourceIndex, 1)
+    newLayout.splice(targetIndex, 0, sourceEl.id)
 
-    return isTooLarge(newLayout, maxElements)
-        ? moveElementsToNextIndex(newLayout, maxElements)
-        : newLayout
+    // Reorder element order in the grid
+    for (const element of gridElements) {
+        (element as HTMLElement).style.order = newLayout
+            .findIndex((w) => w === element.id)
+            .toString()
+        // YonDo: Maybe removce this method from here?
+    }
+
+    return getGridTemplate(newLayout, maxElements)
 }
 
 function moveElementsToNextIndex(

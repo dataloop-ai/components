@@ -35,7 +35,7 @@
             v-model="layout"
             :max-elements-per-row="widgetsPerRow"
         >
-            <dl-widget>
+            <dl-widget id="a">
                 <template #header>
                     <span>Widget 1</span>
                     <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
@@ -67,7 +67,7 @@
                 </template>
             </dl-widget>
 
-            <dl-widget>
+            <dl-widget id="b">
                 <template #header>
                     <span>Widget 2</span>
                 </template>
@@ -79,7 +79,7 @@
                 </template>
             </dl-widget>
 
-            <dl-widget>
+            <dl-widget id="c">
                 <template #header>
                     <span>Widget 3</span>
                 </template>
@@ -91,7 +91,7 @@
                 </template>
             </dl-widget>
 
-            <dl-widget>
+            <dl-widget id="d">
                 <template #header>
                     <span>Widget 4</span>
                     <span style="font-size: 12px; color: gray">Subtitle</span>
@@ -111,7 +111,7 @@
                 </template>
             </dl-widget>
 
-            <dl-widget>
+            <dl-widget id="e">
                 <template #header>
                     <span>Widget 5</span>
                 </template>
@@ -124,6 +124,7 @@
             </dl-widget>
 
             <dl-widget
+                id="f"
                 is-empty
                 :empty-state-props="{
                     responsive: true,
@@ -137,7 +138,7 @@
                 }"
             >
                 <template #header>
-                    <span>Widget 5</span>
+                    <span>Widget 6</span>
                 </template>
                 <template #links="">
                     <div style="display: flex; gap: 5px; padding: 0 20px">
@@ -242,8 +243,8 @@ export default defineComponent({
     },
     setup() {
         const layout = ref([
-            [1, 5, 2],
-            [3, 4, 6]
+            ['a', 'b', 'c'],
+            ['d', 'e', 'f']
         ])
 
         const layouts = ref<DlGridLayout[]>([
