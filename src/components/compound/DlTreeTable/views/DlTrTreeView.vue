@@ -1,6 +1,6 @@
 <template>
     <DlTrTree
-        v-if="row.isExpandedParent || row.level === 1"
+        v-show="row.isExpandedParent || row.level === 1"
         :class="rowClass"
         :no-hover="noHover"
         @click="emitRowClick($event, row, pageIndex)"
@@ -38,12 +38,6 @@
                 />
             </slot>
         </td>
-        <!--
-        Here we have to include dynamic slots
-        <td v-for="(col, colIndex) in computedCols">
-            <slot ... />
-        </td>
-        -->
         <DlTdTree
             v-for="(col, colIndex) in computedCols"
             :key="colIndex"

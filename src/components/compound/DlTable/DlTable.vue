@@ -503,44 +503,32 @@ import {
     defineComponent,
     computed,
     ref,
-    PropType,
     watch,
     getCurrentInstance,
     ComputedRef,
     onMounted,
     toRef
 } from 'vue-demi'
+import { props } from './utils/props'
+import { emits } from './utils/emits'
 import {
     useTablePagination,
-    useTablePaginationState,
-    useTablePaginationProps
+    useTablePaginationState
 } from './hooks/tablePagination'
 import DlTr from './components/DlTr.vue'
 import DlTh from './components/DlTh.vue'
 import DlTd from './components/DlTd.vue'
 import {
     commonVirtPropsList,
-    commonVirtScrollProps,
     ScrollDetails
 } from '../../shared/DlVirtualScroll/useVirtualScroll'
 import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
-import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
-import { useTableSort, useTableSortProps } from './hooks/tableSort'
-import {
-    useTableRowSelection,
-    useTableRowSelectionProps,
-    useTableRowSelectionEmits
-} from './hooks/tableRowSelection'
-import {
-    useTableColumnSelection,
-    useTableColumnSelectionProps
-} from './hooks/tableColumnSelection'
-import {
-    useTableRowExpand,
-    useTableRowExpandProps,
-    useTableRowExpandEmits
-} from './hooks/tableRowExpand'
-import { useTableActionsProps, useTableActions } from './hooks/tableActions'
+import { useTableFilter } from './hooks/tableFilter'
+import { useTableSort } from './hooks/tableSort'
+import { useTableRowSelection } from './hooks/tableRowSelection'
+import { useTableColumnSelection } from './hooks/tableColumnSelection'
+import { useTableRowExpand } from './hooks/tableRowExpand'
+import { useTableActions } from './hooks/tableActions'
 import {
     applyDraggableRows,
     applyDraggableColumns
@@ -551,7 +539,6 @@ import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
 import { ResizableManager } from './utils'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
-import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
 
@@ -573,118 +560,8 @@ export default defineComponent({
         DlCheckbox,
         DlEmptyState
     },
-    props: {
-        columns: { type: Array, default: () => [] as Record<string, any>[] },
-        rows: {
-            type: Array,
-            default: () => [] as Record<string, any>[]
-        },
-        rowKey: {
-            type: [String, Function],
-            default: 'id'
-        },
-        bordered: Boolean,
-        separator: {
-            type: String,
-            default: 'horizontal',
-            validator: (v: string) =>
-                ['horizontal', 'vertical', 'cell', 'none'].includes(v)
-        },
-        draggable: {
-            type: String,
-            default: 'none',
-            validator: (v: string) =>
-                ['rows', 'columns', 'none', 'both'].includes(v)
-        },
-        title: { type: String, default: null },
-        color: {
-            type: String,
-            default: 'dl-color-darker'
-        },
-        loading: Boolean,
-        dense: Boolean,
-        resizable: Boolean,
-        hideNoData: Boolean,
-        hideHeader: Boolean,
-        hideBottom: Boolean,
-        virtualScroll: Boolean,
-        hidePagination: Boolean,
-        hideSelectedBanner: Boolean,
-        selectedRowsLabel: {
-            type: Function,
-            default: (val: number) => `${val} records selected`
-        },
-        loadingLabel: {
-            type: String,
-            default: 'Loading...'
-        },
-        noResultsLabel: {
-            type: String,
-            default: 'There are no results to display'
-        },
-        noDataLabel: {
-            type: String,
-            default: 'No data available'
-        },
-        virtualScrollTarget: {
-            type: Object as PropType<HTMLElement>,
-            default: null
-        },
-        titleClass: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableStyle: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableClass: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableHeaderStyle: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableHeaderClass: {
-            type: [String, Array, Object],
-            default: null
-        },
-        noHover: Boolean,
-        isEmpty: Boolean,
-        emptyStateProps: {
-            type: Object as PropType<DlEmptyStateProps>,
-            default: null
-        },
-        scrollDebounce: {
-            type: Number,
-            default: 100
-        },
-        flatTreeData: {
-            type: Boolean,
-            default: false
-        },
-        ...useTableActionsProps,
-        ...commonVirtScrollProps,
-        ...useTableRowExpandProps,
-        ...useTablePaginationProps,
-        ...useTableFilterProps,
-        ...useTableSortProps,
-        ...useTableColumnSelectionProps,
-        ...useTableRowSelectionProps
-    },
-    emits: [
-        'request',
-        'virtual-scroll',
-        'row-reorder',
-        'col-reorder',
-        'row-click',
-        'th-click',
-        'row-dblclick',
-        'row-contextmenu',
-        ...useTableRowExpandEmits,
-        ...useTableRowSelectionEmits
-    ],
+    props,
+    emits,
     setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
 

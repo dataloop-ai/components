@@ -635,7 +635,7 @@ export default defineComponent({
         }
 
         const onRowClick = (item: any) => {
-            console.log('onRowClick: ', item)
+            // console.log('onRowClick TreeTableDemo: ', item)
         }
 
         return {
