@@ -50,7 +50,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlIcon } from '../../essential'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import {
     setTextColor,
@@ -62,7 +63,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -86,7 +87,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         overflow: { type: Boolean, default: false },
         fit: { type: Boolean, default: false }

@@ -16,21 +16,46 @@
             :style="cssItemVars"
             @click="onClick"
         >
-            <slot name="prefix" />
+            <slot name="prefix">
+                <dl-item-section
+                    v-if="startIcon"
+                    side
+                    style="display: flex"
+                >
+                    <dl-icon
+                        :icon="startIconData.icon"
+                        :color="startIconData.color"
+                        :size="startIconData.size"
+                    />
+                </dl-item-section>
+            </slot>
             <slot />
-            <slot name="suffix" />
+            <slot name="suffix">
+                <dl-item-section
+                    v-if="endIcon"
+                    side
+                    style="display: flex"
+                >
+                    <dl-icon
+                        :icon="endIconData.icon"
+                        :color="endIconData.color"
+                        :size="endIconData.size"
+                    />
+                </dl-item-section>
+            </slot>
         </div>
         <dl-separator v-if="separator" />
     </component>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { PropType, defineComponent } from 'vue-demi'
 import { DlItemSection } from '../../shared'
 import { DlIcon, DlSeparator } from '../../essential'
 import { itemHoverColor, itemActiveColor, itemCursor, itemColor } from './utils'
 import { wave, waveTrigger } from '../../../utils'
 import { v4 } from 'uuid'
+import { isObject } from 'lodash'
 
 export default defineComponent({
     name: 'DlListItem',
@@ -56,6 +81,48 @@ export default defineComponent({
         padding: { type: String, default: null, required: false },
         highlighted: {
             type: Boolean
+        },
+        startIcon: {
+            type: [Object, String] as PropType<
+                | {
+                      icon: string
+                      color?: string
+                      size?: string
+                  }
+                | string
+            >,
+            default: null,
+            validator: (value: any) => {
+                if (value) {
+                    if (isObject(value) as any) {
+                        return value.icon && typeof value.icon === 'string'
+                    } else {
+                        return typeof value === 'string'
+                    }
+                }
+                return true
+            }
+        },
+        endIcon: {
+            type: [Object, String] as PropType<
+                | {
+                      icon: string
+                      color?: string
+                      size?: string
+                  }
+                | string
+            >,
+            default: null,
+            validator: (value: any) => {
+                if (value) {
+                    if (isObject(value) as any) {
+                        return value.icon && typeof value.icon === 'string'
+                    } else {
+                        return typeof value === 'string'
+                    }
+                }
+                return true
+            }
         }
     },
     emits: ['click'],
@@ -83,6 +150,20 @@ export default defineComponent({
                     ? 'var(--dl-color-fill-hover)'
                     : 'transparent'
             }
+        },
+        startIconData(): { icon: string; color: string; size: string } {
+            return Object.assign(
+                { color: 'dl-color-darker', size: '16px' },
+                isObject(this.startIcon)
+                    ? this.startIcon
+                    : { icon: this.startIcon }
+            )
+        },
+        endIconData(): { icon: string; color: string; size: string } {
+            return Object.assign(
+                { color: 'dl-color-darker', size: '16px' },
+                isObject(this.endIcon) ? this.endIcon : { icon: this.endIcon }
+            )
         }
     },
     methods: {

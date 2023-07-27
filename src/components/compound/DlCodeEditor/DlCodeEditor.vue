@@ -10,20 +10,20 @@
             :languages="[[language, languageTitle]]"
             :read-only="readonly"
             :theme="theme"
-            :font-size="options.fontSize ? options.fontSize : dlFontSize"
+            :font-size="styleFontSize"
             :tab-spaces="options.tabSpaces ? options.tabSpaces : 4"
             :wrap="!!options.textWrapping"
-            :width="width"
-            :height="height"
+            :width="styleWidth"
+            :height="styleHeight"
             :header="!options.hideHeader"
             :display-language="!options.hideLanguage"
-            :copy-button="!options.hideCopyCode"
+            :copy-button="!options.hideCopyButton"
         />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, PropType, toRef } from 'vue-demi'
+import { defineComponent, computed, PropType, toRefs } from 'vue-demi'
 import { DlCodeEditorTheme, DlCodeEditorOptions } from './types'
 import CodeEditor from './components/CodeEditor.vue'
 
@@ -73,11 +73,12 @@ export default defineComponent({
     },
     emits: ['update:model-value', 'change'],
     setup(props, { emit }) {
-        const modelRef = toRef(props, 'modelValue')
+        const { modelValue, language, options, height, width } = toRefs(props)
+        const dlFontSize = `12px`
 
         const code = computed({
             get() {
-                return modelRef.value
+                return modelValue.value as string
             },
             set(value) {
                 emit('update:model-value', value)
@@ -86,7 +87,7 @@ export default defineComponent({
         })
 
         const languageTitle = computed(() => {
-            switch (props.language.toLowerCase()) {
+            switch (language.value.toLowerCase()) {
                 case 'python':
                     return 'Python'
                 case 'javascript':
@@ -99,24 +100,55 @@ export default defineComponent({
                     return 'JavaScript'
                 default:
                     return (
-                        props.language.charAt(0).toUpperCase() +
-                        props.language.slice(1)
+                        language.value.charAt(0).toUpperCase() +
+                        language.value.slice(1)
                     )
             }
         })
 
-        const dlFontSize = `12px`
-
         const cssVars = computed(() => {
             return {
-                '--dl-code-editor-header-border-bottom': !props.options
+                '--dl-code-editor-header-border-bottom': !options.value
                     ?.lineNumbers
                     ? `1px solid var(--dl-color-separator)`
-                    : `none`
-            }
+                    : `none`,
+                '--dl-colde-editor-width': styleWidth.value,
+                '--dl-colde-editor-height': styleHeight.value
+            } as Record<string, any>
         })
 
-        return { code, languageTitle, dlFontSize, cssVars }
+        const styleWidth = computed(() => {
+            if (typeof width.value === 'number') {
+                return `${width.value}px`
+            }
+            return width.value
+        })
+        const styleHeight = computed(() => {
+            if (typeof height.value === 'number') {
+                return `${height.value}px`
+            }
+            return height.value
+        })
+        const styleFontSize = computed(() => {
+            if (!options.value.fontSize) {
+                return dlFontSize
+            }
+            const frontSize = options.value.fontSize
+            if (typeof frontSize === 'number') {
+                return `${frontSize}px`
+            }
+            return frontSize
+        })
+
+        return {
+            code,
+            languageTitle,
+            dlFontSize,
+            cssVars,
+            styleHeight,
+            styleWidth,
+            styleFontSize
+        }
     }
 })
 </script>
@@ -124,6 +156,8 @@ export default defineComponent({
 .dl-code-editor-wrapper {
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
+    width: var(--dl-colde-editor-width, fit-content);
+    height: var(--dl-colde-editor-height, fit-content);
 }
 </style>
 
@@ -135,6 +169,9 @@ export default defineComponent({
         }
         textarea {
             color: var(--dl-code-editor-text-area-color);
+        }
+        .line-nums {
+            flex-grow: 1;
         }
     }
 }

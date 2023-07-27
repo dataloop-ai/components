@@ -12,9 +12,9 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor } from '../../../utils'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 
-type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p'
+type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div'
 
 const sizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'small']
 
@@ -35,7 +35,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         bold: Boolean,
         color: {
@@ -77,7 +77,7 @@ export default defineComponent({
                 }
             } else {
                 if (sizes.includes(this.variant)) {
-                    classes.push(`dl-typography--${this.size}`)
+                    classes.push(`dl-typography--${this.variant}`)
                 } else {
                     classes.push(`dl-typography--body`)
                 }
@@ -121,6 +121,7 @@ export default defineComponent({
         font-size: var(--dl-font-size-small);
     }
 
+    // important needed above for sizing of h tags.. quasar conflict
     // to deal with quasar conflicts.
     line-height: initial !important;
 }

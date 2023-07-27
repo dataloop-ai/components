@@ -1,5 +1,6 @@
 <template>
     <div
+        :id="`DlSmartSearchInput${uuid}`"
         class="dl-smart-search-input"
         :style="cssVars"
     >
@@ -19,7 +20,7 @@
                 </div>
                 <div class="dl-smart-search-input__textarea-wrapper">
                     <div
-                        id="editor"
+                        :id="`dl-smart-search-input-text-area-${uuid}`"
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
@@ -27,7 +28,7 @@
                         :contenteditable="!disabled"
                         @keypress="keyPress"
                         @input="handleValueChange"
-                        @click="focus"
+                        @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
@@ -104,6 +105,7 @@
         </div>
         <dl-suggestions-dropdown
             v-model="suggestionModal"
+            :parent-id="`${uuid}`"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
@@ -118,7 +120,7 @@
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
-                    :single-selection="false"
+                    :single-selection="true"
                     @change="handleDateSelectionUpdate"
                 />
             </div>
@@ -134,7 +136,7 @@ import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
 import { SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce } from 'lodash'
-import { DlTooltip } from '../../../../essential'
+import { DlTooltip } from '../../../../shared'
 import DlSuggestionsDropdown from './DlSuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
 import {
@@ -144,6 +146,7 @@ import {
     updateEditor,
     isEligibleToChange
 } from '../utils'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
@@ -156,7 +159,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         status: {
@@ -221,7 +224,7 @@ export default defineComponent({
         }
     },
     emits: [
-        'update:modelValue',
+        'update:model-value',
         'update:expanded',
         'save',
         'search',
@@ -265,11 +268,25 @@ export default defineComponent({
                         .join(' ')
                         .replace('  ', ' ')
                 } else {
-                    query.splice(-1)
+                    if (query[query.length - 1].endsWith('.')) {
+                        query[query.length - 1] = query[
+                            query.length - 1
+                        ].replace('.', '')
+                    } else {
+                        query.splice(-1)
+                    }
                     stringValue = [...query, value, ''].join(' ')
                 }
             } else {
-                stringValue = [value, ''].join(' ')
+                if (query[query.length - 1].endsWith('.')) {
+                    query[query.length - 1] = query[query.length - 1].replace(
+                        '.',
+                        ''
+                    )
+                    stringValue = [...query, value, ''].join(' ')
+                } else {
+                    stringValue = [value, ''].join(' ')
+                }
             }
 
             // to handle date suggestion modal to open automatically.
@@ -280,6 +297,7 @@ export default defineComponent({
             const specialSuggestions = props.suggestions.filter((suggestion) =>
                 suggestion.startsWith('.')
             )
+
             for (const suggestion of specialSuggestions) {
                 if (stringValue.includes(suggestion)) {
                     stringValue = stringValue.replace(
@@ -289,7 +307,7 @@ export default defineComponent({
                 }
             }
 
-            emit('update:modelValue', stringValue)
+            emit('update:model-value', stringValue)
         }
 
         const debouncedSetModal = debounce(
@@ -298,6 +316,7 @@ export default defineComponent({
         )
 
         return {
+            uuid: v4(),
             input,
             label,
             hasEllipsis,
@@ -449,16 +468,15 @@ export default defineComponent({
         },
         suggestions(val) {
             if (this.isDatePickerVisible) return
+            nextTick(() => {
+                if (!val.length) {
+                    this.suggestionModal = false
+                }
 
-            if (!val.length) {
-                this.suggestionModal = false
-            }
-
-            if (!this.suggestionModal && val.length > 0 && this.focused) {
-                nextTick(() => {
+                if (!this.suggestionModal && val.length > 0 && this.focused) {
                     this.suggestionModal = true
-                })
-            }
+                }
+            })
         },
         expanded(value) {
             this.$nextTick(() => {
@@ -552,7 +570,7 @@ export default defineComponent({
         },
         clearValue() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
-            this.$emit('update:modelValue', '')
+            this.$emit('update:model-value', '')
             if (!this.focused) {
                 this.focus()
             }
@@ -573,7 +591,7 @@ export default defineComponent({
                 .toString()
                 .replaceAll(' ', ' ')
 
-            this.$emit('update:modelValue', text)
+            this.$emit('update:model-value', text)
         },
         handleScreenButtonClick() {
             this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
@@ -586,7 +604,7 @@ export default defineComponent({
             this.datePickerSelection = val
 
             this.$emit(
-                'update:modelValue',
+                'update:model-value',
                 replaceDateInterval(this.modelValue, val)
             )
         }

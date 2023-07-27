@@ -215,7 +215,14 @@ export default {
 const Template = (args) => ({
     components: { DlIcon, DlButton, DlListItem, DlItemSection, DlList, DlMenu },
     setup() {
-        return { args }
+        return {
+            args,
+            menuStartIcon: {
+                icon: 'icon-dl-search',
+                color: 'dl-color-positive'
+            },
+            menuEndIcon: { icon: 'icon-dl-id', color: 'dl-color-secondary' }
+        }
     },
     methods: {
         toggle: action('toggle'),
@@ -253,10 +260,8 @@ const Template = (args) => ({
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors

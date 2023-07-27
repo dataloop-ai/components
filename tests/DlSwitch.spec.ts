@@ -49,6 +49,7 @@ describe('DlSwitch', () => {
                 }
             })
         })
+
         it('should mount the component', async () => {
             expect(wrapper.exists()).toBe(true)
         })
@@ -138,6 +139,24 @@ describe('DlSwitch', () => {
                 'one',
                 'three'
             ])
+        })
+    })
+
+    describe('When emit @update:model-value event without the current value element', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSwitch, {
+                props: {
+                    rightLabel: 'Switch Label',
+                    fluid: true,
+                    modelValue: [5, 3, 4],
+                    value: 3
+                }
+            })
+        })
+        it('should render the given fluid prop', () => {
+            expect(wrapper.vm.$el.style.justifyContent).toBe('space-between')
         })
     })
 })

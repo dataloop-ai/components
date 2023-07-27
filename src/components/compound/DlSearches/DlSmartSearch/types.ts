@@ -34,3 +34,17 @@ export type SyntaxColorSchema = {
         color: string
     }
 }
+
+import {
+    Alias as DlSmartSearchAlias,
+    Schema as DlSmartSearchSchema
+} from '../../../../hooks/use-suggestions'
+
+type DlSmartSearchFilters = Filters & { [key: string]: any }
+
+export type {
+    DlSmartSearchAlias,
+    DlSmartSearchSchema,
+    ColorSchema as DlSmartSearchColorSchema,
+    DlSmartSearchFilters
+}

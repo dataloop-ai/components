@@ -8,15 +8,7 @@
             'read-only': readOnly,
             wrap: wrap
         }"
-        :style="{
-            width: width,
-            height: height,
-            zIndex: zIndex,
-            maxWidth: maxWidth,
-            minWidth: minWidth,
-            maxHeight: maxHeight,
-            minHeight: minHeight
-        }"
+        :style="editorStyle"
     >
         <div
             class="hljs"
@@ -61,7 +53,7 @@
             >
                 <div
                     v-if="showLineNums"
-                    ref="lineNums"
+                    ref="lineNumsEl"
                     class="line-nums hljs"
                     :style="{
                         fontSize: fontSize,
@@ -83,18 +75,7 @@
                     ref="textarea"
                     title="textarea"
                     :readOnly="readOnly"
-                    :style="{
-                        fontSize: fontSize,
-                        padding: !header
-                            ? padding
-                            : lineNums
-                                ? '10px ' + padding + ' ' + padding
-                                : '0 ' + padding + ' ' + padding,
-                        marginLeft: showLineNums ? lineNumsWidth + 'px' : '0',
-                        width: showLineNums
-                            ? 'calc(100% - ' + lineNumsWidth + 'px)'
-                            : '100%'
-                    }"
+                    :style="textAreaStyle"
                     :autofocus="autofocus"
                     spellcheck="false"
                     :value="modelValue == undefined ? content : modelValue"
@@ -130,12 +111,24 @@
 
 <script lang="ts">
 import hljs from 'highlight.js'
-import { computed, defineComponent, nextTick, PropType, ref } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    nextTick,
+    onBeforeUnmount,
+    onMounted,
+    onUpdated,
+    PropType,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlSelect } from '../../DlSelect'
 import { DlToast } from '../../DlToast'
 import '../styles/themes.css'
 import '../styles/themes-base16.css'
+import { debounce } from 'lodash'
 
 export default defineComponent({
     name: 'CodeEditor',
@@ -143,32 +136,15 @@ export default defineComponent({
         DlSelect,
         DlButton
     },
-    directives: {
-        highlight: {
-            mounted(el, binding) {
-                nextTick(() => {
-                    el.textContent = binding.value
-                    hljs.highlightElement(el)
-                })
-            },
-            updated(el, binding) {
-                if (el.scrolling) {
-                    el.scrolling = false
-                } else {
-                    el.textContent = binding.value
-                    hljs.highlightElement(el)
-                }
-            }
-        }
-    },
     model: {
         prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {
         modelValue: {
-            required: true,
-            type: String
+            required: false,
+            type: String,
+            default: null
         },
         value: {
             type: String,
@@ -228,7 +204,7 @@ export default defineComponent({
         },
         borderRadius: {
             type: String,
-            default: '12px'
+            default: '0px'
         },
         languages: {
             type: Array as PropType<string[][]>,
@@ -268,6 +244,22 @@ export default defineComponent({
         }
     },
     setup(props: any, { emit }) {
+        const {
+            lineNums,
+            wrap,
+            tabSpaces,
+            modelValue,
+            height,
+            fontSize,
+            header,
+            padding,
+            width,
+            zIndex,
+            minHeight,
+            maxHeight,
+            minWidth,
+            maxWidth
+        } = toRefs(props)
         const scrollBarWidth = ref(0)
         const scrollBarHeight = ref(0)
         const top = ref(0)
@@ -285,7 +277,9 @@ export default defineComponent({
         const lineNumsWidth = ref(0)
         const scrolling = ref(false)
         const textareaHeight = ref(0)
-        const showLineNums = ref(props.wrap ? false : props.lineNums)
+        const showLineNums = computed(() => {
+            return wrap.value ? false : !!lineNums.value
+        })
         const languagesOptions = computed(() => {
             return props.languages.map((lang: string[]) => {
                 return {
@@ -295,6 +289,232 @@ export default defineComponent({
             })
         })
         const selectedLanguage = ref(languagesOptions.value[0])
+        const code = ref<HTMLElement>(null as any)
+        const textarea = ref<HTMLTextAreaElement>(null as any)
+        const lineNumsEl = ref<HTMLDivElement>(null as any)
+
+        const tabWidth = computed(() => {
+            let result = ''
+            for (let i = 0; i < tabSpaces.value; i++) {
+                result += ' '
+            }
+            return result
+        })
+
+        const contentValue = computed(() => {
+            return !modelValue.value && modelValue.value !== ''
+                ? content.value + '\n'
+                : props.modelValue + '\n'
+        })
+
+        const scroll = computed(() => {
+            return height.value == 'auto' ? false : true
+        })
+
+        const editorStyle = computed<Record<string, any>>(() => {
+            return {
+                width: width.value,
+                height: height.value,
+                zIndex: zIndex.value,
+                maxWidth: maxWidth.value,
+                minWidth: minWidth.value,
+                maxHeight: maxHeight.value,
+                minHeight: minHeight.value
+            }
+        })
+
+        watch(contentValue, () => {
+            nextTick(() => {
+                code.value!.textContent = contentValue.value
+                hljs.highlightElement(code.value!)
+            })
+        })
+
+        const textareaResizer = ref<ResizeObserver>(null as any)
+        const lineNumsResizer = ref<ResizeObserver>(null as any)
+
+        const setupTextAreaResizer = () => {
+            textareaResizer.value = new ResizeObserver((entries) => {
+                scrollBarWidth.value =
+                    (entries[0].target as HTMLElement).offsetWidth -
+                    entries[0].target.clientWidth
+                scrollBarHeight.value =
+                    (entries[0].target as HTMLElement).offsetHeight -
+                    entries[0].target.clientHeight
+                textareaHeight.value = (
+                    entries[0].target as HTMLElement
+                ).offsetHeight
+            })
+
+            textareaResizer.value.observe(textarea.value)
+        }
+
+        const setupLineNumsResizer = () => {
+            lineNumsResizer.value = new ResizeObserver((entries) => {
+                lineNumsWidth.value = (
+                    entries[0].target as HTMLElement
+                ).offsetWidth
+            })
+
+            lineNumsResizer.value.observe(lineNumsEl.value)
+        }
+
+        const disposeTextAreaResizer = () => {
+            if (!textareaResizer.value) return
+            textareaResizer.value.disconnect()
+            textareaResizer.value = null as any
+        }
+        const disposeLineNumsResizer = () => {
+            if (!lineNumsResizer.value) return
+            lineNumsResizer.value.disconnect()
+            lineNumsResizer.value = null as any
+        }
+
+        const getLinesCount = () => {
+            if (!lineNumsEl.value) return
+
+            // lineNum
+            const str = textarea.value.value
+            const matches = str.match(/(\r\n|\r|\n)/gim)
+            const localLineNum = matches.length
+
+            // // disabling the current behavior of highlighting entire dock
+            // const singleLineHeight = (
+            //     lineNumsEl.value.firstChild as HTMLElement
+            // ).offsetHeight
+            // const heightNum =
+            //     Math.round(textareaHeight.value / singleLineHeight) - 1
+
+            // displayed lineNum
+            lineNum.value = localLineNum
+        }
+
+        const debouncedGetLinesCount = debounce(getLinesCount, 100)
+
+        onMounted(() => {
+            emit('lang', props.languages[0][0])
+            emit('content', props.content)
+            emit('textarea', textarea.value)
+            setupTextAreaResizer()
+            if (showLineNums.value) {
+                setupLineNumsResizer()
+            }
+            code.value.textContent = contentValue.value
+            if (lineNums.value) {
+                if (scrolling.value) {
+                    scrolling.value = false
+                } else {
+                    debouncedGetLinesCount()
+                }
+            }
+            hljs.highlightElement(code.value)
+        })
+
+        onBeforeUnmount(() => {
+            disposeTextAreaResizer()
+            disposeLineNumsResizer()
+        })
+
+        onUpdated(() => {
+            if (insertTab.value) {
+                textarea.value.setSelectionRange(
+                    cursorPosition.value,
+                    cursorPosition.value
+                )
+                insertTab.value = false
+            }
+        })
+
+        watch(showLineNums, (newVal, oldVal) => {
+            nextTick(() => {
+                if (newVal) {
+                    setupLineNumsResizer()
+                } else {
+                    disposeLineNumsResizer()
+                }
+
+                if (lineNums.value) {
+                    if (scrolling.value) {
+                        scrolling.value = false
+                    } else {
+                        debouncedGetLinesCount()
+                    }
+                }
+            })
+        })
+
+        watch(modelValue, () => {
+            if (lineNums.value) {
+                if (scrolling.value) {
+                    scrolling.value = false
+                } else {
+                    debouncedGetLinesCount()
+                }
+            }
+        })
+
+        const copy = async () => {
+            try {
+                await navigator.clipboard.writeText(textarea.value.value)
+                DlToast.success('Copied to clipboard')
+            } catch (e) {
+                DlToast.error('Failed to copy to clipboard')
+            }
+        }
+
+        const calcScrollDistance = (e: any) => {
+            const codeEl = code.value as any
+            codeEl.scrolling = true
+            scrolling.value = true
+            top.value = -e.target.scrollTop
+            left.value = -e.target.scrollLeft
+        }
+
+        const tab = () => {
+            if (document.execCommand('insertText')) {
+                document.execCommand('insertText', false, tabWidth.value)
+            } else {
+                const localCursorPosition = textarea.value.selectionStart
+                content.value =
+                    content.value.substring(0, localCursorPosition) +
+                    tabWidth.value +
+                    content.value.substring(localCursorPosition)
+                cursorPosition.value =
+                    localCursorPosition + tabWidth.value.length
+                insertTab.value = true
+            }
+        }
+
+        const changeLang = (lang: string[][]) => {
+            languageTitle.value = lang[1] ? lang[1] : lang[0]
+            languageClass.value = 'language-' + lang[0]
+            emit('lang', lang[0])
+        }
+
+        const updateValue = (e: any) => {
+            if (!props.modelValue && props.modelValue !== '') {
+                content.value = e.target.value
+            } else {
+                emit('update:model-value', e.target.value)
+            }
+        }
+
+        const textAreaStyle = computed<Record<string, any>>(() => {
+            const paddingVal = lineNums.value
+                ? '10px ' + padding.value + ' ' + padding.value
+                : '0 ' + padding.value + ' ' + padding.value
+
+            return {
+                fontSize: fontSize.value,
+                padding: !header.value ? padding.value : paddingVal,
+                marginLeft: showLineNums.value
+                    ? lineNumsWidth.value + 'px'
+                    : '0',
+                width: showLineNums.value
+                    ? 'calc(100% - ' + lineNumsWidth.value + 'px)'
+                    : '100%'
+            }
+        })
 
         return {
             scrollBarWidth,
@@ -312,141 +532,20 @@ export default defineComponent({
             textareaHeight,
             showLineNums,
             selectedLanguage,
-            languagesOptions
-        }
-    },
-    computed: {
-        tabWidth() {
-            let result = ''
-            for (let i = 0; i < this.tabSpaces; i++) {
-                result += ' '
-            }
-            return result
-        },
-        contentValue() {
-            return this.modelValue == undefined
-                ? this.content + '\n'
-                : this.modelValue + '\n'
-        },
-        scroll() {
-            return this.height == 'auto' ? false : true
-        }
-    },
-    mounted() {
-        this.$emit('lang', this.languages[0][0])
-        this.$emit('content', this.content)
-        this.$emit('textarea', this.$refs.textarea)
-        this.resizer()
-        ;(this.$refs.code as HTMLElement).textContent = this.contentValue
-        hljs.highlightElement(this.$refs.code as HTMLElement)
-    },
-    updated() {
-        if (this.insertTab) {
-            (this.$refs.textarea as HTMLTextAreaElement).setSelectionRange(
-                this.cursorPosition,
-                this.cursorPosition
-            )
-            this.insertTab = false
-        }
-        if (this.lineNums) {
-            if (this.scrolling) {
-                this.scrolling = false
-            } else {
-                this.getLineNum()
-            }
-        }
-    },
-    methods: {
-        updateValue(e: any) {
-            if (this.modelValue == undefined) {
-                this.content = e.target.value
-            } else {
-                this.$emit('update:modelValue', e.target.value)
-            }
-        },
-        changeLang(lang: string[][]) {
-            this.languageTitle = lang[1] ? lang[1] : lang[0]
-            this.languageClass = 'language-' + lang[0]
-            this.$emit('lang', lang[0])
-        },
-        tab() {
-            if (document.execCommand('insertText')) {
-                document.execCommand('insertText', false, this.tabWidth)
-            } else {
-                const cursorPosition = (
-                    this.$refs.textarea as HTMLTextAreaElement
-                ).selectionStart
-                this.content =
-                    this.content.substring(0, cursorPosition) +
-                    this.tabWidth +
-                    this.content.substring(cursorPosition)
-                this.cursorPosition = cursorPosition + this.tabWidth.length
-                this.insertTab = true
-            }
-        },
-        calcScrollDistance(e: any) {
-            (this.$refs.code as any).scrolling = true
-            this.scrolling = true
-            this.top = -e.target.scrollTop
-            this.left = -e.target.scrollLeft
-        },
-        resizer() {
-            // textareaResizer
-            const textareaResizer = new ResizeObserver((entries) => {
-                this.scrollBarWidth =
-                    (entries[0].target as HTMLElement).offsetWidth -
-                    entries[0].target.clientWidth
-                this.scrollBarHeight =
-                    (entries[0].target as HTMLElement).offsetHeight -
-                    entries[0].target.clientHeight
-                this.textareaHeight = (
-                    entries[0].target as HTMLElement
-                ).offsetHeight
-            })
-            textareaResizer.observe(this.$refs.textarea as HTMLElement)
-            // lineNumsResizer
-            const lineNumsResizer = new ResizeObserver((entries) => {
-                this.lineNumsWidth = (
-                    entries[0].target as HTMLElement
-                ).offsetWidth
-            })
-            if (this.$refs.lineNums) {
-                lineNumsResizer.observe(this.$refs.lineNums as HTMLElement)
-            }
-        },
-        async copy() {
-            try {
-                await navigator.clipboard.writeText(
-                    (this.$refs.textarea as HTMLTextAreaElement).value
-                )
-                DlToast.success('Copied to clipboard')
-            } catch (e) {
-                DlToast.error('Failed to copy to clipboard')
-            }
-        },
-        getLineNum() {
-            // lineNum
-            const str = (this.$refs.textarea as HTMLTextAreaElement).value
-            let lineNum = 0
-            let position = str.indexOf('\n')
-            while (position !== -1) {
-                lineNum++
-                position = str.indexOf('\n', position + 1)
-            }
-            // heightNum
-            const singleLineHeight = (
-                (this.$refs.lineNums as HTMLDivElement)
-                    .firstChild as HTMLElement
-            ).offsetHeight
-            const heightNum =
-                Math.round(this.textareaHeight / singleLineHeight) - 1
-            // displayed lineNum
-            this.lineNum =
-                this.height == 'auto'
-                    ? lineNum
-                    : lineNum > heightNum
-                    ? lineNum
-                    : heightNum
+            languagesOptions,
+            tabWidth,
+            contentValue,
+            scroll,
+            code,
+            textarea,
+            lineNumsEl,
+            copy,
+            calcScrollDistance,
+            tab,
+            changeLang,
+            updateValue,
+            textAreaStyle,
+            editorStyle
         }
     }
 })

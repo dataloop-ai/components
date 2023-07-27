@@ -6,10 +6,11 @@
         @click="handleClick"
     >
         <span class="avatar-content">
-            <span v-if="name">
-                {{ computedLetters }}
-            </span>
-            <slot v-else />
+            <slot>
+                <span>
+                    {{ computedLetters }}
+                </span>
+            </slot>
             <dl-tooltip v-if="tooltip">
                 {{ tooltip }}
             </dl-tooltip>
@@ -19,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlTooltip } from '../../essential'
+import { DlTooltip } from '../../shared'
 import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
 
@@ -41,6 +42,10 @@ export default defineComponent({
     },
     computed: {
         computedLetters(): string {
+            if (!this.name) {
+                return ''
+            }
+
             const firstLetters = this.name
                 .split(' ')
                 .map((w) => w[0])

@@ -37,7 +37,10 @@ import {
 } from 'vue-demi'
 
 import useWindowSize from '../../../hooks/use-window-size'
-import useAnchor, { useAnchorProps } from '../../../hooks/use-anchor'
+import useAnchor, {
+    CheckAnchorElVisibility,
+    useAnchorProps
+} from '../../../hooks/use-anchor'
 import useScrollTarget from '../../../hooks/use-scroll-target'
 import useModelToggle, {
     useModelToggleProps,
@@ -149,6 +152,13 @@ export default defineComponent({
         zIndex: {
             type: [Number, String],
             default: 'var(--dl-z-index-menu)'
+        },
+        /**
+         * the % of the parent element that triggers the tooltips visibility
+         */
+        triggerPercentage: {
+            type: Number,
+            default: 1
         }
     },
 
@@ -291,18 +301,21 @@ export default defineComponent({
                 { continuous: true }
             )
 
-            registerTimeout(() => {
-                // required in order to avoid the "double-tap needed" issue
-                avoidAutoClose = avoidAutoCloseFn(isMobile.value, {
-                    avoidAutoClose,
-                    autoClose: props.autoClose,
-                    innerRef
-                })
+            registerTimeout(
+                () => {
+                    // required in order to avoid the "double-tap needed" issue
+                    avoidAutoClose = avoidAutoCloseFn(isMobile.value, {
+                        avoidAutoClose,
+                        autoClose: props.autoClose,
+                        innerRef
+                    })
 
-                updatePosition()
-                showPortal(true) // done showing portal
-                emit('show', evt)
-            }, props.transitionDuration)
+                    updatePosition()
+                    showPortal(true) // done showing portal
+                    emit('show', evt)
+                },
+                isVue2 ? 5 : props.transitionDuration
+            )
         }
 
         function handleHide(evt: ClickOutsideEvent) {
@@ -314,10 +327,13 @@ export default defineComponent({
             anchorCleanup(true)
             refocusTarget = refocusTargetFn(evt, refocusTarget as HTMLElement)
 
-            registerTimeout(() => {
-                hidePortal(true) // done hiding, now destroy
-                emit('hide', evt)
-            }, props.transitionDuration)
+            registerTimeout(
+                () => {
+                    hidePortal(true) // done hiding, now destroy
+                    emit('hide', evt)
+                },
+                isVue2 ? 5 : props.transitionDuration
+            )
         }
 
         function anchorCleanup(hiding: boolean) {
@@ -367,16 +383,6 @@ export default defineComponent({
             hide(evt)
         }
 
-        function CheckAnchorElVisiblity(domElement: any) {
-            return new Promise((resolve) => {
-                const o = new IntersectionObserver(([entry]) => {
-                    resolve(entry.intersectionRatio === 1)
-                    o.disconnect()
-                })
-                o.observe(domElement)
-            })
-        }
-
         const updatePosition = async () => {
             const el = innerRef.value
 
@@ -384,8 +390,11 @@ export default defineComponent({
                 return
             }
 
-            const isAnchorElVisible = await CheckAnchorElVisiblity(
-                anchorEl.value
+            const isAnchorElVisible = await CheckAnchorElVisibility(
+                anchorEl.value,
+                {
+                    triggerPercentage: props.triggerPercentage
+                }
             )
 
             if (!isAnchorElVisible) {

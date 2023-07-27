@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import DlEllipsis from '../../../../../basic/DlEllipsis/DlEllipsis.vue'
+import { DlEllipsis } from '../../../../../essential'
 import { TDoughnutChartData } from '../types/TDoughnutChartData'
 
 enum EBadgeText {

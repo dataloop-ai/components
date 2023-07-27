@@ -9,6 +9,7 @@
             class="dl-smart-search__input-wrapper"
         >
             <dl-smart-search-input
+                ref="smartSearchInput"
                 :status="computedStatus"
                 :style-model="defineStyleModel"
                 :with-save-button="true"
@@ -22,45 +23,51 @@
                 :default-width="width"
                 @save="saveQueryDialogBoxModel = true"
                 @focus="setFocused"
-                @update:modelValue="debouncedInputModel"
+                @update:model-value="debouncedInputModel"
                 @dql-edit="jsonEditorModel = !jsonEditorModel"
             />
         </div>
         <div class="dl-smart-search__buttons">
-            <div
-                style="height: 28px"
-                class="dl-smart-search__search-btn-wrapper"
-            >
-                <dl-button
-                    icon="icon-dl-search"
-                    :styles="{
-                        height: '28px'
-                    }"
-                    :disabled="disabled"
-                    @click="emitSearchQuery"
-                />
-            </div>
+            <slot name="buttons">
+                <div style="display: flex; align-items: center">
+                    <div
+                        style="height: 28px"
+                        class="dl-smart-search__search-btn-wrapper"
+                    >
+                        <dl-button
+                            icon="icon-dl-search"
+                            :styles="{
+                                height: '28px'
+                            }"
+                            :disabled="disabled"
+                            @click="emitSearchQuery"
+                        />
+                    </div>
 
-            <dl-button
-                class="dl-smart-search__buttons--filters"
-                shaded
-                outlined
-                size="s"
-            >
-                Saved Filters
-                <dl-menu
-                    v-model="filtersModel"
-                    :offset="[0, 5]"
-                    anchor="bottom middle"
-                    self="top middle"
-                >
-                    <dl-smart-search-filters
-                        :filters="filters"
-                        @filters-select="handleFiltersSelect"
-                        @filters-delete="handleFiltersDelete"
-                    />
-                </dl-menu>
-            </dl-button>
+                    <slot name="extra-actions" />
+
+                    <dl-button
+                        class="dl-smart-search__buttons--filters"
+                        shaded
+                        outlined
+                        size="s"
+                    >
+                        Saved Filters
+                        <dl-menu
+                            v-model="filtersModel"
+                            :offset="[0, 5]"
+                            anchor="bottom middle"
+                            self="top middle"
+                        >
+                            <dl-smart-search-filters
+                                :filters="filters"
+                                @filters-select="handleFiltersSelect"
+                                @filters-delete="handleFiltersDelete"
+                            />
+                        </dl-menu>
+                    </dl-button>
+                </div>
+            </slot>
         </div>
         <dl-dialog-box
             v-model="jsonEditorModel"
@@ -222,9 +229,15 @@ import {
     Alias,
     removeBrackets
 } from '../../../../hooks/use-suggestions'
-import { Filters, Query, ColorSchema, SearchStatus } from './types'
 import {
-    replaceAliases,
+    Filters,
+    Query,
+    ColorSchema,
+    SearchStatus,
+    SyntaxColorSchema
+} from './types'
+import {
+    revertAliases,
     setAliases,
     replaceStringifiedDatesWithJSDates,
     createColorSchema,
@@ -249,7 +262,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -308,7 +321,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query', 'update:modelValue'],
+    emits: ['save-query', 'remove-query', 'search-query', 'update:model-value'],
     setup(props, { emit }) {
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
@@ -343,20 +356,21 @@ export default defineComponent({
         )
 
         const handleInputModel = (value: string) => {
-            inputModel.value = value
+            const aliased = setAliases(value, props.aliases)
+            inputModel.value = aliased
             const bracketless = removeBrackets(value)
-            const cleanedAliases = replaceAliases(bracketless, props.aliases)
+            const cleanedAliases = revertAliases(bracketless, props.aliases)
             const json = toJSON(cleanedAliases)
             if (!isEqual(json, props.modelValue)) {
-                emit('update:modelValue', json)
+                emit('update:model-value', json)
             }
             const stringified = JSON.stringify(json)
             activeQuery.value.query = stringified
             nextTick(() => {
-                findSuggestions(value)
+                findSuggestions(aliased)
             })
             isQuerying.value = false
-            oldInputQuery.value = value
+            oldInputQuery.value = aliased
         }
 
         const debouncedInputModel = debounce(handleInputModel, 300)
@@ -480,11 +494,8 @@ export default defineComponent({
                 '--dl-search-max-width': this.isFocused ? '100%' : this.width
             }
         },
-        defineStyleModel(): Record<string, string> {
-            return createColorSchema(
-                this.colorSchema,
-                this.aliases
-            ) as any as Record<string, string>
+        defineStyleModel(): SyntaxColorSchema {
+            return createColorSchema(this.colorSchema, this.aliases)
         },
         computedStatus(): SearchStatus {
             if (this.isQuerying) return
@@ -540,7 +551,7 @@ export default defineComponent({
             const json = JSON.stringify(
                 this.toJSON(removeBrackets(this.inputModel))
             )
-            const newQuery = replaceAliases(json, this.aliases)
+            const newQuery = revertAliases(json, this.aliases)
             if (newQuery && newQuery !== '{}') {
                 this.jsonEditorQuery = newQuery
             }

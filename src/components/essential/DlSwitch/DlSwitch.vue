@@ -2,7 +2,9 @@
     <div
         :id="uuid"
         class="dl-switch-wrapper"
-        :style="`height: ${size}px; margin: ${margin}`"
+        :style="`height: ${size}px; margin: ${margin}; ${
+            fluid ? 'justify-content: space-between;' : ''
+        }`"
     >
         <label
             v-if="!!leftLabel"
@@ -102,7 +104,8 @@ export default defineComponent({
         value: { type: Any, default: null },
         falseValue: { type: Any, default: false },
         trueValue: { type: Any, default: true },
-        tabindex: { type: String, default: '0' }
+        tabindex: { type: String, default: '0' },
+        fluid: { type: Boolean, default: false }
     },
     emits: ['update:model-value', 'toggle', 'click', 'change'],
     data() {

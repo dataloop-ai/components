@@ -12,12 +12,7 @@
             />
             <div
                 class="dialog-wrapper"
-                :style="{
-                    width: Number(width) ? `${width}px` : width,
-                    height: Number(height) ? `${height}px` : height,
-                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`,
-                    maxHeight: !fullscreen && !fullHeight ? '90vh' : ''
-                }"
+                :style="wrapperStyles"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
                     'dialog-wrapper--fullheight': fullHeight,
@@ -92,7 +87,7 @@ export default defineComponent({
     components: { DlIcon, DlEmptyState },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         width: { type: [Number, String], default: 400 },
@@ -120,7 +115,7 @@ export default defineComponent({
             default: 'var(--dl-z-index-dialog)'
         }
     },
-    emits: ['update:modelValue', 'hide', 'show'],
+    emits: ['update:model-value', 'hide', 'show'],
     data(): {
         uuid: string
         show: boolean
@@ -162,6 +157,21 @@ export default defineComponent({
                 }px`,
                 '--dialog-z-index':
                     `${this.zIndex}` ?? 'var(--dl-z-index-dialog)'
+            }
+        },
+        wrapperStyles() {
+            return {
+                ...{
+                    width: Number(this.width) ? `${this.width}px` : this.width,
+                    height: Number(this.height)
+                        ? `${this.height}px`
+                        : this.height,
+                    maxHeight:
+                        !this.fullscreen && !this.fullHeight ? '90vh' : ''
+                },
+                ...(this.draggable && {
+                    transform: `translate(${this.draggableOptions.draggableX}px, ${this.draggableOptions.draggableY}px)`
+                })
             }
         },
         iconStyles(): Record<string, string> {
@@ -224,7 +234,7 @@ export default defineComponent({
                 (this.$el as HTMLElement).blur()
             }
             this.show = false
-            this.$emit('update:modelValue', false)
+            this.$emit('update:model-value', false)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'auto'
             }
@@ -234,7 +244,7 @@ export default defineComponent({
         },
         openModal() {
             this.show = true
-            this.$emit('update:modelValue', true)
+            this.$emit('update:model-value', true)
             if (!this.hasParent) {
                 document.documentElement.style.overflow = 'hidden'
             }

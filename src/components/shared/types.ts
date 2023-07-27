@@ -1,4 +1,4 @@
-export const transformOptions: string[] = [
+export const DlTransformOptions: string[] = [
     'none',
     'capitalize',
     'uppercase',

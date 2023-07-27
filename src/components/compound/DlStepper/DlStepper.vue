@@ -17,7 +17,7 @@
                 :steps="steps"
                 :bg-color="bgColor"
                 :hide="hide"
-                :sidebar-navigation="sidebarNavigation"
+                :disabled="disabled"
                 @step-click="$emit('set-step', $event)"
             />
             <div class="dl-stepper-content dl-stepper-content--slot">
@@ -62,6 +62,8 @@
                     :prev-button-label="prevButtonLabel"
                     :disabled-next-step="disabledNextStep"
                     :disabled-prev-step="disabledPrevStep"
+                    :prev-step-disabled-tooltip="prevStepDisabledTooltip"
+                    :next-step-disabled-tooltip="nextStepDisabledTooltip"
                     @next="$emit('next')"
                     @prev="$emit('prev')"
                     @done="$emit('done')"
@@ -96,7 +98,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         steps: {
@@ -153,7 +155,7 @@ export default defineComponent({
         disabledPrevStep: Boolean,
         isDone: Boolean,
         hideCloseButton: Boolean,
-        sidebarNavigation: { type: Boolean, default: true },
+        disabled: { type: Boolean, default: false },
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
@@ -161,7 +163,7 @@ export default defineComponent({
             default: null
         }
     },
-    emits: ['update:modelValue', 'done', 'next', 'prev', 'set-step', 'close'],
+    emits: ['update:model-value', 'done', 'next', 'prev', 'set-step', 'close'],
     data() {
         return {
             uuid: `dl-stepper-${v4()}`,
@@ -177,6 +179,16 @@ export default defineComponent({
         },
         prevButtonLabel(): string {
             return this.prevStep?.title ?? null
+        },
+        nextStepDisabledTooltip(): string {
+            return this.disabledNextStep
+                ? this.nextStep?.disabledTooltip ?? ''
+                : ''
+        },
+        prevStepDisabledTooltip(): string {
+            return this.disabledPrevStep
+                ? this.prevStep?.disabledTooltip ?? ''
+                : ''
         },
         cssVars(): Record<string, string | number> {
             return {
@@ -195,7 +207,7 @@ export default defineComponent({
     methods: {
         closeStepper() {
             this.$emit('close')
-            this.$emit('update:modelValue', false)
+            this.$emit('update:model-value', false)
         }
     }
 })

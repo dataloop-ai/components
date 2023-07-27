@@ -17,7 +17,7 @@
                     :disabled="disabled"
                     :with-left-chevron="true"
                     @prev="handleDatePrev"
-                    @update:modelValue="updateDateInterval"
+                    @update:model-value="updateDateInterval"
                     @mousedown="handleMousedown"
                     @mouseenter="handleMouseenter"
                 />
@@ -32,7 +32,7 @@
                     :disabled="disabled"
                     :with-right-chevron="true"
                     @next="handleDateNext"
-                    @update:modelValue="updateDateInterval"
+                    @update:model-value="updateDateInterval"
                     @mousedown="handleMousedown"
                     @mouseenter="handleMouseenter"
                 />
@@ -49,7 +49,7 @@
                     :available-range="availableRange"
                     :disabled="disabled"
                     :with-left-chevron="true"
-                    @update:modelValue="updateDateInterval"
+                    @update:model-value="updateDateInterval"
                     @prev="handleMonthPrev"
                     @mousedown="handleMousedown"
                     @mouseenter="handleMouseenter"
@@ -62,7 +62,7 @@
                     :available-range="availableRange"
                     :disabled="disabled"
                     :with-right-chevron="true"
-                    @update:modelValue="updateDateInterval"
+                    @update:model-value="updateDateInterval"
                     @next="handleMonthNext"
                     @mousedown="handleMousedown"
                     @mouseenter="handleMouseenter"
@@ -88,7 +88,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -110,7 +110,7 @@ export default defineComponent({
         normalizeCalendars: Boolean,
         disabled: Boolean
     },
-    emits: ['update:modelValue', 'change'],
+    emits: ['update:model-value', 'change'],
     data(): {
         uuid: string
         timeout: number | null
@@ -193,7 +193,7 @@ export default defineComponent({
         },
         updateModelValue(value: DateInterval) {
             if (this.disabled) return
-            this.$emit('update:modelValue', value)
+            this.$emit('update:model-value', value)
             this.$emit('change', value)
         },
 
@@ -249,7 +249,7 @@ export default defineComponent({
 
             this.dateInterval = { from: date, to: date }
 
-            if (this.singleSelection) {
+            if (!this.singleSelection) {
                 this.isSelectionMode = true
             } else {
                 this.updateModelValue(this.dateInterval)
@@ -297,7 +297,10 @@ export default defineComponent({
                 }
             }
 
-            this.dateInterval = { from: this.dateInterval.from, to: date }
+            this.dateInterval = {
+                from: this.dateInterval.from,
+                to: date
+            }
         }
     }
 })

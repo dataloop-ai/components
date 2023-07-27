@@ -29,7 +29,7 @@ describe('DlMonthCalendar', () => {
         })
         it('should emit date on click', () => {
             wrapper.vm.handleClick(0)
-            expect(wrapper.emitted()['update:modelValue']).toEqual([
+            expect(wrapper.emitted()['update:model-value']).toEqual([
                 [
                     {
                         from: date,

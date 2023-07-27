@@ -37,7 +37,7 @@ describe('PageNavigation', () => {
                 await btns[0].trigger('click')
             })
             it('should emitted click event', function () {
-                expect(wrapper.emitted()['update:modelValue'][0]).toBeTruthy()
+                expect(wrapper.emitted()['update:model-value'][0]).toBeTruthy()
             })
             it('should have the right value', function () {
                 expect(wrapper.vm.value).toBe(1)

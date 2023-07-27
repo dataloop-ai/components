@@ -10,7 +10,8 @@
             fit-container
             :model-value="modelValue"
             :arrow-nav-items="suggestions"
-            @update:modelValue="emitModelValue($event)"
+            :auto-close="false"
+            @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
             @highlightedIndex="setHighlightedIndex"
@@ -31,7 +32,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlMenu, DlList } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
 
@@ -43,9 +44,13 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
+        parentId: {
+            type: String,
+            required: true
+        },
         expanded: {
             type: Boolean,
             default: false
@@ -67,7 +72,7 @@ export default defineComponent({
             default: () => [0, 0]
         }
     },
-    emits: ['set-input-value', 'update:modelValue'],
+    emits: ['set-input-value', 'update:model-value'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -85,13 +90,19 @@ export default defineComponent({
             handleOption(value)
         }
         const emitModelValue = (event: any) => {
-            emit('update:modelValue', event)
+            console.log('emit suggestion model change')
+            emit('update:model-value', event)
         }
         const handleOption = (item: any) => {
             emit('set-input-value', item)
         }
 
+        const defaultTarget = computed(() => {
+            return `#dl-smart-search-input-text-area-${props.parentId}`
+        })
+
         return {
+            defaultTarget,
             setHighlightedIndex,
             handleSelectedItem,
             highlightedIndex,
@@ -99,11 +110,6 @@ export default defineComponent({
             onHide,
             emitModelValue,
             handleOption
-        }
-    },
-    computed: {
-        defaultTarget() {
-            return '.dl-smart-search-input__textarea'
         }
     }
 })

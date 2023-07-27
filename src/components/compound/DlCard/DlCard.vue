@@ -1,7 +1,7 @@
 <template>
     <div
         class="card"
-        :style="[{ height }, computedStyles, cssVars]"
+        :style="cardStyles"
         @mouseover="onCardMouseover"
         @mouseleave="onCardMouseleave"
         @click="onCardClick"
@@ -11,7 +11,7 @@
             class="card--icon"
         >
             <dl-icon
-                :icon="icon.src"
+                :icon="icon.icon"
                 :styles="iconStyles"
                 :size="iconSize"
                 :color="iconColor"
@@ -29,7 +29,7 @@
                 <DlLink
                     newtab
                     external
-                    :href="image.link.href"
+                    :href="imageLink"
                 >
                     <dl-icon
                         :icon="image.link.icon"
@@ -46,7 +46,7 @@
                 @mouseenter="showMagnifier"
             >
                 <img
-                    ref="image"
+                    ref="imageEl"
                     :src="image.src"
                     :style="imageStyles"
                     :alt="imageAlt"
@@ -254,11 +254,12 @@
 
 <script lang="ts">
 import { isString } from 'lodash'
-import { defineComponent, PropType } from 'vue-demi'
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue-demi'
 import { getColor, stringStyleToRecord } from '../../../utils'
 import { DlEmptyStateProps } from '../../basic/types'
-import { DlIcon, DlLink, DlTypography, DlTooltip } from '../../essential'
-import { DlChip, DlEllipsis, DlEmptyState } from '../../basic'
+import { DlTooltip } from '../../shared'
+import { DlIcon, DlLink, DlTypography, DlEllipsis } from '../../essential'
+import { DlChip, DlEmptyState } from '../../basic'
 import {
     DlCardImageType,
     DlCardLinkType,
@@ -348,189 +349,258 @@ export default defineComponent({
         }
     },
     emits: ['onUpdateDescription', 'onCardActive'],
-    data() {
-        return {
-            hasMagnifyingGlass: false,
-            showImagePreview: false,
-            previewOffset: { x: 0, y: 0 },
-            dlCardBorder: '1px solid var(--dl-color-separator)',
-            dlCardBorderBottom: '1px solid var(--dl-color-separator)',
-            boxShadow: '0px 5px 15px 0px var(--dl-color-shadow)',
-            isCardActive: false
-        }
-    },
-    computed: {
-        iconStyles(): string {
-            return this.icon?.styles ?? ''
-        },
-        iconSize(): string {
-            return this.icon?.size ?? '50px'
-        },
-        iconColor(): string {
-            return this.icon?.color ?? 'var(--dl-color-darker)'
-        },
-        hasImageLink(): boolean {
-            return !!(this.image?.link?.icon && this.image?.link?.href)
-        },
-        cssVars() {
+    setup(props, { emit }) {
+        const imageEl = ref<HTMLImageElement>(null as any)
+        const imageHolder = ref<HTMLDivElement>(null as any)
+        const magnifyingGlass = ref<HTMLDivElement>(null as any)
+        const imagePreview = ref<HTMLDivElement>(null as any)
+
+        const {
+            icon,
+            image,
+            indicatorColor,
+            interactive,
+            width,
+            styles,
+            cardId,
+            zoom,
+            height
+        } = toRefs(props)
+        const hasMagnifyingGlass = ref(false)
+        const showImagePreview = ref(false)
+        const previewOffset = ref({ x: 0, y: 0 })
+        const dlCardBorder = ref('1px solid var(--dl-color-separator)')
+        const dlCardBorderBottom = ref('1px solid var(--dl-color-separator)')
+        const boxShadow = ref('0px 5px 15px 0px var(--dl-color-shadow)')
+        const isCardActive = ref(false)
+
+        const iconStyles = computed(() => {
+            return icon.value?.styles ?? ''
+        })
+        const iconSize = computed(() => {
+            return icon.value?.size ?? '50px'
+        })
+        const iconColor = computed(() => {
+            return icon.value.color ?? 'var(--dl-color-darker)'
+        })
+        const hasImageLink = computed(() => {
+            return !!(image.value?.link?.icon && image.value?.link?.href)
+        })
+        const cssVars = computed(() => {
             return {
-                '--dl-card-colored-strip': this.indicatorColor
+                '--dl-card-colored-strip': indicatorColor.value
                     ? `4px solid ${getColor(
-                          this.indicatorColor as string,
+                          indicatorColor.value,
                           'dl-color-separator'
                       )}`
-                    : this.dlCardBorderBottom,
-                '--dl-card-border': this.dlCardBorder,
-                '--dl-card-box-shadow': this.boxShadow,
-                '--dl-card-content-padding': this.interactive
-                    ? `10px 10px ${this.indicatorColor ? '16px' : '20px'} 10px`
+                    : dlCardBorderBottom.value,
+                '--dl-card-border': dlCardBorder.value,
+                '--dl-card-box-shadow': boxShadow.value,
+                '--dl-card-content-padding': interactive.value
+                    ? `10px 10px ${indicatorColor.value ? '16px' : '20px'} 10px`
                     : '16px',
-                '--dl-card-link-icon-circle-size': this.image?.link?.size
-                    ? parseInt(this.image?.link?.size) + 8 + 'px'
+                '--dl-card-link-icon-circle-size': image.value?.link?.size
+                    ? parseInt(image.value?.link?.size) + 8 + 'px'
                     : '20px',
-                '--dl-card-link-icon-circle-color': this.image?.link
+                '--dl-card-link-icon-circle-color': image.value?.link
                     ?.backgroundColor
-                    ? this.image?.link?.backgroundColor
+                    ? image.value?.link?.backgroundColor
                     : 'rgba(255, 255, 255, 0.8)',
-                '--dl-card-width': this.interactive ? '180px' : this.width,
-                '--dl-card-image-width': this.interactive ? '180px' : '200px',
-                '--dl-card-image-height': this.interactive ? '112px' : '100px'
+                '--dl-card-width': interactive.value ? '180px' : width.value,
+                '--dl-card-image-width': interactive.value ? '180px' : '200px',
+                '--dl-card-image-height': interactive.value ? '112px' : '100px'
             }
-        },
-        computedStyles(): Record<string, string> {
-            return isString(this.styles)
-                ? stringStyleToRecord(this.styles)
-                : this.styles
-        },
-        imageStyles(): string {
-            return this.image?.styles ?? ''
-        },
-        imageAlt(): string {
-            return this.image?.alt ?? ''
-        },
-        tooltipPreviewStyles() {
+        })
+        const computedStyles = computed<Record<string, string>>(() => {
+            return isString(styles.value)
+                ? stringStyleToRecord(styles.value)
+                : styles.value
+        })
+        const cardStyles = computed<Record<string, any>>(() => {
+            return Object.assign(
+                { height: height.value },
+                cssVars.value,
+                computedStyles.value
+            )
+        })
+        const imageStyles = computed<any>(() => {
+            return image.value?.styles ?? ''
+        })
+        const imageAlt = computed(() => {
+            return image.value?.alt ?? ''
+        })
+        const tooltipPreviewStyles = computed(() => {
             return {
                 border: '1px solid var(--dl-color-separator)',
                 'border-radius': '2px',
                 'box-shadow': '0px 3px 6px var(--dl-color-separator)'
             }
-        }
-    },
-    methods: {
-        onImageLoad() {
-            if (!this.$refs.image) {
+        })
+        const imageLink = computed(() => {
+            return image.value?.link?.href ?? ''
+        })
+
+        const onImageLoad = () => {
+            if (!imageEl.value) {
                 return
             }
-            const holder = this.$refs.imageHolder as any
-            ;(
-                this.$refs.image as any
-            ).style = `height: ${holder.clientHeight}px; width: ${holder.clientWidth}px; object-fit: cover;`
-        },
-        onCardMouseover() {
-            if (!this.interactive) return
-            this.dlCardBorder = '1px solid var(--dl-color-hover)'
-            this.dlCardBorderBottom = this.dlCardBorder
-        },
-        onCardMouseleave() {
-            if (!this.interactive) return
-            this.dlCardBorder = this.isCardActive
+            imageEl.value.setAttribute(
+                'style',
+                `height: ${imageHolder.value.clientHeight}px; width: ${imageHolder.value.clientWidth}px; object-fit: cover;`
+            )
+        }
+        const onCardMouseover = () => {
+            if (!interactive.value) {
+                return
+            }
+            dlCardBorder.value = '1px solid var(--dl-color-hover)'
+            dlCardBorderBottom.value = dlCardBorder.value
+        }
+        const onCardMouseleave = () => {
+            if (!interactive.value) {
+                return
+            }
+            dlCardBorder.value = isCardActive.value
                 ? '1px solid var(--dl-color-secondary)'
                 : '1px solid var(--dl-color-separator)'
-            this.dlCardBorderBottom = this.dlCardBorder
-        },
-        onCardClick() {
-            if (!this.interactive) return
-            this.isCardActive = !this.isCardActive
-            this.dlCardBorder = this.isCardActive
+            dlCardBorderBottom.value = dlCardBorder.value
+        }
+        const onCardClick = () => {
+            if (!interactive.value) {
+                return
+            }
+            isCardActive.value = !isCardActive.value
+            dlCardBorder.value = isCardActive.value
                 ? '1px solid var(--dl-color-secondary)'
                 : '1px solid var(--dl-color-separator)'
-            this.dlCardBorderBottom = this.dlCardBorder
-            if (this.isCardActive) {
-                this.$emit('onCardActive', {
-                    cardId: this.cardId
+            dlCardBorderBottom.value = dlCardBorder.value
+            if (isCardActive.value) {
+                emit('onCardActive', {
+                    cardId: cardId.value
                 })
             }
-        },
-        showMagnifier() {
-            if (!this.zoom) return
-            this.hasMagnifyingGlass = true
-        },
-        hideMagnifier() {
-            if (!this.zoom) return
-            this.hasMagnifyingGlass = false
-        },
-        getCursorPos(event: MouseEvent) {
-            if (!this.zoom) return
-            const image = this.$refs.image as HTMLElement
-            const rect = image.getBoundingClientRect()
+        }
+        const showMagnifier = () => {
+            if (!zoom.value) return
+            hasMagnifyingGlass.value = true
+        }
+        const hideMagnifier = () => {
+            if (!zoom.value) return
+            hasMagnifyingGlass.value = false
+        }
+        const getCursorPos = (event: MouseEvent) => {
+            if (!zoom.value) return
+            const rect = imageEl.value.getBoundingClientRect()
 
             let x = event.clientX - rect.left
             let y = event.clientY - rect.top
 
-            x = x - window.pageXOffset
-            y = y - window.pageYOffset
+            x = x - window.scrollX
+            y = y - window.scrollY
 
             return { x, y }
-        },
-        movePreview(event: MouseEvent) {
-            if (!this.zoom) return
-            const image = this.$refs.image as HTMLElement
-            const rect = image.getBoundingClientRect()
+        }
+        const movePreview = (event: MouseEvent) => {
+            if (!zoom.value) return
+            const rect = imageEl.value.getBoundingClientRect()
 
             const x = event.clientX - rect.left
             const y = event.clientY - rect.top
 
-            this.previewOffset = { x, y }
-        },
-        moveMagnifier(event: MouseEvent) {
-            if (!this.zoom) return
-            const holder = this.$refs.imageHolder as HTMLElement
-            const glass = this.$refs.magnifyingGlass as HTMLElement
-            const image = this.$refs.image as HTMLElement
-            const imagePreview = this.$refs.imagePreview as HTMLElement
+            previewOffset.value = { x, y }
+        }
+        const moveMagnifier = (event: MouseEvent) => {
+            if (!zoom.value) return
+            const pos = getCursorPos(event)!
 
-            const pos = this.getCursorPos(event)
+            if (!magnifyingGlass.value?.offsetWidth) return
 
-            if (!glass?.offsetWidth) return
+            let x = pos.x - magnifyingGlass.value?.offsetWidth / 2
+            let y = pos.y - magnifyingGlass.value?.offsetHeight / 2
 
-            let x = pos.x - glass?.offsetWidth / 2
-            let y = pos.y - glass?.offsetHeight / 2
-
-            if (x > (image as HTMLElement).clientWidth - glass.offsetWidth) {
-                x = image.clientWidth - glass.offsetWidth
+            if (
+                x >
+                (imageEl.value as HTMLElement).clientWidth -
+                    magnifyingGlass.value.offsetWidth
+            ) {
+                x =
+                    imageEl.value.clientWidth -
+                    magnifyingGlass.value.offsetWidth
             }
             if (x < 0) {
                 x = 0
             }
-            if (y > image.clientHeight - glass.offsetHeight) {
-                y = image.clientHeight - glass.offsetHeight
+            if (
+                y >
+                imageEl.value.clientHeight - magnifyingGlass.value.offsetHeight
+            ) {
+                y =
+                    imageEl.value.clientHeight -
+                    magnifyingGlass.value.offsetHeight
             }
             if (y < 0) {
                 y = 0
             }
 
-            glass.style.display = 'block'
-            glass.style.left = x + 'px'
-            glass.style.top = y + 'px'
-            glass.style.backgroundPosition = '-' + x * 2 + 'px -' + y * 2 + 'px'
+            magnifyingGlass.value.style.display = 'block'
+            magnifyingGlass.value.style.left = x + 'px'
+            magnifyingGlass.value.style.top = y + 'px'
+            magnifyingGlass.value.style.backgroundPosition =
+                '-' + x * 2 + 'px -' + y * 2 + 'px'
 
-            if (!imagePreview?.clientWidth) return
+            if (!imagePreview.value?.clientWidth) return
 
-            const previewWidth = imagePreview.clientWidth
+            const previewWidth = imagePreview.value.clientWidth
             const scaleValue = 460 / previewWidth
 
-            imagePreview.style.transform = 'scale(' + scaleValue + ')'
-            imagePreview.style.top = -(1 * y) + 'px'
-            imagePreview.style.left = -(2.5 * x) + 'px'
-        },
-        updateDescription(value: string) {
-            this.$emit('onUpdateDescription', {
-                cardId: this.cardId,
+            imagePreview.value.style.transform = 'scale(' + scaleValue + ')'
+            imagePreview.value.style.top = -(1 * y) + 'px'
+            imagePreview.value.style.left = -(2.5 * x) + 'px'
+        }
+        const updateDescription = (value: string) => {
+            emit('onUpdateDescription', {
+                cardId: cardId.value,
                 description: value
             })
-        },
-        stopPropagationEvent(event: MouseEvent) {
+        }
+        const stopPropagationEvent: any = (event: MouseEvent) => {
             event.stopPropagation()
+        }
+
+        return {
+            imageEl,
+            imageHolder,
+            magnifyingGlass,
+            imagePreview,
+            hasMagnifyingGlass,
+            showImagePreview,
+            previewOffset,
+            dlCardBorder,
+            dlCardBorderBottom,
+            boxShadow,
+            isCardActive,
+            iconStyles,
+            cardStyles,
+            iconSize,
+            iconColor,
+            imageLink,
+            hasImageLink,
+            cssVars,
+            computedStyles,
+            imageStyles,
+            imageAlt,
+            tooltipPreviewStyles,
+            onImageLoad,
+            onCardMouseover,
+            onCardMouseleave,
+            onCardClick,
+            showMagnifier,
+            hideMagnifier,
+            getCursorPos,
+            movePreview,
+            moveMagnifier,
+            updateDescription,
+            stopPropagationEvent
         }
     }
 })

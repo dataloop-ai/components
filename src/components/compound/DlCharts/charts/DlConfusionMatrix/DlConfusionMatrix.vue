@@ -36,11 +36,18 @@
                 <div
                     ref="yAxis"
                     class="y-axis"
+                    style="min-height: 100%"
                 >
                     <div
                         v-for="(label, index) in labels"
                         :key="index"
                         class="y-axis__element"
+                        style="
+                            display: flex;
+                            flex-grow: 1;
+                            align-items: center;
+                            justify-content: center;
+                        "
                     >
                         <img
                             v-if="labelImages[0]"
@@ -76,8 +83,6 @@
                             :style="`background-color: ${getCellBackground(
                                 cell.value
                             )}; color: ${getCellTextColor(cell.value)}`"
-                            @mouseenter="handleShowTooltip(cell, $event)"
-                            @mouseleave="handleHideTooltip"
                             @mousedown="openLink(cell)"
                         >
                             {{
@@ -87,46 +92,93 @@
                                         : cell.unnormalizedValue
                                     : null
                             }}
+                            <dl-tooltip
+                                id="MatrixTooltip"
+                                class="matrix-tooltip"
+                                background-color="dl-color-shadow"
+                                color="dl-color-tooltip-background"
+                                :offset="[5, 5]"
+                            >
+                                <div class="matrix-tooltip__body">
+                                    <span>{{ cell.xLabel }}</span>
+                                    <span>{{ cell.yLabel }}</span>
+                                    <span class="matrix-tooltip__value">
+                                        <span
+                                            v-if="cell.value"
+                                            class="matrix-tooltip__color"
+                                            :style="`background-color: ${getCellBackground(
+                                                cell.value
+                                            )}`"
+                                        />
+                                        {{
+                                            normalized
+                                                ? `Normalized ${cell.value}`
+                                                : `Unnormalized ${cell.unnormalizedValue}`
+                                        }}
+                                    </span>
+                                </div>
+                            </dl-tooltip>
                         </div>
                     </div>
                 </div>
-                <div class="x-axis">
-                    <span
+                <div
+                    class="x-axis"
+                    style="margin-top: 10px"
+                >
+                    <div
                         v-for="(label, index) in visibleLabels"
-                        ref="xAxis"
                         :key="index"
-                        class="x-axis__element"
-                        :style="`${
-                            !labelImages[0]
-                                ? `transform: rotate(${
-                                    rotateXLabels ? '70' : '0'
-                                }deg);`
-                                : ''
-                        }`"
+                        style="
+                            display: flex;
+                            flex-grow: 100;
+                            width: 100%;
+                            justify-content: center;
+                        "
                     >
-                        <span class="x-axis__element--text">
-                            <img
-                                v-if="labelImages[0]"
-                                class="legend-avatar"
-                                :src="labelImages[index]"
-                            >
-                            <span v-else>
-                                {{ label }}
+                        <span
+                            :ref="`xAxis-${index}`"
+                            class="x-axis__element"
+                            :style="`
+                                justify-content: center;
+                                display: flex;${
+                                !labelImages[0]
+                                    ? `transform: rotate(${
+                                        rotateXLabels ? '70' : '0'
+                                    }deg); line-height: ${
+                                        rotateXLabels ? 100 : 10
+                                    }px`
+                                    : ''
+                            };`"
+                        >
+                            <span class="x-axis__element--text">
+                                <img
+                                    v-if="labelImages[0]"
+                                    class="legend-avatar"
+                                    :src="labelImages[index]"
+                                >
+                                <span v-else>
+                                    {{ label }}
+                                </span>
                             </span>
+                            <dl-tooltip
+                                self="top middle"
+                                :offset="debouncedCalculateXAxisElOffset(index)"
+                            >
+                                {{ labelStrings[index] }}</dl-tooltip>
                         </span>
-                        <dl-tooltip self="top middle">
-                            {{ labelStrings[index] }}</dl-tooltip>
-                    </span>
+                    </div>
                 </div>
                 <dl-brush
                     track-size="18px"
                     thumb-size="20px"
                     :max="matrix.length"
-                    :max-range="2"
+                    :min-range="2"
+                    :max-range="cellDisplayLimit"
                     :selection-color="getCellBackground(0.1)"
                     :color="getCellBackground()"
                     :step="1"
                     drag-range
+                    :model-value="currentBrushState"
                     @update:model-value="handleBrushUpdate"
                 />
                 <span class="label-tag x"> {{ bottomLabel }} </span>
@@ -154,32 +206,13 @@
         >
             The given props cannot create a valid matrix.
         </div>
-        <div
-            v-if="tooltipVisible"
-            :style="tooltipStyles"
-            class="matrix-tooltip"
-        >
-            <span class="matrix-tooltip__x">{{ tooltipState.xLabel }}</span>
-            <span class="matrix-tooltip__y">{{ tooltipState.yLabel }}</span>
-            <span>
-                <span
-                    v-if="tooltipState.value"
-                    class="matrix-tooltip__color"
-                    :style="`background-color: ${getCellBackground(
-                        tooltipState.value
-                    )}`"
-                />
-                {{ normalized ? 'Normalized' : 'Unnormalized' }}
-                {{ tooltipState.value }}
-            </span>
-        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue-demi'
+import { defineComponent, getCurrentInstance, PropType, ref } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
-import DlTooltip from '../../../../essential/DlTooltip/DlTooltip.vue'
+import { DlTooltip } from '../../../../shared'
 import {
     DlConfusionMatrixCell,
     DlConfusionMatrixLabel,
@@ -219,6 +252,10 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
+        cellDisplayLimit: {
+            type: Number,
+            default: 10
+        },
         color: {
             type: String,
             default: '--dl-color-secondary'
@@ -242,22 +279,16 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const vm = getCurrentInstance()
         const { variables } = useThemeVariables()
-
-        const tooltipState = ref<{
-            value?: number
-            xLabel?: string
-            yLabel?: string
-            x?: number
-            y?: number
-            visible?: boolean
-        } | null>(null)
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
-            max: props.matrix.length
+            max: Math.min(props.matrix.length, props.cellDisplayLimit)
         })
         const cellWidth = ref<number | null>(null)
         const rotateXLabels = ref(true)
+        const resizeObserver = ref<ResizeObserver>(null)
+        const isDisposed = ref(false)
 
         const getCellBackground = (value: number = 1): string => {
             const object: { [key: string]: any } = {
@@ -276,20 +307,39 @@ export default defineComponent({
             return `var(--dl-color-text${value < 0.5 ? '-darker' : ''}-buttons)`
         }
 
+        const calculateXAxisElOffset = (index: number): number[] => {
+            let el = vm.refs[`xAxis-${index}`] as HTMLElement
+            if (!el) return null
+            if (Array.isArray(el)) {
+                el = el[0]
+            }
+            if (!el) {
+                return [0, 0]
+            }
+            const height = el.clientHeight
+            const offsetHeight = -1 * (height / 2)
+            return [0, offsetHeight]
+        }
+
+        const debouncedCalculateXAxisElOffset = debounce(
+            calculateXAxisElOffset,
+            100
+        )
+
         return {
+            resizeObserver,
             variables,
             getCellBackground,
             getCellTextColor,
             cellWidth,
-            tooltipState,
             currentBrushState,
-            rotateXLabels
+            rotateXLabels,
+            calculateXAxisElOffset,
+            debouncedCalculateXAxisElOffset,
+            isDisposed
         }
     },
     computed: {
-        tooltipVisible(): boolean {
-            return this.tooltipState?.visible
-        },
         visibleLabels(): DlConfusionMatrixLabel[] {
             if (this.labels[0]) {
                 const arr = this.labels as DlConfusionMatrixLabel[]
@@ -316,17 +366,11 @@ export default defineComponent({
         flattenedMatrix(): DlConfusionMatrixCell[] {
             return flattenConfusionMatrix(this.matrix, this.labelStrings)
         },
-        matrixStyles(): Record<string, string | number> {
+        matrixStyles(): Record<string, number | string> {
             return {
                 '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
                 '--general-color': this.getCellBackground()
-            }
-        },
-        tooltipStyles(): Record<string, string> {
-            return {
-                left: `${this.tooltipState?.x + 10}px`,
-                top: `${this.tooltipState?.y + 15}px`
             }
         },
         gradationValues(): number[] {
@@ -338,28 +382,68 @@ export default defineComponent({
     watch: {
         matrix: {
             handler(value) {
-                this.currentBrushState.max = value.length
-                this.resizeMatrix()
+                this.currentBrushState.max = Math.min(
+                    this.cellDisplayLimit,
+                    value.length
+                )
+                this.$nextTick(() => {
+                    this.resizeMatrix()
+                })
             }
         },
         currentBrushState() {
-            const longest = Math.max(
-                ...this.visibleLabels.map(
-                    (el: DlConfusionMatrixLabel) => el.title.length
-                )
-            )
-            this.rotateXLabels = longest * 12 > getCellWidth()
+            this.calculateRotatedXLabels()
+        },
+        isEmpty(val) {
+            this.handleResizeObserver({ dispose: !val })
         }
     },
     mounted() {
+        this.isDisposed = false
         if (!this.isValidMatrix) return
-        this.resizeMatrix()
-        const resizeObserver = new ResizeObserver(this.resizeMatrix)
-        resizeObserver.observe(this.$refs.wrapper as Element)
-        window.onresize = this.resizeMatrix
+        if (this.isEmpty) return
+
+        this.handleResizeObserver()
+        this.$nextTick(() => {
+            setTimeout(() => {
+                if (this.isDisposed) return
+                this.calculateRotatedXLabels()
+                this.updateBrush(this, this.currentBrushState)
+            }, 300)
+        })
+    },
+    beforeUnmount() {
+        this.isDisposed = true
+        this.handleResizeObserver({ dispose: true })
     },
     methods: {
+        calculateRotatedXLabels() {
+            const longest = Math.max(
+                ...this.visibleLabels.map(
+                    (el: DlConfusionMatrixLabel) =>
+                        (isObject(el) ? el.title : `${el}`).length
+                )
+            )
+            this.rotateXLabels = longest * 12 > getCellWidth()
+        },
+        handleResizeObserver(options: { dispose?: boolean } = {}) {
+            if (this.isDisposed) return
+            const { dispose } = options
+            if (dispose && this.resizeObserver) {
+                this.resizeObserver.unobserve(this.$refs.wrapper as Element)
+                this.resizeObserver.disconnect()
+                this.resizeObserver = null
+            } else {
+                this.resizeMatrix()
+                if (!this.resizeObserver) {
+                    this.resizeObserver = new ResizeObserver(this.resizeMatrix)
+                    this.resizeObserver.observe(this.$refs.wrapper as Element)
+                    window.onresize = this.resizeMatrix
+                }
+            }
+        },
         resizeMatrix() {
+            if (this.isDisposed) return
             const colorSpectrum = this.$refs.colorSpectrum as HTMLElement
             const verticalWrapper = this.$refs.verticalWrapper as HTMLElement
             const labelY = this.$refs.labelY as HTMLElement
@@ -367,7 +451,7 @@ export default defineComponent({
             const width = verticalWrapper?.offsetWidth
 
             labelY.style.marginTop = `-${this.leftLabel.length * 16}px`
-            this.cellWidth = width / this.matrix.length
+            this.cellWidth = Math.round(width / this.matrix.length)
             colorSpectrum.style.height = `${width}px`
             yAxisOuter.style.height = `${width}px`
         },
@@ -385,7 +469,7 @@ export default defineComponent({
                     ctx.matrix.length / (brush.max - brush.min),
                     ctx.$refs.matrix
                 )
-                const scroll = brush.min * (getCellWidth() - 2)
+                const scroll = brush.min * getCellWidth()
                 const container = ctx.$refs.matrixWrapper
                 container.scroll(scroll, 0)
                 ctx.currentBrushState = brush
@@ -401,28 +485,6 @@ export default defineComponent({
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },
-        handleShowTooltip(cell: DlConfusionMatrixCell, e: MouseEvent) {
-            this.showTooltip(this, cell, e)
-        },
-        handleHideTooltip() {
-            this.hideTooltip(this)
-        },
-        showTooltip: debounce(
-            (ctx: any, cell: DlConfusionMatrixCell, e: MouseEvent) => {
-                ctx.tooltipState = {
-                    value: ctx.normalized ? cell.value : cell.unnormalizedValue,
-                    xLabel: cell.xLabel,
-                    yLabel: cell.yLabel,
-                    x: e.x,
-                    y: e.y,
-                    visible: true
-                }
-            },
-            200
-        ),
-        hideTooltip: debounce((ctx: any) => {
-            if (ctx?.tooltipState) ctx.tooltipState.visible = false
-        }, 200),
         openLink(cell: DlConfusionMatrixCell) {
             if (!cell.link) return
             window.open(cell.link, '_blank')
@@ -470,8 +532,7 @@ export default defineComponent({
     max-height: 100px;
     &__element {
         width: var(--cell-dimensions);
-        line-height: 100px;
-        overflow: hidden;
+        max-width: 100px;
         text-overflow: ellipsis;
         &--text {
             font-size: 12px;
@@ -522,9 +583,8 @@ export default defineComponent({
     grid-template-columns: repeat(var(--matrix-rows), 1fr);
 
     &__cell {
-        font-size: 12px;
+        font-size: calc(var(--cell-dimensions) * 0.33);
         cursor: pointer;
-        border: 1px solid var(--dl-color-separator);
         box-sizing: border-box;
         width: var(--cell-dimensions);
         height: var(--cell-dimensions);
@@ -562,17 +622,25 @@ export default defineComponent({
     }
 }
 
+#MatrixTooltip {
+    padding: 0;
+}
+
 .matrix-tooltip {
-    position: absolute;
-    border: 1px solid var(--dl-color-separator);
-    padding: 8px;
-    font-size: 0.8em;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--dl-color-shadow);
-    color: var(--dl-color-tooltip-background);
-    border-radius: 3px;
-    animation: fadeIn 0.4s;
+    &__body {
+        border: 1px solid var(--dl-color-separator);
+        padding: 8px;
+        font-size: 10px;
+        line-height: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__value {
+        display: flex;
+        align-items: center;
+    }
 
     &__color {
         display: inline-block;

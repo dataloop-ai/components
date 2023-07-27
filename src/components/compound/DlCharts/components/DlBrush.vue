@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, watch, defineComponent } from 'vue-demi'
+import { ref, computed, watch, defineComponent, PropType } from 'vue-demi'
 
 import useSlider, {
     useSliderProps,
@@ -78,7 +78,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         ...useSliderProps,
@@ -91,7 +91,12 @@ export default defineComponent({
                 }),
             validator: (v: Object) => 'min' in v && 'max' in v
         },
-
+        value: {
+            type: Object as PropType<{ min: number; max: number }>,
+            default: null,
+            required: false,
+            validator: (v: Object) => 'min' in v && 'max' in v
+        },
         dragRange: Boolean,
         dragOnlyRange: Boolean,
         trackColor: {
@@ -99,6 +104,10 @@ export default defineComponent({
             default: 'dl-color-panel-background'
         },
         maxRange: {
+            type: Number,
+            default: null
+        },
+        minRange: {
             type: Number,
             default: null
         },
@@ -120,7 +129,8 @@ export default defineComponent({
         const rootRef = ref(null)
         const curMinRatio = ref(0)
         const curMaxRatio = ref(0)
-        const model = ref({ min: 0, max: 0 })
+
+        const model = ref(props.value ?? { min: 0, max: 0 })
 
         function normalizeModel() {
             model.value.min =
@@ -150,6 +160,15 @@ export default defineComponent({
             () =>
                 `${props.modelValue.min}|${props.modelValue.max}|${state.innerMin.value}|${state.innerMax.value}`,
             normalizeModel
+        )
+
+        watch(
+            () => props.value,
+            (v) => {
+                if (v !== null) {
+                    model.value = v
+                }
+            }
         )
 
         normalizeModel()
@@ -392,7 +411,8 @@ export default defineComponent({
                     break
             }
 
-            if (pos.max - pos.min < props.maxRange) return
+            if (props.maxRange && pos.max - pos.min > props.maxRange) return
+            if (props.minRange && pos.max - pos.min < props.minRange) return
 
             model.value =
                 model.value.min === null || model.value.max === null

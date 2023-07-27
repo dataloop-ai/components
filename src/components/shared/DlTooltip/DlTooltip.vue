@@ -34,7 +34,10 @@ import {
     PropType,
     onMounted
 } from 'vue-demi'
-import useAnchor, { useAnchorProps } from '../../../hooks/use-anchor'
+import useAnchor, {
+    CheckAnchorElVisibility,
+    useAnchorProps
+} from '../../../hooks/use-anchor'
 import useModelToggle, { AnchorEvent } from '../../../hooks/use-model-toggle'
 import usePortal from '../../../hooks/use-portal'
 import useScrollTarget from '../../../hooks/use-scroll-target'
@@ -272,17 +275,6 @@ export default defineComponent({
             cleanEvt(anchorEvents, 'tooltipTemp')
         }
 
-        function CheckAnchorElVisiblity(domElement: any) {
-            const intersectionRatio = props.triggerPercentage ?? 1
-            return new Promise((resolve) => {
-                const o = new IntersectionObserver(([entry]) => {
-                    resolve(entry.intersectionRatio >= intersectionRatio)
-                    o.disconnect()
-                })
-                o.observe(domElement)
-            })
-        }
-
         async function updatePosition() {
             const el = innerRef.value
 
@@ -290,8 +282,11 @@ export default defineComponent({
                 return
             }
 
-            const isAnchorElVisible = await CheckAnchorElVisiblity(
-                anchorEl.value
+            const isAnchorElVisible = await CheckAnchorElVisibility(
+                anchorEl.value,
+                {
+                    triggerPercentage: props.triggerPercentage
+                }
             )
             if (!isAnchorElVisible) {
                 hide()
@@ -400,7 +395,7 @@ export default defineComponent({
 
         return {
             uuid: (attrs.id as string)?.length
-                ? attrs.id
+                ? (attrs.id as string)
                 : `dl-tooltip-${v4()}`,
             portalIsActive,
             classes: ['dl-tooltip dl-position-engine', attrs.class],
@@ -453,14 +448,6 @@ export default defineComponent({
     white-space: break-spaces;
     word-break: break-word;
     pointer-events: none;
-}
-
-.dl-tooltip {
-    z-index: 9000;
-    position: fixed !important;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 2px 5px;
 }
 
 .capitalize::first-letter {

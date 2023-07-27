@@ -596,7 +596,7 @@
 }
 [theme=brown-paper] .hljs {
   color: #363c69;
-  background: url(./brown-papersq.png) #b7a68e;
+  background: #b7a68e;
 }
 [theme=brown-paper] .hljs-keyword, [theme=brown-paper] .hljs-literal, [theme=brown-paper] .hljs-selector-tag {
   color: #059;
@@ -2940,7 +2940,7 @@
 }
 [theme=pojoaque] .hljs {
   color: #dccf8f;
-  background: url(./pojoaque.jpg) left top #181914;
+  background: #181914;
 }
 [theme=pojoaque] .hljs-comment, [theme=pojoaque] .hljs-quote {
   color: #586e75;

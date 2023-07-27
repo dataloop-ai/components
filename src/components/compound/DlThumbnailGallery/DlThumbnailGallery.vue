@@ -63,7 +63,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlIcon, DlTooltip } from '../../essential'
+import { DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
 import { DlThumbnail, statusColors } from './types'
 
 export default defineComponent({
@@ -73,7 +74,7 @@ export default defineComponent({
     },
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         /**
@@ -119,7 +120,7 @@ export default defineComponent({
             default: 0.3
         }
     },
-    emits: ['update:modelValue', 'selected'],
+    emits: ['update:model-value', 'selected'],
     data() {
         return {
             currentList: { first: 0, last: this.visibleThumbnails }
@@ -185,7 +186,7 @@ export default defineComponent({
                 : 'slider__arrow--icon--invisible'
         },
         handleThumbnailMousedown(image: string) {
-            this.$emit('update:modelValue', image)
+            this.$emit('update:model-value', image)
             this.$emit('selected', image)
         }
     }

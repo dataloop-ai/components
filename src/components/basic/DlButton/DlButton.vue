@@ -14,6 +14,7 @@
             style="pointer-events: auto"
             :class="buttonClass"
             @click="onClick"
+            @dblclick="onDblClick"
             @mousedown="onMouseDown"
         >
             <dl-tooltip
@@ -53,7 +54,8 @@
 </template>
 
 <script lang="ts">
-import { DlTooltip, DlIcon } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlIcon } from '../../essential'
 import {
     setPadding,
     setFontSize,
@@ -76,7 +78,7 @@ import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 import { stringStyleToRecord } from '../../../utils'
 import { textTransform } from '../../../utils/string'
 import { isString } from 'lodash'
@@ -97,7 +99,7 @@ export default defineComponent({
          * The color of the button
          */
         color: {
-            type: String! as PropType<keyof typeof colorNames>,
+            type: String! as PropType<keyof typeof colorNames | string>,
             default: ''
         },
         /**
@@ -152,7 +154,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         /**
          * Doesn't allow the button's text to be wrapped along multiple rows
@@ -175,7 +177,7 @@ export default defineComponent({
         shaded: { type: Boolean, default: false },
         outlined: Boolean
     },
-    emits: ['click', 'mousedown'],
+    emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
@@ -372,6 +374,17 @@ export default defineComponent({
                 }
 
                 this.$emit('click', e)
+            }
+        },
+        onDblClick(e: Event) {
+            if (this.isActionable) {
+                if (!e) {
+                    if (e.defaultPrevented === true) {
+                        return
+                    }
+                }
+
+                this.$emit('dblclick', e)
             }
         },
         onMouseDown(e: Event) {

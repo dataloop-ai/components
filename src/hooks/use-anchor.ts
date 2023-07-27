@@ -25,10 +25,26 @@ interface AnchorElements {
 
 export const useAnchorProps = {
     target: {
+        type: [String, Boolean],
         default: true
     },
     noParentEvent: Boolean,
     contextMenu: Boolean
+}
+
+export function CheckAnchorElVisibility(
+    domElement: any,
+    options: { triggerPercentage?: number } = {}
+) {
+    const { triggerPercentage } = options
+    const intersectionRatio = triggerPercentage ?? 1
+    return new Promise((resolve) => {
+        const o = new IntersectionObserver(([entry]) => {
+            resolve(entry.intersectionRatio >= intersectionRatio)
+            o.disconnect()
+        })
+        o.observe(domElement)
+    })
 }
 
 export default function useAnchor({
@@ -142,7 +158,6 @@ export default function useAnchor({
             setAnchorEl(proxy.$el.parentNode as HTMLElement)
         } else {
             let el = props.target
-
             if (typeof props.target === 'string') {
                 try {
                     el = document.querySelector(props.target)
@@ -204,7 +219,7 @@ export default function useAnchor({
         pickAnchorEl()
 
         if (props.modelValue === true && anchorEl.value === null) {
-            emit('update:modelValue', false)
+            emit('update:model-value', false)
         }
     })
 

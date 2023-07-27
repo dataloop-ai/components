@@ -12,7 +12,7 @@
             class="header-content"
         >
             <span class="title">
-                {{ title }}
+                <dl-ellipsis :text="title" />
                 <span class="info-icon">
                     <dl-icon
                         v-if="hasAdditionalInfo"
@@ -41,19 +41,23 @@
                     size="12px"
                 />
             </span>
-            <span class="subtitle">{{ subtitle }}</span>
+            <span class="subtitle">
+                <dl-ellipsis :text="subtitle" />
+            </span>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlTooltip, DlIcon } from '../../../essential'
+import { DlIcon, DlEllipsis } from '../../../essential'
+import { DlTooltip } from '../../../shared'
 
 export default defineComponent({
     components: {
         DlIcon,
-        DlTooltip
+        DlTooltip,
+        DlEllipsis
     },
     props: {
         title: { type: String, default: '' },
@@ -91,7 +95,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .popup-header {
     max-width: 100%;
-    padding: 16px 10px 20px 16px;
+    padding: 16px 10px 16px 16px;
 }
 
 .header-content {

@@ -40,10 +40,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors
@@ -149,10 +147,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors
@@ -263,10 +259,8 @@
                     </dl-list-item>
                     <dl-list-item
                         clickable
-                        start-icon="icon-dl-search"
-                        end-icon="icon-dl-id"
-                        start-icon-color="dl-color-positive"
-                        end-icon-color="dl-color-secondary"
+                        :start-icon="menuStartIcon"
+                        :end-icon="menuEndIcon"
                     >
                         <dl-item-section no-wrap>
                             item with custom icon colors
@@ -339,7 +333,7 @@
                 flex-direction: column;
             "
         >
-            V-model {{ showing }}
+            With model V-model {{ showing }}
             <div>
                 <dl-button
                     color="primary"
@@ -363,10 +357,7 @@
             >
                 Click me
 
-                <dl-menu
-                    v-model="showing"
-                    :value="false"
-                >
+                <dl-menu v-model="showing">
                     <dl-list style="min-width: 100px">
                         <dl-list-item clickable>
                             <dl-item-section>New tab</dl-item-section>
@@ -534,6 +525,32 @@
                 </dl-button>
             </div>
         </div>
+
+        <h4>With model as button: {{ isOpen }}</h4>
+        <dl-button label="test">
+            <dl-menu
+                v-model="isOpen"
+                max-height="250px"
+                self="bottom middle"
+                anchor="top middle"
+                :offset="[50, 5]"
+                @show="onShow"
+                @hide="onHide"
+            >
+                <dl-list style="min-width: 100px">
+                    <dl-list-item
+                        v-for="(item, index) in alotOfListItems"
+                        :key="index"
+                        clickable
+                        :is-highlighted="index === highlightedIndex"
+                    >
+                        <dl-item-section>
+                            {{ item }}
+                        </dl-item-section>
+                    </dl-list-item>
+                </dl-list>
+            </dl-menu>
+        </dl-button>
     </div>
 </template>
 
@@ -565,6 +582,7 @@ export default defineComponent({
         const showing = ref(false)
         const isMenuOpen = ref(false)
         const arrowNavigationLabel = ref<ItemType>('Arrow Navigation Label')
+        const isOpen = ref(false)
 
         const listItems = ref([
             'New tab',
@@ -703,11 +721,17 @@ export default defineComponent({
             listItems,
             onShow,
             onHide,
+            isOpen,
             isMenuOpen,
             selectedItem,
             highlightedIndex,
             arrowNavigationLabel,
-            alotOfListItems
+            alotOfListItems,
+            menuStartIcon: {
+                icon: 'icon-dl-search',
+                color: 'dl-color-positive'
+            },
+            menuEndIcon: { icon: 'icon-dl-id', color: 'dl-color-secondary' }
         }
     }
 })

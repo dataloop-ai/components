@@ -21,7 +21,7 @@ import {
 export default defineComponent({
     model: {
         prop: 'modelValue',
-        event: 'update:modelValue'
+        event: 'update:model-value'
     },
     props: {
         modelValue: {
@@ -41,7 +41,7 @@ export default defineComponent({
             default: 3
         }
     },
-    emits: ['update:modelValue', 'layout-changed'],
+    emits: ['update:model-value', 'layout-changed'],
     computed: {
         gridStyles(): object {
             return {
@@ -57,20 +57,21 @@ export default defineComponent({
     },
     watch: {
         modelValue: {
-            handler(val) {
+            handler(val, oldVal) {
                 this.$nextTick(() => {
-                    if (val) this.applyGridElementStyles()
+                    if (val) {
+                        if (val.length !== oldVal?.length) {
+                            this.applyIndexesForChildren()
+                        }
+                        this.applyGridElementStyles()
+                    }
                 })
             },
             immediate: true
         }
     },
     mounted() {
-        Array.from((this.$refs.grid as HTMLElement).children).forEach(
-            (element: Element, index: number) => {
-                (element as HTMLElement).dataset.index = `${index}`
-            }
-        )
+        this.applyIndexesForChildren()
     },
     methods: {
         applyGridElementStyles() {
@@ -128,13 +129,20 @@ export default defineComponent({
                 this.maxElementsPerRow
             )
             // Update modelValue is required to trigger visualization of the changes
-            this.$emit('update:modelValue', newLayout)
+            this.$emit('update:model-value', newLayout)
             if (e.detail.endDragging) {
                 this.layoutChanged()
             }
         },
         layoutChanged() {
             this.$emit('layout-changed', this.modelValue)
+        },
+        applyIndexesForChildren() {
+            Array.from((this.$refs.grid as HTMLElement).children).forEach(
+                (element: Element, index: number) => {
+                    (element as HTMLElement).dataset.index = `${index}`
+                }
+            )
         }
     }
 })

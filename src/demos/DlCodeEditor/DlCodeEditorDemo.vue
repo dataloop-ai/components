@@ -5,6 +5,10 @@
             left-label="Dark Mode"
         />
         <dl-switch
+            v-model="lines"
+            left-label="code lines"
+        />
+        <dl-switch
             v-model="readonly"
             left-label="readonly"
         />
@@ -21,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref, watch } from 'vue-demi'
 import { DlCodeEditor, DlSwitch } from '../../components'
 import { DlCodeEditorOptions, DlCodeEditorTheme } from '../../components/types'
 
@@ -34,6 +38,7 @@ export default defineComponent({
     setup() {
         const readonly = ref(false)
         const isDark = ref(false)
+        const lines = ref(false)
 
         const codeEditorValue = ref(
             'import urllib3\n' +
@@ -213,11 +218,16 @@ export default defineComponent({
                 : DlCodeEditorTheme.Light
         })
 
-        const options: DlCodeEditorOptions = {
-            lineNumbers: true
-        }
+        const options = computed<DlCodeEditorOptions>(() => ({
+            lineNumbers: lines.value
+        }))
+
+        watch(codeEditorValue, (val) => {
+            console.log('@@@', val)
+        })
 
         return {
+            lines,
             codeEditorValue,
             language,
             isDark,

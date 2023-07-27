@@ -155,6 +155,7 @@
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
                 :max-height="dropdownMaxHeight"
+                :trigger-percentage="triggerPercentage"
                 @show="onMenuOpen"
                 @hide="closeMenu"
                 @highlightedIndex="setHighlightedIndex"
@@ -232,13 +233,10 @@
                                 name="option"
                                 :opt="item"
                             >
-                                {{
-                                    capitalizedOptions
-                                        ? typeof getOptionLabel(item) ===
-                                            'string' &&
-                                            getOptionLabel(item).toLowerCase()
-                                        : getOptionLabel(item)
-                                }}
+                                <span
+                                    class="inner-option"
+                                    v-html="getOptionHtml(item)"
+                                />
                             </slot>
                         </dl-select-option>
                     </dl-virtual-scroll>
@@ -313,7 +311,8 @@
 <script lang="ts">
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { DlListItem } from '../../basic'
-import { DlTooltip, DlList, DlIcon, DlMenu } from '../../essential'
+import { DlTooltip } from '../../shared'
+import { DlList, DlIcon, DlMenu } from '../../essential'
 import {
     DlInfoErrorMessage,
     DlItemSection,
@@ -325,7 +324,8 @@ import {
     getIconSize,
     optionsValidator,
     DlSelectOptionType,
-    getLabelOfSelectedOption
+    getLabelOfSelectedOption,
+    getCaseInsensitiveInput
 } from './utils'
 import DlSelectOption from './components/DlSelectOption.vue'
 import { isEqual } from 'lodash'
@@ -391,7 +391,14 @@ export default defineComponent({
         clearButtonTooltip: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
         preserveSearch: { type: Boolean, default: false },
-        disabledTooltip: { type: String, default: 'Disabled' }
+        disabledTooltip: { type: String, default: 'Disabled' },
+        /**
+         * the % of the select element to display the menu
+         */
+        triggerPercentage: {
+            type: Number,
+            default: 1
+        }
     },
     emits: [
         'search-focus',
@@ -661,6 +668,9 @@ export default defineComponent({
         },
         modelValue() {
             this.setSelectedIndex()
+        },
+        emitValue() {
+            this.setSelectedIndex()
         }
     },
     beforeMount() {
@@ -689,7 +699,7 @@ export default defineComponent({
                 return
             }
 
-            if (this.emitValue && this.selectedIndex !== -1) {
+            if (this.emitValue) {
                 this.selectedIndex = this.options.findIndex(
                     (
                         option:
@@ -827,14 +837,15 @@ export default defineComponent({
             this.$emit('search-input', searchValue)
         },
         getOptionHtml(option: DlSelectOptionType) {
-            let label = `${this.getOptionLabel(option)}`
-            if (this.capitalizedOptions) {
-                label = label.toLowerCase()
-            }
+            const label = `${this.getOptionLabel(option)}`
+            const toReplace = new RegExp(this.searchInputValue, 'gi')
 
             const highlightedHtml = label.replace(
-                this.searchInputValue,
-                `<span style="background: var(--dl-color-warning)">${this.searchInputValue}</span>`
+                toReplace,
+                `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                    label,
+                    this.searchInputValue
+                )}</span>`
             )
             const html = `<span>${highlightedHtml}</span>`
 

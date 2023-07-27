@@ -42,7 +42,7 @@ import DlBadgeDemo from './DlBadgeDemo.vue'
 import DlTrendDemo from './DlTrendDemo.vue'
 import DlWidgetDemo from './DlWidgetDemo.vue'
 import DlRadioDemo from './DlRadioDemo.vue'
-import DlTextHolderDemo from './DlTextHolderDemo.vue'
+import DlLabel from './DlLabelDemo.vue'
 import DlColumnChartDemo from './ColumnChartDemo.vue'
 import DlBarChartDemo from './BarChartDemo.vue'
 import DlSwitchDemo from './DlSwitchDemo.vue'
@@ -64,7 +64,7 @@ import DlMarkupTableDemo from './DlMarkupTableDemo.vue'
 import DlVirtualScrollDemo from './DlVirtualScrollDemo.vue'
 import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
-import DlPageLayoutDemo from './DlPageLayoutDemo.vue'
+import DlLayoutDemo from './DlLayoutDemo.vue'
 import { DlCodeEditorDemo } from './DlCodeEditor'
 
 export default {
@@ -110,7 +110,7 @@ export default {
     DlTrendDemo,
     DlWidgetDemo,
     DlRadioDemo,
-    DlTextHolderDemo,
+    DlLabel,
     DlToastDemo,
     DlColumnChartDemo,
     DlSwitchDemo,
@@ -132,5 +132,5 @@ export default {
     DlJsonEditorDemo,
     DlThumbnailGallery,
     DlCodeEditorDemo,
-    DlPageLayoutDemo
+    DlLayoutDemo
 }

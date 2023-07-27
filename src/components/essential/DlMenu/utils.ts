@@ -119,7 +119,7 @@ export const refocusTargetFn = (
         // menu was hidden from code or ESC plugin
         (evt ||
             // menu was not closed from a mouse or touch clickOutside
-            evt.dlClickOutside !== true)
+            evt?.dlClickOutside !== true)
     ) {
         (refocusTarget as HTMLElement).focus()
     }

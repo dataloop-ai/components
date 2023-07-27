@@ -24,5 +24,7 @@ window.DlComponents = window.DlComponents || {
 }
 
 export * from './components'
+export * from './layouts'
+
 import DlComponentsDemo from './App.vue'
 export { DlComponentsDemo }

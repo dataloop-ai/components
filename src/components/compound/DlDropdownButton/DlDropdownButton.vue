@@ -188,7 +188,7 @@ import {
     Ref
 } from 'vue-demi'
 import { v4 } from 'uuid'
-import { transformOptions } from '../../shared/types'
+import { DlTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -203,7 +203,6 @@ export default defineComponent({
         event: 'update:model-value'
     },
     props: {
-        'onUpdate:modelValue': [Function, Array],
         modelValue: Boolean,
         split: Boolean,
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },
@@ -242,7 +241,7 @@ export default defineComponent({
             type: String,
             default: 'default',
             validator: (value: string): boolean =>
-                transformOptions.includes(value)
+                DlTransformOptions.includes(value)
         },
         outlined: Boolean,
         padding: { type: String, default: '5px' },
@@ -257,7 +256,7 @@ export default defineComponent({
     },
     emits: [
         'update:model-value',
-        'update:modelValue',
+        'update:model-value',
         'click',
         'before-show',
         'show',
@@ -293,7 +292,7 @@ export default defineComponent({
 
         const menuModel = computed({
             get: () => props.modelValue,
-            set: (val) => emit('update:modelValue', val)
+            set: (val) => emit('update:model-value', val)
         })
 
         const iconClass = computed(() => {
@@ -344,7 +343,7 @@ export default defineComponent({
 
         function onShow(e: Event) {
             emit('show', e)
-            emit('update:modelValue', true)
+            emit('update:model-value', true)
         }
 
         function onBeforeHide(e: Event) {
@@ -354,7 +353,7 @@ export default defineComponent({
 
         function onHide(e: Event) {
             emit('hide', e)
-            emit('update:modelValue', false)
+            emit('update:model-value', false)
         }
 
         function onClick(e: Event) {

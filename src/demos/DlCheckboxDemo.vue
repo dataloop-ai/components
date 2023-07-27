@@ -1,5 +1,18 @@
 <template>
     <div style="--dl-checkbox-sub-label-left-padding: 20px">
+        <div style="max-width: 150px">
+            in a tight container with long text
+            <dl-checkbox
+                v-model="customValueCheck"
+                toggle-indeterminate
+                indeterminate-value="maybe"
+                false-value="no"
+                true-value="yes"
+                label="dasflsd;ljasl;djfasjkl;dfjklasdfjl;kasj;klasjl;kl;aksdfkl;asjdfkl;asjdfl;kasjdflk;asdf;kljsdkl;fjasl;dkfjaskl;dfjasl;kdfal;skdfkl;asdfl;kasdfkl;asjdfkl;asjdfkl;asjdf;"
+                sub-label="this is a lot of text this is a lot of text this is a lot of text this is a lot of text this is a lot of text this is a lot of text "
+                @update:model-value="logValue"
+            />
+        </div>
         <dl-checkbox
             v-model="customValueCheck"
             toggle-indeterminate
@@ -35,8 +48,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlCheckbox } from '../components'
-import DlTooltip from '../components/essential/DlTooltip/DlTooltip.vue'
+import { DlCheckbox, DlTooltip } from '../components'
+
 export default defineComponent({
     name: 'DlCheckboxDemo',
     components: {

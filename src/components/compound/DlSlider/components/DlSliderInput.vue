@@ -1,19 +1,20 @@
 <template>
     <input
         ref="sliderInput"
-        :value="sliderValue"
+        :value="modelRef"
         type="number"
         :min="min"
         :max="max"
         :readonly="readonly"
         :disabled="disabled"
-        @input="sliderValue = $event"
+        @input="handleChange"
         @change="handleChange"
     >
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { debounce } from 'lodash'
+import { defineComponent, toRef } from 'vue-demi'
 import { getInputValue } from '../utils'
 
 export default defineComponent({
@@ -45,34 +46,24 @@ export default defineComponent({
         }
     },
     emits: ['update:model-value', 'change'],
-    computed: {
-        sliderValue: {
-            get(): number | undefined {
-                return this.modelValue
-            },
-            set(evt: any): void {
-                const val = evt.target.value
+    setup(props, { emit }) {
+        const modelRef = toRef(props, 'modelValue')
 
-                if (val === '') return
-
-                const { value } = getInputValue(val, this.min, this.max)
-
-                ;(this.$refs.sliderInput as HTMLInputElement).value = value
-
-                this.$emit('update:model-value', Number(value))
-            }
-        }
-    },
-    methods: {
-        handleChange(evt: any) {
+        const handleChange = (evt: any) => {
             const val = evt.target.value
             if (val === '') return
 
-            const { value } = getInputValue(val, this.min, this.max)
+            const { value } = getInputValue(val, props.min, props.max)
 
-            ;(this.$refs.sliderInput as HTMLInputElement).value = value
+            emit('change', Number(value))
+            emit('update:model-value', Number(value))
+        }
 
-            this.$emit('change', Number(value))
+        const debouncedHandleChange = debounce(handleChange, 300)
+
+        return {
+            modelRef,
+            handleChange: debouncedHandleChange
         }
     },
     template: 'dl-slider-input'

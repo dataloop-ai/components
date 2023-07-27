@@ -16,6 +16,20 @@
             label="Option 3"
             :value="3"
         />
+        disabled
+
+        <dl-radio
+            v-model="disabledModel"
+            label="Option Disabled"
+            :value="4"
+            disabled
+        />
+        <dl-radio
+            v-model="disabledModel"
+            label="Option Disabled not selected"
+            :value="5"
+            disabled
+        />
     </div>
 </template>
 
@@ -28,7 +42,8 @@ export default {
     },
     data() {
         return {
-            checkModel: 1
+            checkModel: 1,
+            disabledModel: 4
         }
     }
 }
