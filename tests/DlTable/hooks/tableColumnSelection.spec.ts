@@ -75,7 +75,7 @@ describe('use-table-column-selection', () => {
 
         expect(wrapper.result.current?.computedColspan.value).toBe(COLSPAN)
         expect(wrapper.result.current?.computedCols.value[0].thClass).toBe(
-            ' text-right'
+            ' text-right text-transform--default'
         )
     })
 })

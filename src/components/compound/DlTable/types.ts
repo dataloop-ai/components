@@ -31,6 +31,7 @@ export type DlTableColumn = {
     classes?: string | ((row: DlTableRow) => string)
     headerStyle?: string
     headerClasses?: string
+    textTransform?: string
 }
 
 export type DlTableFilterMethod = (
