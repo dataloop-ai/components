@@ -53,7 +53,7 @@ export function useTableColumnSelection(
             const alignClass = ` text-${align}`
 
             const transform: string = col.textTransform || 'default'
-            const textTransformClass: string = ` text-transform--${transform}`
+            const textTransformClass: string = ` dl-text-transform--${transform}`
 
             const headerClass: string = col.headerClasses
                 ? ` ${col.headerClasses}`
