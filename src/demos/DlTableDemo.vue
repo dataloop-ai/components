@@ -417,14 +417,16 @@ const columns = [
         label: 'Dessert (100g serving)',
         align: 'left',
         field: 'name',
-        sortable: true
+        sortable: true,
+        textTransform: 'uppercase'
     },
     {
         name: 'calories',
         align: 'center',
         label: 'Calories',
         field: 'calories',
-        sortable: true
+        sortable: true,
+        textTransform: 'lowercase'
     },
     { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
     { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
@@ -435,6 +437,7 @@ const columns = [
         label: 'Calcium (%)',
         field: 'calcium',
         sortable: true,
+        textTransform: 'lowercase',
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     },
@@ -443,6 +446,7 @@ const columns = [
         label: 'Iron (%)',
         field: 'iron',
         sortable: true,
+        textTransform: 'lowercase',
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     }
