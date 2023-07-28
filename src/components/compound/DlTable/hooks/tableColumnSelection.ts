@@ -52,35 +52,68 @@ export function useTableColumnSelection(
             const align = col.align || 'right'
             const alignClass = ` text-${align}`
 
+            const transform: string = col.textTransform || 'default'
+            const textTransformClass: string = ` text-transform--${transform}`
+
+            const headerClass: string = col.headerClasses
+                ? ` ${col.headerClasses}`
+                : ''
+            const sortableClass: string =
+                col.sortable === true ? ' sortable' : ''
+            const sortOrderClass: string =
+                col.name === sortBy
+                    ? ` sorted ${descending === true ? 'sort-desc' : ''}`
+                    : ''
+
             return {
                 ...col,
                 align,
                 iconClass: `dl-table__sort-icon dl-table__sort-icon--${align}`,
                 thClass:
                     alignClass +
-                    (col.headerClasses ? ' ' + col.headerClasses : '') +
-                    (col.sortable === true ? ' sortable' : '') +
-                    (col.name === sortBy
-                        ? ` sorted ${descending === true ? 'sort-desc' : ''}`
-                        : ''),
-
-                tdStyle: col.style
-                    ? typeof col.style !== 'function'
-                        ? () => col.style
-                        : col.style
-                    : () => '',
-
-                tdClass: col.classes
-                    ? typeof col.classes !== 'function'
-                        ? () => alignClass + ' ' + col.classes
-                        : (row: DlTableRow) =>
-                              alignClass + ' ' + (col.classes as Function)(row)
-                    : () => alignClass
+                    headerClass +
+                    sortableClass +
+                    sortOrderClass +
+                    textTransformClass,
+                tdStyle: assignTdStyles(col),
+                tdClass: assignTdClasses(col, alignClass, textTransformClass)
             }
         })
 
         return updatedCols
     })
+
+    const assignTdStyles = (col: any) => {
+        if (!col.style) {
+            return () => ''
+        }
+
+        if (typeof col.style !== 'function') {
+            return () => col.style
+        }
+
+        return col.style
+    }
+
+    const assignTdClasses = (
+        col: any,
+        alignClass: string,
+        textTransformClass: string
+    ) => {
+        if (!col.classes) {
+            return () => alignClass + textTransformClass
+        }
+
+        if (typeof col.classes !== 'function') {
+            return () => alignClass + ' ' + col.classes + textTransformClass
+        }
+
+        return (row: DlTableRow) =>
+            alignClass +
+            textTransformClass +
+            ' ' +
+            (col.classes as Function)(row)
+    }
 
     const computedColsMap = computed(() => {
         const names: Record<string, DlTableColumn> = {}

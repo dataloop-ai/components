@@ -20,7 +20,6 @@ import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { getColor } from '../../../../utils'
 import { DlTooltip } from '../../../shared'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
-import { DlTransformOptions } from '../../../shared/types'
 
 export default defineComponent({
     name: 'DlTd',
@@ -34,12 +33,6 @@ export default defineComponent({
         bgColor: {
             type: String,
             default: ''
-        },
-        transform: {
-            type: String,
-            default: 'default',
-            validator: (value: string): boolean =>
-                DlTransformOptions.includes(value)
         }
     },
     setup(props) {
@@ -67,17 +60,13 @@ export default defineComponent({
             return classNames
         })
 
-        const letterClass = computed(() => {
-            if (props.transform === 'default') {
-                return 'first-letter-capitalized'
-            }
-            return null
-        })
-
         const tdStyles = computed(() => {
-            const styles: Record<string, string | number> = {
-                background: props.bgColor ? getColor(props.bgColor, '') : null,
-                textTransform: letterClass.value ? null : props.transform
+            let styles = ''
+
+            if (props.bgColor) {
+                styles = styles.concat(
+                    `background: ${getColor(props.bgColor, '')}`
+                )
             }
             return styles
         })
