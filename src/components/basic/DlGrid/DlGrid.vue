@@ -88,11 +88,11 @@ export default defineComponent({
             const childrenElements = Array.from(
                 (this.$refs.grid as HTMLElement).children
             )
-            const layoutOrder = this.modelValue?.flat(1) ?? []
+            const layoutOrder = this.modelValue?.flat() ?? []
 
             if (
                 !this.modelValue ||
-                childrenElements.length > layoutOrder.flat(1).length
+                childrenElements.length > layoutOrder.flat().length
             ) {
                 for (const element of childrenElements) {
                     const htmlElement = element as HTMLElement
@@ -108,7 +108,7 @@ export default defineComponent({
             for (const element of childrenElements) {
                 const htmlElement = element as HTMLElement
                 const orderIndex: number = layoutOrder
-                    .flat(1)
+                    .flat()
                     .findIndex((w) => w === htmlElement.dataset.id)
                 if (this.dynamicGridMode) {
                     htmlElement.style.gridColumn = gridTemplate[orderIndex]
@@ -154,7 +154,7 @@ export default defineComponent({
             Array.from((this.$refs.grid as HTMLElement).children).forEach(
                 (element: Element, index: number) => {
                     (element as HTMLElement).dataset.id =
-                        this.modelValue.flat(1)[index]
+                        this.modelValue.flat()[index]
                 }
             )
         }
