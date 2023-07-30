@@ -185,10 +185,12 @@ import {
     watch,
     onMounted,
     getCurrentInstance,
-    Ref
+    Ref,
+    Prop,
+    PropType
 } from 'vue-demi'
 import { v4 } from 'uuid'
-import { DlTransformOptions } from '../../shared/types'
+import { DlTextTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -238,10 +240,10 @@ export default defineComponent({
         iconSize: { type: String, required: false, default: '20px' },
         flat: Boolean,
         transform: {
-            type: String,
+            type: String as PropType<DlTextTransformOptions>,
             default: 'default',
-            validator: (value: string): boolean =>
-                DlTransformOptions.includes(value)
+            validator: (value: DlTextTransformOptions): boolean =>
+                Object.values(DlTextTransformOptions).includes(value)
         },
         outlined: Boolean,
         padding: { type: String, default: '5px' },
