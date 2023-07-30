@@ -70,7 +70,7 @@ export default defineComponent({
             handler(val, oldVal) {
                 this.$nextTick(() => {
                     if (val) {
-                        if (val.length !== oldVal?.length) {
+                        if (val.flat().length !== oldVal?.flat().length) {
                             this.applyIndexesForChildren()
                         }
                         this.applyGridElementStyles()
