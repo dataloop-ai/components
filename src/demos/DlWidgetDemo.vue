@@ -1,177 +1,147 @@
 <template>
-    <div>
-        <div class="options">
-            <div class="select-layout">
-                <select
-                    class="select-layout__input"
-                    @change="selectLayout"
-                >
-                    <option
-                        v-for="(layoutItem, layoutIndex) in layouts"
-                        :key="layoutIndex"
-                        :value="layoutIndex"
-                    >
-                        {{ layoutItem.name }}
-                    </option>
-                </select>
-                <button
-                    class="select-layout__button"
-                    @mousedown="saveLayout"
-                >
-                    Save
-                </button>
-                <span class="select-layout__info">{{ hasBeenSaved }}</span>
-            </div>
-            <div class="widgets-per-row">
-                <span class="widgets-per-row__label"> Widgets per row: </span>
-                <input
-                    v-model="widgetsPerRow"
-                    class="widgets-per-row__input"
-                    type="number"
-                >
-            </div>
-        </div>
-        <dl-grid
-            v-model="layout"
-            :max-elements-per-row="widgetsPerRow"
-        >
-            <dl-widget id="a">
-                <template #header>
-                    <span>Widget 1</span>
-                    <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="8"
-                    />
-                </template>
-                <template #menu>
-                    <div class="menu-icons">
-                        <dl-icon
-                            size="m"
-                            icon="icon-dl-settings"
-                        />
-                        <dl-icon
-                            size="m"
-                            icon="icon-dl-download"
-                        />
-                    </div>
-                </template>
-                <template #description>
-                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Libero eligendi dolore, similique possimus
-                        veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate modi
-                        dicta eveniet veritatis?</span>
-                </template>
-            </dl-widget>
-
-            <dl-widget id="b">
-                <template #header>
-                    <span>Widget 2</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-
-            <dl-widget id="c">
-                <template #header>
-                    <span>Widget 3</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-
-            <dl-widget id="d">
-                <template #header>
-                    <span>Widget 4</span>
-                    <span style="font-size: 12px; color: gray">Subtitle</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="8"
-                    />
-                </template>
-                <template #description>
-                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Libero eligendi dolore, similique possimus
-                        veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate modi
-                        dicta eveniet veritatis?</span>
-                </template>
-            </dl-widget>
-
-            <dl-widget id="e">
-                <template #header>
-                    <span>Widget 5</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-
-            <dl-widget
-                id="f"
-                is-empty
-                :empty-state-props="{
-                    responsive: true,
-                    style: 'min-height: 350px;',
-                    bgSize: '130px',
-                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                    title: 'Lorem ipsum',
-                    subtitle:
-                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                    info: 'To learn more about this analytics, read our documentation.'
-                }"
+    <div class="widgets-demo-wrapper">
+        <div>
+            <h1>Constant grid mode</h1>
+            <dl-button
+                class="select-layout__button"
+                style="width: 200px"
+                @click="addWidget('cm')"
             >
-                <template #header>
-                    <span>Widget 6</span>
-                </template>
-                <template #links="">
-                    <div style="display: flex; gap: 5px; padding: 0 20px">
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-sdk-documentation"
-                            flat
-                            uppercase
-                            label="SDK"
+                Add widget
+            </dl-button>
+            <dl-grid
+                :key="cmWidgets.length"
+                v-model="cmLayout"
+                :max-elements-per-row="cmMaxWidgetsPerRow"
+            >
+                <dl-widget
+                    v-for="widget in cmWidgets"
+                    :key="widget.id"
+                >
+                    <template #header>
+                        {{ widget.header }}
+                    </template>
+                    <template #content>
+                        <dl-bar-chart
+                            :data="data"
+                            :items-in-view="6"
                         />
-                        <div class="break" />
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-file"
-                            flat
-                            label="Documentation"
+                    </template>
+                    <template #menu>
+                        <div class="menu-icons">
+                            <dl-icon
+                                size="m"
+                                icon="icon-dl-edit"
+                            />
+                            <dl-icon
+                                size="m"
+                                icon="icon-dl-delete"
+                                @click="deleteWidget('cm', widget.id)"
+                            />
+                        </div>
+                    </template>
+                    <template #description>
+                        {{ widget.description }}
+                    </template>
+                </dl-widget>
+            </dl-grid>
+        </div>
+        <div>
+            <h1>Dynamic grid mode</h1>
+            <dl-button
+                class="select-layout__button"
+                style="width: 200px"
+                @click="addWidget('dm')"
+            >
+                Add widget
+            </dl-button>
+            <dl-grid
+                :key="dmWidgets.length"
+                v-model="dmLayout"
+                :max-elements-per-row="dmMaxWidgetsPerRow"
+                dynamic-grid-mode
+            >
+                <dl-widget
+                    v-for="widget in dmWidgets"
+                    :key="widget.id"
+                >
+                    <template #header>
+                        {{ widget.header }}
+                    </template>
+                    <template #content>
+                        <dl-bar-chart
+                            :data="data"
+                            :items-in-view="6"
                         />
-                        <div class="break" />
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-youtube"
-                            flat
-                            label="Video"
+                    </template>
+                    <template #menu>
+                        <div class="menu-icons">
+                            <dl-icon
+                                size="m"
+                                icon="icon-dl-edit"
+                            />
+                            <dl-icon
+                                size="m"
+                                icon="icon-dl-delete"
+                                @click="deleteWidget('dm', widget.id)"
+                            />
+                        </div>
+                    </template>
+                    <template #description>
+                        {{ widget.description }}
+                    </template>
+                </dl-widget>
+            </dl-grid>
+        </div>
+        <div>
+            <h1>Flex grid mode</h1>
+            <dl-button
+                class="select-layout__button"
+                style="width: 200px"
+                @click="addWidget('fm')"
+            >
+                Add widget
+            </dl-button>
+            <dl-grid :key="fmWidgets.length">
+                <dl-widget
+                    v-for="widget in fmWidgets"
+                    :key="widget.id"
+                    :draggable="false"
+                    style="width: 15vw"
+                >
+                    <template #header>
+                        {{ widget.header }}
+                    </template>
+                    <template #content>
+                        <dl-bar-chart
+                            :data="data"
+                            :items-in-view="6"
                         />
-                    </div>
-                </template>
-            </dl-widget>
-        </dl-grid>
+                    </template>
+                    <template #menu>
+                        <div class="menu-icons">
+                            <dl-icon
+                                size="m"
+                                icon="icon-dl-edit"
+                            />
+                            <dl-icon
+                                size="m"
+                                icon="icon-dl-delete"
+                                @click="deleteWidget('fm', widget.id)"
+                            />
+                        </div>
+                    </template>
+                    <template #description>
+                        {{ widget.description }}
+                    </template>
+                </dl-widget>
+            </dl-grid>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, Ref, ref } from 'vue-demi'
 import {
     DlWidget,
     DlGrid,
@@ -181,56 +151,22 @@ import {
     DlButton
 } from '../components'
 
-const labelsFn = () => {
-    const a = []
-    for (let i = 0; i < 20; i++) {
-        a.push(`${i}`)
-    }
-    return a
-}
-
-const dataFn = () => {
-    const a = []
-    for (let i = 1; i <= 20; i++) {
-        a.push(i)
-    }
-    return a
-}
-
 const data = {
-    labels: labelsFn(),
+    labels: Array.from({ length: 20 }, (_, i) => `${i}`),
     datasets: [
         {
             label: 'Data One',
             backgroundColor: '--dl-color-secondary',
             borderRadius: 4,
-            data: dataFn()
+            data: Array.from({ length: 20 }, (_, i) => i + 1)
         },
         {
             label: 'Data Two',
             backgroundColor: '--dl-color-warning',
             borderRadius: 4,
-            data: dataFn()
+            data: Array.from({ length: 20 }, (_, i) => i + 1)
         }
     ]
-}
-
-const matrix: number[][] = []
-const labels: string[] = []
-const size: number = 10
-
-for (let i = 0; i < size; i++) {
-    const row = []
-    for (let j = 0; j < size; j++) {
-        row.push(Math.floor(Math.random() * 10))
-    }
-    matrix.push(row)
-}
-
-const items = ['Van', 'Truck', 'Motorcycle', 'Car', 'Bus']
-
-for (let i = 0; i < size; i++) {
-    labels.push(items[Math.floor(Math.random() * items.length)])
 }
 
 export default defineComponent({
@@ -242,74 +178,135 @@ export default defineComponent({
         DlButton
     },
     setup() {
-        const layout = ref([
+        const cmLayout: Ref<string[][]> = ref([
+            ['a', 'b', 'c'],
+            ['d', 'e']
+        ])
+        const dmLayout: Ref<string[][]> = ref([
+            ['a', 'b', 'c'],
+            ['d', 'e']
+        ])
+        const fmLayout: Ref<string[][]> = ref([
             ['a', 'b', 'c'],
             ['d', 'e', 'f']
         ])
 
-        const layouts = ref<DlGridLayout[]>([
-            {
-                name: 'Layout 1',
-                value: layout.value
-            }
-        ])
+        const cmMaxWidgetsPerRow = ref(3)
+        const dmMaxWidgetsPerRow = ref(3)
+        const fmMaxWidgetsPerRow = ref(3)
 
-        const widgetsPerRow = ref(3)
-        const hasBeenSaved = ref('')
+        const cmWidgets = ref([])
+        const dmWidgets = ref([])
+        const fmWidgets = ref([])
 
-        const saveLayout = () => {
-            const newLayout = {
-                name: `Layout ${layouts.value.length + 1}`,
-                value: layout.value
+        const createRandomWidgets = (
+            layout: Ref<string[][]>,
+            widgets: Ref<any[]>,
+            numOfWidgets: number
+        ) => {
+            for (let i = 0; i < numOfWidgets; i++) {
+                widgets.value.push({
+                    id: layout.value.flat()[i],
+                    header: `Widget ${i}`,
+                    description: `I'm description`
+                })
             }
-            layouts.value.push(newLayout)
-            hasBeenSaved.value = `${newLayout.name} has been saved.`
-            setTimeout(() => {
-                hasBeenSaved.value = ''
-            }, 2000)
+        }
+        createRandomWidgets(cmLayout, cmWidgets, cmLayout.value.flat().length)
+        createRandomWidgets(dmLayout, dmWidgets, dmLayout.value.flat().length)
+        createRandomWidgets(fmLayout, fmWidgets, fmLayout.value.flat().length)
+
+        const deleteWidget = (mode: string, id: string) => {
+            const { widgets, layout, widgetsPerRow } = modeScope(mode)
+            widgets.value = widgets.value.filter((widget) => widget.id !== id)
+            layout.value = buildNewLayout(widgets.value, widgetsPerRow)
         }
 
-        const selectLayout = (e: InputEvent) => {
-            const index = parseInt((e.target as HTMLInputElement).value)
-            layout.value = layouts.value[index].value
+        const addWidget = (mode: string) => {
+            const { widgets, layout, widgetsPerRow } = modeScope(mode)
+            widgets.value.push({
+                id: (widgets.value.length + 1).toString(),
+                header: `Widget ${widgets.value.length}`,
+                description: `I'm description`
+            })
+            layout.value = buildNewLayout(widgets.value, widgetsPerRow)
+        }
+
+        const modeScope = (mode: string) => {
+            let widgets
+            let layout
+            let widgetsPerRow
+            switch (mode) {
+                case 'cm':
+                    widgets = cmWidgets
+                    layout = cmLayout
+                    widgetsPerRow = cmMaxWidgetsPerRow.value
+                    break
+                case 'dm':
+                    widgets = dmWidgets
+                    layout = dmLayout
+                    widgetsPerRow = dmMaxWidgetsPerRow.value
+                    break
+                case 'fm':
+                    widgets = fmWidgets
+                    layout = fmLayout
+                    widgetsPerRow = fmMaxWidgetsPerRow.value
+                    break
+            }
+            return { widgets, layout, widgetsPerRow }
+        }
+
+        const buildNewLayout = (widgets: any[], widgetsPerRow: number) => {
+            const template: string[][] = []
+            let index = 0
+
+            while (index < widgets.length) {
+                const row = widgets.slice(index, index + widgetsPerRow)
+                template.push(row.map((w) => w.id))
+                index += widgetsPerRow
+            }
+            return template
         }
 
         return {
             data,
-            layout,
-            layouts,
-            widgetsPerRow,
-            hasBeenSaved,
-            saveLayout,
-            selectLayout
+            deleteWidget,
+            addWidget,
+            cmLayout,
+            cmWidgets,
+            cmMaxWidgetsPerRow,
+            fmLayout,
+            fmWidgets,
+            fmMaxWidgetsPerRow,
+            dmLayout,
+            dmWidgets,
+            dmMaxWidgetsPerRow
         }
     }
 })
 </script>
 
 <style lang="scss" scoped>
-.options {
-    width: 100%;
+.widgets-demo-wrapper {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    & > * {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        border: 1px solid var(--dl-color-separator);
+        padding: 10px;
+    }
 }
 .widgets-per-row {
     &__input {
         padding: 5px;
         border-radius: 5px;
         width: 50px;
-    }
-}
-.select-layout {
-    &__input,
-    &__button {
-        padding: 5px;
-        border-radius: 5px;
-        margin: 0px 2px;
-    }
-    &__info {
-        font-size: 0.8em;
-        margin-left: 10px;
     }
 }
 .menu-icons {

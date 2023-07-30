@@ -1,19 +1,34 @@
 import { cloneDeep } from 'lodash'
-import { DlGridSideType } from '../DlGrid/types'
 
-export function getGridTemplate(layout_: string[], widgetsPerRow: number) {
-    if (!layout_) return
-
-    const layout: string[][] = []
-    let index = 0
-
-    while (index < layout_.length) {
-        const row = layout_.slice(index, index + widgetsPerRow)
-        layout.push(row)
-        index += widgetsPerRow
+function leastCommonMultiple(arr: number[]) {
+    if (!arr || !arr.length) {
+        return
     }
 
-    return layout
+    const gcd = (a: number, b: number): number => (a ? gcd(b % a, a) : b)
+    const lcm = (a: number, b: number): number => (a * b) / gcd(a, b)
+    return arr.reduce(lcm)
+}
+
+export function getGridTemplate(layout: string[][]) {
+    if (!layout) {
+        return
+    }
+
+    const flatLayout = layout.map((el) => el.length)
+    const template = []
+    const lcm = leastCommonMultiple(flatLayout)
+    for (let i = 0; i < flatLayout.length; i++) {
+        const columns = flatLayout[i]
+        let columnTrack = 1
+        for (let j = 0; j < columns; j++) {
+            let gridSpan = lcm / columns
+            template.push(`${columnTrack} / ${gridSpan + columnTrack}`)
+            columnTrack += gridSpan
+            gridSpan += gridSpan
+        }
+    }
+    return template
 }
 
 export function getElementAbove(el: HTMLElement, className: string) {
@@ -40,74 +55,38 @@ export function removeMouseEnter(
     })
 }
 
-export function findIndexInMatrix(matrix: number[][], nr: number) {
-    for (let i = 0; i < matrix.length; i++) {
-        for (let j = 0; j < matrix[i].length; j++) {
-            if (matrix[i][j] === nr) return { row: i, column: j }
-        }
-    }
-}
-
-export function swapElemensInMatrix(
-    layout: string[][],
+export function swapElementsInMatrix(
+    oldLayout: string[][],
     sourceEl: HTMLElement,
-    targetEl: HTMLElement,
-    side: DlGridSideType,
-    maxElements: number,
-    gridElements: Element[]
+    targetEl: HTMLElement
 ) {
     if (!sourceEl || !targetEl) {
-        return layout
+        return oldLayout
     }
-    const newLayout = cloneDeep(layout).flat(1)
+    const newLayout = cloneDeep(oldLayout).flat(1)
 
-    // Insert source element into target position and push all other elements to the 'side' value
-    const sourceIndex = newLayout.indexOf(sourceEl.id)
-    const targetIndex = newLayout.indexOf(targetEl.id)
+    const sourceIndex = newLayout.indexOf(sourceEl.dataset.id)
+    const targetIndex = newLayout.indexOf(targetEl.dataset.id)
     newLayout.splice(sourceIndex, 1)
-    newLayout.splice(targetIndex, 0, sourceEl.id)
+    newLayout.splice(targetIndex, 0, sourceEl.dataset.id)
 
-    // Reorder element order in the grid
-    for (const element of gridElements) {
-        (element as HTMLElement).style.order = newLayout
-            .findIndex((w) => w === element.id)
-            .toString()
-        // YonDo: Maybe removce this method from here?
-    }
-
-    return getGridTemplate(newLayout, maxElements)
+    return buildNewLayoutOrder(newLayout, oldLayout)
 }
 
-function moveElementsToNextIndex(
-    template: number[][],
-    maxElements: number
-): number[][] {
-    const clonedTemplate: number[][] = cloneDeep(template)
-    let overflow: number[] = []
+function buildNewLayoutOrder(layout: string[], matrix: string[][]) {
+    const template: string[][] = []
+    let index = 0
 
-    for (let i = 0; i < clonedTemplate.length; i++) {
-        let currentRow = clonedTemplate[i]
-        if (overflow.length > 0) {
-            currentRow = overflow.concat(currentRow)
-            overflow = []
+    for (const row of matrix) {
+        const templateRow: string[] = []
+        for (const cell of row) {
+            templateRow.push(layout[index])
+            index++
         }
-        if (currentRow.length > maxElements) {
-            overflow = currentRow.slice(maxElements)
-            currentRow = currentRow.slice(0, maxElements)
-        }
-        clonedTemplate[i] = currentRow
-        if (i + 1 < clonedTemplate.length && overflow.length > 0) {
-            clonedTemplate[i + 1] = overflow.concat(clonedTemplate[i + 1])
-            overflow = []
-        }
+        template.push(templateRow)
     }
-    return clonedTemplate
-}
 
-function isTooLarge(layout: number[][], max: number) {
-    const lengths = layout.map((row) => row.length)
-    const highest = Math.max(...lengths)
-    return highest > max
+    return template
 }
 
 export function isCustomEvent(event: Event): event is CustomEvent {

@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts">
+import { Dictionary } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
 import {
     getGridTemplate,
     getElementAbove,
-    findIndexInMatrix,
-    swapElemensInMatrix,
+    swapElementsInMatrix,
     isCustomEvent
 } from '../DlWidget/utils'
 
@@ -39,16 +39,25 @@ export default defineComponent({
         maxElementsPerRow: {
             type: Number,
             default: 3
+        },
+        dynamicGridMode: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'layout-changed'],
     computed: {
         gridStyles(): object {
-            return {
+            const gridStyles: Dictionary<string | number> = {
                 '--row-gap': this.rowGap,
-                '--column-gap': this.columnGap,
-                '--element-per-row': this.maxElementsPerRow
+                '--column-gap': this.columnGap
             }
+
+            if (!this.dynamicGridMode) {
+                gridStyles['--element-per-row'] = this.maxElementsPerRow
+            }
+
+            return gridStyles
         },
         gridClass(): string {
             return this.modelValue
@@ -59,34 +68,52 @@ export default defineComponent({
     watch: {
         modelValue: {
             handler(val, oldVal) {
-                // this.$nextTick(() => {
-                //     if (val) {
-                //         this.applyGridElementStyles()
-                //     }
-                // })
+                this.$nextTick(() => {
+                    if (val) {
+                        if (val.length !== oldVal?.length) {
+                            this.applyIndexesForChildren()
+                        }
+                        this.applyGridElementStyles()
+                    }
+                })
             },
             immediate: true
         }
     },
     mounted() {
-        this.applyGridElementStyles()
+        this.applyIndexesForChildren()
     },
     methods: {
         applyGridElementStyles() {
-            if (!this.modelValue) return
-            const gridElements = Array.from(
+            const childrenElements = Array.from(
                 (this.$refs.grid as HTMLElement).children
             )
-            const gridTemplate = getGridTemplate(
-                this.modelValue.flat(1),
-                this.maxElementsPerRow
-            )
-            if (gridElements.length > gridTemplate.flat(1).length) return
+            const layoutOrder = this.modelValue?.flat(1) ?? []
 
-            const order = this.modelValue.flat()
-            gridElements.forEach((element: Element, index: number) => {
+            if (
+                !this.modelValue ||
+                childrenElements.length > layoutOrder.flat(1).length
+            ) {
+                for (const element of childrenElements) {
+                    const htmlElement = element as HTMLElement
+                    htmlElement.style.flexGrow = '1'
+                }
+                return
+            }
+
+            let gridTemplate: string[]
+            if (this.dynamicGridMode) {
+                gridTemplate = getGridTemplate(this.modelValue)
+            }
+            for (const element of childrenElements) {
                 const htmlElement = element as HTMLElement
-                htmlElement.style.order = `${index}`
+                const orderIndex: number = layoutOrder
+                    .flat(1)
+                    .findIndex((w) => w === htmlElement.dataset.id)
+                if (this.dynamicGridMode) {
+                    htmlElement.style.gridColumn = gridTemplate[orderIndex]
+                }
+                htmlElement.style.order = `${orderIndex}`
                 htmlElement.addEventListener('position-changing', (e) => {
                     if (!isCustomEvent(e)) return
                     this.changePosition(e)
@@ -95,36 +122,41 @@ export default defineComponent({
                     'position-changed',
                     this.layoutChanged.bind(this)
                 )
-            })
+            }
         },
         changePosition(e: CustomEvent) {
-            if (!this.modelValue) return
-            const side = e.detail.side
+            if (!this.modelValue) {
+                return
+            }
             const className = (this.$refs.grid as HTMLElement).children[0]
                 .classList[0]
             const sourceEl = getElementAbove(e.detail.source, className)
             const targetEl = getElementAbove(e.detail.target, className)
 
-            const gridElements = Array.from(
-                (this.$refs.grid as HTMLElement).children
-            )
-            const newLayout = swapElemensInMatrix(
+            const newLayout: string[][] = swapElementsInMatrix(
                 this.modelValue,
                 sourceEl,
-                targetEl,
-                side,
-                this.maxElementsPerRow,
-                gridElements // YonDo: should this method from here?
+                targetEl
             )
             // Update modelValue is required to trigger visualization of the changes
             this.$emit('update:model-value', newLayout)
-            this.$forceUpdate()
             if (e.detail.endDragging) {
                 this.layoutChanged()
             }
         },
         layoutChanged() {
             this.$emit('layout-changed', this.modelValue)
+        },
+        applyIndexesForChildren() {
+            if (!this.modelValue) {
+                return
+            }
+            Array.from((this.$refs.grid as HTMLElement).children).forEach(
+                (element: Element, index: number) => {
+                    (element as HTMLElement).dataset.id =
+                        this.modelValue.flat(1)[index]
+                }
+            )
         }
     }
 })
@@ -140,6 +172,7 @@ export default defineComponent({
     }
     &__flex {
         display: flex;
+        gap: var(--row-gap);
         flex-wrap: wrap;
     }
 }
