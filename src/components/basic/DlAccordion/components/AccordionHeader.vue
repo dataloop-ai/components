@@ -106,7 +106,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .accordion-header {
-    padding: 12px 16px;
+    padding: var(--dl-accordion-header-padding, 12px 16px);
     cursor: pointer;
     font-size: var(--dl-accordion-header-fontsize);
     display: flex;
