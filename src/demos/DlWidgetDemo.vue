@@ -111,7 +111,7 @@
                     v-for="widget in fmWidgets"
                     :key="widget.id"
                     :draggable="false"
-                    style="width: 15vw"
+                    style="max-width: 15vw"
                 >
                     <template #header>
                         {{ widget.header }}
