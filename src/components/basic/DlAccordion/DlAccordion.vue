@@ -15,10 +15,7 @@
             data-test-id="accordion-header"
             @click="handleClick"
         >
-            <template
-                v-if="hasHeaderSlot"
-                #header
-            >
+            <template #header>
                 <slot name="header" />
             </template>
         </dl-accordion-header>
