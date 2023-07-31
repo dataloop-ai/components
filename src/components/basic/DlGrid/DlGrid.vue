@@ -140,6 +140,7 @@ export default defineComponent({
             )
             // Update modelValue is required to trigger visualization of the changes
             this.$emit('update:model-value', newLayout)
+            this.$forceUpdate()
             if (e.detail.endDragging) {
                 this.layoutChanged()
             }
