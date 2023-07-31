@@ -10,7 +10,16 @@
 
 <script lang="ts">
 import { Dictionary } from 'lodash'
-import { defineComponent, PropType } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    nextTick,
+    onMounted,
+    PropType,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
 import { getGridTemplate, swapElementsInMatrix } from './utils'
 import { isCustomEvent, getElementAbove } from '../utils'
 import { DlGridMode } from './types'
@@ -43,64 +52,71 @@ export default defineComponent({
         }
     },
     emits: ['update:model-value', 'layout-changed'],
-    computed: {
-        gridStyles(): Record<string, string | number> {
+    setup(props, { emit }) {
+        const grid = ref<HTMLElement | null>(null)
+        const { modelValue, mode, rowGap, columnGap, maxElementsPerRow } =
+            toRefs(props)
+
+        const isLayoutMode = computed(() => mode.value == DlGridMode.LAYOUT)
+        const isGridMode = computed(() => mode.value == DlGridMode.GRID)
+        const isFlexMode = computed(() => mode.value == DlGridMode.FLEX)
+
+        const gridClass = computed(() =>
+            modelValue.value || !isFlexMode.value
+                ? 'dl-grid-wrapper__grid'
+                : 'dl-grid-wrapper__flex'
+        )
+
+        const gridStyles = computed(() => {
             const gridStyles: Dictionary<string | number> = {
-                '--row-gap': this.rowGap,
-                '--column-gap': this.columnGap
+                '--row-gap': rowGap.value,
+                '--column-gap': columnGap.value
             }
 
-            if (!this.isGridMode) {
-                gridStyles['--element-per-row'] = this.maxElementsPerRow
+            if (!isGridMode.value) {
+                gridStyles['--element-per-row'] = maxElementsPerRow.value
             }
 
             return gridStyles
-        },
-        gridClass(): string {
-            return this.modelValue
-                ? 'dl-grid-wrapper__grid'
-                : 'dl-grid-wrapper__flex'
-        },
-        isLayoutMode(): boolean {
-            return this.mode === DlGridMode.LAYOUT
-        },
-        isGridMode(): boolean {
-            return this.mode === DlGridMode.GRID
-        },
-        isFlexMode(): boolean {
-            return this.mode === DlGridMode.FLEX
+        })
+
+        const layoutChanged = () => {
+            emit('layout-changed', modelValue.value)
         }
-    },
-    watch: {
-        modelValue: {
-            handler(val, oldVal) {
-                this.$nextTick(() => {
-                    if (val) {
-                        if (val.flat().length !== oldVal?.flat().length) {
-                            this.applyIndexesForChildren()
-                        }
-                        this.applyGridElementStyles()
-                    }
-                })
-            },
-            immediate: true
-        }
-    },
-    mounted() {
-        this.applyIndexesForChildren()
-    },
-    methods: {
-        applyGridElementStyles() {
-            const childrenElements = Array.from(
-                (this.$refs.grid as HTMLElement).children
+
+        const changePosition = (e: CustomEvent) => {
+            if (!modelValue.value) {
+                return
+            }
+            const className = grid.value.children[0].classList[0]
+            const sourceEl = getElementAbove(e.detail.source, className)
+            const targetEl = getElementAbove(e.detail.target, className)
+
+            const newLayout: string[][] = swapElementsInMatrix(
+                modelValue.value,
+                sourceEl,
+                targetEl
             )
-            const layoutOrder = this.modelValue?.flat() ?? []
+            // Update modelValue is required to trigger visualization of the changes
+            emit('update:model-value', newLayout)
+
+            // Force update is required to trigger the re-render of the grid
+            // instance?.proxy?.$forceUpdate();
+
+            if (e.detail.endDragging) {
+                layoutChanged()
+            }
+        }
+
+        const applyGridElementStyles = () => {
+            const childrenElements = Array.from(grid.value.children)
+            const layoutOrder = modelValue.value?.flat() ?? []
 
             // The check is needed to avoid errors and incorrect behavior
             if (
-                !this.modelValue ||
+                !modelValue.value ||
                 childrenElements.length > layoutOrder.flat().length ||
-                this.isFlexMode
+                isFlexMode.value
             ) {
                 for (const element of childrenElements) {
                     const htmlElement = element as HTMLElement
@@ -110,64 +126,64 @@ export default defineComponent({
             }
 
             let gridTemplate: string[]
-            if (this.isGridMode) {
-                gridTemplate = getGridTemplate(this.modelValue)
+            if (isGridMode.value) {
+                gridTemplate = getGridTemplate(modelValue.value)
             }
             for (const element of childrenElements) {
                 const htmlElement = element as HTMLElement
                 const orderIndex: number = layoutOrder
                     .flat()
                     .findIndex((w) => w === htmlElement.dataset.id)
-                if (this.isGridMode) {
+                if (isGridMode.value) {
                     htmlElement.style.gridColumn = gridTemplate[orderIndex]
                 }
                 htmlElement.style.order = `${orderIndex}`
                 htmlElement.addEventListener('position-changing', (e) => {
                     if (!isCustomEvent(e)) return
-                    this.changePosition(e)
+                    changePosition(e)
                 })
-                htmlElement.addEventListener(
-                    'position-changed',
-                    this.layoutChanged.bind(this)
-                )
+                htmlElement.addEventListener('position-changed', layoutChanged)
             }
-        },
-        changePosition(e: CustomEvent) {
-            if (!this.modelValue) {
+        }
+
+        const applyIndexesForChildren = () => {
+            if (!modelValue.value) {
                 return
             }
-            const className = (this.$refs.grid as HTMLElement).children[0]
-                .classList[0]
-            const sourceEl = getElementAbove(e.detail.source, className)
-            const targetEl = getElementAbove(e.detail.target, className)
-
-            const newLayout: string[][] = swapElementsInMatrix(
-                this.modelValue,
-                sourceEl,
-                targetEl
-            )
-            // Update modelValue is required to trigger visualization of the changes
-            this.$emit('update:model-value', newLayout)
-
-            // Force update is required to trigger the re-render of the grid
-            this.$forceUpdate()
-            if (e.detail.endDragging) {
-                this.layoutChanged()
-            }
-        },
-        layoutChanged() {
-            this.$emit('layout-changed', this.modelValue)
-        },
-        applyIndexesForChildren() {
-            if (!this.modelValue) {
-                return
-            }
-            Array.from((this.$refs.grid as HTMLElement).children).forEach(
+            Array.from(grid.value.children).forEach(
                 (element: Element, index: number) => {
                     const el = element as HTMLElement
-                    el.dataset.id = this.modelValue.flat()[index]
+                    el.dataset.id = modelValue.value.flat()[index]
                 }
             )
+        }
+
+        watch(
+            modelValue,
+            (val, old) => {
+                nextTick(() => {
+                    if (val) {
+                        if (val.flat().length !== old?.flat().length) {
+                            applyIndexesForChildren()
+                        }
+                        applyGridElementStyles()
+                    }
+                })
+            },
+            { immediate: true }
+        )
+
+        onMounted(() => {
+            applyGridElementStyles()
+        })
+
+        return {
+            isLayoutMode,
+            isGridMode,
+            isFlexMode,
+            gridClass,
+            gridStyles,
+            grid
         }
     }
 })
