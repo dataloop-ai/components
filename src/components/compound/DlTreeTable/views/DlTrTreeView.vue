@@ -7,9 +7,6 @@
         @dblclick="onTrDoubleClick($event, row, pageIndex)"
         @contextmenu="onTrContextMenu($event, row, pageIndex)"
     >
-        <!--
-        :key="getRowKey(row)"
-        -->
         <td v-if="hasDraggableRows">
             <dl-icon
                 class="draggable-icon"
@@ -136,8 +133,8 @@ export default defineComponent({
             default: null
         },
         computedRows: {
-            type: Array as PropType<Record<string, any>[]>, //DlTableRow[]
-            default: () => [] as Record<string, any>[]
+            type: Array as PropType<DlTableRow[]>,
+            default: () => [] as DlTableRow[]
         },
         cellValue: {
             type: String,
