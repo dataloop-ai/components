@@ -259,6 +259,7 @@ export function applyDraggableColumns(
 
             mouseDrag = true
             // table.classList.add('mouse-drag')
+            handleMouseMove(event)
         }
     }
 
