@@ -15,6 +15,7 @@ import {
     Ref
 } from 'vue-demi'
 import { noop } from '../../../utils/events'
+import { VirtualScrollParamsType } from './types/VirtualScrollParamsType'
 
 export interface ScrollDetails {
     scrollStart: number
@@ -276,18 +277,13 @@ export const useVirtualScrollProps = {
 }
 
 export function useVirtualScroll({
+    dynamicId,
     virtualScrollLength,
     getVirtualScrollTarget,
     getVirtualScrollEl,
     virtualScrollItemSizeComputed, // optional
     debounceValue
-}: {
-    virtualScrollLength: ComputedRef<number>
-    getVirtualScrollTarget: () => HTMLElement | undefined
-    getVirtualScrollEl: () => HTMLElement
-    virtualScrollItemSizeComputed?: ComputedRef<number>
-    debounceValue?: number
-}) {
+}: VirtualScrollParamsType) {
     const vm = getCurrentInstance()
 
     const { props, emit, proxy } = vm
@@ -879,9 +875,9 @@ export function useVirtualScroll({
             create(
                 tag,
                 {
-                    id: 'draggable',
+                    id: dynamicId.value,
                     attrs: {
-                        id: 'draggable'
+                        id: dynamicId.value
                     },
                     class: 'dl-virtual-scroll__content',
                     key: 'content',

@@ -58,6 +58,7 @@
             v-if="hasVirtScroll"
             ref="virtScrollRef"
             type="__dltable"
+            custom-id="draggable"
             :class="tableClass"
             :style="tableStyle"
             :table-colspan="computedColspan"
@@ -144,7 +145,7 @@
             </template>
             <template #default="props">
                 <slot
-                    name="body"
+                    name="table-body"
                     v-bind="props"
                 >
                     <template v-if="!isEmpty && !hasSlotBody">
@@ -249,11 +250,11 @@
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="props"
+                                        #[slot]="emptyStateProps"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="props"
+                                            v-bind="emptyStateProps"
                                         />
                                     </template>
                                 </dl-empty-state>

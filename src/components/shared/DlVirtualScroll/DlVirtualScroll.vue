@@ -100,6 +100,10 @@ export default defineComponent({
         scrollDebounce: {
             type: Number,
             default: 100
+        },
+        customId: {
+            type: String,
+            default: ''
         }
     },
     emits: ['virtual-scroll'],
@@ -140,12 +144,15 @@ export default defineComponent({
             return scrollSizeItem.value
         })
 
+        const dynamicId = computed<string>(() => props.customId)
+
         const {
             virtualScrollSliceRange,
             localResetVirtualScroll,
             padVirtualScroll,
             onVirtualScrollEvt
         } = useVirtualScroll({
+            dynamicId,
             virtualScrollLength,
             getVirtualScrollTarget,
             getVirtualScrollEl,
