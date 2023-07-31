@@ -13,6 +13,7 @@
                 :key="cmWidgets.length"
                 v-model="cmLayout"
                 :max-elements-per-row="cmMaxWidgetsPerRow"
+                :mode="layout"
             >
                 <dl-widget
                     v-for="widget in cmWidgets"
@@ -59,7 +60,7 @@
                 :key="dmWidgets.length"
                 v-model="dmLayout"
                 :max-elements-per-row="dmMaxWidgetsPerRow"
-                dynamic-grid-mode
+                :mode="grid"
             >
                 <dl-widget
                     v-for="widget in dmWidgets"
@@ -102,7 +103,10 @@
             >
                 Add widget
             </dl-button>
-            <dl-grid :key="fmWidgets.length">
+            <dl-grid
+                :key="fmWidgets.length"
+                :mode="flex"
+            >
                 <dl-widget
                     v-for="widget in fmWidgets"
                     :key="widget.id"
@@ -150,6 +154,7 @@ import {
     DlIcon,
     DlButton
 } from '../components'
+import { DlGridMode } from '../types'
 
 const data = {
     labels: Array.from({ length: 20 }, (_, i) => `${i}`),
@@ -280,7 +285,10 @@ export default defineComponent({
             fmMaxWidgetsPerRow,
             dmLayout,
             dmWidgets,
-            dmMaxWidgetsPerRow
+            dmMaxWidgetsPerRow,
+            layout: DlGridMode.LAYOUT,
+            flex: DlGridMode.FLEX,
+            grid: DlGridMode.GRID
         }
     }
 })

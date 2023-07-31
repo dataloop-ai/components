@@ -11,12 +11,9 @@
 <script lang="ts">
 import { Dictionary } from 'lodash'
 import { defineComponent, PropType } from 'vue-demi'
-import {
-    getGridTemplate,
-    getElementAbove,
-    swapElementsInMatrix,
-    isCustomEvent
-} from '../DlWidget/utils'
+import { getGridTemplate, swapElementsInMatrix } from './utils'
+import { isCustomEvent, getElementAbove } from '../utils'
+import { DlGridMode } from './types'
 
 export default defineComponent({
     model: {
@@ -40,20 +37,20 @@ export default defineComponent({
             type: Number,
             default: 3
         },
-        dynamicGridMode: {
-            type: Boolean,
-            default: false
+        mode: {
+            type: String as PropType<DlGridMode>,
+            default: DlGridMode.LAYOUT
         }
     },
     emits: ['update:model-value', 'layout-changed'],
     computed: {
-        gridStyles(): object {
+        gridStyles(): Record<string, string | number> {
             const gridStyles: Dictionary<string | number> = {
                 '--row-gap': this.rowGap,
                 '--column-gap': this.columnGap
             }
 
-            if (!this.dynamicGridMode) {
+            if (!this.isGridMode) {
                 gridStyles['--element-per-row'] = this.maxElementsPerRow
             }
 
@@ -63,6 +60,15 @@ export default defineComponent({
             return this.modelValue
                 ? 'dl-grid-wrapper__grid'
                 : 'dl-grid-wrapper__flex'
+        },
+        isLayoutMode(): boolean {
+            return this.mode === DlGridMode.LAYOUT
+        },
+        isGridMode(): boolean {
+            return this.mode === DlGridMode.GRID
+        },
+        isFlexMode(): boolean {
+            return this.mode === DlGridMode.FLEX
         }
     },
     watch: {
@@ -90,9 +96,11 @@ export default defineComponent({
             )
             const layoutOrder = this.modelValue?.flat() ?? []
 
+            // The check is needed to avoid errors and incorrect behavior
             if (
                 !this.modelValue ||
-                childrenElements.length > layoutOrder.flat().length
+                childrenElements.length > layoutOrder.flat().length ||
+                this.isFlexMode
             ) {
                 for (const element of childrenElements) {
                     const htmlElement = element as HTMLElement
@@ -102,7 +110,7 @@ export default defineComponent({
             }
 
             let gridTemplate: string[]
-            if (this.dynamicGridMode) {
+            if (this.isGridMode) {
                 gridTemplate = getGridTemplate(this.modelValue)
             }
             for (const element of childrenElements) {
@@ -110,7 +118,7 @@ export default defineComponent({
                 const orderIndex: number = layoutOrder
                     .flat()
                     .findIndex((w) => w === htmlElement.dataset.id)
-                if (this.dynamicGridMode) {
+                if (this.isGridMode) {
                     htmlElement.style.gridColumn = gridTemplate[orderIndex]
                 }
                 htmlElement.style.order = `${orderIndex}`
@@ -140,6 +148,8 @@ export default defineComponent({
             )
             // Update modelValue is required to trigger visualization of the changes
             this.$emit('update:model-value', newLayout)
+
+            // Force update is required to trigger the re-render of the grid
             this.$forceUpdate()
             if (e.detail.endDragging) {
                 this.layoutChanged()
@@ -154,8 +164,8 @@ export default defineComponent({
             }
             Array.from((this.$refs.grid as HTMLElement).children).forEach(
                 (element: Element, index: number) => {
-                    (element as HTMLElement).dataset.id =
-                        this.modelValue.flat()[index]
+                    const el = element as HTMLElement
+                    el.dataset.id = this.modelValue.flat()[index]
                 }
             )
         }

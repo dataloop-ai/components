@@ -10,6 +10,22 @@ function leastCommonMultiple(arr: number[]) {
     return arr.reduce(lcm)
 }
 
+function buildNewLayoutOrder(layout: string[], matrix: string[][]) {
+    const template: string[][] = []
+    let index = 0
+
+    for (const row of matrix) {
+        const templateRow: string[] = []
+        for (const cell of row) {
+            templateRow.push(layout[index])
+            index++
+        }
+        template.push(templateRow)
+    }
+
+    return template
+}
+
 export function getGridTemplate(layout: string[][]) {
     if (!layout) {
         return
@@ -31,30 +47,6 @@ export function getGridTemplate(layout: string[][]) {
     return template
 }
 
-export function getElementAbove(el: HTMLElement, className: string) {
-    //@ts-ignore
-    for (; el && el !== document; el = el.parentNode) {
-        if (el.classList.contains(className)) {
-            return el
-        }
-    }
-}
-
-export function addMouseEnter(className: string, method: EventListenerObject) {
-    Array.from(document.getElementsByClassName(className)).forEach((widget) => {
-        widget.addEventListener('mouseenter', method)
-    })
-}
-
-export function removeMouseEnter(
-    className: string,
-    method: EventListenerObject
-) {
-    Array.from(document.getElementsByClassName(className)).forEach((widget) => {
-        widget.removeEventListener('mouseenter', method)
-    })
-}
-
 export function swapElementsInMatrix(
     oldLayout: string[][],
     sourceEl: HTMLElement,
@@ -71,24 +63,4 @@ export function swapElementsInMatrix(
     newLayout.splice(targetIndex, 0, sourceEl.dataset.id)
 
     return buildNewLayoutOrder(newLayout, oldLayout)
-}
-
-function buildNewLayoutOrder(layout: string[], matrix: string[][]) {
-    const template: string[][] = []
-    let index = 0
-
-    for (const row of matrix) {
-        const templateRow: string[] = []
-        for (const cell of row) {
-            templateRow.push(layout[index])
-            index++
-        }
-        template.push(templateRow)
-    }
-
-    return template
-}
-
-export function isCustomEvent(event: Event): event is CustomEvent {
-    return 'detail' in event
 }
