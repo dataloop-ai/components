@@ -1,81 +1,62 @@
-import { DlBarChart, DlGrid, DlWidget } from '../components'
-import { ref } from 'vue'
-
-const labelsFn = () => {
-    const a = []
-    for (let i = 0; i < 20; i++) {
-        a.push(`${i}`)
-    }
-    return a
-}
-
-const dataFn = () => {
-    const a = []
-    for (let i = 1; i <= 20; i++) {
-        a.push(i)
-    }
-    return a
-}
+import { DlBarChart, DlWidget, DlButton, DlIcon } from '../components'
 
 const data = {
-    labels: labelsFn(),
+    labels: Array.from({ length: 20 }, (_, i) => `${i}`),
     datasets: [
         {
             label: 'Data One',
             backgroundColor: '--dl-color-secondary',
             borderRadius: 4,
-            data: dataFn()
+            data: Array.from({ length: 20 }, (_, i) => i + 1)
         },
         {
             label: 'Data Two',
             backgroundColor: '--dl-color-warning',
             borderRadius: 4,
-            data: dataFn()
+            data: Array.from({ length: 20 }, (_, i) => i + 1)
         }
     ]
 }
 
 export default {
     title: 'Library/Components/DlWidget',
-    component: DlGrid,
+    component: DlWidget,
     argTypes: {
-        rowGap: {
-            name: 'rowGap',
-            type: { name: 'string', required: false },
-            description: 'The gap between the grid rows',
-            defaultValue: '10px',
+        isEmpty: {
+            name: 'isEmpty',
+            type: { name: 'boolean', required: false },
+            description: 'Is empty state flag.',
+            defaultValue: false,
             table: {
-                type: { summary: 'string' },
-                defaultValue: { summary: '10px' }
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
             },
             control: {
-                type: 'text'
+                type: 'boolean'
             }
         },
-        columnGap: {
-            name: 'columnGap',
-            type: { name: 'string', required: false },
-            description: 'The gap between the grid columns',
-            defaultValue: '10px',
+        emptyStateProps: {
+            name: 'emptyStateProps',
+            type: { name: 'object', required: false },
+            defaultValue: null,
+            description:
+                'The empty state props object, isEmpty is required to be true.',
             table: {
-                type: { summary: 'string' },
-                defaultValue: { summary: '10px' }
-            },
-            control: {
-                type: 'text'
+                type: { summary: 'object' },
+                defaultValue: { summary: {} }
             }
         },
-        maxElementsPerRow: {
-            name: 'maxElementsPerRow',
-            type: { name: 'number', required: false },
-            description: 'Sets a maximum amount of widgets on a single row',
-            defaultValue: '3',
+        draggable: {
+            name: 'draggable',
+            type: { name: 'boolean', required: false },
+            description: 'Is the widget is draggable.',
+            defaultValue: true,
             table: {
-                type: { summary: 'number' },
-                defaultValue: { summary: '3' }
+                type: { summary: 'boolean' },
+                defaultValue: { summary: true }
             },
             control: {
-                type: 'number'
+                type: 'boolean'
             }
         }
     }
@@ -83,176 +64,117 @@ export default {
 
 const Template = (args) => ({
     components: {
-        DlGrid,
         DlWidget,
+        DlIcon,
         DlBarChart
     },
     setup() {
-        const layout = ref([
-            [1, 5, 2],
-            [3, 4]
-        ])
-
-        const layouts = ref([
-            {
-                name: 'Layout 1',
-                value: layout.value
-            }
-        ])
-
-        const widgetsPerRow = ref(3)
-        const hasBeenSaved = ref('')
-
-        const saveLayout = () => {
-            const newLayout = {
-                name: `Layout ${layouts.value.length + 1}`,
-                value: layout.value
-            }
-            layouts.value.push(newLayout)
-            hasBeenSaved.value = `${newLayout.name} has been saved.`
-            setTimeout(() => {
-                hasBeenSaved.value = ''
-            }, 2000)
-        }
-
-        const selectLayout = (e) => {
-            const index = parseInt(e.target.value)
-            layout.value = layouts.value[index].value
-        }
-
         return {
-            data,
-            layout,
-            layouts,
-            widgetsPerRow,
-            hasBeenSaved,
-            saveLayout,
-            selectLayout,
-            args
+            data
         }
     },
     template: `
     <div>
-        <div class="options">
-            <div class="select-layout">
-                <select
-                    class="select-layout__input"
-                    @change="selectLayout"
-                >
-                    <option
-                        v-for="(layout, index) in layouts"
-                        :key="index"
-                        :value="index"
-                    >
-                        {{ layout.name }}
-                    </option>
-                </select>
-                <button
-                    class="select-layout__button"
-                    @mousedown="saveLayout"
-                >
-                    Save
-                </button>
-                <span class="select-layout__info">{{ hasBeenSaved }}</span>
-            </div>
-        </div>
-        <dl-grid
-            v-bind="args"
-            v-model="layout"
-        >
-            <dl-widget>
+        <dl-widget>
                 <template #header>
-                    <span>Widget 1</span>
-                    <span style="font-size: 12px; color: gray">Subtitle</span>
+                    <span>Widget with menu icons</span>
+                    <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
                 </template>
                 <template #content>
                     <dl-bar-chart
-                        :legend-props="legendProps"
                         :data="data"
-                        :options="options"
                         :items-in-view="8"
                     />
                 </template>
-                <template #description>
-                    <span style="color: var(--dl-color-medium)">Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Libero eligendi dolore, similique possimus
-                        veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate modi
-                        dicta eveniet veritatis?</span>
+                <template #menu>
+                    <div style="display: flex; gap: 15px; padding: 0 10px">
+                        <dl-icon
+                            size="m"
+                            icon="icon-dl-settings"
+                        />
+                        <dl-icon
+                            size="m"
+                            icon="icon-dl-download"
+                        />
+                    </div>
                 </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 2</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :legend-props="legendProps"
-                        :data="data"
-                        :options="options"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 3</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :legend-props="legendProps"
-                        :data="data"
-                        :options="options"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 4</span>
-                    <span style="font-size: 12px; color: gray">Subtitle</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :legend-props="legendProps"
-                        :data="data"
-                        :options="options"
-                        :items-in-view="8"
-                    />
-                </template>
-                <template #description>
-                    <span style="color: var(--dl-color-medium)">Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Libero eligendi dolore, similique possimus
-                        veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate modi
-                        dicta eveniet veritatis?</span>
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 5</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :legend-props="legendProps"
-                        :data="data"
-                        :options="options"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-        </dl-grid>
+        </dl-widget>
     </div>
   `
 })
 
 export const Preview = Template.bind({})
-Preview.args = {
-    rowGap: '10px',
-    columnGap: '10px',
-    maxElementsPerRow: 3
+Preview.args = {}
+
+// ==============================
+
+const EmptyStateTemplate = (args) => ({
+    components: {
+        DlWidget,
+        DlButton,
+        DlBarChart
+    },
+    setup() {
+        return {
+            data
+        }
+    },
+    template: `
+    <div>
+        <dl-widget
+                is-empty
+                :empty-state-props="{
+                    style: 'min-height: 350px;',
+                    title: 'Lorem ipsum',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                    info: 'To learn more about this analytics, read our documentation.',
+                    responsive: false
+                }"
+            >
+                <template #header>
+                    <span>Empty state widget</span>
+                </template>
+                <template #links="">
+                    <div style="display: flex; gap: 5px; padding: 0 20px">
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-sdk-documentation"
+                            flat
+                            uppercase
+                            label="SDK"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-file"
+                            flat
+                            label="Documentation"
+                        />
+                        <div class="break" />
+                        <dl-button
+                            padding="0px"
+                            icon="icon-dl-youtube"
+                            flat
+                            label="Video"
+                        />
+                    </div>
+                </template>
+        </dl-widget>
+    </div>
+  `
+})
+
+export const EmptyState = EmptyStateTemplate.bind({})
+EmptyState.args = {
+    isEmpty: true,
+    emptyStateProps: {
+        style: 'min-height: 350px;',
+        title: 'Lorem ipsum',
+        subtitle:
+            'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+        info: 'To learn more about this analytics, read our documentation.',
+        responsive: false
+    },
+    draggable: false
 }

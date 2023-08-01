@@ -77,7 +77,10 @@ export default defineComponent({
         DlEmptyState
     },
     props: {
-        isEmpty: Boolean,
+        isEmpty: {
+            type: Boolean,
+            default: false
+        },
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
             default: null
