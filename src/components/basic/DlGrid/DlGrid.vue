@@ -13,6 +13,7 @@ import { Dictionary } from 'lodash'
 import {
     computed,
     defineComponent,
+    getCurrentInstance,
     nextTick,
     onMounted,
     PropType,
@@ -53,6 +54,7 @@ export default defineComponent({
     },
     emits: ['update:model-value', 'layout-changed'],
     setup(props, { emit }) {
+        const vm = getCurrentInstance()
         const grid = ref<HTMLElement | null>(null)
         const { modelValue, mode, rowGap, columnGap, maxElementsPerRow } =
             toRefs(props)
@@ -101,7 +103,7 @@ export default defineComponent({
             emit('update:model-value', newLayout)
 
             // Force update is required to trigger the re-render of the grid
-            // instance?.proxy?.$forceUpdate();
+            vm?.proxy?.$forceUpdate()
 
             if (e.detail.endDragging) {
                 layoutChanged()
