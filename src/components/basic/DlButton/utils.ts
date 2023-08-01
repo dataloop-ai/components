@@ -1,7 +1,7 @@
 import { getColor } from '../../../utils'
 import { getLighterGradient } from '../../../utils/getLighterGradient'
 
-export type ButtonSizes = 's' | 'm' | 'l' | ('xl' & string)
+export type ButtonSizes = 's' | 'm' | 'l' | 'xl'
 
 const paddings = {
     s: '7px 16px',
