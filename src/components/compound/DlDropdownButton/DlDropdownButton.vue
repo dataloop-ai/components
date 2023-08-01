@@ -186,7 +186,6 @@ import {
     onMounted,
     getCurrentInstance,
     Ref,
-    Prop,
     PropType
 } from 'vue-demi'
 import { v4 } from 'uuid'
