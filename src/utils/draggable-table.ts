@@ -1,4 +1,4 @@
-import { debounce } from 'lodash'
+import { ClickAndHold } from './ClickAndHold'
 
 function getTargetRow(target: any) {
     const elemName = target.tagName.toLowerCase()
@@ -58,7 +58,7 @@ function isIntersecting(
 }
 
 function getRows(table: HTMLTableElement) {
-    return table.querySelectorAll('tbody#draggable tr')
+    return table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
 }
 
 export function applyDraggableRows(
@@ -66,7 +66,7 @@ export function applyDraggableRows(
     vm?: any,
     root?: HTMLDivElement
 ) {
-    const tbody = table.querySelector('tbody#draggable')!
+    const tbody = table.querySelector('tbody.dl-virtual-scroll__content')!
 
     let currRow: any = null
     let dragElem: any = null
@@ -231,9 +231,17 @@ export function applyDraggableColumns(
     let colHeight = 0
 
     function bindMouse() {
-        table.addEventListener('mousedown', handleMouseDown)
+        table.addEventListener('mousedown', handleMouseHold)
         document.addEventListener('mousemove', handleMouseMove)
         document.addEventListener('mouseup', handleMouseUp)
+    }
+
+    function handleMouseHold(event: MouseEvent) {
+        if (event.button !== 0) return true
+        const target = getTargetCol(event.target as Element)
+        ClickAndHold.apply(target, () => {
+            handleMouseDown(event)
+        })
     }
 
     function handleMouseDown(event: MouseEvent) {
@@ -259,6 +267,7 @@ export function applyDraggableColumns(
 
             mouseDrag = true
             // table.classList.add('mouse-drag')
+            handleMouseMove(event)
         }
     }
 
@@ -277,9 +286,11 @@ export function applyDraggableColumns(
         if (!mouseDrag) return
 
         Array.from(table.rows).forEach((row) => {
-            row.cells[
-                newColIndex === -1 ? colIndex : newColIndex
-            ].classList.remove('dl-table__selected')
+            const index = newColIndex === -1 ? colIndex : newColIndex
+            if (!row.cells[index]) {
+                return
+            }
+            row.cells[index].classList.remove('dl-table__selected')
         })
 
         vm.emit('col-reorder', colIndex, newColIndex)
@@ -381,6 +392,9 @@ export function applyDraggableColumns(
     const moveBefore = (index: number) => {
         requestAnimationFrame(() => {
             Array.from(table.rows).forEach((row) => {
+                if (!row.cells[newColIndex]) {
+                    return
+                }
                 row.insertBefore(row.cells[newColIndex], row.cells[index])
             })
 
@@ -391,6 +405,9 @@ export function applyDraggableColumns(
     const moveAfter = (index: number) => {
         requestAnimationFrame(() => {
             Array.from(table.rows).forEach((row) => {
+                if (!row.cells[index]) {
+                    return
+                }
                 row.insertBefore(row.cells[index], row.cells[newColIndex])
             })
 

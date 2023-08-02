@@ -102,9 +102,8 @@
                     @selectedItems="selectedItems"
                 />
             </div>
-
-            <div style="margin-top: 100px">
-                <p>Infinite scrolling</p>
+            <div style="padding-top: 300px">
+                <p>Custom body cell</p>
                 <DlTreeTable
                     :separator="separator"
                     :columns="tableColumns"
@@ -115,12 +114,58 @@
                     :filter="filter"
                     :selection="selection"
                     :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="onRowClick"
+                    @th-click="log"
+                    @selectedItems="selectedItems"
+                >
+                    <template #body-cell-calories="prop">
+                        <span style="color: green; margin-right: 10px">
+                            calories: {{ prop.row.calories }}
+                        </span>
+                        <dl-icon
+                            size="14px"
+                            icon="icon-dl-info"
+                            class="info-icon"
+                        />
+                    </template>
+                    <template #body-cell-carbs="prop">
+                        <span style="color: yellow">
+                            carbs: {{ prop.row.carbs }}
+                        </span>
+                    </template>
+                    <template #body-cell-iron="prop">
+                        <span style="color: #1ae1dc">
+                            iron: {{ prop.row.iron }}
+                        </span>
+                    </template>
+                </DlTreeTable>
+            </div>
+
+            <div style="margin-top: 100px">
+                <p>Infinite scrolling</p>
+                <DlTreeTable
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :resizable="resizable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :loading="loading"
                     :rows="tableRowsVS"
+                    :selection="selection"
                     virtual-scroll
                     row-key="name"
                     color="dl-color-secondary"
                     style="height: 500px"
-                    @selectedItems="selectedItems"
                 />
             </div>
         </div>
@@ -129,12 +174,11 @@
 
 <script lang="ts">
 import {
-    DlTable,
     DlOptionGroup,
     DlSwitch,
     DlInput,
-    DlButton,
-    DlTreeTable
+    DlTreeTable,
+    DlIcon
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
@@ -458,11 +502,12 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlTreeTable
+        DlTreeTable,
+        DlIcon
     },
     setup() {
         const filter = ref('')
-        const selected = ref([])
+        const selectedData = ref([])
         const selection = ref('none')
         const separator = ref('horizontal')
         const bordered = ref(false)
@@ -590,12 +635,12 @@ export default defineComponent({
         }
 
         const onRowClick = (item: any) => {
-            console.log('onRowClick: ', item)
+            // console.log('onRowClick TreeTableDemo: ', item)
         }
 
         return {
             filter,
-            selected,
+            selectedData,
             selection,
             separator,
             bordered,
