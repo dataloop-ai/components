@@ -32,6 +32,7 @@
             :disabled="switchState"
             :is-loading="isLoading"
             :strict="strictState"
+            style="width: 600px"
             @remove-query="handleRemoveQuery"
             @save-query="handleSaveQuery"
             @search-query="handleSearchQuery"
@@ -42,20 +43,27 @@
         <br>
         <br>
         <br>
-        <br>
-        Test second if they work on same page..
-        <dl-smart-search
-            v-model="queryObject2"
-            :aliases="[]"
-            :schema="schema2"
+        Only the search
+
+        <dl-smart-search-input
+            v-model="queryObject"
+            :aliases="aliases"
+            :schema="schema"
             :color-schema="colorSchema"
+            :strict="strictState"
         />
+        {{ queryObject }}
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlSmartSearch, DlCheckbox, DlInput } from '../../components'
+import {
+    DlSmartSearch,
+    DlSmartSearchInput,
+    DlCheckbox,
+    DlInput
+} from '../../components'
 import { DlSmartSearchFilters, Query } from '../../components/types'
 import { parseSmartQuery } from '../../utils'
 
@@ -63,6 +71,7 @@ export default defineComponent({
     name: 'DlSmartSearchDemo',
     components: {
         DlSmartSearch,
+        DlSmartSearchInput,
         DlCheckbox,
         DlInput
     },
