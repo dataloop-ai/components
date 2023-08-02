@@ -1,4 +1,4 @@
-import { debounce } from 'lodash'
+import { ClickAndHold } from './ClickAndHold'
 
 function getTargetRow(target: any) {
     const elemName = target.tagName.toLowerCase()
@@ -58,7 +58,7 @@ function isIntersecting(
 }
 
 function getRows(table: HTMLTableElement) {
-    return table.querySelectorAll('tbody#draggable tr')
+    return table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
 }
 
 export function applyDraggableRows(
@@ -66,7 +66,7 @@ export function applyDraggableRows(
     vm?: any,
     root?: HTMLDivElement
 ) {
-    const tbody = table.querySelector('tbody#draggable')!
+    const tbody = table.querySelector('tbody.dl-virtual-scroll__content')!
 
     let currRow: any = null
     let dragElem: any = null
@@ -231,9 +231,17 @@ export function applyDraggableColumns(
     let colHeight = 0
 
     function bindMouse() {
-        table.addEventListener('mousedown', handleMouseDown)
+        table.addEventListener('mousedown', handleMouseHold)
         document.addEventListener('mousemove', handleMouseMove)
         document.addEventListener('mouseup', handleMouseUp)
+    }
+
+    function handleMouseHold(event: MouseEvent) {
+        if (event.button !== 0) return true
+        const target = getTargetCol(event.target as Element)
+        ClickAndHold.apply(target, () => {
+            handleMouseDown(event)
+        })
     }
 
     function handleMouseDown(event: MouseEvent) {

@@ -875,10 +875,6 @@ export function useVirtualScroll({
             create(
                 tag,
                 {
-                    id: dynamicId.value,
-                    attrs: {
-                        id: dynamicId.value
-                    },
                     class: 'dl-virtual-scroll__content',
                     key: 'content',
                     ref: contentRef,

@@ -80,16 +80,18 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-with"
+                                @mousedown="stopAndPrevent"
                             />
-
                             <th
                                 v-else-if="multipleSelection"
                                 class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             >
                                 <slot
                                     name="header-selection"
@@ -285,16 +287,19 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-with"
+                                @mousedown="stopAndPrevent"
                             />
 
                             <th
                                 v-else-if="multipleSelection"
                                 class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             >
                                 <slot
                                     name="header-selection"
@@ -346,7 +351,7 @@
                         </tr>
                     </slot>
                 </thead>
-                <tbody id="draggable">
+                <tbody class="dl-virtual-scroll__content">
                     <slot
                         name="top-row"
                         :cols="computedCols"
@@ -519,10 +524,10 @@
                             v-bind="marginalsScope.pagination"
                             :total-items="rows.length"
                             @update:rowsPerPage="
-                                (v) => setPagination({ rowsPerPage: v })
+                                (v) => updatePagination(v, 'rowsPerPage')
                             "
                             @update:model-value="
-                                (v) => setPagination({ page: v })
+                                (v) => updatePagination(v, 'page')
                             "
                         />
                     </slot>
@@ -580,6 +585,7 @@ import { ResizableManager } from './utils'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
+import { stopAndPrevent } from '../../../utils'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -1221,6 +1227,10 @@ export default defineComponent({
             return slots.length ? slots.map((slot: any) => slot.name) : null
         })
 
+        const updatePagination = (value: any, key: string) => {
+            return setPagination({ [`${key}`]: value })
+        }
+
         return {
             uuid: `dl-table-${v4()}`,
             rootRef,
@@ -1271,7 +1281,9 @@ export default defineComponent({
             hasPaginationSlot,
             slotNames,
             hasSlotBody,
-            hasSlotHeaderSelection
+            hasSlotHeaderSelection,
+            stopAndPrevent,
+            updatePagination
         }
     }
 })
