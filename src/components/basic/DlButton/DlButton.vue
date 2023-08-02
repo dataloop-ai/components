@@ -27,7 +27,7 @@
                     v-if="hasIcon"
                     class="dl-button-icon"
                     :size="iconSizePX"
-                    :color="iconColor || textColor"
+                    :color="getIconColor"
                     :icon="icon"
                     :style="cssButtonVars"
                 />
@@ -194,6 +194,17 @@ export default defineComponent({
         }
     },
     computed: {
+        getIconColor(): string {
+            if (this.iconColor) {
+                return this.iconColor
+            }
+
+            if (this.textColor) {
+                return this.textColor
+            }
+
+            return 'dl-color-secondary'
+        },
         capitalizeFirst(): string {
             if (this.transform === 'default') {
                 return 'first-letter-capitalized'
