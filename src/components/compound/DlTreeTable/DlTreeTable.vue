@@ -106,7 +106,7 @@
                 </DlTrTreeView>
             </template>
             <template v-else>
-                <template v-if="dlTableRef">
+                <template v-if="dlTableRef && !isEmpty">
                     <DlTrTreeView
                         v-for="(row, pageIndex) in computedRows"
                         :key="pageIndex"
@@ -173,7 +173,23 @@
                     </DlTrTreeView>
                 </template>
                 <template v-else>
-                    no data
+                    <DlTr>
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center">
+                                <dl-empty-state v-bind="props">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="emptyStateProps"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="emptyStateProps"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
+                        </DlTd>
+                    </DlTr>
                 </template>
             </template>
         </template>
@@ -189,7 +205,7 @@ import {
     set,
     ref
 } from 'vue-demi'
-import { DlTable } from '../../../components'
+import { DlTable, DlEmptyState, DlTr, DlTd } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { cloneDeep } from 'lodash'
 import { DlTableProps, DlTableRow } from '../DlTable/types'
@@ -204,7 +220,10 @@ export default defineComponent({
     components: {
         DlTable,
         DlTrTreeView,
-        DlCheckbox
+        DlCheckbox,
+        DlEmptyState,
+        DlTr,
+        DlTd
     },
     props,
     emits,

@@ -58,7 +58,6 @@
             v-if="hasVirtScroll"
             ref="virtScrollRef"
             type="__dltable"
-            custom-id="draggable"
             :class="tableClass"
             :style="tableStyle"
             :table-colspan="computedColspan"
@@ -249,7 +248,7 @@
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
-                                <dl-empty-state v-bind="emptyStateProps">
+                                <dl-empty-state v-bind="props">
                                     <template
                                         v-for="(_, slot) in $slots"
                                         #[slot]="emptyStateProps"
@@ -464,14 +463,14 @@
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
-                                <dl-empty-state v-bind="emptyStateProps">
+                                <dl-empty-state v-bind="props">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="props"
+                                        #[slot]="emptyStateProps"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="props"
+                                            v-bind="emptyStateProps"
                                         />
                                     </template>
                                 </dl-empty-state>
@@ -1206,7 +1205,7 @@ export default defineComponent({
                 totalItems: computedRowsNumber.value
             }
         })
-        const hasSlotBody = computed(() => !!slots['body'])
+        const hasSlotBody = computed(() => !!slots['table-body'])
         const hasSlotHeaderSelection = computed(
             () => !!slots['header-selection']
         )

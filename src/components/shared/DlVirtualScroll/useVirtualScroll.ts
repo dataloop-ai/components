@@ -277,7 +277,6 @@ export const useVirtualScrollProps = {
 }
 
 export function useVirtualScroll({
-    dynamicId,
     virtualScrollLength,
     getVirtualScrollTarget,
     getVirtualScrollEl,
