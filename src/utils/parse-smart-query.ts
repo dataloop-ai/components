@@ -62,7 +62,7 @@ export const parseSmartQuery = (query: string) => {
     const orTerms: { [key: string]: any }[] = []
 
     for (const query of queryArr) {
-        const andTerms = query.split(' AND ')
+        const andTerms = query.split(' AND ').filter((q) => !!q.length)
         for (let i = 0; i < andTerms.length; i++) {
             const term: string = andTerms[i]
             let withOperator = false
