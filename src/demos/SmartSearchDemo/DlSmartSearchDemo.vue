@@ -46,13 +46,14 @@
         Only the search
 
         <dl-smart-search-input
-            v-model="queryObject"
+            v-model="queryObject2"
             :aliases="aliases"
             :schema="schema"
             :color-schema="colorSchema"
             :strict="strictState"
+            :disabled="switchState"
         />
-        {{ queryObject }}
+        {{ queryObject2 }}
     </div>
 </template>
 
