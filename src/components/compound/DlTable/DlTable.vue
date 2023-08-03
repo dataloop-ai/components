@@ -248,14 +248,14 @@
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
-                                <dl-empty-state v-bind="props">
+                                <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateProps"
+                                        #[slot]="emptyStateSlotProps"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="emptyStateProps"
+                                            v-bind="emptyStateSlotProps"
                                         />
                                     </template>
                                 </dl-empty-state>
@@ -460,17 +460,17 @@
                         </slot>
                     </slot>
 
-                    <DlTr v-if="isEmpty">
+                    <DlTr v-if="isEmpty && hasEmptyStateProps">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
-                                <dl-empty-state v-bind="props">
+                                <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateProps"
+                                        #[slot]="props"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="emptyStateProps"
+                                            v-bind="props"
                                         />
                                     </template>
                                 </dl-empty-state>
@@ -879,9 +879,6 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            /*if(props.virtualScrollRows.length) {
-                return props.virtualScrollRows
-            }*/
             let rows = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
@@ -1229,6 +1226,9 @@ export default defineComponent({
         const updatePagination = (value: any, key: string) => {
             return setPagination({ [`${key}`]: value })
         }
+        const hasEmptyStateProps = computed(
+            () => Object.keys(props.emptyStateProps).length > 0
+        )
 
         return {
             uuid: `dl-table-${v4()}`,
@@ -1282,7 +1282,8 @@ export default defineComponent({
             hasSlotBody,
             hasSlotHeaderSelection,
             stopAndPrevent,
-            updatePagination
+            updatePagination,
+            hasEmptyStateProps
         }
     }
 })
