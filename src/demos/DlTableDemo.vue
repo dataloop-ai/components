@@ -181,6 +181,45 @@
             </div>
 
             <div style="margin-top: 100px">
+                Custom Slot `row-body`
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="id"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #row-body="propsRowBody">
+                        <dl-tr :props="{ props: propsRowBody }">
+                            <dl-td
+                                v-for="(value, key) in Object.keys(
+                                    propsRowBody.row
+                                )"
+                                :key="key"
+                            >
+                                {{ propsRowBody.row[value] }}
+                            </dl-td>
+                        </dl-tr>
+                    </template>
+                </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
                 <DlTable
                     :selected="selected"
                     :separator="separator"
@@ -405,7 +444,9 @@ import {
     DlOptionGroup,
     DlSwitch,
     DlInput,
-    DlButton
+    DlButton,
+    DlTr,
+    DlTd
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
@@ -577,7 +618,9 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlButton
+        DlButton,
+        DlTr,
+        DlTd
     },
     setup() {
         const filter = ref('')
