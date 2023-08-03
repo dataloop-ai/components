@@ -205,7 +205,7 @@
                     @update:selected="updateSeleted"
                 >
                     <template #row-body="propsRowBody">
-                        <dl-tr :props="{ props: propsRowBody }">
+                        <dl-tr :props="propsRowBody">
                             <dl-td
                                 v-for="(value, key) in Object.keys(
                                     propsRowBody.row
