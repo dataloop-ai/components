@@ -18,6 +18,10 @@
         :title="title"
         :virtual-scroll="virtualScroll"
         :rows-per-page-options="rowsPerPageOptions"
+        :hide-pagination="hidePagination"
+        :is-empty="isEmpty"
+        :empty-state-props="emptyStateProps"
+        :no-data-label="noDataLabel"
         @row-click="emitRowClick"
         @th-click="emitThClick"
         @update:selected="updateSelected"
@@ -32,7 +36,7 @@
             />
         </template>
         <template #table-body="props">
-            <template v-if="virtualScroll">
+            <template v-if="virtualScroll && !isEmpty">
                 <DlTrTreeView
                     :row="props.item"
                     :is-row-selected="
@@ -172,26 +176,10 @@
                         </template>
                     </DlTrTreeView>
                 </template>
-                <template v-else>
-                    <DlTr>
-                        <DlTd colspan="100%">
-                            <div class="flex justify-center">
-                                <dl-empty-state v-bind="props">
-                                    <template
-                                        v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateProps"
-                                    >
-                                        <slot
-                                            :name="slot"
-                                            v-bind="emptyStateProps"
-                                        />
-                                    </template>
-                                </dl-empty-state>
-                            </div>
-                        </DlTd>
-                    </DlTr>
-                </template>
             </template>
+        </template>
+        <template #no-data>
+            <slot name="no-data" />
         </template>
     </DlTable>
 </template>
@@ -205,7 +193,7 @@ import {
     set,
     ref
 } from 'vue-demi'
-import { DlTable, DlEmptyState, DlTr, DlTd } from '../../../components'
+import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { cloneDeep } from 'lodash'
 import { DlTableProps, DlTableRow } from '../DlTable/types'
@@ -220,10 +208,7 @@ export default defineComponent({
     components: {
         DlTable,
         DlTrTreeView,
-        DlCheckbox,
-        DlEmptyState,
-        DlTr,
-        DlTd
+        DlCheckbox
     },
     props,
     emits,
@@ -237,8 +222,13 @@ export default defineComponent({
         const tableRows = ref(cloneDeep(props.rows))
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
+        const hasEmptyStateProps = computed(
+            () => Object.keys(props.emptyStateProps).length > 0
+        )
 
-        const computedRows = computed(() => dlTableRef.value.computedRows)
+        const computedRows = computed(() =>
+            dlTableRef.value?.computedRows ? dlTableRef.value?.computedRows : []
+        )
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
@@ -380,6 +370,7 @@ export default defineComponent({
             computedRows,
             getRowKey,
             updateSelection,
+            hasEmptyStateProps,
             updateExpandedRow,
             updateSelectionHierarchy,
             onMultipleSelectionSet,
