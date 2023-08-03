@@ -308,6 +308,7 @@ export default defineComponent({
                 showSuggestions.value = false
             } else {
                 showDatePicker.value = false
+                datePickerSelection.value = null
                 showSuggestions.value = true
             }
             scroll.value = input.value.offsetHeight > 40
@@ -329,6 +330,13 @@ export default defineComponent({
                 emit('update:model-value', json)
             }
         }
+
+        const setInputFromModel = (value: string) => {
+            searchQuery.value = value
+            input.value.innerHTML = value
+        }
+
+        const debouncedSetInputFromModel = debounce(setInputFromModel, 100)
 
         const setMenuOffset = (value: number[]) => {
             menuOffset.value = value
@@ -393,6 +401,7 @@ export default defineComponent({
         const onDateSelection = (value: DateInterval) => {
             datePickerSelection.value = value
             searchQuery.value = replaceDateInterval(searchQuery.value, value)
+            input.value.innerHTML = searchQuery.value
         }
 
         const readModelValue = (val: { [key: string]: any }) => {
@@ -400,7 +409,7 @@ export default defineComponent({
                 const aliased = fromJSON(val)
 
                 if (aliased !== searchQuery.value.trim()) {
-                    debouncedSetInputValue(aliased)
+                    debouncedSetInputFromModel(aliased)
                 }
             }
         }
@@ -417,9 +426,8 @@ export default defineComponent({
         }
 
         const toJSON = (value: string) => {
-            const json = parseSmartQuery(
-                replaceStringifiedDatesWithJSDates(value) ?? searchQuery.value
-            )
+            const replacedDate = replaceStringifiedDatesWithJSDates(value)
+            const json = parseSmartQuery(replacedDate ?? searchQuery.value)
 
             return isValidJSON(json) ? json : searchQuery.value
         }
