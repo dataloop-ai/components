@@ -168,6 +168,75 @@
                     style="height: 500px"
                 />
             </div>
+            <div style="margin-top: 100px">
+                <p>Empty State</p>
+                <DlTreeTable
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    is-empty
+                    hide-pagination
+                    @row-click="onRowClick"
+                    @th-click="log"
+                    @selectedItems="selectedItems"
+                >
+                    <template #no-data>
+                        <div class="flex justify-center">
+                            &lt slot#no-data >
+                        </div>
+                    </template>
+                </DlTreeTable>
+                <div>
+                    <DlTreeTable
+                        :separator="separator"
+                        :columns="tableColumns"
+                        :bordered="bordered"
+                        :draggable="draggable"
+                        :dense="dense"
+                        class="sticky-header"
+                        :filter="filter"
+                        :selection="selection"
+                        :loading="loading"
+                        :rows="tableRows"
+                        :resizable="resizable"
+                        row-key="name"
+                        color="dl-color-secondary"
+                        title="Table Title"
+                        :virtual-scroll="vScroll"
+                        style="height: 500px"
+                        :rows-per-page-options="rowsPerPageOptions"
+                        is-empty
+                        hide-pagination
+                        :empty-state-props="{
+                            responsive: false,
+                            style: 'min-height: 350px; width: 300px;',
+                            bgSize: '130px',
+                            bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
+                            title: 'Lorem ipsum',
+                            subtitle:
+                                'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                            info: 'To learn more about this analytics, read our documentation.'
+                        }"
+                        @row-click="onRowClick"
+                        @th-click="log"
+                        @selectedItems="selectedItems"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>

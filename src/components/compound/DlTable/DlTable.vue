@@ -248,14 +248,14 @@
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
-                                <dl-empty-state v-bind="props">
+                                <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateProps"
+                                        #[slot]="emptyStateSlotProps"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="emptyStateProps"
+                                            v-bind="emptyStateSlotProps"
                                         />
                                     </template>
                                 </dl-empty-state>
@@ -463,14 +463,14 @@
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
-                                <dl-empty-state v-bind="props">
+                                <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateProps"
+                                        #[slot]="props"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="emptyStateProps"
+                                            v-bind="props"
                                         />
                                     </template>
                                 </dl-empty-state>

@@ -18,6 +18,7 @@
         :title="title"
         :virtual-scroll="virtualScroll"
         :rows-per-page-options="rowsPerPageOptions"
+        :hide-pagination="hidePagination"
         @row-click="emitRowClick"
         @th-click="emitThClick"
         @update:selected="updateSelected"
@@ -175,19 +176,28 @@
                 <template v-else>
                     <DlTr>
                         <DlTd colspan="100%">
-                            <div class="flex justify-center">
-                                <dl-empty-state v-bind="props">
+                            <div
+                                v-if="hasEmptyStateProps"
+                                class="flex justify-center"
+                            >
+                                <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateProps"
+                                        #[slot]="emptyStateSlotProps"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="emptyStateProps"
+                                            v-bind="emptyStateSlotProps"
                                         />
                                     </template>
                                 </dl-empty-state>
                             </div>
+                            <slot
+                                v-if="!hasEmptyStateProps"
+                                name="no-data"
+                            >
+                                No data
+                            </slot>
                         </DlTd>
                     </DlTr>
                 </template>
@@ -237,6 +247,9 @@ export default defineComponent({
         const tableRows = ref(cloneDeep(props.rows))
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
+        const hasEmptyStateProps = computed(
+            () => Object.keys(props.emptyStateProps).length > 0
+        )
 
         const computedRows = computed(() => dlTableRef.value.computedRows)
 
@@ -380,6 +393,7 @@ export default defineComponent({
             computedRows,
             getRowKey,
             updateSelection,
+            hasEmptyStateProps,
             updateExpandedRow,
             updateSelectionHierarchy,
             onMultipleSelectionSet,
