@@ -19,6 +19,9 @@
         :virtual-scroll="virtualScroll"
         :rows-per-page-options="rowsPerPageOptions"
         :hide-pagination="hidePagination"
+        :is-empty="isEmpty"
+        :empty-state-props="emptyStateProps"
+        :no-data-label="noDataLabel"
         @row-click="emitRowClick"
         @th-click="emitThClick"
         @update:selected="updateSelected"
@@ -33,7 +36,7 @@
             />
         </template>
         <template #table-body="props">
-            <template v-if="virtualScroll">
+            <template v-if="virtualScroll && !isEmpty">
                 <DlTrTreeView
                     :row="props.item"
                     :is-row-selected="
@@ -173,35 +176,10 @@
                         </template>
                     </DlTrTreeView>
                 </template>
-                <template v-else>
-                    <DlTr>
-                        <DlTd colspan="100%">
-                            <div
-                                v-if="hasEmptyStateProps"
-                                class="flex justify-center"
-                            >
-                                <dl-empty-state v-bind="emptyStateProps">
-                                    <template
-                                        v-for="(_, slot) in $slots"
-                                        #[slot]="emptyStateSlotProps"
-                                    >
-                                        <slot
-                                            :name="slot"
-                                            v-bind="emptyStateSlotProps"
-                                        />
-                                    </template>
-                                </dl-empty-state>
-                            </div>
-                            <slot
-                                v-if="!hasEmptyStateProps"
-                                name="no-data"
-                            >
-                                No data
-                            </slot>
-                        </DlTd>
-                    </DlTr>
-                </template>
             </template>
+        </template>
+        <template #no-data>
+            <slot name="no-data" />
         </template>
     </DlTable>
 </template>
@@ -215,7 +193,7 @@ import {
     set,
     ref
 } from 'vue-demi'
-import { DlTable, DlEmptyState, DlTr, DlTd } from '../../../components'
+import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { cloneDeep } from 'lodash'
 import { DlTableProps, DlTableRow } from '../DlTable/types'
@@ -230,10 +208,7 @@ export default defineComponent({
     components: {
         DlTable,
         DlTrTreeView,
-        DlCheckbox,
-        DlEmptyState,
-        DlTr,
-        DlTd
+        DlCheckbox
     },
     props,
     emits,
@@ -251,7 +226,9 @@ export default defineComponent({
             () => Object.keys(props.emptyStateProps).length > 0
         )
 
-        const computedRows = computed(() => dlTableRef.value.computedRows)
+        const computedRows = computed(() =>
+            dlTableRef.value?.computedRows ? dlTableRef.value?.computedRows : []
+        )
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'

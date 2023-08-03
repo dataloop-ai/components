@@ -180,7 +180,7 @@
                     :filter="filter"
                     :selection="selection"
                     :loading="loading"
-                    :rows="tableRows"
+                    :rows="[]"
                     :resizable="resizable"
                     row-key="name"
                     color="dl-color-secondary"
@@ -196,7 +196,7 @@
                 >
                     <template #no-data>
                         <div class="flex justify-center">
-                            &lt slot#no-data >
+                            &lt slot#no-data > customizabled
                         </div>
                     </template>
                 </DlTreeTable>

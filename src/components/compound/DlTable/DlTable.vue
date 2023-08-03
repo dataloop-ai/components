@@ -460,7 +460,7 @@
                         </slot>
                     </slot>
 
-                    <DlTr v-if="isEmpty">
+                    <DlTr v-if="isEmpty && hasEmptyStateProps">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
                                 <dl-empty-state v-bind="emptyStateProps">
@@ -1229,6 +1229,9 @@ export default defineComponent({
         const updatePagination = (value: any, key: string) => {
             return setPagination({ [`${key}`]: value })
         }
+        const hasEmptyStateProps = computed(
+            () => Object.keys(props.emptyStateProps).length > 0
+        )
 
         return {
             uuid: `dl-table-${v4()}`,
@@ -1282,7 +1285,8 @@ export default defineComponent({
             hasSlotBody,
             hasSlotHeaderSelection,
             stopAndPrevent,
-            updatePagination
+            updatePagination,
+            hasEmptyStateProps
         }
     }
 })
