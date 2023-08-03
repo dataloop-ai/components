@@ -155,7 +155,7 @@ export default defineComponent({
             Array.from(grid.value.children).forEach(
                 (element: Element, index: number) => {
                     const el = element as HTMLElement
-                    el.dataset.id = modelValue.value.flat()[index]
+                    el.dataset.id = `${modelValue.value.flat()[index]}`
                 }
             )
         }
