@@ -204,15 +204,13 @@
                     @th-click="log"
                     @update:selected="updateSeleted"
                 >
-                    <template #row-body="propsRowBody">
-                        <dl-tr :props="propsRowBody">
+                    <template #row-body="props">
+                        <dl-tr :props="props">
                             <dl-td
-                                v-for="(value, key) in Object.keys(
-                                    propsRowBody.row
-                                )"
+                                v-for="(value, key) in Object.keys(props.row)"
                                 :key="key"
                             >
-                                {{ propsRowBody.row[value] }}
+                                {{ props.row[value] }}
                             </dl-td>
                         </dl-tr>
                     </template>
