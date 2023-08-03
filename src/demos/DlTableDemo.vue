@@ -181,6 +181,43 @@
             </div>
 
             <div style="margin-top: 100px">
+                Custom Slot `row-body`
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="id"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #row-body="props">
+                        <dl-tr :props="props">
+                            <dl-td
+                                v-for="(value, key) in Object.keys(props.row)"
+                                :key="key"
+                            >
+                                {{ props.row[value] }}
+                            </dl-td>
+                        </dl-tr>
+                    </template>
+                </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
                 <DlTable
                     :selected="selected"
                     :separator="separator"
@@ -311,7 +348,7 @@
                     :rows="tableRows"
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"
@@ -346,7 +383,7 @@
                 <DlTable
                     :selected="selected"
                     :separator="separator"
-                    :columns="columns"
+                    :columns="tableColumns"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"
@@ -405,7 +442,9 @@ import {
     DlOptionGroup,
     DlSwitch,
     DlInput,
-    DlButton
+    DlButton,
+    DlTr,
+    DlTd
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
@@ -417,14 +456,16 @@ const columns = [
         label: 'Dessert (100g serving)',
         align: 'left',
         field: 'name',
-        sortable: true
+        sortable: true,
+        textTransform: 'uppercase'
     },
     {
         name: 'calories',
         align: 'center',
         label: 'Calories',
         field: 'calories',
-        sortable: true
+        sortable: true,
+        textTransform: 'lowercase'
     },
     { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
     { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
@@ -435,6 +476,7 @@ const columns = [
         label: 'Calcium (%)',
         field: 'calcium',
         sortable: true,
+        textTransform: 'lowercase',
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     },
@@ -443,6 +485,7 @@ const columns = [
         label: 'Iron (%)',
         field: 'iron',
         sortable: true,
+        textTransform: 'lowercase',
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     }
@@ -573,7 +616,9 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlButton
+        DlButton,
+        DlTr,
+        DlTd
     },
     setup() {
         const filter = ref('')

@@ -27,7 +27,7 @@
                     v-if="hasIcon"
                     class="dl-button-icon"
                     :size="iconSizePX"
-                    :color="iconColor || textColor"
+                    :color="getIconColor"
                     :icon="icon"
                     :style="cssButtonVars"
                 />
@@ -78,7 +78,7 @@ import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
 import { ButtonColors } from './types'
-import { DlTransformOptions } from '../../shared/types'
+import { DlTextTransformOptions } from '../../shared/types'
 import { stringStyleToRecord } from '../../../utils'
 import { textTransform } from '../../../utils/string'
 import { isString } from 'lodash'
@@ -151,10 +151,10 @@ export default defineComponent({
          * The button will be transparent with a colored outline
          */
         transform: {
-            type: String,
+            type: String as PropType<DlTextTransformOptions>,
             default: 'default',
-            validator: (value: string): boolean =>
-                DlTransformOptions.includes(value)
+            validator: (value: DlTextTransformOptions): boolean =>
+                Object.values(DlTextTransformOptions).includes(value)
         },
         /**
          * Doesn't allow the button's text to be wrapped along multiple rows
@@ -194,6 +194,17 @@ export default defineComponent({
         }
     },
     computed: {
+        getIconColor(): string {
+            if (this.iconColor) {
+                return this.iconColor
+            }
+
+            if (this.textColor) {
+                return this.textColor
+            }
+
+            return 'dl-color-secondary'
+        },
         capitalizeFirst(): string {
             if (this.transform === 'default') {
                 return 'first-letter-capitalized'

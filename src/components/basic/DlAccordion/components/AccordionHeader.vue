@@ -13,20 +13,17 @@
             :color="titleColor"
         />
         <div class="header-content">
-            <slot
-                v-if="hasSlot"
-                name="header"
-            />
-            <span
-                v-else
-                ref="dlAccordionTitleRef"
-                class="accordion-title"
-            >
-                <dl-tooltip v-if="isOverflowing">
+            <slot name="header">
+                <span
+                    ref="dlAccordionTitleRef"
+                    class="accordion-title"
+                >
+                    <dl-tooltip v-if="isOverflowing">
+                        {{ title }}
+                    </dl-tooltip>
                     {{ title }}
-                </dl-tooltip>
-                {{ title }}
-            </span>
+                </span>
+            </slot>
             <span class="flex">
                 <dl-icon
                     v-if="hasAdditionalInfo"
@@ -93,7 +90,7 @@ export default defineComponent({
             return this.$slots.header !== undefined
         },
         hasAdditionalInfo(): boolean {
-            return this.additionalInfo !== ''
+            return this.additionalInfo.length !== 0
         }
     },
     methods: {
@@ -106,7 +103,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .accordion-header {
-    padding: 12px 16px;
+    padding: var(--dl-accordion-header-padding, 12px 16px);
     cursor: pointer;
     font-size: var(--dl-accordion-header-fontsize);
     display: flex;

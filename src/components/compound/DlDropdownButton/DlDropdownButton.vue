@@ -69,13 +69,7 @@
                 :class="iconClass"
                 :icon="dropdownIcon"
                 :size="iconSize"
-                :color="
-                    disabled
-                        ? 'dl-color-disabled'
-                        : outlined && !textColor
-                            ? 'dl-color-secondary'
-                            : textColor || 'dl-color-white'
-                "
+                :color="getIconColor"
             />
         </dl-button>
         <dl-menu
@@ -134,13 +128,7 @@
                 :class="iconClass"
                 :icon="dropdownIcon"
                 :size="iconSize"
-                :color="
-                    disabled
-                        ? 'dl-color-disabled'
-                        : outlined && !textColor
-                            ? 'dl-color-secondary'
-                            : textColor || 'dl-color-white'
-                "
+                :color="getIconColor"
             />
         </div>
 
@@ -185,10 +173,11 @@ import {
     watch,
     onMounted,
     getCurrentInstance,
-    Ref
+    Ref,
+    PropType
 } from 'vue-demi'
 import { v4 } from 'uuid'
-import { DlTransformOptions } from '../../shared/types'
+import { DlTextTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -238,10 +227,10 @@ export default defineComponent({
         iconSize: { type: String, required: false, default: '20px' },
         flat: Boolean,
         transform: {
-            type: String,
+            type: String as PropType<DlTextTransformOptions>,
             default: 'default',
-            validator: (value: string): boolean =>
-                DlTransformOptions.includes(value)
+            validator: (value: DlTextTransformOptions): boolean =>
+                Object.values(DlTextTransformOptions).includes(value)
         },
         outlined: Boolean,
         padding: { type: String, default: '5px' },
@@ -403,6 +392,26 @@ export default defineComponent({
             )
         })
 
+        const getIconColor = computed(() => {
+            if (props.disabled) {
+                return 'dl-color-disabled'
+            }
+
+            if (props.textColor) {
+                return props.textColor
+            }
+
+            if (props.outlined) {
+                return 'dl-color-secondary'
+            }
+
+            if (props.color) {
+                return props.color
+            }
+
+            return 'dl-color-medium'
+        })
+
         return {
             uuid: `dl-dropdown-button-${v4()}`,
             identifierClass,
@@ -424,7 +433,8 @@ export default defineComponent({
             props,
             setHighlightedIndex,
             handleSelectedItem,
-            cssVars
+            cssVars,
+            getIconColor
         }
     }
 })

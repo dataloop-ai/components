@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { PropType, defineComponent, ref } from 'vue-demi'
 import { DlTooltip } from '../../shared'
 import { DlIcon } from '../../essential'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
@@ -63,7 +63,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-import { DlTransformOptions } from '../../shared/types'
+import { DlTextTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -84,10 +84,10 @@ export default defineComponent({
         removable: Boolean,
         tabIndex: { type: [String, Number], default: '' },
         transform: {
-            type: String,
+            type: String as PropType<DlTextTransformOptions>,
             default: 'default',
-            validator: (value: string): boolean =>
-                DlTransformOptions.includes(value)
+            validator: (value: DlTextTransformOptions): boolean =>
+                Object.values(DlTextTransformOptions).includes(value)
         },
         overflow: { type: Boolean, default: false },
         fit: { type: Boolean, default: false }

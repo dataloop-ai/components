@@ -1,3 +1,5 @@
+import { DlTextTransformOptions } from '../../shared/types'
+
 export type DlTableProps = {
     columns: DlTableColumn[]
     rows: DlTableRow[]
@@ -31,6 +33,7 @@ export type DlTableColumn = {
     classes?: string | ((row: DlTableRow) => string)
     headerStyle?: string
     headerClasses?: string
+    textTransform?: DlTextTransformOptions
 }
 
 export type DlTableFilterMethod = (
