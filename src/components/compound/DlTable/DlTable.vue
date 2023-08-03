@@ -550,7 +550,8 @@ import {
     getCurrentInstance,
     ComputedRef,
     onMounted,
-    toRef
+    toRef,
+    toRefs
 } from 'vue-demi'
 import { props } from './utils/props'
 import { emits } from './utils/emits'
@@ -608,8 +609,16 @@ export default defineComponent({
     emits,
     setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
+        const {
+            tableStyle,
+            tableClass,
+            tableHeaderStyle,
+            tableHeaderClass,
+            dense,
+            draggable
+        } = toRefs(props)
 
-        const rootRef = ref(null)
+        const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed(() => props.virtualScroll === true)
 
@@ -691,10 +700,10 @@ export default defineComponent({
         })
 
         const hasDraggableRows = computed(() =>
-            ['rows', 'both'].includes(props.draggable)
+            ['rows', 'both'].includes(draggable.value)
         )
         const hasDraggableColumns = computed(() =>
-            ['columns', 'both'].includes(props.draggable)
+            ['columns', 'both'].includes(draggable.value)
         )
 
         let removeDraggableRows = () => {}
@@ -808,12 +817,13 @@ export default defineComponent({
         )
 
         watch(
-            () =>
-                (props.tableStyle as string) +
-                props.tableClass +
-                props.tableHeaderStyle +
-                props.tableHeaderClass +
-                __containerClass,
+            [
+                tableStyle,
+                tableClass,
+                tableHeaderStyle,
+                tableHeaderClass,
+                __containerClass
+            ],
             () => {
                 if (
                     hasVirtScroll.value === true &&
@@ -828,7 +838,7 @@ export default defineComponent({
             useTablePaginationState(vm, getCellValue)
 
         watch(
-            [computedPagination, () => props.dense],
+            [computedPagination, dense],
             () => {
                 if (tableEl && props.resizable && resizableManager) {
                     const tableHeight = tableEl.offsetHeight || 0
@@ -1075,7 +1085,7 @@ export default defineComponent({
             toIndex = parseInt(toIndex as string, 10)
             const rowEl = rootRef.value.querySelector(
                 `tbody tr:nth-of-type(${toIndex + 1})`
-            )
+            ) as HTMLElement
 
             if (rowEl !== null) {
                 const scrollTarget = rootRef.value.querySelector(
