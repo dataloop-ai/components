@@ -32,7 +32,7 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Array as PropType<string[][]>,
+            type: Array as PropType<(string | number)[][]>,
             default: null
         },
         rowGap: {
@@ -94,7 +94,7 @@ export default defineComponent({
             const sourceEl = getElementAbove(e.detail.source, className)
             const targetEl = getElementAbove(e.detail.target, className)
 
-            const newLayout: string[][] = swapElementsInMatrix(
+            const newLayout: (string | number)[][] = swapElementsInMatrix(
                 modelValue.value,
                 sourceEl,
                 targetEl

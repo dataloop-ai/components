@@ -10,12 +10,15 @@ function leastCommonMultiple(arr: number[]) {
     return arr.reduce(lcm)
 }
 
-function buildNewLayoutOrder(layout: string[], matrix: string[][]) {
-    const template: string[][] = []
+function buildNewLayoutOrder(
+    layout: (string | number)[],
+    matrix: (string | number)[][]
+) {
+    const template: (string | number)[][] = []
     let index = 0
 
     for (const row of matrix) {
-        const templateRow: string[] = []
+        const templateRow: (string | number)[] = []
         for (const cell of row) {
             templateRow.push(layout[index])
             index++
@@ -26,7 +29,7 @@ function buildNewLayoutOrder(layout: string[], matrix: string[][]) {
     return template
 }
 
-export function getGridTemplate(layout: string[][]) {
+export function getGridTemplate(layout: (string | number)[][]) {
     if (!layout) {
         return
     }
@@ -48,7 +51,7 @@ export function getGridTemplate(layout: string[][]) {
 }
 
 export function swapElementsInMatrix(
-    oldLayout: string[][],
+    oldLayout: (string | number)[][],
     sourceEl: HTMLElement,
     targetEl: HTMLElement
 ) {
