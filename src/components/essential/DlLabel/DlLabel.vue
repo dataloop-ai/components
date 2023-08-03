@@ -40,13 +40,15 @@
                         name="actions"
                     />
                 </div>
-                <dl-icon
-                    v-if="hint"
-                    class="dl-label__suffix-icon"
-                    icon="icon-dl-info"
-                >
-                    <dl-tooltip>{{ hint }}</dl-tooltip>
-                </dl-icon>
+                <slot name="hint">
+                    <dl-icon
+                        v-if="hint"
+                        class="dl-label__suffix-icon"
+                        icon="icon-dl-info"
+                    >
+                        <dl-tooltip>{{ hint }}</dl-tooltip>
+                    </dl-icon>
+                </slot>
             </div>
         </div>
     </div>

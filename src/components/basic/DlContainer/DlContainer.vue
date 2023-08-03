@@ -18,6 +18,13 @@
             <div class="dl-container__content">
                 <slot />
             </div>
+
+            <div
+                v-if="hasFooterSlot"
+                class="dl-container__footer"
+            >
+                <slot name="footer" />
+            </div>
         </div>
     </div>
 </template>
@@ -38,6 +45,9 @@ export default defineComponent({
         },
         hasHeaderSlot(): boolean {
             return this.$slots.header !== undefined
+        },
+        hasFooterSlot(): boolean {
+            return this.$slots.footer !== undefined
         }
     }
 })
@@ -59,6 +69,11 @@ export default defineComponent({
         padding: 10px;
         height: 100%;
         overflow-y: auto;
+    }
+    &__footer {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid var(--dl-color-separator);
     }
 }
 
