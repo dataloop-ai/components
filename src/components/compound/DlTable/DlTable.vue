@@ -879,9 +879,6 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            /*if(props.virtualScrollRows.length) {
-                return props.virtualScrollRows
-            }*/
             let rows = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
