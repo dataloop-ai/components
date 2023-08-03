@@ -1,6 +1,31 @@
 <template>
     <div>
         <div style="display: flex; gap: 20px; flex-direction: column">
+            <h2>without text-color prop</h2>
+            <dl-dropdown-button
+                v-model="showing"
+                flat
+                :label="outlinedLabel"
+                :no-wrap="false"
+                :overflow="false"
+                auto-close
+                fit-content
+                icon="icon-dl-sdk-documentation"
+                :color="'secondary'"
+                size="s"
+            >
+                <dl-list>
+                    <dl-list-item
+                        v-for="val in ['Photos', 'Videos', 'Articles']"
+                        :key="val"
+                        clickable
+                        @click="handleOutlinedSelect(val)"
+                    >
+                        <dl-item-section> {{ val }} </dl-item-section>
+                    </dl-list-item>
+                </dl-list>
+            </dl-dropdown-button>
+
             <h2>Splitted</h2>
             <dl-dropdown-button
                 auto-close
