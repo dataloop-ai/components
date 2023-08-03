@@ -17,7 +17,7 @@
             width="45vw"
             height="75vh"
             :language="language"
-            :theme="theme"
+            :theme="'atom-one-dark'"
             :readonly="readonly"
             :options="options"
         />
