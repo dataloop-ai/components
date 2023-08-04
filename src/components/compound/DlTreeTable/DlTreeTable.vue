@@ -53,14 +53,14 @@
                         dlTableRef.getBodySelectionScope({
                             key: getRowKey(props.item),
                             row: props.item,
-                            pageIndex: props.index
+                            rowIndex: props.index
                         })
                     "
                     :bind-body-cell-scope="
                         dlTableRef.getBodyCellScope({
                             key: getRowKey(props.item),
                             row: props.item,
-                            pageIndex: props.index
+                            rowIndex: props.index
                         })
                     "
                     :color="color"
@@ -102,7 +102,7 @@
                                 dlTableRef.getBodyCellScope({
                                     key: getRowKey(props.item),
                                     row: props.item,
-                                    pageIndex: props.index
+                                    rowIndex: props.index
                                 })
                             "
                         />
@@ -112,9 +112,10 @@
             <template v-else>
                 <template v-if="dlTableRef && !isEmpty">
                     <DlTrTreeView
-                        v-for="(row, pageIndex) in computedRows"
-                        :key="pageIndex"
+                        v-for="(row, rowIndex) in computedRows"
+                        :key="rowIndex"
                         :row="row"
+                        :row-key="rowKey"
                         :is-row-selected="
                             isRowSelected(rowKey, getRowKey(row))
                                 ? 'selected'
@@ -122,21 +123,21 @@
                         "
                         :has-any-action="dlTableRef.hasAnyAction"
                         :no-hover="dlTableRef.noHover"
-                        :page-index="pageIndex"
+                        :row-index="rowIndex"
                         :has-draggable-rows="dlTableRef.hasDraggableRows"
                         :has-selection-mode="dlTableRef.hasSelectionMode"
                         :bind-body-selection="
                             dlTableRef.getBodySelectionScope({
                                 key: getRowKey(row),
                                 row,
-                                pageIndex
+                                rowIndex
                             })
                         "
                         :bind-body-cell-scope="
                             dlTableRef.getBodyCellScope({
                                 key: getRowKey(row),
                                 row,
-                                pageIndex
+                                rowIndex
                             })
                         "
                         :color="color"
@@ -148,12 +149,12 @@
                             (adding, evt) =>
                                 updateSelectionHierarchy(adding, evt, row)
                         "
-                        @rowClick="dlTableRef.onTrClick($event, row, pageIndex)"
+                        @rowClick="dlTableRef.onTrClick($event, row, rowIndex)"
                         @rowDoubleClick="
-                            dlTableRef.onTrDblClick($event, row, pageIndex)
+                            dlTableRef.onTrDblClick($event, row, rowIndex)
                         "
                         @rowContextMenu="
-                            dlTableRef.onTrContextMenu($event, row, pageIndex)
+                            dlTableRef.onTrContextMenu($event, row, rowIndex)
                         "
                         @updateExpandedRow="
                             updateExpandedRow(!row.expanded, getRowKey(row))
@@ -169,7 +170,7 @@
                                     dlTableRef.getBodySelectionScope({
                                         key: getRowKey(row),
                                         row,
-                                        pageIndex
+                                        rowIndex
                                     })
                                 "
                             />
@@ -222,6 +223,7 @@ export default defineComponent({
         const tableRows = ref(cloneDeep(props.rows))
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
+
         const hasEmptyStateProps = computed(
             () => Object.keys(props.emptyStateProps).length > 0
         )
