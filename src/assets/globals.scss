@@ -46,6 +46,12 @@ body {
     &--none{
         text-transform: none;
     }
+    &--default {
+        &,
+        & > * {
+            text-transform: capitalize;
+        }
+    }
 }
 
 /* Inserting a collapsed row between two flex items will make 
