@@ -24,7 +24,7 @@ import { getLinkTarget, getLinkRel } from './utils'
 export default defineComponent({
     name: 'DlLink',
     props: {
-        href: { required: true, type: String },
+        href: { required: false, type: String, default: null },
         newtab: { required: false, default: false, type: Boolean },
         external: { required: false, default: false, type: Boolean },
         disabled: { required: false, default: false, type: Boolean },
@@ -37,6 +37,9 @@ export default defineComponent({
     },
     computed: {
         link(): string {
+            if (!this.href) {
+                return null
+            }
             return this.external
                 ? `${this.href}`
                 : `${window.origin}/${this.href}`
@@ -45,9 +48,15 @@ export default defineComponent({
             return this.color ?? 'dl-color-studio-secondary'
         },
         target(): string | null {
+            if (!this.href) {
+                return null
+            }
             return getLinkTarget(this.newtab)
         },
         rel(): string | null {
+            if (!this.href) {
+                return null
+            }
             return getLinkRel(this.external)
         }
     },
@@ -63,6 +72,7 @@ a {
 
 a:hover {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .disabled {
