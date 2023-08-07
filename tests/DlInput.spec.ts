@@ -48,7 +48,7 @@ describe('DlInput component', () => {
             await wrapper.find('input').trigger('input')
 
             // @ts-ignore // handled in jest setup
-            await window.delay(100)
+            await window.delay(500)
             await wrapper.vm.$nextTick()
 
             const inputEvent: any = wrapper.emitted('input')
@@ -57,7 +57,7 @@ describe('DlInput component', () => {
         it('should trigger right blur event', async () => {
             await wrapper.find('input').trigger('blur')
             // @ts-ignore // handled in jest setup
-            await window.delay(50)
+            await window.delay(500)
             await wrapper.vm.$nextTick()
 
             const blurEvent: any = wrapper.emitted('blur')
@@ -66,7 +66,7 @@ describe('DlInput component', () => {
         it('should trigger right focus event', async () => {
             await wrapper.find('input').trigger('focus')
             // @ts-ignore // handled in jest setup
-            await window.delay(50)
+            await window.delay(500)
             await wrapper.vm.$nextTick()
 
             const focusEvent: any = wrapper.emitted('focus')
@@ -94,7 +94,7 @@ describe('DlInput component', () => {
             await wrapper.find('input').trigger('focus')
 
             // @ts-ignore // handled in jest setup
-            await window.delay(50)
+            await window.delay(500)
             await wrapper.vm.$nextTick()
 
             await wrapper

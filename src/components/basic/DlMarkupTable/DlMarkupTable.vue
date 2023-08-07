@@ -11,7 +11,8 @@
 
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent, computed, ref } from 'vue-demi'
+import { defineComponent, computed, ref, PropType, toRefs } from 'vue-demi'
+import { DlTextTransformOptions } from '../../shared/types'
 
 const separatorValues = ['horizontal', 'vertical', 'cell', 'none']
 
@@ -22,7 +23,14 @@ export default defineComponent({
         flat: Boolean,
         bordered: Boolean,
         square: Boolean,
-        wrapCells: Boolean,
+        /** wraps the cells */
+        wrap: Boolean,
+        transform: {
+            type: String as PropType<DlTextTransformOptions>,
+            default: 'default',
+            validator: (value: DlTextTransformOptions): boolean =>
+                Object.values(DlTextTransformOptions).includes(value)
+        },
 
         separator: {
             type: String,
@@ -32,17 +40,21 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const { transform, dense, separator, flat, bordered, square, wrap } =
+            toRefs(props)
+
         const uuid = ref(`dl-markup-table-${v4()}`)
 
         const classes = computed(
             () =>
                 'dl-markup-table dl-table__container dl-table__card' +
-                ` dl-table--${props.separator}-separator` +
-                (props.dense === true ? ' dl-table--dense' : '') +
-                (props.flat === true ? ' dl-table--flat' : '') +
-                (props.bordered === true ? ' dl-table--bordered' : '') +
-                (props.square === true ? ' dl-table--square' : '') +
-                (props.wrapCells === false ? ' dl-table--no-wrap' : '')
+                ` dl-table--${separator.value}-separator` +
+                (dense.value === true ? ' dl-table--dense' : '') +
+                (flat.value === true ? ' dl-table--flat' : '') +
+                (bordered.value === true ? ' dl-table--bordered' : '') +
+                (square.value === true ? ' dl-table--square' : '') +
+                (wrap.value === false ? ' dl-table--no-wrap' : '') +
+                ` dl-text-transform--${transform.value}`
         )
 
         return {

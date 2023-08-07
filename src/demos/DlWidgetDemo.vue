@@ -1,316 +1,131 @@
 <template>
     <div>
-        <div class="options">
-            <div class="select-layout">
-                <select
-                    class="select-layout__input"
-                    @change="selectLayout"
-                >
-                    <option
-                        v-for="(layoutItem, layoutIndex) in layouts"
-                        :key="layoutIndex"
-                        :value="layoutIndex"
-                    >
-                        {{ layoutItem.name }}
-                    </option>
-                </select>
-                <button
-                    class="select-layout__button"
-                    @mousedown="saveLayout"
-                >
-                    Save
-                </button>
-                <span class="select-layout__info">{{ hasBeenSaved }}</span>
-            </div>
-            <div class="widgets-per-row">
-                <span class="widgets-per-row__label"> Widgets per row: </span>
-                <input
-                    v-model="widgetsPerRow"
-                    class="widgets-per-row__input"
-                    type="number"
-                >
-            </div>
-        </div>
-        <dl-grid
-            v-model="layout"
-            :max-elements-per-row="widgetsPerRow"
+        <dl-widget style="width: 50vw">
+            <template #header>
+                <span>Widget with menu icons</span>
+                <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
+            </template>
+            <template #content>
+                <dl-bar-chart
+                    :data="data"
+                    :items-in-view="8"
+                />
+            </template>
+            <template #menu>
+                <div class="menu-icons">
+                    <dl-icon
+                        size="m"
+                        icon="icon-dl-settings"
+                    />
+                    <dl-icon
+                        size="m"
+                        icon="icon-dl-download"
+                    />
+                </div>
+            </template>
+        </dl-widget>
+
+        <dl-widget style="width: 50vw">
+            <template #header>
+                <span>Widget with description</span>
+            </template>
+            <template #content>
+                <dl-bar-chart
+                    :data="data"
+                    :items-in-view="6"
+                />
+            </template>
+            <template #description>
+                <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Libero eligendi dolore, similique possimus veritatis in
+                    vitae quia praesentium fuga quibusdam autem. Doloremque
+                    tenetur repudiandae a cupiditate modi dicta eveniet
+                    veritatis?</span>
+            </template>
+        </dl-widget>
+
+        <dl-widget
+            is-empty
+            :empty-state-props="{
+                style: 'min-height: 350px;',
+                title: 'Lorem ipsum',
+                subtitle:
+                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
+                info: 'To learn more about this analytics, read our documentation.',
+                responsive: false
+            }"
+            style="width: 50vw"
         >
-            <dl-widget>
-                <template #header>
-                    <span>Widget 1</span>
-                    <span style="font-size: 12px; color: var(--dl-color-medium)">Subtitle</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="8"
+            <template #header>
+                <span>Empty state widget</span>
+            </template>
+            <template #links="">
+                <div style="display: flex; gap: 5px; padding: 0 20px">
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-sdk-documentation"
+                        flat
+                        uppercase
+                        label="SDK"
                     />
-                </template>
-                <template #menu>
-                    <div class="menu-icons">
-                        <dl-icon
-                            size="m"
-                            icon="icon-dl-settings"
-                        />
-                        <dl-icon
-                            size="m"
-                            icon="icon-dl-download"
-                        />
-                    </div>
-                </template>
-                <template #description>
-                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Libero eligendi dolore, similique possimus
-                        veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate modi
-                        dicta eveniet veritatis?</span>
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 2</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="6"
+                    <div class="break" />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-file"
+                        flat
+                        label="Documentation"
                     />
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 3</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="6"
+                    <div class="break" />
+                    <dl-button
+                        padding="0px"
+                        icon="icon-dl-youtube"
+                        flat
+                        label="Video"
                     />
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 4</span>
-                    <span style="font-size: 12px; color: gray">Subtitle</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="8"
-                    />
-                </template>
-                <template #description>
-                    <span>Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Libero eligendi dolore, similique possimus
-                        veritatis in vitae quia praesentium fuga quibusdam
-                        autem. Doloremque tenetur repudiandae a cupiditate modi
-                        dicta eveniet veritatis?</span>
-                </template>
-            </dl-widget>
-
-            <dl-widget>
-                <template #header>
-                    <span>Widget 5</span>
-                </template>
-                <template #content>
-                    <dl-bar-chart
-                        :data="data"
-                        :items-in-view="6"
-                    />
-                </template>
-            </dl-widget>
-
-            <dl-widget
-                is-empty
-                :empty-state-props="{
-                    responsive: true,
-                    style: 'min-height: 350px;',
-                    bgSize: '130px',
-                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                    title: 'Lorem ipsum',
-                    subtitle:
-                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                    info: 'To learn more about this analytics, read our documentation.'
-                }"
-            >
-                <template #header>
-                    <span>Widget 5</span>
-                </template>
-                <template #links="">
-                    <div style="display: flex; gap: 5px; padding: 0 20px">
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-sdk-documentation"
-                            flat
-                            uppercase
-                            label="SDK"
-                        />
-                        <div class="break" />
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-file"
-                            flat
-                            label="Documentation"
-                        />
-                        <div class="break" />
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-youtube"
-                            flat
-                            label="Video"
-                        />
-                    </div>
-                </template>
-            </dl-widget>
-        </dl-grid>
+                </div>
+            </template>
+        </dl-widget>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
-import {
-    DlWidget,
-    DlGrid,
-    DlBarChart,
-    DlGridLayout,
-    DlIcon,
-    DlButton
-} from '../components'
-
-const labelsFn = () => {
-    const a = []
-    for (let i = 0; i < 20; i++) {
-        a.push(`${i}`)
-    }
-    return a
-}
-
-const dataFn = () => {
-    const a = []
-    for (let i = 1; i <= 20; i++) {
-        a.push(i)
-    }
-    return a
-}
+import { defineComponent } from 'vue-demi'
+import { DlWidget, DlBarChart, DlIcon, DlButton } from '../components'
 
 const data = {
-    labels: labelsFn(),
+    labels: Array.from({ length: 20 }, (_, i) => `${i}`),
     datasets: [
         {
             label: 'Data One',
             backgroundColor: '--dl-color-secondary',
             borderRadius: 4,
-            data: dataFn()
+            data: Array.from({ length: 20 }, (_, i) => i + 1)
         },
         {
             label: 'Data Two',
             backgroundColor: '--dl-color-warning',
             borderRadius: 4,
-            data: dataFn()
+            data: Array.from({ length: 20 }, (_, i) => i + 1)
         }
     ]
 }
 
-const matrix: number[][] = []
-const labels: string[] = []
-const size: number = 10
-
-for (let i = 0; i < size; i++) {
-    const row = []
-    for (let j = 0; j < size; j++) {
-        row.push(Math.floor(Math.random() * 10))
-    }
-    matrix.push(row)
-}
-
-const items = ['Van', 'Truck', 'Motorcycle', 'Car', 'Bus']
-
-for (let i = 0; i < size; i++) {
-    labels.push(items[Math.floor(Math.random() * items.length)])
-}
-
 export default defineComponent({
     components: {
-        DlGrid,
         DlWidget,
         DlBarChart,
         DlIcon,
         DlButton
     },
     setup() {
-        const layout = ref([
-            [1, 5, 2],
-            [3, 4, 6]
-        ])
-
-        const layouts = ref<DlGridLayout[]>([
-            {
-                name: 'Layout 1',
-                value: layout.value
-            }
-        ])
-
-        const widgetsPerRow = ref(3)
-        const hasBeenSaved = ref('')
-
-        const saveLayout = () => {
-            const newLayout = {
-                name: `Layout ${layouts.value.length + 1}`,
-                value: layout.value
-            }
-            layouts.value.push(newLayout)
-            hasBeenSaved.value = `${newLayout.name} has been saved.`
-            setTimeout(() => {
-                hasBeenSaved.value = ''
-            }, 2000)
-        }
-
-        const selectLayout = (e: InputEvent) => {
-            const index = parseInt((e.target as HTMLInputElement).value)
-            layout.value = layouts.value[index].value
-        }
-
         return {
-            data,
-            layout,
-            layouts,
-            widgetsPerRow,
-            hasBeenSaved,
-            saveLayout,
-            selectLayout
+            data
         }
     }
 })
 </script>
 
 <style lang="scss" scoped>
-.options {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-}
-.widgets-per-row {
-    &__input {
-        padding: 5px;
-        border-radius: 5px;
-        width: 50px;
-    }
-}
-.select-layout {
-    &__input,
-    &__button {
-        padding: 5px;
-        border-radius: 5px;
-        margin: 0px 2px;
-    }
-    &__info {
-        font-size: 0.8em;
-        margin-left: 10px;
-    }
-}
 .menu-icons {
     display: flex;
     align-items: center;

@@ -1,5 +1,10 @@
 export interface DlGridLayout {
     name: string
-    value: number[][]
+    value: (number | string)[][]
 }
-export type DlGridSideType = 'left' | 'right'
+
+export enum DlGridMode {
+    GRID = 'grid',
+    FLEX = 'flex',
+    LAYOUT = 'layout'
+}

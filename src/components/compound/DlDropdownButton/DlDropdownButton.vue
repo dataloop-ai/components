@@ -405,11 +405,15 @@ export default defineComponent({
                 return 'dl-color-secondary'
             }
 
+            if (props.flat) {
+                return 'dl-color-darker'
+            }
+
             if (props.color) {
                 return props.color
             }
 
-            return 'dl-color-medium'
+            return 'dl-color-white'
         })
 
         return {
