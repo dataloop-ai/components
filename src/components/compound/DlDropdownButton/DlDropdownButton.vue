@@ -409,7 +409,7 @@ export default defineComponent({
                 return props.color
             }
 
-            return 'dl-color-medium'
+            return 'dl-color-white'
         })
 
         return {
