@@ -618,7 +618,7 @@ export default defineComponent({
             draggable
         } = toRefs(props)
 
-        const rootRef = ref(null)
+        const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed(() => props.virtualScroll === true)
 
@@ -1085,7 +1085,7 @@ export default defineComponent({
             toIndex = parseInt(toIndex as string, 10)
             const rowEl = rootRef.value.querySelector(
                 `tbody tr:nth-of-type(${toIndex + 1})`
-            )
+            ) as HTMLElement
 
             if (rowEl !== null) {
                 const scrollTarget = rootRef.value.querySelector(
