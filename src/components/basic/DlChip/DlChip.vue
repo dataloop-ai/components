@@ -127,10 +127,7 @@ export default defineComponent({
             return this.iconColor
         },
         chipClass(): string {
-            if (this.transform === 'default') {
-                return 'first-letter-capitalized'
-            }
-            return null
+            return `dl-text-transform--${this.transform}`
         },
         cssChipVars(): Record<string, string | number> {
             return {
@@ -170,10 +167,7 @@ export default defineComponent({
                 '--dl-chip-left-icon-hover-opacity': this.disabled ? 1 : 0.8,
                 '--dl-chip-left-icon-cursor': this.disabled
                     ? 'not-allowed'
-                    : 'pointer',
-                '--dl-chip-text-transform': this.chipClass
-                    ? null
-                    : this.transform
+                    : 'pointer'
             }
         }
     },
@@ -193,7 +187,6 @@ export default defineComponent({
     position: relative;
     display: flex;
     vertical-align: middle;
-    text-transform: var(--dl-chip-text-transform);
     font-size: var(--dl-font-size-body);
     line-height: 12px;
     border-radius: 2px;
@@ -217,13 +210,6 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-    }
-}
-
-.dl-chip.first-letter-capitalized {
-    &::first-letter,
-    & > *::first-letter {
-        text-transform: capitalize;
     }
 }
 

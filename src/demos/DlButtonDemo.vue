@@ -25,7 +25,7 @@
                         flat
                         @click="log"
                     >
-                        Flat Primary
+                        flat primary
                     </DlButton>
                     <DlButton
                         color="secondary"
