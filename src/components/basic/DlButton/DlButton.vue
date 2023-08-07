@@ -214,7 +214,7 @@ export default defineComponent({
                 return this.textColor
             }
 
-            return 'dl-color-secondary'
+            return null
         },
         computedStyles(): Record<string, string> {
             return isString(this.styles)
