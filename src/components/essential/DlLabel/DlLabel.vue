@@ -29,10 +29,14 @@
                 <slot name="default" />
             </dl-ellipsis>
             <span
-                v-if="suffix"
-                :class="fluid ? 'dl-label__fluid' : ''"
+                v-if="suffix || hasSuffixSlot"
+                class="dl-label__suffix-content"
+                :class="{ 'dl-label__fluid': fluid }"
             >
-                {{ suffixPreview }}</span>
+                <slot name="suffix">
+                    <dl-ellipsis :text="suffixPreview" />
+                </slot>
+            </span>
             <div class="dl-label__suffix">
                 <div class="dl-label__suffix-slot">
                     <slot
@@ -131,6 +135,9 @@ export default defineComponent({
             return !!slots['actions']
         })
 
+        const hasSuffixSlot = computed(() => {
+            return !!slots['suffix']
+        })
         const prefixPreview = computed(() => {
             return prefix.value?.trim() ?? ''
         })
@@ -143,6 +150,7 @@ export default defineComponent({
             mouseOver,
             styles,
             hasActions,
+            hasSuffixSlot,
             prefixPreview,
             suffixPreview
         }
@@ -171,6 +179,13 @@ export default defineComponent({
         align-items: center;
         &-icon {
             cursor: pointer;
+        }
+        &-content {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1 4 auto;
         }
     }
     &__content {
