@@ -62,7 +62,7 @@
             :suggestions="suggestions"
             :offset="menuOffset"
             :expanded="expanded"
-            @set-input-value="debouncedSetInputValue"
+            @set-input-value="setInputFromSuggestion"
         />
         <dl-menu
             v-if="showDatePicker && focused"
@@ -210,7 +210,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
-        const searchQuery = ref(stringifySmartQuery(modelValue.value))
+        const searchQuery = ref<string>(stringifySmartQuery(modelValue.value))
         const focused = ref(false)
         const isOverflowing = ref(false)
         const isTyping = ref(false)
@@ -234,47 +234,11 @@ export default defineComponent({
 
         //#region methods
         const setInputValue = (value: string) => {
-            const newQuery = searchQuery.value + ' ' + value
-            const query = newQuery
-                .replace(new RegExp(' ', 'g'), ' ')
-                .split(' ')
-                .map((string) => string.trim())
-                .filter((string) => !!string.length)
-
             showSuggestions.value = false
 
-            let stringValue = ''
-
-            if (query.length > 1) {
-                if (query[query.length - 1] === '') {
-                    stringValue = [...query, value, '']
-                        .join(' ')
-                        .replace('  ', ' ')
-                } else {
-                    if (query[query.length - 1].endsWith('.')) {
-                        query[query.length - 1] = query[
-                            query.length - 1
-                        ].replace('.', '')
-                    } else {
-                        query.splice(-1)
-                    }
-                    stringValue = [...query, value, ''].join(' ')
-                }
-            } else {
-                if (query[query.length - 1].endsWith('.')) {
-                    query[query.length - 1] = query[query.length - 1].replace(
-                        '.',
-                        ''
-                    )
-                    stringValue = [...query, value, ''].join(' ')
-                } else {
-                    stringValue = [value, ''].join(' ')
-                }
-            }
-
             // to handle date suggestion modal to open automatically.
-            if (stringValue.includes('(dd/mm/yyyy)')) {
-                stringValue = stringValue.trimEnd()
+            if (value.includes('(dd/mm/yyyy)')) {
+                value = value.trimEnd()
             }
 
             const specialSuggestions = suggestions.value.filter((suggestion) =>
@@ -282,20 +246,19 @@ export default defineComponent({
             )
 
             for (const suggestion of specialSuggestions) {
-                if (stringValue.includes(suggestion)) {
-                    stringValue = stringValue.replace(
-                        ` ${suggestion}`,
-                        suggestion
-                    )
+                if (value.includes(suggestion)) {
+                    value = value.replace(` ${suggestion}`, suggestion)
                 }
             }
 
-            searchQuery.value = stringValue
+            searchQuery.value = value
+            input.value.innerHTML = value
+
             // const resetCursor = restoreCursorPosition(input.value)
-            input.value.innerHTML = stringValue
             updateEditor(input.value, editorStyle.value)
             setMenuOffset(isEligibleToChange(input.value, expanded.value))
             // resetCursor()
+
             setCaret(input.value)
 
             if (!expanded.value) {
@@ -314,13 +277,50 @@ export default defineComponent({
             scroll.value = input.value.offsetHeight > 40
 
             nextTick(() => {
-                findSuggestions(stringValue)
+                findSuggestions(value)
             })
 
-            emit('input', searchQuery.value)
+            emit('input', value)
         }
 
-        const debouncedSetInputValue = debounce(setInputValue, 100)
+        const setInputFromSuggestion = (value: string) => {
+            let stringValue = ''
+            if (searchQuery.value.length) {
+                const query = searchQuery.value
+                    .replace(new RegExp(' ', 'g'), ' ')
+                    .split(' ')
+                    .map((string: string) => string.trim())
+                    .filter((string: string) => !!string.length)
+
+                if (query.length > 1) {
+                    if (query[query.length - 1] === '') {
+                        stringValue = [...query, value, '']
+                            .join(' ')
+                            .replace('  ', ' ')
+                    } else {
+                        if (query[query.length - 1].endsWith('.')) {
+                            query[query.length - 1] = query[
+                                query.length - 1
+                            ].replace('.', '')
+                        }
+                        stringValue = [...query, value, ''].join(' ')
+                    }
+                } else {
+                    if (query[query.length - 1].endsWith('.')) {
+                        query[query.length - 1] = query[
+                            query.length - 1
+                        ].replace('.', '')
+                    }
+                    stringValue = [...query, value, ''].join(' ')
+                }
+            } else {
+                stringValue = value + ' '
+            }
+
+            setInputValue(stringValue)
+        }
+
+        const debouncedSetInputValue = debounce(setInputValue, 300)
 
         const updateJSONQuery = () => {
             const bracketless = removeBrackets(searchQuery.value)
@@ -336,7 +336,7 @@ export default defineComponent({
             input.value.innerHTML = value
         }
 
-        const debouncedSetInputFromModel = debounce(setInputFromModel, 100)
+        const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
 
         const setMenuOffset = (value: number[]) => {
             menuOffset.value = value
@@ -382,6 +382,7 @@ export default defineComponent({
         const onClear = () => {
             cancelBlur.value = cancelBlur.value === 0 ? 1 : cancelBlur.value
             searchQuery.value = ''
+            input.value.innerHTML = ''
             if (!focused.value) {
                 focus()
             }
@@ -671,7 +672,8 @@ export default defineComponent({
             onKeyPress,
             onInput,
             onDateSelection,
-            computedStatus
+            computedStatus,
+            setInputFromSuggestion
         }
     }
 })
