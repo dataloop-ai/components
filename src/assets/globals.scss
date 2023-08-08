@@ -327,4 +327,14 @@ html {
     flex-direction: row;
 }
 
+// maybe add later
+// .disabled, 
+// .disabled *, 
+[disabled], 
+[disabled] * {
+    opacity: 0.6 !important;
+    outline: 0 !important;
+    cursor: not-allowed !important;
+}
+
 @import 'grid';
