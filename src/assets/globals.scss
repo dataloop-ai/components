@@ -327,12 +327,19 @@ html {
     flex-direction: row;
 }
 
-// maybe add later
-// .disabled, 
-// .disabled *, 
-[disabled], 
-[disabled] * {
+// maybe add this in the future
+// .disabled {
+//     opacity: 0.6 !important;
+// }
+// .disabled,  .disabled * {
+//     outline: 0 !important;
+//     cursor: not-allowed !important;
+// }
+
+[disabled] {
     opacity: 0.6 !important;
+}
+[disabled], [disabled] * {
     outline: 0 !important;
     cursor: not-allowed !important;
 }
