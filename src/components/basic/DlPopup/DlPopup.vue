@@ -17,6 +17,7 @@
             >
                 <draggable-upper
                     v-if="draggable"
+                    class="popup-dialog-upper"
                     @move="movePopup"
                 />
                 <popup-header
@@ -376,7 +377,7 @@ export default defineComponent({
 
         function configureScrollTarget() {
             if (anchorEl.value !== null || props.scrollTarget) {
-                (localScrollTarget as Ref<any>).value = getScrollTarget(
+                localScrollTarget.value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget
                 )
@@ -503,6 +504,16 @@ export default defineComponent({
     /* TODO: Change to variable */
     box-shadow: 0px 3px 6px rgba(16, 30, 115, 0.15);
     border-radius: 2px;
+}
+
+.popup-dialog-upper {
+    opacity: 0;
+    position: absolute;
+    top: 2px;
+    cursor: pointer;
+}
+.popup-dialog-upper:hover {
+    opacity: 1;
 }
 
 .popup-content {
