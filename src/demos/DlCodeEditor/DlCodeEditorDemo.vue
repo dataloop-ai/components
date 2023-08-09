@@ -1,10 +1,6 @@
 <template>
     <div>
         <dl-switch
-            v-model="isDark"
-            left-label="Dark Mode"
-        />
-        <dl-switch
             v-model="lines"
             left-label="code lines"
         />
@@ -17,7 +13,7 @@
             width="45vw"
             height="75vh"
             :language="language"
-            :theme="'atom-one-dark'"
+            :theme="theme"
             :readonly="readonly"
             :options="options"
         />
@@ -28,6 +24,7 @@
 import { computed, defineComponent, ref, watch } from 'vue-demi'
 import { DlCodeEditor, DlSwitch } from '../../components'
 import { DlCodeEditorOptions, DlCodeEditorTheme } from '../../components/types'
+import { stateManager } from '../../StateManager'
 
 export default defineComponent({
     name: 'DlCodeEditorDemo',
@@ -37,7 +34,6 @@ export default defineComponent({
     },
     setup() {
         const readonly = ref(false)
-        const isDark = ref(false)
         const lines = ref(false)
 
         const codeEditorValue = ref(
@@ -213,7 +209,7 @@ export default defineComponent({
         const language = ref('python')
 
         const theme = computed(() => {
-            return isDark.value
+            return stateManager.isDarkTheme
                 ? DlCodeEditorTheme.Dark
                 : DlCodeEditorTheme.Light
         })
@@ -230,7 +226,6 @@ export default defineComponent({
             lines,
             codeEditorValue,
             language,
-            isDark,
             theme,
             readonly,
             options
