@@ -1,8 +1,6 @@
-import { install, reactive } from 'vue-demi'
+import { install } from 'vue-demi'
 
 install()
-
-export * from './StateManager'
 
 export * from './components'
 export * from './layouts'
