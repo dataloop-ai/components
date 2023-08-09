@@ -287,9 +287,19 @@
         <div>
             <h3>Shaded and outlined</h3>
             <dl-button
-                :active="activeButtonState"
                 icon="icon-dl-search"
                 label="test me"
+                shaded
+                outlined
+            />
+        </div>
+        <div>
+            <h3>button with icon color</h3>
+            <dl-button
+                icon="icon-dl-search"
+                :icon-color="'red'"
+                label="test me"
+                size="s"
                 shaded
                 outlined
             />

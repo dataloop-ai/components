@@ -16,6 +16,8 @@
             @click="onClick"
             @dblclick="onDblClick"
             @mousedown="onMouseDown"
+            @mouseenter="mouseOver = true"
+            @mouseleave="mouseOver = false"
         >
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
@@ -182,6 +184,7 @@ export default defineComponent({
         const { active } = toRefs(props)
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
+        const mouseOver = ref(false)
 
         const buttonClass = computed(() => {
             const classes = ['dl-button']
@@ -195,7 +198,8 @@ export default defineComponent({
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
             isOverflowing: hasEllipsis,
-            buttonClass
+            buttonClass,
+            mouseOver
         }
     },
     computed: {
@@ -206,6 +210,10 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
+            if (this.mouseOver) {
+                return 'dl-color-hover'
+            }
+
             if (this.iconColor) {
                 return this.iconColor
             }
@@ -463,6 +471,9 @@ export default defineComponent({
         & .dl-button-label {
             transition: var(--dl-button-text-transition-duration);
             color: var(--dl-button-color-hover);
+        }
+        .dl-icon {
+            color: var(--dl-button-text-color-hover) !important;
         }
     }
 }
