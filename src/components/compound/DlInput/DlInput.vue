@@ -256,6 +256,7 @@ import { DlMenu, DlIcon, DlList, DlEllipsis } from '../../essential'
 import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { v4 } from 'uuid'
+import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
     name: 'DlInput',
@@ -545,6 +546,9 @@ export default defineComponent({
             return !!this.suggestItems.length && !!this.modelValue
         },
         debouncedBlur(): any {
+            if (stateManager.disableDebounce) {
+                return this.onBlur.bind(this)
+            }
             const debounced = debounce(this.onBlur.bind(this), 50)
             return debounced
         },
@@ -572,6 +576,9 @@ export default defineComponent({
             return classes
         },
         debouncedInput(): any {
+            if (stateManager.disableDebounce) {
+                return this.onChange.bind(this)
+            }
             const debounced = debounce(this.onChange.bind(this), this.debounce)
             return debounced
         }
