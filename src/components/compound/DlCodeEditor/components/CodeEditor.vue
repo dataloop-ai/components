@@ -410,7 +410,7 @@ export default defineComponent({
                 if (scrolling.value) {
                     scrolling.value = false
                 } else {
-                    debouncedGetLinesCount()
+                    debouncedGetLinesCount.value()
                 }
             }
             hljs.highlightElement(code.value)
@@ -443,7 +443,7 @@ export default defineComponent({
                     if (scrolling.value) {
                         scrolling.value = false
                     } else {
-                        debouncedGetLinesCount()
+                        debouncedGetLinesCount.value()
                     }
                 }
             })
@@ -454,7 +454,7 @@ export default defineComponent({
                 if (scrolling.value) {
                     scrolling.value = false
                 } else {
-                    debouncedGetLinesCount()
+                    debouncedGetLinesCount.value()
                 }
             }
         })
