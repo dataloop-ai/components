@@ -232,12 +232,12 @@ export default defineComponent({
     },
     methods: {
         handleChange(value: number) {
+            if (this.sliderValue === value) return
+
             this.$emit('change', value)
+            this.sliderValue = value
         },
         handleResetButtonClick() {
-            if (this.value === this.initialValue) return
-
-            this.sliderValue = this.initialValue
             this.handleChange(this.initialValue)
         }
     }

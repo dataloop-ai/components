@@ -45,12 +45,12 @@ export default defineComponent({
     },
     watch: {
         value(newValue, oldValue) {
-            console.log(`@@@ value changed from ${oldValue} to ${newValue}`)
+            console.log(`@@@ model value update ${oldValue} to ${newValue}`)
         }
     },
     methods: {
         handleChange(value: number) {
-            console.log(`@@@ value changed to ${value}`)
+            console.log(`@@@ handling change ${value}`)
         }
     },
     template: 'dl-slider-demo'

@@ -128,7 +128,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType, nextTick } from 'vue-demi'
+import { defineComponent, ref, PropType, nextTick, computed } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
@@ -147,6 +147,7 @@ import {
     isEligibleToChange
 } from '../utils'
 import { v4 } from 'uuid'
+import { stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -310,10 +311,12 @@ export default defineComponent({
             emit('update:model-value', stringValue)
         }
 
-        const debouncedSetModal = debounce(
-            () => (suggestionModal.value = true),
-            200
-        )
+        const debouncedSetModal = computed(() => {
+            if (stateManager.disableDebounce) {
+                return () => (suggestionModal.value = true)
+            }
+            return debounce(() => (suggestionModal.value = true), 100)
+        })
 
         return {
             uuid: v4(),
