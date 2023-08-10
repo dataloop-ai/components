@@ -24,6 +24,7 @@ import {
     TextContent
 } from 'vanilla-jsoneditor'
 import { debounce } from 'lodash'
+import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
     model: {
@@ -109,11 +110,16 @@ export default defineComponent({
             emit('change', (content as TextContent).text)
         }
 
-        const debouncedHandleJSONChange = debounce(handleJSONChange, 100)
+        const debouncedHandleJSONChange = computed(() => {
+            if (stateManager.disableDebounce) {
+                return handleJSONChange
+            }
+            return debounce(handleJSONChange, 100)
+        })
 
         const initJsonEditor = () => {
             const initialAttrs: JSONEditorPropsOptional = {
-                onChange: debouncedHandleJSONChange,
+                onChange: debouncedHandleJSONChange.value,
                 indentation: indentation.value,
                 mode: mode.value,
                 readOnly: readonly.value || mode.value === Mode.tree,

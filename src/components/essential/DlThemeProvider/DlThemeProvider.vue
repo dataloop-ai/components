@@ -9,6 +9,7 @@ import { defineComponent, onMounted, watch, provide, ref } from 'vue-demi'
 import { getThemeModeAttr } from '../../../utils'
 import '@dataloop-ai/icons/style.css'
 import { v4 } from 'uuid'
+import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
     props: {
@@ -26,8 +27,7 @@ export default defineComponent({
 
         const isDarkTheme = ref(props.isDark)
 
-        // @ts-ignore
-        window.DlComponents?.setTheme(props.isDark ? 'dark' : 'light')
+        stateManager.theme = props.isDark ? 'dark' : 'light'
 
         provide('theme', isDarkTheme)
 
@@ -40,8 +40,7 @@ export default defineComponent({
                     getThemeModeAttr(isDark)
                 ) // sets the dl data-theme attr
 
-                // @ts-ignore
-                window.DlComponents?.setTheme(props.isDark ? 'dark' : 'light')
+                stateManager.theme = props.isDark ? 'dark' : 'light'
             }
         )
     },
