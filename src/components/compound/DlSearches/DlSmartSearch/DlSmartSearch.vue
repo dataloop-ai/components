@@ -10,6 +10,7 @@
             <dl-smart-search-input
                 ref="smartSearchInput"
                 v-model="queryObject"
+                style="margin-bottom: 0px"
                 :status="status"
                 :aliases="aliases"
                 :schema="schema"
@@ -242,6 +243,9 @@ export default defineComponent({
 .dl-smart-search {
     display: flex;
     width: 100%;
+    align-items: center;
+    /* Margin for the absolute text */
+    margin-bottom: 15px;
 
     &__inner {
         display: flex;
@@ -258,8 +262,8 @@ export default defineComponent({
     &__buttons {
         display: flex;
         align-items: center;
+        height: 100%;
         margin-left: 8px;
-        margin-top: 1px;
         &--filters {
             min-width: fit-content;
             border-radius: 3px;
@@ -281,26 +285,6 @@ export default defineComponent({
     &__search-btn-wrapper {
         display: flex;
         align-items: center;
-    }
-
-    &__filters-btn-wrapper {
-        display: flex;
-        align-items: center;
-
-        ::v-deep .dl-button {
-            padding: 0;
-            font-size: 12px;
-            width: 110px;
-        }
-    }
-
-    &__search-label {
-        font-size: 10px;
-        margin-left: 4px;
-        margin-top: 4px;
-        color: gray;
-        position: relative;
-        word-break: break-all;
     }
 }
 .json-editor__footer {

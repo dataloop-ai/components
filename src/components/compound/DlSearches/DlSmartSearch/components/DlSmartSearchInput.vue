@@ -48,12 +48,14 @@
                     </div>
                 </div>
             </div>
-            <label
-                v-if="!focused"
+            <dl-label
+                v-if="!focused && computedStatus"
                 ref="label"
                 class="dl-smart-search-input__search-label"
+                :text="computedStatus.message"
+                :color="computedStatus.type === 'error' ? 'red' : 'gray'"
                 :style="labelStyles"
-            >{{ status ? status.message : null }}</label>
+            />
         </div>
         <suggestions-dropdown
             v-model="showSuggestions"
@@ -93,7 +95,7 @@ import {
 } from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
-import { DlMenu, DlIcon } from '../../../../essential'
+import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
@@ -130,7 +132,8 @@ export default defineComponent({
         SuggestionsDropdown,
         DlTooltip,
         DlDatePicker,
-        DlMenu
+        DlMenu,
+        DlLabel
     },
     model: {
         prop: 'modelValue',
@@ -686,6 +689,8 @@ export default defineComponent({
     width: var(--dl-smart-search-input-bar-width);
     height: 100%;
     transition: max-width 0.3s ease-out;
+    /* Margin for the status label */
+    margin-bottom: 15px;
 
     &__char {
         ::selection {
@@ -883,11 +888,14 @@ export default defineComponent({
     }
 
     &__search-label {
-        margin-top: 3px;
         font-size: 10px;
+        height: 10px;
         color: gray;
-        position: relative;
+        position: absolute;
         word-break: break-all;
+        bottom: -10px;
+        max-width: 100%;
+        margin-top: 3px;
     }
 
     &__date-picker-wrapper {
