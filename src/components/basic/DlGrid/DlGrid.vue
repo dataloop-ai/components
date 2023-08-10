@@ -9,14 +9,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import { Dictionary } from 'lodash'
 import {
-    getGridTemplate,
-    getElementAbove,
-    findIndexInMatrix,
-    swapElemensInMatrix,
-    isCustomEvent
-} from '../DlWidget/utils'
+    computed,
+    defineComponent,
+    getCurrentInstance,
+    nextTick,
+    onMounted,
+    PropType,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
+import { getGridTemplate, swapElementsInMatrix } from './utils'
+import { isCustomEvent, getElementAbove } from '../utils'
+import { DlGridMode } from './types'
 
 export default defineComponent({
     model: {
@@ -25,7 +32,7 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Array as PropType<number[][]>,
+            type: Array as PropType<(string | number)[][]>,
             default: null
         },
         rowGap: {
@@ -39,110 +46,146 @@ export default defineComponent({
         maxElementsPerRow: {
             type: Number,
             default: 3
+        },
+        mode: {
+            type: String as PropType<DlGridMode>,
+            default: DlGridMode.LAYOUT
         }
     },
     emits: ['update:model-value', 'layout-changed'],
-    computed: {
-        gridStyles(): object {
-            return {
-                '--row-gap': this.rowGap,
-                '--column-gap': this.columnGap
-            }
-        },
-        gridClass(): string {
-            return this.modelValue
+    setup(props, { emit }) {
+        const vm = getCurrentInstance()
+        const grid = ref<HTMLElement | null>(null)
+        const { modelValue, mode, rowGap, columnGap, maxElementsPerRow } =
+            toRefs(props)
+
+        const isLayoutMode = computed(() => mode.value == DlGridMode.LAYOUT)
+        const isGridMode = computed(() => mode.value == DlGridMode.GRID)
+        const isFlexMode = computed(() => mode.value == DlGridMode.FLEX)
+
+        const gridClass = computed(() =>
+            modelValue.value || !isFlexMode.value
                 ? 'dl-grid-wrapper__grid'
                 : 'dl-grid-wrapper__flex'
+        )
+
+        const gridStyles = computed(() => {
+            const gridStyles: Dictionary<string | number> = {
+                '--row-gap': rowGap.value,
+                '--column-gap': columnGap.value
+            }
+
+            if (!isGridMode.value) {
+                gridStyles['--element-per-row'] = maxElementsPerRow.value
+            }
+
+            return gridStyles
+        })
+
+        const layoutChanged = () => {
+            emit('layout-changed', modelValue.value)
         }
-    },
-    watch: {
-        modelValue: {
-            handler(val, oldVal) {
-                this.$nextTick(() => {
+
+        const changePosition = (e: CustomEvent) => {
+            if (!modelValue.value) {
+                return
+            }
+            const className = grid.value.children[0].classList[0]
+            const sourceEl = getElementAbove(e.detail.source, className)
+            const targetEl = getElementAbove(e.detail.target, className)
+
+            const newLayout: (string | number)[][] = swapElementsInMatrix(
+                modelValue.value,
+                sourceEl,
+                targetEl
+            )
+            // Update modelValue is required to trigger visualization of the changes
+            emit('update:model-value', newLayout)
+
+            // Force update is required to trigger the re-render of the grid
+            vm?.proxy?.$forceUpdate()
+
+            if (e.detail.endDragging) {
+                layoutChanged()
+            }
+        }
+
+        const applyGridElementStyles = () => {
+            const childrenElements = Array.from(grid.value.children)
+            const layoutOrder = modelValue.value?.flat() ?? []
+
+            // The check is needed to avoid errors and incorrect behavior
+            if (
+                !modelValue.value ||
+                childrenElements.length > layoutOrder.flat().length ||
+                isFlexMode.value
+            ) {
+                for (const element of childrenElements) {
+                    const htmlElement = element as HTMLElement
+                    htmlElement.style.flexGrow = '1'
+                }
+                return
+            }
+
+            let gridTemplate: string[]
+            if (isGridMode.value) {
+                gridTemplate = getGridTemplate(modelValue.value)
+            }
+            for (const element of childrenElements) {
+                const htmlElement = element as HTMLElement
+                const orderIndex: number = layoutOrder
+                    .flat()
+                    .findIndex((w) => w === htmlElement.dataset.id)
+                if (isGridMode.value) {
+                    htmlElement.style.gridColumn = gridTemplate[orderIndex]
+                }
+                htmlElement.style.order = `${orderIndex}`
+                htmlElement.addEventListener('position-changing', (e) => {
+                    if (!isCustomEvent(e)) return
+                    changePosition(e)
+                })
+                htmlElement.addEventListener('position-changed', layoutChanged)
+            }
+        }
+
+        const applyIndexesForChildren = () => {
+            if (!modelValue.value) {
+                return
+            }
+            Array.from(grid.value.children).forEach(
+                (element: Element, index: number) => {
+                    const el = element as HTMLElement
+                    el.dataset.id = `${modelValue.value.flat()[index]}`
+                }
+            )
+        }
+
+        watch(
+            modelValue,
+            (val, old) => {
+                nextTick(() => {
                     if (val) {
-                        if (val.length !== oldVal?.length) {
-                            this.applyIndexesForChildren()
+                        if (val.flat().length !== old?.flat().length) {
+                            applyIndexesForChildren()
                         }
-                        this.applyGridElementStyles()
+                        applyGridElementStyles()
                     }
                 })
             },
-            immediate: true
-        }
-    },
-    mounted() {
-        this.applyIndexesForChildren()
-    },
-    methods: {
-        applyGridElementStyles() {
-            if (!this.modelValue) return
-            const gridElements = Array.from(
-                (this.$refs.grid as HTMLElement).children
-            )
-            const gridTemplate = getGridTemplate(this.modelValue)
-            if (gridElements.length > gridTemplate.length) return
+            { immediate: true }
+        )
 
-            const order = this.modelValue.flat()
-            gridElements.forEach((element: Element, index: number) => {
-                const orderIndex =
-                    order.findIndex((nr: number) => nr === index + 1) + 1
-                const htmlElement = element as HTMLElement
-                htmlElement.style.order = `${orderIndex}`
-                htmlElement.style.gridColumn = gridTemplate[orderIndex - 1]
-                htmlElement.addEventListener('position-changing', (e) => {
-                    if (!isCustomEvent(e)) return
-                    this.changePosition(e)
-                })
-                htmlElement.addEventListener(
-                    'position-changed',
-                    this.layoutChanged.bind(this)
-                )
-            })
-        },
-        changePosition(e: CustomEvent) {
-            if (!this.modelValue) return
-            const side = e.detail.side
-            const className = (this.$refs.grid as HTMLElement).children[0]
-                .classList[0]
-            const sourceIndex =
-                parseInt(
-                    getElementAbove(e.detail.source, className).dataset.index
-                ) + 1
-            const targetIndex =
-                parseInt(
-                    getElementAbove(e.detail.target, className).dataset.index
-                ) + 1
-            const sourceMatrixIndex = findIndexInMatrix(
-                this.modelValue,
-                sourceIndex
-            )
-            const targetMatrixIndex = findIndexInMatrix(
-                this.modelValue,
-                targetIndex
-            )
+        onMounted(() => {
+            applyGridElementStyles()
+        })
 
-            const newLayout = swapElemensInMatrix(
-                this.modelValue,
-                sourceMatrixIndex,
-                targetMatrixIndex,
-                side,
-                this.maxElementsPerRow
-            )
-            // Update modelValue is required to trigger visualization of the changes
-            this.$emit('update:model-value', newLayout)
-            if (e.detail.endDragging) {
-                this.layoutChanged()
-            }
-        },
-        layoutChanged() {
-            this.$emit('layout-changed', this.modelValue)
-        },
-        applyIndexesForChildren() {
-            Array.from((this.$refs.grid as HTMLElement).children).forEach(
-                (element: Element, index: number) => {
-                    (element as HTMLElement).dataset.index = `${index}`
-                }
-            )
+        return {
+            isLayoutMode,
+            isGridMode,
+            isFlexMode,
+            gridClass,
+            gridStyles,
+            grid
         }
     }
 })
@@ -154,9 +197,11 @@ export default defineComponent({
         display: grid;
         row-gap: var(--row-gap);
         column-gap: var(--column-gap);
+        grid-template-columns: repeat(var(--element-per-row), 1fr);
     }
     &__flex {
         display: flex;
+        gap: var(--row-gap);
         flex-wrap: wrap;
     }
 }

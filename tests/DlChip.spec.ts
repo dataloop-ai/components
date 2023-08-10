@@ -123,11 +123,9 @@ describe('DlChip', () => {
             })
 
             it('will have the inputted transform', () => {
-                console.log(chip.attributes('style'))
+                console.log(chip.classes())
                 expect(
-                    chip
-                        .attributes('style')
-                        ?.includes('-dl-chip-text-transform: capitalized')
+                    chip.classes()?.includes('dl-text-transform--capitalized')
                 ).to.be.true
             })
         })
@@ -152,13 +150,8 @@ describe('DlChip', () => {
             })
 
             it('will have the inputted transform', () => {
-                expect(
-                    chip
-                        .attributes('style')
-                        ?.includes('--dl-chip-text-transform')
-                ).to.be.false
-                expect(chip.classes()?.includes('first-letter-capitalized')).to
-                    .be.true
+                expect(chip.classes()?.includes('dl-text-transform--default'))
+                    .to.be.true
             })
         })
     })
