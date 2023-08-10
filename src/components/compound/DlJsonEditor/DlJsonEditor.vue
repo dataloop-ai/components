@@ -7,6 +7,7 @@
 
 <script lang="ts">
 import {
+    computed,
     defineComponent,
     onMounted,
     PropType,
