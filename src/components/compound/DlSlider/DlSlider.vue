@@ -231,13 +231,14 @@ export default defineComponent({
         }
     },
     methods: {
-        handleChange(value: string) {
+        handleChange(value: number) {
             this.$emit('change', value)
         },
         handleResetButtonClick() {
             if (this.value === this.initialValue) return
 
             this.sliderValue = this.initialValue
+            this.handleChange(this.initialValue)
         }
     }
 })
