@@ -1,7 +1,7 @@
 <template>
     <div>
         <dl-slider
-            v-model.number="value"
+            v-model="value"
             width="500px"
             text="slider"
             :step="1"
@@ -40,6 +40,11 @@ export default defineComponent({
             editable: false,
             disabled: false,
             readonly: false
+        }
+    },
+    watch: {
+        value(newValue, oldValue) {
+            console.log(`@@@ value changed from ${oldValue} to ${newValue}`)
         }
     },
     template: 'dl-slider-demo'
