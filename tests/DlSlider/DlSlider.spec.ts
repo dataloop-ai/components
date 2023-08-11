@@ -57,6 +57,7 @@ describe('DlSlider', () => {
                 expect(wrapper.emitted()['update:model-value'][0]).toEqual([
                     -10
                 ])
+                expect(wrapper.emitted()['change'][0]).toEqual([-10])
             })
         })
         describe('When emit events nonEditableSliderInput', () => {

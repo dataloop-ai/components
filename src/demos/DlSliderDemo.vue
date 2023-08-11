@@ -10,6 +10,7 @@
             :editable="editable"
             :readonly="readonly"
             :disabled="disabled"
+            @change="handleChange"
         />
         <div>
             <button @click="editable = !editable">
@@ -44,7 +45,12 @@ export default defineComponent({
     },
     watch: {
         value(newValue, oldValue) {
-            console.log(`@@@ value changed from ${oldValue} to ${newValue}`)
+            console.log(`@@@ model value update ${oldValue} to ${newValue}`)
+        }
+    },
+    methods: {
+        handleChange(value: number) {
+            console.log(`@@@ handling change ${value}`)
         }
     },
     template: 'dl-slider-demo'

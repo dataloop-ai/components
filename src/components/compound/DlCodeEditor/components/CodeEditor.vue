@@ -129,6 +129,7 @@ import { DlToast } from '../../DlToast'
 import '../styles/themes.css'
 import '../styles/themes-base16.css'
 import { debounce } from 'lodash'
+import { stateManager } from '../../../../StateManager'
 
 export default defineComponent({
     name: 'CodeEditor',
@@ -389,7 +390,12 @@ export default defineComponent({
             lineNum.value = localLineNum
         }
 
-        const debouncedGetLinesCount = debounce(getLinesCount, 100)
+        const debouncedGetLinesCount = computed(() => {
+            if (stateManager.disableDebounce) {
+                return getLinesCount
+            }
+            return debounce(getLinesCount, 100)
+        })
 
         onMounted(() => {
             emit('lang', props.languages[0][0])
@@ -404,7 +410,7 @@ export default defineComponent({
                 if (scrolling.value) {
                     scrolling.value = false
                 } else {
-                    debouncedGetLinesCount()
+                    debouncedGetLinesCount.value()
                 }
             }
             hljs.highlightElement(code.value)
@@ -437,7 +443,7 @@ export default defineComponent({
                     if (scrolling.value) {
                         scrolling.value = false
                     } else {
-                        debouncedGetLinesCount()
+                        debouncedGetLinesCount.value()
                     }
                 }
             })
@@ -448,7 +454,7 @@ export default defineComponent({
                 if (scrolling.value) {
                     scrolling.value = false
                 } else {
-                    debouncedGetLinesCount()
+                    debouncedGetLinesCount.value()
                 }
             }
         })

@@ -104,6 +104,7 @@ import { DlIcon, DlCheckbox } from '../../../essential'
 import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
+import { stateManager } from '../../../../StateManager'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -168,6 +169,9 @@ export default defineComponent({
             return this.totalItems ? 'indeterminate' : undefined
         },
         handleChildren(): any {
+            if (stateManager.disableDebounce) {
+                return this.toggleChildren.bind(this)
+            }
             return debounce(this.toggleChildren.bind(this), 50)
         },
         hasChildren(): boolean {

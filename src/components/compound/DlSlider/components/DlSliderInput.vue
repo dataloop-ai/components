@@ -14,7 +14,8 @@
 
 <script lang="ts">
 import { debounce } from 'lodash'
-import { defineComponent, toRef } from 'vue-demi'
+import { computed, defineComponent, ref, toRef } from 'vue-demi'
+import { stateManager } from '../../../../StateManager'
 import { getInputValue } from '../utils'
 
 export default defineComponent({
@@ -48,6 +49,7 @@ export default defineComponent({
     emits: ['update:model-value', 'change'],
     setup(props, { emit }) {
         const modelRef = toRef(props, 'modelValue')
+        const sliderInput = ref<HTMLInputElement>(null)
 
         const handleChange = (evt: any) => {
             const val = evt.target.value
@@ -57,11 +59,18 @@ export default defineComponent({
 
             emit('change', Number(value))
             emit('update:model-value', Number(value))
+            if (sliderInput.value) sliderInput.value.value = value
         }
 
-        const debouncedHandleChange = debounce(handleChange, 300)
+        const debouncedHandleChange = computed(() => {
+            if (stateManager.disableDebounce) {
+                return handleChange
+            }
+            return debounce(handleChange, 100)
+        })
 
         return {
+            sliderInput,
             modelRef,
             handleChange: debouncedHandleChange
         }
