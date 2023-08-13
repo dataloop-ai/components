@@ -1,37 +1,42 @@
 import { getColor } from '../../../utils'
 import { getLighterGradient } from '../../../utils/getLighterGradient'
 
-export type ButtonSizes = 's' | 'm' | 'l' | 'xl' | string
+export enum ButtonSizes {
+    s = 's',
+    m = 'm',
+    l = 'l',
+    xl = 'xl'
+}
 
-const paddings: { [key: ButtonSizes]: string } = {
+const paddings: { [key: string]: string } = {
     s: '7px 16px',
     m: '9px 16px',
     l: '10px 16px',
     xl: '12px 16px'
 }
 
-const iconPaddings: { [key: ButtonSizes]: string } = {
+const iconPaddings: { [key: string]: string } = {
     s: '6px',
     m: '8px',
     l: '10px',
     xl: '12px'
 }
 
-const iconSizes: { [key: ButtonSizes]: string } = {
+const iconSizes: { [key: string]: string } = {
     s: '12px',
     m: '16px',
     l: '18px',
     xl: '20px'
 }
 
-const maxHeights: { [key: ButtonSizes]: string } = {
+const maxHeights: { [key: string]: string } = {
     s: '28px',
     m: '34px',
     l: 'auto',
     xl: 'auto'
 }
 
-const fontSizes: { [key: ButtonSizes]: string } = {
+const fontSizes: { [key: string]: string } = {
     s: '12px',
     m: '14px',
     l: '16px',
@@ -48,16 +53,21 @@ export interface DlButtonProps {
     textColor: string
 }
 
-export const setIconSize = (size: ButtonSizes | string) =>
+export const setIconSize = (size: ButtonSizes | string): string =>
     iconSizes[size] || size
 
-export const setPadding = (size: ButtonSizes) => paddings[size]
+export const setPadding = (size: ButtonSizes | string): string | undefined =>
+    paddings[size]
 
-export const setIconPadding = (size: ButtonSizes) => iconPaddings[size]
+export const setIconPadding = (
+    size: ButtonSizes | string
+): string | undefined => iconPaddings[size]
 
-export const setFontSize = (size: ButtonSizes) => fontSizes[size]
+export const setFontSize = (size: ButtonSizes | string): string | undefined =>
+    fontSizes[size]
 
-export const setMaxHeight = (size: ButtonSizes) => maxHeights[size]
+export const setMaxHeight = (size: ButtonSizes | string): string | undefined =>
+    maxHeights[size]
 
 export const setTextColor = ({
     disabled,

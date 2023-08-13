@@ -200,7 +200,7 @@ export default defineComponent({
             set: (val) => emit('update:modelValue', val)
         })
 
-        const jsonEditor = ref<typeof DlJsonEditor>(null)
+        const jsonEditor = ref<any>(null)
         const showSaveDialog = ref(false)
         const showDeleteDialog = ref(false)
         const stringifiedJSON = ref(json.value)

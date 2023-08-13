@@ -111,49 +111,6 @@ function renderText(text: string, colorSchema: SyntaxColorSchema) {
     return output?.join('')
 }
 
-export const restoreCursorPosition = (inputElement: HTMLInputElement) => {
-    function getTextNodeAtPosition(root: HTMLElement, index: number) {
-        const NODE_TYPE = NodeFilter.SHOW_TEXT
-        const treeWalker = document.createTreeWalker(
-            root,
-            NODE_TYPE,
-            function next(elem) {
-                if (index > elem.textContent.length) {
-                    index -= elem.textContent.length
-                    return NodeFilter.FILTER_REJECT
-                }
-                return NodeFilter.FILTER_ACCEPT
-            }
-        )
-        const c = treeWalker.nextNode()
-        return {
-            node: c ? c : root,
-            position: index
-        }
-    }
-
-    const selection = window.getSelection()
-    try {
-        const range = selection.getRangeAt(0)
-        range.setStart(inputElement, 0)
-        const len = range.toString().length
-
-        return function restore() {
-            try {
-                const pos = getTextNodeAtPosition(inputElement, len)
-                selection.removeAllRanges()
-                const range = new Range()
-                range.setStart(pos.node, pos.position)
-                selection.addRange(range)
-            } catch (e) {
-                // do something
-            }
-        }
-    } catch (e) {
-        return () => {}
-    }
-}
-
 export function setCaret(target: HTMLElement) {
     const range = document.createRange()
     const sel = window.getSelection()

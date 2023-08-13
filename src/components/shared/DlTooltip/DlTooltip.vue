@@ -183,12 +183,7 @@ export default defineComponent({
 
         const { showPortal, hidePortal, portalIsActive, portalEl } = usePortal(
             vm,
-            innerRef,
-            false,
-            {
-                parentId: attrs.id as string,
-                parentClass: attrs.class as string
-            }
+            innerRef
         )
 
         const isMobile = computed(() => isMobileOrTablet())
