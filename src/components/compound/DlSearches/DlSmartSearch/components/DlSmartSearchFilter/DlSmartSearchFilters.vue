@@ -15,6 +15,7 @@
                 <dl-tab-panel
                     v-for="tab in tabItems"
                     :key="tab.name"
+                    :name="tab.name"
                 >
                     <div>
                         <filters-query
@@ -34,11 +35,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { DlTabs } from '../../../DlTabs'
-import { DlTabPanels, DlTabPanel } from '../../../DlTabPanels'
-import { Filters } from '../../../DlSearches/DlSmartSearch/types'
-import { getTabItems } from '../utils'
-import FiltersQuery from './FiltersQuery.vue'
+import { DlTabs } from '../../../../DlTabs'
+import { DlTabPanels, DlTabPanel } from '../../../../DlTabPanels'
+import { Filters } from '../../types'
+import { getTabItems } from '../../utils'
+import FiltersQuery from './components/FiltersQuery.vue'
 import { v4 } from 'uuid'
 
 export default defineComponent({
@@ -54,7 +55,7 @@ export default defineComponent({
             default: (): Filters => ({ saved: [], recent: [], suggested: [] })
         }
     },
-    emits: ['filters-delete', 'filters-search'],
+    emits: ['filters-delete', 'filters-select'],
     data() {
         return {
             uuid: `dl-smart-search-filters-${v4()}`,
