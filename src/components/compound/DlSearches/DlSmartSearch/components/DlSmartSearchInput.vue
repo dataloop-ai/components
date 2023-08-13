@@ -110,7 +110,6 @@ import {
     updateEditor,
     isEligibleToChange,
     createColorSchema,
-    restoreCursorPosition,
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,

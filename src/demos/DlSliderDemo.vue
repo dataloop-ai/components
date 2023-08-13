@@ -1,7 +1,7 @@
 <template>
     <div>
         <dl-slider
-            v-model.number="value"
+            v-model="value"
             width="500px"
             text="slider"
             :step="1"
@@ -10,6 +10,7 @@
             :editable="editable"
             :readonly="readonly"
             :disabled="disabled"
+            @change="handleChange"
         />
         <div>
             <button @click="editable = !editable">
@@ -40,6 +41,16 @@ export default defineComponent({
             editable: false,
             disabled: false,
             readonly: false
+        }
+    },
+    watch: {
+        value(newValue, oldValue) {
+            console.log(`@@@ model value update ${oldValue} to ${newValue}`)
+        }
+    },
+    methods: {
+        handleChange(value: number) {
+            console.log(`@@@ handling change ${value}`)
         }
     },
     template: 'dl-slider-demo'
