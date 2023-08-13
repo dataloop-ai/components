@@ -1,37 +1,37 @@
 import { getColor } from '../../../utils'
 import { getLighterGradient } from '../../../utils/getLighterGradient'
 
-export type ButtonSizes = 's' | 'm' | 'l' | 'xl'
+export type ButtonSizes = 's' | 'm' | 'l' | 'xl' | string
 
-const paddings = {
+const paddings: { [key: ButtonSizes]: string } = {
     s: '7px 16px',
     m: '9px 16px',
     l: '10px 16px',
     xl: '12px 16px'
 }
 
-const iconPaddings = {
+const iconPaddings: { [key: ButtonSizes]: string } = {
     s: '6px',
     m: '8px',
     l: '10px',
     xl: '12px'
 }
 
-const iconSizes = {
+const iconSizes: { [key: ButtonSizes]: string } = {
     s: '12px',
     m: '16px',
     l: '18px',
     xl: '20px'
 }
 
-const maxHeights = {
+const maxHeights: { [key: ButtonSizes]: string } = {
     s: '28px',
     m: '34px',
     l: 'auto',
     xl: 'auto'
 }
 
-const fontSizes = {
+const fontSizes: { [key: ButtonSizes]: string } = {
     s: '12px',
     m: '14px',
     l: '16px',
@@ -48,7 +48,8 @@ export interface DlButtonProps {
     textColor: string
 }
 
-export const setIconSize = (size: ButtonSizes) => iconSizes[size] || size
+export const setIconSize = (size: ButtonSizes | string) =>
+    iconSizes[size] || size
 
 export const setPadding = (size: ButtonSizes) => paddings[size]
 
