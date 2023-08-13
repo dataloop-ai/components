@@ -3,9 +3,10 @@
         v-show="row.isExpandedParent || row.level === 1"
         :class="rowClass"
         :no-hover="noHover"
-        @click="emitRowClick($event, row, pageIndex)"
-        @dblclick="onTrDoubleClick($event, row, pageIndex)"
-        @contextmenu="onTrContextMenu($event, row, pageIndex)"
+        :children="childrenCount"
+        @click="emitRowClick($event, row, rowIndex)"
+        @dblclick="onTrDoubleClick($event, row, rowIndex)"
+        @contextmenu="onTrContextMenu($event, row, rowIndex)"
     >
         <td v-if="hasDraggableRows">
             <dl-icon
@@ -62,7 +63,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import {
+    defineComponent,
+    PropType,
+    onMounted,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
 import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
@@ -84,6 +92,9 @@ export default defineComponent({
             type: Object as PropType<Record<string, any>>,
             default: () => ({} as Record<string, any>)
         },
+        rowKey: {
+            type: [String, Function]
+        },
         isRowSelected: {
             type: [Boolean, String],
             default: null
@@ -96,7 +107,7 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        pageIndex: {
+        rowIndex: {
             type: Number,
             default: null
         },
@@ -153,28 +164,43 @@ export default defineComponent({
         'updateExpandedRow'
     ],
     setup(props, context) {
+        const visibleChildren = ref(1)
+        const childrenCount = ref(1)
+        const { row } = toRefs(props)
+
+        watch(
+            row,
+            () => {
+                getChildrenCount()
+            },
+            {
+                deep: true,
+                flush: 'post'
+            }
+        )
+
         const emitRowClick = (
             event: MouseEvent,
             row: Record<string, any>,
-            pageIndex: number
+            rowIndex: number
         ) => {
-            context.emit('rowClick', event, row, pageIndex)
+            context.emit('rowClick', event, row, rowIndex)
         }
 
         const onTrDoubleClick = (
             evt: MouseEvent,
             row: DlTableRow,
-            pageIndex: number
+            rowIndex: number
         ) => {
-            context.emit('rowDoubleClick', evt, row, pageIndex)
+            context.emit('rowDoubleClick', evt, row, rowIndex)
         }
 
         const onTrContextMenu = (
             evt: MouseEvent,
             row: DlTableRow,
-            pageIndex: number
+            rowIndex: number
         ) => {
-            context.emit('rowContextMenu', evt, row, pageIndex)
+            context.emit('rowContextMenu', evt, row, rowIndex)
         }
 
         const emitUpdateModelValue = (adding: boolean, evt: Event) => {
@@ -234,7 +260,65 @@ export default defineComponent({
             return ''
         }
 
+        const getExpandedvisibleChildren = (): void => {
+            visibleChildren.value = 1
+            updateExpandedvisibleChildren(row.value)
+        }
+
+        const updateExpandedvisibleChildren = (
+            parentRow: Record<string, any>
+        ): void => {
+            if (!parentRow) {
+                return
+            }
+
+            if (!parentRow.expanded) {
+                visibleChildren.value = 1
+                return
+            } else {
+                visibleChildren.value += parentRow.children.length
+            }
+
+            if (!parentRow?.children) {
+                return
+            }
+
+            for (const child of parentRow.children) {
+                if (child.expanded) {
+                    updateExpandedvisibleChildren(child)
+                }
+            }
+        }
+
+        const getChildrenCount = (): void => {
+            childrenCount.value = 1
+            let arr = []
+
+            if (!Array.isArray(row.value)) {
+                arr.push(row.value)
+            } else {
+                arr = row.value
+            }
+
+            getLength(arr)
+        }
+
+        const getLength = (data: any) => {
+            for (let count = 0; count < data.length; count++) {
+                if (data[count]?.children?.length) {
+                    childrenCount.value += data[count].children.length
+                    getLength(data[count].children)
+                }
+            }
+        }
+
+        onMounted(() => {
+            getChildrenCount()
+        })
+
         return {
+            visibleChildren,
+            childrenCount,
             getRowKey,
             emitRowClick,
             onTrDoubleClick,
@@ -245,7 +329,9 @@ export default defineComponent({
             getCellValue,
             hasSlotByName,
             rowClass,
-            getSlotByName
+            getSlotByName,
+            getExpandedvisibleChildren,
+            updateExpandedvisibleChildren
         }
     }
 })
