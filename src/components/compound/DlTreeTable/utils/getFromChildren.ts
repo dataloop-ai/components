@@ -32,6 +32,7 @@ export function getFromChildren(
             traverseChildren(child)
         }
     }
+
     traverseChildren(clonedParentRows)
 
     return { childrenKeys, childrenCollection }
