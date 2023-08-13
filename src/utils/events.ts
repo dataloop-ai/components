@@ -1,3 +1,5 @@
+import { stateManager } from '../StateManager'
+
 export const listenOpts: Record<string, any> = {
     hasPassive: false,
     passiveCapture: true,
@@ -17,7 +19,7 @@ try {
         }
     })
 } catch (e) {
-    console.log(e)
+    stateManager.logger.warn('Unknown Error Occured', e)
 }
 
 export function stopAndPrevent(e: Event) {
