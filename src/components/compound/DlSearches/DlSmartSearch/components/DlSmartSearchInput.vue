@@ -385,6 +385,7 @@ export default defineComponent({
             cancelBlur.value = cancelBlur.value === 0 ? 1 : cancelBlur.value
             searchQuery.value = ''
             input.value.innerHTML = ''
+            emit('update:model-value', {})
             if (!focused.value) {
                 focus()
             }

@@ -20,6 +20,7 @@ import { getScrollTarget } from '../../../utils/scroll'
 import { DlList } from '../../essential/DlList'
 import { DlMarkupTable } from '../../basic/DlMarkupTable'
 import { useVirtualScroll } from './useVirtualScroll'
+import { stateManager } from '../../../StateManager'
 
 const comps = {
     list: DlList,
@@ -301,7 +302,7 @@ export default defineComponent({
         const renderSlot = (fn: Function) => (isVue2 ? fn() : () => fn())
 
         if (!this.hasDefaultSlot) {
-            console.error(
+            stateManager.logger.error(
                 'DlVirtualScroll: default scoped slot is required for rendering'
             )
             return

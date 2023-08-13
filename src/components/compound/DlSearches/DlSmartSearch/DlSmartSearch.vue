@@ -64,6 +64,7 @@
             @search="emitSearchQuery"
             @change="handleJSONChange"
         />
+        <!-- todo: Add support for saved queries-->
     </div>
 </template>
 <script lang="ts">
@@ -73,6 +74,7 @@ import { DlSmartSearchInput, DlSmartSearchJsonEditorDialog } from './components'
 import { Schema, Alias } from '../../../../hooks/use-suggestions'
 import { Filters, ColorSchema, SearchStatus } from './types'
 import { v4 } from 'uuid'
+import { stateManager } from '../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -201,12 +203,33 @@ export default defineComponent({
         //#endregion
 
         //#region methods
-        const emitSearchQuery = () => {
-            emit('search-query', queryObject.value)
+        const toObject = (query: string) => {
+            if (typeof query !== 'string') {
+                return query
+            }
+
+            try {
+                return JSON.parse(query)
+            } catch (e) {
+                stateManager.logger.warn(
+                    'DlSmartSearch - Invalid JSON in DQL Editor',
+                    e
+                )
+                return null
+            }
+        }
+
+        const emitSearchQuery = (query: string) => {
+            const json = toObject(query)
+            if (!json) return
+            queryObject.value = json
+            emit('search-query', json)
         }
 
         const handleJSONChange = (val: string) => {
-            emit('update:model-value', JSON.parse(val))
+            const json = toObject(val)
+            if (!json) return
+            queryObject.value = json
         }
         //#endregion
 

@@ -1,4 +1,5 @@
 <template>
+    <!-- todo: Add support for saved queries-->
     <div>
         <dl-dialog-box
             v-model="isOpen"
@@ -20,6 +21,7 @@
                         style="margin-bottom: 10px"
                     >
                         <dl-select
+                            disabled
                             :model-value="selectedOption"
                             width="200px"
                             :options="options"
@@ -39,13 +41,14 @@
                         ref="jsonEditor"
                         v-model="stringifiedJSON"
                         class="json-editor"
+                        @change="onChange"
                     />
                 </div>
             </template>
             <template #footer>
                 <div class="json-editor-footer">
                     <dl-button
-                        :disabled="canDelete"
+                        :disabled="true || canDelete"
                         icon="icon-dl-delete"
                         label="Delete Query"
                         flat
@@ -55,6 +58,7 @@
                     />
                     <div class="json-editor-footer-actions">
                         <dl-button
+                            disabled
                             style="margin-right: 14px"
                             outlined
                             label="Save As"
@@ -62,7 +66,7 @@
                         />
                         <dl-button
                             label="Search"
-                            @click="$emit('search', stringifiedJSON)"
+                            @click="search"
                         />
                     </div>
                 </div>
@@ -93,13 +97,13 @@
                     <dl-button
                         :disabled="!newQueryName"
                         outlined
-                        @click="() => {}"
+                        @click="saveQuery"
                     >
                         Save
                     </dl-button>
                     <dl-button
                         :disabled="!newQueryName"
-                        @click="() => {}"
+                        @click="() => saveQuery(true)"
                     >
                         Save and Search
                     </dl-button>
@@ -125,7 +129,7 @@
             </template>
             <template #footer>
                 <div class="full-width flex justify-end">
-                    <dl-button @click="() => {}">
+                    <dl-button @click="deleteQuery">
                         Delete
                     </dl-button>
                 </div>
@@ -138,10 +142,13 @@
 import {
     defineComponent,
     ref,
-    watch,
     PropType,
     toRefs,
-    computed
+    computed,
+    nextTick,
+    onMounted,
+    getCurrentInstance,
+    watch
 } from 'vue-demi'
 import { DlSelect } from '../../../DlSelect'
 import { DlSelectOption } from '../../../DlSelect/types'
@@ -150,6 +157,9 @@ import { DlDialogBox, DlDialogBoxHeader } from '../../../DlDialogBox'
 import { DlJsonEditor } from '../../../DlJsonEditor'
 import { DlTypography } from '../../../../essential'
 import { DlInput } from '../../../DlInput'
+import { stateManager } from '../../../../../StateManager'
+import { isEqual } from 'lodash'
+import { registerToWindow } from '../../../../../utils'
 
 export default defineComponent({
     components: {
@@ -181,7 +191,7 @@ export default defineComponent({
             default: () => [] as DlSelectOption[]
         }
     },
-    emits: ['update:modelValue', 'search', 'change', 'save', 'delete'],
+    emits: ['update:modelValue', 'search', 'change', 'update:options'],
     setup(props, { emit }) {
         const { modelValue, options, json } = toRefs(props)
 
@@ -196,17 +206,10 @@ export default defineComponent({
         const stringifiedJSON = ref(json.value)
         const newQueryName = ref('')
         const selectedOption = ref<DlSelectOption>(
-            options.value.find((o) => o.value === json.value) ?? {
+            options.value.find((o) => isEqual(o.value, json.value)) ?? {
                 label: 'New Query',
                 value: json.value
             }
-        )
-
-        const canDelete = computed(
-            () =>
-                !options.value?.filter(
-                    (q: DlSelectOption) => q.value === stringifiedJSON
-                ).length
         )
 
         const alignJSON = () => {
@@ -218,6 +221,67 @@ export default defineComponent({
             stringifiedJSON.value = option.value
         }
 
+        const toObject = (json: string) => {
+            try {
+                return JSON.parse(json)
+            } catch (e) {
+                stateManager.logger.warn('DlSmartSearch - Invalid JSON', e)
+                return null
+            }
+        }
+
+        const search = () => {
+            const parsed = toObject(stringifiedJSON.value)
+            if (!parsed) return
+            emit('search', parsed)
+            isOpen.value = false
+        }
+
+        const onChange = (json: string) => {
+            const parsed = toObject(json)
+            if (!parsed) return
+            emit('change', parsed)
+        }
+
+        const saveQuery = (searchAfterSave = false) => {
+            const newOptions = options.value.concat([
+                {
+                    label: newQueryName.value,
+                    value: stringifiedJSON.value
+                }
+            ])
+
+            emit('update:options', newOptions)
+
+            showSaveDialog.value = false
+            nextTick(() => {
+                if (searchAfterSave) {
+                    search()
+                }
+            })
+        }
+
+        const canDelete = computed(
+            () => selectedOption.value.label !== 'New Query'
+        )
+
+        const deleteQuery = () => {
+            const newOptions = options.value.filter(
+                (o: DlSelectOption) => o.value !== selectedOption.value.label
+            )
+
+            emit('update:options', newOptions)
+            selectedOption.value = {
+                label: 'New Query',
+                value: '{}'
+            }
+            showDeleteDialog.value = false
+        }
+
+        watch(json, () => {
+            stringifiedJSON.value = json.value
+        })
+
         return {
             isOpen,
             jsonEditor,
@@ -228,7 +292,11 @@ export default defineComponent({
             alignJSON,
             onQuerySelect,
             newQueryName,
-            showDeleteDialog
+            showDeleteDialog,
+            search,
+            onChange,
+            saveQuery,
+            deleteQuery
         }
     }
 })
