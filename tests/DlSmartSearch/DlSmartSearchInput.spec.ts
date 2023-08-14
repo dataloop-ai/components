@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -186,5 +186,170 @@ describe('DlSmartSearchInput', () => {
         const interval = { from: new Date(), to: new Date() }
         wrapper.vm.onDateSelection(interval)
         expect(wrapper.vm.datePickerSelection).toEqual(interval)
+    })
+
+    describe('Search in general', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+        })
+
+        describe('when mounting', () => {
+            it('should mount the component', () => {
+                const component = wrapper.find('div.dl-smart-search-input')
+                expect(component.exists()).toBe(true)
+            })
+        })
+
+        describe('when changing status when typing a query', () => {
+            it('should have status info by default', () => {
+                expect(wrapper.vm.computedStatus.type).toMatch('info')
+            })
+            it('should change status to success when typing a valid query', async () => {
+                await wrapper.vm.debouncedSetInputValue(`name = 'test'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.computedStatus.type).toMatch('success')
+            })
+            it('should change status to warning when the error state is set to warning', async () => {
+                await wrapper.vm.debouncedSetInputValue(`age = 'test'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.computedStatus.type).toMatch('warning')
+            })
+            it('should change status to error when error state is error', async () => {
+                await wrapper.vm.debouncedSetInputValue(`name = 50`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.computedStatus.type).toMatch('error')
+            })
+        })
+
+        describe('when typing inside the input', () => {
+            it('should set input model and active query when typing in the smart search input component', async () => {
+                const testString = 'Age = 21'
+                wrapper.vm.debouncedSetInputValue(testString)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.emitted().input).toEqual([[testString]])
+                wrapper.vm.blur()
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.emitted()['update:model-value']).toEqual([
+                    [{ 'metadata.nesting.age': 21 }]
+                ])
+            })
+        })
+
+        describe.only('when querying with a set scheme', () => {
+            describe('when using an alias', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(`Age = 25`)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have not have errors', () => {
+                    expect(wrapper.vm.error).to.be.null
+                })
+            })
+            describe('when having a supported anykey field', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(`metadata.test = 'bla'`)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have not have errors', () => {
+                    expect(wrapper.vm.error).to.be.null
+                })
+            })
+            describe('when having a supported nested anykey field', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(`metadata.test.a = 'bla'`)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have not have errors', () => {
+                    expect(wrapper.vm.error).to.be.null
+                })
+            })
+            describe('when having a nested unsupported key', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(
+                        `metadata.nesting.a = 'bla'`
+                    )
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have have errors', () => {
+                    expect(wrapper.vm.error).to.be.equal(
+                        'Invalid value for "metadata.nesting.a" field'
+                    )
+                })
+            })
+            describe.only('when having a non supported field in the schema', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(
+                        `metadata.nesting.a = 'bla'`
+                    )
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have have errors', () => {
+                    expect(wrapper.vm.error).to.be.equal(
+                        'Invalid value for "metadata.nesting.a" field'
+                    )
+                })
+
+                describe.only('When using non strict mode', () => {
+                    beforeAll(async () => {
+                        await wrapper.setProps({
+                            strict: false
+                        })
+                        wrapper.vm.debouncedSetInputValue(
+                            `nonexistingfield = 'bla'`
+                        )
+                        // @ts-ignore
+                        await window.delay(500)
+                        await wrapper.vm.$nextTick()
+                    })
+                    it('should not give an error', () => {
+                        expect(wrapper.vm.error).to.be.equal('warning')
+                    })
+                })
+                describe('When using strict mode', () => {
+                    beforeAll(async () => {
+                        await wrapper.setProps({
+                            strict: true
+                        })
+                        wrapper.vm.debouncedSetInputValue(
+                            `nonexistingfield = 'bla'`
+                        )
+                        // @ts-ignore
+                        await window.delay(500)
+                        await wrapper.vm.$nextTick()
+                    })
+                    it('should give an error', () => {
+                        expect(wrapper.vm.error).to.be.equal(
+                            'Invalid Expression'
+                        )
+                    })
+                })
+            })
+        })
     })
 })
