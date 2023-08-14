@@ -197,7 +197,7 @@ describe('DlSmartSearchInput', () => {
         expect(wrapper.vm.datePickerSelection).toEqual(interval)
     })
 
-    describe.only('Search in general', () => {
+    describe('DlSmartSearchInput Search behavior', () => {
         let wrapper: any
         beforeAll(() => {
             wrapper = mount(DlSmartSearchInput, {
