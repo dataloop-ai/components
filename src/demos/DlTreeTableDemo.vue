@@ -127,6 +127,7 @@
                     @selectedItems="selectedItems"
                 >
                     <template #body-cell-calories="prop">
+                        {{ log(prop) }}
                         <span style="color: green; margin-right: 10px">
                             calories: {{ prop.row.calories }}
                         </span>
