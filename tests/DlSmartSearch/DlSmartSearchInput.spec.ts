@@ -251,7 +251,7 @@ describe('DlSmartSearchInput', () => {
             })
         })
 
-        describe.only('when querying with a set scheme', () => {
+        describe('when querying with a set scheme', () => {
             describe('when using an alias', () => {
                 beforeAll(async () => {
                     wrapper.vm.debouncedSetInputValue(`Age = 25`)
@@ -300,7 +300,7 @@ describe('DlSmartSearchInput', () => {
                     )
                 })
             })
-            describe.only('when having a non supported field in the schema', () => {
+            describe('when having a non supported field in the schema', () => {
                 beforeAll(async () => {
                     wrapper.vm.debouncedSetInputValue(
                         `metadata.nesting.a = 'bla'`
@@ -315,7 +315,7 @@ describe('DlSmartSearchInput', () => {
                     )
                 })
 
-                describe.only('When using non strict mode', () => {
+                describe('When using non strict mode', () => {
                     beforeAll(async () => {
                         await wrapper.setProps({
                             strict: false
