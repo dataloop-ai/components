@@ -9,7 +9,7 @@ describe('DlLabel', () => {
             wrapper = mount(DlLabel, {
                 props: {
                     text: 'test',
-                    labelColor: 'red',
+                    indicatorColor: 'red',
                     hint: 'info'
                 }
             })
@@ -18,7 +18,7 @@ describe('DlLabel', () => {
             expect(wrapper.props()).toStrictEqual({
                 color: 'dl-color-darker',
                 text: 'test',
-                labelColor: 'red',
+                indicatorColor: 'red',
                 hint: 'info',
                 suffix: null,
                 prefix: null,

@@ -433,29 +433,32 @@
                                         />
                                     </slot>
                                 </td>
-                                <slot
+                                <DlTd
                                     v-for="col in computedCols"
-                                    v-bind="
-                                        getBodyCellScope({
-                                            key: getRowKey(row),
-                                            row,
-                                            pageIndex,
-                                            col
-                                        })
-                                    "
-                                    :name="
-                                        hasSlotByName(`body-cell-${col.name}`)
-                                            ? `body-cell-${col.name}`
-                                            : 'body-cell'
-                                    "
+                                    :key="col.name"
+                                    :class="col.tdClass(row)"
+                                    :style="col.tdStyle(row)"
                                 >
-                                    <DlTd
-                                        :class="col.tdClass(row)"
-                                        :style="col.tdStyle(row)"
+                                    <slot
+                                        v-bind="
+                                            getBodyCellScope({
+                                                key: getRowKey(row),
+                                                row,
+                                                pageIndex,
+                                                col
+                                            })
+                                        "
+                                        :name="
+                                            hasSlotByName(
+                                                `body-cell-${col.name}`
+                                            )
+                                                ? `body-cell-${col.name}`
+                                                : 'body-cell'
+                                        "
                                     >
                                         {{ getCellValue(col, row) }}
-                                    </DlTd>
-                                </slot>
+                                    </slot>
+                                </DlTd>
                             </DlTr>
                         </slot>
                     </slot>

@@ -49,7 +49,7 @@ describe('createColorSchema', () => {
         const mockDiv = document.createElement('div')
         mockDiv.setAttribute('id', 'editor')
         document.body.appendChild(mockDiv)
-        updateEditor(schema)
+        updateEditor(mockDiv, schema)
         expect(mockDiv.innerHTML.includes('span')).toBeTruthy()
     })
 })

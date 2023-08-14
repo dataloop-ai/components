@@ -94,7 +94,9 @@ export default defineComponent({
                     undefined
             ) {
                 if (!(status.contentErrors as ContentParseError).isRepairable) {
-                    console.warn('[DlJsonEditor] Failed to parse JSON')
+                    stateManager.logger.warn(
+                        '[DlJsonEditor] Failed to parse JSON'
+                    )
                     return
                 }
             }
@@ -163,7 +165,10 @@ export default defineComponent({
                 })
                 emit('align-text')
             } catch (e) {
-                console.warn('[DlJsonEditor] Failed to format document', e)
+                stateManager.logger.warn(
+                    '[DlJsonEditor] Failed to format document',
+                    e
+                )
                 return
             }
         }
@@ -178,7 +183,10 @@ export default defineComponent({
                 const parsed = JSON.parse(modelValue.value)
                 return parsed
             } catch (e) {
-                console.warn('[DlJsonEditor] Failed to format document', e)
+                stateManager.logger.warn(
+                    '[DlJsonEditor] Failed to format document',
+                    e
+                )
                 return null
             }
         }

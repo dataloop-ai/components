@@ -76,60 +76,139 @@
             </template>
         </dl-dialog-box>
 
-        <dl-dialog-box
-            ref="modalTwo"
-            is-empty
-            :empty-state-props="{
-                responsive: true,
-                bgSize: '100px',
-                bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                title: 'Lorem ipsum',
-                subtitle:
-                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                info: 'To learn more about this analytics, read our documentation.'
-            }"
-        >
-            <template #header>
-                <dl-dialog-box-header
-                    has-back-button
-                    title="Dialog Box Title"
-                    subtitle="updated by rotemshaham@dataloop.ai"
-                    @on-close="closeSecondModal"
-                />
-            </template>
-
-            <template #links="">
-                <div style="display: flex; gap: 15px; flex-wrap: wrap">
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-sdk-documentation"
-                        flat
-                        uppercase
-                        label="SDK"
+        <div>
+            Styled Tooltip using a class
+            <dl-button @click="openModal2">
+                Open modal
+            </dl-button>
+            <dl-dialog-box
+                ref="modalTwo"
+                v-model="isOpenedSecondModal"
+                class="TestID"
+                :draggable="draggable"
+                :full-height="fullHeight"
+                :fullscreen="fullscreen"
+            >
+                <template #header>
+                    <dl-dialog-box-header
+                        title="Dialog Box Title"
+                        subtitle="updated by rotemshaham@dataloop.ai"
+                        @on-close="closeModal"
                     />
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-file"
-                        flat
-                        label="Documentation"
+                </template>
+                <template #body>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-medium);
+                            font-size: 10px;
+                        "
+                    >
+                        Updated by rotemshaham@dataloop.ai
+                    </p>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-medium);
+                            font-size: 10px;
+                            margin-bottom: 20px;
+                        "
+                    >
+                        Dec 1, 2020, 12:21pm
+                    </p>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-darker);
+                            font-size: 12px;
+                        "
+                    >
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Erat ac duis sed ullamcorper sagittis, sed. Tempus ac
+                        pellentesque dignissim lobortis.
+                    </p>
+                </template>
+                <template #footer>
+                    <dl-dialog-box-footer>
+                        <dl-button
+                            outlined
+                            @click="openSecondModal"
+                        >
+                            Open empty modal
+                        </dl-button>
+                        <dl-button @click="isOpenedSecondModal = false">
+                            Close
+                        </dl-button>
+                    </dl-dialog-box-footer>
+                </template>
+            </dl-dialog-box>
+        </div>
+        <div>
+            Styled Tooltip using an id
+            <dl-button @click="openModal3">
+                Open modal
+            </dl-button>
+            <dl-dialog-box
+                ref="modalThree"
+                v-model="isOpenedThirdModal"
+                :draggable="draggable"
+                :full-height="fullHeight"
+                :fullscreen="fullscreen"
+            >
+                <template #header>
+                    <dl-dialog-box-header
+                        title="Dialog Box Title"
+                        subtitle="updated by rotemshaham@dataloop.ai"
+                        @on-close="closeModal"
                     />
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-youtube"
-                        flat
-                        label="Video"
-                    />
-                </div>
-            </template>
-
-            <template #footer>
-                <dl-dialog-box-footer>
-                    <dl-button @click="closeSecondModal">
-                        Close
-                    </dl-button>
-                </dl-dialog-box-footer>
-            </template>
-        </dl-dialog-box>
+                </template>
+                <template #body>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-medium);
+                            font-size: 10px;
+                        "
+                    >
+                        Updated by rotemshaham@dataloop.ai
+                    </p>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-medium);
+                            font-size: 10px;
+                            margin-bottom: 20px;
+                        "
+                    >
+                        Dec 1, 2020, 12:21pm
+                    </p>
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-darker);
+                            font-size: 12px;
+                        "
+                    >
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Erat ac duis sed ullamcorper sagittis, sed. Tempus ac
+                        pellentesque dignissim lobortis.
+                    </p>
+                </template>
+                <template #footer>
+                    <dl-dialog-box-footer>
+                        <dl-button
+                            outlined
+                            @click="openSecondModal"
+                        >
+                            Open empty modal
+                        </dl-button>
+                        <dl-button @click="isOpenedThirdModal = false">
+                            Close
+                        </dl-button>
+                    </dl-dialog-box-footer>
+                </template>
+            </dl-dialog-box>
+        </div>
     </div>
 </template>
 
@@ -150,10 +229,13 @@ export default defineComponent({
     setup() {
         const modalOne = ref<any>(null)
         const modalTwo = ref<any>(null)
+        const modalThree = ref<any>(null)
         const draggable = ref(true)
         const fullscreen = ref(false)
         const fullHeight = ref(false)
         const isOpenedFirstModal = ref(false)
+        const isOpenedSecondModal = ref(false)
+        const isOpenedThirdModal = ref(false)
 
         const openModal = () => {
             if (!modalOne.value) {
@@ -161,6 +243,20 @@ export default defineComponent({
             }
 
             modalOne.value?.openModal()
+        }
+        const openModal2 = () => {
+            if (!modalOne.value) {
+                return
+            }
+
+            modalTwo.value?.openModal()
+        }
+        const openModal3 = () => {
+            if (!modalOne.value) {
+                return
+            }
+
+            modalThree.value?.openModal()
         }
 
         const closeModal = () => {
@@ -197,8 +293,22 @@ export default defineComponent({
             isOpenedFirstModal,
             draggable,
             fullscreen,
-            fullHeight
+            fullHeight,
+            openModal2,
+            openModal3,
+            isOpenedSecondModal,
+            isOpenedThirdModal
         }
     }
 })
 </script>
+<style>
+#TestID {
+    border: 1px solid red;
+    background-color: blue;
+}
+.TestID {
+    border: 1px solid red;
+    background-color: blue;
+}
+</style>

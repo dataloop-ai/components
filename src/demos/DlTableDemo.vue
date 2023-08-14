@@ -432,6 +432,18 @@
                     title="Table Title"
                 />
             </div>
+            <div>
+                <p>Custom body cell</p>
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Custom Cells"
+                >
+                    <template #body-cell-name="{ row }">
+                        {{ row.name }}
+                    </template>
+                </DlTable>
+            </div>
         </div>
     </div>
 </template>
