@@ -9,7 +9,7 @@
         <div class="dl-label__prefix">
             <slot name="prefix">
                 <div
-                    v-if="labelColor"
+                    v-if="indicatorColor"
                     class="dl-label__line"
                 />
             </slot>
@@ -94,7 +94,7 @@ export default defineComponent({
         /**
          * Color of the left side line
          */
-        labelColor: {
+        indicatorColor: {
             type: String,
             default: null
         },
@@ -122,11 +122,11 @@ export default defineComponent({
     },
     setup(props, { emit, slots }) {
         const mouseOver = ref(false)
-        const { labelColor, color, prefix, suffix } = toRefs(props)
+        const { indicatorColor, color, prefix, suffix } = toRefs(props)
 
         const styles = computed<Record<string, any>>(() => {
             return {
-                '--dl-label-color': getColor(labelColor.value),
+                '--dl-label-color': getColor(indicatorColor.value),
                 '--dl-label-text-color': getColor(color.value)
             }
         })

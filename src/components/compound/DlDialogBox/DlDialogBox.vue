@@ -3,6 +3,7 @@
         <div
             v-if="show"
             :id="uuid"
+            :class="$attrs.class"
             :style="cssVars"
             class="root-wrapper"
         >
@@ -129,7 +130,9 @@ export default defineComponent({
         visibleDragIcon: boolean
     } {
         return {
-            uuid: `dl-dialog-box-${v4()}`,
+            uuid: (this.$attrs.id as string)?.length
+                ? (this.$attrs.id as string)
+                : `dl-dialog-box-${v4()}`,
             show: this.modelValue,
             draggableOptions: {
                 draggableX: 0,
