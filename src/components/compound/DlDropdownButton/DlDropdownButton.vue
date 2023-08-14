@@ -61,7 +61,7 @@
                         ? 'var(--dl-color-disabled)'
                         : outlined && !textColor
                             ? 'var(--dl-color-secondary)'
-                            : textColor || 'var(--dl-color-white)'
+                            : computedTextColor || 'var(--dl-color-white)'
                 }`"
             />
             <dl-icon
@@ -174,10 +174,12 @@ import {
     onMounted,
     getCurrentInstance,
     Ref,
-    PropType
+    PropType,
+    toRefs
 } from 'vue-demi'
 import { v4 } from 'uuid'
 import { DlTextTransformOptions } from '../../shared/types'
+import { getColor } from '../../../utils'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -258,6 +260,7 @@ export default defineComponent({
     setup(props, { emit }) {
         const vm = getCurrentInstance()
         const proxy = vm!.proxy!
+        const { textColor } = toRefs(props)
 
         const showing = ref<boolean>(!!props.modelValue) as Ref<boolean>
         const menuRef = ref(null)
@@ -416,6 +419,8 @@ export default defineComponent({
             return 'dl-color-white'
         })
 
+        const computedTextColor = computed(() => getColor(textColor.value))
+
         return {
             uuid: `dl-dropdown-button-${v4()}`,
             identifierClass,
@@ -438,7 +443,8 @@ export default defineComponent({
             setHighlightedIndex,
             handleSelectedItem,
             cssVars,
-            getIconColor
+            getIconColor,
+            computedTextColor
         }
     }
 })
