@@ -226,10 +226,11 @@ export default defineComponent({
         //#endregion
 
         //#region hooks
+        // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
         const { suggestions, error, findSuggestions } = useSuggestions(
-            props.schema,
-            props.aliases,
+            schema.value,
+            aliases.value,
             { strict }
         )
         //#endregion
@@ -443,7 +444,7 @@ export default defineComponent({
             )
 
             const stringQuery = stringifySmartQuery(replacedDate)
-            const aliased = setAliases(stringQuery, props.aliases)
+            const aliased = setAliases(stringQuery, aliases.value)
             return aliased
         }
         //#endregion
@@ -505,7 +506,7 @@ export default defineComponent({
                 classes += ' dl-smart-search-input__search-bar--expanded'
             }
 
-            if (props.disabled) {
+            if (disabled.value) {
                 classes += ' dl-smart-search-input__search-bar--disabled'
             }
 
@@ -622,7 +623,7 @@ export default defineComponent({
                     readModelValue(value)
                 }
             },
-            { immediate: true }
+            { immediate: true, deep: true }
         )
         //#endregion
 

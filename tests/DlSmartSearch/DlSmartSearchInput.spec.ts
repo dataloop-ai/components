@@ -1,4 +1,4 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
 import { describe, it, expect, vi } from 'vitest'
 
@@ -10,15 +10,42 @@ window.ResizeObserver =
         unobserve: vi.fn()
     }))
 
-// todo: fix this test
-describe.skip('DlSmartSearchInput', () => {
-    it('should render component with default props', async () => {
-        const wrapper = mount(DlSmartSearchInput, {
-            props: {}
-        })
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-full-screen')
-    })
+const schema = {
+    name: 'string',
+    level: ['high', 'medium', 'low', 30],
+    completed: 'boolean',
+    metadata: {
+        nesting: {
+            age: 'number',
+            valid: 'boolean'
+        },
+        date: 'date',
+        start: 'datetime',
+        classTime: 'time',
+        '*': 'any'
+    }
+}
 
+const aliases = [
+    {
+        alias: 'Name',
+        key: 'name'
+    },
+    {
+        alias: 'Age',
+        key: 'metadata.nesting.age'
+    },
+    {
+        alias: 'StartTime',
+        key: 'metadata.start'
+    },
+    {
+        alias: 'Level',
+        key: 'level'
+    }
+]
+
+describe('DlSmartSearchInput', () => {
     it('should assign classes to component according to the props', async () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {
@@ -26,7 +53,6 @@ describe.skip('DlSmartSearchInput', () => {
             }
         })
         expect(wrapper.vm.searchBarClasses.includes('--error')).toBeTruthy()
-        expect(wrapper.find('label').text()).toBe('error label')
 
         await wrapper.setProps({
             status: { type: 'info', message: 'info label' }
@@ -61,26 +87,32 @@ describe.skip('DlSmartSearchInput', () => {
     it('Will update the v-model', async () => {
         const wrapper = mount(DlSmartSearchInput as any, {
             props: {
-                modelValue: 'a',
+                modelValue: { a: true },
                 styleModel: { fields: { values: '', color: 'red' } }
             }
         })
-        await wrapper.setProps({ modelValue: 'search' })
+        await wrapper.setProps({ modelValue: { a: false } })
         // @ts-ignore // handled in jest setup
         await window.delay(500)
         await wrapper.vm.$nextTick()
         const inputRef = wrapper.vm.$refs.input as HTMLInputElement
-        expect(inputRef.innerHTML).toBe('search')
+        expect(inputRef.innerHTML).toBe('a = false')
     })
 
-    it('will show suggestions', async () => {
-        const wrapper = mount(DlSmartSearchInput)
-        await wrapper.vm.focus()
-        await wrapper.setProps({ suggestions: ['one', 'two'] })
+    it('will show focus on click', async () => {
+        const wrapper = mount(DlSmartSearchInput, {
+            props: {
+                schema,
+                aliases,
+                modelValue: {}
+            }
+        })
+
+        await wrapper.vm.input.click()
         // @ts-ignore // handled in jest setup
         await window.delay(500)
         await wrapper.vm.$nextTick()
-        expect(wrapper.vm.suggestionModal).toBe(true)
+        expect(wrapper.vm.focused).toBe(true)
     })
 
     it('should focus', () => {
@@ -96,41 +128,15 @@ describe.skip('DlSmartSearchInput', () => {
         expect(wrapper.emitted().focus).toBeTruthy()
     })
 
-    it('should handle blur', () => {
+    it('should handle blur', async () => {
         const wrapper = mount(DlSmartSearchInput, {
             mounted() {
                 this.$refs.input.scrollTo = vi.fn()
             }
         })
-        wrapper.vm.suggestionModal = true
         wrapper.vm.blur()
-        expect(wrapper.vm.focused).toBe(true)
-        wrapper.vm.cancelBlur = 1
-        wrapper.vm.blur()
-        expect(wrapper.emitted().focus).toEqual([[true]])
-    })
-
-    it('should render component with expanded data', async () => {
-        const wrapper = shallowMount(DlSmartSearchInput, {
-            props: {},
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
-        })
-
-        wrapper.vm.handleScreenButtonClick()
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
-    })
-
-    it('should emit save', () => {
-        const wrapper = shallowMount(DlSmartSearchInput)
-        wrapper.vm.save()
-        expect(wrapper.emitted().save).toBeTruthy()
-    })
-    it('should emit edit', () => {
-        const wrapper = shallowMount(DlSmartSearchInput)
-        wrapper.vm.edit()
-        expect(wrapper.emitted()['dql-edit']).toBeTruthy()
+        expect(wrapper.emitted().blur).toBeDefined()
+        expect(wrapper.vm.focused).toBe(false)
     })
 
     it('should clear the value', () => {
@@ -139,62 +145,46 @@ describe.skip('DlSmartSearchInput', () => {
                 this.$refs.input.scrollTo = vi.fn()
             }
         })
-        wrapper.vm.clearValue()
-        expect(wrapper.emitted()['update:model-value']).toEqual([['']])
+        wrapper.vm.onClear()
+        expect(wrapper.emitted()['update:model-value']).toEqual([[{}]])
     })
 
-    it('should handle keyboard input', () => {
+    it('should handle keyboard input', async () => {
         const wrapper = mount(DlSmartSearchInput, {
-            props: {
-                modelValue: 'model'
-            }
+            props: {}
         })
-        wrapper.vm.keyPress({
+        await wrapper.setProps({ modelValue: { a: false } })
+
+        //@ts-ignore
+        await window.delay(500)
+        await wrapper.vm.$nextTick()
+
+        wrapper.vm.onKeyPress({
             key: 'backspace',
             preventDefault: vi.fn()
         } as any as KeyboardEvent)
-        wrapper.vm.keyPress({
+        wrapper.vm.onKeyPress({
             key: 'Enter',
             preventDefault: vi.fn()
         } as any as KeyboardEvent)
-        expect(wrapper.emitted().search).toEqual([['model']])
+
+        const inputRef = wrapper.vm.$refs.input as HTMLInputElement
+        expect(inputRef.innerHTML).toBe('a = false')
     })
 
-    it('should handle value change', () => {
+    it('should handle value change', async () => {
         const wrapper = mount(DlSmartSearchInput)
-        wrapper.vm.handleValueChange({
-            target: { textContent: 'text' }
-        } as any as Event)
-        expect(wrapper.emitted()['update:model-value']).toEqual([['text']])
-    })
-
-    it('should handle screen button click', () => {
-        const wrapper = mount(DlSmartSearchInput, {
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
-        })
-        wrapper.vm.expanded = false
-        wrapper.vm.handleScreenButtonClick()
-        expect(wrapper.vm.expanded).toBe(true)
+        wrapper.vm.debouncedSetInputValue('text')
+        //@ts-ignore
+        await window.delay(500)
+        await wrapper.vm.$nextTick()
+        expect(wrapper.emitted()['input']).toEqual([['text']])
     })
 
     it('should handle selection update', () => {
         const wrapper = mount(DlSmartSearchInput)
         const interval = { from: new Date(), to: new Date() }
-        wrapper.vm.handleDateSelectionUpdate(interval)
+        wrapper.vm.onDateSelection(interval)
         expect(wrapper.vm.datePickerSelection).toEqual(interval)
-    })
-
-    it('should render component with expanded data', () => {
-        const wrapper = shallowMount(DlSmartSearchInput, {
-            props: {},
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
-        })
-
-        wrapper.vm.handleScreenButtonClick()
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
     })
 })
