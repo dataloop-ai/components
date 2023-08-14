@@ -236,7 +236,12 @@ export default defineComponent({
         //#endregion
 
         //#region methods
-        const setInputValue = (value: string) => {
+        const setInputValue = (
+            value: string,
+            options: { noEmit?: boolean } = {}
+        ) => {
+            const { noEmit } = options
+
             showSuggestions.value = false
 
             // to handle date suggestion modal to open automatically.
@@ -269,21 +274,26 @@ export default defineComponent({
                     isEllipsisActive(input.value) || hasEllipsis.value
             }
 
-            if (value.length && isEndingWithDateIntervalPattern(value)) {
-                showDatePicker.value = true
-                showSuggestions.value = false
-            } else {
-                showDatePicker.value = false
-                datePickerSelection.value = null
-                showSuggestions.value = true
+            if (focused.value) {
+                if (value.length && isEndingWithDateIntervalPattern(value)) {
+                    showDatePicker.value = true
+                    showSuggestions.value = false
+                } else {
+                    showDatePicker.value = false
+                    datePickerSelection.value = null
+                    showSuggestions.value = true
+                }
             }
+
             scroll.value = input.value.offsetHeight > 40
 
             nextTick(() => {
                 findSuggestions(value)
             })
 
-            emit('input', value)
+            if (!noEmit) {
+                emit('input', value)
+            }
         }
 
         const setInputFromSuggestion = (value: string) => {
@@ -337,6 +347,7 @@ export default defineComponent({
         const setInputFromModel = (value: string) => {
             searchQuery.value = value
             input.value.innerHTML = value
+            setInputValue(`${value} `, { noEmit: true })
         }
 
         const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
