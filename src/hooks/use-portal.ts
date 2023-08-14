@@ -27,18 +27,12 @@ function isOnGlobalDialog(vm: any) {
 export default function usePortal(
     vm: ComponentInternalInstance | null,
     innerRef: Ref<HTMLElement | null>,
-    checkGlobalDialog = false,
-    config: {
-        parentId?: string
-        parentClass?: string
-        parentStyle?: string
-    } = {}
+    checkGlobalDialog = false
 ) {
     // showing, including while in show/hide transition
     const portalIsActive = ref(false)
 
     const { proxy } = vm!
-    const { parentId, parentClass, parentStyle } = config
 
     // showing & not in any show/hide transition
     const portalIsAccessible = ref(false)

@@ -3,7 +3,6 @@
         ref="dlTrTreeRef"
         :class="trClasses"
         v-bind="$attrs"
-        :children="children"
         v-on="listeners"
     >
         <slot />
@@ -11,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, isVue2, watch } from 'vue-demi'
+import { defineComponent, isVue2 } from 'vue-demi'
 
 export default defineComponent({
     name: 'DlTrTree',
@@ -24,7 +23,7 @@ export default defineComponent({
         }
     },
     computed: {
-        childrenComputed() {
+        childrenComputed(): number | null {
             return this.children
         },
         listeners(): any {

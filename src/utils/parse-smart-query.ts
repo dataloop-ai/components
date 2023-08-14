@@ -43,7 +43,11 @@ const Operators: string[] = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
  * @param { string } query DlSmartSearch query string
  * @returns Mongo based JSON
  */
-export const parseSmartQuery = (query: string) => {
+export const parseSmartQuery = (
+    query: string
+): {
+    [key: string]: any
+} => {
     const queryArr = query.split(' OR ')
     for (let i = 0; i < queryArr.length; i++) {
         const term: string = queryArr[i]
@@ -62,7 +66,7 @@ export const parseSmartQuery = (query: string) => {
     const orTerms: { [key: string]: any }[] = []
 
     for (const query of queryArr) {
-        const andTerms = query.split(' AND ')
+        const andTerms = query.split(' AND ').filter((q) => !!q.length)
         for (let i = 0; i < andTerms.length; i++) {
             const term: string = andTerms[i]
             let withOperator = false
@@ -188,7 +192,7 @@ export const parseSmartQuery = (query: string) => {
  * @param { { [key: string]: any } } query Mongo based JSON that represents a query
  * @returns DlSmartSearch query string
  */
-export const stringifySmartQuery = (query: { [key: string]: any }) => {
+export const stringifySmartQuery = (query: { [key: string]: any }): string => {
     let result = ''
 
     for (const key in query) {

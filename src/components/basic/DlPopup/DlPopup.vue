@@ -463,7 +463,9 @@ export default defineComponent({
         Object.assign(proxy, { focus, updatePosition })
 
         return {
-            uuid: `dl-popup-${v4()}`,
+            uuid: (attrs.id as string)?.length
+                ? (attrs.id as string)
+                : `dl-popup-${v4()}`,
             portalIsAccessible,
             anchorEl,
             showing,
@@ -475,7 +477,7 @@ export default defineComponent({
             innerRef,
             portalEl: isVue2 ? 'body' : portalEl,
             portalIsActive,
-            classes: 'dl-popup dl-position-engine scroll',
+            classes: ['dl-popup dl-position-engine scroll', attrs.class],
             styles: [
                 isString(attrs.style)
                     ? stringStyleToRecord(attrs.style)
