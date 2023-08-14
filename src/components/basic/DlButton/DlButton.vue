@@ -130,7 +130,7 @@ export default defineComponent({
          * The size of the button, it can be s,m,l or xl
          */
         margin: { type: String, default: '0 auto' },
-        size: { type: String! as PropType<ButtonSizes>, default: 'm' },
+        size: { type: String! as PropType<ButtonSizes | string>, default: 'm' },
         /**
          * The assigned color will fill the entirety of the button
          */

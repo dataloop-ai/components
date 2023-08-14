@@ -1,6 +1,6 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -10,14 +10,42 @@ window.ResizeObserver =
         unobserve: vi.fn()
     }))
 
-describe('DlSmartSearchInput', () => {
-    it('should render component with default props', async () => {
-        const wrapper = mount(DlSmartSearchInput, {
-            props: {}
-        })
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-full-screen')
-    })
+const schema = {
+    name: 'string',
+    level: ['high', 'medium', 'low', 30],
+    completed: 'boolean',
+    metadata: {
+        nesting: {
+            age: 'number',
+            valid: 'boolean'
+        },
+        date: 'date',
+        start: 'datetime',
+        classTime: 'time',
+        '*': 'any'
+    }
+}
 
+const aliases = [
+    {
+        alias: 'Name',
+        key: 'name'
+    },
+    {
+        alias: 'Age',
+        key: 'metadata.nesting.age'
+    },
+    {
+        alias: 'StartTime',
+        key: 'metadata.start'
+    },
+    {
+        alias: 'Level',
+        key: 'level'
+    }
+]
+
+describe('DlSmartSearchInput', () => {
     it('should assign classes to component according to the props', async () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {
@@ -25,7 +53,6 @@ describe('DlSmartSearchInput', () => {
             }
         })
         expect(wrapper.vm.searchBarClasses.includes('--error')).toBeTruthy()
-        expect(wrapper.find('label').text()).toBe('error label')
 
         await wrapper.setProps({
             status: { type: 'info', message: 'info label' }
@@ -60,26 +87,37 @@ describe('DlSmartSearchInput', () => {
     it('Will update the v-model', async () => {
         const wrapper = mount(DlSmartSearchInput as any, {
             props: {
-                modelValue: 'a',
+                modelValue: { a: true },
                 styleModel: { fields: { values: '', color: 'red' } }
             }
         })
-        await wrapper.setProps({ modelValue: 'search' })
+        await wrapper.setProps({ modelValue: { a: false } })
         // @ts-ignore // handled in jest setup
         await window.delay(500)
         await wrapper.vm.$nextTick()
         const inputRef = wrapper.vm.$refs.input as HTMLInputElement
-        expect(inputRef.innerHTML).toBe('search')
+        let innerHTML = ''
+        for (const child of inputRef.children) {
+            innerHTML += child.innerHTML
+        }
+
+        expect(innerHTML.trim()).toBe('a = false')
     })
 
-    it('will show suggestions', async () => {
-        const wrapper = mount(DlSmartSearchInput)
-        await wrapper.vm.focus()
-        await wrapper.setProps({ suggestions: ['one', 'two'] })
+    it('will show focus on click', async () => {
+        const wrapper = mount(DlSmartSearchInput, {
+            props: {
+                schema,
+                aliases,
+                modelValue: {}
+            }
+        })
+
+        await wrapper.vm.input.click()
         // @ts-ignore // handled in jest setup
         await window.delay(500)
         await wrapper.vm.$nextTick()
-        expect(wrapper.vm.suggestionModal).toBe(true)
+        expect(wrapper.vm.focused).toBe(true)
     })
 
     it('should focus', () => {
@@ -95,41 +133,15 @@ describe('DlSmartSearchInput', () => {
         expect(wrapper.emitted().focus).toBeTruthy()
     })
 
-    it('should handle blur', () => {
+    it('should handle blur', async () => {
         const wrapper = mount(DlSmartSearchInput, {
             mounted() {
                 this.$refs.input.scrollTo = vi.fn()
             }
         })
-        wrapper.vm.suggestionModal = true
         wrapper.vm.blur()
-        expect(wrapper.vm.focused).toBe(true)
-        wrapper.vm.cancelBlur = 1
-        wrapper.vm.blur()
-        expect(wrapper.emitted().focus).toEqual([[true]])
-    })
-
-    it('should render component with expanded data', async () => {
-        const wrapper = shallowMount(DlSmartSearchInput, {
-            props: {},
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
-        })
-
-        wrapper.vm.handleScreenButtonClick()
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
-    })
-
-    it('should emit save', () => {
-        const wrapper = shallowMount(DlSmartSearchInput)
-        wrapper.vm.save()
-        expect(wrapper.emitted().save).toBeTruthy()
-    })
-    it('should emit edit', () => {
-        const wrapper = shallowMount(DlSmartSearchInput)
-        wrapper.vm.edit()
-        expect(wrapper.emitted()['dql-edit']).toBeTruthy()
+        expect(wrapper.emitted().blur).toBeDefined()
+        expect(wrapper.vm.focused).toBe(false)
     })
 
     it('should clear the value', () => {
@@ -138,62 +150,218 @@ describe('DlSmartSearchInput', () => {
                 this.$refs.input.scrollTo = vi.fn()
             }
         })
-        wrapper.vm.clearValue()
-        expect(wrapper.emitted()['update:model-value']).toEqual([['']])
+        wrapper.vm.onClear()
+        expect(wrapper.emitted()['update:model-value']).toEqual([[{}]])
     })
 
-    it('should handle keyboard input', () => {
+    it('should handle keyboard input', async () => {
         const wrapper = mount(DlSmartSearchInput, {
-            props: {
-                modelValue: 'model'
-            }
+            props: {}
         })
-        wrapper.vm.keyPress({
+        await wrapper.setProps({ modelValue: { a: false } })
+
+        //@ts-ignore
+        await window.delay(500)
+        await wrapper.vm.$nextTick()
+
+        wrapper.vm.onKeyPress({
             key: 'backspace',
             preventDefault: vi.fn()
         } as any as KeyboardEvent)
-        wrapper.vm.keyPress({
+        wrapper.vm.onKeyPress({
             key: 'Enter',
             preventDefault: vi.fn()
         } as any as KeyboardEvent)
-        expect(wrapper.emitted().search).toEqual([['model']])
+
+        const inputRef = wrapper.vm.$refs.input as HTMLInputElement
+        let innerHTML = ''
+        for (const child of inputRef.children) {
+            innerHTML += child.innerHTML
+        }
+        expect(innerHTML.trim()).toBe('a = false')
     })
 
-    it('should handle value change', () => {
+    it('should handle value change', async () => {
         const wrapper = mount(DlSmartSearchInput)
-        wrapper.vm.handleValueChange({
-            target: { textContent: 'text' }
-        } as any as Event)
-        expect(wrapper.emitted()['update:model-value']).toEqual([['text']])
-    })
-
-    it('should handle screen button click', () => {
-        const wrapper = mount(DlSmartSearchInput, {
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
-        })
-        wrapper.vm.expanded = false
-        wrapper.vm.handleScreenButtonClick()
-        expect(wrapper.vm.expanded).toBe(true)
+        wrapper.vm.debouncedSetInputValue('text')
+        //@ts-ignore
+        await window.delay(500)
+        await wrapper.vm.$nextTick()
+        expect(wrapper.emitted()['input']).toEqual([['text']])
     })
 
     it('should handle selection update', () => {
         const wrapper = mount(DlSmartSearchInput)
         const interval = { from: new Date(), to: new Date() }
-        wrapper.vm.handleDateSelectionUpdate(interval)
+        wrapper.vm.onDateSelection(interval)
         expect(wrapper.vm.datePickerSelection).toEqual(interval)
     })
 
-    it('should render component with expanded data', () => {
-        const wrapper = shallowMount(DlSmartSearchInput, {
-            props: {},
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
+    describe('DlSmartSearchInput Search behavior', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
         })
 
-        wrapper.vm.handleScreenButtonClick()
-        expect(wrapper.vm.screenIcon).toBe('icon-dl-fit-to-screen')
+        describe('when mounting', () => {
+            it('should mount the component', () => {
+                const component = wrapper.find('div.dl-smart-search-input')
+                expect(component.exists()).toBe(true)
+            })
+        })
+
+        describe('when changing status when typing a query', () => {
+            it('should have status info by default', () => {
+                expect(wrapper.vm.computedStatus.type).toMatch('info')
+            })
+            it('should change status to success when typing a valid query', async () => {
+                await wrapper.vm.debouncedSetInputValue(`name = 'test'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.computedStatus.type).toMatch('success')
+            })
+            it('should change status to warning when the error state is set to warning', async () => {
+                await wrapper.vm.debouncedSetInputValue(`age = 'test'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.computedStatus.type).toMatch('warning')
+            })
+            it('should change status to error when error state is error', async () => {
+                await wrapper.vm.debouncedSetInputValue(`name = 50`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.computedStatus.type).toMatch('error')
+            })
+        })
+
+        describe('when typing inside the input', () => {
+            it('should set input model and active query when typing in the smart search input component', async () => {
+                const testString = 'Age = 21'
+                wrapper.vm.debouncedSetInputValue(testString)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.emitted().input).toBeDefined()
+                expect(
+                    wrapper.emitted().input.filter((o) => o[0] === testString)
+                ).toBeDefined()
+                wrapper.vm.blur()
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.emitted()['update:model-value']).toEqual([
+                    [{ 'metadata.nesting.age': 21 }]
+                ])
+            })
+        })
+
+        describe('when querying with a set scheme', () => {
+            describe('when using an alias', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(`Age = 25`)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have not have errors', () => {
+                    expect(wrapper.vm.error).to.be.null
+                })
+            })
+            describe('when having a supported anykey field', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(`metadata.test = 'bla'`)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have not have errors', () => {
+                    expect(wrapper.vm.error).to.be.null
+                })
+            })
+            describe('when having a supported nested anykey field', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(`metadata.test.a = 'bla'`)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have not have errors', () => {
+                    expect(wrapper.vm.error).to.be.null
+                })
+            })
+            describe('when having a nested unsupported key', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(
+                        `metadata.nesting.a = 'bla'`
+                    )
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have have errors', () => {
+                    expect(wrapper.vm.error).to.be.equal(
+                        'Invalid value for "metadata.nesting.a" field'
+                    )
+                })
+            })
+            describe('when having a non supported field in the schema', () => {
+                beforeAll(async () => {
+                    wrapper.vm.debouncedSetInputValue(
+                        `metadata.nesting.a = 'bla'`
+                    )
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                it('should have have errors', () => {
+                    expect(wrapper.vm.error).to.be.equal(
+                        'Invalid value for "metadata.nesting.a" field'
+                    )
+                })
+
+                describe('When using non strict mode', () => {
+                    beforeAll(async () => {
+                        await wrapper.setProps({
+                            strict: false
+                        })
+                        wrapper.vm.debouncedSetInputValue(
+                            `nonexistingfield = 'bla'`
+                        )
+                        // @ts-ignore
+                        await window.delay(500)
+                        await wrapper.vm.$nextTick()
+                    })
+                    it('should not give an error', () => {
+                        expect(wrapper.vm.error).to.be.equal('warning')
+                    })
+                })
+                describe('When using strict mode', () => {
+                    beforeAll(async () => {
+                        await wrapper.setProps({
+                            strict: true
+                        })
+                        wrapper.vm.debouncedSetInputValue(
+                            `nonexistingfield = 'bla'`
+                        )
+                        // @ts-ignore
+                        await window.delay(500)
+                        await wrapper.vm.$nextTick()
+                    })
+                    it('should give an error', () => {
+                        expect(wrapper.vm.error).to.be.equal(
+                            'Invalid Expression'
+                        )
+                    })
+                })
+            })
+        })
     })
 })

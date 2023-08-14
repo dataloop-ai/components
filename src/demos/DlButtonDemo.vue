@@ -325,7 +325,9 @@ export default defineComponent({
         DlIcon
     },
     setup() {
-        const buttons = reactive<ButtonSizes[]>(['s', 'm', 'l', 'xl'])
+        const buttons = reactive<(ButtonSizes | string)[]>(
+            Object.values(ButtonSizes)
+        )
         const activeButtonState = ref(false)
 
         const log = (e: Event) => console.log(e)

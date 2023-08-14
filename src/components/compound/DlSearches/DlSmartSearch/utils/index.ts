@@ -9,8 +9,8 @@ import {
     datePatternNoBrackets,
     removeBrackets
 } from '../../../../../hooks/use-suggestions'
-import { flatten, unflatten } from 'flat'
 import moment from 'moment'
+import { cloneDeep } from 'lodash'
 
 export const isEndOfString = (
     str: string,
@@ -109,21 +109,26 @@ export function replaceJSDatesWithStringifiedDates(
         return json
     }
 
-    for (const key of Object.keys(json)) {
-        if (typeof json[key] === 'object') {
-            json[key] = replaceJSDatesWithStringifiedDates(json[key], dateKeys)
+    const toReturn = cloneDeep(json)
+
+    for (const key of Object.keys(toReturn)) {
+        if (typeof toReturn[key] === 'object') {
+            toReturn[key] = replaceJSDatesWithStringifiedDates(
+                toReturn[key],
+                dateKeys
+            )
             continue
         }
 
-        const value = json[key]
+        const value = toReturn[key]
         const keyToCheck = key.split('.').pop()
 
         if (dateKeys.includes(keyToCheck)) {
-            json[key] = formatToStringDate(value)
+            toReturn[key] = formatToStringDate(value)
         }
     }
 
-    return json
+    return toReturn
 }
 
 export function revertAliases(json: string, aliases: Alias[]) {
