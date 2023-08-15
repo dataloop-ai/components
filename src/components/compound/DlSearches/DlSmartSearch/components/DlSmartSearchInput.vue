@@ -901,13 +901,12 @@ export default defineComponent({
 
     &__search-label {
         font-size: 10px;
-        height: 10px;
+        height: 15px;
         color: gray;
         position: absolute;
         word-break: break-all;
-        bottom: -10px;
+        bottom: -15px;
         max-width: 100%;
-        margin-top: 3px;
     }
 
     &__date-picker-wrapper {

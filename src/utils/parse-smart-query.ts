@@ -209,6 +209,18 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
             continue
         }
 
+        if (key === '$and') {
+            if (Array.isArray(value)) {
+                const andObject: { [key: string]: any } = {}
+                for (const subQuery of value) {
+                    for (const subKey in subQuery) {
+                        andObject[subKey] = subQuery[subKey]
+                    }
+                }
+                return stringifySmartQuery(andObject)
+            }
+        }
+
         if (result.length) {
             result += ' AND '
         }
