@@ -5,7 +5,9 @@
     >
         <div class="kpi_box__counter">
             <dl-typography
-                :color="getTextColor(counter)"
+                :color="
+                    counter.value ? 'dl-color-secondary' : 'dl-color-medium'
+                "
                 variant="h1"
                 :size="counterFontSizeComputed"
             >
@@ -209,15 +211,9 @@ export default defineComponent({
                 : numberWithComma(amount as number)
         }
 
-        const getTextColor = (counter: DlKpiCounterType) => {
-            if (!counter.value) return 'dl-color-medium'
-            return 'dl-color-secondary'
-        }
-
         return {
             progressValue,
             formatCounter,
-            getTextColor,
             cssVars,
             titleFontSizeComputed,
             counterFontSizeComputed
