@@ -54,7 +54,7 @@
             </template>
             <span v-else>
                 <slot
-                    v-bind="bindBodyCellScope"
+                    v-bind="bindBodyCellScope(col)"
                     :name="getSlotByName(col.name)"
                 />
             </span>
@@ -109,7 +109,7 @@ export default defineComponent({
         },
         rowIndex: {
             type: Number,
-            default: null
+            required: true
         },
         hasDraggableRows: {
             type: Boolean,

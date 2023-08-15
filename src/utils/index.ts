@@ -31,3 +31,62 @@ export const isMobileOrTablet = () => {
     })(navigator.userAgent || navigator.vendor || window.opera)
     return check
 }
+export const registerToWindow = (params: {
+    key?: string
+    ref: any
+}): (() => void) => {
+    let { key, ref } = params
+    key = !key && ref._isVue ? `${ref.$vnode.tag}-${ref._uid}` : key
+    const dispose = () => {
+        // console.log(`DISPOSING ${key}`)
+        // @ts-ignore
+        window[key] = undefined
+        // @ts-ignore
+        delete window[key]
+    }
+
+    const destroyRef = () => {
+        // console.log(`DESTROYING ${key}`)
+        const keys = Object.keys(ref.$data)
+        keys.forEach((k) => {
+            if (k === 'unsubscribers' && Array.isArray(ref.$data[k])) {
+                ref.$data[k].forEach((unsubscribe: () => void) => unsubscribe())
+                ref.$data[k] = []
+                return
+            }
+            ref.$data[k] = undefined
+        })
+        const refs = Object.keys(ref.$refs)
+        refs.forEach((r) => {
+            ref.$refs[r] = undefined
+        })
+    }
+    if (ref._isVue) {
+        ref.$once('hook:beforeDestroy', destroyRef.bind(this))
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+        // @ts-ignore
+        window[key] = ref
+        if (ref._isVue) {
+            ref.$once('hook:beforeDestroy', dispose.bind(this))
+        }
+    }
+    return dispose
+}
+
+export const setTimeInterval = (
+    callback: (...args: any[]) => void,
+    ms: number,
+    ref?: any
+): (() => void) => {
+    const intervalId = setInterval(callback, ms)
+    const unregister = () => {
+        clearInterval(intervalId)
+    }
+    const unregisterCallback = unregister.bind(this)
+    if (ref && ref._isVue) {
+        ref.$once('hook:beforeDestroy', unregisterCallback)
+    }
+    return unregisterCallback
+}

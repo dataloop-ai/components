@@ -372,11 +372,15 @@ const getError = (
 const isValidByDataType = (
     str: string,
     dataType: string | string[],
-    operator: string // TODO: use operator
+    operator: string
 ): boolean => {
     if (dataType === 'any') {
         return true
     }
+
+    /**
+     * TODO: create new support to validate by operation as well
+     */
 
     if (Array.isArray(dataType)) {
         let isOneOf = !!getValueMatch(dataType, str)

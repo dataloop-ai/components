@@ -3,7 +3,7 @@
         <div class="dl-text-holder-demo">
             Label with actions
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 text="dl-labelaaaaaaaaaaaaaa"
             >
                 <template #actions>
@@ -25,7 +25,7 @@
         <div class="dl-text-holder-demo">
             Label with hint
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
             />
@@ -33,7 +33,7 @@
         <div class="dl-text-holder-demo">
             Label with and actions
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
             >
@@ -56,7 +56,7 @@
         <div class="dl-text-holder-demo">
             Label with prefix
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaadjsfskdlfjdslkfjskfljslkadjakldjdkljdkladjakldajdlkadsjakldaj"
                 prefix="%"
@@ -80,7 +80,7 @@
         <div class="dl-text-holder-demo">
             Label with suffix
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
                 suffix=".mp3"
@@ -107,7 +107,7 @@
         >
             Label with suffix in a large container
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
                 suffix=".mp3"
@@ -134,7 +134,7 @@
         >
             Label with suffix in a large container and fluid
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
                 suffix=".mp3asdasdsfjksdhfjkdsfhkajshdsakjdhasjkdhaskjdhaskjdhaskjdhaskjfhdskjahrjkasdhjksadhasjkashjfg"
@@ -159,7 +159,7 @@
         <div class="dl-text-holder-demo">
             Label with a big suffix
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
                 suffix=".askdjhask jshadk jsah dajk dhsa djksahd ksaj dhajkd ah dkajsd haskd shds asd asd sadas "

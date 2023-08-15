@@ -1,4 +1,5 @@
 import { computed, reactive } from 'vue-demi'
+import { ILogger, loggerFactory } from './utils'
 
 export interface DlComponentsState {
     theme: 'light' | 'dark'
@@ -16,6 +17,7 @@ export class StateManager {
     }
 
     private _state: DlComponentsState = null
+    public logger: ILogger = null
 
     private constructor() {
         this._state = reactive({
@@ -23,6 +25,7 @@ export class StateManager {
             locale: 'en',
             disableDebounce: false
         })
+        this.logger = loggerFactory('DlComponents')
     }
 
     public get state(): DlComponentsState {

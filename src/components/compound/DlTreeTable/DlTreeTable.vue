@@ -35,60 +35,76 @@
                 @update:model-value="onMultipleSelectionSet"
             />
         </template>
-        <template #table-body="props">
+        <template #table-body="tableBodyProps">
             <template v-if="virtualScroll && !isEmpty">
                 <DlTrTreeView
-                    :row="props.item"
+                    :row="tableBodyProps.item"
                     :is-row-selected="
-                        isRowSelected(rowKey, getRowKey(props.item))
+                        isRowSelected(rowKey, getRowKey(tableBodyProps.item))
                             ? 'selected'
                             : ''
                     "
                     :has-any-action="dlTableRef.hasAnyAction"
                     :no-hover="dlTableRef.noHover"
-                    :page-index="props.index"
+                    :page-index="tableBodyProps.index"
                     :has-draggable-rows="dlTableRef.hasDraggableRows"
                     :has-selection-mode="dlTableRef.hasSelectionMode"
                     :bind-body-selection="
                         dlTableRef.getBodySelectionScope({
-                            key: getRowKey(props.item),
-                            row: props.item,
-                            rowIndex: props.index
+                            key: getRowKey(tableBodyProps.item),
+                            row: tableBodyProps.item,
+                            pageIndex: tableBodyProps.index
                         })
                     "
                     :bind-body-cell-scope="
-                        dlTableRef.getBodyCellScope({
-                            key: getRowKey(props.item),
-                            row: props.item,
-                            rowIndex: props.index
-                        })
+                        (col) =>
+                            dlTableRef.getBodyCellScope({
+                                key: getRowKey(tableBodyProps.item),
+                                row: tableBodyProps.item,
+                                pageIndex: tableBodyProps.index,
+                                col
+                            })
                     "
                     :color="color"
                     :computed-cols="dlTableRef.computedCols"
                     :slot-name="dlTableRef.slotNames"
                     :computed-rows="computedRows"
-                    :model-value="isRowSelected(rowKey, getRowKey(props.item))"
+                    :model-value="
+                        isRowSelected(rowKey, getRowKey(tableBodyProps.item))
+                    "
                     @update:model-value="
                         (adding, evt) =>
-                            updateSelectionHierarchy(adding, evt, props.item)
+                            updateSelectionHierarchy(
+                                adding,
+                                evt,
+                                tableBodyProps.item
+                            )
                     "
                     @rowClick="
-                        dlTableRef.onTrClick($event, props.item, props.index)
+                        dlTableRef.onTrClick(
+                            $event,
+                            tableBodyProps.item,
+                            tableBodyProps.index
+                        )
                     "
                     @rowDoubleClick="
-                        dlTableRef.onTrDblClick($event, props.item, props.index)
+                        dlTableRef.onTrDblClick(
+                            $event,
+                            tableBodyProps.item,
+                            tableBodyProps.index
+                        )
                     "
                     @rowContextMenu="
                         dlTableRef.onTrContextMenu(
                             $event,
-                            props.item,
-                            props.index
+                            tableBodyProps.item,
+                            tableBodyProps.index
                         )
                     "
                     @updateExpandedRow="
                         updateExpandedRow(
-                            !props.item.expanded,
-                            getRowKey(props.item)
+                            !tableBodyProps.item.expanded,
+                            getRowKey(tableBodyProps.item)
                         )
                     "
                 >
@@ -100,9 +116,10 @@
                             :name="getSlotByName(templateCol.name)"
                             v-bind="
                                 dlTableRef.getBodyCellScope({
-                                    key: getRowKey(props.item),
-                                    row: props.item,
-                                    rowIndex: props.index
+                                    key: getRowKey(tableBodyProps.item),
+                                    row: tableBodyProps.item,
+                                    pageIndex: tableBodyProps.index,
+                                    col: templateCol
                                 })
                             "
                         />
@@ -115,6 +132,7 @@
                         v-for="(row, rowIndex) in computedRows"
                         :key="rowIndex"
                         :row="row"
+                        :row-index="rowIndex"
                         :row-key="rowKey"
                         :is-row-selected="
                             isRowSelected(rowKey, getRowKey(row))
@@ -123,22 +141,23 @@
                         "
                         :has-any-action="dlTableRef.hasAnyAction"
                         :no-hover="dlTableRef.noHover"
-                        :row-index="rowIndex"
                         :has-draggable-rows="dlTableRef.hasDraggableRows"
                         :has-selection-mode="dlTableRef.hasSelectionMode"
                         :bind-body-selection="
                             dlTableRef.getBodySelectionScope({
                                 key: getRowKey(row),
                                 row,
-                                rowIndex
+                                pageIndex: rowIndex
                             })
                         "
                         :bind-body-cell-scope="
-                            dlTableRef.getBodyCellScope({
-                                key: getRowKey(row),
-                                row,
-                                rowIndex
-                            })
+                            (col) =>
+                                dlTableRef.getBodyCellScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex: rowIndex,
+                                    col
+                                })
                         "
                         :color="color"
                         :computed-cols="dlTableRef.computedCols"
@@ -170,7 +189,8 @@
                                     dlTableRef.getBodySelectionScope({
                                         key: getRowKey(row),
                                         row,
-                                        rowIndex
+                                        col: templateCol,
+                                        pageIndex: rowIndex
                                     })
                                 "
                             />
