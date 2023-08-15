@@ -345,7 +345,7 @@
                                         <dl-list separator>
                                             <dl-option-group
                                                 :model-value="
-                                                    visibleColumnsState
+                                                    computedVisibleCols
                                                 "
                                                 :options="groupOptions"
                                                 :left-label="true"
@@ -674,6 +674,10 @@ export default defineComponent({
 
         const visibleColumnsState = ref(
             (props.columns as DlTableColumn[]).map((col) => col.name)
+        )
+
+        const computedVisibleCols = computed(() =>
+            computedCols.value.map((col) => col.name)
         )
 
         const { hasAnyAction } = useTableActions(props) // todo: does not work
@@ -1364,7 +1368,8 @@ export default defineComponent({
             hasEmptyStateProps,
             groupOptions,
             visibleColumnsState,
-            handleVisibleColumnsUpdate
+            handleVisibleColumnsUpdate,
+            computedVisibleCols
         }
     }
 })
