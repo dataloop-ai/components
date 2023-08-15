@@ -350,6 +350,9 @@
                                                 max-width="250px"
                                                 type="switch"
                                                 class="table-options"
+                                                @update:model-value="
+                                                    handleVisibleColumnsUpdate
+                                                "
                                             />
                                         </dl-list>
                                     </dl-menu>
@@ -1297,6 +1300,10 @@ export default defineComponent({
             () => Object.keys(props.emptyStateProps).length > 0
         )
 
+        const handleVisibleColumnsUpdate = (columns: string[]) => {
+            emit('update-visible-columns', columns)
+        }
+
         return {
             uuid: `dl-table-${v4()}`,
             rootRef,
@@ -1352,7 +1359,8 @@ export default defineComponent({
             updatePagination,
             hasEmptyStateProps,
             groupOptions,
-            visibleColumnsState
+            visibleColumnsState,
+            handleVisibleColumnsUpdate
         }
     }
 })
