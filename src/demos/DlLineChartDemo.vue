@@ -62,49 +62,13 @@
             :options="tensionOptions"
             style="width: 100%"
             is-empty
-            :empty-state-props="{
-                responsive: true,
-                style: 'min-height: 450px;',
-                bgSize: '130px',
-                bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                title: 'Lorem ipsum',
-                subtitle:
-                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                info: 'To learn more about this analytics, read our documentation.'
-            }"
-        >
-            <template #links="">
-                <div style="display: flex; gap: 5px; padding: 0 20px">
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-sdk-documentation"
-                        flat
-                        uppercase
-                        label="SDK"
-                    />
-                    <div class="break" />
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-file"
-                        flat
-                        label="Documentation"
-                    />
-                    <div class="break" />
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-youtube"
-                        flat
-                        label="Video"
-                    />
-                </div>
-            </template>
-        </dl-line-chart>
+        />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlLineChart, DlButton } from '../components'
+import { DlLineChart } from '../components'
 import { orderBy } from 'lodash'
 
 function randomIntFromInterval(min: number, max: number) {
@@ -383,8 +347,7 @@ const legendProps = {
 export default defineComponent({
     name: 'DlLineChartDemo',
     components: {
-        DlLineChart,
-        DlButton
+        DlLineChart
     },
     data() {
         return {

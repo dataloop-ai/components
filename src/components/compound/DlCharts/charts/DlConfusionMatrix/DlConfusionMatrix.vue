@@ -238,6 +238,11 @@ import {
 } from './utils'
 import { debounce, isObject } from 'lodash'
 import { stateManager } from '../../../../../StateManager'
+
+const confusionMatrixEmptyStateProps = {
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
 export default defineComponent({
     components: {
         DlBrush,
@@ -282,7 +287,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: confusionMatrixEmptyStateProps
         }
     },
     setup(props) {

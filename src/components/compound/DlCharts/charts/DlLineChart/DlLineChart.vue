@@ -140,6 +140,11 @@ import type {
 import { orderBy, merge, isEqual, unionBy, cloneDeep } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 
+const lineChartEmptyStateProps = {
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
+
 ChartJS.register(
     Title,
     Tooltip,
@@ -175,7 +180,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: lineChartEmptyStateProps
         },
         ...CommonProps,
         ...ColumnChartProps
