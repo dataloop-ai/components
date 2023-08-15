@@ -1,5 +1,5 @@
 // 25-30,48-50,56-58,65-91
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { mountComposition } from 'vue-composition-test-utils'
 import { useTableColumnSelection } from '../../../src/components/compound//DlTable/hooks/tableColumnSelection'
 import { describe, it, expect } from 'vitest'
@@ -28,6 +28,7 @@ const hasDraggableRows = computed(() => false)
 
 describe('use-table-column-selection', () => {
     it('should get current value when trigger method', () => {
+        const visibleColumnsState = ref(COLUMNS.map((col) => col.name))
         const wrapper = mountComposition(() =>
             useTableColumnSelection(
                 {
@@ -36,7 +37,8 @@ describe('use-table-column-selection', () => {
                 } as any,
                 paginationRef,
                 hasSelectionMode,
-                hasDraggableRows
+                hasDraggableRows,
+                visibleColumnsState
             )
         )
 

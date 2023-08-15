@@ -1,4 +1,4 @@
-import { computed, ComputedRef } from 'vue-demi'
+import { computed, ComputedRef, Ref } from 'vue-demi'
 
 import { isNumber } from '../../../../utils/is'
 import { DlTableProps, DlTableColumn, DlTableRow } from '../types'
@@ -12,7 +12,8 @@ export function useTableColumnSelection(
     props: DlTableProps,
     computedPagination: ComputedRef<TablePagination>,
     hasSelectionMode: ComputedRef<boolean>,
-    hasDraggableRows: ComputedRef<boolean>
+    hasDraggableRows: ComputedRef<boolean>,
+    visibleColumnsState: Ref
 ) {
     const colList = computed(() => {
         if (props.columns) {
@@ -40,11 +41,11 @@ export function useTableColumnSelection(
     const computedCols = computed(() => {
         const { sortBy, descending } = computedPagination.value
 
-        const cols = props.visibleColumns
+        const cols = visibleColumnsState?.value
             ? colList.value.filter(
                   (col) =>
                       col.required === true ||
-                      props.visibleColumns.includes(col.name) === true
+                      visibleColumnsState.value.includes(col.name) === true
               )
             : colList.value
 

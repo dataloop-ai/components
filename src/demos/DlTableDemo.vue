@@ -444,6 +444,15 @@
                     </template>
                 </DlTable>
             </div>
+            <div>
+                <p>With editable columns</p>
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Editable Columns"
+                    has-editable-columns
+                />
+            </div>
         </div>
     </div>
 </template>

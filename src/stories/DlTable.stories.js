@@ -789,81 +789,22 @@ const ControlVisibleColumnsTemplate = (args) => ({
     setup() {
         const columns = ref(tableColumns)
         const rows = ref(tableRows)
-        const visibleColumns = ref([
-            'name',
-            'calories',
-            'fat',
-            'carbs',
-            'protein',
-            'sodium',
-            'calcium',
-            'iron'
-        ])
-
-        const options = columns.value.map((item) => ({
-            label: item.label,
-            value: item.name
-        }))
 
         return {
             args,
             columns,
-            rows,
-            visibleColumns,
-            options
+            rows
         }
     },
     template: `
-    <div style="padding: 50px">
+        <div style="padding: 50px">
         <dl-table
-            title="Treats"
-            v-bind="args"
-            :rows="rows"
-            :columns="columns"
-            :visibleColumns="visibleColumns"
-            row-key="name"
-        >
-            <template v-slot:header="props">
-                <dl-tr :props="props">
-                    <dl-th
-                        v-for="col in props.cols"
-                        :key="col.name"
-                        :props="props"
-                    >
-                        {{ col.label }}
-                    </dl-th>
-                    <dl-th :props="props">
-                        <dl-button text-color="dl-color-medium" flat icon="icon-dl-column">
-                            <dl-menu>
-                                <dl-list separator>
-                                    <dl-option-group
-                                    v-model="visibleColumns"
-                                    :options="options"
-                                    :leftLabel="true"
-                                    max-width="250px"
-                                    type="switch"
-                                    class="table-options"
-                                    />
-                                </dl-list>
-                            </dl-menu>
-                        </dl-button>
-                    </dl-th>
-                </dl-tr>
-            </template>
-           <template #body="props">
-            <dl-tr :props="props">
-                <dl-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                >
-                    {{ col.value }}
-                </dl-td>
-                <dl-td auto-width />
-            </dl-tr>
-        </template> 
-        </dl-table>
-    </div>
+         :rows="rows"
+         :columns="columns"
+         title="Editable Columns"
+         has-editable-columns
+         />
+         </div>
    `
 })
 export const ControlVisibleColumnsPreview = ControlVisibleColumnsTemplate.bind(
