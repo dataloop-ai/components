@@ -23,6 +23,10 @@
                 Disable: {{ disabled }}
             </button>
         </div>
+        <div>
+            Events: <br>
+            {{ events }}
+        </div>
     </div>
 </template>
 
@@ -40,17 +44,22 @@ export default defineComponent({
             value: 0,
             editable: false,
             disabled: false,
-            readonly: false
+            readonly: false,
+            events: []
         }
     },
     watch: {
         value(newValue, oldValue) {
             console.log(`@@@ model value update ${oldValue} to ${newValue}`)
+            this.events.push(
+                `@@@ model value update ${oldValue} to ${newValue}`
+            )
         }
     },
     methods: {
         handleChange(value: number) {
             console.log(`@@@ handling change ${value}`)
+            this.events.push(`@@@ handling change ${value}`)
         }
     },
     template: 'dl-slider-demo'
