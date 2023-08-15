@@ -5,23 +5,23 @@
         :style="sliderStyles"
     >
         <div
-            v-if="editable"
-            class="slider editable"
-            data-test="editable-slider"
+            v-if="slim"
+            class="slider slim"
+            data-test="slim-slider"
         >
             <span class="text capitalize">{{ text }}</span>
             <dl-slider-input
-                v-model="sliderValue"
+                v-model="value"
                 :min="min"
                 :max="max"
                 :readonly="readonly"
                 :disabled="disabled"
                 :style="{ marginRight: '10px' }"
-                data-test="editable-slider-input"
+                data-test="slim-slider-input"
             />
             <div class="slider-bar-container">
                 <dl-slider-base
-                    v-model.number="sliderValue"
+                    v-model.number="value"
                     :min="min"
                     :max="max"
                     :step="step"
@@ -37,8 +37,8 @@
         </div>
         <div
             v-else
-            class="slider non-editable"
-            data-test="non-editable-slider"
+            class="slider non-slim"
+            data-test="non-slim-slider"
         >
             <div class="header">
                 <div class="row text capitalize">
@@ -60,24 +60,24 @@
                         size="12px"
                         label="Reset"
                         :disabled="disabled || readonly"
-                        data-test="non-editable-slider-button"
+                        data-test="non-slim-slider-button"
                         @click="handleResetButtonClick"
                     />
                     <dl-slider-input
                         id="slider-input"
-                        v-model="sliderValue"
+                        v-model="value"
                         :min="min"
                         :max="max"
                         :readonly="readonly"
                         :disabled="disabled"
-                        data-test="non-editable-slider-input"
-                        @change="handleChange"
+                        data-test="non-slim-slider-input"
+                        @change="onChange"
                     />
                 </div>
             </div>
             <div class="slider-bar-container">
                 <dl-slider-base
-                    v-model.number="sliderValue"
+                    v-model.number="value"
                     :min="min"
                     :max="max"
                     :step="step"
@@ -87,7 +87,7 @@
                     :disabled="disabled"
                     :snap="snap"
                     :name="name"
-                    @change="handleChange"
+                    @change="onChange"
                 />
             </div>
         </div>
@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { computed, defineComponent, ref, toRefs, watch } from 'vue-demi'
 import { DlSliderBase, DlSliderInput } from './components/'
 import { DlButton } from '../../basic'
 import { DlIcon } from '../../essential'
@@ -133,7 +133,7 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        editable: {
+        slim: {
             type: Boolean,
             default: false
         },
@@ -185,60 +185,82 @@ export default defineComponent({
         }
     },
     emits: ['update:model-value', 'change'],
-    data() {
-        const val =
-            this.modelValue === null
-                ? this.min
-                : between(this.modelValue, this.min, this.max)
+    setup(props, { emit }) {
+        const { modelValue, min, max, textColor, width, thumbSize, color } =
+            toRefs(props)
+        const initialValue = ref(
+            modelValue.value === null
+                ? min.value
+                : between(modelValue.value, min.value, max.value)
+        )
+        const displaySliderInput = ref(false)
+
+        const value = computed({
+            get: () => {
+                return modelValue.value === null
+                    ? min.value
+                    : between(modelValue.value, min.value, max.value)
+            },
+            set(val: number) {
+                console.log(
+                    '@@@ intial, cur',
+                    initialValue.value,
+                    modelValue.value
+                )
+                console.log(`@@@ model value update `, val)
+                if (val === modelValue.value) {
+                    return
+                }
+                emit('update:model-value', val)
+                emit('change', val)
+            }
+        })
+
+        const sliderStyles = computed<Record<string, any>>(() => {
+            return {
+                '--text-color': getColor(textColor.value, 'dl-color-darker'),
+                '--width': width.value,
+                '--thumb-size': parseInt(thumbSize.value) / 2 + 'px',
+                '--color': getColor(color.value, 'dl-color-secondary')
+            }
+        })
+
+        const onChange = (val: number) => {
+            value.value = between(val, min.value, max.value)
+        }
+
+        const handleResetButtonClick = () => {
+            onChange(initialValue.value)
+        }
+
+        watch(
+            modelValue,
+            () => {
+                if (modelValue.value === value.value) {
+                    return
+                }
+
+                if (modelValue.value === null) {
+                    value.value = min.value
+                } else {
+                    value.value = between(
+                        modelValue.value,
+                        min.value,
+                        max.value
+                    )
+                }
+            },
+            { immediate: true }
+        )
 
         return {
             uuid: `dl-slider-${v4()}`,
-            initialValue: val,
-            value: val,
-            displaySliderInput: false
-        }
-    },
-    computed: {
-        valueUpdate(): string {
-            return `${this.modelValue}|${this.min}|${this.max}`
-        },
-        sliderValue: {
-            get(): number {
-                return this.value
-            },
-            set(val: number | string): void {
-                this.$emit(
-                    'update:model-value',
-                    typeof val === 'number' ? val : null
-                )
-            }
-        },
-        sliderStyles(): Record<string, any> {
-            return {
-                '--text-color': getColor(this.textColor, 'dl-color-darker'),
-                '--width': this.width,
-                '--thumb-size': parseInt(this.thumbSize) / 2 + 'px',
-                '--color': getColor(this.color, 'dl-color-secondary')
-            }
-        }
-    },
-    watch: {
-        valueUpdate() {
-            this.value =
-                this.modelValue === null
-                    ? this.min
-                    : between(this.modelValue, this.min, this.max)
-        }
-    },
-    methods: {
-        handleChange(value: number) {
-            if (this.sliderValue === value) return
-
-            this.$emit('change', value)
-            this.sliderValue = value
-        },
-        handleResetButtonClick() {
-            this.handleChange(this.initialValue)
+            initialValue,
+            value,
+            sliderStyles,
+            displaySliderInput,
+            onChange,
+            handleResetButtonClick
         }
     }
 })

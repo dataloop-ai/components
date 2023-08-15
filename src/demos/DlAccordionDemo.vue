@@ -88,55 +88,19 @@
                 v-model="isAccordionOpen"
                 title="Empty State Component"
                 is-empty
-                :empty-state-props="{
-                    responsive: true,
-                    style: 'max-width: 300px;',
-                    align: 'left',
-                    bgSize: '200px',
-                    bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                    title: 'Lorem ipsum',
-                    subtitle:
-                        'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                    info: 'To learn more about this analytics, read our documentation.'
-                }"
-            >
-                <template #links="">
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap">
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-sdk-documentation"
-                            flat
-                            uppercase
-                            label="SDK"
-                        />
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-file"
-                            flat
-                            label="Documentation"
-                        />
-                        <dl-button
-                            padding="0px"
-                            icon="icon-dl-youtube"
-                            flat
-                            label="Video"
-                        />
-                    </div>
-                </template>
-            </dl-accordion>
+            />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DlAccordion, DlSwitch, DlButton } from '../components'
+import { DlAccordion, DlSwitch } from '../components'
 import { defineComponent } from 'vue-demi'
 
 export default defineComponent({
     components: {
         DlAccordion,
-        DlSwitch,
-        DlButton
+        DlSwitch
     },
     data() {
         return {
