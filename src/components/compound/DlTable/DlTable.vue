@@ -332,6 +332,34 @@
                                     {{ col.label }}
                                 </DlTh>
                             </slot>
+                            <DlTh
+                                v-if="hasEditableColumns"
+                                key="visibleColsBtn"
+                            >
+                                <dl-button
+                                    text-color="dl-color-medium"
+                                    flat
+                                    icon="icon-dl-column"
+                                >
+                                    <dl-menu>
+                                        <dl-list separator>
+                                            <dl-option-group
+                                                :model-value="
+                                                    computedVisibleCols
+                                                "
+                                                :options="groupOptions"
+                                                :left-label="true"
+                                                max-width="250px"
+                                                type="switch"
+                                                class="table-options"
+                                                @update:model-value="
+                                                    handleVisibleColumnsUpdate
+                                                "
+                                            />
+                                        </dl-list>
+                                    </dl-menu>
+                                </dl-button>
+                            </DlTh>
                         </DlTr>
 
                         <tr
@@ -583,8 +611,16 @@ import {
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
-import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
+import {
+    DlIcon,
+    DlCheckbox,
+    DlProgressBar,
+    DlMenu,
+    DlList
+} from '../../essential'
 import { ResizableManager } from './utils'
+import { DlButton } from '../../basic'
+import { DlOptionGroup } from '../../compound'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
@@ -606,7 +642,11 @@ export default defineComponent({
         DlProgressBar,
         DlIcon,
         DlCheckbox,
-        DlEmptyState
+        DlEmptyState,
+        DlButton,
+        DlOptionGroup,
+        DlMenu,
+        DlList
     },
     props,
     emits,
@@ -624,6 +664,21 @@ export default defineComponent({
         const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed(() => props.virtualScroll === true)
+
+        const groupOptions = computed(() =>
+            (props.columns as DlTableColumn[]).map((item) => ({
+                label: item.label,
+                value: item.name
+            }))
+        )
+
+        const visibleColumnsState = ref(
+            (props.columns as DlTableColumn[]).map((col) => col.name)
+        )
+
+        const computedVisibleCols = computed(() =>
+            computedCols.value.map((col) => col.name)
+        )
 
         const { hasAnyAction } = useTableActions(props) // todo: does not work
 
@@ -791,6 +846,13 @@ export default defineComponent({
         )
 
         watch(
+            () => (props as any).visibleColummns,
+            (value) => {
+                visibleColumnsState.value = value
+            }
+        )
+
+        watch(
             () => props.draggable,
             () => {
                 if (tableEl) {
@@ -950,7 +1012,8 @@ export default defineComponent({
                 props as unknown as DlTableProps,
                 computedPagination,
                 hasSelectionMode,
-                hasDraggableRows
+                hasDraggableRows,
+                visibleColumnsState
             )
 
         const { columnToSort, computedSortMethod, sort } = useTableSort(
@@ -1243,6 +1306,12 @@ export default defineComponent({
             () => Object.keys(props.emptyStateProps).length > 0
         )
 
+        const handleVisibleColumnsUpdate = (columns: string[]) => {
+            if (columns.length < 1) return
+            visibleColumnsState.value = columns
+            emit('update-visible-columns', columns)
+        }
+
         return {
             uuid: `dl-table-${v4()}`,
             rootRef,
@@ -1296,7 +1365,11 @@ export default defineComponent({
             hasSlotHeaderSelection,
             stopAndPrevent,
             updatePagination,
-            hasEmptyStateProps
+            hasEmptyStateProps,
+            groupOptions,
+            visibleColumnsState,
+            handleVisibleColumnsUpdate,
+            computedVisibleCols
         }
     }
 })
