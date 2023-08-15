@@ -7,14 +7,14 @@
             :step="1"
             :min="-100"
             :max="100"
-            :editable="editable"
+            :slim="slim"
             :readonly="readonly"
             :disabled="disabled"
             @change="handleChange"
         />
         <div>
-            <button @click="editable = !editable">
-                Editable: {{ editable }}
+            <button @click="slim = !slim">
+                slim: {{ slim }}
             </button>
             <button @click="readonly = !readonly">
                 Readonly: {{ readonly }}
@@ -22,6 +22,10 @@
             <button @click="disabled = !disabled">
                 Disable: {{ disabled }}
             </button>
+        </div>
+        <div>
+            Events: <br>
+            {{ events }}
         </div>
     </div>
 </template>
@@ -37,20 +41,23 @@ export default defineComponent({
     },
     data() {
         return {
-            value: 0,
-            editable: false,
+            value: null,
+            slim: false,
             disabled: false,
-            readonly: false
+            readonly: false,
+            events: []
         }
     },
     watch: {
         value(newValue, oldValue) {
             console.log(`@@@ model value update ${oldValue} to ${newValue}`)
+            this.events[0] = `@@@ model value update ${oldValue} to ${newValue}`
         }
     },
     methods: {
         handleChange(value: number) {
             console.log(`@@@ handling change ${value}`)
+            this.events[1] = `@@@ handling change ${value}`
         }
     },
     template: 'dl-slider-demo'
