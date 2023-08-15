@@ -344,7 +344,9 @@
                                     <dl-menu>
                                         <dl-list separator>
                                             <dl-option-group
-                                                v-model="visibleColumnsState"
+                                                :model-value="
+                                                    visibleColumnsState
+                                                "
                                                 :options="groupOptions"
                                                 :left-label="true"
                                                 max-width="250px"
@@ -1301,6 +1303,8 @@ export default defineComponent({
         )
 
         const handleVisibleColumnsUpdate = (columns: string[]) => {
+            if (columns.length < 1) return
+            visibleColumnsState.value = columns
             emit('update-visible-columns', columns)
         }
 
