@@ -113,7 +113,8 @@ import {
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,
-    revertAliases
+    revertAliases,
+    clearPartlyTypedSuggestion
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -260,14 +261,13 @@ export default defineComponent({
             }
 
             searchQuery.value = value
-            input.value.innerHTML = value
 
-            // const resetCursor = restoreCursorPosition(input.value)
+            if (value !== input.value.innerText) {
+                input.value.innerHTML = value
+            }
+
             updateEditor(input.value, editorStyle.value)
             setMenuOffset(isEligibleToChange(input.value, expanded.value))
-            // resetCursor()
-
-            setCaret(input.value)
 
             if (!expanded.value) {
                 isOverflowing.value =
@@ -330,7 +330,10 @@ export default defineComponent({
                 stringValue = value + ' '
             }
 
-            setInputValue(stringValue)
+            setInputValue(
+                clearPartlyTypedSuggestion(input.value.innerText, stringValue)
+            )
+            setCaret(input.value)
         }
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
