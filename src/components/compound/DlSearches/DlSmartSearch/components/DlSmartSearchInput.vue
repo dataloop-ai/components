@@ -424,7 +424,10 @@ export default defineComponent({
             if (val) {
                 const aliased = fromJSON(val)
 
-                if (aliased !== searchQuery.value.trim()) {
+                if (
+                    aliased !== searchQuery.value.trim() ||
+                    !input.value?.innerHTML.length
+                ) {
                     debouncedSetInputFromModel(aliased)
                 }
             }
