@@ -73,6 +73,13 @@
                 </div>
             </template>
         </DlCard>
+
+        <div>Text Card</div>
+        <DlCard
+            title="This is a long long long long long long text title wooo"
+            text="sdaljfaldksfj;asdjfal;ksdf;ajksd;faj;lskdf;alkjsdflk;ajsd;lfjas;ldjfa;ldsjfals;dj"
+            :links="interactiveProps.links"
+        />
     </div>
 </template>
 
