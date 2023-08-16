@@ -141,7 +141,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: doughnutChartEmptyStateProps
+            default: () => doughnutChartEmptyStateProps
         }
     },
     setup(props) {

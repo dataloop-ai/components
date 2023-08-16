@@ -46,7 +46,7 @@
                 <div class="popup-content">
                     <slot v-if="!isEmpty" />
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
@@ -189,7 +189,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => ({} as DlEmptyStateProps)
+            default: null
         },
         zIndex: {
             type: [Number, String],

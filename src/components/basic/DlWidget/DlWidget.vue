@@ -29,7 +29,7 @@
 
                 <div class="dl-widget__content">
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
