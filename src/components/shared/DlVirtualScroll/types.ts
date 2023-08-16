@@ -1,4 +1,9 @@
 export * from './types'
 
-import { ScrollDetails as DlVirtualScrollScrollDetails } from './useVirtualScroll'
-export type { DlVirtualScrollScrollDetails }
+export type DlVirtualScrollEvent = {
+    index: number
+    from: number
+    to: number
+    direction: 'decrease' | 'increase'
+    ref: any // A reference to the vue proxy component
+}
