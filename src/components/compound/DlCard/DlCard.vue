@@ -618,6 +618,7 @@ export default defineComponent({
     width: var(--dl-card-width);
 
     &--content {
+        overflow-wrap: anywhere;
         padding: var(--dl-card-content-padding);
         &_text {
             font-size: 12px;
