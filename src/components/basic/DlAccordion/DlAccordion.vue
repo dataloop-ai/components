@@ -79,7 +79,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: accordionEmptyStateProps
+            default: () => accordionEmptyStateProps
         }
     },
     emits: ['update:model-value', 'hide', 'show'],

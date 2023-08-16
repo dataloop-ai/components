@@ -146,7 +146,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: barChartEmptyStateProps
+            default: () => barChartEmptyStateProps
         }
     },
     setup(props) {

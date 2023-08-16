@@ -11,6 +11,7 @@
                 ref="smartSearchInput"
                 v-model="queryObject"
                 style="margin-bottom: 0px"
+                :width="width"
                 :status="status"
                 :aliases="aliases"
                 :schema="schema"
@@ -33,7 +34,7 @@
                                 height: '28px'
                             }"
                             :disabled="disabled"
-                            @click="emitSearchQuery"
+                            @click="$emit('search-query', queryObject)"
                         />
                     </div>
                     <div
@@ -138,6 +139,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
+        // todo: more cleanup
         const inputModel = ref('')
         const jsonEditorModel = ref(false)
         const showJSONEditor = ref(false)

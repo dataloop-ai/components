@@ -26,7 +26,7 @@
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
-            :schema="schema"
+            :schema="schema2"
             :color-schema="colorSchema"
             :filters="filters"
             :disabled="switchState"
@@ -48,7 +48,7 @@
         <dl-smart-search-input
             v-model="queryObject2"
             :aliases="aliases"
-            :schema="schema"
+            :schema="schema2"
             :color-schema="colorSchema"
             :strict="strictState"
             :disabled="switchState"

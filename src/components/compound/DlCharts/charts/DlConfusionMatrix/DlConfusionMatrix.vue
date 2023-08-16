@@ -287,7 +287,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: confusionMatrixEmptyStateProps
+            default: () => confusionMatrixEmptyStateProps
         }
     },
     setup(props) {

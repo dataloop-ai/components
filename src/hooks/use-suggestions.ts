@@ -383,6 +383,7 @@ const isValidByDataType = (
      */
 
     if (Array.isArray(dataType)) {
+        str = str.replace(/\'/g, '')
         let isOneOf = !!getValueMatch(dataType, str)
         for (const type of dataType) {
             isOneOf = isOneOf || isValidByDataType(str, type, operator)
