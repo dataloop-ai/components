@@ -121,8 +121,12 @@ export function setCaret(target: HTMLElement) {
 }
 
 export function clearPartlyTypedSuggestion(oldValue: string, newValue: string) {
-    const oldSuggestion = oldValue.split(' ').at(-1)
-    const newSuggestion = newValue.split(' ').at(-2)
+    const oldSuggestions = oldValue.split(' ')
+    const newSuggestions = newValue.split(' ')
+
+    const oldSuggestion = oldSuggestions[oldSuggestions.length - 1]
+    const newSuggestion = newSuggestions[newSuggestions.length - 2]
+
     if (oldSuggestion && newSuggestion?.includes(oldSuggestion)) {
         newValue = removeOldSuggestion(newValue)
     }
