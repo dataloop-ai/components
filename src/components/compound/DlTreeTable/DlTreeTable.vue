@@ -236,7 +236,6 @@ export default defineComponent({
     setup(props, { emit, slots }) {
         const dlTableRef = ref(null)
         const selectedData = ref([])
-        const vScroll = ref(false)
         const borderState = ref([])
         const denseState = ref([])
         const resizableState = ref([])
@@ -381,7 +380,6 @@ export default defineComponent({
             dlTableRef,
             isRowSelected,
             hasFlatTreeData,
-            vScroll,
             headerSelectedValue,
             selectedData,
             denseState,

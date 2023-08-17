@@ -79,7 +79,6 @@ export default defineComponent({
             required: false,
             default: false
         },
-        onVirtualScroll: { type: Function, default: null },
         items: {
             type: Array,
             default: () => [] as Record<string, any>[]

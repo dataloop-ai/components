@@ -38,7 +38,7 @@
                 >
                     <dl-icon
                         :icon="endIconData.icon"
-                        :color="endIconData.color"
+                        :color="getIconColor(endIconData.color)"
                         :size="endIconData.size"
                     />
                 </dl-item-section>

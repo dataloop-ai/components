@@ -616,10 +616,7 @@ import {
 import DlTr from './components/DlTr.vue'
 import DlTh from './components/DlTh.vue'
 import DlTd from './components/DlTd.vue'
-import {
-    commonVirtPropsList,
-    ScrollDetails
-} from '../../shared/DlVirtualScroll/useVirtualScroll'
+import { commonVirtPropsList } from '../../shared/DlVirtualScroll/useVirtualScroll'
 import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
 import { useTableFilter } from './hooks/tableFilter'
 import { useTableSort } from './hooks/tableSort'
@@ -648,6 +645,7 @@ import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
 import { stopAndPrevent } from '../../../utils'
+import { DlVirtualScrollEvent } from '../../types'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -681,12 +679,15 @@ export default defineComponent({
             tableHeaderStyle,
             tableHeaderClass,
             dense,
-            draggable
+            draggable,
+            virtualScroll
         } = toRefs(props)
 
         const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
-        const hasVirtScroll = computed(() => props.virtualScroll === true)
+        const hasVirtScroll = computed<boolean>(
+            () => virtualScroll.value === true
+        )
 
         const groupOptions = computed(() =>
             (props.columns as DlTableColumn[]).map((item) => ({
@@ -1197,7 +1198,7 @@ export default defineComponent({
             }
         }
 
-        function onVScroll(info: ScrollDetails) {
+        function onVScroll(info: DlVirtualScrollEvent) {
             emit('virtual-scroll', info)
         }
 

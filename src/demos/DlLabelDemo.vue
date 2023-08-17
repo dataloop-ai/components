@@ -109,7 +109,7 @@
             <dl-label
                 indicator-color="dl-color-secondary"
                 hint="tooltip"
-                text="dl-labelaaaaaaaaaaaaaa"
+                text="dl-labelaaaaaaaaaaaaaaasdasdsdfsdfhaskjhsadkjsahdkjsahkfdsjhsdfkhkjhkshhajhfhfkfkjfhfkjakjh"
                 suffix=".mp3"
             >
                 <template #actions>

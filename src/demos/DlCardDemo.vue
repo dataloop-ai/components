@@ -76,7 +76,7 @@
 
         <div>Text Card</div>
         <DlCard
-            title="This is a long long long long long long text title wooo"
+            title="This-test--tes-tes-t-est-set-se-tse-t-est-set-se-ts-et-set-se-ts-et-set-tse-tse-tes-t"
             text="sdaljfaldksfj;asdjfal;ksdf;ajksd;faj;lskdf;alkjsdflk;ajsd;lfjas;ldjfa;ldsjfals;dj"
             :links="interactiveProps.links"
         />
