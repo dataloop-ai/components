@@ -123,11 +123,10 @@ export function useTablePaginationState(
             return
         }
 
-        if (props.pagination && props['onUpdate:pagination']) {
-            emit('update:pagination', newPagination)
-        } else {
+        if (!props.pagination || !props['onUpdate:pagination']) {
             innerPagination.value = newPagination
         }
+        emit('update:pagination', newPagination)
     }
 
     return {
