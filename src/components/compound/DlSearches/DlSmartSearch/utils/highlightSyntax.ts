@@ -52,7 +52,6 @@ export function updateEditor(
     })
 
     editor.innerHTML = renderText(textContent, colorSchema)
-
     restoreSelection(editor, anchorIndex, focusIndex)
 }
 
@@ -119,4 +118,25 @@ export function setCaret(target: HTMLElement) {
     sel.removeAllRanges()
     sel.addRange(range)
     target.focus()
+}
+
+export function clearPartlyTypedSuggestion(oldValue: string, newValue: string) {
+    const oldSuggestion = oldValue.split(' ').at(-1)
+    const newSuggestion = newValue.split(' ').at(-2)
+    if (oldSuggestion && newSuggestion?.includes(oldSuggestion)) {
+        newValue = removeOldSuggestion(newValue)
+    }
+    return newValue
+}
+
+function removeOldSuggestion(inputString: string) {
+    const words = inputString.trim().split(' ')
+
+    if (words.length >= 2) {
+        words.splice(-2, 1)
+        const resultString = words.join(' ')
+        return resultString + ' '
+    } else {
+        return inputString
+    }
 }
