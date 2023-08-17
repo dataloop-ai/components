@@ -185,7 +185,7 @@ export default defineComponent({
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            flex: 2 1 auto;
+            flex: 1 0 auto;
         }
     }
     &__content {
