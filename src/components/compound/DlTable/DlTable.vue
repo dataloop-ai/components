@@ -270,7 +270,7 @@
                     </template>
                     <DlTr v-if="isEmpty">
                         <DlTd colspan="100%">
-                            <div class="flex justify-center">
+                            <div class="flex justify-center full-width">
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
