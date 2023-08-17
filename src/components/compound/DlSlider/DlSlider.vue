@@ -202,12 +202,6 @@ export default defineComponent({
                     : between(modelValue.value, min.value, max.value)
             },
             set(val: number) {
-                console.log(
-                    '@@@ intial, cur',
-                    initialValue.value,
-                    modelValue.value
-                )
-                console.log(`@@@ model value update `, val)
                 if (val === modelValue.value) {
                     return
                 }
