@@ -350,7 +350,12 @@ export default defineComponent({
         const setInputFromModel = (value: string) => {
             searchQuery.value = value
             input.value.innerHTML = value
-            setInputValue(`${value} `, { noEmit: true })
+
+            let inputValue = `${value}`
+            if (value.length) {
+                inputValue += ' '
+            }
+            setInputValue(inputValue, { noEmit: true })
         }
 
         const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
