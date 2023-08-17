@@ -148,6 +148,10 @@ describe('DlTable', () => {
             })
             await wrapper.setProps({ filter: 'yo' })
             await wrapper.vm.$nextTick()
+            const emitted = wrapper.emitted()
+            const newPagination = emitted['update:pagination'][1][0]
+            await wrapper.setProps({ pagination: newPagination })
+            await wrapper.vm.$nextTick()
         })
 
         it('should have the right pagination page', () => {
