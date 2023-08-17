@@ -38,8 +38,6 @@ describe('useTablePaginationState', () => {
         useTablePaginationState(vm, getCellValue)
     )
 
-    console.log(wrapper)
-
     const {
         innerPagination,
         computedPagination,
