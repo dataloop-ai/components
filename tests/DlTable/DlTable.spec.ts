@@ -151,6 +151,7 @@ describe('DlTable', () => {
         })
 
         it('should have the right pagination page', () => {
+            console.log(wrapper.vm.computedPagination)
             expect(wrapper.vm.marginalsScope.pagination.page).toBe(1)
         })
     })

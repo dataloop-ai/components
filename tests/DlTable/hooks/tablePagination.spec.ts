@@ -23,7 +23,6 @@ const vm = {
     props: {
         rowsPerPageOptions: [10, 25, 100],
         pagination,
-        'onUpdate:pagination': vi.fn(),
         filter: () => 'value'
     },
     emit: emitFn
@@ -87,26 +86,6 @@ describe('useTablePaginationState', () => {
                     withQuickNavigation: true,
                     withRowsPerPage: true
                 })
-            })
-        })
-
-        describe('when pagination event is not provided', () => {
-            const localWrapper = mountComposition(() =>
-                useTablePaginationState(
-                    {
-                        ...vm,
-                        props: { ...vm.props, 'onUpdate:pagination': undefined }
-                    },
-                    getCellValue
-                )
-            )
-
-            it('should set the inner pagination with new pagination', () => {
-                const { innerPagination, setPagination } =
-                    localWrapper.result.current!
-                setPagination({ ...pagination, page: 6 })
-
-                expect(innerPagination.value.page).toBe(6)
             })
         })
     })

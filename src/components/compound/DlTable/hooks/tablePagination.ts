@@ -45,9 +45,7 @@ export const useTablePaginationProps = {
     rowsPerPageOptions: {
         type: Array,
         default: () => [5, 7, 10, 15, 20, 25, 50, 100]
-    },
-
-    'onUpdate:pagination': [Function, Array]
+    }
 }
 
 export function useTablePaginationState(
@@ -93,7 +91,7 @@ export function useTablePaginationState(
     )
 
     const computedPagination = computed(() => {
-        const pag = props['onUpdate:pagination']
+        const pag = props.pagination
             ? {
                   ...innerPagination.value,
                   ...props.pagination
@@ -123,7 +121,7 @@ export function useTablePaginationState(
             return
         }
 
-        if (!props.pagination || !props['onUpdate:pagination']) {
+        if (!props.pagination) {
             innerPagination.value = newPagination
         }
         emit('update:pagination', newPagination)
@@ -220,9 +218,7 @@ export function useTablePagination(
         }
     })
 
-    if (props['onUpdate:pagination']) {
-        emit('update:pagination', { ...computedPagination.value })
-    }
+    emit('update:pagination', { ...computedPagination.value })
 
     return {
         firstRowIndex,
