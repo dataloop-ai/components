@@ -45,6 +45,7 @@
             <template #icon="{}">
                 <DlIcon
                     v-if="(row.children || []).length > 0 && colIndex === 0"
+                    style="margin-right: 5px"
                     :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
                     @click="emitUpdateExpandedRow"
                 />
