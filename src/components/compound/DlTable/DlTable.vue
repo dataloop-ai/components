@@ -959,7 +959,7 @@ export default defineComponent({
 
             if (props.filter) {
                 filtered = computedFilterMethod.value(
-                    rows,
+                    rows.value,
                     props.filter,
                     computedCols.value,
                     getCellValue
