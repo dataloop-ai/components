@@ -959,7 +959,7 @@ export default defineComponent({
 
             if (props.filter) {
                 filtered = computedFilterMethod.value(
-                    rows,
+                    rows.value,
                     props.filter,
                     computedCols.value,
                     getCellValue
@@ -992,10 +992,14 @@ export default defineComponent({
                         filtered = filtered.slice(0, lastRowIndex.value)
                     }
                 } else {
-                    filtered = filtered.slice(
-                        firstRowIndex.value,
-                        lastRowIndex.value
-                    )
+                    if (
+                        filtered.length > computedPagination.value.rowsPerPage
+                    ) {
+                        filtered = filtered.slice(
+                            firstRowIndex.value,
+                            lastRowIndex.value
+                        )
+                    }
                 }
             }
 
