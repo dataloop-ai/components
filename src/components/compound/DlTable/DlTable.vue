@@ -575,7 +575,7 @@
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
-                            :total-items="rows.length"
+                            :total-items="totalItemsCount"
                             @update:rowsPerPage="
                                 (v) => updatePagination(v, 'rowsPerPage')
                             "
@@ -680,7 +680,8 @@ export default defineComponent({
             tableHeaderClass,
             dense,
             draggable,
-            virtualScroll
+            virtualScroll,
+            rows
         } = toRefs(props)
 
         const rootRef = ref<HTMLDivElement>(null)
@@ -793,6 +794,10 @@ export default defineComponent({
 
         let resizableManager: ResizableManager | null = null
         let tableEl: HTMLTableElement = null
+
+        const totalItemsCount = computed(() => {
+            return computedPagination.value.rowsNumber || rows.value.length
+        })
 
         onMounted(() => {
             tableEl = (rootRef.value as HTMLDivElement).querySelector(
@@ -939,22 +944,21 @@ export default defineComponent({
         )
 
         const { computedFilterMethod } = useTableFilter(props, setPagination)
-        const rowsPropRef = toRef(props, 'rows')
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
         const filteredSortedRows = computed(() => {
-            let rows = rowsPropRef.value as DlTableRow[]
+            let filtered = rows.value as DlTableRow[]
 
-            if (rows.length === 0) {
-                return rows
+            if (filtered.length === 0) {
+                return rows.value as DlTableRow[]
             }
 
             const { sortBy, descending } = computedPagination.value
 
             if (props.filter) {
-                rows = computedFilterMethod.value(
+                filtered = computedFilterMethod.value(
                     rows,
                     props.filter,
                     computedCols.value,
@@ -963,14 +967,14 @@ export default defineComponent({
             }
 
             if (columnToSort.value !== null) {
-                rows = computedSortMethod.value(
-                    rowsPropRef.value === rows ? rows.slice() : rows,
+                filtered = computedSortMethod.value(
+                    rows.value === filtered ? filtered.slice() : filtered,
                     sortBy,
                     descending
                 )
             }
 
-            return rows
+            return filtered
         })
 
         const filteredSortedRowsNumber = computed(
@@ -978,25 +982,28 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            let rows = filteredSortedRows.value
+            let filtered = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && rowsPropRef.value !== rows) {
-                    if (rows.length > lastRowIndex.value) {
-                        rows = rows.slice(0, lastRowIndex.value)
+                if (firstRowIndex.value === 0 && rows.value !== filtered) {
+                    if (filtered.length > lastRowIndex.value) {
+                        filtered = filtered.slice(0, lastRowIndex.value)
                     }
                 } else {
-                    rows = rows.slice(firstRowIndex.value, lastRowIndex.value)
+                    filtered = filtered.slice(
+                        firstRowIndex.value,
+                        lastRowIndex.value
+                    )
                 }
             }
 
-            return props.flatTreeData ? flatTreeData(rows) : rows
+            return props.flatTreeData ? flatTreeData(filtered) : filtered
         })
 
         const additionalClasses = computed(() => {
-            const classes = []
+            const classes: string[] = []
 
             if (hasDraggableRows.value === true) {
                 classes.push('dl-table--draggable-rows')
@@ -1055,7 +1062,7 @@ export default defineComponent({
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < rowsPropRef.value.length
+                computedRows.value.length < rows.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
@@ -1393,7 +1400,8 @@ export default defineComponent({
             groupOptions,
             visibleColumnsState,
             handleVisibleColumnsUpdate,
-            computedVisibleCols
+            computedVisibleCols,
+            totalItemsCount
         }
     }
 })

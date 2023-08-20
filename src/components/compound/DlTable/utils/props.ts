@@ -8,12 +8,16 @@ import { useTableFilterProps } from '../hooks/tableFilter'
 import { useTableSortProps } from '../hooks/tableSort'
 import { useTableColumnSelectionProps } from '../hooks/tableColumnSelection'
 import { useTableRowSelectionProps } from '../hooks/tableRowSelection'
+import { DlTableColumn, DlTableRow } from '../types'
 
 export const props = {
-    columns: { type: Array, default: () => [] as Record<string, any>[] },
+    columns: {
+        type: Array as PropType<DlTableColumn[]>,
+        default: () => [] as DlTableColumn[]
+    },
     rows: {
-        type: Array,
-        default: () => [] as Record<string, any>[]
+        type: Array as PropType<DlTableRow[]>,
+        default: () => [] as DlTableRow[]
     },
     rowKey: {
         type: [String, Function],
