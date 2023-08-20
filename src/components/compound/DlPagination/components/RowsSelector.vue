@@ -15,6 +15,7 @@
             width="min-content"
             align-right
             disable-dropdown-icon-padding
+            fit-content
             without-borders
             :model-value="modelValue"
             @update:model-value="setSelectedItem"
