@@ -690,6 +690,12 @@ export default defineComponent({
             () => virtualScroll.value === true
         )
 
+        const hasEmptyStateProps = computed(() =>
+            props.emptyStateProps
+                ? Object.keys(props.emptyStateProps).length > 0
+                : false
+        )
+
         const groupOptions = computed(() =>
             (props.columns as DlTableColumn[]).map((item) => ({
                 label: item.label,
@@ -1337,9 +1343,6 @@ export default defineComponent({
         const updatePagination = (value: any, key: string) => {
             return setPagination({ [`${key}`]: value })
         }
-        const hasEmptyStateProps = computed(
-            () => Object.keys(props.emptyStateProps).length > 0
-        )
 
         const handleVisibleColumnsUpdate = (columns: string[]) => {
             if (columns.length < 1) return

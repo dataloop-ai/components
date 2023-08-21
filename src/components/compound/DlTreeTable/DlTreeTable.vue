@@ -243,8 +243,10 @@ export default defineComponent({
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
 
-        const hasEmptyStateProps = computed(
-            () => Object.keys(props.emptyStateProps).length > 0
+        const hasEmptyStateProps = computed(() =>
+            props.emptyStateProps
+                ? Object.keys(props.emptyStateProps).length > 0
+                : false
         )
 
         const computedRows = computed(() =>
