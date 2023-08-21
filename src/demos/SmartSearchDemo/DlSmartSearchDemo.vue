@@ -22,7 +22,12 @@
             style="width: 100px"
             class="props"
         />
-        { "metadata.system.width": 5 }
+        <div>
+            Template searches<br>
+
+            dir IN 'test', 'test2'<br>
+            { "metadata.system.width": 5 }<br>
+        </div>
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
@@ -46,6 +51,15 @@
         Only the search
 
         <dl-smart-search-input
+            v-model="queryObject"
+            :aliases="aliases"
+            :schema="schema"
+            :color-schema="colorSchema"
+            :strict="strictState"
+            :disabled="switchState"
+        />
+
+        <dl-smart-search-input
             v-model="queryObject2"
             :aliases="aliases"
             :schema="schema2"
@@ -53,6 +67,7 @@
             :strict="strictState"
             :disabled="switchState"
         />
+        {{ queryObject }}
         {{ queryObject2 }}
     </div>
 </template>
