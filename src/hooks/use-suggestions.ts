@@ -370,11 +370,20 @@ const getError = (
 }
 
 const isValidByDataType = (
-    str: string,
+    str: string | string[],
     dataType: string | string[],
     operator: string
 ): boolean => {
     if (dataType === 'any') {
+        return true
+    }
+
+    if (Array.isArray(str)) {
+        for (const string of str) {
+            if (!isValidByDataType(string, dataType, operator)) {
+                return false
+            }
+        }
         return true
     }
 
@@ -383,7 +392,6 @@ const isValidByDataType = (
      */
 
     if (Array.isArray(dataType)) {
-        str = str.replace(/\'/g, '')
         let isOneOf = !!getValueMatch(dataType, str)
         for (const type of dataType) {
             isOneOf = isOneOf || isValidByDataType(str, type, operator)
@@ -406,9 +414,12 @@ const isValidByDataType = (
 }
 
 const validateBracketValues = (value: string) => {
-    value = removeBrackets(value)
-    value = value.split(',')[0]
-    return value
+    const bracketless = removeBrackets(value)
+    const pureValue = bracketless.split(',')
+    if (pureValue.length === 1) {
+        return pureValue[0]
+    }
+    return pureValue
 }
 
 const isValidDateIntervalPattern = (str: string) => {
@@ -426,7 +437,7 @@ const isValidBoolean = (str: string) => {
 const isValidString = (str: string) => {
     const match = str.match(/(?<=\")(.*?)(?=\")|(?<=\')(.*?)(?=\')/)
     if (!match) return false
-    return match[0] === removeQuotes(str)
+    return match[0] === removeQuotes(str.trim())
 }
 
 const getOperatorByDataType = (dataType: string) => {
