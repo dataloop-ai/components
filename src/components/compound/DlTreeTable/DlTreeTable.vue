@@ -281,7 +281,7 @@ export default defineComponent({
             rowsArr = tableRows.value
         ) => {
             (rowsArr as DlTableRow[]).some((o) => {
-                if (o[props.rowKey] === name) {
+                if (o[getRowKey.value as unknown as string] === name) {
                     if (isVue2) {
                         set(o, 'expanded', isExpanded)
                     } else {
