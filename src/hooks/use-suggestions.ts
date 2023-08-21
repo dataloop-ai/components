@@ -521,14 +521,26 @@ const insensitive = (str: string): string => str.toLowerCase()
 const getMatch = (strArr: string[], str: string) =>
     strArr.find((val) => insensitive(val) === insensitive(str)) ?? null
 
-const getValueMatch = (strArr: string[], str: string | number | boolean) => {
-    return (
-        strArr.find((val) =>
-            val.toString().charAt(0) === '"' && typeof str === 'string'
-                ? insensitive(val.replaceAll('"', '')) === insensitive(str)
-                : val.toString() === str.toString()
-        ) ?? null
-    )
+const getValueMatch = (
+    strArr: (string | number | boolean)[],
+    str: string | number | boolean
+) => {
+    for (const s of strArr) {
+        let term = str
+        let serach = s
+
+        if (typeof str === 'string') {
+            term = insensitive(str.replace(/["']/gi, ''))
+        }
+        if (typeof s === 'string') {
+            serach = insensitive(s)
+        }
+
+        if (serach === term) {
+            return s
+        }
+    }
+    return null
 }
 const getMatches = (strArr: string[], str: string | number | boolean) =>
     strArr.filter((val) =>
