@@ -210,9 +210,20 @@ describe('use-suggestions', () => {
             expect(error.value).toBe('Invalid value for "Name" field')
         })
 
-        it('should be "Invalid value for "Completed" field" when the Name value does not have quotes', () => {
+        it('should be "Invalid value for "Completed" field" when the is not of the correct type', () => {
             findSuggestions('Completed = "true"')
             expect(error.value).toBe('Invalid value for "Completed" field')
+        })
+
+        describe('When using a IN operator', () => {
+            it('should be "Invalid value for "Name" field" when the values are not strings', () => {
+                findSuggestions(`Name IN 'a', 5`)
+                expect(error.value).toBe('Invalid value for "Name" field')
+            })
+            it('should be valid field" when the values are not strings', () => {
+                findSuggestions(`Name IN "a", '5'`)
+                expect(error.value).toBe(null)
+            })
         })
     })
 })
