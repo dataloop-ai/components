@@ -1,7 +1,8 @@
 <template>
     <div>
-        <dl-button label="Open Popup">
+        <dl-button label="Controlled Popup">
             <dl-popup
+                :model-value="showing"
                 class="TestID"
                 :style="{ '--dl-popup-padding': '0px' }"
                 title="Edit Item Description"
@@ -9,6 +10,31 @@
                 subtitle="Some text for better explanation."
                 with-close-button
                 draggable
+                @update:model-value="handleClose"
+                @close-button-click="handleClear"
+            >
+                <dl-text-area
+                    v-model="text"
+                    :max-length="100"
+                    show-counter
+                    placeholder="Type your text"
+                    width="203px"
+                />
+                <template #footer>
+                    <dl-button fluid>
+                        Save
+                    </dl-button>
+                </template>
+            </dl-popup>
+        </dl-button>
+        <dl-button label="Open Popup">
+            <dl-popup
+                class="TestID"
+                :style="{ '--dl-popup-padding': '0px' }"
+                title="Edit Item Description"
+                with-close-button
+                additional-info="Some additional information"
+                subtitle="Some text for better explanation."
                 @close-button-click="handleClear"
             >
                 <dl-text-area
@@ -152,12 +178,16 @@ export default defineComponent({
     },
     data() {
         return {
-            text: ''
+            text: '',
+            showing: false
         }
     },
     methods: {
         handleClear() {
             this.text = ''
+        },
+        handleClose(val: boolean) {
+            this.showing = val
         }
     }
 })
