@@ -32,6 +32,7 @@ describe('DlChip', () => {
                 tabIndex: '',
                 icon: '',
                 textColor: '',
+                noBorder: false,
                 transform: 'default',
                 overflow: false,
                 fit: false

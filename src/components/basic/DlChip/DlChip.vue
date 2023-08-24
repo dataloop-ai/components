@@ -27,14 +27,17 @@
         >
             <div
                 ref="dlChipRef"
-                :class="{ 'dl-chip--ellipsis': overflow }"
+                :class="{
+                    'dl-chip--ellipsis': overflow,
+                    'dl-chip--no-overflow': !overflow
+                }"
             >
                 <slot>
                     {{ hasLabel ? label : null }}
                 </slot>
             </div>
         </div>
-
+        <slot name="suffix" />
         <span
             v-if="removable"
             class="dl-chip-remove-icon-container"
@@ -74,6 +77,7 @@ export default defineComponent({
     props: {
         disabled: Boolean,
         filled: { type: Boolean, default: true },
+        noBorder: { type: Boolean, default: false },
         outlined: Boolean,
         color: { type: String, default: 'dl-color-secondary' },
         textColor: { type: String, default: '' },
@@ -156,6 +160,7 @@ export default defineComponent({
                     color: this.color
                 }),
                 '--dl-chip-border': setBorder({
+                    noBorder: this.noBorder,
                     disabled: this.disabled,
                     color: this.color
                 }),
@@ -215,6 +220,10 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+    }
+
+    &--no-overflow {
+        overflow-wrap: break-word;
     }
 }
 
