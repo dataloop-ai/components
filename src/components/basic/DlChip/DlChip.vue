@@ -27,7 +27,7 @@
         >
             <div
                 ref="dlChipRef"
-                class="dl-chip--ellipsis"
+                :class="{ 'dl-chip--ellipsis': overflow }"
             >
                 <slot>
                     {{ hasLabel ? label : null }}
@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent, ref } from 'vue-demi'
+import { PropType, defineComponent, ref, watch } from 'vue-demi'
 import { DlTooltip } from '../../shared'
 import { DlIcon } from '../../essential'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
@@ -92,11 +92,16 @@ export default defineComponent({
         overflow: { type: Boolean, default: false },
         fit: { type: Boolean, default: false }
     },
-    emits: ['remove'],
-    setup() {
+    emits: ['remove', 'ellipsis'],
+    setup(props, ctx) {
         const isVisible = ref(true)
         const dlChipRef = ref(null)
-        const { hasEllipsis } = useSizeObserver(dlChipRef)
+        const label = ref(props.label)
+        const { hasEllipsis } = useSizeObserver(dlChipRef, label)
+
+        watch(hasEllipsis, () => {
+            ctx.emit('ellipsis', hasEllipsis.value)
+        })
 
         return {
             isVisible,
