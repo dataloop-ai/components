@@ -225,5 +225,10 @@ describe('use-suggestions', () => {
                 expect(error.value).toBe(null)
             })
         })
+
+        it('should be valid for correct level value', () => {
+            findSuggestions('Level = "high"')
+            expect(error.value).toBe(null)
+        })
     })
 })

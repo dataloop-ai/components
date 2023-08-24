@@ -26,6 +26,7 @@
             Template searches<br>
 
             dir IN 'test', 'test2'<br>
+            type = 'dir'<br>
             { "metadata.system.width": 5 }<br>
         </div>
         <dl-smart-search
@@ -97,7 +98,6 @@ export default defineComponent({
             filename: 'string',
             name: 'string',
             url: 'string',
-            type: 'string',
             dataset: 'string',
             datasetId: 'string',
             dir: 'string',
@@ -113,7 +113,10 @@ export default defineComponent({
                 },
                 test: 'any',
                 '*': 'any'
-            }
+            },
+            type: ['dir', 'file'],
+            test1: ['5', '6', 'number'],
+            test2: ['true', 'false']
         }
         const schema2: any = {
             type: [
