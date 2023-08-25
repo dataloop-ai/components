@@ -2,6 +2,7 @@
     <div>
         <dl-input
             v-model="textInputValue"
+            max-width="100%"
             style="width: 920px"
             placeholder="Select option"
             size="l"
@@ -26,15 +27,7 @@
             style="width: 220px"
             placeholder="Input with icon"
             size="l"
-            has-append
-        >
-            <template #append>
-                <dl-icon
-                    icon="icon-dl-save"
-                    size="12px"
-                />
-            </template>
-        </dl-input>
+        />
         <dl-input
             v-model="passFieldValue"
             title="Password"
@@ -147,12 +140,11 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlInput, DlIcon, DlButton } from '../components'
+import { DlInput, DlButton } from '../components'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
         DlInput,
-        DlIcon,
         DlButton
     },
     setup() {

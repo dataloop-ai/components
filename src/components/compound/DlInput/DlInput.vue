@@ -69,20 +69,20 @@
             >
                 <div class="row center full-width full-height">
                     <div style="flex-grow: 1; height: 100%; position: relative">
-                        <input
+                        <div
                             ref="input"
-                            :value="modelValue"
+                            :contenteditable="!disabled || readonly"
                             :class="inputClasses"
                             :placeholder="placeholder"
-                            :maxlength="maxLength"
-                            :type="showPass ? 'text' : type"
                             :disabled="disabled"
-                            :readonly="readonly"
                             @input="debouncedInput"
                             @focus="onFocus"
                             @blur="debouncedBlur"
-                            @keyup.enter="onKeyPress"
+                            @keydown="onKeydown"
+                            @keyup.enter="onEnterPress"
                         >
+                            {{ modelValue }}
+                        </div>
                         <div
                             v-if="hasPrepend"
                             :class="[
@@ -278,6 +278,14 @@ export default defineComponent({
             type: [String, Number],
             default: null
         },
+        maxWidth: {
+            type: String,
+            default: '200px'
+        },
+        minWidth: {
+            type: String,
+            default: '200px'
+        },
         size: {
             type: String as PropType<TInputSizes>,
             default: InputSizes.l
@@ -402,14 +410,15 @@ export default defineComponent({
         const handleSelectedItem = (value: any) => {
             onAutoSuggestClick(null, value)
         }
-        const inputRef = ref<HTMLInputElement>(null)
+        const input = ref(null)
         const onAutoSuggestClick = (
             e: Event,
             item: string | HTMLInputElement
         ): void => {
-            emit('input', item, e)
-            emit('update:model-value', item)
-            inputRef.value = item as HTMLInputElement
+            const newValue = props.modelValue.toString() + item
+            emit('input', newValue, e)
+            emit('update:model-value', newValue)
+            input.inneHTML += item
         }
 
         return {
@@ -419,7 +428,8 @@ export default defineComponent({
             isMenuOpen,
             setHighlightedIndex,
             handleSelectedItem,
-            mouseOverClear
+            mouseOverClear,
+            input
         }
     },
     data() {
@@ -465,7 +475,9 @@ export default defineComponent({
             }
             return {
                 '--dl-input-margin': inputMargin,
-                '--dl-input-border-color-hover': this.getBorderColor
+                '--dl-input-border-color-hover': this.getBorderColor,
+                '--dl-input-max-width': this.maxWidth,
+                '--dl-input-min-width': this.minWidth
             }
         },
         inputClasses(): string[] {
@@ -482,6 +494,9 @@ export default defineComponent({
             }
             if (this.hasPrepend && this.hasAppend) {
                 classes.push('dl-text-input__input--both-adornments')
+            }
+            if (this.type === 'password') {
+                classes.push('dl-text-input__input--password')
             }
             if (this.error) {
                 classes.push('dl-text-input__input--error')
@@ -551,6 +566,9 @@ export default defineComponent({
         inputLength(): number {
             return `${this.modelValue}`.length
         },
+        isWithinMaxLength(): boolean {
+            return this.maxLength ? this.inputLength < this.maxLength : true
+        },
         characterCounter(): string {
             if (!this.maxLength) {
                 return ''
@@ -577,13 +595,19 @@ export default defineComponent({
         }
     },
     methods: {
+        onKeydown(e: KeyboardEvent) {
+            if (!this.isWithinMaxLength && e.key !== 'Backspace') {
+                e.preventDefault()
+                return
+            }
+        },
         onClick(e: Event, item: string) {
             this.onAutoSuggestClick(e, item)
         },
         onChange(e: any): void {
             this.isMenuOpen = true
-            this.$emit('input', e.target.value, e)
-            this.$emit('update:model-value', e.target.value)
+            this.$emit('input', e.target.innerText, e)
+            this.$emit('update:model-value', e.target.innerText)
         },
         focus(): void {
             const inputRef = this.$refs.input as HTMLInputElement
@@ -601,7 +625,7 @@ export default defineComponent({
             this.focused = false
             this.$emit('blur', e)
         },
-        onKeyPress(e: any): void {
+        onEnterPress(e: any): void {
             this.$emit('enter', e.target.value, e)
         },
         onClear(e: any): void {
@@ -610,7 +634,7 @@ export default defineComponent({
             this.$emit('update:model-value', '')
 
             const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.value = ''
+            inputRef.innerHTML = ''
             inputRef.focus()
         },
         onPassShowClick(): void {
@@ -768,12 +792,17 @@ export default defineComponent({
     }
 
     &__input {
+        font-family: Arial, Helvetica, sans-serif;
         border: 1px solid var(--dl-color-separator);
         border-radius: 2px;
         color: var(--dl-color-darker);
         width: calc(100% - 20px);
+        max-width: var(--dl-input-max-width);
+        min-width: var(--dl-input-min-width);
         box-sizing: content-box;
-        height: 12px;
+        min-height: 10px;
+        line-height: 10px;
+        word-wrap: break-word;
         padding: 10px;
         outline: none;
         background: none;
@@ -826,6 +855,10 @@ export default defineComponent({
             border-color: var(--dl-input-border-color-hover);
             &:hover {
             }
+        }
+
+        &--password {
+            -webkit-text-security: disc;
         }
 
         &::placeholder {
