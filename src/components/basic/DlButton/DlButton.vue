@@ -213,6 +213,9 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
+            if (this.disabled) {
+                return 'dl-color-disabled'
+            }
             if (this.mouseOver) {
                 return 'dl-color-hover'
             }
