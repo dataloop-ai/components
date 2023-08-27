@@ -37,7 +37,10 @@
                     <dl-ellipsis :text="suffixPreview" />
                 </slot>
             </span>
-            <div class="dl-label__suffix">
+            <div
+                v-if="hint || hasHintSlot || hasActions"
+                class="dl-label__suffix"
+            >
                 <div class="dl-label__suffix-slot">
                     <slot
                         v-if="mouseOver"
@@ -138,6 +141,11 @@ export default defineComponent({
         const hasSuffixSlot = computed(() => {
             return !!slots['suffix']
         })
+
+        const hasHintSlot = computed(() => {
+            return !!slots['hint']
+        })
+
         const prefixPreview = computed(() => {
             return prefix.value?.trim() ?? ''
         })
@@ -151,6 +159,7 @@ export default defineComponent({
             styles,
             hasActions,
             hasSuffixSlot,
+            hasHintSlot,
             prefixPreview,
             suffixPreview
         }
