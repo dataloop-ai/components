@@ -22,7 +22,7 @@
             :hide-pagination="true"
             :hide-header="true"
             :bordered="false"
-            :columns="cols"
+            :columns="columns"
             selection="none"
             :loading="false"
             :filter="inputValue"
@@ -43,15 +43,9 @@
 </template>
 
 <script lang="ts">
-import { ref, type PropType, toRef, defineComponent } from 'vue-demi'
+import { ref, PropType, defineComponent } from 'vue-demi'
 import { DlLabel, DlInput, DlIcon, DlTreeTable } from '../../../components'
-
-export type TLabelPickerItem = {
-    color: string
-    identifier: string
-    displayLabel: string
-    children?: TLabelPickerItem[]
-}
+import { DlLabelPickerItem } from './types'
 
 export default defineComponent({
     name: 'DlLabelPicker',
@@ -63,20 +57,28 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Array as PropType<TLabelPickerItem[]>,
-            default: () => [] as PropType<TLabelPickerItem[]>
+            type: Array as PropType<DlLabelPickerItem[]>,
+            default: () => [] as PropType<DlLabelPickerItem[]>
         }
     },
     emits: ['selectedLabel'],
     setup(props, { emit, slots }) {
+        const columns = [
+            {
+                name: 'displayLabel',
+                label: '',
+                required: false,
+                align: 'left',
+                field: 'displayLabel',
+                sortable: false
+            }
+        ]
+
         const inputValue = ref('')
         const isInputActive = ref(false)
         const inputBorderLeft = ref('2px solid transparent')
-        const results = ref<TLabelPickerItem[]>([])
 
-        const cols = ref(columns)
-
-        const handleRowClick = (_: MouseEvent, item: TLabelPickerItem) => {
+        const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
             inputBorderLeft.value = `2px solid ${item.color}`
             emit('selectedLabel', item)
         }
@@ -86,21 +88,10 @@ export default defineComponent({
             inputValue,
             inputBorderLeft,
             isInputActive,
-            cols
+            columns
         }
     }
 })
-
-const columns = [
-    {
-        name: 'displayLabel',
-        label: '',
-        required: false,
-        align: 'left',
-        field: 'displayLabel',
-        sortable: false
-    }
-]
 </script>
 
 <style scope>
