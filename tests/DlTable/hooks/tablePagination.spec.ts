@@ -1,4 +1,4 @@
-import { ComputedRef, Ref } from 'vue'
+import { ComputedRef, Ref, reactive } from 'vue-demi'
 import { mountComposition, nextTick } from 'vue-composition-test-utils'
 import {
     useTablePaginationState,
@@ -7,23 +7,23 @@ import {
 } from '../../../src/components/compound/DlTable/hooks/tablePagination'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const pagination = {
+const pagination = reactive({
     sortBy: 'field',
     descending: false,
     page: 1,
     rowsPerPage: 10,
     rowsNumber: 50,
     maxPages: 5
-}
+})
 
 const emitFn = vi.fn()
 const getCellValue = vi.fn()
 
 const vm = {
     props: {
+        virtualScroll: false,
         rowsPerPageOptions: [10, 25, 100],
         pagination,
-        'onUpdate:pagination': vi.fn(),
         filter: () => 'value'
     },
     emit: emitFn
@@ -87,26 +87,6 @@ describe('useTablePaginationState', () => {
                     withQuickNavigation: true,
                     withRowsPerPage: true
                 })
-            })
-        })
-
-        describe('when pagination event is not provided', () => {
-            const localWrapper = mountComposition(() =>
-                useTablePaginationState(
-                    {
-                        ...vm,
-                        props: { ...vm.props, 'onUpdate:pagination': undefined }
-                    },
-                    getCellValue
-                )
-            )
-
-            it('should set the inner pagination with new pagination', () => {
-                const { innerPagination, setPagination } =
-                    localWrapper.result.current!
-                setPagination({ ...pagination, page: 6 })
-
-                expect(innerPagination.value.page).toBe(6)
             })
         })
     })

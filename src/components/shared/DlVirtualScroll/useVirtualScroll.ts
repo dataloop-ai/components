@@ -15,7 +15,7 @@ import {
     Ref
 } from 'vue-demi'
 import { noop } from '../../../utils/events'
-import { VirtualScrollParamsType } from './types/VirtualScrollParamsType'
+import { DlVirtualScrollParamsType } from './types/VirtualScrollParamsType'
 
 export interface ScrollDetails {
     scrollStart: number
@@ -282,7 +282,7 @@ export function useVirtualScroll({
     getVirtualScrollEl,
     virtualScrollItemSizeComputed, // optional
     debounceValue
-}: VirtualScrollParamsType) {
+}: DlVirtualScrollParamsType) {
     const vm = getCurrentInstance()
 
     const { props, emit, proxy } = vm

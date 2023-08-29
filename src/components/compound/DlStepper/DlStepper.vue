@@ -41,7 +41,7 @@
                         :state="state"
                     />
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
@@ -159,7 +159,6 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            required: false,
             default: null
         }
     },

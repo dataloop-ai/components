@@ -9,7 +9,7 @@
         <div class="dl-label__prefix">
             <slot name="prefix">
                 <div
-                    v-if="labelColor"
+                    v-if="indicatorColor"
                     class="dl-label__line"
                 />
             </slot>
@@ -29,11 +29,18 @@
                 <slot name="default" />
             </dl-ellipsis>
             <span
-                v-if="suffix"
-                :class="fluid ? 'dl-label__fluid' : ''"
+                v-if="suffix || hasSuffixSlot"
+                class="dl-label__suffix-content"
+                :class="{ 'dl-label__fluid': fluid }"
             >
-                {{ suffixPreview }}</span>
-            <div class="dl-label__suffix">
+                <slot name="suffix">
+                    <dl-ellipsis :text="suffixPreview" />
+                </slot>
+            </span>
+            <div
+                v-if="hint || hasHintSlot || hasActions"
+                class="dl-label__suffix"
+            >
                 <div class="dl-label__suffix-slot">
                     <slot
                         v-if="mouseOver"
@@ -90,7 +97,7 @@ export default defineComponent({
         /**
          * Color of the left side line
          */
-        labelColor: {
+        indicatorColor: {
             type: String,
             default: null
         },
@@ -118,17 +125,25 @@ export default defineComponent({
     },
     setup(props, { emit, slots }) {
         const mouseOver = ref(false)
-        const { labelColor, color, prefix, suffix } = toRefs(props)
+        const { indicatorColor, color, prefix, suffix } = toRefs(props)
 
         const styles = computed<Record<string, any>>(() => {
             return {
-                '--dl-label-color': getColor(labelColor.value),
+                '--dl-label-color': getColor(indicatorColor.value),
                 '--dl-label-text-color': getColor(color.value)
             }
         })
 
         const hasActions = computed(() => {
             return !!slots['actions']
+        })
+
+        const hasSuffixSlot = computed(() => {
+            return !!slots['suffix']
+        })
+
+        const hasHintSlot = computed(() => {
+            return !!slots['hint']
         })
 
         const prefixPreview = computed(() => {
@@ -143,6 +158,8 @@ export default defineComponent({
             mouseOver,
             styles,
             hasActions,
+            hasSuffixSlot,
+            hasHintSlot,
             prefixPreview,
             suffixPreview
         }
@@ -171,6 +188,13 @@ export default defineComponent({
         align-items: center;
         &-icon {
             cursor: pointer;
+        }
+        &-content {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1 0 auto;
         }
     }
     &__content {

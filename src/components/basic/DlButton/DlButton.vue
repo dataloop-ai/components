@@ -1,9 +1,9 @@
 <template>
     <div
         :id="uuid"
-        class="dl-button-container"
+        :class="containerClasses"
         style="pointer-events: none"
-        :style="[cssButtonVars, containerStyles, capitalizeFirst]"
+        :style="[cssButtonVars, containerStyles]"
     >
         <button
             v-if="hasContent || hasIcon"
@@ -16,6 +16,8 @@
             @click="onClick"
             @dblclick="onDblClick"
             @mousedown="onMouseDown"
+            @mouseenter="mouseOver = true"
+            @mouseleave="mouseOver = false"
         >
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
@@ -73,7 +75,7 @@ import {
     setMaxHeight
 } from './utils'
 import type { ButtonSizes } from './utils'
-import { computed, defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue-demi'
 import { colorNames } from '../../../utils/css-color-names'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 import { v4 } from 'uuid'
@@ -128,7 +130,7 @@ export default defineComponent({
          * The size of the button, it can be s,m,l or xl
          */
         margin: { type: String, default: '0 auto' },
-        size: { type: String! as PropType<ButtonSizes>, default: 'm' },
+        size: { type: String! as PropType<ButtonSizes | string>, default: 'm' },
         /**
          * The assigned color will fill the entirety of the button
          */
@@ -179,22 +181,45 @@ export default defineComponent({
     },
     emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
+        const { active } = toRefs(props)
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
+        const mouseOver = ref(false)
 
         const buttonClass = computed(() => {
-            return props.active ? 'dl-button active-class' : 'dl-button'
+            const classes = ['dl-button']
+            if (active.value) {
+                classes.push('active-class')
+            }
+            if (props.dense) {
+                classes.push('dl-button--dense')
+            }
+            return classes
         })
 
         return {
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
             isOverflowing: hasEllipsis,
-            buttonClass
+            buttonClass,
+            mouseOver
         }
     },
     computed: {
+        containerClasses(): string[] {
+            return [
+                'dl-button-container',
+                `dl-text-transform--${this.transform}`
+            ]
+        },
         getIconColor(): string {
+            if (this.disabled) {
+                return 'dl-color-disabled'
+            }
+            if (this.mouseOver) {
+                return 'dl-color-hover'
+            }
+
             if (this.iconColor) {
                 return this.iconColor
             }
@@ -203,12 +228,6 @@ export default defineComponent({
                 return this.textColor
             }
 
-            return 'dl-color-secondary'
-        },
-        capitalizeFirst(): string {
-            if (this.transform === 'default') {
-                return 'first-letter-capitalized'
-            }
             return null
         },
         computedStyles(): Record<string, string> {
@@ -356,9 +375,6 @@ export default defineComponent({
                     : setPadding(this.size),
                 '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
-                '--dl-button-text-transform': this.capitalizeFirst
-                    ? null
-                    : this.transform,
                 '--dl-button-cursor': this.isActionable
                     ? 'pointer'
                     : 'not-allowed',
@@ -424,7 +440,6 @@ export default defineComponent({
     padding: var(--dl-button-padding);
     margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
-    text-transform: var(--dl-button-text-transform);
     font-family: 'Roboto', sans-serif;
     font-size: var(--dl-button-font-size);
     cursor: var(--dl-button-cursor);
@@ -453,6 +468,11 @@ export default defineComponent({
         }
     }
 
+    &--dense {
+        border: none;
+        padding: 0;
+    }
+
     &:hover:enabled:not(:active) {
         transition: var(--dl-button-transition-duration);
         color: var(--dl-button-text-color-hover);
@@ -462,6 +482,9 @@ export default defineComponent({
         & .dl-button-label {
             transition: var(--dl-button-text-transition-duration);
             color: var(--dl-button-color-hover);
+        }
+        .dl-icon {
+            color: var(--dl-button-text-color-hover) !important;
         }
     }
 }
@@ -482,13 +505,6 @@ export default defineComponent({
 
 .dl-button-icon {
     transition: var(--dl-button-text-transition-duration);
-}
-
-.dl-button-container.first-letter-capitalized {
-    &::first-letter,
-    & > *::first-letter {
-        text-transform: capitalize;
-    }
 }
 
 .dl-button-container {

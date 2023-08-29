@@ -70,6 +70,9 @@
                 >
             </div>
         </div>
+        <div>
+            {{ date }}
+        </div>
         <div class="dl-dtr--input">
             <dl-date-time-range
                 v-model="date"

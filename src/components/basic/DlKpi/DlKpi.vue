@@ -5,7 +5,9 @@
     >
         <div class="kpi_box__counter">
             <dl-typography
-                color="dl-color-secondary"
+                :color="
+                    counter.value ? 'dl-color-secondary' : 'dl-color-medium'
+                "
                 variant="h1"
                 :size="counterFontSizeComputed"
             >

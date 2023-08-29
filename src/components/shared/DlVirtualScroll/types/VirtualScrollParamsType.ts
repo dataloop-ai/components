@@ -1,6 +1,6 @@
 import { ComputedRef } from 'vue-demi'
 
-export type VirtualScrollParamsType = {
+export type DlVirtualScrollParamsType = {
     virtualScrollLength: ComputedRef<number>
     getVirtualScrollTarget: () => HTMLElement | undefined
     getVirtualScrollEl: () => HTMLElement

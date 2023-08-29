@@ -93,6 +93,11 @@ import {
     DoughnutControllerChartOptions
 } from 'chart.js'
 
+const doughnutChartEmptyStateProps = {
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
+
 ChartJS.register(Tooltip, Legend, DoughnutController, ArcElement)
 
 import { cloneDeep, merge } from 'lodash'
@@ -136,7 +141,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: () => doughnutChartEmptyStateProps
         }
     },
     setup(props) {

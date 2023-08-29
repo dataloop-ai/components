@@ -178,6 +178,7 @@ export default defineComponent({
     },
     watch: {
         isTrue() {
+            // todo: what the hell ?
             debounce(() => {
                 nextTick(() => {
                     (this.$refs.input as HTMLInputElement).checked =

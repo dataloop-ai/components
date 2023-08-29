@@ -1,3 +1,4 @@
+// todo handle this shitshow
 export interface Query {
     name: string
     query: string | null

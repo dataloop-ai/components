@@ -21,50 +21,14 @@
             :options="options"
             :items-in-view="6"
             is-empty
-            :empty-state-props="{
-                responsive: true,
-                style: 'min-height: 350px;',
-                bgSize: '130px',
-                bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                title: 'Lorem ipsum',
-                subtitle:
-                    'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                info: 'To learn more about this analytics, read our documentation.'
-            }"
-        >
-            <template #links="">
-                <div style="display: flex; gap: 5px; padding: 0 20px">
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-sdk-documentation"
-                        flat
-                        uppercase
-                        label="SDK"
-                    />
-                    <div class="break" />
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-file"
-                        flat
-                        label="Documentation"
-                    />
-                    <div class="break" />
-                    <dl-button
-                        padding="0px"
-                        icon="icon-dl-youtube"
-                        flat
-                        label="Video"
-                    />
-                </div>
-            </template>
-        </dl-bar-chart>
+        />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { ChartOptions } from 'chart.js'
-import { DlBarChart, DlButton } from '../components'
+import { DlBarChart } from '../components'
 
 const labelsFn = () => {
     const a = []
@@ -117,8 +81,7 @@ const options: ChartOptions = {
 export default defineComponent({
     name: 'DlChartDemo',
     components: {
-        DlBarChart,
-        DlButton
+        DlBarChart
     },
     data() {
         return {

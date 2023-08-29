@@ -17,6 +17,7 @@
             >
                 <draggable-upper
                     v-if="draggable"
+                    class="popup-dialog-upper"
                     @move="movePopup"
                 />
                 <popup-header
@@ -45,7 +46,7 @@
                 <div class="popup-content">
                     <slot v-if="!isEmpty" />
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
@@ -188,7 +189,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => ({} as DlEmptyStateProps)
+            default: null
         },
         zIndex: {
             type: [Number, String],
@@ -376,7 +377,7 @@ export default defineComponent({
 
         function configureScrollTarget() {
             if (anchorEl.value !== null || props.scrollTarget) {
-                (localScrollTarget as Ref<any>).value = getScrollTarget(
+                localScrollTarget.value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget
                 )
@@ -462,7 +463,9 @@ export default defineComponent({
         Object.assign(proxy, { focus, updatePosition })
 
         return {
-            uuid: `dl-popup-${v4()}`,
+            uuid: (attrs.id as string)?.length
+                ? (attrs.id as string)
+                : `dl-popup-${v4()}`,
             portalIsAccessible,
             anchorEl,
             showing,
@@ -474,7 +477,7 @@ export default defineComponent({
             innerRef,
             portalEl: isVue2 ? 'body' : portalEl,
             portalIsActive,
-            classes: 'dl-popup dl-position-engine scroll',
+            classes: ['dl-popup dl-position-engine scroll', attrs.class],
             styles: [
                 isString(attrs.style)
                     ? stringStyleToRecord(attrs.style)
@@ -503,6 +506,16 @@ export default defineComponent({
     /* TODO: Change to variable */
     box-shadow: 0px 3px 6px rgba(16, 30, 115, 0.15);
     border-radius: 2px;
+}
+
+.popup-dialog-upper {
+    opacity: 0;
+    position: absolute;
+    top: 2px;
+    cursor: pointer;
+}
+.popup-dialog-upper:hover {
+    opacity: 1;
 }
 
 .popup-content {

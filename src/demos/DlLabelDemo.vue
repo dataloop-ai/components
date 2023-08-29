@@ -3,7 +3,7 @@
         <div class="dl-text-holder-demo">
             Label with actions
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 text="dl-labelaaaaaaaaaaaaaa"
             >
                 <template #actions>
@@ -25,7 +25,7 @@
         <div class="dl-text-holder-demo">
             Label with hint
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
             />
@@ -33,7 +33,7 @@
         <div class="dl-text-holder-demo">
             Label with and actions
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
             >
@@ -56,9 +56,9 @@
         <div class="dl-text-holder-demo">
             Label with prefix
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
-                text="dl-labelaaaaaaaaaaaaaa"
+                text="dl-labelaaaaaaaaaaaaaadjsfskdlfjdslkfjskfljslkadjakldjdkljdkladjakldajdlkadsjakldaj"
                 prefix="%"
             >
                 <template #actions>
@@ -80,7 +80,7 @@
         <div class="dl-text-holder-demo">
             Label with suffix
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
                 suffix=".mp3"
@@ -107,9 +107,9 @@
         >
             Label with suffix in a large container
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
-                text="dl-labelaaaaaaaaaaaaaa"
+                text="dl-labelaaaaaaaaaaaaaaasdasdsdfsdfhaskjhsadkjsahdkjsahkfdsjhsdfkhkjhkshhajhfhfkfkjfhfkjakjh"
                 suffix=".mp3"
             >
                 <template #actions>
@@ -134,10 +134,10 @@
         >
             Label with suffix in a large container and fluid
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
-                suffix=".mp3"
+                suffix=".mp3asdasdsfjksdhfjkdsfhkajshdsakjdhasjkdhaskjdhaskjdhaskjdhaskjfhdskjahrjkasdhjksadhasjkashjfg"
                 fluid
             >
                 <template #actions>
@@ -157,27 +157,34 @@
             </dl-label>
         </div>
         <div class="dl-text-holder-demo">
-            Label with suffix and fluid
+            Label with a big suffix
             <dl-label
-                label-color="dl-color-secondary"
+                indicator-color="dl-color-secondary"
                 hint="tooltip"
                 text="dl-labelaaaaaaaaaaaaaa"
-                suffix=".mp3"
-                fluid
+                suffix=".askdjhask jshadk jsah dajk dhsa djksahd ksaj dhajkd ah dkajsd haskd shds asd asd sadas "
+            />
+        </div>
+        <div class="dl-text-holder-demo">
+            Label with suffix and separator
+            <dl-label
+                id="show-both-ends"
+                text="I am a package name"
             >
-                <template #actions>
-                    <div
+                <template #suffix>
+                    <span
                         style="
-                            display: flex;
-                            gap: 5px;
-                            align-items: center;
-                            height: 100%;
-                            margin-right: 5px;
+                            width: 100%;
+                            display: inline-flex;
+                            gap: 2px;
+                            margin-left: 2px;
                         "
                     >
-                        <dl-icon icon="icon-dl-add" />
-                        <dl-icon icon="icon-dl-delete" />
-                    </div>
+                        <span style="color: var(--dl-color-lighter)">|</span>
+                        <dl-ellipsis
+                            text="I am a very long model name I am a very long model name"
+                        />
+                    </span>
                 </template>
             </dl-label>
         </div>
@@ -186,12 +193,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlLabel, DlIcon } from '../components'
+import { DlLabel, DlIcon, DlEllipsis } from '../components'
 
 export default defineComponent({
     components: {
         DlLabel,
-        DlIcon
+        DlIcon,
+        DlEllipsis
     }
 })
 </script>
@@ -201,8 +209,15 @@ export default defineComponent({
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    width: 200px;
+    width: 300px;
     padding: 5px;
     word-wrap: break-word;
+}
+</style>
+<style lang="scss">
+#show-both-ends {
+    .dl-label__suffix-content {
+        flex: 1 2 auto;
+    }
 }
 </style>

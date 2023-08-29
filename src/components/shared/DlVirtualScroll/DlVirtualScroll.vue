@@ -12,7 +12,8 @@ import {
     watch,
     isVue2,
     h,
-    onUnmounted
+    onUnmounted,
+    toRefs
 } from 'vue-demi'
 import getTableMiddle from '../../compound/DlTable/utils/getTableMiddle'
 import { listenOpts, mergeSlot } from '../../../utils'
@@ -20,6 +21,7 @@ import { getScrollTarget } from '../../../utils/scroll'
 import { DlList } from '../../essential/DlList'
 import { DlMarkupTable } from '../../basic/DlMarkupTable'
 import { useVirtualScroll } from './useVirtualScroll'
+import { stateManager } from '../../../StateManager'
 
 const comps = {
     list: DlList,
@@ -77,7 +79,6 @@ export default defineComponent({
             required: false,
             default: false
         },
-        onVirtualScroll: { type: Function, default: null },
         items: {
             type: Array,
             default: () => [] as Record<string, any>[]
@@ -104,6 +105,17 @@ export default defineComponent({
     },
     emits: ['virtual-scroll'],
     setup(props, { slots, attrs }) {
+        const {
+            itemsSize,
+            itemsFn,
+            items,
+            virtualScrollItemSize,
+            scrollDebounce,
+            virtualScrollHorizontal,
+            scrollTarget,
+            type
+        } = toRefs(props)
+
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
         const scrollSizeItem: Ref<number> = ref(40)
@@ -111,16 +123,16 @@ export default defineComponent({
         const isDefined = (v: any) => v !== undefined && v !== null
 
         const virtualScrollLength = computed(() => {
-            return props.itemsSize >= 0 && isDefined(props.itemsFn)
-                ? parseInt(props.itemsSize as unknown as string, 10)
-                : Array.isArray(props.items)
-                ? props.items.length
+            return itemsSize.value >= 0 && isDefined(itemsFn.value)
+                ? parseInt(itemsSize.value as unknown as string, 10)
+                : Array.isArray(items.value)
+                ? items.value.length
                 : 0
         })
 
         const setItemSize = () => {
-            scrollSizeItem.value = props.virtualScrollItemSize
-                ? props.virtualScrollItemSize
+            scrollSizeItem.value = virtualScrollItemSize.value
+                ? virtualScrollItemSize.value
                 : typeof rootRef.value?.getElementsByClassName === 'function'
                 ? rootRef.value?.getElementsByClassName(
                       'dl-virtual-scroll__content'
@@ -150,7 +162,7 @@ export default defineComponent({
             getVirtualScrollTarget,
             getVirtualScrollEl,
             virtualScrollItemSizeComputed,
-            debounceValue: props.scrollDebounce
+            debounceValue: scrollDebounce.value
         })
 
         const virtualScrollScope = computed(() => {
@@ -163,16 +175,15 @@ export default defineComponent({
                 item
             })
 
-            const itemsFn = props.itemsFn as Function
-            const items = props.items as Record<string, any>[]
+            const func = itemsFn.value as Function
 
-            return isDefined(itemsFn)
-                ? itemsFn(
+            return isDefined(func)
+                ? func(
                       virtualScrollSliceRange.value.from,
                       virtualScrollSliceRange.value.to -
                           virtualScrollSliceRange.value.from
                   ).map(mapFn)
-                : items
+                : items.value
                       .slice(
                           virtualScrollSliceRange.value.from,
                           virtualScrollSliceRange.value.to
@@ -183,27 +194,24 @@ export default defineComponent({
         const classes = computed(
             () =>
                 `dl-virtual-scroll dl-virtual-scroll` +
-                (props.virtualScrollHorizontal === true
+                (virtualScrollHorizontal.value === true
                     ? '--horizontal'
                     : '--vertical') +
-                (isDefined(props.scrollTarget) ? '' : ' scroll')
+                (isDefined(scrollTarget.value) ? '' : ' scroll')
         )
 
         const attributes = computed(() =>
-            isDefined(props.scrollTarget) ? {} : { tabindex: 0 }
+            isDefined(scrollTarget.value) ? {} : { tabindex: 0 }
         )
 
         watch(virtualScrollLength, () => {
             localResetVirtualScroll()
         })
 
-        watch(
-            () => props.scrollTarget,
-            () => {
-                unconfigureScrollTarget()
-                configureScrollTarget()
-            }
-        )
+        watch(scrollTarget, () => {
+            unconfigureScrollTarget()
+            configureScrollTarget()
+        })
 
         function getVirtualScrollEl() {
             return (rootRef.value as any)?.$el || rootRef.value
@@ -216,7 +224,7 @@ export default defineComponent({
         function configureScrollTarget() {
             localScrollTarget = getScrollTarget(
                 getVirtualScrollEl(),
-                props.scrollTarget as any
+                scrollTarget.value as any
             )
 
             localScrollTarget!.addEventListener(
@@ -240,7 +248,7 @@ export default defineComponent({
         function __getVirtualChildren(create: Function) {
             let child = padVirtualScroll(
                 virtualScrollRootTag[
-                    props.type as 'list' | 'table' | '__dltable'
+                    type.value as 'list' | 'table' | '__dltable'
                 ] || 'div',
                 virtualScrollScope.value.map(slots.default),
                 create
@@ -283,7 +291,7 @@ export default defineComponent({
         return {
             hasDefaultSlot,
             getVirtualChildren: __getVirtualChildren,
-            tag: (comps as Record<string, any>)[props.type] || props.type,
+            tag: (comps as Record<string, any>)[type.value] || type.value,
             attrs,
             rootRef,
             classes,
@@ -301,7 +309,7 @@ export default defineComponent({
         const renderSlot = (fn: Function) => (isVue2 ? fn() : () => fn())
 
         if (!this.hasDefaultSlot) {
-            console.error(
+            stateManager.logger.error(
                 'DlVirtualScroll: default scoped slot is required for rendering'
             )
             return

@@ -6,7 +6,8 @@ import {
     nextTick,
     Ref,
     ComputedRef,
-    PropType
+    PropType,
+    toRefs
 } from 'vue-demi'
 
 export type TablePagination = {
@@ -45,9 +46,7 @@ export const useTablePaginationProps = {
     rowsPerPageOptions: {
         type: Array,
         default: () => [5, 7, 10, 15, 20, 25, 50, 100]
-    },
-
-    'onUpdate:pagination': [Function, Array]
+    }
 }
 
 export function useTablePaginationState(
@@ -56,16 +55,18 @@ export function useTablePaginationState(
 ) {
     const { props, emit } = vm
 
+    const { pagination, rowsPerPageOptions, virtualScroll } = toRefs(props)
+
     const innerPagination = ref(
         Object.assign(
             {
                 sortBy: null,
                 descending: false,
                 page: 1,
-                rowsPerPage: props.virtualScroll
+                rowsPerPage: virtualScroll.value
                     ? 0
-                    : props.rowsPerPageOptions.length > 0
-                    ? props.rowsPerPageOptions[0]
+                    : rowsPerPageOptions.value.length > 0
+                    ? rowsPerPageOptions.value[0]
                     : 5,
                 min: 1,
                 maxPages: 0,
@@ -76,16 +77,16 @@ export function useTablePaginationState(
                 itemsName: 'Rows',
                 withLegend: true,
                 withRowsPerPage: true,
-                rowsPerPageOptions: props.virtualScroll
+                rowsPerPageOptions: virtualScroll.value
                     ? [0]
-                    : props.rowsPerPageOptions
+                    : rowsPerPageOptions.value
             },
-            props.pagination
+            pagination.value
         )
     )
 
     watch(
-        () => props.pagination,
+        pagination,
         (pag) => {
             innerPagination.value = Object.assign(innerPagination.value, pag)
         },
@@ -93,10 +94,10 @@ export function useTablePaginationState(
     )
 
     const computedPagination = computed(() => {
-        const pag = props['onUpdate:pagination']
+        const pag = pagination.value
             ? {
                   ...innerPagination.value,
-                  ...props.pagination
+                  ...pagination.value
               }
             : innerPagination.value
 
@@ -123,11 +124,11 @@ export function useTablePaginationState(
             return
         }
 
-        if (props.pagination && props['onUpdate:pagination']) {
-            emit('update:pagination', newPagination)
-        } else {
+        if (!props.pagination) {
             innerPagination.value = newPagination
         }
+
+        emit('update:pagination', newPagination)
     }
 
     return {
@@ -221,9 +222,7 @@ export function useTablePagination(
         }
     })
 
-    if (props['onUpdate:pagination']) {
-        emit('update:pagination', { ...computedPagination.value })
-    }
+    emit('update:pagination', { ...computedPagination.value })
 
     return {
         firstRowIndex,

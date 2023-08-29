@@ -22,16 +22,23 @@
             style="width: 100px"
             class="props"
         />
-        { "metadata.system.width": 5 }
+        <div>
+            Template searches<br>
+
+            dir IN 'test', 'test2'<br>
+            type = 'dir'<br>
+            { "metadata.system.width": 5 }<br>
+        </div>
         <dl-smart-search
             v-model="queryObject"
             :aliases="aliases"
-            :schema="schema"
+            :schema="schema2"
             :color-schema="colorSchema"
             :filters="filters"
             :disabled="switchState"
             :is-loading="isLoading"
             :strict="strictState"
+            style="width: 600px"
             @remove-query="handleRemoveQuery"
             @save-query="handleSaveQuery"
             @search-query="handleSearchQuery"
@@ -42,20 +49,38 @@
         <br>
         <br>
         <br>
-        <br>
-        Test second if they work on same page..
-        <dl-smart-search
+        Only the search
+
+        <dl-smart-search-input
+            v-model="queryObject"
+            :aliases="aliases"
+            :schema="schema"
+            :color-schema="colorSchema"
+            :strict="strictState"
+            :disabled="switchState"
+        />
+
+        <dl-smart-search-input
             v-model="queryObject2"
-            :aliases="[]"
+            :aliases="aliases"
             :schema="schema2"
             :color-schema="colorSchema"
+            :strict="strictState"
+            :disabled="switchState"
         />
+        {{ queryObject }}
+        {{ queryObject2 }}
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlSmartSearch, DlCheckbox, DlInput } from '../../components'
+import {
+    DlSmartSearch,
+    DlSmartSearchInput,
+    DlCheckbox,
+    DlInput
+} from '../../components'
 import { DlSmartSearchFilters, Query } from '../../components/types'
 import { parseSmartQuery } from '../../utils'
 
@@ -63,6 +88,7 @@ export default defineComponent({
     name: 'DlSmartSearchDemo',
     components: {
         DlSmartSearch,
+        DlSmartSearchInput,
         DlCheckbox,
         DlInput
     },
@@ -72,7 +98,6 @@ export default defineComponent({
             filename: 'string',
             name: 'string',
             url: 'string',
-            type: 'string',
             dataset: 'string',
             datasetId: 'string',
             dir: 'string',
@@ -88,7 +113,10 @@ export default defineComponent({
                 },
                 test: 'any',
                 '*': 'any'
-            }
+            },
+            type: ['dir', 'file'],
+            test1: ['5', '6', 'number'],
+            test2: ['true', 'false']
         }
         const schema2: any = {
             type: [

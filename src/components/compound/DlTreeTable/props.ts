@@ -117,7 +117,7 @@ export const props = {
     isEmpty: Boolean,
     emptyStateProps: {
         type: Object as PropType<DlEmptyStateProps>,
-        default: () => ({} as DlEmptyStateProps)
+        default: null as unknown as PropType<DlEmptyStateProps>
     },
     scrollDebounce: {
         type: Number,

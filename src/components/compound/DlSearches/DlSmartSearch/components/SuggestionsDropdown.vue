@@ -10,6 +10,7 @@
             fit-container
             :model-value="modelValue"
             :arrow-nav-items="suggestions"
+            :trigger-percentage="triggerPercentage"
             :auto-close="false"
             @update:model-value="emitModelValue($event)"
             @show="onShow"
@@ -70,6 +71,13 @@ export default defineComponent({
         offset: {
             type: Array as PropType<number[]>,
             default: () => [0, 0]
+        },
+        /**
+         * the % of the parent element that triggers the tooltips visibility
+         */
+        triggerPercentage: {
+            type: Number,
+            default: 1
         }
     },
     emits: ['set-input-value', 'update:model-value'],
@@ -90,7 +98,6 @@ export default defineComponent({
             handleOption(value)
         }
         const emitModelValue = (event: any) => {
-            console.log('emit suggestion model change')
             emit('update:model-value', event)
         }
         const handleOption = (item: any) => {
