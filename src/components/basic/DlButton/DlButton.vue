@@ -191,6 +191,9 @@ export default defineComponent({
             if (active.value) {
                 classes.push('active-class')
             }
+            if (props.dense) {
+                classes.push('dl-button--dense')
+            }
             return classes
         })
 
@@ -210,6 +213,9 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
+            if (this.disabled) {
+                return 'dl-color-disabled'
+            }
             if (this.mouseOver) {
                 return 'dl-color-hover'
             }
@@ -460,6 +466,11 @@ export default defineComponent({
         & > span > i {
             transition: var(--dl-button-text-transition-duration);
         }
+    }
+
+    &--dense {
+        border: none;
+        padding: 0;
     }
 
     &:hover:enabled:not(:active) {

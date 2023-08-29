@@ -40,14 +40,14 @@ export function useTableColumnSelection(
 
     const computedCols = computed(() => {
         const { sortBy, descending } = computedPagination.value
-
-        const cols = visibleColumnsState?.value
-            ? colList.value.filter(
-                  (col) =>
-                      col.required === true ||
-                      visibleColumnsState.value.includes(col.name) === true
-              )
-            : colList.value
+        const cols =
+            visibleColumnsState?.value && visibleColumnsState?.value?.length
+                ? colList.value.filter(
+                      (col) =>
+                          col.required === true ||
+                          visibleColumnsState.value.includes(col.name) === true
+                  )
+                : colList.value
 
         const updatedCols = cols.map((col) => {
             const align = col.align || 'right'

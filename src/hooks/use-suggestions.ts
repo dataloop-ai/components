@@ -370,11 +370,20 @@ const getError = (
 }
 
 const isValidByDataType = (
-    str: string,
+    str: string | string[],
     dataType: string | string[],
     operator: string
 ): boolean => {
     if (dataType === 'any') {
+        return true
+    }
+
+    if (Array.isArray(str)) {
+        for (const string of str) {
+            if (!isValidByDataType(string, dataType, operator)) {
+                return false
+            }
+        }
         return true
     }
 
@@ -383,7 +392,6 @@ const isValidByDataType = (
      */
 
     if (Array.isArray(dataType)) {
-        str = str.replace(/\'/g, '')
         let isOneOf = !!getValueMatch(dataType, str)
         for (const type of dataType) {
             isOneOf = isOneOf || isValidByDataType(str, type, operator)
@@ -406,9 +414,12 @@ const isValidByDataType = (
 }
 
 const validateBracketValues = (value: string) => {
-    value = removeBrackets(value)
-    value = value.split(',')[0]
-    return value
+    const bracketless = removeBrackets(value)
+    const pureValue = bracketless.split(',')
+    if (pureValue.length === 1) {
+        return pureValue[0]
+    }
+    return pureValue
 }
 
 const isValidDateIntervalPattern = (str: string) => {
@@ -426,7 +437,7 @@ const isValidBoolean = (str: string) => {
 const isValidString = (str: string) => {
     const match = str.match(/(?<=\")(.*?)(?=\")|(?<=\')(.*?)(?=\')/)
     if (!match) return false
-    return match[0] === removeQuotes(str)
+    return match[0] === removeQuotes(str.trim())
 }
 
 const getOperatorByDataType = (dataType: string) => {
@@ -510,14 +521,26 @@ const insensitive = (str: string): string => str.toLowerCase()
 const getMatch = (strArr: string[], str: string) =>
     strArr.find((val) => insensitive(val) === insensitive(str)) ?? null
 
-const getValueMatch = (strArr: string[], str: string | number | boolean) => {
-    return (
-        strArr.find((val) =>
-            val.toString().charAt(0) === '"' && typeof str === 'string'
-                ? insensitive(val.replaceAll('"', '')) === insensitive(str)
-                : val.toString() === str.toString()
-        ) ?? null
-    )
+const getValueMatch = (
+    strArr: (string | number | boolean)[],
+    str: string | number | boolean
+) => {
+    for (const s of strArr) {
+        let term = str
+        let serach = s
+
+        if (typeof str === 'string') {
+            term = insensitive(str.replace(/["']/gi, ''))
+        }
+        if (typeof s === 'string') {
+            serach = insensitive(s)
+        }
+
+        if (serach === term) {
+            return s
+        }
+    }
+    return null
 }
 const getMatches = (strArr: string[], str: string | number | boolean) =>
     strArr.filter((val) =>

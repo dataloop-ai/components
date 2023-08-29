@@ -243,8 +243,10 @@ export default defineComponent({
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
 
-        const hasEmptyStateProps = computed(
-            () => Object.keys(props.emptyStateProps).length > 0
+        const hasEmptyStateProps = computed(() =>
+            props.emptyStateProps
+                ? Object.keys(props.emptyStateProps).length > 0
+                : false
         )
 
         const computedRows = computed(() =>
@@ -281,7 +283,7 @@ export default defineComponent({
             rowsArr = tableRows.value
         ) => {
             (rowsArr as DlTableRow[]).some((o) => {
-                if (o.name === name) {
+                if (getRowKey.value(o) === name) {
                     if (isVue2) {
                         set(o, 'expanded', isExpanded)
                     } else {

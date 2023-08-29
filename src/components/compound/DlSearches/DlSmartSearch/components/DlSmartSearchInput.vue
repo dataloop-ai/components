@@ -60,6 +60,7 @@
         <suggestions-dropdown
             v-model="showSuggestions"
             :parent-id="`${uuid}`"
+            :trigger-percentage="0.5"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"

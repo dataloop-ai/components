@@ -32,6 +32,7 @@ describe('DlChip', () => {
                 tabIndex: '',
                 icon: '',
                 textColor: '',
+                noBorder: false,
                 transform: 'default',
                 overflow: false,
                 fit: false
@@ -91,7 +92,7 @@ describe('DlChip', () => {
                 }
             })
 
-            chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+            chip = wrapper.find(`#${wrapper.vm.uuid}`)
         })
 
         it('will have max-width of "fit-content"', () => {
@@ -119,7 +120,7 @@ describe('DlChip', () => {
                     }
                 })
 
-                chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+                chip = wrapper.find(`#${wrapper.vm.uuid}`)
             })
 
             it('will have the inputted transform', () => {
@@ -146,7 +147,7 @@ describe('DlChip', () => {
                     }
                 })
 
-                chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+                chip = wrapper.find(`#${wrapper.vm.uuid}`)
             })
 
             it('will have the inputted transform', () => {
