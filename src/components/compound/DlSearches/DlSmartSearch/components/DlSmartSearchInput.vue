@@ -300,7 +300,7 @@ export default defineComponent({
         const setInputFromSuggestion = (value: string) => {
             let stringValue = ''
             if (searchQuery.value.length) {
-                const query = searchQuery.value
+                let query = searchQuery.value
                     .replace(new RegExp(' ', 'g'), ' ')
                     .split(' ')
                     .map((string: string) => string.trim())
@@ -316,6 +316,14 @@ export default defineComponent({
                             query[query.length - 1] = query[
                                 query.length - 1
                             ].replace('.', '')
+                        } else if (
+                            value
+                                .toLowerCase()
+                                .startsWith(
+                                    query[query.length - 1].toLowerCase()
+                                )
+                        ) {
+                            query = query.slice(0, query.length - 1)
                         }
                         stringValue = [...query, value, ''].join(' ')
                     }
@@ -324,7 +332,14 @@ export default defineComponent({
                         query[query.length - 1] = query[
                             query.length - 1
                         ].replace('.', '')
+                    } else if (
+                        value
+                            .toLowerCase()
+                            .startsWith(query[query.length - 1].toLowerCase())
+                    ) {
+                        query = query.slice(0, query.length - 1)
                     }
+
                     stringValue = [...query, value, ''].join(' ')
                 }
             } else {
