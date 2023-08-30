@@ -115,6 +115,7 @@
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
+                @rowDragged="rowDragged"
             />
 
             <div style="margin-top: 100px">
@@ -748,7 +749,14 @@ export default defineComponent({
             setPagination({ page: pagesNumber.value })
         }
 
+        const rowDragged = (data: any) => {
+            console.log('DlTable old data: ', tableRows.value)
+            tableRows.value = data
+            console.log('DlTable new data: ', tableRows.value)
+        }
+
         return {
+            rowDragged,
             filter,
             selected,
             selection,

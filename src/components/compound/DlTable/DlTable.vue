@@ -111,6 +111,7 @@
 
                             <slot
                                 v-for="col in computedCols"
+                                :key="JSON.stringify(col)"
                                 v-bind="getHeaderScope({ col })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
@@ -221,6 +222,7 @@
                             </td>
                             <slot
                                 v-for="col in computedCols"
+                                :key="JSON.stringify(col)"
                                 v-bind="
                                     getBodyCellScope({
                                         key: getRowKey(props.item),
@@ -317,6 +319,7 @@
 
                             <slot
                                 v-for="col in computedCols"
+                                :key="JSON.stringify(col)"
                                 v-bind="getHeaderScope({ col, onThClick })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
@@ -361,6 +364,7 @@
                     >
                         <slot
                             v-for="(row, pageIndex) in computedRows"
+                            :key="JSON.stringify(row)"
                             v-bind="
                                 getBodyScope({
                                     key: getRowKey(row),
@@ -435,6 +439,7 @@
                                 </td>
                                 <slot
                                     v-for="col in computedCols"
+                                    :key="JSON.stringify(col)"
                                     v-bind="
                                         getBodyCellScope({
                                             key: getRowKey(row),
@@ -573,8 +578,7 @@ import { useTableRowSelection } from './hooks/tableRowSelection'
 import { useTableColumnSelection } from './hooks/tableColumnSelection'
 import { useTableRowExpand } from './hooks/tableRowExpand'
 import { useTableActions } from './hooks/tableActions'
-import {
-    applyDraggableRows,
+import applyDraggableRows, {
     applyDraggableColumns
 } from '../../../utils/draggable-table'
 import { injectProp } from '../../../utils/inject-object-prop'
@@ -586,6 +590,7 @@ import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
 import { stopAndPrevent } from '../../../utils'
+import { cloneDeep, findIndex } from 'lodash'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -615,8 +620,21 @@ export default defineComponent({
             tableHeaderStyle,
             tableHeaderClass,
             dense,
-            draggable
+            draggable,
+            rows
         } = toRefs(props)
+
+        watch(
+            rows,
+            (value) => {
+                // console.log('DlTable watch rows')
+                // vm.proxy.$forceUpdate()
+            },
+            {
+                deep: true,
+                flush: 'post'
+            }
+        )
 
         const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
@@ -706,65 +724,237 @@ export default defineComponent({
             ['columns', 'both'].includes(draggable.value)
         )
 
-        let removeDraggableRows = () => {}
+        // let removeDraggableRows = () => {}
         let removeDraggableColumns = () => {}
 
         let resizableManager: ResizableManager | null = null
-        let tableEl: HTMLTableElement = null
+        // let tableEl: HTMLTableElement = null
+        const tableEl = computed<HTMLTableElement>(() => {
+            if (!rootRef.value) return
+            return (rootRef.value as HTMLDivElement).querySelector(
+                'table.dl-table'
+            ) as HTMLTableElement
+        })
+
+        /*let removeDraggableRows = applyDraggableRows(
+            tableEl.value,
+            vm,
+            rootRef.value
+        )*/
+
+        /*const applyDraggableRows = computed(() => {
+            const {  } = applyDraggableRows(
+                tableEl.value,
+                vm,
+                rootRef.value
+            )
+        })*/
+
+        const moveRowInfoDataState = ref(null)
+
+        const applyDraggableRowsFunc = () => {
+            const { moveRowInfoData } = applyDraggableRows(
+                tableEl.value,
+                vm,
+                rootRef.value
+            )
+
+            moveRowInfoDataState.value = moveRowInfoData
+        }
+
+        const arrayMove = (
+            arr: Record<string, any>[],
+            fromIndex: number,
+            toIndex: number,
+            deleteCount: number
+        ) => {
+            // console.log('clonedDeep computedRows: ', arr)
+            const element = arr[fromIndex]
+            // console.log('element: ', element)
+
+            arr.splice(toIndex, 0, element)
+            arr.splice(fromIndex, deleteCount)
+
+            // console.log('moved item in computedRows: ', arr)
+        }
+
+        const findNestedItem = (
+            clonedRows: Record<string, any>[],
+            movedHierarchy: Record<string, any>
+        ) => {
+            const indexOfMovedItem = findIndex(clonedRows, movedHierarchy)
+
+            if (indexOfMovedItem !== -1 || !clonedRows) {
+                return
+            }
+
+            for (const item of clonedRows) {
+                if ((item as any)?.children?.length) {
+                    const indexOfItem = findIndex(
+                        (item as any)?.children,
+                        movedHierarchy
+                    )
+
+                    if (indexOfItem === -1) {
+                        findNestedItem((item as any)?.children, movedHierarchy)
+                    }
+
+                    item.children.splice(indexOfItem, 1)
+                }
+            }
+        }
+
+        const findNestedBeforeItem = (
+            clonedRows: Record<string, any>[],
+            movedItem: any,
+            beforeItem: Record<string, any>
+        ) => {
+            const indexOfBeforeItem = findIndex(clonedRows, beforeItem)
+            // console.log('findNestedBeforeItem indexOfMovedItem: ', indexOfBeforeItem)
+            // console.log('findNestedBeforeItem movedItem: ', movedItem)
+
+            if (indexOfBeforeItem !== -1) {
+                return
+            }
+
+            for (const item of clonedRows) {
+                // console.log('has children')
+
+                if ((item as any)?.children?.length) {
+                    const indexOfItem = findIndex(
+                        (item as any)?.children,
+                        beforeItem
+                    )
+
+                    if (indexOfItem === -1) {
+                        findNestedItem((item as any)?.children, beforeItem)
+                    }
+                    item.children.splice(indexOfItem, 0, movedItem)
+
+                    // console.log('inserted deep: ')
+                }
+            }
+        }
+
+        const insertBeforeItem = (
+            clonedRows: Record<string, any>[],
+            movedHierarchy: any,
+            beforeItem: Record<string, any>
+        ) => {
+            const indexOfBeforeItem = findIndex(clonedRows, beforeItem)
+            // console.log('indexOfBeforeItem: ', indexOfBeforeItem)
+            if (indexOfBeforeItem !== -1) {
+                clonedRows.splice(indexOfBeforeItem, 0, movedHierarchy)
+                // console.log('inserted in first line')
+                // emit('rowDragged', clonedRows)
+            } else {
+                findNestedBeforeItem(clonedRows, movedHierarchy, beforeItem)
+            }
+
+            // console.log('clonedRows after insert before: ', clonedRows)
+            emit('rowDragged', clonedRows)
+        }
+
+        const deleteOldItemPosition = (
+            movedHierarchy: Record<string, any>,
+            beforeItem: Record<string, any>
+        ) => {
+            const clonedRows = cloneDeep(props.rows)
+            const indexOfMovedItem = findIndex(clonedRows, movedHierarchy)
+
+            if (indexOfMovedItem === -1) {
+                findNestedItem(clonedRows, movedHierarchy)
+            } else {
+                clonedRows.splice(indexOfMovedItem, 1)
+            }
+
+            // console.log('deleteOldItemPosition: ', clonedRows)
+            insertBeforeItem(clonedRows, movedHierarchy, beforeItem)
+        }
+
+        const handleMovedObject = (rowMoveInfo: Record<string, any>) => {
+            // to do
+            if (!rowMoveInfo) return
+
+            const clonedComputedRows = cloneDeep(computedRows.value)
+            // const beforeItem = clonedComputedRows.slice(rowMoveInfo.toIndex, rowMoveInfo.toIndex + 1)
+            const beforeItem = clonedComputedRows[rowMoveInfo.toIndex]
+            const movedItem = clonedComputedRows[rowMoveInfo.fromIndex]
+
+            delete movedItem.isExpandedParent
+            delete movedItem.level
+
+            // console.log('beforeItem: ', beforeItem)
+
+            deleteOldItemPosition(movedItem, beforeItem)
+        }
+
+        watch(
+            moveRowInfoDataState,
+            (rowMoveInfo: Record<string, any>) => {
+                handleMovedObject(rowMoveInfo.value)
+            },
+            {
+                deep: true
+            }
+        )
 
         onMounted(() => {
+            /*
             tableEl = (rootRef.value as HTMLDivElement).querySelector(
                 'table.dl-table'
             ) as HTMLTableElement
+            */
             resizableManager = new ResizableManager()
 
             if (props.resizable === true) {
-                resizableManager.addResizeCapability(tableEl)
+                resizableManager.addResizeCapability(tableEl.value)
             }
 
             if (hasDraggableRows.value === true) {
-                removeDraggableRows = applyDraggableRows(
-                    tableEl,
-                    vm,
-                    rootRef.value
-                )
+                // const { movedOnIndex } = removeDraggableRows
+                // console.log('DlTable onMounted movedOnIndex: ', movedOnIndex)
             }
 
             if (hasDraggableColumns.value === true) {
                 removeDraggableColumns = applyDraggableColumns(
-                    tableEl,
+                    tableEl.value,
                     vm,
                     vm.refs.dragRef as HTMLDivElement,
                     rootRef.value
                 )
             }
+            applyDraggableRowsFunc()
         })
 
         watch(
             hasVirtScroll,
             () => {
+                /*
                 tableEl = (rootRef.value as HTMLDivElement).querySelector(
                     'table.dl-table'
                 ) as HTMLTableElement
-
+                */
                 if (props.resizable) {
                     resizableManager.removeResizeCapability()
-                    resizableManager.addResizeCapability(tableEl)
+                    resizableManager.addResizeCapability(tableEl.value)
                 }
 
                 if (hasDraggableRows.value === true) {
-                    removeDraggableRows()
+                    // removeDraggableRows()
+                    /*
                     removeDraggableRows = applyDraggableRows(
-                        tableEl,
+                        tableEl.value,
                         vm,
                         rootRef.value
                     )
+                    */
                 }
 
                 if (hasDraggableColumns.value === true) {
                     removeDraggableColumns()
                     removeDraggableColumns = applyDraggableColumns(
-                        tableEl,
+                        tableEl.value,
                         vm,
                         vm.refs.dragRef as HTMLDivElement,
                         rootRef.value
@@ -780,7 +970,7 @@ export default defineComponent({
             () => props.resizable,
             (value: boolean) => {
                 if (value) {
-                    resizableManager.addResizeCapability(tableEl)
+                    resizableManager.addResizeCapability(tableEl.value)
                 } else {
                     resizableManager.removeResizeCapability()
                 }
@@ -790,20 +980,20 @@ export default defineComponent({
         watch(
             () => props.draggable,
             () => {
-                if (tableEl) {
+                if (tableEl.value) {
                     if (hasDraggableRows.value === true) {
-                        removeDraggableRows = applyDraggableRows(
-                            tableEl,
+                        /*removeDraggableRows = applyDraggableRows(
+                            tableEl.value,
                             vm,
                             rootRef.value
-                        )
+                        )*/
                     } else {
-                        removeDraggableRows()
+                        // removeDraggableRows()
                     }
 
                     if (hasDraggableColumns.value === true) {
                         removeDraggableColumns = applyDraggableColumns(
-                            tableEl,
+                            tableEl.value,
                             vm,
                             vm.refs.dragRef as HTMLDivElement,
                             rootRef.value
@@ -840,8 +1030,8 @@ export default defineComponent({
         watch(
             [computedPagination, dense],
             () => {
-                if (tableEl && props.resizable && resizableManager) {
-                    const tableHeight = tableEl.offsetHeight || 0
+                if (tableEl.value && props.resizable && resizableManager) {
+                    const tableHeight = tableEl.value.offsetHeight || 0
 
                     resizableManager.updateResizersHeight(tableHeight)
                 }
@@ -857,6 +1047,7 @@ export default defineComponent({
 
         const filteredSortedRows = computed(() => {
             let rows = rowsPropRef.value as DlTableRow[]
+            // console.log('DlTable filteredSortedRows: ', rows)
 
             if (rows.length === 0) {
                 return rows
@@ -881,6 +1072,7 @@ export default defineComponent({
                 )
             }
 
+            // console.log('DlTable filteredSortedRows return: ', rows)
             return rows
         })
 
@@ -889,7 +1081,17 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            let rows = filteredSortedRows.value
+            // console.log('DlTable computedRows init')
+            // console.log('DlTable computedRows props.flatTreeData: ', props.flatTreeData)
+
+            // let rows = filteredSortedRows.value
+            const rowsS = cloneDeep(filteredSortedRows.value)
+            console.log('DlTable computedRows rowsS: ', rowsS)
+            console.log(
+                'DlTable computedRows flatTreeData(rowsS): ',
+                flatTreeData(rowsS)
+            )
+            let rows = cloneDeep(filteredSortedRows.value)
 
             const { rowsPerPage } = computedPagination.value
 
@@ -903,7 +1105,12 @@ export default defineComponent({
                 }
             }
 
-            return props.flatTreeData ? flatTreeData(rows) : rows
+            console.log('DlTable computedRows rows: ', rows)
+            const result = props.flatTreeData ? flatTreeData(rows) : rows
+            // console.log('DlTable computedRows flatTreeData(rows): ', flatTreeData(rows))
+            console.log('DlTable computedRows result: ', result)
+            // return props.flatTreeData ? flatTreeData(rows) : rows
+            return result
         })
 
         const additionalClasses = computed(() => {
@@ -1293,7 +1500,15 @@ export default defineComponent({
             hasSlotHeaderSelection,
             stopAndPrevent,
             updatePagination,
-            hasEmptyStateProps
+            hasEmptyStateProps,
+            applyDraggableRowsFunc,
+            moveRowInfoDataState,
+            arrayMove,
+            handleMovedObject,
+            deleteOldItemPosition,
+            findNestedItem,
+            insertBeforeItem,
+            findNestedBeforeItem
         }
     }
 })

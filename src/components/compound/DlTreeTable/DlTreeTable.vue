@@ -25,6 +25,7 @@
         @row-click="emitRowClick"
         @th-click="emitThClick"
         @update:selected="updateSelected"
+        @rowDragged="rowDragged"
     >
         <template #header-selection>
             <DlCheckbox
@@ -111,9 +112,14 @@
             </template>
             <template v-else>
                 <template v-if="dlTableRef && !isEmpty">
+                    <!--
+                    <pre>
+                        {{ computedRows }}
+                    </pre>
+                    -->
                     <DlTrTreeView
                         v-for="(row, rowIndex) in computedRows"
-                        :key="rowIndex"
+                        :key="JSON.stringify(row)"
                         :row="row"
                         :row-key="rowKey"
                         :is-row-selected="
@@ -159,6 +165,8 @@
                         @updateExpandedRow="
                             updateExpandedRow(!row.expanded, getRowKey(row))
                         "
+                        @mousedown="onMousedown(row)"
+                        @mouseup="onMouseup(row)"
                     >
                         <template
                             v-for="templateCol in dlTableRef.computedCols"
@@ -192,7 +200,11 @@ import {
     defineComponent,
     isVue2,
     set,
-    ref
+    ref,
+    onMounted,
+    toRefs,
+    watch,
+    getCurrentInstance
 } from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
@@ -214,12 +226,28 @@ export default defineComponent({
     props,
     emits,
     setup(props, { emit, slots }) {
+        const vm = getCurrentInstance()
         const dlTableRef = ref(null)
         const selectedData = ref([])
         const vScroll = ref(false)
         const borderState = ref([])
         const denseState = ref([])
         const resizableState = ref([])
+        const { rows } = toRefs(props)
+
+        watch(
+            rows,
+            (newRows) => {
+                // console.log('rows have changed')
+                tableRows.value = newRows
+                // vm.proxy.$forceUpdate()
+            },
+            {
+                deep: true,
+                flush: 'post'
+            }
+        )
+
         const tableRows = ref(cloneDeep(props.rows))
         const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
@@ -230,6 +258,17 @@ export default defineComponent({
 
         const computedRows = computed(() =>
             dlTableRef.value?.computedRows ? dlTableRef.value?.computedRows : []
+        )
+
+        watch(
+            computedRows,
+            (value) => {
+                // console.log('watch DlTreeTable computedRows value: ', value)
+            },
+            {
+                deep: true,
+                flush: 'post'
+            }
         )
 
         const getRowKey = computed(() =>
@@ -357,7 +396,35 @@ export default defineComponent({
             }
         }
 
+        const isMousemove = ref(false)
+        const isMousedown = ref(false)
+
+        const onMousedown = (row: any) => {
+            isMousedown.value = true
+            // console.log('onMousedown: ', row)
+        }
+        const onMouseup = (event: any) => {
+            isMousedown.value = false
+            // console.log('onMouseup: ', event)
+        }
+        const onMousemove = (row: any) => {
+            isMousemove.value = true
+            // console.log('onMousemove: ', row)
+        }
+
+        onMounted(() => {
+            // document.addEventListener('mouseup', onMouseup)
+            // document.getElementsByClassName('dl-table').addEventListener('resize', (event) => console.log('resize: ', event))
+        })
+
+        const rowDragged = (data: any) => {
+            // console.log('DlTreeTable rowDragged event: ', data)
+            emit('rowDragged', data)
+        }
         return {
+            onMousedown,
+            onMouseup,
+            onMousemove,
             dlTableRef,
             isRowSelected,
             hasFlatTreeData,
@@ -381,7 +448,8 @@ export default defineComponent({
             emitRowClick,
             emitThClick,
             hasSlotByName,
-            getSlotByName
+            getSlotByName,
+            rowDragged
         }
     }
 })

@@ -1,4 +1,6 @@
+import { ref } from 'vue-demi'
 import { ClickAndHold } from './ClickAndHold'
+import { cloneDeep } from 'lodash'
 
 function getTargetRow(target: any) {
     const elemName = target.tagName.toLowerCase()
@@ -61,11 +63,13 @@ function getRows(table: HTMLTableElement) {
     return table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
 }
 
-export function applyDraggableRows(
+export default function applyDraggableRows(
     table: HTMLTableElement,
     vm?: any,
     root?: HTMLDivElement
 ) {
+    if (!table || !vm || !root) return
+
     const tbody = table.querySelector('tbody.dl-virtual-scroll__content')!
 
     let draggableParentRow: any = null
@@ -81,8 +85,13 @@ export function applyDraggableRows(
     let wasMoved = false
     let draggableTable: any = null
     let childrenCount: number
+    const movedOnIndex = ref(-1)
+    const moveRowInfoData = ref<Record<string, any>>(undefined)
+    const startDraggingIndex = ref(-1)
+    const draggableRowIndexEnd = ref(-1)
 
     function bindMouse() {
+        // console.log('table: ', table)
         table.addEventListener('mousedown', handleMouseDown)
         document.addEventListener('mousemove', handleMouseMove)
         document.addEventListener('mouseup', handleMouseUp)
@@ -100,8 +109,12 @@ export function applyDraggableRows(
         parentRow.classList.add('dl-table__is-dragging')
         const targetRow = parentRow.cloneNode(true)
 
-        const allRows = [...(table.querySelectorAll('tr') as any)]
+        // const allRows = [...(table.querySelectorAll('tr') as any)]
+        const allRows = Array.from(tbody.children)
         let draggableParentRowIndex = allRows.indexOf(parentRow)
+        startDraggingIndex.value = draggableParentRowIndex
+        // console.log('allRows[0]: ', allRows[0].cells[1].innerText)
+        // console.log('draggableParentRowIndex: ', draggableParentRowIndex)
 
         const parentRowStyle = window.getComputedStyle(parentRow)
 
@@ -168,6 +181,7 @@ export function applyDraggableRows(
     }
 
     function handleMouseUp() {
+        // console.log('handleMouseUp draggable table')
         if (!mouseDrag) return
 
         draggableParentRow.classList.remove('dl-table__is-dragging')
@@ -185,21 +199,46 @@ export function applyDraggableRows(
         Array.from(tbody.children).forEach((element) => {
             element.classList.remove('dl-table__is-dragging')
         })
+
+        const data = {
+            fromIndex: startDraggingIndex.value,
+            childrenCount,
+            toIndex: movedOnIndex.value
+        }
+
+        // console.log('data: ', data)
+
+        moveRowInfoData.value = data
     }
 
     function swapRow(row: any, index: number) {
         const allRows = Array.from(tbody.children)
+        /*
+        const data = {
+            startIndex: -1,
+            endIndex: -1,
+            count: 0,
+            movedOnIndexOf: -1
+        }
+        */
 
         newIndex = index + 1
         wasMoved = oldIndex !== newIndex
 
-        let indexOfParentRow = allRows.indexOf(draggableParentRow)
+        const startDraggableRowIndex = allRows.indexOf(draggableParentRow)
+
+        let indexOfParentRow = cloneDeep(startDraggableRowIndex)
         if (indexOfParentRow === -1) {
             return
         }
         const indexEnd = indexOfParentRow + childrenCount
+        draggableRowIndexEnd.value = indexEnd
         const hierarchyData = allRows.slice(indexOfParentRow, indexEnd)
         const rowIndex = hierarchyData.indexOf(row)
+        // console.log('allRows[0] swapRow: ', allRows[0].cells[1].innerText)
+        // console.log('row: ', row.cells[1].innerText)
+        // console.log('allRows[movedOnIndex.value] swapRow: ', allRows[movedOnIndex.value].cells[1].innerText)
+        // console.log('rowIndex swapRow: ', movedOnIndex.value)
         const isDraggingOverChildren = rowIndex > -1
 
         /**
@@ -213,6 +252,11 @@ export function applyDraggableRows(
             tbody.insertBefore(allRows[indexOfParentRow], row)
             indexOfParentRow++
         }
+        // console.log('rowIndex: ', rowIndex)
+
+        movedOnIndex.value = allRows.indexOf(row)
+
+        // console.log('data: ', data)
     }
 
     function moveRow(x: number, y: number) {
@@ -281,7 +325,11 @@ export function applyDraggableRows(
         document.removeEventListener('mouseup', handleMouseUp)
     }
 
-    return unsubscribeEvents
+    return {
+        unsubscribeEvents,
+        movedOnIndex,
+        moveRowInfoData
+    }
 }
 
 export function applyDraggableColumns(

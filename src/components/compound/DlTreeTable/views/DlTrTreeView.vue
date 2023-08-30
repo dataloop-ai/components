@@ -38,7 +38,7 @@
         </td>
         <DlTdTree
             v-for="(col, colIndex) in computedCols"
-            :key="colIndex"
+            :key="JSON.stringify(col)"
             :class="col.tdClass(row)"
             :style="col.tdStyle(row) + getTdStyles(row, colIndex)"
         >
@@ -291,6 +291,7 @@ export default defineComponent({
         }
 
         const getChildrenCount = (): void => {
+            // console.log('watch getChildrenCount')
             childrenCount.value = 1
             let arr = []
 
@@ -313,6 +314,7 @@ export default defineComponent({
         }
 
         onMounted(() => {
+            // console.log('DlTreeTableView onMounted')
             getChildrenCount()
         })
 

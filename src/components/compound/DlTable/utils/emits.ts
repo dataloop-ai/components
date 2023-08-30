@@ -10,6 +10,7 @@ export const emits = [
     'th-click',
     'row-dblclick',
     'row-contextmenu',
+    'rowDragged',
     ...useTableRowExpandEmits,
     ...useTableRowSelectionEmits
 ]

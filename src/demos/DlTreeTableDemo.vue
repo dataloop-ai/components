@@ -100,6 +100,7 @@
                     @row-click="onRowClick"
                     @th-click="log"
                     @selectedItems="selectedItems"
+                    @rowDragged="rowDragged"
                 />
             </div>
             <div style="padding-top: 300px">
@@ -707,6 +708,13 @@ export default defineComponent({
             // console.log('onRowClick TreeTableDemo: ', item)
         }
 
+        const rowDragged = (data: any) => {
+            console.log('demo rowDragged old data: ', tableRows.value)
+            console.log('demo rowDragged new data: ', data)
+            // tableRows.value = JSON.parse(JSON.stringify(data))
+            // tableRows.value = data
+        }
+
         return {
             filter,
             selectedData,
@@ -737,7 +745,8 @@ export default defineComponent({
             prevPage,
             isLastPage,
             isFirstPage,
-            onRowClick
+            onRowClick,
+            rowDragged
         }
     },
 
