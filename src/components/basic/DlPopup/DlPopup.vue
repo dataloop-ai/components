@@ -301,13 +301,17 @@ export default defineComponent({
     opacity: 1;
 }
 
+.popup-header {
+    padding: var(--dl-popup-padding, 10px 0 16px 0);
+}
+
 .popup-content {
     max-width: 100%;
-    padding: 16px 16px;
+    padding: var(--dl-popup-padding, 16px 16px);
     height: 100%;
 }
 
 .popup-footer {
-    padding: 20px 16px 16px;
+    padding: var(--dl-popup-padding, 20px 16px 16px);
 }
 </style>
