@@ -2,11 +2,11 @@
     <div style="width: 200px">
         <dl-input
             v-model="inputValue"
-            placeholder="No items selected"
+            :placeholder="placeHolderText"
             size="l"
             has-prepend
             padding-prop="0px 0px 0px 0px"
-            :style="{ 'border-left': inputBorderLeft }"
+            :style="inputStyles"
         >
             <template #prepend>
                 <dl-icon
@@ -43,8 +43,9 @@
 </template>
 
 <script lang="ts">
-import { ref, PropType, defineComponent } from 'vue-demi'
+import { ref, PropType, defineComponent, computed } from 'vue-demi'
 import { DlLabel, DlInput, DlIcon, DlTreeTable } from '../../../components'
+import { DlTableColumn } from '../../types'
 import { DlLabelPickerItem } from './types'
 
 export default defineComponent({
@@ -63,32 +64,56 @@ export default defineComponent({
     },
     emits: ['selectedLabel'],
     setup(props, { emit, slots }) {
-        const columns = [
+        const columns: DlTableColumn[] = [
             {
                 name: 'displayLabel',
                 label: '',
                 required: false,
                 align: 'left',
                 field: 'displayLabel',
-                sortable: false
+                sortable: false,
+                style: `cursor: pointer;`
             }
         ]
 
         const inputValue = ref('')
         const isInputActive = ref(false)
         const inputBorderLeft = ref('2px solid transparent')
+        const currentSelectedLabel = ref<DlLabelPickerItem>(null)
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
-            inputBorderLeft.value = `2px solid ${item.color}`
+            currentSelectedLabel.value = item
             emit('selectedLabel', item)
         }
+
+        const placeHolderText = computed(() => {
+            if (!currentSelectedLabel.value) {
+                return `No items selected`
+            }
+
+            return currentSelectedLabel.value.displayLabel
+        })
+
+        const selectedColor = computed(() => {
+            if (!currentSelectedLabel.value) {
+                return null
+            }
+            return currentSelectedLabel.value.color
+        })
+
+        const inputStyles = computed(() => {
+            return { 'border-left': `2px solid ${selectedColor.value}` }
+        })
 
         return {
             handleRowClick,
             inputValue,
             inputBorderLeft,
             isInputActive,
-            columns
+            columns,
+            selectedColor,
+            placeHolderText,
+            inputStyles
         }
     }
 })
