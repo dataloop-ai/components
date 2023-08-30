@@ -14,7 +14,7 @@ export type DlEmptyStateProps = {
     iconSize?: string
     iconColor?: string
     responsive?: boolean
-    align: 'center' | 'left'
+    align?: 'center' | 'left'
 }
 
 export type DlEmptyStateSlots = ['cta', 'links']
