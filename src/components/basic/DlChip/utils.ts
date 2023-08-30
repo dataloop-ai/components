@@ -9,6 +9,7 @@ export interface DlChipProps {
     filled: boolean
     color: string
     textColor: string
+    noBorder: boolean
 }
 
 export const setTextColor = ({
@@ -42,7 +43,14 @@ export const setBgColor = ({
     return getColor(color, 'dl-color-secondary')
 }
 
-export const setBorder = ({ disabled, color = '' }: Partial<DlChipProps>) => {
+export const setBorder = ({
+    noBorder,
+    disabled,
+    color = ''
+}: Partial<DlChipProps>) => {
+    if (noBorder) {
+        return 'none'
+    }
     if (disabled) {
         return `1px solid var(--dl-color-disabled)`
     }
@@ -59,17 +67,17 @@ export const setPadding = ({
     const right = removable ? 20 : 5
 
     if (hasLabel && (removable || hasIcon)) {
-        return `5px ${right}px 5px ${left}px`
+        return `3px ${right}px 3px ${left}px`
     }
 
     if (!hasLabel && hasIcon && removable) {
-        return `5px ${right}px 5px 0`
+        return `3px ${right}px 3px 0`
     }
     if (removable || hasIcon) {
-        return '5px 0'
+        return '3px 0'
     }
 
-    return '5px'
+    return '3px 5px'
 }
 
 export const setRemoveIconWidth = ({

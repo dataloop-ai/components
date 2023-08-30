@@ -283,7 +283,7 @@ export default defineComponent({
             rowsArr = tableRows.value
         ) => {
             (rowsArr as DlTableRow[]).some((o) => {
-                if (o[getRowKey.value as unknown as string] === name) {
+                if (getRowKey.value(o) === name) {
                     if (isVue2) {
                         set(o, 'expanded', isExpanded)
                     } else {
@@ -363,8 +363,8 @@ export default defineComponent({
         const emitSelectedItems = (payload: any) => {
             emit('selectedItems', payload)
         }
-        const emitRowClick = (payload: any) => {
-            emit('row-click', payload)
+        const emitRowClick = (...payload: any) => {
+            emit('row-click', ...payload)
         }
         const emitThClick = (payload: any) => {
             emit('th-click', payload)
