@@ -340,6 +340,13 @@ export default defineComponent({
                         flat: this.flat,
                         color: this.getIconColor
                     }),
+                    '--dl-icon-color': setColorOnHover({
+                        disabled: this.disabled,
+                        outlined: this.outlined,
+                        shaded: this.shaded,
+                        flat: this.flat,
+                        color: this.getIconColor
+                    }),
                     '--dl-button-border-hover': setBorderOnHover({
                         disabled: this.disabled,
                         flat: this.flat,

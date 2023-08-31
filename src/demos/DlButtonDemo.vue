@@ -294,7 +294,7 @@
             />
         </div>
         <div>
-            <h3>Shaded and outlined</h3>
+            <h3>hover color</h3>
             <dl-button
                 icon="icon-dl-search"
                 flat
