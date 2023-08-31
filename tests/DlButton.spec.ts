@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { DlButton } from '../src/components'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { before } from 'node:test'
 
 describe('DlButton', () => {
     describe('When mounting', () => {

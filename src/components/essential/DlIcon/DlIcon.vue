@@ -157,7 +157,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-icon {
     display: inline-flex;
-    color: var(var(--dl-icon-color), var(--color-icon-default));
+    color: var(var(--dl-icon-color), var(--color-icon));
     font-size: var(--dl-icon-font-size);
 }
 </style>

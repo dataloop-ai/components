@@ -350,6 +350,7 @@ export default defineComponent({
 .col {
     width: auto;
     display: flex;
+    flex-wrap: wrap;
     min-width: 0;
     max-width: 100%;
 
