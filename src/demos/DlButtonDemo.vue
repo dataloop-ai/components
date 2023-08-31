@@ -294,6 +294,16 @@
                 outlined
             />
         </div>
+        <div>
+            <h3>Shaded and outlined</h3>
+            <dl-button
+                icon="icon-dl-search"
+                flat
+                dense
+                label="test me"
+                text-color="red"
+            />
+        </div>
     </div>
 </template>
 

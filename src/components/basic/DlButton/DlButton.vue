@@ -319,6 +319,13 @@ export default defineComponent({
                         flat: this.flat,
                         color: this.textColor
                     }),
+                    '--dl-button-icon-color-hover': setColorOnHover({
+                        disabled: this.disabled,
+                        outlined: this.outlined,
+                        shaded: this.shaded,
+                        flat: this.flat,
+                        color: this.getIconColor
+                    }),
                     '--dl-button-border-hover': setBorderOnHover({
                         disabled: this.disabled,
                         flat: this.flat,
@@ -483,6 +490,9 @@ export default defineComponent({
 
 .dl-button-icon {
     transition: var(--dl-button-text-transition-duration);
+    &:hover:enabled:not(:active) {
+        color: var(--dl-button-icon-color-hover);
+    }
 }
 
 .dl-button-container {
