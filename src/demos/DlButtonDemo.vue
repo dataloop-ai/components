@@ -294,6 +294,16 @@
             />
         </div>
         <div>
+            <h3>hover color</h3>
+            <dl-button
+                icon="icon-dl-search"
+                flat
+                dense
+                label="test me"
+                text-color="red"
+            />
+        </div>
+        <div>
             <h3>button with icon color</h3>
             <dl-button
                 icon="icon-dl-search"
