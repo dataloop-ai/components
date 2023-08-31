@@ -4,12 +4,11 @@ import { describe, it, expect, beforeAll } from 'vitest'
 
 describe('DlSlider', () => {
     describe('When mounting', () => {
-        const _editableSlider = '[data-test="editable-slider"]'
-        const _editableSliderInput = '[data-test="editable-slider-input"]'
-        const _nonEditableSlider = '[data-test="non-editable-slider"]'
-        const _nonEditableSliderInput =
-            '[data-test="non-editable-slider-input"]'
-        const _nonEditableSliderBtn = '[data-test="non-editable-slider-button"]'
+        const _slimSlider = '[data-test="slim-slider"]'
+        const _slimSliderInput = '[data-test="slim-slider-input"]'
+        const _nonSlimSlider = '[data-test="non-slim-slider"]'
+        const _nonSlimSliderInput = '[data-test="non-slim-slider-input"]'
+        const _nonSlimSliderBtn = '[data-test="non-slim-slider-button"]'
         let wrapper: any
 
         beforeAll(() => {
@@ -32,48 +31,47 @@ describe('DlSlider', () => {
             expect(wrapper.vm.initialValue).toBe(-10)
         })
         it('should mount the elements', function () {
-            expect(wrapper.find(_nonEditableSlider).exists()).toBe(true)
-            expect(wrapper.find(_nonEditableSliderInput).exists()).toBe(true)
-            expect(wrapper.find(_nonEditableSliderBtn).exists()).toBe(true)
+            expect(wrapper.find(_nonSlimSlider).exists()).toBe(true)
+            expect(wrapper.find(_nonSlimSliderInput).exists()).toBe(true)
+            expect(wrapper.find(_nonSlimSliderBtn).exists()).toBe(true)
         })
-        describe('When emit click event on nonEditableSliderBtn', () => {
-            let nonEditableSliderBtn: any
+        describe('When emit click event on nonSlimSliderBtn', () => {
+            let nonSlimSliderBtn: any
             beforeAll(async () => {
-                nonEditableSliderBtn = wrapper.find(_nonEditableSliderBtn)
-                await nonEditableSliderBtn.trigger('click')
+                nonSlimSliderBtn = wrapper.find(_nonSlimSliderBtn)
+                await nonSlimSliderBtn.trigger('click')
             })
 
-            it('should not update model value ', function () {
-                expect(
-                    wrapper.emitted()['update:model-value']
-                ).not.toBeDefined()
-            })
             it('should update the model value', async function () {
+                wrapper._emitted = {}
                 await wrapper.setProps({
                     modelValue: 0
                 })
 
-                await nonEditableSliderBtn.trigger('click')
+                await nonSlimSliderBtn.trigger('click')
+
+                await wrapper.vm.$nextTick()
                 expect(wrapper.emitted()['update:model-value'][0]).toEqual([
                     -10
                 ])
+                expect(wrapper.emitted()['change'][0]).toEqual([-10])
             })
         })
-        describe('When emit events nonEditableSliderInput', () => {
-            let nonEditableSliderInput: any
+        describe('When emit events nonSlimSliderInput', () => {
+            let nonSlimSliderInput: any
             beforeAll(async () => {
-                nonEditableSliderInput = wrapper.get(_nonEditableSliderInput)
-                await nonEditableSliderInput.trigger('focus')
-                await nonEditableSliderInput.trigger('blur')
+                nonSlimSliderInput = wrapper.get(_nonSlimSliderInput)
+                await nonSlimSliderInput.trigger('focus')
+                await nonSlimSliderInput.trigger('blur')
 
                 await wrapper.setProps({
                     disabled: true
                 })
             })
 
-            it('should _nonEditableSliderInput disabled', function () {
+            it('should _nonSlimSliderInput disabled', function () {
                 expect(
-                    wrapper.find(_nonEditableSliderInput).attributes().disabled
+                    wrapper.find(_nonSlimSliderInput).attributes().disabled
                 ).toBeDefined()
             })
             it('should have the right value', async function () {
@@ -89,29 +87,14 @@ describe('DlSlider', () => {
                 await wrapper.setProps({ modelValue: 1 })
                 expect(wrapper.vm.value).toBe(1)
             })
-            it('should mount editableSlider and editableSliderInput', async function () {
-                await wrapper.setProps({ editable: true })
+            it('should mount slimSlider and slimSliderInput', async function () {
+                await wrapper.setProps({ slim: true })
 
-                expect(wrapper.find(_editableSlider).exists()).toBe(true)
-                expect(wrapper.find(_editableSliderInput).exists()).toBe(true)
+                expect(wrapper.find(_slimSlider).exists()).toBe(true)
+                expect(wrapper.find(_slimSliderInput).exists()).toBe(true)
             })
-            it('should not mount nonEditableSlider', function () {
-                expect(wrapper.find(_nonEditableSlider).exists()).toBe(false)
-            })
-        })
-        describe('When set value of editableSliderInput', () => {
-            let editableSliderInput: any
-
-            beforeAll(async () => {
-                editableSliderInput =
-                    wrapper.findComponent(_editableSliderInput)
-                await editableSliderInput.setValue(1)
-            })
-            it('should have the right model value', function () {
-                expect(wrapper.emitted()['update:model-value'][1]).toEqual([1])
-            })
-            it('should have the right value', function () {
-                expect(wrapper.vm.value).toEqual(1)
+            it('should not mount nonSlimSlider', function () {
+                expect(wrapper.find(_nonSlimSlider).exists()).toBe(false)
             })
         })
     })

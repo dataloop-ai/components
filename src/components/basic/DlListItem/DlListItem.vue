@@ -24,7 +24,7 @@
                 >
                     <dl-icon
                         :icon="startIconData.icon"
-                        :color="startIconData.color"
+                        :color="getIconColor(startIconData.color)"
                         :size="startIconData.size"
                     />
                 </dl-item-section>
@@ -38,7 +38,7 @@
                 >
                     <dl-icon
                         :icon="endIconData.icon"
-                        :color="endIconData.color"
+                        :color="getIconColor(endIconData.color)"
                         :size="endIconData.size"
                     />
                 </dl-item-section>
@@ -171,6 +171,9 @@ export default defineComponent({
             if (this.isClickable) {
                 this.$emit('click', e)
             }
+        },
+        getIconColor(color: string) {
+            return this.disabled ? 'dl-color-disabled' : color
         }
     }
 })

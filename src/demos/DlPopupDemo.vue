@@ -2,10 +2,13 @@
     <div>
         <dl-button label="Open Popup">
             <dl-popup
+                class="TestID"
+                :style="{ '--dl-popup-padding': '0px' }"
                 title="Edit Item Description"
                 additional-info="Some additional information"
                 subtitle="Some text for better explanation."
                 with-close-button
+                draggable
                 @close-button-click="handleClear"
             >
                 <dl-text-area
@@ -159,3 +162,14 @@ export default defineComponent({
     }
 })
 </script>
+
+<style>
+#TestID {
+    border: 1px solid red;
+    background-color: blue;
+}
+.TestID {
+    border: 1px solid red !important;
+    background-color: blue;
+}
+</style>

@@ -16,6 +16,8 @@
             @click="onClick"
             @dblclick="onDblClick"
             @mousedown="onMouseDown"
+            @mouseenter="mouseOver = true"
+            @mouseleave="mouseOver = false"
         >
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
@@ -128,7 +130,7 @@ export default defineComponent({
          * The size of the button, it can be s,m,l or xl
          */
         margin: { type: String, default: '0 auto' },
-        size: { type: String! as PropType<ButtonSizes>, default: 'm' },
+        size: { type: String! as PropType<ButtonSizes | string>, default: 'm' },
         /**
          * The assigned color will fill the entirety of the button
          */
@@ -182,11 +184,15 @@ export default defineComponent({
         const { active } = toRefs(props)
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
+        const mouseOver = ref(false)
 
         const buttonClass = computed(() => {
             const classes = ['dl-button']
             if (active.value) {
                 classes.push('active-class')
+            }
+            if (props.dense) {
+                classes.push('dl-button--dense')
             }
             return classes
         })
@@ -195,7 +201,8 @@ export default defineComponent({
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
             isOverflowing: hasEllipsis,
-            buttonClass
+            buttonClass,
+            mouseOver
         }
     },
     computed: {
@@ -206,6 +213,13 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
+            if (this.disabled) {
+                return 'dl-color-disabled'
+            }
+            if (this.mouseOver) {
+                return 'dl-color-hover'
+            }
+
             if (this.iconColor) {
                 return this.iconColor
             }
@@ -461,6 +475,11 @@ export default defineComponent({
         }
     }
 
+    &--dense {
+        border: none;
+        padding: 0;
+    }
+
     &:hover:enabled:not(:active) {
         transition: var(--dl-button-transition-duration);
         color: var(--dl-button-text-color-hover);
@@ -470,6 +489,9 @@ export default defineComponent({
         & .dl-button-label {
             transition: var(--dl-button-text-transition-duration);
             color: var(--dl-button-color-hover);
+        }
+        .dl-icon {
+            color: var(--dl-button-text-color-hover) !important;
         }
     }
 }

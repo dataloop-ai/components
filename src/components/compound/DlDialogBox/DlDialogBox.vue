@@ -3,6 +3,7 @@
         <div
             v-if="show"
             :id="uuid"
+            :class="$attrs.class"
             :style="cssVars"
             class="root-wrapper"
         >
@@ -49,7 +50,7 @@
                         name="body"
                     />
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
@@ -108,7 +109,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => ({} as DlEmptyStateProps)
+            default: null
         },
         zIndex: {
             type: [Number, String],
@@ -129,7 +130,9 @@ export default defineComponent({
         visibleDragIcon: boolean
     } {
         return {
-            uuid: `dl-dialog-box-${v4()}`,
+            uuid: (this.$attrs.id as string)?.length
+                ? (this.$attrs.id as string)
+                : `dl-dialog-box-${v4()}`,
             show: this.modelValue,
             draggableOptions: {
                 draggableX: 0,
@@ -330,7 +333,7 @@ export default defineComponent({
     display: flex;
     padding: var(--dl-dialog-box-header-padding, 16px);
     border-bottom: var(--dl-dialog-separator);
-    height: var(--dl-dialog-box-header-height, 60px);
+    height: fit-content;
 }
 
 .content {
@@ -349,7 +352,7 @@ export default defineComponent({
 .footer {
     display: flex;
     padding: var(--dl-dialog-box-footer-padding, 20px 16px);
-    height: var(--dl-dialog-box-footer-height, 35px);
+    height: fit-content;
     border-top: var(--dl-dialog-separator);
 }
 

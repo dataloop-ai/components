@@ -1,5 +1,6 @@
 <template>
     <tr
+        ref="dlTrTreeRef"
         :class="trClasses"
         v-bind="$attrs"
         v-on="listeners"
@@ -15,9 +16,16 @@ export default defineComponent({
     name: 'DlTrTree',
     props: {
         props: { type: Object, default: () => {} },
-        noHover: Boolean
+        noHover: Boolean,
+        children: {
+            type: Number,
+            default: null
+        }
     },
     computed: {
+        childrenComputed(): number | null {
+            return this.children
+        },
         listeners(): any {
             if (isVue2) {
                 // @ts-ignore
@@ -44,6 +52,25 @@ export default defineComponent({
             }
 
             return classes
+        }
+    },
+    watch: {
+        childrenComputed(value) {
+            (this.$refs.dlTrTreeRef as any).setAttribute(
+                'data-children',
+                value
+            )
+        }
+    },
+    mounted(): void {
+        this.setAttributeChildren()
+    },
+    methods: {
+        setAttributeChildren() {
+            (this.$refs.dlTrTreeRef as any).setAttribute(
+                'data-children',
+                this.children
+            )
         }
     }
 })

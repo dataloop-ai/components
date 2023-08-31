@@ -441,13 +441,7 @@ export default defineComponent({
             } else {
                 this.dateInterval = {
                     from: value.from,
-                    to: new Date(
-                        value.to.getFullYear(),
-                        value.to.getMonth(),
-                        value.to.getDate(),
-                        23,
-                        59
-                    )
+                    to: new Date(value.to)
                 }
             }
             this.$emit('update:model-value', value)

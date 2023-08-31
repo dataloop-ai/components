@@ -148,10 +148,41 @@ describe('DlTable', () => {
             })
             await wrapper.setProps({ filter: 'yo' })
             await wrapper.vm.$nextTick()
+            const emitted = wrapper.emitted()
+            const newPagination = emitted['update:pagination'][1][0]
+            await wrapper.setProps({ pagination: newPagination })
+            await wrapper.vm.$nextTick()
         })
 
         it('should have the right pagination page', () => {
+            console.log(wrapper.vm.computedPagination)
             expect(wrapper.vm.marginalsScope.pagination.page).toBe(1)
+        })
+    })
+    describe(`Test | table 'columns' prop is reactive`, () => {
+        describe(`When the table is initialized without columns`, () => {
+            let wrapper: any
+
+            beforeAll(async () => {
+                wrapper = mount(DlTable, {
+                    props: {
+                        columns: []
+                    }
+                })
+            })
+
+            it(`The table shouldn't include any columns`, () => {
+                expect(wrapper.vm.computedCols.length).toBe(0)
+            })
+            describe(`When the table 'columns' prop is updated`, () => {
+                beforeAll(async () => {
+                    await wrapper.setProps({ columns: COLUMNS })
+                })
+
+                it(`I expect that the table columns to be updated accordingly`, async () => {
+                    expect(wrapper.vm.computedCols.length).toBe(COLUMNS.length)
+                })
+            })
         })
     })
 })

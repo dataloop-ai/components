@@ -8,12 +8,16 @@ import { useTableFilterProps } from '../hooks/tableFilter'
 import { useTableSortProps } from '../hooks/tableSort'
 import { useTableColumnSelectionProps } from '../hooks/tableColumnSelection'
 import { useTableRowSelectionProps } from '../hooks/tableRowSelection'
+import { DlTableColumn, DlTableRow } from '../types'
 
 export const props = {
-    columns: { type: Array, default: () => [] as Record<string, any>[] },
+    columns: {
+        type: Array as PropType<DlTableColumn[]>,
+        default: () => [] as DlTableColumn[]
+    },
     rows: {
-        type: Array,
-        default: () => [] as Record<string, any>[]
+        type: Array as PropType<DlTableRow[]>,
+        default: () => [] as DlTableRow[]
     },
     rowKey: {
         type: [String, Function],
@@ -46,6 +50,7 @@ export const props = {
     virtualScroll: Boolean,
     hidePagination: Boolean,
     hideSelectedBanner: Boolean,
+    hasEditableColumns: Boolean,
     selectedRowsLabel: {
         type: Function,
         default: (val: number) => `${val} records selected`
@@ -90,7 +95,12 @@ export const props = {
     isEmpty: Boolean,
     emptyStateProps: {
         type: Object as PropType<DlEmptyStateProps>,
-        default: null as unknown as PropType<DlEmptyStateProps>
+        default: () =>
+            ({
+                title: '',
+                subtitle: 'No data to show yet',
+                icon: 'icon-dl-dataset-filled'
+            } as unknown as PropType<DlEmptyStateProps>)
     },
     scrollDebounce: {
         type: Number,

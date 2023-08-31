@@ -109,6 +109,11 @@ import { useThemeVariables } from '../../../../../hooks/use-theme'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 
+const barChartEmptyStateProps = {
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -141,7 +146,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: () => barChartEmptyStateProps
         }
     },
     setup(props) {

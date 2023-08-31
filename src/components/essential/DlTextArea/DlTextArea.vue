@@ -222,6 +222,10 @@ export default defineComponent({
         maxHeight: {
             type: String,
             default: '120px'
+        },
+        minHeight: {
+            type: String,
+            default: '80px'
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'update:model-value', 'keydown'],
@@ -235,6 +239,7 @@ export default defineComponent({
             return {
                 '--dl-textarea-max-width': props.width || 'auto',
                 '--dl-textarea-max-height': props.maxHeight,
+                '--dl-textarea-min-height': props.minHeight,
                 '--dl-textarea-width':
                     borderBoxSize.value?.[0].inlineSize + 'px' || '100%'
             }
@@ -365,7 +370,7 @@ export default defineComponent({
     width: 100%;
     min-width: 100px;
     max-width: 100%;
-    min-height: 80px;
+    min-height: var(--dl-textarea-min-height);
     max-height: var(--dl-textarea-max-height);
     outline: none;
     color: var(--dl-color-darker);

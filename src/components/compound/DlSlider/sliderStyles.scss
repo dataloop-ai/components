@@ -85,12 +85,12 @@
   }
 }
 
-.editable {
+.slim {
   align-items: center;
   flex-direction: row;
 }
 
-.non-editable {
+.non-slim {
   flex-direction: column;
 
   & .header {

@@ -94,7 +94,7 @@
             >
                 <div class="column" />
                 <dl-empty-state
-                    v-if="isEmpty"
+                    v-if="isEmpty && emptyStateProps"
                     v-bind="emptyStateProps"
                 >
                     <template

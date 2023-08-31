@@ -287,7 +287,6 @@
         <div>
             <h3>Shaded and outlined</h3>
             <dl-button
-                :active="activeButtonState"
                 icon="icon-dl-search"
                 label="test me"
                 shaded
@@ -302,6 +301,17 @@
                 dense
                 label="test me"
                 text-color="red"
+            />
+        </div>
+        <div>
+            <h3>button with icon color</h3>
+            <dl-button
+                icon="icon-dl-search"
+                :icon-color="'red'"
+                label="test me"
+                size="s"
+                shaded
+                outlined
             />
         </div>
     </div>
@@ -325,7 +335,9 @@ export default defineComponent({
         DlIcon
     },
     setup() {
-        const buttons = reactive<ButtonSizes[]>(['s', 'm', 'l', 'xl'])
+        const buttons = reactive<(ButtonSizes | string)[]>(
+            Object.values(ButtonSizes)
+        )
         const activeButtonState = ref(false)
 
         const log = (e: Event) => console.log(e)
@@ -338,7 +350,6 @@ export default defineComponent({
 .col {
     width: auto;
     display: flex;
-    flex-wrap: wrap;
     min-width: 0;
     max-width: 100%;
 

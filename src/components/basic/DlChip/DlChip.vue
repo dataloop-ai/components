@@ -27,14 +27,17 @@
         >
             <div
                 ref="dlChipRef"
-                class="dl-chip--ellipsis"
+                :class="{
+                    'dl-chip--ellipsis': overflow,
+                    'dl-chip--no-overflow': !overflow
+                }"
             >
                 <slot>
                     {{ hasLabel ? label : null }}
                 </slot>
             </div>
         </div>
-
+        <slot name="suffix" />
         <span
             v-if="removable"
             class="dl-chip-remove-icon-container"
@@ -49,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent, ref } from 'vue-demi'
+import { PropType, defineComponent, ref, watch } from 'vue-demi'
 import { DlTooltip } from '../../shared'
 import { DlIcon } from '../../essential'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
@@ -74,6 +77,7 @@ export default defineComponent({
     props: {
         disabled: Boolean,
         filled: { type: Boolean, default: true },
+        noBorder: { type: Boolean, default: false },
         outlined: Boolean,
         color: { type: String, default: 'dl-color-secondary' },
         textColor: { type: String, default: '' },
@@ -92,11 +96,16 @@ export default defineComponent({
         overflow: { type: Boolean, default: false },
         fit: { type: Boolean, default: false }
     },
-    emits: ['remove'],
-    setup() {
+    emits: ['remove', 'ellipsis'],
+    setup(props, ctx) {
         const isVisible = ref(true)
         const dlChipRef = ref(null)
-        const { hasEllipsis } = useSizeObserver(dlChipRef)
+        const label = ref(props.label)
+        const { hasEllipsis } = useSizeObserver(dlChipRef, label)
+
+        watch(hasEllipsis, () => {
+            ctx.emit('ellipsis', hasEllipsis.value)
+        })
 
         return {
             isVisible,
@@ -151,6 +160,7 @@ export default defineComponent({
                     color: this.color
                 }),
                 '--dl-chip-border': setBorder({
+                    noBorder: this.noBorder,
                     disabled: this.disabled,
                     color: this.color
                 }),
@@ -210,6 +220,10 @@ export default defineComponent({
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+    }
+
+    &--no-overflow {
+        overflow-wrap: break-word;
     }
 }
 

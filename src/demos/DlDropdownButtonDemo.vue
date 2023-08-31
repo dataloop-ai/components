@@ -333,6 +333,29 @@
                 </dl-dropdown-button>
             </div>
         </div>
+
+        <div style="margin-top: 20px; display: flex; flex-direction: column">
+            Button with text color with split
+            <dl-dropdown-button
+                auto-close
+                split
+                outlined
+                text-color="red"
+                :label="outlinedLabel"
+                @handleSelectedItem="handleOutlinedSelect"
+            >
+                <dl-list>
+                    <dl-list-item
+                        v-for="val in ['Photos', 'Videos', 'Articles']"
+                        :key="val"
+                        clickable
+                        @click="handleOutlinedSelect(val)"
+                    >
+                        <dl-item-section> {{ val }} </dl-item-section>
+                    </dl-list-item>
+                </dl-list>
+            </dl-dropdown-button>
+        </div>
     </div>
 </template>
 
