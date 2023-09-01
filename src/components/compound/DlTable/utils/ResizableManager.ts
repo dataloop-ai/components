@@ -84,6 +84,7 @@ export class ResizableManager {
 
         leftSeparator.style.backgroundColor = 'transparent'
         resizeSeparator.style.backgroundColor = 'transparent'
+        resizeSeparator.style.border = '0px'
         eventTarget.style.cursor = 'inherit'
     }
 
@@ -123,6 +124,8 @@ export class ResizableManager {
 
         leftSeparator.style.backgroundColor = this._options.color
         resizeSeparator.style.backgroundColor = this._options.color
+        resizeSeparator.style.width = '1px'
+        resizeSeparator.style.border = '3px solid var(--dl-color-bg)'
         e.target.style.cursor = 'pointer'
     }
 

@@ -1,8 +1,8 @@
 <template>
     <div
         :id="`DlSmartSearchInput${uuid}`"
-        class="dl-smart-search-input"
         :style="cssVars"
+        class="dl-smart-search-input"
     >
         <div class="dl-smart-search-input__search-bar-wrapper">
             <div
@@ -11,7 +11,7 @@
             >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="!focused && (withSearchIcon || status)"
+                        v-if="!focused && computedStatus"
                         :icon="statusIcon"
                         :color="statusIconColor"
                         size="16px"
@@ -26,15 +26,15 @@
                         :style="textareaStyles"
                         :placeholder="placeholder"
                         :contenteditable="!disabled"
-                        @keypress="keyPress"
-                        @input="handleValueChange"
+                        @keypress="onKeyPress"
+                        @input="onInput"
                         @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
                 <div class="dl-smart-search-input__toolbar">
                     <div
-                        v-if="withClearBtn && modelValue"
+                        v-if="showClearButton && modelValue"
                         class="dl-smart-search-input__clear-btn-wrapper"
                     >
                         <dl-button
@@ -42,303 +42,443 @@
                             size="12px"
                             flat
                             :disabled="disabled"
-                            @mousedown="clearValue"
+                            @mousedown="onClear"
                         />
                         <dl-tooltip> Clear Query </dl-tooltip>
                     </div>
-                    <div class="dl-smart-search-input__toolbar--right">
-                        <div
-                            v-if="withScreenButton"
-                            class="dl-smart-search-input__screen-btn-wrapper"
-                        >
-                            <dl-button
-                                :icon="screenIcon"
-                                size="16px"
-                                flat
-                                :disabled="disabled"
-                                @mousedown="handleScreenButtonClick"
-                            />
-                            <dl-tooltip>
-                                {{ expanded ? 'Collapse' : 'Expand' }} Smart
-                                Search
-                            </dl-tooltip>
-                        </div>
-                        <div
-                            v-if="withSaveButton"
-                            class="dl-smart-search-input__save-btn-wrapper"
-                        >
-                            <div>
-                                <dl-button
-                                    icon="icon-dl-save"
-                                    size="16px"
-                                    flat
-                                    :disabled="saveStatus"
-                                    @click="save"
-                                />
-                                <dl-tooltip> Save Query </dl-tooltip>
-                            </div>
-                            <dl-button
-                                icon="icon-dl-edit"
-                                size="16px"
-                                flat
-                                transform="none"
-                                text-color="dl-color-darker"
-                                uppercase
-                                label="DQL"
-                                @click="edit"
-                            >
-                                <dl-tooltip> Switch to DQL </dl-tooltip>
-                            </dl-button>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <label
-                v-if="!focused"
+            <dl-label
+                v-if="!focused && computedStatus"
                 ref="label"
                 class="dl-smart-search-input__search-label"
+                :text="computedStatus.message"
+                :color="computedStatus.type === 'error' ? 'red' : 'gray'"
                 :style="labelStyles"
-            >{{ status ? status.message : null }}</label>
+            />
         </div>
-        <div :class="messageClasses">
-            {{ message }}
-        </div>
-        <dl-suggestions-dropdown
-            v-model="suggestionModal"
+        <suggestions-dropdown
+            v-model="showSuggestions"
             :parent-id="`${uuid}`"
+            :trigger-percentage="0.5"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
             :expanded="expanded"
-            @set-input-value="setInputValue"
+            @set-input-value="setInputFromSuggestion"
         />
         <dl-menu
-            v-if="isDatePickerVisible && focused"
-            v-model="isDatePickerVisible"
+            v-if="showDatePicker && focused"
+            v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
                     :single-selection="true"
-                    @change="handleDateSelectionUpdate"
+                    @change="onDateSelection"
                 />
             </div>
         </dl-menu>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, PropType, nextTick } from 'vue-demi'
+import {
+    defineComponent,
+    ref,
+    PropType,
+    nextTick,
+    toRefs,
+    computed,
+    watch,
+    onMounted,
+    onBeforeUnmount
+} from 'vue-demi'
 import { DlButton } from '../../../../basic'
 import { DlDatePicker } from '../../../DlDateTime'
-import { DlMenu, DlIcon } from '../../../../essential'
+import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
 import { setCaretAtTheEnd } from '../../../../../utils'
-import { SearchStatus, SyntaxColorSchema } from '../types'
-import { debounce } from 'lodash'
+import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
+import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
-import DlSuggestionsDropdown from './DlSuggestionsDropdown.vue'
+import SuggestionsDropdown from './SuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
     updateEditor,
-    isEligibleToChange
+    isEligibleToChange,
+    createColorSchema,
+    replaceJSDatesWithStringifiedDates,
+    replaceStringifiedDatesWithJSDates,
+    setAliases,
+    revertAliases,
+    clearPartlyTypedSuggestion
 } from '../utils'
 import { v4 } from 'uuid'
+import {
+    Schema,
+    Alias,
+    useSuggestions,
+    removeBrackets
+} from '../../../../../hooks/use-suggestions'
+import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 
 export default defineComponent({
     components: {
         DlIcon,
         DlButton,
-        DlSuggestionsDropdown,
+        SuggestionsDropdown,
         DlTooltip,
         DlDatePicker,
-        DlMenu
+        DlMenu,
+        DlLabel
     },
     model: {
         prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {
+        modelValue: {
+            type: Object as PropType<Record<string, any>>,
+            default: () => ({})
+        },
+        schema: {
+            type: Object as PropType<Schema>,
+            default: () => ({})
+        },
+        aliases: {
+            type: Array as PropType<Alias[]>,
+            default: () => [] as Alias[]
+        },
+        colorSchema: {
+            type: Object as PropType<ColorSchema>,
+            default: () => ({
+                fields: 'var(--dl-color-secondary)',
+                operators: 'var(--dl-color-positive)',
+                keywords: 'var(--dl-color-medium)'
+            })
+        },
         status: {
             type: Object as PropType<SearchStatus>,
             default: () => ({ type: 'info', message: '' })
-        },
-        styleModel: {
-            type: Object as PropType<SyntaxColorSchema>,
-            default: null
         },
         placeholder: {
             type: String,
             default: ''
         },
-        suggestions: {
-            type: Array as PropType<string[]>,
-            default: () => [] as string[]
-        },
-        inputHeight: {
-            type: String,
-            default: '26px'
-        },
-        expandedInputHeight: {
-            type: String,
-            default: '327px'
-        },
-        modelValue: {
-            type: String,
-            default: ''
-        },
-        withSearchIcon: {
-            type: Boolean,
-            default: false
-        },
-        withScreenButton: {
-            type: Boolean,
-            default: false
-        },
-        withSaveButton: {
-            type: Boolean,
-            default: false
-        },
-        withDQLButton: {
+        clearButton: {
             type: Boolean,
             default: true
-        },
-        message: {
-            type: String,
-            default: ''
         },
         disabled: {
             type: Boolean,
             default: false
         },
-        searchBarWidth: {
+        width: {
             type: String,
-            default: 'auto'
+            default: '250px'
         },
-        defaultWidth: {
+        height: {
             type: String,
-            default: '450px'
+            default: '28px'
+        },
+
+        strict: {
+            type: Boolean,
+            default: false
         }
     },
-    emits: [
-        'update:model-value',
-        'update:expanded',
-        'save',
-        'search',
-        'filter',
-        'dql-edit',
-        'focus'
-    ],
+    emits: ['update:model-value', 'focus', 'blur', 'input'],
     setup(props, { emit }) {
-        const input = ref(null)
-        const label = ref(null)
-        const styledTexarea = ref(null)
-        const styledInput = ref(null)
+        //#region refs
+        const input = ref<HTMLInputElement>(null)
+        const label = ref<HTMLLabelElement>(null)
+        const searchBar = ref<HTMLDivElement>(null)
+        //#endregion
 
+        //#region props
+        const {
+            modelValue,
+            colorSchema,
+            aliases,
+            strict,
+            status,
+            disabled,
+            schema,
+            height,
+            width
+        } = toRefs(props)
+        //#endregion
+
+        //#region data
+        const searchQuery = ref<string>(stringifySmartQuery(modelValue.value))
         const focused = ref(false)
-        const isOverflow = ref(false)
+        const isOverflowing = ref(false)
         const isTyping = ref(false)
         const scroll = ref(false)
-
-        const { hasEllipsis } = useSizeObserver(input)
-
-        const suggestionModal = ref(false)
+        const showSuggestions = ref(false)
         const menuOffset = ref([0, 5])
         const cancelBlur = ref(0)
-        const expanded = ref(false)
-
+        const expanded = ref(true)
         const datePickerSelection = ref(null)
-        const isDatePickerVisible = ref(false)
+        const showDatePicker = ref(false)
+        //#endregion
 
-        const setInputValue = (value: string) => {
-            const query = props.modelValue
-                .split(' ')
-                .map((string) => string.trim())
+        //#region hooks
+        // todo: these can be stale data. we need to update them on schema change.
+        const { hasEllipsis } = useSizeObserver(input)
+        const { suggestions, error, findSuggestions } = useSuggestions(
+            schema.value,
+            aliases.value,
+            { strict }
+        )
+        //#endregion
 
-            suggestionModal.value = false
+        //#region methods
+        const setInputValue = (
+            value: string,
+            options: { noEmit?: boolean } = {}
+        ) => {
+            const { noEmit } = options
 
+            showSuggestions.value = false
+
+            // to handle date suggestion modal to open automatically.
+            if (value.includes('(dd/mm/yyyy)')) {
+                value = value.trimEnd()
+            }
+
+            const specialSuggestions = suggestions.value.filter((suggestion) =>
+                suggestion.startsWith('.')
+            )
+
+            for (const suggestion of specialSuggestions) {
+                if (value.includes(suggestion)) {
+                    value = value.replace(` ${suggestion}`, suggestion)
+                }
+            }
+
+            searchQuery.value = value
+
+            if (value !== input.value.innerText) {
+                input.value.innerHTML = value
+            }
+
+            updateEditor(input.value, editorStyle.value)
+            setMenuOffset(isEligibleToChange(input.value, expanded.value))
+
+            if (!expanded.value) {
+                isOverflowing.value =
+                    isEllipsisActive(input.value) || hasEllipsis.value
+            }
+
+            if (focused.value) {
+                if (value.length && isEndingWithDateIntervalPattern(value)) {
+                    showDatePicker.value = true
+                    showSuggestions.value = false
+                } else {
+                    showDatePicker.value = false
+                    datePickerSelection.value = null
+                    showSuggestions.value = true
+                }
+            }
+
+            scroll.value = input.value.offsetHeight > 40
+
+            nextTick(() => {
+                findSuggestions(value)
+            })
+
+            if (!noEmit) {
+                emit('input', value)
+            }
+        }
+
+        const setInputFromSuggestion = (value: string) => {
             let stringValue = ''
+            if (searchQuery.value.length) {
+                const query = searchQuery.value
+                    .replace(new RegExp(' ', 'g'), ' ')
+                    .split(' ')
+                    .map((string: string) => string.trim())
+                    .filter((string: string) => !!string.length)
 
-            if (query.length > 1) {
-                if (query[query.length - 1] === '') {
-                    stringValue = [...query, value, '']
-                        .join(' ')
-                        .replace('  ', ' ')
+                if (query.length > 1) {
+                    if (query[query.length - 1] === '') {
+                        stringValue = [...query, value, '']
+                            .join(' ')
+                            .replace('  ', ' ')
+                    } else {
+                        if (query[query.length - 1].endsWith('.')) {
+                            query[query.length - 1] = query[
+                                query.length - 1
+                            ].replace('.', '')
+                        }
+                        stringValue = [...query, value, ''].join(' ')
+                    }
                 } else {
                     if (query[query.length - 1].endsWith('.')) {
                         query[query.length - 1] = query[
                             query.length - 1
                         ].replace('.', '')
-                    } else {
-                        query.splice(-1)
                     }
                     stringValue = [...query, value, ''].join(' ')
                 }
             } else {
-                if (query[query.length - 1].endsWith('.')) {
-                    query[query.length - 1] = query[query.length - 1].replace(
-                        '.',
-                        ''
-                    )
-                    stringValue = [...query, value, ''].join(' ')
-                } else {
-                    stringValue = [value, ''].join(' ')
+                stringValue = value + ' '
+            }
+
+            setInputValue(
+                clearPartlyTypedSuggestion(input.value.innerText, stringValue)
+            )
+            setCaretAtTheEnd(input.value)
+        }
+
+        const debouncedSetInputValue = debounce(setInputValue, 300)
+
+        const updateJSONQuery = () => {
+            const bracketless = removeBrackets(searchQuery.value)
+            const cleanedAliases = revertAliases(bracketless, aliases.value)
+            const json = toJSON(cleanedAliases)
+            if (!isEqual(json, modelValue.value)) {
+                emit('update:model-value', json)
+            }
+        }
+
+        const setInputFromModel = (value: string) => {
+            searchQuery.value = value
+            input.value.innerHTML = value
+
+            let inputValue = `${value}`
+            if (value.length) {
+                inputValue += ' '
+            }
+            setInputValue(inputValue, { noEmit: true })
+        }
+
+        const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
+
+        const setMenuOffset = (value: number[]) => {
+            menuOffset.value = value
+        }
+
+        const focus = () => {
+            if (disabled.value) {
+                return
+            }
+
+            input.value.scrollTo(0, input.value.scrollHeight)
+            input.value.scrollLeft = input.value.scrollWidth
+
+            input.value.focus()
+
+            focused.value = true
+            emit('focus')
+        }
+
+        const blur = () => {
+            if (showDatePicker.value) {
+                return
+            }
+
+            if (cancelBlur.value === 0) {
+                if (showSuggestions.value) {
+                    focused.value = true
+                    return
+                }
+
+                input.value.scrollLeft = 0
+                input.value.scrollTop = 0
+                focused.value = false
+                expanded.value = true
+                updateJSONQuery()
+                emit('blur')
+            } else {
+                focus()
+                cancelBlur.value = cancelBlur.value - 1
+            }
+        }
+
+        const onClear = () => {
+            cancelBlur.value = cancelBlur.value === 0 ? 1 : cancelBlur.value
+            searchQuery.value = ''
+            input.value.innerHTML = ''
+            emit('update:model-value', {})
+            if (!focused.value) {
+                focus()
+            }
+        }
+
+        const onKeyPress = (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+            }
+        }
+
+        const onInput = (e: Event) => {
+            const text = (e.target as HTMLElement).textContent
+            debouncedSetInputValue(text)
+        }
+
+        const onDateSelection = (value: DateInterval) => {
+            datePickerSelection.value = value
+            searchQuery.value = replaceDateInterval(searchQuery.value, value)
+            input.value.innerHTML = searchQuery.value
+        }
+
+        const readModelValue = (val: { [key: string]: any }) => {
+            if (val) {
+                const aliased = fromJSON(val)
+
+                if (
+                    aliased !== searchQuery.value.trim() ||
+                    !input.value?.innerHTML.length
+                ) {
+                    debouncedSetInputFromModel(aliased)
                 }
             }
+        }
 
-            // to handle date suggestion modal to open automatically.
-            if (stringValue.includes('(dd/mm/yyyy)')) {
-                stringValue = stringValue.trimEnd()
+        const isValidJSON = (item: string | Object): boolean => {
+            let value = typeof item !== 'string' ? JSON.stringify(item) : item
+            try {
+                value = JSON.parse(value)
+            } catch (e) {
+                return false
             }
 
-            const specialSuggestions = props.suggestions.filter((suggestion) =>
-                suggestion.startsWith('.')
+            return typeof value === 'object' && value !== null
+        }
+
+        const toJSON = (value: string) => {
+            const replacedDate = replaceStringifiedDatesWithJSDates(value)
+            const json = parseSmartQuery(replacedDate ?? searchQuery.value)
+
+            return isValidJSON(json) ? json : searchQuery.value
+        }
+
+        const fromJSON = (value: { [key: string]: any }) => {
+            const replacedDate = replaceJSDatesWithStringifiedDates(
+                value,
+                dateKeys.value
             )
 
-            for (const suggestion of specialSuggestions) {
-                if (stringValue.includes(suggestion)) {
-                    stringValue = stringValue.replace(
-                        ` ${suggestion}`,
-                        suggestion
-                    )
-                }
-            }
-
-            emit('update:model-value', stringValue)
+            const stringQuery = stringifySmartQuery(replacedDate)
+            const aliased = setAliases(stringQuery, aliases.value)
+            return aliased
         }
+        //#endregion
 
-        const debouncedSetModal = debounce(
-            () => (suggestionModal.value = true),
-            200
-        )
+        //#region computed
+        const editorStyle = computed((): SyntaxColorSchema => {
+            return createColorSchema(colorSchema.value, aliases.value)
+        })
 
-        return {
-            uuid: v4(),
-            input,
-            label,
-            hasEllipsis,
-            suggestionModal,
-            setInputValue,
-            menuOffset,
-            cancelBlur,
-            expanded,
-            styledTexarea,
-            styledInput,
-            datePickerSelection,
-            isDatePickerVisible,
-            focused,
-            isOverflow,
-            isTyping,
-            scroll,
-            debouncedSetModal
-        }
-    },
-    computed: {
-        statusIcon(): string {
-            switch (this.status.type) {
+        const statusIcon = computed(() => {
+            switch (computedStatus.value.type) {
                 case 'success':
                     return 'icon-dl-approve-filled'
                 case 'error':
@@ -348,9 +488,10 @@ export default defineComponent({
                 default:
                     return ''
             }
-        },
-        statusIconColor(): string {
-            switch (this.status.type) {
+        })
+
+        const statusIconColor = computed(() => {
+            switch (computedStatus.value.type) {
                 case 'success':
                     return 'dl-color-positive'
                 case 'error':
@@ -360,253 +501,206 @@ export default defineComponent({
                 default:
                     return ''
             }
-        },
-        screenIcon(): string {
-            return this.expanded
-                ? 'icon-dl-fit-to-screen'
-                : 'icon-dl-full-screen'
-        },
-        textareaStyles(): Record<string, any> {
+        })
+
+        const textareaStyles = computed<Record<string, string | number>>(() => {
             const overflow: string =
-                this.scroll && this.focused ? 'scroll' : 'hidden'
+                scroll.value && focused.value ? 'scroll' : 'hidden'
             return {
                 overflow,
                 '-webkit-appearance': 'textfield'
             }
-        },
-        searchBarClasses(): string {
+        })
+
+        const searchBarClasses = computed<string>(() => {
             let classes = 'dl-smart-search-input__search-bar'
 
-            if (this.focused) {
+            if (focused.value) {
                 classes += ' dl-smart-search-input__search-bar--focused'
-            } else if (!this.focused) {
-                if (this.status.type === 'error') {
+            } else if (!focused.value) {
+                if (computedStatus.value.type === 'error') {
                     classes += ' dl-smart-search-input__search-bar--error'
-                } else if (this.status.type === 'warning') {
+                } else if (computedStatus.value.type === 'warning') {
                     classes += ' dl-smart-search-input__search-bar--warning'
                 }
             }
 
-            if (this.expanded) {
+            if (expanded.value) {
                 classes += ' dl-smart-search-input__search-bar--expanded'
             }
 
-            if (this.disabled) {
+            if (disabled.value) {
                 classes += ' dl-smart-search-input__search-bar--disabled'
             }
 
             return classes
-        },
-        inputClass(): string {
+        })
+
+        const inputClass = computed<string>(() => {
             return `dl-smart-search-input__textarea${
-                this.focused ? ' focus' : ''
+                focused.value ? ' focus' : ''
             }`
-        },
-        messageClasses(): string {
-            let classes = 'dl-smart-search-input__message'
+        })
 
-            if (this.status) {
-                classes += ` dl-smart-search-input__message--${this.status}`
-            }
+        const showClearButton = computed(() => {
+            return searchQuery.value.length > 0
+        })
 
-            return classes
-        },
-        withClearBtn(): boolean {
-            return this.modelValue.length > 0
-        },
-        cssVars(): Record<string, string> {
+        const cssVars = computed<Record<string, string | number>>(() => {
             return {
-                '--dl-smart-search-bar-wrapper-height':
-                    this.expandedInputHeight,
-                '--dl-smart-search-input-height': this.inputHeight,
-                '--search-bar-width': this.searchBarWidth
+                '--dl-smart-search-bar-wrapper-height': !focused.value
+                    ? 'auto'
+                    : 'fit-content',
+                '--dl-smart-search-input-height': height.value,
+                '--dl-smart-search-input-bar-width': focused.value
+                    ? '100%'
+                    : width.value,
+                '--dl-smart-search-input-max-width': focused.value
+                    ? '100%'
+                    : width.value
             }
-        },
-        saveStatus(): boolean {
-            return (
-                this.disabled ||
-                !this.modelValue ||
-                this.status.type === 'error'
+        })
+
+        const labelStyles = computed<Record<string, string | number>>(() => {
+            return {
+                color: computedStatus.value.type === 'error' ? 'red' : 'gray'
+            }
+        })
+
+        const dateKeys = computed(() => {
+            return Object.keys(schema.value).filter(
+                (key) => schema.value[key] === 'date'
             )
-        },
-        labelStyles(): Record<string, any> {
+        })
+
+        const computedStatus = computed<SearchStatus>((): SearchStatus => {
+            if (searchQuery.value === '') {
+                return status.value
+            }
+
+            if (!error.value && searchQuery.value !== '') {
+                return {
+                    type: 'success',
+                    message: ''
+                }
+            }
+
+            if (error.value === 'warning') {
+                return {
+                    type: 'warning',
+                    message: 'The query is not supported technically.'
+                }
+            }
+
             return {
-                color: this.status?.type === 'error' ? 'red' : 'gray'
+                type: 'error',
+                message: error.value
             }
-        }
-    },
-    watch: {
-        modelValue(value: string) {
-            const target = this.$refs['input'] as HTMLInputElement
-            value = value?.replaceAll(' ', ' ') ?? ''
-            /*
-             * I commented out this line because it was blocking arrow navigation
-             * */
-            // if (!this.isTyping) target.innerHTML = value
-            target.innerHTML = value
-            updateEditor(this.styleModel)
-            this.setMenuOffset(isEligibleToChange(target, this.expanded))
-            /*
-             * I commented out this line because it was blocking arrow navigation
-             * */
-            // if (!this.isTyping) setCaret(target)
-            setCaretAtTheEnd(target)
-            if (!this.expanded) {
-                this.isOverflow =
-                    isEllipsisActive(this.$refs['input'] as Element) ||
-                    this.hasEllipsis
-            }
+        })
+        //#endregion
 
-            if (value.length && isEndingWithDateIntervalPattern(value)) {
-                this.isDatePickerVisible = true
-                this.suggestionModal = false
-            } else {
-                this.isDatePickerVisible = false
-                this.suggestionModal = true
-            }
-            this.scroll = (this.$refs.input as HTMLDivElement).offsetHeight > 40
-        },
-        suggestions(val) {
-            if (this.isDatePickerVisible) return
+        //#region watcher
+        watch(suggestions, (value) => {
+            if (showDatePicker.value) return
             nextTick(() => {
-                if (!val.length) {
-                    this.suggestionModal = false
+                if (!value.length) {
+                    showSuggestions.value = false
                 }
 
-                if (!this.suggestionModal && val.length > 0 && this.focused) {
-                    this.suggestionModal = true
-                }
-            })
-        },
-        expanded(value) {
-            this.$nextTick(() => {
-                const element = this.$refs['input'] as HTMLTextAreaElement
-
-                if (!value) {
-                    element.scrollLeft = 0
-                }
-
-                this.setMenuOffset(isEligibleToChange(element, value))
-
-                if (value) {
-                    this.focus()
+                if (
+                    !showSuggestions.value &&
+                    value.length > 0 &&
+                    focused.value
+                ) {
+                    showSuggestions.value = true
                 }
             })
-        },
-        focused(value) {
-            (this.$refs.searchBar as HTMLElement).style.maxHeight = `${
-                value ? parseInt(this.searchBarWidth) : 450
-            }px`
+        })
+
+        watch(focused, (value) => {
             if (!value) {
-                (this.$refs.input as HTMLElement).parentElement.style.width =
-                    '1px'
+                input.value.parentElement.style.width = '1px'
+            } else {
+                setMenuOffset(isEligibleToChange(input.value, value))
+                input.value.parentElement.style.width = '100%'
             }
-        },
-        isDatePickerVisible(val: boolean) {
-            if (!val) {
-                this.datePickerSelection = null
+        })
+
+        watch(showDatePicker, (value) => {
+            if (!value) {
+                datePickerSelection.value = null
 
                 nextTick(() => {
-                    this.focus()
+                    focus()
                 })
             }
-        }
-    },
-    mounted() {
-        if (!this.expanded) {
-            this.isOverflow =
-                isEllipsisActive(this.$refs['input'] as Element) ||
-                this.hasEllipsis
-        }
-        window.addEventListener('mousemove', () => (this.isTyping = false))
-    },
-    methods: {
-        setMenuOffset(value: number[]) {
-            this.menuOffset = value
-        },
-        focus() {
-            const target = this.$refs['input'] as HTMLInputElement
-            if (this.disabled) {
-                return
-            }
+        })
 
-            target.scrollTo(0, target.scrollHeight)
-            target.scrollLeft = target.scrollWidth
-
-            target.focus()
-
-            this.focused = true
-            this.$emit('focus', true)
-        },
-        blur() {
-            const element = this.$refs['input'] as HTMLTextAreaElement
-
-            if (this.isDatePickerVisible) {
-                return
-            }
-
-            if (this.cancelBlur === 0) {
-                if (this.suggestionModal) {
-                    this.focused = true
-                    return
+        watch(
+            modelValue,
+            (value, old) => {
+                if (value) {
+                    if (isEqual(value, old)) {
+                        return
+                    }
+                    readModelValue(value)
                 }
+            },
+            { immediate: true, deep: true }
+        )
+        //#endregion
 
-                element.scrollLeft = 0
-                element.scrollTop = 0
-                this.focused = false
-                this.expanded = false
-                this.$emit('focus', false)
-            } else {
-                this.focus()
-                this.focused = true
-                this.cancelBlur = this.cancelBlur - 1
+        onMounted(() => {
+            if (!expanded.value) {
+                isOverflowing.value =
+                    isEllipsisActive(input.value) || hasEllipsis.value
             }
-        },
-        save() {
-            this.$emit('save')
-        },
-        edit() {
-            this.$emit('dql-edit')
-        },
-        clearValue() {
-            this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
-            this.$emit('update:model-value', '')
-            if (!this.focused) {
-                this.focus()
-            }
-        },
-        keyPress(e: KeyboardEvent) {
-            if (e.key === 'Enter') {
-                this.$emit('search', this.modelValue)
-                e.preventDefault()
-                return
-            } else if (e.key === 'backspace') {
-                setCaretAtTheEnd(this.$refs['input'] as HTMLElement)
-            }
-        },
-        handleValueChange(e: Event) {
-            this.isTyping = true
-
-            const text = (e.target as HTMLElement).textContent
-                .toString()
-                .replaceAll(' ', ' ')
-
-            this.$emit('update:model-value', text)
-        },
-        handleScreenButtonClick() {
-            this.cancelBlur = this.cancelBlur === 0 ? 1 : this.cancelBlur
-            this.expanded = !this.expanded
-            if (!this.focused) {
-                this.focus()
-            }
-        },
-        handleDateSelectionUpdate(val: DateInterval) {
-            this.datePickerSelection = val
-
-            this.$emit(
-                'update:model-value',
-                replaceDateInterval(this.modelValue, val)
+            window.addEventListener('mousemove', () => (isTyping.value = false))
+            blur()
+        })
+        onBeforeUnmount(() => {
+            window.removeEventListener(
+                'mousemove',
+                () => (isTyping.value = false)
             )
+        })
+
+        return {
+            uuid: v4(),
+            input,
+            label,
+            searchBar,
+            searchQuery,
+            focused,
+            isOverflowing,
+            isTyping,
+            scroll,
+            showSuggestions,
+            menuOffset,
+            cancelBlur,
+            expanded,
+            datePickerSelection,
+            showDatePicker,
+            suggestions,
+            error,
+            editorStyle,
+            debouncedSetInputValue,
+            statusIcon,
+            statusIconColor,
+            textareaStyles,
+            searchBarClasses,
+            inputClass,
+            showClearButton,
+            cssVars,
+            labelStyles,
+            focus,
+            blur,
+            onClear,
+            onKeyPress,
+            onInput,
+            onDateSelection,
+            computedStatus,
+            setInputFromSuggestion
         }
     }
 })
@@ -614,9 +708,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .dl-smart-search-input {
     display: flex;
-    text-align: left;
-    position: absolute;
-    width: var(--search-bar-width);
+    flex-grow: 1;
+    max-width: var(--dl-smart-search-input-max-width);
+    width: var(--dl-smart-search-input-bar-width);
+    height: 100%;
+    transition: max-width 0.3s ease-out;
+    /* Margin for the status label */
+    margin-bottom: 15px;
 
     &__char {
         ::selection {
@@ -635,7 +733,7 @@ export default defineComponent({
         display: flex;
         flex-grow: 1;
         height: 100%;
-        padding: 0 10px;
+        padding-left: 10px;
         overflow-y: auto;
         background-color: var(--dl-color-panel-background);
 
@@ -753,7 +851,7 @@ export default defineComponent({
     }
 
     &__clear-btn-wrapper {
-        border-right: 1px solid var(--dl-color-separator);
+        padding-left: 5px;
         height: 100%;
         display: flex;
         align-items: center;
@@ -814,11 +912,13 @@ export default defineComponent({
     }
 
     &__search-label {
-        margin-top: 3px;
         font-size: 10px;
+        height: 15px;
         color: gray;
-        position: relative;
+        position: absolute;
         word-break: break-all;
+        bottom: -15px;
+        max-width: 100%;
     }
 
     &__date-picker-wrapper {

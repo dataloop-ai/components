@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { DlChip } from '../components'
-import { DlTransformOptions } from '../components/types'
+import { DlTextTransformOptions } from '../components/types'
 
 export default {
     title: 'Library/Components/DlChip',
@@ -109,10 +109,10 @@ export default {
             name: 'transform',
             defaultValue: 'lowercase',
             description: 'The text transform options for the chip',
-            options: DlTransformOptions,
+            options: Object.values(DlTextTransformOptions),
             control: { type: 'radio' },
             table: {
-                type: { summary: DlTransformOptions },
+                type: { summary: DlTextTransformOptions },
                 defaultValue: { summary: 'lowercase' }
             }
         },

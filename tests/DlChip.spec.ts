@@ -32,6 +32,7 @@ describe('DlChip', () => {
                 tabIndex: '',
                 icon: '',
                 textColor: '',
+                noBorder: false,
                 transform: 'default',
                 overflow: false,
                 fit: false
@@ -91,7 +92,7 @@ describe('DlChip', () => {
                 }
             })
 
-            chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+            chip = wrapper.find(`#${wrapper.vm.uuid}`)
         })
 
         it('will have max-width of "fit-content"', () => {
@@ -119,15 +120,13 @@ describe('DlChip', () => {
                     }
                 })
 
-                chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+                chip = wrapper.find(`#${wrapper.vm.uuid}`)
             })
 
             it('will have the inputted transform', () => {
-                console.log(chip.attributes('style'))
+                console.log(chip.classes())
                 expect(
-                    chip
-                        .attributes('style')
-                        ?.includes('-dl-chip-text-transform: capitalized')
+                    chip.classes()?.includes('dl-text-transform--capitalized')
                 ).to.be.true
             })
         })
@@ -148,17 +147,12 @@ describe('DlChip', () => {
                     }
                 })
 
-                chip = await wrapper.find(`#${wrapper.vm.uuid}`)
+                chip = wrapper.find(`#${wrapper.vm.uuid}`)
             })
 
             it('will have the inputted transform', () => {
-                expect(
-                    chip
-                        .attributes('style')
-                        ?.includes('--dl-chip-text-transform')
-                ).to.be.false
-                expect(chip.classes()?.includes('first-letter-capitalized')).to
-                    .be.true
+                expect(chip.classes()?.includes('dl-text-transform--default'))
+                    .to.be.true
             })
         })
     })

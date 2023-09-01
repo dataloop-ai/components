@@ -3,6 +3,7 @@
         <div
             v-if="show"
             :id="uuid"
+            :class="$attrs.class"
             :style="cssVars"
             class="root-wrapper"
         >
@@ -12,12 +13,7 @@
             />
             <div
                 class="dialog-wrapper"
-                :style="{
-                    width: Number(width) ? `${width}px` : width,
-                    height: Number(height) ? `${height}px` : height,
-                    transform: `translate(${draggableOptions.draggableX}px, ${draggableOptions.draggableY}px)`,
-                    maxHeight: !fullscreen && !fullHeight ? '90vh' : ''
-                }"
+                :style="wrapperStyles"
                 :class="{
                     'dialog-wrapper--fullscreen': fullscreen,
                     'dialog-wrapper--fullheight': fullHeight,
@@ -54,7 +50,7 @@
                         name="body"
                     />
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
@@ -113,7 +109,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: () => ({} as DlEmptyStateProps)
+            default: null
         },
         zIndex: {
             type: [Number, String],
@@ -134,7 +130,9 @@ export default defineComponent({
         visibleDragIcon: boolean
     } {
         return {
-            uuid: `dl-dialog-box-${v4()}`,
+            uuid: (this.$attrs.id as string)?.length
+                ? (this.$attrs.id as string)
+                : `dl-dialog-box-${v4()}`,
             show: this.modelValue,
             draggableOptions: {
                 draggableX: 0,
@@ -164,6 +162,19 @@ export default defineComponent({
                     `${this.zIndex}` ?? 'var(--dl-z-index-dialog)'
             }
         },
+        wrapperStyles(): Record<string, string | number> {
+            const styles: Record<string, string | number> = {
+                width: Number(this.width) ? `${this.width}px` : this.width,
+                height: Number(this.height) ? `${this.height}px` : this.height,
+                maxHeight: !this.fullscreen && !this.fullHeight ? '90vh' : ''
+            }
+
+            if (this.draggable) {
+                styles.transform = `translate(${this.draggableOptions.draggableX}px, ${this.draggableOptions.draggableY}px)`
+            }
+
+            return styles
+        },
         iconStyles(): Record<string, string> {
             return {
                 cursor: this.draggableOptions.draggableCursor,
@@ -173,7 +184,7 @@ export default defineComponent({
         hasParent(): boolean {
             const parentClassList = (this?.$el?.parentNode as HTMLElement)
                 ?.classList
-            return parentClassList?.contains('content')
+            return !!parentClassList?.contains('content')
         },
         hasHeader(): boolean {
             return !!this.$slots.header
@@ -220,8 +231,9 @@ export default defineComponent({
             this.draggableOptions.draggableCursor = 'pointer'
         },
         closeModal() {
-            if ((this.$el as HTMLElement)?.blur) {
-                (this.$el as HTMLElement).blur()
+            const el = this.$el as HTMLElement
+            if (el?.blur) {
+                el.blur()
             }
             this.show = false
             this.$emit('update:model-value', false)
@@ -321,7 +333,7 @@ export default defineComponent({
     display: flex;
     padding: var(--dl-dialog-box-header-padding, 16px);
     border-bottom: var(--dl-dialog-separator);
-    height: var(--dl-dialog-box-header-height, 60px);
+    height: fit-content;
 }
 
 .content {
@@ -340,7 +352,7 @@ export default defineComponent({
 .footer {
     display: flex;
     padding: var(--dl-dialog-box-footer-padding, 20px 16px);
-    height: var(--dl-dialog-box-footer-height, 35px);
+    height: fit-content;
     border-top: var(--dl-dialog-separator);
 }
 

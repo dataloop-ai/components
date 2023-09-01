@@ -73,6 +73,15 @@ describe('DlButton', () => {
 
             expect(clickEvent).toHaveLength(1)
         })
+        it('should exist the dblclick event', async () => {
+            buttonElem.trigger('dblclick')
+
+            expect(wrapper.emitted()).toHaveProperty('dblclick')
+
+            expect(wrapper.vm.isActionable).toBe(true)
+
+            expect(buttonElem.attributes().tabindex).toBe('0')
+        })
     })
     describe('When updating props', () => {
         let wrapper: any

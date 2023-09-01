@@ -140,6 +140,12 @@ import { updateKeys } from '../../../../../utils/update-key'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 import { getMaxDatasetValue } from '../../utils'
 
+const columnChartEmptyStateProps = {
+    title: 'Something went wrong',
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
+
 ChartJS.register(
     Title,
     Tooltip,
@@ -175,7 +181,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: () => columnChartEmptyStateProps
         },
         ...CommonProps,
         ...ColumnChartProps

@@ -1,3 +1,4 @@
+import { DlSmartSearchInput } from './components'
 import DlSmartSearch from './DlSmartSearch.vue'
 
-export { DlSmartSearch }
+export { DlSmartSearch, DlSmartSearchInput }

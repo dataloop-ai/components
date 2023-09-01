@@ -27,14 +27,17 @@
         >
             <div
                 ref="dlChipRef"
-                class="dl-chip--ellipsis"
+                :class="{
+                    'dl-chip--ellipsis': overflow,
+                    'dl-chip--no-overflow': !overflow
+                }"
             >
                 <slot>
                     {{ hasLabel ? label : null }}
                 </slot>
             </div>
         </div>
-
+        <slot name="suffix" />
         <span
             v-if="removable"
             class="dl-chip-remove-icon-container"
@@ -49,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { PropType, defineComponent, ref, watch } from 'vue-demi'
 import { DlTooltip } from '../../shared'
 import { DlIcon } from '../../essential'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
@@ -63,7 +66,7 @@ import {
     setRemoveIconWidth
 } from './utils'
 import { v4 } from 'uuid'
-import { DlTransformOptions } from '../../shared/types'
+import { DlTextTransformOptions } from '../../shared/types'
 
 export default defineComponent({
     name: 'DlChip',
@@ -74,6 +77,7 @@ export default defineComponent({
     props: {
         disabled: Boolean,
         filled: { type: Boolean, default: true },
+        noBorder: { type: Boolean, default: false },
         outlined: Boolean,
         color: { type: String, default: 'dl-color-secondary' },
         textColor: { type: String, default: '' },
@@ -84,19 +88,24 @@ export default defineComponent({
         removable: Boolean,
         tabIndex: { type: [String, Number], default: '' },
         transform: {
-            type: String,
+            type: String as PropType<DlTextTransformOptions>,
             default: 'default',
-            validator: (value: string): boolean =>
-                DlTransformOptions.includes(value)
+            validator: (value: DlTextTransformOptions): boolean =>
+                Object.values(DlTextTransformOptions).includes(value)
         },
         overflow: { type: Boolean, default: false },
         fit: { type: Boolean, default: false }
     },
-    emits: ['remove'],
-    setup() {
+    emits: ['remove', 'ellipsis'],
+    setup(props, ctx) {
         const isVisible = ref(true)
         const dlChipRef = ref(null)
-        const { hasEllipsis } = useSizeObserver(dlChipRef)
+        const label = ref(props.label)
+        const { hasEllipsis } = useSizeObserver(dlChipRef, label)
+
+        watch(hasEllipsis, () => {
+            ctx.emit('ellipsis', hasEllipsis.value)
+        })
 
         return {
             isVisible,
@@ -127,10 +136,7 @@ export default defineComponent({
             return this.iconColor
         },
         chipClass(): string {
-            if (this.transform === 'default') {
-                return 'first-letter-capitalized'
-            }
-            return null
+            return `dl-text-transform--${this.transform}`
         },
         cssChipVars(): Record<string, string | number> {
             return {
@@ -154,6 +160,7 @@ export default defineComponent({
                     color: this.color
                 }),
                 '--dl-chip-border': setBorder({
+                    noBorder: this.noBorder,
                     disabled: this.disabled,
                     color: this.color
                 }),
@@ -170,10 +177,7 @@ export default defineComponent({
                 '--dl-chip-left-icon-hover-opacity': this.disabled ? 1 : 0.8,
                 '--dl-chip-left-icon-cursor': this.disabled
                     ? 'not-allowed'
-                    : 'pointer',
-                '--dl-chip-text-transform': this.chipClass
-                    ? null
-                    : this.transform
+                    : 'pointer'
             }
         }
     },
@@ -193,7 +197,6 @@ export default defineComponent({
     position: relative;
     display: flex;
     vertical-align: middle;
-    text-transform: var(--dl-chip-text-transform);
     font-size: var(--dl-font-size-body);
     line-height: 12px;
     border-radius: 2px;
@@ -218,12 +221,9 @@ export default defineComponent({
         white-space: nowrap;
         overflow: hidden;
     }
-}
 
-.dl-chip.first-letter-capitalized {
-    &::first-letter,
-    & > *::first-letter {
-        text-transform: capitalize;
+    &--no-overflow {
+        overflow-wrap: break-word;
     }
 }
 

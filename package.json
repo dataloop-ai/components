@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.18.37",
+  "version": "0.18.102",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -22,7 +22,7 @@
     "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
   },
   "dependencies": {
-    "@dataloop-ai/icons": "^3.0.6",
+    "@dataloop-ai/icons": "^3.0.14",
     "@types/flat": "^5.0.2",
     "@types/lodash": "^4.14.184",
     "chart.js": "^3.9.1",
@@ -35,7 +35,7 @@
     "uuid": "^8.3.2",
     "v-wave": "^1.5.0",
     "vanilla-jsoneditor": "^0.10.2",
-    "vue-demi": "^0.12.5",
+    "vue-demi": "^0.14.5",
     "vue2-teleport": "^1.0.1"
   },
   "devDependencies": {
@@ -79,7 +79,7 @@
     "vite": "^4.2.3",
     "vitest": "^0.29.2",
     "vitest-canvas-mock": "^0.2.2",
-    "vue": "^3.2.25",
+    "vue": "^3.3.4",
     "vue-composition-test-utils": "^1.0.3",
     "vue-loader": "^16.8.3",
     "vue-tsc": "^0.35.2"

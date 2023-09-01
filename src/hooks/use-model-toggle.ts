@@ -1,30 +1,7 @@
-import {
-    watch,
-    nextTick,
-    onMounted,
-    getCurrentInstance,
-    Ref,
-    PropType,
-    isVue2
-} from 'vue-demi'
+import { watch, nextTick, onMounted, getCurrentInstance, Ref } from 'vue-demi'
 
-const modelValueNaming = isVue2 ? 'model-value' : 'modelValue'
-
-const staticUseModelToggleProps: any = {
-    modelValue: {
-        type: Boolean as PropType<boolean>,
-        default: false
-    }
-}
-
-staticUseModelToggleProps[`onUpdate:${modelValueNaming}`] = [Function, Array]
-
-export const useModelToggleProps = staticUseModelToggleProps as {
-    modelValue: {
-        type: PropType<boolean>
-        default: boolean
-    }
-    'onUpdate:model-value': (FunctionConstructor | ArrayConstructor)[]
+export const useModelToggleProps = {
+    modelValue: Boolean
 }
 
 export const useModelToggleEmits = [
@@ -32,14 +9,12 @@ export const useModelToggleEmits = [
     'show',
     'before-hide',
     'hide',
-    'update:mode-value'
+    'update:model-value'
 ]
 
 export interface AnchorEvent extends KeyboardEvent {
     dlAnchorHandled?: boolean
 }
-
-// handleShow/handleHide -> removeTick(), self (& emit show)
 
 export default function useModelToggle({
     showing,
@@ -76,22 +51,16 @@ export default function useModelToggle({
             return
         }
 
-        const listener =
-            props[`onUpdate:${modelValueNaming}`] ||
-            (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`]
+        emit(`update:model-value`, true)
+        payload = evt
 
-        if (listener) {
-            emit(`update:${modelValueNaming}`, true)
-            payload = evt
+        nextTick(() => {
+            if (payload === evt) {
+                payload = null
+            }
+        })
 
-            nextTick(() => {
-                if (payload === evt) {
-                    payload = null
-                }
-            })
-        }
-
-        if (!props.modelValue || !listener) {
+        if (!props.modelValue) {
             processShow(evt)
         }
     }
@@ -117,21 +86,15 @@ export default function useModelToggle({
             return
         }
 
-        const listener =
-            props[`onUpdate:${modelValueNaming}`] ||
-            (vm!.proxy! as any)?.$listeners?.[`update:${modelValueNaming}`]
+        emit(`update:model-value`, false)
+        payload = evt
+        nextTick(() => {
+            if (payload === evt) {
+                payload = null
+            }
+        })
 
-        if (listener) {
-            emit(`update:${modelValueNaming}`, false)
-            payload = evt
-            nextTick(() => {
-                if (payload === evt) {
-                    payload = null
-                }
-            })
-        }
-
-        if (!props.modelValue || !listener) {
+        if (!props.modelValue) {
             processHide(evt)
         }
     }
@@ -154,16 +117,17 @@ export default function useModelToggle({
 
     function processModelChange(val: boolean) {
         if (props.disabled === true && val === true) {
-            if (props[`onUpdate:${modelValueNaming}`]) {
-                emit(`update:${modelValueNaming}`, false)
-            }
-        } else if ((val === true) !== showing.value) {
+            emit(`update:model-value`, false)
+        } else if (val !== showing.value) {
             const fn = val === true ? processShow : processHide
             fn(payload as AnchorEvent)
         }
     }
 
-    watch(() => props.modelValue as boolean, processModelChange, { deep: true })
+    watch(
+        () => props.modelValue as boolean,
+        (val) => processModelChange(val)
+    )
 
     if (processOnMount) {
         onMounted(() => {

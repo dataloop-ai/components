@@ -15,10 +15,7 @@
             data-test-id="accordion-header"
             @click="handleClick"
         >
-            <template
-                v-if="hasHeaderSlot"
-                #header
-            >
+            <template #header>
                 <slot name="header" />
             </template>
         </dl-accordion-header>
@@ -57,6 +54,14 @@ import { DlEmptyStateProps } from '../DlEmptyState/types'
 import { defineComponent, PropType } from 'vue-demi'
 import { v4 } from 'uuid'
 
+const accordionEmptyStateProps = {
+    title: '',
+    subtitle: 'No content to show',
+    icon: '',
+    align: 'left',
+    subtitleSize: '12px'
+}
+
 export default defineComponent({
     name: 'DlAccordion',
     components: {
@@ -78,7 +83,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: () => accordionEmptyStateProps
         },
         separator: { type: Boolean, default: false }
     },

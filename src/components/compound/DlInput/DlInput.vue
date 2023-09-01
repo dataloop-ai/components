@@ -68,10 +68,7 @@
                 } bottom-section full-width full-height`"
             >
                 <div class="row center full-width full-height">
-                    <div
-                        :class="wrapperClasses"
-                        :disabled="disabled"
-                    >
+                    <div :class="wrapperClasses">
                         <div
                             ref="input"
                             :contenteditable="!readonly"
@@ -341,6 +338,7 @@ import { v4 } from 'uuid'
 import { setCaretAtTheEnd } from '../../../utils'
 import { InputFile, InputSuggestion } from './types'
 import InputFileElement from './components/InputFileElement.vue'
+import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
     name: 'DlInput',
@@ -709,6 +707,9 @@ export default defineComponent({
             return !!this.suggestItems?.length && !!this.modelValue
         },
         debouncedBlur(): any {
+            if (stateManager.disableDebounce) {
+                return this.onBlur.bind(this)
+            }
             const debounced = debounce(this.onBlur.bind(this), 50)
             return debounced
         },

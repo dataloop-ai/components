@@ -8,9 +8,9 @@
   border-collapse: separate;
   border-spacing: 0;
 
-  &__drag-icon > div {
+  &__drag-icon>div {
     transition: all ease-in 0.1s;
-      opacity: 0;
+    opacity: 0;
   }
 
   //markup-table 
@@ -53,6 +53,10 @@
     }
   }
 
+  .trigger-icon {
+    margin-right: 5px
+  }
+
   th:first-child,
   td:first-child {
     padding-left: 8px;
@@ -71,9 +75,10 @@
     height: 40px;
 
     &:not(.dl-tr--no-hover):hover {
-      .dl-table__drag-icon > div {
+      .dl-table__drag-icon>div {
         opacity: 1;
       }
+
       td:not(.dl-td--no-hover) {
         background-color: var(--dl-color-fill-hover);
       }
@@ -86,6 +91,7 @@
     white-space: nowrap;
     overflow: hidden;
     padding: 10px 8px;
+    display: flex;
   }
 
   th {
@@ -310,7 +316,6 @@
   tbody {
     td {
       position: relative;
-      text-transform: capitalize;
       font-size: 12px;
       line-height: 12px;
       background-color: inherit;

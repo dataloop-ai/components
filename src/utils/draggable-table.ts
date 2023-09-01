@@ -1,4 +1,4 @@
-import { debounce } from 'lodash'
+import { ClickAndHold } from './ClickAndHold'
 
 function getTargetRow(target: any) {
     const elemName = target.tagName.toLowerCase()
@@ -58,7 +58,7 @@ function isIntersecting(
 }
 
 function getRows(table: HTMLTableElement) {
-    return table.querySelectorAll('tbody#draggable tr')
+    return table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
 }
 
 export function applyDraggableRows(
@@ -66,9 +66,9 @@ export function applyDraggableRows(
     vm?: any,
     root?: HTMLDivElement
 ) {
-    const tbody = table.querySelector('tbody#draggable')!
+    const tbody = table.querySelector('tbody.dl-virtual-scroll__content')!
 
-    let currRow: any = null
+    let draggableParentRow: any = null
     let dragElem: any = null
     let oldIndex = 0
     let newIndex = 0
@@ -79,6 +79,8 @@ export function applyDraggableRows(
     let mouseDrag = false
     let rowHeight = 0
     let wasMoved = false
+    let draggableTable: any = null
+    let childrenCount: number
 
     function bindMouse() {
         table.addEventListener('mousedown', handleMouseDown)
@@ -89,14 +91,60 @@ export function applyDraggableRows(
     function handleMouseDown(event: MouseEvent) {
         if (event.button != 0) return true
 
-        const target = getTargetRow(event.target)
+        const parentRow = getTargetRow(event.target)
 
-        if (target) {
+        if (!parentRow) {
+            return
+        }
+
+        parentRow.classList.add('dl-table__is-dragging')
+        const targetRow = parentRow.cloneNode(true)
+
+        const allRows = [...(table.querySelectorAll('tr') as any)]
+        let draggableParentRowIndex = allRows.indexOf(parentRow)
+
+        const parentRowStyle = window.getComputedStyle(parentRow)
+
+        draggableTable = document.createElement('table')
+
+        draggableTable.style.backgroundColor =
+            'var(--dl-color-panel-background)'
+        draggableTable.style.width = parentRowStyle.width
+        draggableTable.style.color = 'var(--dl-color-darker)'
+        draggableTable.style.fontSize = '13px'
+        draggableTable.style.boxShadow = `var(--dl-menu-shadow)`
+        draggableTable.style.zIndex = '9999'
+        draggableTable.style.position = 'absolute'
+        draggableTable.classList.add('dl-table--horizontal-separator')
+
+        draggableTable.append(targetRow)
+
+        childrenCount = targetRow.dataset.children
+            ? Number(targetRow.dataset.children)
+            : 1
+
+        for (let i = 1; i < childrenCount; i++) {
+            draggableParentRowIndex += 1
+            allRows[draggableParentRowIndex].classList.add(
+                'dl-table__is-dragging'
+            )
+            draggableTable.append(
+                allRows[draggableParentRowIndex].cloneNode(true)
+            )
+        }
+
+        Array.from(draggableTable.children).forEach((element) => {
+            (element as HTMLElement).classList.remove('dl-table__is-dragging')
+        })
+
+        if (targetRow) {
             table.style.userSelect = 'none'
-            rowHeight = target.cells[0].getBoundingClientRect().height
+            rowHeight =
+                targetRow.cells[0].getBoundingClientRect().height *
+                (childrenCount ? childrenCount : 1)
 
-            currRow = target
-            addDraggableRow(target)
+            draggableParentRow = parentRow
+            addDraggableRow(draggableTable)
 
             const coords = getMouseCoords(event, root)
 
@@ -122,7 +170,7 @@ export function applyDraggableRows(
     function handleMouseUp() {
         if (!mouseDrag) return
 
-        currRow.classList.remove('dl-table__is-dragging')
+        draggableParentRow.classList.remove('dl-table__is-dragging')
         table.removeChild(dragElem)
 
         if (oldIndex !== newIndex) vm?.emit('row-reorder', oldIndex, newIndex)
@@ -133,25 +181,47 @@ export function applyDraggableRows(
         wasMoved = false
 
         table.style.userSelect = 'auto'
+
+        Array.from(tbody.children).forEach((element) => {
+            element.classList.remove('dl-table__is-dragging')
+        })
     }
 
     function swapRow(row: any, index: number) {
-        const currIndex = Array.from(tbody.children).indexOf(currRow)
-        const row1 = currIndex > index ? currRow : row
-        const row2 = currIndex > index ? row : currRow
+        const allRows = Array.from(tbody.children)
 
         newIndex = index + 1
         wasMoved = oldIndex !== newIndex
-        tbody.insertBefore(row1, row2)
+
+        let indexOfParentRow = allRows.indexOf(draggableParentRow)
+        if (indexOfParentRow === -1) {
+            return
+        }
+        const indexEnd = indexOfParentRow + childrenCount
+        const hierarchyData = allRows.slice(indexOfParentRow, indexEnd)
+        const rowIndex = hierarchyData.indexOf(row)
+        const isDraggingOverChildren = rowIndex > -1
+
+        /**
+         * Prevent insertBefore when dragging over the item in the children hierarchy
+         * */
+        if (isDraggingOverChildren) {
+            return
+        }
+
+        for (let i = 0; i < childrenCount; i++) {
+            tbody.insertBefore(allRows[indexOfParentRow], row)
+            indexOfParentRow++
+        }
     }
 
     function moveRow(x: number, y: number) {
         dragElem.style.top = y + 'px'
         dragElem.style.left = x + 'px'
 
-        const dPos = dragElem.getBoundingClientRect()
-        const currStartY = dPos.y
-        const currEndY = currStartY + dPos.height
+        const draggingPosition = dragElem.getBoundingClientRect()
+        const currentStartY = draggingPosition.y
+        const currentEndY = currentStartY + draggingPosition.height
         const rows = getRows(table)
 
         for (let i = 0; i < rows.length; i++) {
@@ -161,25 +231,25 @@ export function applyDraggableRows(
             const rowEndY = rowStartY + rowSize.height
 
             if (
-                currRow !== rowElem &&
-                isIntersecting(currStartY, currEndY, rowStartY, rowEndY)
+                draggableParentRow !== rowElem &&
+                isIntersecting(currentStartY, currentEndY, rowStartY, rowEndY)
             ) {
-                if (Math.abs(currStartY - rowStartY) < rowSize.height / 2)
+                if (Math.abs(currentStartY - rowStartY) < rowSize.height / 2)
                     swapRow(rowElem, i)
             }
         }
     }
 
-    function addDraggableRow(target: any) {
-        target.classList.add('dl-table__is-dragging')
-        dragElem = target.cloneNode(true)
-        oldIndex = target.rowIndex
-        newIndex = target.rowIndex
+    function addDraggableRow(targetRow: any) {
+        targetRow.classList.add('dl-table__is-dragging')
+        dragElem = targetRow.cloneNode(true)
+        oldIndex = targetRow.rowIndex
+        newIndex = targetRow.rowIndex
 
         dragElem.classList.add('dl-table__drag')
         dragElem.style.height = `${rowHeight}px`
-        for (let i = 0; i < target.children.length; i++) {
-            const oldTD = target.children[i]
+        for (let i = 0; i < targetRow.children.length; i++) {
+            const oldTD = targetRow.children[i]
             const newTD = dragElem.children[i]
             newTD.style.width = getStyle(oldTD, 'width')
             newTD.style.height = getStyle(oldTD, 'height')
@@ -189,7 +259,7 @@ export function applyDraggableRows(
 
         table.appendChild(dragElem)
 
-        const tPos = target.getBoundingClientRect()
+        const tPos = targetRow.getBoundingClientRect()
         const dPos = dragElem.getBoundingClientRect()
         dragElem.style.bottom = dPos.y - tPos.y - tPos.height + 'px'
         dragElem.style.left = '-1px'
@@ -231,9 +301,17 @@ export function applyDraggableColumns(
     let colHeight = 0
 
     function bindMouse() {
-        table.addEventListener('mousedown', handleMouseDown)
+        table.addEventListener('mousedown', handleMouseHold)
         document.addEventListener('mousemove', handleMouseMove)
         document.addEventListener('mouseup', handleMouseUp)
+    }
+
+    function handleMouseHold(event: MouseEvent) {
+        if (event.button !== 0) return true
+        const target = getTargetCol(event.target as Element)
+        ClickAndHold.apply(target, () => {
+            handleMouseDown(event)
+        })
     }
 
     function handleMouseDown(event: MouseEvent) {
@@ -259,6 +337,7 @@ export function applyDraggableColumns(
 
             mouseDrag = true
             // table.classList.add('mouse-drag')
+            handleMouseMove(event)
         }
     }
 
@@ -277,9 +356,11 @@ export function applyDraggableColumns(
         if (!mouseDrag) return
 
         Array.from(table.rows).forEach((row) => {
-            row.cells[
-                newColIndex === -1 ? colIndex : newColIndex
-            ].classList.remove('dl-table__selected')
+            const index = newColIndex === -1 ? colIndex : newColIndex
+            if (!row.cells[index]) {
+                return
+            }
+            row.cells[index].classList.remove('dl-table__selected')
         })
 
         vm.emit('col-reorder', colIndex, newColIndex)
@@ -381,6 +462,9 @@ export function applyDraggableColumns(
     const moveBefore = (index: number) => {
         requestAnimationFrame(() => {
             Array.from(table.rows).forEach((row) => {
+                if (!row.cells[newColIndex]) {
+                    return
+                }
                 row.insertBefore(row.cells[newColIndex], row.cells[index])
             })
 
@@ -391,6 +475,9 @@ export function applyDraggableColumns(
     const moveAfter = (index: number) => {
         requestAnimationFrame(() => {
             Array.from(table.rows).forEach((row) => {
+                if (!row.cells[index]) {
+                    return
+                }
                 row.insertBefore(row.cells[index], row.cells[newColIndex])
             })
 

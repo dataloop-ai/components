@@ -1,13 +1,12 @@
 import { cloneDeep } from 'lodash'
-import { RecordStringAny } from '../types'
 
 export function getFromChildren(
-    parent: RecordStringAny,
+    parent: Record<string, any>,
     propsRowKey: string | Function
 ) {
     const clonedParentRows = cloneDeep(parent)
     const childrenKeys: string[] = []
-    const childrenCollection: RecordStringAny[] = []
+    const childrenCollection: Record<string, any>[] = []
 
     childrenCollection.push(clonedParentRows)
 
@@ -16,7 +15,7 @@ export function getFromChildren(
         childrenCollection.concat(keys)
     }
 
-    function traverseChildren(parentRow: RecordStringAny) {
+    function traverseChildren(parentRow: Record<string, any>) {
         if (!parentRow) {
             return
         }
@@ -33,6 +32,7 @@ export function getFromChildren(
             traverseChildren(child)
         }
     }
+
     traverseChildren(clonedParentRows)
 
     return { childrenKeys, childrenCollection }

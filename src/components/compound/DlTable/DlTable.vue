@@ -79,16 +79,18 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-with"
+                                @mousedown="stopAndPrevent"
                             />
-
                             <th
                                 v-else-if="multipleSelection"
                                 class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             >
                                 <slot
                                     name="header-selection"
@@ -143,90 +145,147 @@
                 </thead>
             </template>
             <template #default="props">
-                <DlTr
-                    :key="getRowKey(props.item)"
-                    :class="
-                        isRowSelected(getRowKey(props.item))
-                            ? 'selected'
-                            : hasAnyAction
-                                ? ' cursor-pointer'
-                                : ''
-                    "
-                    :no-hover="noHover"
-                    @click="onTrClick($event, props.item, props.pageIndex)"
-                    @dblclick="
-                        onTrDblClick($event, props.item, props.pageIndex)
-                    "
-                    @contextmenu="
-                        onTrContextMenu($event, props.item, props.pageIndex)
-                    "
+                <slot
+                    name="table-body"
+                    v-bind="props"
                 >
-                    <td
-                        v-if="hasDraggableRows"
-                        class="dl-table__drag-icon"
-                    >
-                        <dl-icon
-                            class="draggable-icon"
-                            icon="icon-dl-drag"
-                            size="12px"
-                        />
-                    </td>
-                    <td
-                        v-if="hasSelectionMode"
-                        class="dl-table--col-auto-with"
-                    >
+                    <template v-if="!isEmpty && !hasSlotBody">
                         <slot
-                            name="body-selection"
                             v-bind="
-                                getBodySelectionScope({
+                                getBodyScope({
                                     key: getRowKey(props.item),
                                     row: props.item,
-                                    pageIndex: props.pageIndex
+                                    pageIndex: props.pageIndex,
+                                    trClass: isRowSelected(
+                                        getRowKey(props.item)
+                                    )
+                                        ? 'selected'
+                                        : ''
                                 })
                             "
+                            :has-any-action="hasAnyAction"
+                            name="row-body"
                         >
-                            <DlCheckbox
-                                :color="color"
-                                :model-value="
+                            <DlTr
+                                :key="getRowKey(props.item)"
+                                :class="
                                     isRowSelected(getRowKey(props.item))
+                                        ? 'selected'
+                                        : hasAnyAction
+                                            ? ' cursor-pointer'
+                                            : ''
                                 "
-                                @update:model-value="
-                                    (adding, evt) =>
-                                        updateSelection(
-                                            [getRowKey(props.item)],
-                                            [props.item],
-                                            adding,
-                                            evt
-                                        )
+                                :no-hover="noHover"
+                                @click="
+                                    onTrClick(
+                                        $event,
+                                        props.item,
+                                        props.pageIndex
+                                    )
                                 "
-                            />
+                                @dblclick="
+                                    onTrDblClick(
+                                        $event,
+                                        props.item,
+                                        props.pageIndex
+                                    )
+                                "
+                                @contextmenu="
+                                    onTrContextMenu(
+                                        $event,
+                                        props.item,
+                                        props.pageIndex
+                                    )
+                                "
+                            >
+                                <td
+                                    v-if="hasDraggableRows"
+                                    class="dl-table__drag-icon"
+                                >
+                                    <dl-icon
+                                        class="draggable-icon"
+                                        icon="icon-dl-drag"
+                                        size="12px"
+                                    />
+                                </td>
+                                <td
+                                    v-if="hasSelectionMode"
+                                    class="dl-table--col-auto-with"
+                                >
+                                    <slot
+                                        name="body-selection"
+                                        v-bind="
+                                            getBodySelectionScope({
+                                                key: getRowKey(props.item),
+                                                row: props.item,
+                                                pageIndex: props.pageIndex
+                                            })
+                                        "
+                                    >
+                                        <DlCheckbox
+                                            :color="color"
+                                            :model-value="
+                                                isRowSelected(
+                                                    getRowKey(props.item)
+                                                )
+                                            "
+                                            @update:model-value="
+                                                (adding, evt) =>
+                                                    updateSelection(
+                                                        [getRowKey(props.item)],
+                                                        [props.item],
+                                                        adding,
+                                                        evt
+                                                    )
+                                            "
+                                        />
+                                    </slot>
+                                </td>
+                                <slot
+                                    v-for="col in computedCols"
+                                    v-bind="
+                                        getBodyCellScope({
+                                            key: getRowKey(props.item),
+                                            row: props.item,
+                                            pageIndex: props.pageIndex,
+                                            col
+                                        })
+                                    "
+                                    :name="
+                                        hasSlotByName(`body-cell-${col.name}`)
+                                            ? `body-cell-${col.name}`
+                                            : 'body-cell'
+                                    "
+                                >
+                                    <DlTd
+                                        :class="col.tdClass(props.item)"
+                                        :style="col.tdStyle(props.item)"
+                                        :no-hover="noHover"
+                                    >
+                                        {{ getCellValue(col, props.item) }}
+                                    </DlTd>
+                                </slot>
+                            </DlTr>
                         </slot>
-                    </td>
-                    <slot
-                        v-for="col in computedCols"
-                        v-bind="
-                            getBodyCellScope({
-                                key: getRowKey(props.item),
-                                row: props.item,
-                                pageIndex: props.pageIndex,
-                                col
-                            })
-                        "
-                        :name="
-                            hasSlotByName(`body-cell-${col.name}`)
-                                ? `body-cell-${col.name}`
-                                : 'body-cell'
-                        "
-                    >
-                        <DlTd
-                            :class="col.tdClass(props.item)"
-                            :style="col.tdStyle(props.item)"
-                            :no-hover="noHover"
-                        >
-                            {{ getCellValue(col, props.item) }}
+                    </template>
+                    <DlTr v-if="isEmpty">
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center full-width">
+                                <dl-empty-state v-bind="emptyStateProps">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="emptyStateSlotProps"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="emptyStateSlotProps"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
                         </DlTd>
-                    </slot>
-                </DlTr>
+                    </DlTr>
+                </slot>
             </template>
         </DlVirtualScroll>
         <!--  -->
@@ -250,16 +309,19 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-with"
+                                @mousedown="stopAndPrevent"
                             />
 
                             <th
                                 v-else-if="multipleSelection"
                                 class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
+                                @mousedown="stopAndPrevent"
                             >
                                 <slot
                                     name="header-selection"
@@ -293,6 +355,34 @@
                                     {{ col.label }}
                                 </DlTh>
                             </slot>
+                            <DlTh
+                                v-if="hasEditableColumns"
+                                key="visibleColsBtn"
+                            >
+                                <dl-button
+                                    text-color="dl-color-medium"
+                                    flat
+                                    icon="icon-dl-column"
+                                >
+                                    <dl-menu>
+                                        <dl-list separator>
+                                            <dl-option-group
+                                                :model-value="
+                                                    computedVisibleCols
+                                                "
+                                                :options="groupOptions"
+                                                :left-label="true"
+                                                max-width="250px"
+                                                type="switch"
+                                                class="table-options"
+                                                @update:model-value="
+                                                    handleVisibleColumnsUpdate
+                                                "
+                                            />
+                                        </dl-list>
+                                    </dl-menu>
+                                </dl-button>
+                            </DlTh>
                         </DlTr>
 
                         <tr
@@ -311,109 +401,120 @@
                         </tr>
                     </slot>
                 </thead>
-                <tbody id="draggable">
+                <tbody class="dl-virtual-scroll__content">
                     <slot
                         name="top-row"
                         :cols="computedCols"
                     />
                     <slot
-                        v-for="(row, pageIndex) in computedRows"
-                        v-bind="
-                            getBodyScope({
-                                key: getRowKey(row),
-                                row,
-                                pageIndex,
-                                trClass: isRowSelected(getRowKey(row))
-                                    ? 'selected'
-                                    : ''
-                            })
-                        "
-                        name="body"
+                        name="table-body"
+                        :computed-rows="computedRows"
                     >
-                        <DlTr
-                            v-if="!isEmpty"
-                            :key="getRowKey(row)"
-                            :class="
-                                isRowSelected(getRowKey(row))
-                                    ? 'selected'
-                                    : hasAnyAction
-                                        ? ' cursor-pointer'
+                        <slot
+                            v-for="(row, pageIndex) in computedRows"
+                            v-bind="
+                                getBodyScope({
+                                    key: getRowKey(row),
+                                    row,
+                                    pageIndex,
+                                    trClass: isRowSelected(getRowKey(row))
+                                        ? 'selected'
                                         : ''
+                                })
                             "
-                            :no-hover="noHover"
-                            @click="onTrClick($event, row, pageIndex)"
-                            @dblclick="onTrDblClick($event, row, pageIndex)"
-                            @contextmenu="
-                                onTrContextMenu($event, row, pageIndex)
-                            "
+                            :has-any-action="hasAnyAction"
+                            name="row-body"
                         >
-                            <td
-                                v-if="hasDraggableRows"
-                                class="dl-table__drag-icon"
+                            <DlTr
+                                v-if="!isEmpty"
+                                :key="getRowKey(row)"
+                                :has-any-action="hasAnyAction"
+                                :class="
+                                    isRowSelected(getRowKey(row))
+                                        ? 'selected'
+                                        : hasAnyAction
+                                            ? ' cursor-pointer'
+                                            : ''
+                                "
+                                :no-hover="noHover"
+                                @click="onTrClick($event, row, pageIndex)"
+                                @dblclick="onTrDblClick($event, row, pageIndex)"
+                                @contextmenu="
+                                    onTrContextMenu($event, row, pageIndex)
+                                "
                             >
-                                <dl-icon
-                                    class="draggable-icon"
-                                    icon="icon-dl-drag"
-                                    size="12px"
-                                />
-                            </td>
-                            <td
-                                v-if="hasSelectionMode"
-                                class="dl-table--col-auto-with"
-                            >
-                                <slot
-                                    name="body-selection"
-                                    v-bind="
-                                        getBodySelectionScope({
-                                            key: getRowKey(row),
-                                            row,
-                                            pageIndex
-                                        })
-                                    "
+                                <td
+                                    v-if="hasDraggableRows"
+                                    class="dl-table__drag-icon"
                                 >
-                                    <DlCheckbox
-                                        :color="color"
-                                        :model-value="
-                                            isRowSelected(getRowKey(row))
-                                        "
-                                        @update:model-value="
-                                            (adding, evt) =>
-                                                updateSelection(
-                                                    [getRowKey(row)],
-                                                    [row],
-                                                    adding,
-                                                    evt
-                                                )
-                                        "
+                                    <dl-icon
+                                        class="draggable-icon"
+                                        icon="icon-dl-drag"
+                                        size="12px"
                                     />
-                                </slot>
-                            </td>
-                            <slot
-                                v-for="col in computedCols"
-                                v-bind="
-                                    getBodyCellScope({
-                                        key: getRowKey(row),
-                                        row,
-                                        pageIndex,
-                                        col
-                                    })
-                                "
-                                :name="
-                                    hasSlotByName(`body-cell-${col.name}`)
-                                        ? `body-cell-${col.name}`
-                                        : 'body-cell'
-                                "
-                            >
+                                </td>
+                                <td
+                                    v-if="hasSelectionMode"
+                                    class="dl-table--col-auto-with"
+                                >
+                                    <slot
+                                        name="body-selection"
+                                        v-bind="
+                                            getBodySelectionScope({
+                                                key: getRowKey(row),
+                                                row,
+                                                pageIndex
+                                            })
+                                        "
+                                    >
+                                        <DlCheckbox
+                                            :color="color"
+                                            :model-value="
+                                                isRowSelected(getRowKey(row))
+                                            "
+                                            @update:model-value="
+                                                (adding, evt) =>
+                                                    updateSelection(
+                                                        [getRowKey(row)],
+                                                        [row],
+                                                        adding,
+                                                        evt
+                                                    )
+                                            "
+                                        />
+                                    </slot>
+                                </td>
                                 <DlTd
+                                    v-for="col in computedCols"
+                                    :key="col.name"
                                     :class="col.tdClass(row)"
                                     :style="col.tdStyle(row)"
                                 >
-                                    {{ getCellValue(col, row) }}
+                                    <slot
+                                        v-bind="
+                                            getBodyCellScope({
+                                                key: getRowKey(row),
+                                                row,
+                                                pageIndex,
+                                                col
+                                            })
+                                        "
+                                        :name="
+                                            hasSlotByName(
+                                                `body-cell-${col.name}`
+                                            )
+                                                ? `body-cell-${col.name}`
+                                                : 'body-cell'
+                                        "
+                                    >
+                                        {{ getCellValue(col, row) }}
+                                    </slot>
                                 </DlTd>
-                            </slot>
-                        </DlTr>
+                            </DlTr>
+                        </slot>
                     </slot>
-                    <DlTr v-if="isEmpty">
+
+                    <DlTr v-if="isEmpty && hasEmptyStateProps">
                         <DlTd colspan="100%">
                             <div class="flex justify-center">
                                 <dl-empty-state v-bind="emptyStateProps">
@@ -474,12 +575,12 @@
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
-                            :total-items="rows.length"
+                            :total-items="totalItemsCount"
                             @update:rowsPerPage="
-                                (v) => setPagination({ rowsPerPage: v })
+                                (v) => updatePagination(v, 'rowsPerPage')
                             "
                             @update:model-value="
-                                (v) => setPagination({ page: v })
+                                (v) => updatePagination(v, 'page')
                             "
                         />
                     </slot>
@@ -499,44 +600,30 @@ import {
     defineComponent,
     computed,
     ref,
-    PropType,
     watch,
     getCurrentInstance,
     ComputedRef,
     onMounted,
-    toRef
+    toRef,
+    toRefs
 } from 'vue-demi'
+import { props } from './utils/props'
+import { emits } from './utils/emits'
 import {
     useTablePagination,
-    useTablePaginationState,
-    useTablePaginationProps
+    useTablePaginationState
 } from './hooks/tablePagination'
 import DlTr from './components/DlTr.vue'
 import DlTh from './components/DlTh.vue'
 import DlTd from './components/DlTd.vue'
-import {
-    commonVirtPropsList,
-    commonVirtScrollProps,
-    ScrollDetails
-} from '../../shared/DlVirtualScroll/useVirtualScroll'
+import { commonVirtPropsList } from '../../shared/DlVirtualScroll/useVirtualScroll'
 import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
-import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
-import { useTableSort, useTableSortProps } from './hooks/tableSort'
-import {
-    useTableRowSelection,
-    useTableRowSelectionProps,
-    useTableRowSelectionEmits
-} from './hooks/tableRowSelection'
-import {
-    useTableColumnSelection,
-    useTableColumnSelectionProps
-} from './hooks/tableColumnSelection'
-import {
-    useTableRowExpand,
-    useTableRowExpandProps,
-    useTableRowExpandEmits
-} from './hooks/tableRowExpand'
-import { useTableActionsProps, useTableActions } from './hooks/tableActions'
+import { useTableFilter } from './hooks/tableFilter'
+import { useTableSort } from './hooks/tableSort'
+import { useTableRowSelection } from './hooks/tableRowSelection'
+import { useTableColumnSelection } from './hooks/tableColumnSelection'
+import { useTableRowExpand } from './hooks/tableRowExpand'
+import { useTableActions } from './hooks/tableActions'
 import {
     applyDraggableRows,
     applyDraggableColumns
@@ -544,11 +631,21 @@ import {
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
-import { DlIcon, DlCheckbox, DlProgressBar } from '../../essential'
+import {
+    DlIcon,
+    DlCheckbox,
+    DlProgressBar,
+    DlMenu,
+    DlList
+} from '../../essential'
 import { ResizableManager } from './utils'
+import { DlButton } from '../../basic'
+import { DlOptionGroup } from '../../compound'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
-import { DlEmptyStateProps } from '../../basic/DlEmptyState/types'
 import { v4 } from 'uuid'
+import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
+import { stopAndPrevent } from '../../../utils'
+import { DlVirtualScrollEvent } from '../../types'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -566,122 +663,53 @@ export default defineComponent({
         DlProgressBar,
         DlIcon,
         DlCheckbox,
-        DlEmptyState
+        DlEmptyState,
+        DlButton,
+        DlOptionGroup,
+        DlMenu,
+        DlList
     },
-    props: {
-        columns: { type: Array, default: () => [] as Record<string, any>[] },
-        rows: {
-            type: Array,
-            default: () => [] as Record<string, any>[]
-        },
-        rowKey: {
-            type: [String, Function],
-            default: 'id'
-        },
-        bordered: Boolean,
-        separator: {
-            type: String,
-            default: 'horizontal',
-            validator: (v: string) =>
-                ['horizontal', 'vertical', 'cell', 'none'].includes(v)
-        },
-        draggable: {
-            type: String,
-            default: 'none',
-            validator: (v: string) =>
-                ['rows', 'columns', 'none', 'both'].includes(v)
-        },
-        title: { type: String, default: null },
-        color: {
-            type: String,
-            default: 'dl-color-darker'
-        },
-        loading: Boolean,
-        dense: Boolean,
-        resizable: Boolean,
-        hideNoData: Boolean,
-        hideHeader: Boolean,
-        hideBottom: Boolean,
-        virtualScroll: Boolean,
-        hidePagination: Boolean,
-        hideSelectedBanner: Boolean,
-        selectedRowsLabel: {
-            type: Function,
-            default: (val: number) => `${val} records selected`
-        },
-        loadingLabel: {
-            type: String,
-            default: 'Loading...'
-        },
-        noResultsLabel: {
-            type: String,
-            default: 'There are no results to display'
-        },
-        noDataLabel: {
-            type: String,
-            default: 'No data available'
-        },
-        virtualScrollTarget: {
-            type: Object as PropType<HTMLElement>,
-            default: null
-        },
-        titleClass: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableStyle: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableClass: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableHeaderStyle: {
-            type: [String, Array, Object],
-            default: null
-        },
-        tableHeaderClass: {
-            type: [String, Array, Object],
-            default: null
-        },
-        noHover: Boolean,
-        isEmpty: Boolean,
-        emptyStateProps: {
-            type: Object as PropType<DlEmptyStateProps>,
-            default: null
-        },
-        scrollDebounce: {
-            type: Number,
-            default: 100
-        },
-        ...useTableActionsProps,
-        ...commonVirtScrollProps,
-        ...useTableRowExpandProps,
-        ...useTablePaginationProps,
-        ...useTableFilterProps,
-        ...useTableSortProps,
-        ...useTableColumnSelectionProps,
-        ...useTableRowSelectionProps
-    },
-    emits: [
-        'request',
-        'virtual-scroll',
-        'row-reorder',
-        'col-reorder',
-        'row-click',
-        'th-click',
-        'row-dblclick',
-        'row-contextmenu',
-        ...useTableRowExpandEmits,
-        ...useTableRowSelectionEmits
-    ],
+    props,
+    emits,
     setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
+        const {
+            tableStyle,
+            tableClass,
+            tableHeaderStyle,
+            tableHeaderClass,
+            dense,
+            draggable,
+            virtualScroll,
+            rows
+        } = toRefs(props)
 
-        const rootRef = ref(null)
+        const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
-        const hasVirtScroll = computed(() => props.virtualScroll === true)
+        const hasVirtScroll = computed<boolean>(
+            () => virtualScroll.value === true
+        )
+
+        const hasEmptyStateProps = computed(() =>
+            props.emptyStateProps
+                ? Object.keys(props.emptyStateProps).length > 0
+                : false
+        )
+
+        const groupOptions = computed(() =>
+            (props.columns as DlTableColumn[]).map((item) => ({
+                label: item.label,
+                value: item.name
+            }))
+        )
+
+        const visibleColumnsState = ref(
+            (props.columns as DlTableColumn[]).map((col) => col.name)
+        )
+
+        const computedVisibleCols = computed(() =>
+            computedCols.value.map((col) => col.name)
+        )
 
         const { hasAnyAction } = useTableActions(props) // todo: does not work
 
@@ -761,10 +789,10 @@ export default defineComponent({
         })
 
         const hasDraggableRows = computed(() =>
-            ['rows', 'both'].includes(props.draggable)
+            ['rows', 'both'].includes(draggable.value)
         )
         const hasDraggableColumns = computed(() =>
-            ['columns', 'both'].includes(props.draggable)
+            ['columns', 'both'].includes(draggable.value)
         )
 
         let removeDraggableRows = () => {}
@@ -772,6 +800,10 @@ export default defineComponent({
 
         let resizableManager: ResizableManager | null = null
         let tableEl: HTMLTableElement = null
+
+        const totalItemsCount = computed(() => {
+            return computedPagination.value.rowsNumber || rows.value.length
+        })
 
         onMounted(() => {
             tableEl = (rootRef.value as HTMLDivElement).querySelector(
@@ -849,6 +881,13 @@ export default defineComponent({
         )
 
         watch(
+            () => (props as any).visibleColummns,
+            (value) => {
+                visibleColumnsState.value = value
+            }
+        )
+
+        watch(
             () => props.draggable,
             () => {
                 if (tableEl) {
@@ -878,12 +917,13 @@ export default defineComponent({
         )
 
         watch(
-            () =>
-                (props.tableStyle as string) +
-                props.tableClass +
-                props.tableHeaderStyle +
-                props.tableHeaderClass +
-                __containerClass,
+            [
+                tableStyle,
+                tableClass,
+                tableHeaderStyle,
+                tableHeaderClass,
+                __containerClass
+            ],
             () => {
                 if (
                     hasVirtScroll.value === true &&
@@ -898,7 +938,7 @@ export default defineComponent({
             useTablePaginationState(vm, getCellValue)
 
         watch(
-            [computedPagination, () => props.dense],
+            [computedPagination, dense],
             () => {
                 if (tableEl && props.resizable && resizableManager) {
                     const tableHeight = tableEl.offsetHeight || 0
@@ -910,23 +950,22 @@ export default defineComponent({
         )
 
         const { computedFilterMethod } = useTableFilter(props, setPagination)
-        const rowsPropRef = toRef(props, 'rows')
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
 
         const filteredSortedRows = computed(() => {
-            let rows = rowsPropRef.value as DlTableRow[]
+            let filtered = rows.value as DlTableRow[]
 
-            if (rows.length === 0) {
-                return rows
+            if (filtered.length === 0) {
+                return rows.value as DlTableRow[]
             }
 
             const { sortBy, descending } = computedPagination.value
 
             if (props.filter) {
-                rows = computedFilterMethod.value(
-                    rows,
+                filtered = computedFilterMethod.value(
+                    rows.value,
                     props.filter,
                     computedCols.value,
                     getCellValue
@@ -934,14 +973,14 @@ export default defineComponent({
             }
 
             if (columnToSort.value !== null) {
-                rows = computedSortMethod.value(
-                    rowsPropRef.value === rows ? rows.slice() : rows,
+                filtered = computedSortMethod.value(
+                    rows.value === filtered ? filtered.slice() : filtered,
                     sortBy,
                     descending
                 )
             }
 
-            return rows
+            return filtered
         })
 
         const filteredSortedRowsNumber = computed(
@@ -949,25 +988,32 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            let rows = filteredSortedRows.value
+            let filtered = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
 
             if (rowsPerPage !== 0) {
-                if (firstRowIndex.value === 0 && rowsPropRef.value !== rows) {
-                    if (rows.length > lastRowIndex.value) {
-                        rows = rows.slice(0, lastRowIndex.value)
+                if (firstRowIndex.value === 0 && rows.value !== filtered) {
+                    if (filtered.length > lastRowIndex.value) {
+                        filtered = filtered.slice(0, lastRowIndex.value)
                     }
                 } else {
-                    rows = rows.slice(firstRowIndex.value, lastRowIndex.value)
+                    if (
+                        filtered.length > computedPagination.value.rowsPerPage
+                    ) {
+                        filtered = filtered.slice(
+                            firstRowIndex.value,
+                            lastRowIndex.value
+                        )
+                    }
                 }
             }
 
-            return rows
+            return props.flatTreeData ? flatTreeData(filtered) : filtered
         })
 
         const additionalClasses = computed(() => {
-            const classes = []
+            const classes: string[] = []
 
             if (hasDraggableRows.value === true) {
                 classes.push('dl-table--draggable-rows')
@@ -1007,7 +1053,8 @@ export default defineComponent({
                 props as unknown as DlTableProps,
                 computedPagination,
                 hasSelectionMode,
-                hasDraggableRows
+                hasDraggableRows,
+                visibleColumnsState
             )
 
         const { columnToSort, computedSortMethod, sort } = useTableSort(
@@ -1025,7 +1072,7 @@ export default defineComponent({
             () =>
                 multipleSelection.value === true &&
                 computedRows.value.length > 0 &&
-                computedRows.value.length < rowsPropRef.value.length
+                computedRows.value.length < rows.value.length
         )
 
         function onMultipleSelectionSet(val: boolean) {
@@ -1120,11 +1167,14 @@ export default defineComponent({
             col: Record<string, any>,
             row: Record<string, any>
         ) {
+            if (!col) {
+                return
+            }
             const val =
-                typeof col.field === 'function'
-                    ? col.field(row)
+                typeof col?.field === 'function'
+                    ? col?.field(row)
                     : row[col.field]
-            return col.format ? col.format(val, row) : val
+            return col?.format ? col.format(val, row) : val
         }
 
         function resetVirtualScroll() {
@@ -1142,7 +1192,7 @@ export default defineComponent({
             toIndex = parseInt(toIndex as string, 10)
             const rowEl = rootRef.value.querySelector(
                 `tbody tr:nth-of-type(${toIndex + 1})`
-            )
+            ) as HTMLElement
 
             if (rowEl !== null) {
                 const scrollTarget = rootRef.value.querySelector(
@@ -1165,7 +1215,7 @@ export default defineComponent({
             }
         }
 
-        function onVScroll(info: ScrollDetails) {
+        function onVScroll(info: DlVirtualScrollEvent) {
             emit('virtual-scroll', info)
         }
 
@@ -1253,6 +1303,7 @@ export default defineComponent({
 
         function getBodySelectionScope(data: Record<string, any>) {
             injectBodyCommonScope(data)
+
             return data
         }
 
@@ -1268,6 +1319,10 @@ export default defineComponent({
                 totalItems: computedRowsNumber.value
             }
         })
+        const hasSlotBody = computed(() => !!slots['table-body'])
+        const hasSlotHeaderSelection = computed(
+            () => !!slots['header-selection']
+        )
 
         // expose public methods and needed computed props
         Object.assign(vm.proxy, {
@@ -1280,6 +1335,20 @@ export default defineComponent({
             nextPage,
             lastPage
         })
+
+        const slotNames = computed(() => {
+            return slots.length ? slots.map((slot: any) => slot.name) : null
+        })
+
+        const updatePagination = (value: any, key: string) => {
+            return setPagination({ [`${key}`]: value })
+        }
+
+        const handleVisibleColumnsUpdate = (columns: string[]) => {
+            if (columns.length < 1) return
+            visibleColumnsState.value = columns
+            emit('update-visible-columns', columns)
+        }
 
         return {
             uuid: `dl-table-${v4()}`,
@@ -1328,7 +1397,18 @@ export default defineComponent({
             onTrDblClick,
             onThClick,
             onTrContextMenu,
-            hasPaginationSlot
+            hasPaginationSlot,
+            slotNames,
+            hasSlotBody,
+            hasSlotHeaderSelection,
+            stopAndPrevent,
+            updatePagination,
+            hasEmptyStateProps,
+            groupOptions,
+            visibleColumnsState,
+            handleVisibleColumnsUpdate,
+            computedVisibleCols,
+            totalItemsCount
         }
     }
 })

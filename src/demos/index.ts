@@ -66,6 +66,7 @@ import DlJsonEditorDemo from './DlJsonEditorDemo.vue'
 import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlLayoutDemo from './DlLayoutDemo.vue'
 import { DlCodeEditorDemo } from './DlCodeEditor'
+import DlLabelPickerDemo from './DlLabelPickerDemo.vue'
 
 export default {
     AvatarDemo,
@@ -132,5 +133,6 @@ export default {
     DlJsonEditorDemo,
     DlThumbnailGallery,
     DlCodeEditorDemo,
-    DlLayoutDemo
+    DlLayoutDemo,
+    DlLabelPickerDemo
 }

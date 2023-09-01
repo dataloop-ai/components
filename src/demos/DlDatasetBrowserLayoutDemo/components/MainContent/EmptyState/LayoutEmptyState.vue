@@ -20,6 +20,7 @@ import { computed, defineComponent, ref } from 'vue-demi'
 import UploadData from './UploadData.vue'
 import { DlCodeEditor } from '../../../../../components'
 import { DlCodeEditorTheme } from '../../../../../components/types'
+import { stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     name: 'LayoutEmptyState',
@@ -201,13 +202,9 @@ export default defineComponent({
         const language = ref('python')
 
         const theme = computed(() => {
-            if (
-                // @ts-ignore
-                window.DlComponents.isDark.value
-            ) {
-                return DlCodeEditorTheme.Dark
-            }
-            return DlCodeEditorTheme.Light
+            return stateManager.isDarkTheme
+                ? DlCodeEditorTheme.Dark
+                : DlCodeEditorTheme.Light
         })
 
         return {

@@ -29,7 +29,7 @@
 
                 <div class="dl-widget__content">
                     <dl-empty-state
-                        v-if="isEmpty"
+                        v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
                         <template
@@ -66,7 +66,7 @@
 import { v4 } from 'uuid'
 import { computed, defineComponent, ref, toRef, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
-import { getElementAbove, addMouseEnter, removeMouseEnter } from './utils'
+import { getElementAbove, addMouseEnter, removeMouseEnter } from '../utils'
 import { DlEmptyStateProps } from '../DlEmptyState/types'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 
@@ -77,7 +77,10 @@ export default defineComponent({
         DlEmptyState
     },
     props: {
-        isEmpty: Boolean,
+        isEmpty: {
+            type: Boolean,
+            default: false
+        },
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
             default: null
@@ -126,6 +129,7 @@ export default defineComponent({
             if (draggedWidget.value && clone.value) {
                 clone.value.appendChild(draggedWidget.value.cloneNode(true))
                 clone.value.style.visibility = 'visible'
+                clone.value.style.position = 'fixed'
                 clone.value.style.width = `${draggedWidget.value.offsetWidth}px`
                 clone.value.style.height = `${draggedWidget.value.offsetHeight}px`
                 clone.value.style.backgroundColor = `var(--dl-color-bg)`

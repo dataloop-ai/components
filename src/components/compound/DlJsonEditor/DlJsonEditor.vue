@@ -7,6 +7,7 @@
 
 <script lang="ts">
 import {
+    computed,
     defineComponent,
     onMounted,
     PropType,
@@ -24,6 +25,7 @@ import {
     TextContent
 } from 'vanilla-jsoneditor'
 import { debounce } from 'lodash'
+import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
     model: {
@@ -92,7 +94,9 @@ export default defineComponent({
                     undefined
             ) {
                 if (!(status.contentErrors as ContentParseError).isRepairable) {
-                    console.warn('[DlJsonEditor] Failed to parse JSON')
+                    stateManager.logger.warn(
+                        '[DlJsonEditor] Failed to parse JSON'
+                    )
                     return
                 }
             }
@@ -109,11 +113,16 @@ export default defineComponent({
             emit('change', (content as TextContent).text)
         }
 
-        const debouncedHandleJSONChange = debounce(handleJSONChange, 100)
+        const debouncedHandleJSONChange = computed(() => {
+            if (stateManager.disableDebounce) {
+                return handleJSONChange
+            }
+            return debounce(handleJSONChange, 100)
+        })
 
         const initJsonEditor = () => {
             const initialAttrs: JSONEditorPropsOptional = {
-                onChange: debouncedHandleJSONChange,
+                onChange: debouncedHandleJSONChange.value,
                 indentation: indentation.value,
                 mode: mode.value,
                 readOnly: readonly.value || mode.value === Mode.tree,
@@ -156,7 +165,10 @@ export default defineComponent({
                 })
                 emit('align-text')
             } catch (e) {
-                console.warn('[DlJsonEditor] Failed to format document', e)
+                stateManager.logger.warn(
+                    '[DlJsonEditor] Failed to format document',
+                    e
+                )
                 return
             }
         }
@@ -166,9 +178,24 @@ export default defineComponent({
             emit('align-text')
         })
 
+        const toObject = (): Object | null => {
+            try {
+                const parsed = JSON.parse(modelValue.value)
+                return parsed
+            } catch (e) {
+                stateManager.logger.warn(
+                    '[DlJsonEditor] Failed to format document',
+                    e
+                )
+                return null
+            }
+        }
+
         return {
             jsonEditorRef,
-            format
+            format,
+            toObject,
+            content: modelValue.value
         }
     }
 })

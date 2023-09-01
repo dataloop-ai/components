@@ -210,7 +210,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance, PropType, ref } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    getCurrentInstance,
+    PropType,
+    ref
+} from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import { DlTooltip } from '../../../../shared'
 import {
@@ -231,6 +237,12 @@ import {
     flattenConfusionMatrix
 } from './utils'
 import { debounce, isObject } from 'lodash'
+import { stateManager } from '../../../../../StateManager'
+
+const confusionMatrixEmptyStateProps = {
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
 export default defineComponent({
     components: {
         DlBrush,
@@ -275,7 +287,7 @@ export default defineComponent({
         isEmpty: Boolean,
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
-            default: null
+            default: () => confusionMatrixEmptyStateProps
         }
     },
     setup(props) {
@@ -321,10 +333,12 @@ export default defineComponent({
             return [0, offsetHeight]
         }
 
-        const debouncedCalculateXAxisElOffset = debounce(
-            calculateXAxisElOffset,
-            100
-        )
+        const debouncedCalculateXAxisElOffset = computed(() => {
+            if (stateManager.disableDebounce) {
+                return calculateXAxisElOffset
+            }
+            return debounce(calculateXAxisElOffset, 100)
+        })
 
         return {
             resizeObserver,

@@ -5,9 +5,6 @@ const SPAN_STYLES = `overflow: hidden;
                      display: inline-block;
                      max-width: 100%`
 
-let editor = document.getElementById('editor')
-let styleModel: SyntaxColorSchema
-
 function getTextSegments(element: HTMLElement) {
     if (!element) return
     const textSegments: { text: string; node: Node }[] = []
@@ -32,10 +29,12 @@ function getTextSegments(element: HTMLElement) {
     return textSegments
 }
 
-export function updateEditor(model: SyntaxColorSchema) {
-    styleModel = model
-    editor = document.getElementById('editor')
+export function updateEditor(
+    editor: HTMLElement,
+    colorSchema: SyntaxColorSchema
+) {
     if (!editor) return
+
     const sel = window.getSelection()
     const textSegments = getTextSegments(editor)
     const textContent = textSegments?.map(({ text }) => text).join('')
@@ -52,12 +51,12 @@ export function updateEditor(model: SyntaxColorSchema) {
         currentIndex += text.length
     })
 
-    editor.innerHTML = renderText(textContent)
-
-    restoreSelection(anchorIndex, focusIndex)
+    editor.innerHTML = renderText(textContent, colorSchema)
+    restoreSelection(editor, anchorIndex, focusIndex)
 }
 
 function restoreSelection(
+    editor: HTMLElement,
     absoluteAnchorIndex: number,
     absoluteFocusIndex: number
 ) {
@@ -91,16 +90,16 @@ function restoreSelection(
     sel.setBaseAndExtent(anchorNode, anchorIndex, focusNode, focusIndex)
 }
 
-function renderText(text: string) {
+function renderText(text: string, colorSchema: SyntaxColorSchema) {
     const words = text?.split(/(\s+)/)
     const output = words?.map((word) => {
-        if (styleModel) {
-            if (styleModel.keywords.values.includes(word)) {
-                return `<strong style='${SPAN_STYLES}; color:${styleModel.keywords.color}'>${word}</strong>`
-            } else if (styleModel.fields.values.includes(word)) {
-                return `<span style='color:${styleModel.fields.color}; ${SPAN_STYLES}'>${word}</span>`
-            } else if (styleModel.operators.values.includes(word)) {
-                return `<span style='color:${styleModel.operators.color}; ${SPAN_STYLES}'>${word}</span>`
+        if (colorSchema) {
+            if (colorSchema.keywords.values.includes(word)) {
+                return `<strong style='${SPAN_STYLES}; color:${colorSchema.keywords.color}'>${word}</strong>`
+            } else if (colorSchema.fields.values.includes(word)) {
+                return `<span style='color:${colorSchema.fields.color}; ${SPAN_STYLES}'>${word}</span>`
+            } else if (colorSchema.operators.values.includes(word)) {
+                return `<span style='color:${colorSchema.operators.color}; ${SPAN_STYLES}'>${word}</span>`
             } else {
                 return `<span style='${SPAN_STYLES}'>${word}</span>`
             }
@@ -109,4 +108,39 @@ function renderText(text: string) {
         }
     })
     return output?.join('')
+}
+
+export function setCaretAtTheEnd(target: HTMLElement) {
+    const range = document.createRange()
+    const sel = window.getSelection()
+    range.selectNodeContents(target)
+    range.collapse(false)
+    sel.removeAllRanges()
+    sel.addRange(range)
+    target.focus()
+}
+
+export function clearPartlyTypedSuggestion(oldValue: string, newValue: string) {
+    const oldSuggestions = oldValue.split(' ')
+    const newSuggestions = newValue.split(' ')
+
+    const oldSuggestion = oldSuggestions[oldSuggestions.length - 1]
+    const newSuggestion = newSuggestions[newSuggestions.length - 2]
+
+    if (oldSuggestion && newSuggestion?.includes(oldSuggestion)) {
+        newValue = removeOldSuggestion(newValue)
+    }
+    return newValue
+}
+
+function removeOldSuggestion(inputString: string) {
+    const words = inputString.trim().split(' ')
+
+    if (words.length >= 2) {
+        words.splice(-2, 1)
+        const resultString = words.join(' ')
+        return resultString + ' '
+    } else {
+        return inputString
+    }
 }
