@@ -1,6 +1,6 @@
 import { DlInput, DlIcon } from '../components'
 import { action } from '@storybook/addon-actions'
-import { ref } from 'vue-demi'
+import { computed, ref } from 'vue-demi'
 
 const defaultSuggestions = ['foo', 'bar', 'foobar', 'foo bar']
 
@@ -500,3 +500,61 @@ Preview.args = {
     counterReverse: false,
     suggestMenuWidth: 'auto'
 }
+
+const TemplateWithSuggestions = (args) => ({
+    components: { DlInput, DlIcon },
+    setup() {
+        const autoSuggestItems = [
+            {
+                suggestion: 'suggestion1',
+                image: 'https://picsum.photos/100/100'
+            },
+            {
+                suggestion: '@suggestion',
+                image: 'https://picsum.photos/100/100'
+            },
+            {
+                suggestion: '@john-doe',
+                image: 'https://picsum.photos/100/100'
+            },
+            {
+                suggestion: '4suggestion',
+                image: 'https://picsum.photos/100/100'
+            }
+        ]
+        const suggestionStrings = computed(() =>
+            autoSuggestItems.map((item) => item.suggestion).join(', ')
+        )
+        return { args, autoSuggestItems, suggestionStrings }
+    },
+    data() {
+        return {
+            model: ref('')
+        }
+    },
+    template: `
+    <div style="padding: 50px;">
+    <span>Suggestions: <span style="color: gray; font-size: 12px">{{suggestionStrings}}</span></span>
+        <DlInput
+            v-model="model"
+            v-bind="args"
+            style="width: 200px; padding: 0px 5px; margin-top: 10px"
+            :autoSuggestItems="autoSuggestItems"
+            @focus="focus"
+            @blur="blur"
+            @input="input"
+            @clear="clear"
+            @enter="enter"
+        />
+    </div>
+  `,
+    methods: {
+        focus: action('focus'),
+        blur: action('blur'),
+        input: action('input'),
+        clear: action('clear'),
+        enter: action('enter')
+    }
+})
+
+export const SuggestionPreview = TemplateWithSuggestions.bind({})

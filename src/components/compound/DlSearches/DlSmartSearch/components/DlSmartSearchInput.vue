@@ -134,6 +134,7 @@ import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
+import { setCaretAtTheEnd } from '../../../../../utils'
 import { SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce } from 'lodash'
 import { DlTooltip } from '../../../../shared'
@@ -142,7 +143,6 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
-    setCaret,
     updateEditor,
     isEligibleToChange
 } from '../utils'
@@ -450,7 +450,7 @@ export default defineComponent({
              * I commented out this line because it was blocking arrow navigation
              * */
             // if (!this.isTyping) setCaret(target)
-            setCaret(target)
+            setCaretAtTheEnd(target)
             if (!this.expanded) {
                 this.isOverflow =
                     isEllipsisActive(this.$refs['input'] as Element) ||
@@ -581,7 +581,7 @@ export default defineComponent({
                 e.preventDefault()
                 return
             } else if (e.key === 'backspace') {
-                setCaret(this.$refs['input'] as HTMLElement)
+                setCaretAtTheEnd(this.$refs['input'] as HTMLElement)
             }
         },
         handleValueChange(e: Event) {

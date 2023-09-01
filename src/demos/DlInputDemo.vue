@@ -4,20 +4,31 @@
             v-model="textInputValue"
             max-width="100%"
             style="width: 920px"
-            placeholder="Select option"
+            title="Input with full width"
+            placeholder="and suggestions"
             size="l"
             margin="20px"
-            title="Input Title"
             required
             tooltip="Quis fugiat et non eu proident sit et amet."
             top-message="Pariatur consequat non sit aliqua labore ad reprehenderit deserunt ullamco incididunt non irure laborum deserunt."
             info-message="Ipsum amet quis velit amet. Anim consectetur nostrud sunt eu non non consequat sint eu amet."
             :auto-suggest-items="[
-                'foo',
-                'bar',
-                'foobar',
-                'barfoo',
-                'foo bar foobarv'
+                {
+                    suggestion: 'suggestion1',
+                    image: 'https://picsum.photos/100/100'
+                },
+                {
+                    suggestion: '@suggestion',
+                    image: 'https://picsum.photos/100/100'
+                },
+                {
+                    suggestion: '@john-doe',
+                    image: 'https://picsum.photos/100/100'
+                },
+                {
+                    suggestion: '4suggestion',
+                    image: 'https://picsum.photos/100/100'
+                }
             ]"
             show-counter
             :max-length="20"
@@ -25,14 +36,34 @@
         <dl-input
             v-model="saveInputValue"
             style="width: 220px"
-            placeholder="Input with icon"
+            title="Expandable input"
+            placeholder="with file upload"
             size="l"
-        />
+            :files="files"
+            expandable
+            @file-update="updateFiles"
+        >
+            <template #append>
+                <label for="file-upload">
+                    <dl-icon
+                        :inline="false"
+                        class="attach-icon"
+                        icon="icon-dl-attach"
+                    />
+                </label>
+                <input
+                    id="file-upload"
+                    style="display: none"
+                    type="file"
+                    @change="addFile"
+                >
+            </template>
+        </dl-input>
         <dl-input
             v-model="passFieldValue"
             title="Password"
             style="width: 220px"
-            placeholder="Select option"
+            placeholder="Input type password"
             size="m"
             type="password"
             error
@@ -41,14 +72,14 @@
         />
         <dl-input
             v-model="warningFieldValue"
-            title="Warning Example"
+            title="Fixed Height Example"
             style="width: 220px"
-            placeholder="Select option"
+            placeholder="Fixed height"
+            height="100px"
             size="m"
-            warning
-            warning-message="Something isn't right."
-            info-message="This won't show, error is true"
+            info-message="This input has fixed height"
             optional
+            expandable
         />
 
         <p>size S with long text</p>
@@ -56,41 +87,11 @@
             v-model="warningFieldValue"
             title="Warning Example"
             style="width: 220px"
-            placeholder="Select option"
             size="s"
             warning
             warning-message="Something isn't right."
             info-message="This won't show, error is true"
             optional
-        />
-        <dl-input
-            v-model="errorFieldValue"
-            title="Error Example"
-            style="width: 220px"
-            placeholder="Select option"
-            size="m"
-            error
-            error-message="Error message is the strongest."
-            warning
-            warning-message="This won't show, error is true"
-            info-message="This won't show, error is true"
-        />
-        <dl-input
-            style="width: 220px"
-            placeholder="Select option"
-            title="Min"
-            required
-            size="s"
-            error
-            error-message="Error message is the strongest."
-        />
-        <dl-input
-            style="width: 440px"
-            placeholder="Select option"
-            title="Min"
-            size="s"
-            error
-            error-message="Error message is the strongest."
         />
         <p>input in a row with button</p>
         <div
@@ -100,7 +101,6 @@
             <dl-input
                 class="input-parts"
                 style="width: 440px"
-                placeholder="Select option"
                 title="Min"
                 dense
                 size="s"
@@ -113,19 +113,16 @@
             />
         </div>
         <dl-input
+            :model-value="'Readonly text'"
             title="Readonly"
             style="width: 220px"
-            placeholder="Readonly state"
             size="m"
             readonly
         />
 
         <p>input in a limited size and action slot size m</p>
         <div style="align-items: center; width: 250px; overflow: hidden">
-            <dl-input
-                class="input-parts"
-                placeholder="Select option"
-            >
+            <dl-input class="input-parts">
                 <template #action>
                     <dl-button
                         dense
@@ -139,13 +136,16 @@
     </div>
 </template>
 <script lang="ts">
+import { v4 } from 'uuid'
 import { defineComponent, ref } from 'vue-demi'
-import { DlInput, DlButton } from '../components'
+import { DlInput, DlButton, DlIcon } from '../components'
+import { InputFile } from '../components/compound/DlInput/types'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
         DlInput,
-        DlButton
+        DlButton,
+        DlIcon
     },
     setup() {
         const textInputValue = ref<string>('')
@@ -154,14 +154,48 @@ export default defineComponent({
         const errorFieldValue = ref<string>('')
         const saveInputValue = ref<string>('')
 
+        const files = ref<InputFile[]>([])
+        const addFile = (e: Event) => {
+            const input = e.target as HTMLInputElement
+            const file = input.files[0]
+            if (file) {
+                const reader = new FileReader()
+
+                reader.onload = (e) => {
+                    const arrayBuffer = e.target.result
+                    files.value.push({
+                        id: v4(),
+                        name: file.name,
+                        image: null,
+                        data: arrayBuffer as ArrayBuffer
+                    })
+                }
+
+                reader.readAsArrayBuffer(file)
+            }
+            input.value = ''
+        }
+        const updateFiles = (val: InputFile[]) => {
+            console.log(val)
+            files.value = val
+        }
+
         return {
             textInputValue,
             passFieldValue,
             warningFieldValue,
             errorFieldValue,
-            saveInputValue
+            saveInputValue,
+            files,
+            updateFiles,
+            addFile
         }
     }
 })
 </script>
-<style></style>
+<style>
+.attach-icon {
+    margin-top: 7px;
+    cursor: pointer;
+}
+</style>

@@ -110,13 +110,3 @@ function renderText(text: string) {
     })
     return output?.join('')
 }
-
-export function setCaret(target: HTMLElement) {
-    const range = document.createRange()
-    const sel = window.getSelection()
-    range.selectNodeContents(target)
-    range.collapse(false)
-    sel.removeAllRanges()
-    sel.addRange(range)
-    target.focus()
-}
