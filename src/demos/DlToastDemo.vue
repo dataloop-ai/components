@@ -89,11 +89,14 @@
         <dl-button @click="showToastMessage">
             Show Toast Message
         </dl-button>
+        <dl-button @click="showToastMessageCustom">
+            Show Toast Message
+        </dl-button>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref, h } from 'vue-demi'
 import {
     DlButton,
     DlInput,
@@ -134,7 +137,31 @@ export default defineComponent({
                 collapseCount: collapseCount.value
             })
         }
+
+        function showToastMessageCustom() {
+            DlToast.open(
+                {
+                    message: message.value,
+                    position: position.value as DlToastPositions,
+                    type: type.value as DlToastTypes,
+                    duration: Number(duration.value) || 1000,
+                    closable: closable.value,
+                    width: width.value,
+                    collapseCount: collapseCount.value
+                },
+                {
+                    message: (...args: any) => {
+                        const vNode = h(DlButton, {
+                            label: 'Click me',
+                            props: { label: 'Click Me' }
+                        })
+                        return vNode
+                    }
+                }
+            )
+        }
         return {
+            showToastMessageCustom,
             showToastMessage,
             message,
             duration,
