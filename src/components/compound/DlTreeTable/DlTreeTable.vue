@@ -48,7 +48,7 @@
                             dlTableRef.getBodyScope({
                                 key: getRowKey(row),
                                 row,
-                                pageIndex: rowKey,
+                                pageIndex: rowIndex,
                                 trClass: isRowSelected(rowKey, getRowKey(row))
                                     ? 'selected'
                                     : ''
@@ -161,7 +161,7 @@
                                     dlTableRef.getBodyScope({
                                         key: getRowKey(row),
                                         row,
-                                        pageIndex: rowKey,
+                                        pageIndex: rowIndex,
                                         trClass: isRowSelected(
                                             rowKey,
                                             getRowKey(row)
