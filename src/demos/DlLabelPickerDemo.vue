@@ -1,14 +1,12 @@
 <template>
     <div>
-        <DlTr :no-hover="true">
-            Label picker component
-        </DlTr>
+        <div>Label picker component</div>
         <DlLabelPicker :items="items" />
     </div>
 </template>
 
 <script lang="ts">
-import { DlTr, DlLabelPicker } from '../components'
+import { DlLabelPicker } from '../components'
 import { defineComponent, ref } from 'vue-demi'
 const rows = [
     {
@@ -38,7 +36,6 @@ const rows = [
 ]
 export default defineComponent({
     components: {
-        DlTr,
         DlLabelPicker
     },
     setup() {

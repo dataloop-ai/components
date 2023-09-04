@@ -640,7 +640,7 @@ import {
 } from '../../essential'
 import { ResizableManager } from './utils'
 import { DlButton } from '../../basic'
-import { DlOptionGroup } from '../../compound'
+import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
