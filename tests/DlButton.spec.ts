@@ -142,4 +142,27 @@ describe('DlButton', () => {
             ).toBe('2px')
         })
     })
+    describe('When passing text color and icon color', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlButton, {
+                props: {
+                    icon: 'icon-dl-search',
+                    flat: true,
+                    dense: true,
+                    label: 'test me',
+                    filled: true,
+                    disabled: false,
+                    textColor: 'red',
+                    iconColor: 'blue'
+                }
+            })
+        })
+        it('should have colors in style', () => {
+            const cssButtonVars = wrapper.vm.cssButtonVars
+            expect(cssButtonVars['--dl-icon-color']).to.exist
+            expect(cssButtonVars['--dl-button-icon-color-hover']).to.exist
+            expect(cssButtonVars['--dl-button-text-color-hover']).to.exist
+        })
+    })
 })
