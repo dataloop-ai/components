@@ -190,6 +190,7 @@
                     class="sticky-header"
                     :separator="separator"
                     :columns="tableColumns"
+                    :rows="tableRows"
                     color="dl-color-secondary"
                     style="height: 500px"
                 >
@@ -741,7 +742,6 @@ export default defineComponent({
         const onRowClick = (item: any) => {
             // console.log('onRowClick TreeTableDemo: ', item)
         }
-
         return {
             filter,
             selectedData,
