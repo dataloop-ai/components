@@ -805,6 +805,8 @@ export default defineComponent({
             inputRef.focus()
         },
         onFocus(e: InputEvent): void {
+            const el = e.target as HTMLElement
+            el.scroll(el.scrollWidth, 0)
             this.focused = true
             this.$emit('focus', e)
         },
@@ -813,6 +815,8 @@ export default defineComponent({
             inputRef.blur()
         },
         onBlur(e: InputEvent): void {
+            const el = e.target as HTMLElement
+            el.scroll(0, 0)
             this.focused = false
             this.$emit('blur', e)
         },
@@ -1026,7 +1030,7 @@ export default defineComponent({
         white-space: var(--dl-input-white-space);
         font-size: var(--dl-font-size-body);
         overflow: hidden scroll;
-        text-overflow: clip;
+        text-overflow: ellipsis;
         box-sizing: content-box;
         word-wrap: break-word;
         outline: none;
@@ -1088,6 +1092,7 @@ export default defineComponent({
 
         &:focus {
             border-color: var(--dl-input-border-color-hover);
+            text-overflow: clip;
         }
 
         &:read-only {
