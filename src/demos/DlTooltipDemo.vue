@@ -25,8 +25,7 @@
                 <dl-tooltip
                     color="rgb(0, 255, 0)"
                     background-color="dl-color-side-panel"
-                >
-                    lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                >lorem ipsum dolor, sit amet consectetur adipisicing elit.
                     Assumenda corporis alias cupiditate natus? Ipsum quos quia
                     temporibus ipsam magnam, alias rerum aut, a quaerat dicta,
                     quasi aperiam facere asperiores saepe.
