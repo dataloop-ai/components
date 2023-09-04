@@ -418,6 +418,15 @@
                 />
             </div>
         </div>
+        <div>
+            <p>With empty data</p>
+            <DlTable
+                :rows="[]"
+                :columns="tableColumns"
+                title="empty data"
+                no-data-label="NOoooooOOOOOoooooo"
+            />
+        </div>
     </div>
 </template>
 

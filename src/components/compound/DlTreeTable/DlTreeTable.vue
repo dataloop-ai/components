@@ -43,14 +43,13 @@
                 <template v-if="virtualScroll && !isEmpty">
                     <slot
                         v-for="(row, rowIndex) in dlTableRef.computedCols"
-                        :key="rowIndex"
                         name="row-body"
                         v-bind="
                             dlTableRef.getBodyScope({
                                 key: getRowKey(row),
                                 row,
-                                pageIndex,
-                                trClass: isRowSelected(getRowKey(row))
+                                pageIndex: rowKey,
+                                trClass: isRowSelected(rowKey, getRowKey(row))
                                     ? 'selected'
                                     : ''
                             })
@@ -58,6 +57,7 @@
                     >
                         <DlTrTreeView
                             :row="tableBodyProps.item"
+                            :row-index="rowIndex"
                             :is-row-selected="
                                 isRowSelected(
                                     rowKey,
@@ -161,8 +161,11 @@
                                     dlTableRef.getBodyScope({
                                         key: getRowKey(row),
                                         row,
-                                        pageIndex,
-                                        trClass: isRowSelected(getRowKey(row))
+                                        pageIndex: rowKey,
+                                        trClass: isRowSelected(
+                                            rowKey,
+                                            getRowKey(row)
+                                        )
                                             ? 'selected'
                                             : ''
                                     })
@@ -288,13 +291,13 @@ import {
     ref,
     h
 } from 'vue-demi'
-import { DlTable } from '../../../components'
+import { DlCheckbox } from '../../essential'
+import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { cloneDeep } from 'lodash'
 import { DlTableProps, DlTableRow } from '../DlTable/types'
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
-import DlCheckbox from '../../essential/DlCheckbox/DlCheckbox.vue'
 import { props } from './props'
 import { emits } from './emits'
 
