@@ -169,6 +169,41 @@
                 />
             </div>
             <div style="margin-top: 100px">
+                <p>Custom table body slot</p>
+                <DlTreeTable
+                    class="sticky-header"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    color="dl-color-secondary"
+                    style="height: 500px"
+                >
+                    <template #table-body>
+                        <div class="custom-body-slot">
+                            Custom body slot inside tree table
+                        </div>
+                    </template>
+                </DlTreeTable>
+            </div>
+            <div style="margin-top: 100px">
+                <p>Custom row body slot</p>
+                <DlTreeTable
+                    class="sticky-header"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    color="dl-color-secondary"
+                    style="height: 500px"
+                >
+                    <template #row-body="{ row }">
+                        <tr>
+                            Custom row slot, row name:
+                            {{
+                                row.name
+                            }}
+                        </tr>
+                    </template>
+                </DlTreeTable>
+            </div>
+            <div style="margin-top: 100px">
                 <p>Empty State</p>
                 <DlTreeTable
                     :separator="separator"
@@ -804,5 +839,13 @@ export default defineComponent({
         /* height of all previous header rows */
         top: 40px;
     }
+}
+.custom-body-slot {
+    padding: 20px;
+    font-size: 35px;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 </style>
