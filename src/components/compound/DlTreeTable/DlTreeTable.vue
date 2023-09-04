@@ -154,113 +154,120 @@
                 </template>
                 <template v-else>
                     <template v-if="dlTableRef && !isEmpty">
-                        <slot
-                            v-for="(row, rowIndex) in dlTableRef.computedCols"
-                            :key="rowIndex"
-                            name="row-body"
-                            v-bind="
-                                dlTableRef.getBodyScope({
-                                    key: getRowKey(row),
-                                    row,
-                                    pageIndex,
-                                    trClass: isRowSelected(getRowKey(row))
-                                        ? 'selected'
-                                        : ''
-                                })
-                            "
-                        >
-                            <DlTrTreeView
-                                v-for="(row, rowIndex) in computedRows"
-                                :key="rowIndex"
-                                :row="row"
-                                :row-index="rowIndex"
-                                :row-key="rowKey"
-                                :is-row-selected="
-                                    isRowSelected(rowKey, getRowKey(row))
-                                        ? 'selected'
-                                        : ''
-                                "
-                                :has-any-action="dlTableRef.hasAnyAction"
-                                :no-hover="dlTableRef.noHover"
-                                :has-draggable-rows="
-                                    dlTableRef.hasDraggableRows
-                                "
-                                :has-selection-mode="
-                                    dlTableRef.hasSelectionMode
-                                "
-                                :bind-body-selection="
-                                    dlTableRef.getBodySelectionScope({
+                        <template v-for="(row, rowIndex) in computedRows">
+                            <slot
+                                name="row-body"
+                                v-bind="
+                                    dlTableRef.getBodyScope({
                                         key: getRowKey(row),
                                         row,
-                                        pageIndex: rowIndex
+                                        pageIndex,
+                                        trClass: isRowSelected(getRowKey(row))
+                                            ? 'selected'
+                                            : ''
                                     })
                                 "
-                                :bind-body-cell-scope="
-                                    (col) =>
-                                        dlTableRef.getBodyCellScope({
+                            >
+                                <DlTrTreeView
+                                    :key="rowIndex"
+                                    :row="row"
+                                    :row-index="rowIndex"
+                                    :row-key="rowKey"
+                                    :is-row-selected="
+                                        isRowSelected(rowKey, getRowKey(row))
+                                            ? 'selected'
+                                            : ''
+                                    "
+                                    :has-any-action="dlTableRef.hasAnyAction"
+                                    :no-hover="dlTableRef.noHover"
+                                    :has-draggable-rows="
+                                        dlTableRef.hasDraggableRows
+                                    "
+                                    :has-selection-mode="
+                                        dlTableRef.hasSelectionMode
+                                    "
+                                    :bind-body-selection="
+                                        dlTableRef.getBodySelectionScope({
                                             key: getRowKey(row),
                                             row,
-                                            pageIndex: rowIndex,
-                                            col
+                                            pageIndex: rowIndex
                                         })
-                                "
-                                :color="color"
-                                :computed-cols="dlTableRef.computedCols"
-                                :slot-name="dlTableRef.slotNames"
-                                :computed-rows="computedRows"
-                                :model-value="
-                                    isRowSelected(rowKey, getRowKey(row))
-                                "
-                                @update:model-value="
-                                    (adding, evt) =>
-                                        updateSelectionHierarchy(
-                                            adding,
-                                            evt,
-                                            row
-                                        )
-                                "
-                                @rowClick="
-                                    dlTableRef.onTrClick($event, row, rowIndex)
-                                "
-                                @rowDoubleClick="
-                                    dlTableRef.onTrDblClick(
-                                        $event,
-                                        row,
-                                        rowIndex
-                                    )
-                                "
-                                @rowContextMenu="
-                                    dlTableRef.onTrContextMenu(
-                                        $event,
-                                        row,
-                                        rowIndex
-                                    )
-                                "
-                                @updateExpandedRow="
-                                    updateExpandedRow(
-                                        !row.expanded,
-                                        getRowKey(row)
-                                    )
-                                "
-                            >
-                                <template
-                                    v-for="templateCol in dlTableRef.computedCols"
-                                    #[getSlotByName(templateCol.name)]
-                                >
-                                    <slot
-                                        :name="getSlotByName(templateCol.name)"
-                                        v-bind="
-                                            dlTableRef.getBodySelectionScope({
+                                    "
+                                    :bind-body-cell-scope="
+                                        (col) =>
+                                            dlTableRef.getBodyCellScope({
                                                 key: getRowKey(row),
                                                 row,
-                                                col: templateCol,
-                                                pageIndex: rowIndex
+                                                pageIndex: rowIndex,
+                                                col
                                             })
-                                        "
-                                    />
-                                </template>
-                            </DlTrTreeView>
-                        </slot>
+                                    "
+                                    :color="color"
+                                    :computed-cols="dlTableRef.computedCols"
+                                    :slot-name="dlTableRef.slotNames"
+                                    :computed-rows="computedRows"
+                                    :model-value="
+                                        isRowSelected(rowKey, getRowKey(row))
+                                    "
+                                    @update:model-value="
+                                        (adding, evt) =>
+                                            updateSelectionHierarchy(
+                                                adding,
+                                                evt,
+                                                row
+                                            )
+                                    "
+                                    @rowClick="
+                                        dlTableRef.onTrClick(
+                                            $event,
+                                            row,
+                                            rowIndex
+                                        )
+                                    "
+                                    @rowDoubleClick="
+                                        dlTableRef.onTrDblClick(
+                                            $event,
+                                            row,
+                                            rowIndex
+                                        )
+                                    "
+                                    @rowContextMenu="
+                                        dlTableRef.onTrContextMenu(
+                                            $event,
+                                            row,
+                                            rowIndex
+                                        )
+                                    "
+                                    @updateExpandedRow="
+                                        updateExpandedRow(
+                                            !row.expanded,
+                                            getRowKey(row)
+                                        )
+                                    "
+                                >
+                                    <template
+                                        v-for="templateCol in dlTableRef.computedCols"
+                                        #[getSlotByName(templateCol.name)]
+                                    >
+                                        <slot
+                                            :name="
+                                                getSlotByName(templateCol.name)
+                                            "
+                                            v-bind="
+                                                dlTableRef.getBodySelectionScope(
+                                                    {
+                                                        key: getRowKey(row),
+                                                        row,
+                                                        col: templateCol,
+                                                        pageIndex: rowIndex
+                                                    }
+                                                )
+                                            "
+                                        />
+                                    </template>
+                                </DlTrTreeView>
+                            </slot>
+                        </template>
                     </template>
                 </template>
             </slot>
@@ -278,7 +285,8 @@ import {
     defineComponent,
     isVue2,
     set,
-    ref
+    ref,
+    h
 } from 'vue-demi'
 import { DlTable } from '../../../components'
 import DlTrTreeView from './views/DlTrTreeView.vue'
