@@ -14,24 +14,28 @@
             info-message="Ipsum amet quis velit amet. Anim consectetur nostrud sunt eu non non consequat sint eu amet."
             :auto-suggest-items="[
                 {
-                    suggestion: 'suggestion1',
-                    image: 'https://picsum.photos/100/100'
+                    suggestion: 'clickable',
+                    image: 'https://picsum.photos/100/100',
+                    click: true
                 },
                 {
                     suggestion: '@suggestion',
-                    image: 'https://picsum.photos/100/100'
+                    image: 'https://picsum.photos/100/100',
+                    click: true
                 },
                 {
                     suggestion: '@john-doe',
-                    image: 'https://picsum.photos/100/100'
+                    image: 'https://picsum.photos/100/100',
+                    click: true
                 },
                 {
-                    suggestion: '4suggestion',
+                    suggestion: 'unclickable',
                     image: 'https://picsum.photos/100/100'
                 }
             ]"
             show-counter
             :max-length="20"
+            @suggestion-click="log"
         />
         <dl-input
             v-model="saveInputValue"
@@ -181,6 +185,7 @@ export default defineComponent({
         }
 
         return {
+            log: console.log,
             textInputValue,
             passFieldValue,
             warningFieldValue,

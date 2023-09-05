@@ -1,6 +1,7 @@
 export interface InputSuggestion {
     suggestion: string
     image: string
+    click: boolean
 }
 
 export interface InputFile {

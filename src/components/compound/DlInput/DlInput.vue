@@ -167,10 +167,10 @@
                             <dl-list-item
                                 v-for="(item, suggestIndex) in suggestItems"
                                 :key="item.suggestion"
-                                clickable
+                                :clickable="item.click"
                                 style="font-size: 12px"
                                 :highlighted="suggestIndex === highlightedIndex"
-                                @click="onClick($event, item.suggestion)"
+                                @click="onClick($event, item)"
                             >
                                 <img
                                     v-if="item.image"
@@ -184,6 +184,7 @@
                                     )"
                                     :key="JSON.stringify(word) + index"
                                     :class="{
+                                        clickable: item.click,
                                         'dl-input__suggestion--highlighted':
                                             word.highlighted
                                     }"
@@ -508,7 +509,8 @@ export default defineComponent({
         'clear',
         'enter',
         'file-update',
-        'update:model-value'
+        'update:model-value',
+        'suggestion-click'
     ],
     setup(props, { emit }) {
         const mouseOverClear = ref(false)
@@ -754,12 +756,12 @@ export default defineComponent({
                 return
             }
         },
-        onClick(e: Event, item: string) {
-            this.onAutoSuggestClick(e, item)
+        onClick(e: Event, item: InputSuggestion) {
+            this.$emit('suggestion-click', item)
+            this.onAutoSuggestClick(e, item.suggestion)
         },
         onChange(e: InputEvent): void {
             this.isMenuOpen = true
-            const input = this.$refs.input as HTMLElement
             this.updateSyntax()
             const target = e.target as HTMLElement
             this.$emit('input', target.innerText, e)
@@ -925,6 +927,10 @@ export default defineComponent({
     display: block;
     opacity: 0.5;
     -webkit-text-security: none;
+}
+
+.clickable:hover {
+    text-decoration: underline;
 }
 
 .dl-input {
