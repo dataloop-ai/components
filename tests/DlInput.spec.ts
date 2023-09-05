@@ -246,11 +246,11 @@ describe('DlInput component', () => {
             wrapper = mount(DlInput)
         })
         it('should set state on focus', () => {
-            wrapper.vm.onFocus()
+            wrapper.vm.onFocus({ target: { scroll: () => {} } })
             expect(wrapper.vm.focused).toBe(true)
         })
         it('should set state on blur', () => {
-            wrapper.vm.onBlur()
+            wrapper.vm.onBlur({ target: { scroll: () => {} } })
             expect(wrapper.vm.focused).toBe(false)
         })
         it('should emit clear event', () => {
