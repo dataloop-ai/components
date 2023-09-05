@@ -125,8 +125,8 @@ export default defineComponent({
             default: () => ({})
         },
         bindBodyCellScope: {
-            type: Object as PropType<Record<string, any>>,
-            default: () => ({})
+            type: Function,
+            default: () => {}
         },
         color: {
             type: String,

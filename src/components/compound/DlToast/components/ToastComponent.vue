@@ -1,7 +1,7 @@
 <template>
     <transition
-        :enter-active-class="transition.enter"
-        :leave-active-class="transition.leave"
+        :enter-active-class="transitionState.enter"
+        :leave-active-class="transitionState.leave"
     >
         <div
             v-show="isActive"
@@ -21,10 +21,12 @@
                 style="position: relative"
                 @update:model-value="closeToast"
             >
-                <span
-                    class="toast-message"
-                    data-test="message-text"
-                />
+                <slot name="message">
+                    <span
+                        class="toast-message"
+                        data-test="message-text"
+                    />
+                </slot>
                 <dl-badge
                     v-if="count"
                     with-border
@@ -56,6 +58,7 @@
 import {
     computed,
     defineComponent,
+    getCurrentInstance,
     onBeforeMount,
     onMounted,
     ref
@@ -106,7 +109,7 @@ export default defineComponent({
         }
     },
     emits: ['removed'],
-    setup(props: any, { emit }) {
+    setup(props: any, { emit, slots }) {
         const uuid = v4()
         const { position, duration, message, collapseCount } = props
         const root = ref(null)
@@ -114,13 +117,14 @@ export default defineComponent({
         let parentTop: HTMLElement = null
         let parentBottom: HTMLElement = null
         const toastParentPosition = ref(null)
+
         const isActive = ref(false)
         function closeToastMessage(): void {
             isActive.value = false
-            setTimeout(() => {
-                emit('removed')
-                removeElement(root.value)
-            }, 200)
+            clearTimeout(timeoutId.value)
+
+            emit('removed')
+            removeElement(root.value)
         }
         onBeforeMount(() => {
             setupContainer()
@@ -157,7 +161,7 @@ export default defineComponent({
             }
         })
 
-        const transition = computed((): Animation => {
+        const transitionState = computed((): Animation => {
             switch (position) {
                 case DlToastPositions.TOP:
                 case DlToastPositions.TOP_RIGHT:
@@ -195,8 +199,13 @@ export default defineComponent({
 
         function showNotice(): void {
             const parent = correctParent.value
-            const container = root.value.closest('.dl-toast-container--pending')
-            root.value.querySelector('.toast-message').innerHTML = message
+            const container = root.value?.closest(
+                '.dl-toast-container--pending'
+            )
+            const messageContainer = root.value?.querySelector('.toast-message')
+            if (messageContainer) {
+                messageContainer.innerHTML = message
+            }
             parent.insertAdjacentElement('afterbegin', root.value)
             container?.remove()
             isActive.value = true
@@ -204,16 +213,12 @@ export default defineComponent({
                 setHideTimeout()
             }
             if (collapseCount && collapseCount < parent.childNodes.length) {
-                setTimeout(() => {
-                    emit('removed')
-                    removeElement(parent.lastElementChild)
-                }, 200)
+                closeToastMessage()
             }
         }
         function closeToast(val: boolean) {
             if (!val) {
-                emit('removed')
-                removeElement(root.value)
+                closeToastMessage()
             }
         }
 
@@ -238,7 +243,7 @@ export default defineComponent({
         return {
             uuid,
             root,
-            transition,
+            transitionState,
             isActive,
             closeToast,
             correctParent,

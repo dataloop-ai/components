@@ -44,7 +44,8 @@
 
 <script lang="ts">
 import { ref, PropType, defineComponent, computed } from 'vue-demi'
-import { DlLabel, DlInput, DlIcon, DlTreeTable } from '../../../components'
+import { DlLabel, DlIcon } from '../../essential'
+import { DlInput, DlTreeTable } from '../../compound'
 import { DlTableColumn } from '../../types'
 import { DlLabelPickerItem } from './types'
 

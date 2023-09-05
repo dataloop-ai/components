@@ -33,7 +33,8 @@ if (VueDemi.isVue3) {
         return renderVue2Component(
             ToastComponent,
             props,
-            '.dl-toast-container--pending'
+            '.dl-toast-container--pending',
+            slots
         )
     }
 }
@@ -49,12 +50,18 @@ export function removeElement(el: Element) {
 export { createComponent }
 
 function renderVue2Component(
-    component: Object,
-    props: Object,
-    container: string
+    component: { [key: string]: any },
+    props: { [key: string]: any },
+    container: string,
+    slots: { [key: string]: any }
 ) {
-    return new VueDemi.Vue2({
-        render: (h: (arg0: Object, arg1: { props: Object }) => any) =>
-            h(component, { props })
-    }).$mount(container)
+    const vueComponent: any = new VueDemi.Vue2({
+        render: (
+            h: (
+                arg0: { [key: string]: any },
+                arg1: { [key: string]: any }
+            ) => any
+        ) => h(component, { props, on: props.on, scopedSlots: slots })
+    })
+    return vueComponent.$mount(container)
 }

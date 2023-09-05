@@ -516,15 +516,15 @@
 
                     <DlTr v-if="isEmpty && hasEmptyStateProps">
                         <DlTd colspan="100%">
-                            <div class="flex justify-center">
+                            <div class="flex justify-center full-width">
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
-                                        #[slot]="props"
+                                        #[slot]="emptyStateProps"
                                     >
                                         <slot
                                             :name="slot"
-                                            v-bind="props"
+                                            v-bind="emptyStateProps"
                                         />
                                     </template>
                                 </dl-empty-state>
@@ -640,7 +640,7 @@ import {
 } from '../../essential'
 import { ResizableManager } from './utils'
 import { DlButton } from '../../basic'
-import { DlOptionGroup } from '../../compound'
+import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
