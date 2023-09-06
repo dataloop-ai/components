@@ -135,6 +135,7 @@
                 >
                     <dl-icon
                         v-if="clearable && hasSelection"
+                        class=".dl-select__clear-button"
                         icon="icon-dl-close"
                         :size="withoutBorders ? '10px' : '12px'"
                         style="margin-right: 3px; cursor: pointer"
