@@ -11,7 +11,7 @@
         />
         <div
             v-if="text"
-            class="spinner-text"
+            class="dl-spinner-text"
             :style="textStyles"
         >
             <span>{{ text }}</span>
