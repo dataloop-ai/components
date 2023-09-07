@@ -11,7 +11,7 @@
         :selection="selection"
         :loading="loading"
         :rows="tableRows"
-        :flat-tree-data="hasFlatTreeData"
+        :is-tree-table="hasFlatTreeData"
         :resizable="resizable"
         :row-key="rowKey"
         :color="color"
@@ -36,10 +36,7 @@
             />
         </template>
         <template #table-body="tableBodyProps">
-            <slot
-                name="table-body"
-                v-bind="tableBodyProps"
-            >
+            <slot name="table-body" v-bind="tableBodyProps">
                 <template v-if="virtualScroll && !isEmpty">
                     <slot
                         v-for="(row, rowIndex) in dlTableRef.computedCols"
@@ -359,7 +356,7 @@ export default defineComponent({
             name: string,
             rowsArr = tableRows.value
         ) => {
-            (rowsArr as DlTableRow[]).some((o) => {
+            ;(rowsArr as DlTableRow[]).some((o) => {
                 if (getRowKey.value(o) === name) {
                     if (isVue2) {
                         set(o, 'expanded', isExpanded)

@@ -1,4 +1,8 @@
+import { DlTableRow } from '../types'
 import { ClickAndHold } from './ClickAndHold'
+import { getElementAbove } from './get-element-above'
+
+let prevMouseY: number = 0
 
 function getTargetRow(target: any) {
     const elemName = target.tagName.toLowerCase()
@@ -58,7 +62,334 @@ function isIntersecting(
 }
 
 function getRows(table: HTMLTableElement) {
-    return table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
+    // return Array.from(
+    //     table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
+    // ).filter((row: any) => row.dataset.isVisible === 'true')
+
+    return Array.from(
+        table.querySelectorAll('tbody.dl-virtual-scroll__content tr')
+    )
+}
+
+export function applyTreeDraggableRows(
+    table: HTMLTableElement,
+    vm?: any,
+    root?: HTMLDivElement
+) {
+    const tbody = table.querySelector('tbody.dl-virtual-scroll__content')!
+
+    // let draggableParentRow: any = null
+    let dragElem: any = null
+    let oldIndex = 0
+    let newIndex = 0
+    let mouseDownX = 0
+    let mouseDownY = 0
+    let mouseX = 0
+    let mouseY = 0
+    let mouseDrag = false
+    let rowHeight = 0
+    let wasMoved = false
+    let draggableClone: any = null
+    let elementCount: number
+    let sourceRow: any = null
+    let isMovingDownward = false
+
+    function bindMouse() {
+        table.addEventListener('mousedown', handleMouseDown)
+        document.addEventListener('mousemove', handleMouseMove)
+        document.addEventListener('mouseup', handleMouseUp)
+    }
+
+    function handleMouseDown(event: MouseEvent) {
+        if (event.button != 0) return true
+
+        sourceRow = getTargetRow(event.target)
+
+        if (!sourceRow) {
+            return
+        }
+
+        sourceRow.classList.add('dl-table__is-dragging')
+        const targetRow = sourceRow.cloneNode(true)
+        targetRow.dataset.height = sourceRow.offsetHeight
+
+        const allRows = [...(table.querySelectorAll('tr') as any)]
+
+        let sourceRowIndex = allRows.indexOf(sourceRow)
+        const sourceRowStyle = window.getComputedStyle(sourceRow)
+
+        draggableClone = document.createElement('table')
+
+        draggableClone.style.backgroundColor =
+            'var(--dl-color-panel-background)'
+        draggableClone.style.width = sourceRowStyle.width
+        // TODO improvements ...styles
+        draggableClone.style.color = 'var(--dl-color-darker)'
+        draggableClone.style.fontSize = '13px'
+        draggableClone.style.boxShadow = `var(--dl-menu-shadow)`
+        draggableClone.style.zIndex = '9999'
+        draggableClone.style.position = 'absolute'
+        draggableClone.classList.add('dl-table--horizontal-separator')
+
+        draggableClone.append(targetRow)
+
+        // Source row and its children
+        elementCount = targetRow.dataset.children
+            ? parseInt(targetRow.dataset.children)
+            : 1
+        //
+
+        // Add draggable class to allRows, append draggable rows to draggableClone
+        for (let i = 1; i < elementCount; i++) {
+            sourceRowIndex += 1
+            allRows[sourceRowIndex].classList.add('dl-table__is-dragging')
+            draggableClone.append(allRows[sourceRowIndex].cloneNode(true))
+        }
+        //
+
+        // Remove children classes from draggableChildren array
+        Array.from(draggableClone.children).forEach((element) => {
+            ;(element as HTMLElement).classList.remove('dl-table__is-dragging')
+        })
+        //
+
+        if (targetRow) {
+            table.style.userSelect = 'none'
+
+            rowHeight = parseInt(targetRow.dataset.height) * elementCount
+
+            // draggableParentRow = sourceRow
+            addDraggableRow(draggableClone)
+
+            const coords = getMouseCoords(event, root)
+
+            mouseDownX = coords.x
+            mouseDownY = coords.y
+
+            mouseDrag = true
+            table.classList.add('mouse-drag')
+        }
+    }
+
+    function handleMouseMove(event: MouseEvent) {
+        if (!mouseDrag) return
+
+        const coords = getMouseCoords(event, root)
+
+        mouseX = coords.x
+        mouseY = coords.y
+
+        moveRow(mouseX, mouseY, event)
+    }
+
+    function handleMouseUp() {
+        if (!mouseDrag) return
+
+        sourceRow.classList.remove('dl-table__is-dragging')
+        table.removeChild(dragElem)
+
+        // if (oldIndex !== newIndex) vm?.emit('row-reorder', oldIndex, newIndex)
+
+        dragElem = null
+        mouseDrag = false
+        table.classList.remove('mouse-drag')
+        wasMoved = false
+
+        table.style.userSelect = 'auto'
+
+        Array.from(tbody.children).forEach((element) => {
+            element.classList.remove('dl-table__is-dragging')
+        })
+    }
+
+    function swapRow(targetRow: Element, i: number, direction: string) {
+        const allRows = Array.from(tbody.children)
+
+        // newIndex = index + 1
+        // wasMoved = oldIndex !== newIndex
+
+        // let indexOfSourceRow = allRows.indexOf(sourceRow)
+
+        let indexOfSourceRow = allRows.indexOf(sourceRow)
+
+        // const prevRow = indexOfSourceRow > i ? sourceRow : targetRow
+        // const nextRow = indexOfSourceRow > i ? targetRow : sourceRow
+
+        if (indexOfSourceRow === -1) {
+            return
+        }
+        // const indexEnd = indexOfSourceRow + elementCount
+        // const hierarchyData = allRows.slice(indexOfSourceRow, indexEnd)
+        // const rowIndex = hierarchyData.indexOf(row)
+        // console.log(rowIndex)
+
+        // const isDraggingOverChildren = rowIndex > -1
+
+        /**
+         * Prevent insertBefore when dragging over the item in the children hierarchy
+         * */
+        // if (isDraggingOverChildren) {
+        //     return
+        // }
+
+        console.log({ indexOfSourceRow })
+
+        // console.log({ elementCount })
+
+        // console.log(row, sourceRow)
+
+        for (let i = 0; i < elementCount; i++) {
+            tbody.insertBefore(targetRow, sourceRow)
+            indexOfSourceRow++
+        }
+    }
+
+    function moveRow(x: number, y: number, event: MouseEvent) {
+        dragElem.style.top = y + 'px'
+        dragElem.style.left = x + 'px'
+
+        const draggingPosition = dragElem.getBoundingClientRect()
+
+        if (event.pageY < prevMouseY) {
+            isMovingDownward = false
+        } else if (event.pageY > prevMouseY) {
+            isMovingDownward = true
+        }
+
+        const currentStartY = draggingPosition.y
+        const currentEndY = currentStartY + draggingPosition.height
+
+        const rows = getRows(table)
+
+        // const rowElem = rows[i] as HTMLTableRowElement
+        // const rowSize = rowElem.cells[0].getBoundingClientRect()
+        // const rowStartY = rowSize.y
+        // const rowEndY = rowStartY + rowSize.height
+
+        // const rowQuarter = rowSize.height / 4
+        // const startOfMiddle = rowStartY + rowQuarter //starting with 1/4 of the height
+        // const endOfMiddle = startOfMiddle + rowQuarter * 2 //ending with 3/4 of the height
+
+        // const isMouseBeforeMiddle =
+        //     event.clientY < startOfMiddle && event.clientY >= rowStartY
+
+        // const isMouseInTheMiddle =
+        //     event.clientY > startOfMiddle && event.clientY < endOfMiddle
+
+        // const isMouseAfterMiddle =
+        //     event.clientY > endOfMiddle && event.clientY <= rowEndY
+
+        // const currIndex = rows.indexOf(sourceRow)
+        // const prevRow = currIndex > i ? sourceRow : rowElem
+        // const nextRow = currIndex > i ? rowElem : sourceRow
+
+        // if (
+        //     sourceRow !== rowElem &&
+        //     isIntersecting(currentStartY, currentEndY, rowStartY, rowEndY)
+        // ) {
+        //     if (isMouseInTheMiddle) {
+        //         console.log('mouse is in the middle', i)
+        //     }
+
+        //     if (isMouseAfterMiddle) {
+        //         if (isMovingDownward) {
+        //             swapRow(rowElem, currIndex)
+        //         }
+        //     }
+
+        //     if (isMouseBeforeMiddle) {
+        //         if (!isMovingDownward) {
+        //             swapRow(rowElem, currIndex)
+        //         }
+        //     }
+        // }
+
+        for (let i = 0; i < rows.length; i++) {
+            const rowElem = rows[i] as HTMLTableRowElement
+            const rowSize = rowElem.cells[0].getBoundingClientRect()
+            const rowStartY = rowSize.y
+            const rowEndY = rowStartY + rowSize.height
+
+            const rowQuarter = rowSize.height / 4
+            const startOfMiddle = rowStartY + rowQuarter //starting with 1/4 of the height
+            const endOfMiddle = startOfMiddle + rowQuarter * 2 //ending with 3/4 of the height
+
+            const isMouseBeforeMiddle =
+                event.clientY < startOfMiddle && event.clientY >= rowStartY
+
+            const isMouseInTheMiddle =
+                event.clientY > startOfMiddle && event.clientY < endOfMiddle
+
+            const isMouseAfterMiddle =
+                event.clientY > endOfMiddle && event.clientY <= rowEndY
+
+            if (
+                sourceRow !== rowElem &&
+                isIntersecting(currentStartY, currentEndY, rowStartY, rowEndY)
+            ) {
+                if (isMouseInTheMiddle) {
+                    // console.log('mouse is in the middle', i)
+                }
+
+                if (isMouseAfterMiddle) {
+                    if (isMovingDownward) {
+                        swapRow(rowElem, i, 'down')
+                    }
+                }
+
+                if (isMouseBeforeMiddle) {
+                    if (!isMovingDownward) {
+                        swapRow(rowElem, i, 'up')
+                    }
+                }
+            }
+        }
+        prevMouseY = event.pageY
+    }
+
+    function addDraggableRow(draggableClone: any) {
+        draggableClone.classList.add('dl-table__is-dragging')
+        dragElem = draggableClone.cloneNode(true)
+        oldIndex = draggableClone.rowIndex
+        newIndex = draggableClone.rowIndex
+
+        dragElem.classList.add('dl-table__drag')
+        draggableClone.style.height = `${rowHeight}px`
+        for (let i = 0; i < draggableClone.children.length; i++) {
+            const oldTD = draggableClone.children[i]
+            const newTD = dragElem.children[i]
+            newTD.style.width = getStyle(oldTD, 'width')
+            newTD.style.height = getStyle(oldTD, 'height')
+            newTD.style.padding = getStyle(oldTD, 'padding')
+            newTD.style.margin = getStyle(oldTD, 'margin')
+        }
+
+        table.appendChild(dragElem)
+
+        const tPos = draggableClone.getBoundingClientRect()
+        const dPos = dragElem.getBoundingClientRect()
+
+        dragElem.style.bottom = dPos.y - tPos.y - tPos.height + 'px'
+        dragElem.style.left = '-1px'
+
+        document.dispatchEvent(
+            new MouseEvent('mousemove', {
+                view: window,
+                cancelable: true,
+                bubbles: true
+            })
+        )
+    }
+
+    bindMouse()
+
+    function unsubscribeEvents() {
+        table.removeEventListener('mousedown', handleMouseDown)
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    return unsubscribeEvents
 }
 
 export function applyDraggableRows(
@@ -134,7 +465,7 @@ export function applyDraggableRows(
         }
 
         Array.from(draggableTable.children).forEach((element) => {
-            (element as HTMLElement).classList.remove('dl-table__is-dragging')
+            ;(element as HTMLElement).classList.remove('dl-table__is-dragging')
         })
 
         if (targetRow) {
@@ -173,7 +504,7 @@ export function applyDraggableRows(
         draggableParentRow.classList.remove('dl-table__is-dragging')
         table.removeChild(dragElem)
 
-        if (oldIndex !== newIndex) vm?.emit('row-reorder', oldIndex, newIndex)
+        // if (oldIndex !== newIndex) vm?.emit('row-reorder', oldIndex, newIndex)
 
         dragElem = null
         mouseDrag = false

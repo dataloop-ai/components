@@ -14,6 +14,7 @@ export * from './colors'
 export * from './teleport'
 export * from './parse-smart-query'
 export * from './stringStyleToRecord'
+export * from './get-element-above'
 
 export const isMobileOrTablet = () => {
     let check = false

@@ -26,10 +26,7 @@
                         !darkMode ? 'dl-color-secondary' : 'dl-color-darker'
                     "
                 />
-                <dl-switch
-                    v-model="darkMode"
-                    style="margin: 0 20px"
-                />
+                <dl-switch v-model="darkMode" style="margin: 0 20px" />
                 <dl-icon
                     icon="icon-dl-dark-theme"
                     size="20px"
@@ -39,15 +36,9 @@
         </div>
         <div class="layout-wrapper">
             <div class="sidebar">
-                <dl-search
-                    v-model="filterTerm"
-                    style="margin-bottom: 5px"
-                />
+                <dl-search v-model="filterTerm" style="margin-bottom: 5px" />
 
-                <dl-button
-                    v-if="activeDemo"
-                    outlined
-                >
+                <dl-button v-if="activeDemo" outlined>
                     <span style="text-transform: capitalize">
                         Selected: {{ computeDemoName(activeDemo.name) }}
                     </span>
@@ -57,7 +48,8 @@
                     clickable
                     style="
                         margin-top: 15px;
-                        min-width: 200px;
+                        width: 100%;
+                        min-width: 0;
                         height: 100%;
                         height: calc(100vh - 18vh);
                         overflow: auto;

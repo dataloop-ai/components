@@ -1,6 +1,7 @@
 <template>
     <tr
         ref="dlTrTreeRef"
+        :data-level="props.row.level"
         :class="trClasses"
         v-bind="$attrs"
         v-on="listeners"
@@ -11,6 +12,7 @@
 
 <script lang="ts">
 import { defineComponent, isVue2 } from 'vue-demi'
+import { DlTableRow } from '../../types'
 
 export default defineComponent({
     name: 'DlTrTree',
@@ -54,9 +56,19 @@ export default defineComponent({
             return classes
         }
     },
+
     watch: {
+        'props.row': {
+            handler(row: DlTableRow) {
+                ;(this.$refs.dlTrTreeRef as any).setAttribute(
+                    'data-is-visible',
+                    row.isExpandedParent || row.level === 1
+                )
+            },
+            deep: true
+        },
         childrenComputed(value) {
-            (this.$refs.dlTrTreeRef as any).setAttribute(
+            ;(this.$refs.dlTrTreeRef as any).setAttribute(
                 'data-children',
                 value
             )
@@ -67,7 +79,7 @@ export default defineComponent({
     },
     methods: {
         setAttributeChildren() {
-            (this.$refs.dlTrTreeRef as any).setAttribute(
+            ;(this.$refs.dlTrTreeRef as any).setAttribute(
                 'data-children',
                 this.children
             )

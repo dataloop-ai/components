@@ -106,7 +106,7 @@ export const props = {
         type: Number,
         default: 100
     },
-    flatTreeData: {
+    isTreeTable: {
         type: Boolean,
         default: false
     },

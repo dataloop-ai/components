@@ -102,7 +102,7 @@
                     @selectedItems="selectedItems"
                 />
             </div>
-            <div style="padding-top: 300px">
+            <!-- <div style="padding-top: 300px">
                 <p>Custom body cell</p>
                 <DlTreeTable
                     :separator="separator"
@@ -272,7 +272,7 @@
                         @selectedItems="selectedItems"
                     />
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -584,7 +584,7 @@ const rows2 = [
         calcium: '6%',
         iron: '7%'
     },
-    ...times(100, (index) => ({
+    ...times(5, (index) => ({
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,

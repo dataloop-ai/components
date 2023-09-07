@@ -4,25 +4,16 @@
         :class="rowClass"
         :no-hover="noHover"
         :children="childrenCount"
+        :props="{ row }"
         @click="emitRowClick($event, row, rowIndex)"
         @dblclick="onTrDoubleClick($event, row, rowIndex)"
         @contextmenu="onTrContextMenu($event, row, rowIndex)"
     >
         <td v-if="hasDraggableRows">
-            <dl-icon
-                class="draggable-icon"
-                icon="icon-dl-drag"
-                size="12px"
-            />
+            <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
         </td>
-        <td
-            v-if="hasSelectionMode"
-            class="dl-table--col-auto-with"
-        >
-            <slot
-                name="body-selection"
-                v-bind="bindBodySelection"
-            >
+        <td v-if="hasSelectionMode" class="dl-table--col-auto-with">
+            <slot name="body-selection" v-bind="bindBodySelection">
                 <DlCheckbox
                     style="padding-left: 10px"
                     :color="color"
@@ -165,8 +156,8 @@ export default defineComponent({
         'updateExpandedRow'
     ],
     setup(props, context) {
-        const visibleChildren = ref(1)
-        const childrenCount = ref(1)
+        const visibleChildren = ref(0)
+        const childrenCount = ref(0)
         const { row } = toRefs(props)
 
         watch(
