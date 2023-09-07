@@ -210,13 +210,15 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
         }
 
         if (key === '$and') {
-            const andObject: { [key: string]: any } = {}
-            for (const subQuery of value) {
-                for (const subKey in subQuery) {
-                    andObject[subKey] = subQuery[subKey]
+            if (Array.isArray(value)) {
+                const andObject: { [key: string]: any } = {}
+                for (const subQuery of value) {
+                    for (const subKey in subQuery) {
+                        andObject[subKey] = subQuery[subKey]
+                    }
                 }
+                return stringifySmartQuery(andObject)
             }
-            return stringifySmartQuery(andObject)
         }
 
         if (result.length) {
