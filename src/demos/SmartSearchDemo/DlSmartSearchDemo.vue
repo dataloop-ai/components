@@ -70,6 +70,19 @@
         />
         {{ queryObject }}
         {{ queryObject2 }}
+
+        <br>
+        <br>
+        With placeholder
+        <dl-smart-search-input
+            v-model="queryObject"
+            :aliases="aliases"
+            :schema="schema"
+            :color-schema="colorSchema"
+            :strict="strictState"
+            :disabled="switchState"
+            placeholder="I am a placeholder"
+        />
     </div>
 </template>
 
