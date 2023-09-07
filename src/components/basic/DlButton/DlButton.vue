@@ -214,10 +214,24 @@ export default defineComponent({
         },
         getIconColor(): string {
             if (this.disabled) {
-                return 'dl-color-disabled'
+                return setTextColor({
+                    disabled: this.disabled,
+                    outlined: this.outlined,
+                    flat: this.flat,
+                    color: this.color,
+                    filled: this.filled,
+                    shaded: this.shaded,
+                    textColor: this.iconColor ?? this.textColor
+                })
             }
             if (this.mouseOver) {
-                return 'dl-color-hover'
+                return setColorOnHover({
+                    disabled: this.disabled,
+                    outlined: this.outlined,
+                    shaded: this.shaded,
+                    flat: this.flat,
+                    color: this.iconColor ?? this.textColor
+                })
             }
 
             if (this.iconColor) {
@@ -332,20 +346,6 @@ export default defineComponent({
                         shaded: this.shaded,
                         flat: this.flat,
                         color: this.textColor
-                    }),
-                    '--dl-button-icon-color-hover': setColorOnHover({
-                        disabled: this.disabled,
-                        outlined: this.outlined,
-                        shaded: this.shaded,
-                        flat: this.flat,
-                        color: this.getIconColor
-                    }),
-                    '--dl-icon-color': setColorOnHover({
-                        disabled: this.disabled,
-                        outlined: this.outlined,
-                        shaded: this.shaded,
-                        flat: this.flat,
-                        color: this.getIconColor
                     }),
                     '--dl-button-border-hover': setBorderOnHover({
                         disabled: this.disabled,
@@ -519,9 +519,6 @@ export default defineComponent({
 
 .dl-button-icon {
     transition: var(--dl-button-text-transition-duration);
-    &:hover:enabled:not(:active) {
-        color: var(--dl-button-icon-color-hover);
-    }
 }
 
 .dl-button-container {

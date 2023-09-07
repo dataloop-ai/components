@@ -163,12 +163,13 @@ export const setColorOnHover = ({
 export const setBorderOnHover = ({
     disabled,
     flat,
-    color
+    color,
+    shaded
 }: Partial<DlButtonProps>) => {
     if (disabled) {
         return 'var(--dl-color-separator)'
     }
-    if (flat) {
+    if (flat || shaded) {
         return 'var(--dl-color-transparent)'
     }
     if (color) {
@@ -180,15 +181,21 @@ export const setBorderOnHover = ({
 export const setBgOnHover = ({
     disabled,
     flat,
+    shaded,
     outlined,
     filled,
     color
 }: Partial<DlButtonProps>) => {
-    if (color) return getLighterGradient(color)
+    if (shaded) {
+        return 'var(--dl-color-fill)'
+    }
 
     if (disabled || flat || outlined) {
         return 'var(--dl-color-transparent)'
     }
+
+    if (color) return getLighterGradient(color)
+
     if (filled) {
         return 'var(--dl-color-hover)'
     }
@@ -196,15 +203,9 @@ export const setBgOnHover = ({
     return 'var(--dl-color-panel-background)'
 }
 
-export const setBgOnPressed = ({
-    shaded,
-    outlined
-}: Partial<DlButtonProps>) => {
-    if (shaded && outlined) {
-        return 'var(--dl-color-text-buttons)'
-    }
+export const setBgOnPressed = ({ shaded }: Partial<DlButtonProps>) => {
     if (shaded) {
-        return 'var(--dl-color-secondary)'
+        return 'var(--dl-color-fill-hover)'
     }
     return 'var(--dl-button-bg)'
 }
@@ -213,21 +214,21 @@ export const setTextOnPressed = ({
     shaded,
     outlined
 }: Partial<DlButtonProps>) => {
-    if (shaded && outlined) {
-        return 'var(--dl-color-secondary)'
-    }
-    if (shaded) {
-        return 'var(--dl-color-text-buttons)'
-    }
     return 'var(--dl-button-text-color)'
 }
 
 export const setBorderOnPressed = ({
     shaded,
-    outlined
+    disabled,
+    flat,
+    color
 }: Partial<DlButtonProps>) => {
-    if (shaded && outlined) {
-        return 'var(--dl-color-secondary)'
+    if (disabled) {
+        return 'var(--dl-color-separator)'
     }
+    if (flat || shaded) {
+        return 'var(--dl-color-transparent)'
+    }
+    if (color) return getLighterGradient(color)
     return 'var(--dl-button-border)'
 }
