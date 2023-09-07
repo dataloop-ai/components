@@ -24,7 +24,7 @@
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
-                        :placeholder="placeholder"
+                        :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
                         @input="onInput"
@@ -431,6 +431,10 @@ export default defineComponent({
             if (e.key === 'Enter') {
                 e.preventDefault()
             }
+
+            if (!focused.value) {
+                focus()
+            }
         }
 
         const onInput = (e: Event) => {
@@ -612,6 +616,13 @@ export default defineComponent({
                 message: error.value
             }
         })
+
+        const inputPlaceholder = computed(() => {
+            return focused.value || searchQuery.value.length
+                ? ''
+                : props.placeholder
+        })
+
         //#endregion
 
         //#region watcher
@@ -715,7 +726,8 @@ export default defineComponent({
             onInput,
             onDateSelection,
             computedStatus,
-            setInputFromSuggestion
+            setInputFromSuggestion,
+            inputPlaceholder
         }
     }
 })
@@ -831,8 +843,10 @@ export default defineComponent({
         color: var(--dl-color-darker);
         background-color: var(--dl-color-panel-background);
 
-        ::placeholder {
+        &::before {
             color: var(--dl-color-lighter);
+            /* In case this causes render shadowing move to use html/injection approach */
+            content: attr(placeholder);
         }
         & > * {
             display: flex;
