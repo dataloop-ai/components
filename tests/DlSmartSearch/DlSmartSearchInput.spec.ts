@@ -215,6 +215,34 @@ describe('DlSmartSearchInput', () => {
             })
         })
 
+        describe('when using placeholder', () => {
+            beforeAll(() => {
+                wrapper = mount(DlSmartSearchInput, {
+                    props: {
+                        schema,
+                        aliases,
+                        placeholder: 'placeholder'
+                    }
+                })
+            })
+
+            describe('when the input is focused', () => {
+                it('should not have a placeholder', () => {
+                    wrapper.vm.focused = true
+                    expect(wrapper.vm.placeholder).toBe('placeholder')
+                    expect(wrapper.vm.inputPlaceholder).toBe('')
+                })
+            })
+
+            describe('when the input is not focused', () => {
+                it('should have a placeholder', () => {
+                    wrapper.vm.focused = false
+                    expect(wrapper.vm.placeholder).toBe('placeholder')
+                    expect(wrapper.vm.inputPlaceholder).toBe('placeholder')
+                })
+            })
+        })
+
         describe('when changing status when typing a query', () => {
             it('should have status info by default', () => {
                 expect(wrapper.vm.computedStatus.type).toMatch('info')
