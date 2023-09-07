@@ -428,11 +428,12 @@ export default defineComponent({
         }
 
         const onKeyPress = (e: KeyboardEvent) => {
-            if (!focused.value) {
-                focus()
-            }
             if (e.key === 'Enter') {
                 e.preventDefault()
+            }
+
+            if (!focused.value) {
+                focus()
             }
         }
 
@@ -621,6 +622,7 @@ export default defineComponent({
                 ? ''
                 : props.placeholder
         })
+
         //#endregion
 
         //#region watcher
@@ -843,6 +845,7 @@ export default defineComponent({
 
         &::before {
             color: var(--dl-color-lighter);
+            /* In case this causes render shadowing move to use html/injection approach */
             content: attr(placeholder);
         }
         & > * {

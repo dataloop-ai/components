@@ -210,15 +210,13 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
         }
 
         if (key === '$and') {
-            if (Array.isArray(value)) {
-                // should prevent the nested $and from being processed
-                const subQueries = value.map(
-                    (subQuery: { [key: string]: any }) =>
-                        stringifySmartQuery(subQuery)
-                )
-                result += subQueries.join(' AND ')
-                continue // Important: skip the subsequent processing for this $and key
+            const andObject: { [key: string]: any } = {}
+            for (const subQuery of value) {
+                for (const subKey in subQuery) {
+                    andObject[subKey] = subQuery[subKey]
+                }
             }
+            return stringifySmartQuery(andObject)
         }
 
         if (result.length) {
