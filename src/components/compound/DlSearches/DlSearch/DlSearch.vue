@@ -7,6 +7,7 @@
     >
         <dl-input
             ref="input"
+            class="text-input-area"
             type="text"
             clear-button-tooltip
             :size="size"
@@ -108,6 +109,7 @@ export default defineComponent({
             return BUTTON_SIZES[this.size]
         },
         identifierClass(): string {
+            if (!this.placeholder) return 'dl-search'
             return `dl-search-${this.placeholder}`.replaceAll(' ', '-')
         },
         buttonClasses(): string[] {
@@ -150,6 +152,10 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 100%;
+}
+
+.text-input-area {
+    flex-grow: 1;
 }
 
 ::v-deep .dl-text-input {

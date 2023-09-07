@@ -4,7 +4,7 @@
         :style="cssVars"
         :class="rootContainerClasses"
     >
-        <div class="row">
+        <div class="row full-width full-height">
             <div
                 :class="`${
                     isSmall ? 'col' : 'row  full-width  full-height'
@@ -383,13 +383,13 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        width: {
+            type: String,
+            default: '100%'
+        },
         maxWidth: {
             type: String,
-            default: '200px'
-        },
-        minWidth: {
-            type: String,
-            default: '200px'
+            default: 'fit-content'
         },
         size: {
             type: String as PropType<TInputSizes>,
@@ -650,7 +650,7 @@ export default defineComponent({
                 '--dl-input-align-items':
                     this.expandable || this.height ? 'flex-start' : 'center',
                 '--dl-input-max-width': this.maxWidth,
-                '--dl-input-min-width': this.minWidth,
+                '--dl-input-width': this.width,
                 '--dl-input-max-height': this.maxHeight,
                 '--dl-input-white-space': this.expandable ? 'normal' : 'nowrap'
             }
@@ -1019,7 +1019,7 @@ export default defineComponent({
         display: flex;
         justify-content: space-between;
         border: 1px solid var(--dl-color-separator);
-        min-width: var(--dl-input-min-width);
+        min-width: var(--dl-input-width);
         max-width: var(--dl-input-max-width);
         max-height: var(--dl-input-max-height);
         height: var(--dl-input-height);
