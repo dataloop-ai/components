@@ -167,7 +167,7 @@
                             <dl-list-item
                                 v-for="(item, suggestIndex) in suggestItems"
                                 :key="item.suggestion"
-                                :clickable="item.click"
+                                clickable
                                 style="font-size: 12px"
                                 :highlighted="suggestIndex === highlightedIndex"
                                 @click="onClick($event, item)"
@@ -184,7 +184,6 @@
                                     )"
                                     :key="JSON.stringify(word) + index"
                                     :class="{
-                                        clickable: item.click,
                                         'dl-input__suggestion--highlighted':
                                             word.highlighted
                                     }"
@@ -329,6 +328,7 @@ import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import {
     clearSuggestion,
+    createElementFromHTML,
     getSuggestItems,
     isArrayBufferImage,
     readBlob,
@@ -555,13 +555,31 @@ export default defineComponent({
 
         const updateSyntax = () => {
             setInnerHTMLWithCursor(input.value, (text) => {
-                const words = text.split(' ').map((word) => {
-                    if (word.startsWith('@')) {
-                        return `<span style="color: ${props.syntaxHighlightColor}">${word}</span>`
+                const elements = text.split(' ').map((word) => {
+                    if (
+                        word.startsWith('@') ||
+                        props.autoSuggestItems.some(
+                            (s) => s.suggestion.trim() === word.trim()
+                        )
+                    ) {
+                        return createElementFromHTML(
+                            word + ' ',
+                            {
+                                click: () => {
+                                    emit('suggestion-click', word)
+                                }
+                            },
+                            `color: ${props.syntaxHighlightColor}`,
+                            'clickable'
+                        )
                     }
-                    return word
+                    const plainWord = createElementFromHTML(word + ' ')
+                    return plainWord.innerText.trim() ? plainWord : ''
                 })
-                input.value.innerHTML = words.join(' ')
+                input.value.innerHTML = ''
+                elements.forEach((el) => {
+                    if (el) input.value.appendChild(el)
+                })
             })
         }
 
@@ -757,7 +775,6 @@ export default defineComponent({
             }
         },
         onClick(e: Event, item: InputSuggestion) {
-            this.$emit('suggestion-click', item)
             this.onAutoSuggestClick(e, item.suggestion)
         },
         onChange(e: InputEvent): void {
@@ -927,10 +944,6 @@ export default defineComponent({
     display: block;
     opacity: 0.5;
     -webkit-text-security: none;
-}
-
-.clickable:hover {
-    text-decoration: underline;
 }
 
 .dl-input {

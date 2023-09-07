@@ -5,6 +5,28 @@ import {
 } from '../../../utils'
 import { InputSuggestion } from './types'
 
+export function createElementFromHTML(
+    htmlString: string,
+    eventListeners?: Record<string, () => void>,
+    inlineStyles?: string,
+    classList?: string
+) {
+    const el = document.createElement('span')
+    el.innerHTML = htmlString
+    if (eventListeners) {
+        for (const listener in eventListeners) {
+            el.addEventListener(listener, eventListeners[listener])
+        }
+    }
+    if (inlineStyles) {
+        el.style.cssText = inlineStyles
+    }
+    if (classList) {
+        el.classList.add(classList)
+    }
+    return el
+}
+
 export function clearSuggestion(text: string, suggestion: string) {
     return text.split(' ').slice(0, -1).join(' ') + ' ' + suggestion
 }
