@@ -573,7 +573,7 @@ export default defineComponent({
                             'clickable'
                         )
                     }
-                    const plainWord = createElementFromHTML(word + ' ')
+                    const plainWord = createElementFromHTML(word)
                     return plainWord.innerText?.trim() ? plainWord : ''
                 })
                 input.value.innerHTML = ''
