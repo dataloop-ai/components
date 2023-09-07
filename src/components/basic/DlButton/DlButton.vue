@@ -214,10 +214,24 @@ export default defineComponent({
         },
         getIconColor(): string {
             if (this.disabled) {
-                return 'dl-color-disabled'
+                return setTextColor({
+                    disabled: this.disabled,
+                    outlined: this.outlined,
+                    flat: this.flat,
+                    color: this.color,
+                    filled: this.filled,
+                    shaded: this.shaded,
+                    textColor: this.iconColor ?? this.textColor
+                })
             }
             if (this.mouseOver) {
-                return 'dl-color-hover'
+                return setColorOnHover({
+                    disabled: this.disabled,
+                    outlined: this.outlined,
+                    shaded: this.shaded,
+                    flat: this.flat,
+                    color: this.iconColor ?? this.textColor
+                })
             }
 
             if (this.iconColor) {
