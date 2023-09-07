@@ -89,7 +89,7 @@ export default defineComponent({
         cssIconVars(): Record<string, string> {
             return {
                 '--dl-icon-font-size': `${this.size}`,
-                '--icon-color': this.color
+                '--dl-icon-color': this.color
                     ? // todo: remove this. this is needed for now until the swap of DLBTN in OA
                       getColor(
                           this.color === 'secondary'
@@ -157,7 +157,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-icon {
     display: inline-flex;
-    color: var(--dl-icon-color, var(--icon-color));
+    color: var(--dl-icon-color);
     font-size: var(--dl-icon-font-size);
 }
 </style>
