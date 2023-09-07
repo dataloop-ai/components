@@ -574,7 +574,7 @@ export default defineComponent({
                         )
                     }
                     const plainWord = createElementFromHTML(word + ' ')
-                    return plainWord.innerText.trim() ? plainWord : ''
+                    return plainWord.innerText?.trim() ? plainWord : ''
                 })
                 input.value.innerHTML = ''
                 elements.forEach((el) => {
