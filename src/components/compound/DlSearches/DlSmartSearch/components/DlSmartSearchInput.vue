@@ -24,9 +24,7 @@
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
-                        :placeholder="
-                            focused || searchQuery.length ? '' : placeholder
-                        "
+                        :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
                         @input="onInput"
@@ -617,6 +615,12 @@ export default defineComponent({
                 message: error.value
             }
         })
+
+        const inputPlaceholder = computed(() => {
+            return focused.value || searchQuery.value.length
+                ? ''
+                : props.placeholder
+        })
         //#endregion
 
         //#region watcher
@@ -720,7 +724,8 @@ export default defineComponent({
             onInput,
             onDateSelection,
             computedStatus,
-            setInputFromSuggestion
+            setInputFromSuggestion,
+            inputPlaceholder
         }
     }
 })
