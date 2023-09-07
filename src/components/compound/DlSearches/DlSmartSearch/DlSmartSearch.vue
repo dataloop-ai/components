@@ -17,6 +17,7 @@
                 :schema="schema"
                 :color-schema="colorSchema"
                 :strict="strict"
+                :placeholder="placeholder"
                 @focus="isFocused = true"
                 @blur="isFocused = false"
             />
@@ -130,6 +131,10 @@ export default defineComponent({
         strict: {
             type: Boolean,
             default: false
+        },
+        placeholder: {
+            type: String,
+            default: ''
         }
     },
     emits: ['save-query', 'remove-query', 'search-query', 'update:model-value'],

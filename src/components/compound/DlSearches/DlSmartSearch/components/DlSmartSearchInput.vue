@@ -24,7 +24,9 @@
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
-                        :placeholder="placeholder"
+                        :placeholder="
+                            focused || searchQuery.length ? '' : placeholder
+                        "
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
                         @input="onInput"
@@ -428,6 +430,9 @@ export default defineComponent({
         }
 
         const onKeyPress = (e: KeyboardEvent) => {
+            if (!focused.value) {
+                focus()
+            }
             if (e.key === 'Enter') {
                 e.preventDefault()
             }
@@ -721,6 +726,9 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+:root {
+    --placeholder-text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit...';
+}
 .dl-smart-search-input {
     display: flex;
     flex-grow: 1;
@@ -831,8 +839,9 @@ export default defineComponent({
         color: var(--dl-color-darker);
         background-color: var(--dl-color-panel-background);
 
-        ::placeholder {
+        &::before {
             color: var(--dl-color-lighter);
+            content: attr(placeholder);
         }
         & > * {
             display: flex;
