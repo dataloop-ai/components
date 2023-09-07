@@ -1,5 +1,5 @@
 <template>
-    <div class="spinner-wrapper">
+    <div class="dl-spinner-wrapper">
         <svg
             class="dl-spinner"
             :width="size"

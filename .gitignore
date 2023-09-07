@@ -61,6 +61,8 @@ tsconfig.tsbuildinfo
 tsconfig.node.tsbuildinfo
 
 *vue2.6-vite
+._.
+
 
 *.temp.vue
 *.temp.ts

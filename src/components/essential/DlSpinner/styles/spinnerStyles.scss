@@ -1,4 +1,4 @@
-.spinner-wrapper {
+.dl-spinner-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,25 +11,25 @@
     animation: spinCircle 2s linear infinite;
     transform-origin: center center;
 }
-.spinner-path {
+.dl-spinner-path {
     stroke-dasharray: 1, 200 #{'/* rtl:ignore */'};
     stroke-dashoffset: 0 #{'/* rtl:ignore */'};
     animation: dash 1.5s ease-in-out infinite;
 }
 
-.spinner {
+.dl-spinner {
     position: relative;
 }
 
-.spin-loader,
-.spin-bg {
+.dl-spin-loader,
+.dl-spin-bg {
     width: var(--dl-spinner-size);
     height: var(--dl-spinner-size);
     top: 0;
     left: 0;
 }
 
-.spin-loader {
+.dl-spin-loader {
     position: absolute;
     animation: spin 2s linear infinite;
 }
@@ -48,11 +48,11 @@
     fill: var(--dl-spinner-border-color);
 }
 
-.spinner-color-bg {
+.dl-spinner-color-bg {
     fill: none;
 }
 
-.spinner-color {
+.dl-spinner-color {
     fill: url(#linear-gradient);
 }
 
@@ -110,7 +110,7 @@
     }
 }
 
-.spinner-text {
+.dl-spinner-text {
     font-size: 1em;
     margin-top: 15px;
     display: flex;

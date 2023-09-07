@@ -134,6 +134,14 @@
                     ]"
                 >
                     <dl-icon
+                        v-if="clearable && hasSelection"
+                        class=".dl-select__clear-button"
+                        icon="icon-dl-close"
+                        :size="withoutBorders ? '10px' : '12px'"
+                        style="margin-right: 3px; cursor: pointer"
+                        @click.prevent.stop="clearSelection"
+                    />
+                    <dl-icon
                         :icon="dropdownIcon"
                         :color="chevronIconColor"
                         class="expand-icon"
@@ -388,7 +396,7 @@ export default defineComponent({
         },
         capitalizedOptions: { type: Boolean, default: false },
         withoutDropdownIconPadding: { type: Boolean, default: false },
-        clearButtonTooltip: { type: Boolean, default: false },
+        clearable: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
         preserveSearch: { type: Boolean, default: false },
         disabledTooltip: { type: String, default: 'Disabled' },
@@ -455,6 +463,9 @@ export default defineComponent({
         }
     },
     computed: {
+        hasSelection(): boolean {
+            return !!this.modelValueLength || this.selectedIndex !== -1
+        },
         filteredOptions(): DlSelectOptionType[] {
             if (this.customFilter || this.searchTerm === '') {
                 return this.options
@@ -778,6 +789,13 @@ export default defineComponent({
             this.$emit('change', toEmit)
         },
         clearSelection(): void {
+            let toEmit: any[] | string = []
+            if (this.isModelValuePrimitiveType) {
+                toEmit = ''
+            }
+
+            this.$emit('update:model-value', toEmit)
+            this.$emit('change', toEmit)
             this.selectedIndex = -1
             this.closeMenu()
         },
