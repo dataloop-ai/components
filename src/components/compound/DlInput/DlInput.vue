@@ -327,8 +327,8 @@ import {
 import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import {
+    addEventListenersToElement,
     clearSuggestion,
-    createElementFromHTML,
     getSuggestItems,
     isArrayBufferImage,
     readBlob,
@@ -553,32 +553,31 @@ export default defineComponent({
             )
         }
 
+        const isSpecialWord = (word: string) => {
+            return (
+                word.startsWith('@') ||
+                props.autoSuggestItems.some(
+                    (s) => s.suggestion.trim() === word.trim()
+                )
+            )
+        }
+
         const updateSyntax = () => {
             setInnerHTMLWithCursor(input.value, (text) => {
-                const elements = text.split(' ').map((word) => {
-                    if (
-                        word.startsWith('@') ||
-                        props.autoSuggestItems.some(
-                            (s) => s.suggestion.trim() === word.trim()
-                        )
-                    ) {
-                        return createElementFromHTML(
-                            word + ' ',
-                            {
-                                click: () => {
-                                    emit('suggestion-click', word)
-                                }
-                            },
-                            `color: ${props.syntaxHighlightColor}`,
-                            'clickable'
-                        )
+                const words = text.split(' ').map((word) => {
+                    if (isSpecialWord(word)) {
+                        return `<span class="clickable" style="color: ${props.syntaxHighlightColor}">${word}</span>`
                     }
-                    const plainWord = createElementFromHTML(word)
-                    return plainWord.innerText?.trim() ? plainWord : ''
+                    return word
                 })
-                input.value.innerHTML = ''
-                elements.forEach((el) => {
-                    if (el) input.value.appendChild(el)
+                input.value.innerHTML = words.join(' ')
+            })
+            Array.from(input.value.children).forEach((el: any) => {
+                if (!isSpecialWord(el.innerText)) return
+                addEventListenersToElement(el, {
+                    click: () => {
+                        emit('suggestion-click', el.innerText)
+                    }
                 })
             })
         }
