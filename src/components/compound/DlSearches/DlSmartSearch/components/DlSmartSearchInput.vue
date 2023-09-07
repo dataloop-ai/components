@@ -726,9 +726,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-:root {
-    --placeholder-text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit...';
-}
 .dl-smart-search-input {
     display: flex;
     flex-grow: 1;
