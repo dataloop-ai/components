@@ -100,19 +100,26 @@ export default defineComponent({
     methods: {
         handleClick(value: number) {
             const d = new CalendarDate()
-            d.year(parseInt(this.title)).month(value).startOf('month')
+            d.year(parseInt(this.title)).month(value)
 
-            if (!isInRange(this.availableRange, d)) return
+            const from = new CalendarDate(d)
+            const to = new CalendarDate(d)
 
-            const date = d.toDate()
+            from.startOf('month')
+            from.startOf('day')
+            to.endOf('month')
+            to.endOf('day')
+
+            if (!isInRange(this.availableRange, new CalendarDate(from))) return
+            if (!isInRange(this.availableRange, new CalendarDate(to))) return
+
             const newDate = {
-                from: date,
-                to: date
+                from: from.toDate(),
+                to: to.toDate()
             }
             this.$emit('update:model-value', newDate)
             this.$emit('change', newDate)
         },
-
         handleMouseenter(value: number) {
             if (this.modelValue === null) return
 
