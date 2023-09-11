@@ -367,7 +367,10 @@ export default defineComponent({
                 }
                 return json
             } catch (e) {
-                emit('error', e)
+                emit('error', {
+                    error: e,
+                    message: 'Could not translate given JSON to a valid Scheme'
+                })
                 return modelValue.value
             }
         }
