@@ -407,7 +407,10 @@ export default defineComponent({
             emit('focus')
         }
 
-        const blur = (e: Event | null, options: { force?: boolean } = {}) => {
+        const blur = (
+            e: Event | null = null,
+            options: { force?: boolean } = {}
+        ) => {
             const { force } = options
 
             if (showDatePicker.value) {
