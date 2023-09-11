@@ -200,6 +200,7 @@ export default defineComponent({
         updateDateInterval(value: DateInterval) {
             if (this.disabled) return
             this.dateInterval = value
+            this.updateModelValue(value)
         },
 
         handleDateNext() {
