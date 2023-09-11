@@ -136,17 +136,6 @@
                             </span>
                         </div>
                     </div>
-                    <div
-                        v-if="hasAction"
-                        style="
-                            width: fit-content;
-                            display: flex;
-                            align-items: center;
-                            margin-left: 10px;
-                        "
-                    >
-                        <slot name="action" />
-                    </div>
                     <dl-menu
                         v-if="showSuggestItems"
                         v-model="isMenuOpen"
@@ -310,6 +299,12 @@
                 </dl-dialog-box-footer>
             </template>
         </dl-dialog-box>
+        <div
+            v-if="hasAction"
+            class="dl-input__action"
+        >
+            <slot name="action" />
+        </div>
     </div>
 </template>
 
@@ -684,7 +679,10 @@ export default defineComponent({
         adornmentClasses(): string[] {
             return [
                 'dl-input__adornment-container',
-                `dl-input__adornment-container--${this.size}`
+                `dl-input__adornment-container--${this.size}`,
+                `dl-input__adornment-container--${
+                    this.expandable ? 'expandable' : ''
+                }`
             ]
         },
         isSmall(): boolean {
@@ -960,6 +958,9 @@ export default defineComponent({
         -moz-appearance: textfield;
     }
 
+    display: flex;
+    align-items: center;
+
     &--dense {
         padding: 0;
     }
@@ -1127,9 +1128,9 @@ export default defineComponent({
         justify-content: center;
         align-items: var(--dl-input-align-items);
         width: 30px;
-        &--l {
+        &--expandable {
             margin-top: 3px;
-            margin-right: 5px;
+            margin-right: 3px;
         }
     }
 
@@ -1169,6 +1170,13 @@ export default defineComponent({
     &__zoom-image {
         width: 100%;
         object-fit: contain;
+    }
+
+    &__action {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
     }
 }
 </style>
