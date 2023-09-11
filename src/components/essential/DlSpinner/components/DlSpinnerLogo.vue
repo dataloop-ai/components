@@ -1,12 +1,12 @@
 <template>
-    <div class="spinner-wrapper">
+    <div class="dl-spinner-wrapper">
         <div
-            class="spinner"
+            class="dl-spinner"
             :style="spinnerStyles"
         >
-            <div class="spin-bg">
+            <div class="dl-spin-bg">
                 <svg
-                    id="Layer_2"
+                    id="dl-Layer_2"
                     data-name="Layer 2"
                     viewBox="0 0 140 140"
                 >
@@ -21,9 +21,9 @@
                     </g>
                 </svg>
             </div>
-            <div class="spin-loader">
+            <div class="dl-spin-loader">
                 <svg
-                    id="Layer_2"
+                    id="dl-Layer_2"
                     data-name="Layer 2"
                     viewBox="0 0 140 140"
                 >
@@ -63,16 +63,16 @@
                         </linearGradient>
                     </defs>
                     <g
-                        id="Layer_1-2"
+                        id="dl-Layer_1-2"
                         data-name="Layer 1"
                     >
                         <g>
                             <path
-                                class="spinner-color-bg"
+                                class="dl-spinner-color-bg"
                                 d="M70,0C31.33,0,0,31.33,0,70s31.33,70,70,70,70-31.33,70-70S108.67,0,70,0Zm0,131.97c-34.2,0-61.97-27.77-61.97-61.97S35.8,8.03,70,8.03s61.97,27.77,61.97,61.97-27.77,61.97-61.97,61.97Z"
                             />
                             <path
-                                class="spinner-color"
+                                class="dl-spinner-color"
                                 d="M114.87,25.82c1.38-1.38,2.87-2.75,4.25-4.13,.46-.34,.46-1.03,0-1.49C106.49,7.69,89.16,0,70,0,46.36,0,25.48,11.7,12.74,29.72c-.34,.46-.23,.92,.11,1.38l4.25,4.25c.46,.46,1.15,.34,1.61-.11,11.25-16.52,29.95-27.2,51.3-27.2,16.98,0,32.25,6.77,43.49,17.79,.34,.34,1.03,.34,1.38,0Z"
                             />
                         </g>

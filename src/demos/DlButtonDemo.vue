@@ -293,25 +293,43 @@
                 outlined
             />
         </div>
-        <div>
-            <h3>hover color</h3>
-            <dl-button
-                icon="icon-dl-search"
-                flat
-                dense
-                label="test me"
-                text-color="red"
-            />
-        </div>
-        <div>
+        <div style="display: flex; flex-direction: column">
             <h3>button with icon color</h3>
             <dl-button
                 icon="icon-dl-search"
                 :icon-color="'red'"
+                :text-color="'blue'"
+                color="green"
+                label="test me"
+                size="s"
+                flat
+            />
+            <dl-button
+                icon="icon-dl-search"
+                :icon-color="'red'"
+                :text-color="'blue'"
+                color="green"
                 label="test me"
                 size="s"
                 shaded
+            />
+            <dl-button
+                icon="icon-dl-search"
+                :icon-color="'red'"
+                :text-color="'blue'"
+                color="green"
+                label="test me"
+                size="s"
                 outlined
+            />
+            <dl-button
+                icon="icon-dl-search"
+                :icon-color="'red'"
+                :text-color="'blue'"
+                color="green"
+                label="test me"
+                size="s"
+                filled
             />
         </div>
     </div>

@@ -14,5 +14,6 @@ cd vue2.6-vite
 rm -rf node_modules
 cd ../
 
-tar -czvf vue2-template.tar.gz .
+rm -rf vue2-template.tar.gz
+tar -czvf vue2-template.tar.gz ./vue2.6-vite
 

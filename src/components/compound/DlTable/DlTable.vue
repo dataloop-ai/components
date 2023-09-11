@@ -241,6 +241,7 @@
                                         />
                                     </slot>
                                 </td>
+                                <!-- todo wrap this with dltd -->
                                 <slot
                                     v-for="col in computedCols"
                                     v-bind="

@@ -476,3 +476,35 @@ describe('dl-select computed', () => {
         })
     })
 })
+
+describe('DlSelect', () => {
+    describe('When using dl-select with clearable', () => {
+        let wrapper: any
+        beforeAll(async () => {
+            wrapper = mount(DlSelect, {
+                props: {
+                    options: ['one', 'two', 'three'],
+                    clearable: true
+                }
+            })
+            await wrapper.setProps({
+                modelValue: 'one'
+            })
+        })
+
+        it('should show the clear button', () => {
+            expect(wrapper.vm.clearable).toBeTruthy()
+            const clearButton = wrapper.find('.dl-select__clear-button')
+            expect(clearButton).toBeDefined()
+        })
+
+        describe('When clicking on the clear button', () => {
+            beforeAll(() => {
+                wrapper.vm.clearSelection()
+            })
+            it('should clear the model value', () => {
+                expect(wrapper.emitted()['update:model-value']).toEqual([['']])
+            })
+        })
+    })
+})

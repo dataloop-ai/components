@@ -6,7 +6,7 @@ fi
 
 # check if vue2-playground exists
 if [ ! -d "vue2.6-vite" ]; then
-   tar -zxvf vue2-template.tar.gz
+   tar -zxvf vue2-template.tar.gz --exclude '._*'
 
    sleep 0.5s
 fi
