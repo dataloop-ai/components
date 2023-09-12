@@ -349,7 +349,7 @@ export default defineComponent({
                 stringValue = value + ' '
             }
 
-            setInputValue(
+            debouncedSetInputValue(
                 clearPartlyTypedSuggestion(input.value.innerText, stringValue)
             )
             setCaret(input.value)
@@ -452,10 +452,41 @@ export default defineComponent({
             }
         }
 
+        const endsWithOperator = computed(() => {
+            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+
+            for (const op of operators) {
+                if (
+                    input.value.innerHTML.endsWith(op) ||
+                    input.value.innerHTML.endsWith(`${op} `)
+                ) {
+                    return true
+                }
+            }
+
+            return false
+        })
+
         const onKeyPress = (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
+            if (e.code === 'Enter') {
                 e.preventDefault()
                 e.stopPropagation()
+
+                if (showSuggestions.value || showDatePicker.value) {
+                    onInput(e)
+                    return
+                }
+
+                if (endsWithOperator.value) {
+                    onInput(e)
+                    return
+                }
+
+                if (!input.value.innerHTML.length) {
+                    onInput(e)
+                    return
+                }
+
                 emit('search', updateJSONQuery())
                 showSuggestions.value = false
                 return
@@ -467,10 +498,6 @@ export default defineComponent({
         }
 
         const onInput = (e: Event) => {
-            if ((e as KeyboardEvent).key === 'Enter') {
-                return
-            }
-
             const text = (e.target as HTMLElement).textContent
             debouncedSetInputValue(text)
         }
