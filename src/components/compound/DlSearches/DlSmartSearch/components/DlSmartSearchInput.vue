@@ -217,7 +217,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
-        const searchQuery = ref<string>(stringifySmartQuery(modelValue.value))
+        const searchQuery = ref<string>('')
         const focused = ref(false)
         const isOverflowing = ref(false)
         const isTyping = ref(false)
@@ -804,6 +804,7 @@ export default defineComponent({
         padding-left: 10px;
         overflow-y: auto;
         background-color: var(--dl-color-panel-background);
+        cursor: text;
 
         font-size: 12px;
         line-height: 14px;
@@ -838,6 +839,8 @@ export default defineComponent({
 
         &--disabled {
             border-color: var(--dl-color-separator);
+            color: var(--dl-color-disabled);
+            cursor: not-allowed;
         }
     }
 
