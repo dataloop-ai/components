@@ -112,19 +112,25 @@ export function replaceJSDatesWithStringifiedDates(
     const toReturn = cloneDeep(json)
 
     for (const key of Object.keys(toReturn)) {
-        if (typeof toReturn[key] === 'object') {
-            toReturn[key] = replaceJSDatesWithStringifiedDates(
-                toReturn[key],
-                dateKeys
-            )
-            continue
-        }
-
         const value = toReturn[key]
         const keyToCheck = key.split('.').pop()
 
         if (dateKeys.includes(keyToCheck)) {
-            toReturn[key] = formatToStringDate(value)
+            if (typeof value === 'object') {
+                const testKey = Object.keys(toReturn[key])[0]
+                if (['$gt', '$gte', '$lt', '$lte'].includes(testKey)) {
+                    toReturn[key][testKey] = formatToStringDate(
+                        toReturn[key][testKey]
+                    )
+                }
+            } else {
+                toReturn[key] = formatToStringDate(value)
+            }
+        } else if (typeof value === 'object') {
+            toReturn[key] = replaceJSDatesWithStringifiedDates(
+                toReturn[key],
+                dateKeys
+            )
         }
     }
 
