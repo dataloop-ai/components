@@ -349,7 +349,7 @@ export default defineComponent({
                 stringValue = value + ' '
             }
 
-            debouncedSetInputValue(
+            setInputValue(
                 clearPartlyTypedSuggestion(input.value.innerText, stringValue)
             )
             setCaret(input.value)
