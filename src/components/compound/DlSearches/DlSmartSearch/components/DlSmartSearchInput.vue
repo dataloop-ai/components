@@ -457,8 +457,8 @@ export default defineComponent({
 
             for (const op of operators) {
                 if (
-                    input.value.innerHTML.endsWith(op) ||
-                    input.value.innerHTML.endsWith(`${op} `)
+                    searchQuery.value.endsWith(op) ||
+                    searchQuery.value.endsWith(`${op} `)
                 ) {
                     return true
                 }
@@ -468,22 +468,19 @@ export default defineComponent({
         })
 
         const onKeyPress = (e: KeyboardEvent) => {
-            if (e.code === 'Enter') {
+            if (e.code === 'Enter' || e.key === 'Enter') {
                 e.preventDefault()
                 e.stopPropagation()
 
                 if (showSuggestions.value || showDatePicker.value) {
-                    onInput(e)
                     return
                 }
 
                 if (endsWithOperator.value) {
-                    onInput(e)
                     return
                 }
 
                 if (!input.value.innerHTML.length) {
-                    onInput(e)
                     return
                 }
 
