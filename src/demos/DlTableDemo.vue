@@ -409,13 +409,17 @@
                 </DlTable>
             </div>
             <div>
-                <p>With editable columns</p>
+                <p>With visible columns</p>
                 <DlTable
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    has-editable-columns
-                />
+                    has-visible-columns
+                >
+                    <template #body-cell-row-actions="{ row }">
+                        {{ row }} actiosnsss
+                    </template>
+                </DlTable>
             </div>
         </div>
         <div>
@@ -451,7 +455,8 @@ const columns = [
         align: 'left',
         field: 'name',
         sortable: true,
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
+        hint: 'test hint'
     },
     {
         name: 'calories',
