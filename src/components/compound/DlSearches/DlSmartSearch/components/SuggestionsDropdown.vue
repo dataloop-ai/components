@@ -12,6 +12,7 @@
             :arrow-nav-items="suggestions"
             :trigger-percentage="triggerPercentage"
             :auto-close="false"
+            :toggle-key="null"
             @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"

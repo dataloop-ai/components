@@ -33,7 +33,8 @@ import {
     computed,
     PropType,
     Ref,
-    isVue2
+    isVue2,
+    toRefs
 } from 'vue-demi'
 
 import useWindowSize from '../../../hooks/use-window-size'
@@ -159,6 +160,10 @@ export default defineComponent({
         triggerPercentage: {
             type: Number,
             default: 1
+        },
+        toggleKey: {
+            type: String,
+            default: 'Enter'
         }
     },
 
@@ -183,6 +188,7 @@ export default defineComponent({
 
         const innerRef: Ref<HTMLElement | null> = ref(null)
         const showing = ref(false)
+        const { toggleKey } = toRefs(props)
 
         const { registerTick, removeTick } = useTick()
         const { registerTimeout, removeTimeout } = useTimeout()
@@ -193,7 +199,7 @@ export default defineComponent({
             unconfigureScrollTarget
         } = useScrollTarget(props, configureScrollTarget)
 
-        const { anchorEl, canShow } = useAnchor({})
+        const { anchorEl, canShow } = useAnchor({ toggleKey: toggleKey.value })
 
         const screen = useWindowSize()
 

@@ -166,11 +166,13 @@ describe('DlSmartSearchInput', () => {
 
         wrapper.vm.onKeyPress({
             key: 'backspace',
-            preventDefault: vi.fn()
+            preventDefault: vi.fn(),
+            stopPropagation: vi.fn()
         } as any as KeyboardEvent)
         wrapper.vm.onKeyPress({
             key: 'Enter',
-            preventDefault: vi.fn()
+            preventDefault: vi.fn(),
+            stopPropagation: vi.fn()
         } as any as KeyboardEvent)
 
         const inputRef = wrapper.vm.$refs.input as HTMLInputElement
@@ -215,6 +217,34 @@ describe('DlSmartSearchInput', () => {
             })
         })
 
+        describe('when using placeholder', () => {
+            beforeAll(() => {
+                wrapper = mount(DlSmartSearchInput, {
+                    props: {
+                        schema,
+                        aliases,
+                        placeholder: 'placeholder'
+                    }
+                })
+            })
+
+            describe('when the input is focused', () => {
+                it('should not have a placeholder', () => {
+                    wrapper.vm.focused = true
+                    expect(wrapper.vm.placeholder).toBe('placeholder')
+                    expect(wrapper.vm.inputPlaceholder).toBe('')
+                })
+            })
+
+            describe('when the input is not focused', () => {
+                it('should have a placeholder', () => {
+                    wrapper.vm.focused = false
+                    expect(wrapper.vm.placeholder).toBe('placeholder')
+                    expect(wrapper.vm.inputPlaceholder).toBe('placeholder')
+                })
+            })
+        })
+
         describe('when changing status when typing a query', () => {
             it('should have status info by default', () => {
                 expect(wrapper.vm.computedStatus.type).toMatch('info')
@@ -245,6 +275,7 @@ describe('DlSmartSearchInput', () => {
         describe('when typing inside the input', () => {
             it('should set input model and active query when typing in the smart search input component', async () => {
                 const testString = 'Age = 21'
+                wrapper.vm.focused = true
                 wrapper.vm.debouncedSetInputValue(testString)
                 // @ts-ignore
                 await window.delay(500)
@@ -362,6 +393,93 @@ describe('DlSmartSearchInput', () => {
                     })
                 })
             })
+        })
+    })
+
+    describe('SmartSearch emit on enter', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+            await wrapper.setProps({ modelValue: { name: 'test' } })
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+
+            wrapper.vm.onKeyPress({
+                key: 'Enter',
+                preventDefault: vi.fn(),
+                stopPropagation: vi.fn()
+            } as any as KeyboardEvent)
+        })
+
+        it('will emit search with model value', () => {
+            expect(wrapper.emitted().search).toEqual([[{ name: 'test' }]])
+        })
+    })
+
+    describe('On complex JSON', () => {
+        const complex = {
+            filter: {
+                $and: [
+                    {
+                        hidden: false
+                    },
+                    {
+                        annotated: true
+                    },
+                    {
+                        type: 'file'
+                    }
+                ]
+            },
+            join: {
+                filter: {
+                    $and: [
+                        {
+                            label: {
+                                $in: ['b', 'test']
+                            }
+                        },
+                        {
+                            type: {
+                                $in: ['pose', 'note', 'binary']
+                            }
+                        }
+                    ]
+                },
+                on: {
+                    resource: 'annotations',
+                    local: 'itemId',
+                    forigen: 'id'
+                }
+            }
+        }
+
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+            await wrapper.setProps({ modelValue: complex })
+        })
+
+        it('will emit an error', () => {
+            const emittedErrors = wrapper.emitted()?.error
+            expect(emittedErrors?.length).toBeGreaterThan(0)
+            const message = wrapper.emitted()?.error[0][0]?.message
+            expect(message).toEqual(
+                'Could not translate given JSON to a valid Scheme'
+            )
         })
     })
 })

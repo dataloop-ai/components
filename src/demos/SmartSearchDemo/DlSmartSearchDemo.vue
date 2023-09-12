@@ -58,7 +58,13 @@
             :color-schema="colorSchema"
             :strict="strictState"
             :disabled="switchState"
+            @search="onSearchEmitted"
         />
+
+        <div>
+            <div>EMITED SEARCH:</div>
+            <div>count {{ searchEmitted }} last: {{ lastSearch }}</div>
+        </div>
 
         <dl-smart-search-input
             v-model="queryObject2"
@@ -70,6 +76,19 @@
         />
         {{ queryObject }}
         {{ queryObject2 }}
+
+        <br>
+        <br>
+        With placeholder
+        <dl-smart-search-input
+            v-model="queryObject"
+            :aliases="aliases"
+            :schema="schema"
+            :color-schema="colorSchema"
+            :strict="strictState"
+            :disabled="switchState"
+            placeholder="I am a placeholder"
+        />
     </div>
 </template>
 
@@ -211,7 +230,9 @@ export default defineComponent({
             queryObject: {},
             queryObject2: {},
             textQuery: '',
-            filters
+            filters,
+            lastSearch: null,
+            searchEmitted: 0
         }
     },
     watch: {
@@ -249,6 +270,10 @@ export default defineComponent({
             this.filters[type] = this.filters[type].filter(
                 (q: Query) => q.name !== query.name
             )
+        },
+        onSearchEmitted(query: Query) {
+            this.searchEmitted++
+            this.lastSearch = query
         }
     }
 })

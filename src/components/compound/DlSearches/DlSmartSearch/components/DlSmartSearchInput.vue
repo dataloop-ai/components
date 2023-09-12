@@ -4,7 +4,10 @@
         :style="cssVars"
         class="dl-smart-search-input"
     >
-        <div class="dl-smart-search-input__search-bar-wrapper">
+        <div
+            class="dl-smart-search-input__search-bar-wrapper"
+            @click="focus()"
+        >
             <div
                 ref="searchBar"
                 :class="searchBarClasses"
@@ -24,7 +27,7 @@
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
-                        :placeholder="placeholder"
+                        :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
                         @input="onInput"
@@ -191,7 +194,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['update:model-value', 'focus', 'blur', 'input'],
+    emits: ['update:model-value', 'focus', 'blur', 'input', 'search', 'error'],
     setup(props, { emit }) {
         //#region refs
         const input = ref<HTMLInputElement>(null)
@@ -214,7 +217,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
-        const searchQuery = ref<string>(stringifySmartQuery(modelValue.value))
+        const searchQuery = ref<string>('')
         const focused = ref(false)
         const isOverflowing = ref(false)
         const isTyping = ref(false)
@@ -355,11 +358,20 @@ export default defineComponent({
         const debouncedSetInputValue = debounce(setInputValue, 300)
 
         const updateJSONQuery = () => {
-            const bracketless = removeBrackets(searchQuery.value)
-            const cleanedAliases = revertAliases(bracketless, aliases.value)
-            const json = toJSON(cleanedAliases)
-            if (!isEqual(json, modelValue.value)) {
-                emit('update:model-value', json)
+            try {
+                const bracketless = removeBrackets(searchQuery.value)
+                const cleanedAliases = revertAliases(bracketless, aliases.value)
+                const json = toJSON(cleanedAliases)
+                if (!isEqual(json, modelValue.value)) {
+                    emit('update:model-value', json)
+                }
+                return json
+            } catch (e) {
+                emit('error', {
+                    error: e,
+                    message: 'Could not translate given JSON to a valid Scheme'
+                })
+                return modelValue.value
             }
         }
 
@@ -385,6 +397,10 @@ export default defineComponent({
                 return
             }
 
+            if (focused.value) {
+                return
+            }
+
             input.value.scrollTo(0, input.value.scrollHeight)
             input.value.scrollLeft = input.value.scrollWidth
 
@@ -394,7 +410,12 @@ export default defineComponent({
             emit('focus')
         }
 
-        const blur = () => {
+        const blur = (
+            e: Event | null = null,
+            options: { force?: boolean } = {}
+        ) => {
+            const { force } = options
+
             if (showDatePicker.value) {
                 return
             }
@@ -402,6 +423,10 @@ export default defineComponent({
             if (cancelBlur.value === 0) {
                 if (showSuggestions.value) {
                     focused.value = true
+                    return
+                }
+
+                if (!focused.value && !force) {
                     return
                 }
 
@@ -430,10 +455,22 @@ export default defineComponent({
         const onKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 e.preventDefault()
+                e.stopPropagation()
+                emit('search', updateJSONQuery())
+                showSuggestions.value = false
+                return
+            }
+
+            if (!focused.value) {
+                focus()
             }
         }
 
         const onInput = (e: Event) => {
+            if ((e as KeyboardEvent).key === 'Enter') {
+                return
+            }
+
             const text = (e.target as HTMLElement).textContent
             debouncedSetInputValue(text)
         }
@@ -476,14 +513,22 @@ export default defineComponent({
         }
 
         const fromJSON = (value: { [key: string]: any }) => {
-            const replacedDate = replaceJSDatesWithStringifiedDates(
-                value,
-                dateKeys.value
-            )
+            try {
+                const replacedDate = replaceJSDatesWithStringifiedDates(
+                    value,
+                    dateKeys.value
+                )
 
-            const stringQuery = stringifySmartQuery(replacedDate)
-            const aliased = setAliases(stringQuery, aliases.value)
-            return aliased
+                const stringQuery = stringifySmartQuery(replacedDate)
+                const aliased = setAliases(stringQuery, aliases.value)
+                return aliased
+            } catch (e) {
+                emit('error', {
+                    error: e,
+                    message: 'Could not translate given JSON to a valid Scheme'
+                })
+                return ''
+            }
         }
         //#endregion
 
@@ -612,6 +657,13 @@ export default defineComponent({
                 message: error.value
             }
         })
+
+        const inputPlaceholder = computed(() => {
+            return focused.value || searchQuery.value.length
+                ? ''
+                : props.placeholder
+        })
+
         //#endregion
 
         //#region watcher
@@ -671,7 +723,7 @@ export default defineComponent({
                     isEllipsisActive(input.value) || hasEllipsis.value
             }
             window.addEventListener('mousemove', () => (isTyping.value = false))
-            blur()
+            blur(null, { force: true })
         })
         onBeforeUnmount(() => {
             window.removeEventListener(
@@ -715,7 +767,8 @@ export default defineComponent({
             onInput,
             onDateSelection,
             computedStatus,
-            setInputFromSuggestion
+            setInputFromSuggestion,
+            inputPlaceholder
         }
     }
 })
@@ -751,6 +804,7 @@ export default defineComponent({
         padding-left: 10px;
         overflow-y: auto;
         background-color: var(--dl-color-panel-background);
+        cursor: text;
 
         font-size: 12px;
         line-height: 14px;
@@ -785,6 +839,8 @@ export default defineComponent({
 
         &--disabled {
             border-color: var(--dl-color-separator);
+            color: var(--dl-color-disabled);
+            cursor: not-allowed;
         }
     }
 
@@ -831,8 +887,10 @@ export default defineComponent({
         color: var(--dl-color-darker);
         background-color: var(--dl-color-panel-background);
 
-        ::placeholder {
+        &::before {
             color: var(--dl-color-lighter);
+            /* In case this causes render shadowing move to use html/injection approach */
+            content: attr(placeholder);
         }
         & > * {
             display: flex;
