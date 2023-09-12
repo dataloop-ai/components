@@ -882,7 +882,7 @@ export default defineComponent({
         )
 
         watch(
-            () => (props as any).visibleColummns,
+            () => (props as any).visibleColumns,
             (value) => {
                 visibleColumnsState.value = value
             }
