@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.18.114",
+  "version": "0.18.119",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
