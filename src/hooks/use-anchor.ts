@@ -47,12 +47,15 @@ export function CheckAnchorElVisibility(
     })
 }
 
-export default function useAnchor({
-    configureAnchorEl
-}: {
-    configureAnchorEl?: Function
-}) {
+export default function useAnchor(
+    options: {
+        configureAnchorEl?: Function
+        toggleKey?: string | number
+    } = {}
+) {
     const { props, proxy, emit } = getCurrentInstance()!
+    const { toggleKey } = options
+    let { configureAnchorEl } = options
 
     const anchorEl: Ref<HTMLElement | Element | null> = ref(null)
 
@@ -84,7 +87,7 @@ export default function useAnchor({
             },
 
             toggleKey(evt: AnchorEvent) {
-                if (isKeyCode(evt, 13) && anchorEvents.toggle) {
+                if (isKeyCode(evt, toggleKey) && anchorEvents.toggle) {
                     anchorEvents.toggle(evt)
                 }
             },

@@ -20,6 +20,8 @@
                 :placeholder="placeholder"
                 @focus="isFocused = true"
                 @blur="isFocused = false"
+                @search="emitSearchQuery"
+                @error="$emit('error', $event)"
             />
         </div>
         <div class="dl-smart-search__buttons">
@@ -35,7 +37,7 @@
                                 height: '28px'
                             }"
                             :disabled="disabled"
-                            @click="$emit('search-query', queryObject)"
+                            @click="$emit('search', queryObject)"
                         />
                     </div>
                     <div
@@ -63,10 +65,9 @@
         <dl-smart-search-json-editor-dialog
             v-model="showJSONEditor"
             :json="stringifiedJSON"
-            @search="emitSearchQuery"
+            @search="handleJSONSearch"
             @change="handleJSONChange"
         />
-        <!-- todo: Add support for saved queries-->
     </div>
 </template>
 <script lang="ts">
@@ -137,7 +138,13 @@ export default defineComponent({
             default: ''
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query', 'update:model-value'],
+    emits: [
+        'save-filter',
+        'remove-filter',
+        'update:model-value',
+        'search',
+        'error'
+    ],
     setup(props, { emit }) {
         //#region props
         const { modelValue, filters, width } = toRefs(props)
@@ -226,11 +233,15 @@ export default defineComponent({
             }
         }
 
-        const emitSearchQuery = (query: string) => {
+        const emitSearchQuery = (value?: { [key: string]: any }) => {
+            emit('search', value ?? queryObject.value)
+        }
+
+        const handleJSONSearch = (query: string) => {
             const json = toObject(query)
             if (!json) return
             queryObject.value = json
-            emit('search-query', json)
+            emitSearchQuery(json)
         }
 
         const handleJSONChange = (val: string) => {
@@ -264,6 +275,7 @@ export default defineComponent({
             emitSearchQuery,
             showJSONEditor,
             stringifiedJSON,
+            handleJSONSearch,
             handleJSONChange
         }
     }
