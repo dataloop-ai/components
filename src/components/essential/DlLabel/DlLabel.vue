@@ -200,7 +200,7 @@ export default defineComponent({
     &__content {
         color: var(--dl-label-text-color);
         display: flex;
-        width: 95%;
+        width: 100%;
     }
     &__text {
         overflow: hidden;

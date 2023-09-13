@@ -50,12 +50,14 @@ import {
     Alias as DlSmartSearchAlias,
     Schema as DlSmartSearchSchema
 } from '../../../../hooks/use-suggestions'
+import { DlSelectOption } from '../../types'
 
-type DlSmartSearchFilters = Filters & { [key: string]: any }
+// type DlSmartSearchFilters = Filters & { [key: string]: any }
+type DlSmartSearchFilter = DlSelectOption
 
 export type {
     DlSmartSearchAlias,
     DlSmartSearchSchema,
     ColorSchema as DlSmartSearchColorSchema,
-    DlSmartSearchFilters
+    DlSmartSearchFilter
 }

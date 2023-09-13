@@ -1,4 +1,4 @@
-import { DlSmartSearchInput } from './components'
+import { DlSmartSearchInput, DlSmartSearchJsonEditorDialog } from './components'
 import DlSmartSearch from './DlSmartSearch.vue'
 
-export { DlSmartSearch, DlSmartSearchInput }
+export { DlSmartSearch, DlSmartSearchInput, DlSmartSearchJsonEditorDialog }

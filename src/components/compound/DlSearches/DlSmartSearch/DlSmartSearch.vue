@@ -64,7 +64,8 @@
         </div>
         <dl-smart-search-json-editor-dialog
             v-model="showJSONEditor"
-            :json="stringifiedJSON"
+            :json="modelValue"
+            :options="selectOptions"
             @search="handleJSONSearch"
             @change="handleJSONChange"
         />
@@ -75,7 +76,7 @@ import { defineComponent, PropType, ref, computed, toRefs } from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlSmartSearchInput, DlSmartSearchJsonEditorDialog } from './components'
 import { Schema, Alias } from '../../../../hooks/use-suggestions'
-import { Filters, ColorSchema, SearchStatus } from './types'
+import { ColorSchema, SearchStatus, DlSmartSearchFilter } from './types'
 import { v4 } from 'uuid'
 import { stateManager } from '../../../../StateManager'
 
@@ -115,8 +116,8 @@ export default defineComponent({
             })
         },
         filters: {
-            type: Object as PropType<Filters>,
-            default: () => ({} as Filters)
+            type: Array as PropType<DlSmartSearchFilter[]>,
+            default: () => [] as DlSmartSearchFilter[]
         },
         disabled: {
             type: Boolean,
@@ -179,8 +180,6 @@ export default defineComponent({
         //#endregion
 
         //#region computed
-        const stringifiedJSON = computed(() => JSON.stringify(modelValue.value))
-
         const cssVars = computed(() => ({
             '--dl-smart-search-max-width': isFocused.value
                 ? '100%'
@@ -196,24 +195,9 @@ export default defineComponent({
             }
         })
 
-        const selectedOptions = computed(() => {
-            const options: Record<string, string>[] = [
-                {
-                    label: 'New Query',
-                    value: '{}'
-                }
-            ]
-
-            const queryFilters = filters.value?.saved ?? []
-            for (const filter of queryFilters) {
-                options.push({
-                    label: filter.name,
-                    value: filter.query
-                })
-            }
-
-            return options
-        })
+        const selectOptions = computed<DlSmartSearchFilter[]>(
+            () => filters.value ?? []
+        )
         //#endregion
 
         //#region methods
@@ -271,10 +255,9 @@ export default defineComponent({
             preventUpdate,
             selectedOption,
             cssVars,
-            selectedOptions,
+            selectOptions,
             emitSearchQuery,
             showJSONEditor,
-            stringifiedJSON,
             handleJSONSearch,
             handleJSONChange
         }
