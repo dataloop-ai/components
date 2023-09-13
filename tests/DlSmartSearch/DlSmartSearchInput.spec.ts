@@ -416,6 +416,10 @@ describe('DlSmartSearchInput', () => {
                 preventDefault: vi.fn(),
                 stopPropagation: vi.fn()
             } as any as KeyboardEvent)
+
+            //@ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
         })
 
         it('will emit search with model value', () => {

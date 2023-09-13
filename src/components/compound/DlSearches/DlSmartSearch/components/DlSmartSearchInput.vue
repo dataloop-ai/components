@@ -452,10 +452,38 @@ export default defineComponent({
             }
         }
 
+        const endsWithOperator = computed(() => {
+            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+
+            for (const op of operators) {
+                if (
+                    searchQuery.value.endsWith(op) ||
+                    searchQuery.value.endsWith(`${op} `)
+                ) {
+                    return true
+                }
+            }
+
+            return false
+        })
+
         const onKeyPress = (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
+            if (e.code === 'Enter' || e.key === 'Enter') {
                 e.preventDefault()
                 e.stopPropagation()
+
+                if (showSuggestions.value || showDatePicker.value) {
+                    return
+                }
+
+                if (endsWithOperator.value) {
+                    return
+                }
+
+                if (!input.value.innerHTML.length) {
+                    return
+                }
+
                 emit('search', updateJSONQuery())
                 showSuggestions.value = false
                 return
@@ -467,10 +495,6 @@ export default defineComponent({
         }
 
         const onInput = (e: Event) => {
-            if ((e as KeyboardEvent).key === 'Enter') {
-                return
-            }
-
             const text = (e.target as HTMLElement).textContent
             debouncedSetInputValue(text)
         }

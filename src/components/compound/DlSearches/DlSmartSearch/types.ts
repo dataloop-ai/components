@@ -36,6 +36,16 @@ export type SyntaxColorSchema = {
     }
 }
 
+export type DLSmartSearchOperators =
+    | '>='
+    | '<='
+    | '!='
+    | '='
+    | '>'
+    | '<'
+    | 'IN'
+    | 'NOT-IN'
+
 import {
     Alias as DlSmartSearchAlias,
     Schema as DlSmartSearchSchema
