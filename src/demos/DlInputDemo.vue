@@ -86,11 +86,10 @@
             expandable
         />
 
-        <p>size S with long text</p>
+        <span>size S with long text (no max width)</span>
         <dl-input
-            v-model="warningFieldValue"
+            v-model="sizeSFieldValue"
             title="Warning Example"
-            style="width: 220px"
             size="s"
             warning
             warning-message="Something isn't right."
@@ -103,6 +102,7 @@
             style="align-items: center"
         >
             <dl-input
+                max-width="220px"
                 class="input-parts"
                 style="width: 440px"
                 title="Min"
@@ -125,7 +125,7 @@
         />
 
         <p>input in a limited size and action slot size m</p>
-        <div style="align-items: center; width: 250px; overflow: hidden">
+        <div style="align-items: center; width: 250px; overflow: scroll">
             <dl-input class="input-parts">
                 <template #action>
                     <dl-button
@@ -155,6 +155,7 @@ export default defineComponent({
         const textInputValue = ref<string>('')
         const passFieldValue = ref<string>('')
         const warningFieldValue = ref<string>('')
+        const sizeSFieldValue = ref<string>('')
         const errorFieldValue = ref<string>('')
         const saveInputValue = ref<string>('')
 
@@ -191,6 +192,7 @@ export default defineComponent({
             warningFieldValue,
             errorFieldValue,
             saveInputValue,
+            sizeSFieldValue,
             files,
             updateFiles,
             addFile

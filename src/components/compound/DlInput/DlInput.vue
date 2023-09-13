@@ -9,7 +9,7 @@
                 :class="`${
                     isSmall ? 'col' : 'row  full-width  full-height'
                 } top`"
-                :style="`${isSmall ? 'flex-grow: 0; max-width: 25%;' : ''}`"
+                :style="`${isSmall ? 'flex-grow: 0;' : ''}`"
             >
                 <div
                     v-if="!!title.length || !!tooltip.length"
@@ -93,13 +93,15 @@
                             <slot name="prepend" />
                         </div>
                         <div
-                            v-if="hasAppend"
                             :class="[
                                 ...adornmentClasses,
                                 'dl-input__adornment-container--pos-right'
                             ]"
                         >
-                            <slot name="append" />
+                            <slot
+                                v-if="hasAppend"
+                                name="append"
+                            />
                             <span
                                 v-if="showClearButton"
                                 v-show="focused || mouseOverClear"
@@ -110,7 +112,7 @@
                                 <dl-button
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
-                                    size="s"
+                                    :size="clearIconSize"
                                     text-color="dl-color-darker"
                                     flat
                                     fluid
@@ -238,19 +240,19 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div
-            v-if="files.length"
-            class="dl-input__files"
-        >
-            <input-file-element
-                v-for="file in files"
-                :key="file.id"
-                :file="file"
-                @remove-file="emitRemoveFile"
-                @zoom-image="handleZoomImage"
-                @rename-file="handleRenameFileModal"
-            />
+            <div
+                v-if="files.length"
+                class="dl-input__files"
+            >
+                <input-file-element
+                    v-for="file in files"
+                    :key="file.id"
+                    :file="file"
+                    @remove-file="emitRemoveFile"
+                    @zoom-image="handleZoomImage"
+                    @rename-file="handleRenameFileModal"
+                />
+            </div>
         </div>
         <dl-dialog-box
             v-if="currentZoomImage"
@@ -705,6 +707,10 @@ export default defineComponent({
         hasAction(): boolean {
             return !!this.$slots.action && !this.isSmall
         },
+        clearIconSize(): string {
+            if (this.isSmall) return '7px'
+            return 's'
+        },
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
         },
@@ -748,7 +754,10 @@ export default defineComponent({
             return `${chars}/${this.maxLength}`
         },
         wrapperClasses(): string[] {
-            const classes = ['dl-input__wrapper']
+            const classes = [
+                'dl-input__wrapper',
+                `dl-input__wrapper--${this.size}`
+            ]
             if (this.disabled) {
                 classes.push('dl-input__wrapper--disabled')
             }
@@ -1014,7 +1023,7 @@ export default defineComponent({
     }
 
     &__wrapper {
-        flex-grow: 1;
+        // flex-grow: 1;
         position: relative;
         display: flex;
         justify-content: space-between;
@@ -1037,6 +1046,9 @@ export default defineComponent({
             color: var(--dl-color-disabled);
             pointer-events: none;
             cursor: not-allowed;
+        }
+        &--s {
+            height: 18px;
         }
     }
 
@@ -1131,6 +1143,9 @@ export default defineComponent({
         &--expandable {
             margin-top: 3px;
             margin-right: 3px;
+        }
+        &--s {
+            height: 100%;
         }
     }
 
