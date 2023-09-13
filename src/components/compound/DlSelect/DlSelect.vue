@@ -740,10 +740,7 @@ export default defineComponent({
 
             this.selectedIndex = this.options.findIndex(
                 (option: string | Record<string, string | number> | number) =>
-                    isEqual(
-                        (option as any).value,
-                        (this.modelValue as any).value
-                    )
+                    isEqual(option, this.modelValue)
             )
         },
         getOptionValue(option: any) {
