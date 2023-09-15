@@ -4,7 +4,7 @@ let renderComponent: (
     component: object | string,
     props: object,
     slots: any
-) => void
+) => VueDemiModule.VNode
 
 let renderFunction
 

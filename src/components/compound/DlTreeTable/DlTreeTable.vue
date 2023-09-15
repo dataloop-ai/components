@@ -8,13 +8,14 @@ import {
     set,
     ref,
     h,
-    watch
+    watch,
+    VNode
 } from 'vue-demi'
 import { DlCheckbox } from '../../essential'
 import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { cloneDeep } from 'lodash'
-import { DlTableProps, DlTableRow } from '../DlTable/types'
+import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
 import { props } from './props'
@@ -92,9 +93,9 @@ export default defineComponent({
         const updateExpandedRow = (
             isExpanded: boolean,
             name: string,
-            rowsArr = tableRows.value
+            rowsArr: DlTableRow[] = tableRows.value
         ) => {
-            ;(rowsArr as DlTableRow[]).some((o) => {
+            rowsArr.some((o) => {
                 if (getRowKey.value(o) === name) {
                     if (isVue2) {
                         set(o, 'expanded', isExpanded)
@@ -210,12 +211,17 @@ export default defineComponent({
         // }
 
         const tbodySlotsData = computed(() =>
-            (dlTableRef.value?.computedCols || []).filter((item) =>
-                hasSlotByName(`body-cell-${item.name}`)
+            (dlTableRef.value?.computedCols || []).filter(
+                (item: DlTableColumn) => hasSlotByName(`body-cell-${item.name}`)
             )
         )
 
-        const getTBodyCell = (name: string, row, col, index) => {
+        const getTBodyCell = (
+            name: string,
+            row: DlTableRow,
+            col: DlTableColumn,
+            index: number
+        ) => {
             return slots[name](
                 dlTableRef.value.getBodySelectionScope({
                     key: getRowKey.value(row),
@@ -226,7 +232,12 @@ export default defineComponent({
             )
         }
 
-        const renderDlTrTree = (row, index, children = [], level = 1) =>
+        const renderDlTrTree = (
+            row: DlTableRow,
+            index: number,
+            children: DlTableRow[] = [],
+            level: number = 1
+        ) =>
             renderComponent(
                 DlTrTreeView,
                 {
@@ -251,7 +262,7 @@ export default defineComponent({
                             pageIndex: index
                         }
                     ),
-                    bindBodyCellScope: (col) =>
+                    bindBodyCellScope: (col: DlTableColumn) =>
                         tableRootRef.value.getBodyCellScope({
                             key: getRowKey.value(row),
                             row,
@@ -265,7 +276,7 @@ export default defineComponent({
                         props.rowKey,
                         getRowKey.value(row)
                     ),
-                    'onUpdate:modelValue': (adding, evt) =>
+                    'onUpdate:modelValue': (adding: boolean, evt: Event) =>
                         updateSelectionHierarchy(adding, evt, row),
                     onRowClick: tableRootRef.value.onTrClick(event, row, index),
                     onRowDoubleClick: tableRootRef.value.onTrDblClick(
@@ -286,18 +297,22 @@ export default defineComponent({
                 () => children
             )
 
-        const renderTr = (row, index, level = 1) => {
+        const renderTr = (
+            row: DlTableRow,
+            index: number,
+            level: number = 1
+        ) => {
             const children = []
 
             children.push(renderDlTrTree(row, index, [], level))
 
-            const tbodyEls = []
+            const tbodyEls: VNode[] = []
 
             if ((row.children || []).length > 0) {
                 //TODO CHECK INDEX var
                 level = level + 1
 
-                row.children.forEach((childRow, i) => {
+                row.children.forEach((childRow: DlTableRow, i: number) => {
                     tbodyEls.push(
                         renderComponent(
                             'tbody',
@@ -528,7 +543,7 @@ export default defineComponent({
                             indeterminateValue: true,
                             'onUpdate:modelValue': this.onMultipleSelectionSet
                         },
-                        () => []
+                        (): [] => []
                     ),
                 tbody: this.renderTBody
             }

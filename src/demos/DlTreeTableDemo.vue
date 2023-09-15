@@ -278,13 +278,7 @@
 </template>
 
 <script lang="ts">
-import {
-    DlOptionGroup,
-    DlSwitch,
-    DlInput,
-    DlTreeTable,
-    DlIcon
-} from '../components'
+import { DlOptionGroup, DlSwitch, DlInput, DlTreeTable } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
 
@@ -607,8 +601,7 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlTreeTable,
-        DlIcon
+        DlTreeTable
     },
     setup() {
         const filter = ref('')
