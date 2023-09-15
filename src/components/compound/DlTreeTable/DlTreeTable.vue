@@ -1,292 +1,14 @@
-<template>
-    <DlTable
-        ref="dlTableRef"
-        :selected="selectedData"
-        :separator="separator"
-        :columns="tableColumns"
-        :bordered="bordered"
-        :draggable="draggable"
-        :dense="dense"
-        :filter="filter"
-        :selection="selection"
-        :loading="loading"
-        :rows="tableRows"
-        :is-tree-table="hasFlatTreeData"
-        :resizable="resizable"
-        :row-key="rowKey"
-        :color="color"
-        :title="title"
-        :virtual-scroll="virtualScroll"
-        :rows-per-page-options="rowsPerPageOptions"
-        :hide-pagination="hidePagination"
-        :is-empty="isEmpty"
-        :empty-state-props="emptyStateProps"
-        :no-data-label="noDataLabel"
-        @row-click="emitRowClick"
-        @th-click="emitThClick"
-        @update:selected="updateSelected"
-    >
-        <template #header-selection>
-            <DlCheckbox
-                style="padding-left: 10px"
-                :color="color"
-                :model-value="headerSelectedValue"
-                :indeterminate-value="true"
-                @update:model-value="onMultipleSelectionSet"
-            />
-        </template>
-        <template #table-body="tableBodyProps">
-            <slot name="table-body" v-bind="tableBodyProps">
-                <template v-if="virtualScroll && !isEmpty">
-                    <slot
-                        v-for="(row, rowIndex) in dlTableRef.computedCols"
-                        name="row-body"
-                        v-bind="
-                            dlTableRef.getBodyScope({
-                                key: getRowKey(row),
-                                row,
-                                pageIndex: rowIndex,
-                                trClass: isRowSelected(rowKey, getRowKey(row))
-                                    ? 'selected'
-                                    : ''
-                            })
-                        "
-                    >
-                        <DlTrTreeView
-                            :row="tableBodyProps.item"
-                            :row-index="rowIndex"
-                            :is-row-selected="
-                                isRowSelected(
-                                    rowKey,
-                                    getRowKey(tableBodyProps.item)
-                                )
-                                    ? 'selected'
-                                    : ''
-                            "
-                            :has-any-action="dlTableRef.hasAnyAction"
-                            :no-hover="dlTableRef.noHover"
-                            :page-index="tableBodyProps.index"
-                            :has-draggable-rows="dlTableRef.hasDraggableRows"
-                            :has-selection-mode="dlTableRef.hasSelectionMode"
-                            :bind-body-selection="
-                                dlTableRef.getBodySelectionScope({
-                                    key: getRowKey(tableBodyProps.item),
-                                    row: tableBodyProps.item,
-                                    pageIndex: tableBodyProps.index
-                                })
-                            "
-                            :bind-body-cell-scope="
-                                (col) =>
-                                    dlTableRef.getBodyCellScope({
-                                        key: getRowKey(tableBodyProps.item),
-                                        row: tableBodyProps.item,
-                                        pageIndex: tableBodyProps.index,
-                                        col
-                                    })
-                            "
-                            :color="color"
-                            :computed-cols="dlTableRef.computedCols"
-                            :slot-name="dlTableRef.slotNames"
-                            :computed-rows="computedRows"
-                            :model-value="
-                                isRowSelected(
-                                    rowKey,
-                                    getRowKey(tableBodyProps.item)
-                                )
-                            "
-                            @update:model-value="
-                                (adding, evt) =>
-                                    updateSelectionHierarchy(
-                                        adding,
-                                        evt,
-                                        tableBodyProps.item
-                                    )
-                            "
-                            @rowClick="
-                                dlTableRef.onTrClick(
-                                    $event,
-                                    tableBodyProps.item,
-                                    tableBodyProps.index
-                                )
-                            "
-                            @rowDoubleClick="
-                                dlTableRef.onTrDblClick(
-                                    $event,
-                                    tableBodyProps.item,
-                                    tableBodyProps.index
-                                )
-                            "
-                            @rowContextMenu="
-                                dlTableRef.onTrContextMenu(
-                                    $event,
-                                    tableBodyProps.item,
-                                    tableBodyProps.index
-                                )
-                            "
-                            @updateExpandedRow="
-                                updateExpandedRow(
-                                    !tableBodyProps.item.expanded,
-                                    getRowKey(tableBodyProps.item)
-                                )
-                            "
-                        >
-                            <template
-                                v-for="templateCol in dlTableRef.computedCols"
-                                #[getSlotByName(templateCol.name)]
-                            >
-                                <slot
-                                    :name="getSlotByName(templateCol.name)"
-                                    v-bind="
-                                        dlTableRef.getBodyCellScope({
-                                            key: getRowKey(tableBodyProps.item),
-                                            row: tableBodyProps.item,
-                                            pageIndex: tableBodyProps.index,
-                                            col: templateCol
-                                        })
-                                    "
-                                />
-                            </template>
-                        </DlTrTreeView>
-                    </slot>
-                </template>
-                <template v-else>
-                    <template v-if="dlTableRef && !isEmpty">
-                        <template v-for="(row, rowIndex) in computedRows">
-                            <slot
-                                name="row-body"
-                                v-bind="
-                                    dlTableRef.getBodyScope({
-                                        key: getRowKey(row),
-                                        row,
-                                        pageIndex: rowIndex,
-                                        trClass: isRowSelected(
-                                            rowKey,
-                                            getRowKey(row)
-                                        )
-                                            ? 'selected'
-                                            : ''
-                                    })
-                                "
-                            >
-                                <DlTrTreeView
-                                    :key="rowIndex"
-                                    :row="row"
-                                    :row-index="rowIndex"
-                                    :row-key="rowKey"
-                                    :is-row-selected="
-                                        isRowSelected(rowKey, getRowKey(row))
-                                            ? 'selected'
-                                            : ''
-                                    "
-                                    :has-any-action="dlTableRef.hasAnyAction"
-                                    :no-hover="dlTableRef.noHover"
-                                    :has-draggable-rows="
-                                        dlTableRef.hasDraggableRows
-                                    "
-                                    :has-selection-mode="
-                                        dlTableRef.hasSelectionMode
-                                    "
-                                    :bind-body-selection="
-                                        dlTableRef.getBodySelectionScope({
-                                            key: getRowKey(row),
-                                            row,
-                                            pageIndex: rowIndex
-                                        })
-                                    "
-                                    :bind-body-cell-scope="
-                                        (col) =>
-                                            dlTableRef.getBodyCellScope({
-                                                key: getRowKey(row),
-                                                row,
-                                                pageIndex: rowIndex,
-                                                col
-                                            })
-                                    "
-                                    :color="color"
-                                    :computed-cols="dlTableRef.computedCols"
-                                    :slot-name="dlTableRef.slotNames"
-                                    :computed-rows="computedRows"
-                                    :model-value="
-                                        isRowSelected(rowKey, getRowKey(row))
-                                    "
-                                    @update:model-value="
-                                        (adding, evt) =>
-                                            updateSelectionHierarchy(
-                                                adding,
-                                                evt,
-                                                row
-                                            )
-                                    "
-                                    @rowClick="
-                                        dlTableRef.onTrClick(
-                                            $event,
-                                            row,
-                                            rowIndex
-                                        )
-                                    "
-                                    @rowDoubleClick="
-                                        dlTableRef.onTrDblClick(
-                                            $event,
-                                            row,
-                                            rowIndex
-                                        )
-                                    "
-                                    @rowContextMenu="
-                                        dlTableRef.onTrContextMenu(
-                                            $event,
-                                            row,
-                                            rowIndex
-                                        )
-                                    "
-                                    @updateExpandedRow="
-                                        updateExpandedRow(
-                                            !row.expanded,
-                                            getRowKey(row)
-                                        )
-                                    "
-                                >
-                                    <template
-                                        v-for="templateCol in dlTableRef.computedCols"
-                                        #[getSlotByName(templateCol.name)]
-                                    >
-                                        <slot
-                                            :name="
-                                                getSlotByName(templateCol.name)
-                                            "
-                                            v-bind="
-                                                dlTableRef.getBodySelectionScope(
-                                                    {
-                                                        key: getRowKey(row),
-                                                        row,
-                                                        col: templateCol,
-                                                        pageIndex: rowIndex
-                                                    }
-                                                )
-                                            "
-                                        />
-                                    </template>
-                                </DlTrTreeView>
-                            </slot>
-                        </template>
-                    </template>
-                </template>
-            </slot>
-        </template>
-        <template #no-data>
-            <slot name="no-data" />
-        </template>
-    </DlTable>
-</template>
-
 <script lang="ts">
 import {
+    Vue,
     computed,
     ComputedRef,
     defineComponent,
     isVue2,
     set,
     ref,
-    h
+    h,
+    watch
 } from 'vue-demi'
 import { DlCheckbox } from '../../essential'
 import DlTable from '../DlTable/DlTable.vue'
@@ -297,13 +19,19 @@ import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
 import { props } from './props'
 import { emits } from './emits'
+import Sortable from '../DlSortable/Sortable.vue'
+import TableSortable from '../DlSortable/TableSortable.vue'
+import { renderComponent } from '../../../utils/render-fn'
+import { isEmpty } from 'lodash'
 
 export default defineComponent({
     name: 'DlTreeTable',
     components: {
         DlTable,
         DlTrTreeView,
-        DlCheckbox
+        DlCheckbox,
+        Sortable,
+        TableSortable
     },
     props,
     emits,
@@ -323,9 +51,19 @@ export default defineComponent({
                 : false
         )
 
-        const computedRows = computed(() =>
-            dlTableRef.value?.computedRows ? dlTableRef.value?.computedRows : []
-        )
+        const computedRows = computed(() => {
+            if (props.draggable) {
+                return dlTableRef.value?.rootRef?.computedRows || []
+            }
+            return dlTableRef.value?.computedRows || []
+        })
+
+        const tableRootRef = computed(() => {
+            if (props.draggable) {
+                return dlTableRef.value || {}
+            }
+            return dlTableRef.value || {}
+        })
 
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
@@ -415,27 +153,40 @@ export default defineComponent({
             updateSelection(childrenKeys, childrenCollection, adding, event)
         }
 
-        const headerSelectedValue = computed(() =>
-            someRowsSelected.value === true ? null : allRowsSelected.value
-        )
+        // const headerSelectedValue = computed(() => {
+        //     return someRowsSelected.value === true
+        //         ? null
+        //         : allRowsSelected.value
+        // })
+
+        const headerSelectedValue = computed(() => {
+            if (selectedData.value.length === computedRows.value.length)
+                return true
+
+            if (
+                selectedData.value.length > 0 &&
+                selectedData.value.length !== computedRows.value.length
+            )
+                return null
+
+            return false
+        })
 
         const onMultipleSelectionSet = (val: boolean) => {
-            if (someRowsSelected.value === true) {
-                val = false
-            }
+            const value =
+                selectedData.value.length > 0 &&
+                selectedData.value.length === computedRows.value.length
+                    ? false
+                    : val
 
-            updateSelection(
-                computedRows.value.map(getRowKey.value as any),
-                computedRows.value,
-                val
-            )
+            updateSelected(value ? computedRows.value : [])
         }
         const updateSelected = (payload: any) => {
             selectedData.value = payload
             emitSelectedItems(payload)
         }
         const emitSelectedItems = (payload: any) => {
-            emit('selectedItems', payload)
+            emit('selected-items', payload)
         }
         const emitRowClick = (payload: any) => {
             emit('row-click', payload)
@@ -452,7 +203,264 @@ export default defineComponent({
             }
         }
 
+        const log = console.log
+
+        // const rednerTBodySlots = () => {
+        //     return renderComponent('')
+        // }
+
+        const tbodySlotsData = computed(() =>
+            (dlTableRef.value?.computedCols || []).filter((item) =>
+                hasSlotByName(`body-cell-${item.name}`)
+            )
+        )
+
+        const getTBodyCell = (name: string, row, col, index) => {
+            return slots[name](
+                dlTableRef.value.getBodySelectionScope({
+                    key: getRowKey.value(row),
+                    row,
+                    col,
+                    pageIndex: index
+                })
+            )
+        }
+
+        const renderDlTrTree = (row, index, children = [], level = 1) =>
+            renderComponent(
+                DlTrTreeView,
+                {
+                    row,
+                    rowIndex: index,
+                    rowKey: props.rowKey,
+                    isRowSelected: isRowSelected(
+                        props.rowKey,
+                        getRowKey.value(row)
+                    )
+                        ? 'selected'
+                        : '',
+                    level,
+                    hasAnyAction: tableRootRef.value.hasAnyAction,
+                    noHover: tableRootRef.value.noHover,
+                    hasDraggableRows: tableRootRef.value.hasDraggableRows,
+                    hasSelectionMode: tableRootRef.value.hasSelectionMode,
+                    bindBodySelection: tableRootRef.value.getBodySelectionScope(
+                        {
+                            key: getRowKey.value(row),
+                            row,
+                            pageIndex: index
+                        }
+                    ),
+                    bindBodyCellScope: (col) =>
+                        tableRootRef.value.getBodyCellScope({
+                            key: getRowKey.value(row),
+                            row,
+                            pageIndex: index,
+                            col
+                        }),
+
+                    color: props.color,
+                    computedCols: tableRootRef.value.computedCols,
+                    modelValue: isRowSelected(
+                        props.rowKey,
+                        getRowKey.value(row)
+                    ),
+                    'onUpdate:modelValue': (adding, evt) =>
+                        updateSelectionHierarchy(adding, evt, row),
+                    onRowClick: tableRootRef.value.onTrClick(event, row, index),
+                    onRowDoubleClick: tableRootRef.value.onTrDblClick(
+                        event,
+                        row,
+                        index
+                    ),
+                    onTrContextMenu: tableRootRef.value.onTrContextMenu(
+                        event,
+                        row,
+                        index
+                    ),
+                    onUpdateExpandedRow: updateExpandedRow(
+                        !row.expanded,
+                        getRowKey.value(row)
+                    )
+                },
+                () => children
+            )
+
+        const renderTr = (row, index, level = 1) => {
+            const children = []
+
+            children.push(renderDlTrTree(row, index, [], level))
+
+            const tbodyEls = []
+
+            if ((row.children || []).length > 0) {
+                //TODO CHECK INDEX var
+                level = level + 1
+
+                row.children.forEach((childRow, i) => {
+                    tbodyEls.push(
+                        renderComponent(
+                            'tbody',
+                            {},
+                            renderTr(childRow, i, level)
+                        )
+                    )
+                })
+
+                const tdEl = renderComponent(
+                    'td',
+                    {
+                        colspan: tableRootRef.value.computedColspan,
+                        style: 'padding: 0'
+                    },
+                    renderComponent(
+                        TableSortable,
+                        {
+                            list: [],
+                            itemKey: getRowKey.value,
+                            tag: 'table',
+                            options: {
+                                group: 'nested',
+                                animation: 150,
+                                fallbackOnBody: true,
+                                invertSwap: true,
+                                swapThreshold: 0.5
+                            }
+                        },
+                        () => tbodyEls
+                    )
+                )
+
+                const childrenTrWrapper = renderComponent('tr', {}, tdEl)
+
+                children.push(childrenTrWrapper)
+            }
+
+            return children
+        }
+
+        const TBodyEl = props.draggable ? Sortable : 'tbody'
+        const tbodyOptions = props.draggable
+            ? {
+                  list: computedRows.value,
+                  itemKey: props.rowKey,
+                  class: 'nested-sortable',
+                  tag: 'tbody',
+                  options: {
+                      handle: '.draggable-icon',
+                      group: 'nested',
+                      animation: 150,
+                      fallbackOnBody: true,
+                      invertSwap: true,
+                      swapThreshold: 0.5
+                  }
+              }
+            : {}
+
+        const renderTBody = () => {
+            // console.log(tableRootRef.value)
+            if (isEmpty(tableRootRef.value)) return null
+
+            // return renderComponent(
+            //     props.draggable ? Sortable : 'tbody',
+            //     {
+            //         ...tbodyProps,
+            //         list: tbodyProps.computedRows,
+            //         itemKey: getRowKey.value,
+            //         tag: 'tbody',
+            //         options: {
+            //             handle: '.draggable-icon',
+            //             swap: true,
+            //             animation: 120,
+            //             fallbackOnBody: true,
+            //             swapThreshold: 0.85
+            //         }
+            //     },
+            //     {
+            //         item: ({ element: row, index }) =>§
+            //             renderTrWithChildren(row, index)
+            //     }
+            // )
+
+            // return renderComponent(
+            //     props.draggable ? Sortable : 'tbody',
+            //     {
+            //         list: tableRows.value,
+            //         itemKey: props.rowKey,
+            //         tag: 'tbody',
+            //         options: {
+            //             handle: '.draggable-icon',
+            //             swap: true,
+            //             animation: 120,
+            //             fallbackOnBody: true,
+            //             swapThreshold: 0.85
+            //         }
+            //     },
+            //     {
+            //         item: ({ element, index }) => renderTr(element, index)
+            //     }
+            // )
+
+            const children = tableRows.value.map((row, i) => {
+                return renderComponent(
+                    'tbody',
+                    // props.draggable ? Sortable : 'tbody',
+                    {
+                        list: [row],
+                        itemKey: getRowKey.value,
+                        tag: 'tbody',
+                        options: {
+                            handle: '.draggable-icon',
+                            swap: true,
+                            animation: 120,
+                            fallbackOnBody: true,
+                            swapThreshold: 0.85
+                        }
+                    },
+                    // {
+                    //     // item: ({ element, index }) => renderTr(element, index)
+                    //     item: ({ element, index }) => renderTr(element, index)
+                    // }
+                    renderTr(row, i)
+                )
+            })
+
+            // return children
+
+            const tableBody = renderComponent(
+                'tbody',
+                {},
+                renderComponent(
+                    'tr',
+                    {},
+                    renderComponent(
+                        'td',
+                        { colspan: tableRootRef.value.computedColspan },
+                        renderComponent(
+                            TableSortable,
+                            {
+                                list: computedRows.value,
+                                itemKey: getRowKey.value,
+                                tag: 'table',
+                                options: {
+                                    group: 'nested',
+                                    animation: 150,
+                                    fallbackOnBody: true,
+                                    invertSwap: true,
+                                    swapThreshold: 0.5
+                                }
+                            },
+                            () => children
+                        )
+                    )
+                )
+            )
+
+            return tableBody
+        }
+
         return {
+            log,
             dlTableRef,
             isRowSelected,
             hasFlatTreeData,
@@ -475,8 +483,56 @@ export default defineComponent({
             emitRowClick,
             emitThClick,
             hasSlotByName,
-            getSlotByName
+            getSlotByName,
+            renderTBody,
+            tableRootRef
         }
+    },
+    render() {
+        return renderComponent(
+            // this.$props.draggable ? TableSortable : DlTable,
+            DlTable,
+            {
+                ref: 'dlTableRef',
+                selected: this.selectedData,
+                separator: this.separator,
+                columns: this.tableColumns,
+                bordered: this.bordered,
+                draggable: this.draggable,
+                dense: this.dense,
+                filter: this.filter,
+                isTreeTable: true,
+                selection: this.selection,
+                loading: this.loading,
+                rows: this.tableRows,
+                resizable: this.resizable,
+                rowKey: this.rowKey,
+                color: this.color,
+                title: this.title,
+                virtualScroll: this.virtualScroll,
+                rowsPerPageOptions: this.rowsPerPageOptions,
+                hidePagination: this.hidePagination,
+                isEmpty: this.isEmpty,
+                emptyStateProps: this.emptyStateProps,
+                noDataLabel: this.noDataLabel,
+                onRowClick: this.emitRowClick,
+                'onUpdate:selected': this.updateSelected
+            },
+            {
+                'header-selection': () =>
+                    renderComponent(
+                        DlCheckbox,
+                        {
+                            color: this.color,
+                            modelValue: this.headerSelectedValue,
+                            indeterminateValue: true,
+                            'onUpdate:modelValue': this.onMultipleSelectionSet
+                        },
+                        () => []
+                    ),
+                tbody: this.renderTBody
+            }
+        )
     }
 })
 </script>
@@ -492,6 +548,29 @@ export default defineComponent({
     & > * {
         flex-grow: 1;
     }
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+td {
+    padding: 0 !important;
+}
+
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
 }
 
 .sticky-header {

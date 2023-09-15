@@ -99,7 +99,7 @@
                     :rows-per-page-options="rowsPerPageOptions"
                     @row-click="onRowClick"
                     @th-click="log"
-                    @selectedItems="selectedItems"
+                    @selected-items="selectedItems"
                 />
             </div>
             <!-- <div style="padding-top: 300px">
@@ -147,9 +147,9 @@
                         </span>
                     </template>
                 </DlTreeTable>
-            </div>
+            </div> -->
 
-            <div style="margin-top: 100px">
+            <!-- <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
                 <DlTreeTable
                     :separator="separator"
@@ -167,8 +167,8 @@
                     color="dl-color-secondary"
                     style="height: 500px"
                 />
-            </div>
-            <div style="margin-top: 100px">
+            </div> -->
+            <!-- <div style="margin-top: 100px">
                 <p>Custom table body slot</p>
                 <DlTreeTable
                     class="sticky-header"
@@ -183,8 +183,8 @@
                         </div>
                     </template>
                 </DlTreeTable>
-            </div>
-            <div style="margin-top: 100px">
+            </div> -->
+            <!-- <div style="margin-top: 100px">
                 <p>Custom row body slot</p>
                 <DlTreeTable
                     class="sticky-header"
@@ -203,8 +203,8 @@
                         </tr>
                     </template>
                 </DlTreeTable>
-            </div>
-            <div style="margin-top: 100px">
+            </div> -->
+            <!-- <div style="margin-top: 100px">
                 <p>Empty State</p>
                 <DlTreeTable
                     :separator="separator"
@@ -236,7 +236,8 @@
                         </div>
                     </template>
                 </DlTreeTable>
-                <div>
+            </div> -->
+            <!-- <div>
                     <DlTreeTable
                         :separator="separator"
                         :columns="tableColumns"
@@ -271,8 +272,7 @@
                         @th-click="log"
                         @selectedItems="selectedItems"
                     />
-                </div>
-            </div> -->
+                </div> -->
         </div>
     </div>
 </template>

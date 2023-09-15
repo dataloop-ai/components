@@ -1,6 +1,7 @@
 <template>
+    <!-- v-show="row.isExpandedParent || row.level === 1" -->
+
     <DlTrTree
-        v-show="row.isExpandedParent || row.level === 1"
         :class="rowClass"
         :no-hover="noHover"
         :children="childrenCount"
@@ -9,8 +10,16 @@
         @dblclick="onTrDoubleClick($event, row, rowIndex)"
         @contextmenu="onTrContextMenu($event, row, rowIndex)"
     >
-        <td v-if="hasDraggableRows">
+        <td v-if="hasDraggableRows" style="width: 25px">
             <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
+        </td>
+        <td style="width: 12px">
+            <DlIcon
+                v-if="(row.children || []).length > 0"
+                style="margin-right: 5px"
+                :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
+                @click="emitUpdateExpandedRow"
+            />
         </td>
         <td v-if="hasSelectionMode" class="dl-table--col-auto-with">
             <slot name="body-selection" v-bind="bindBodySelection">
@@ -31,16 +40,23 @@
             v-for="(col, colIndex) in computedCols"
             :key="colIndex"
             :class="col.tdClass(row)"
-            :style="col.tdStyle(row) + getTdStyles(row, colIndex)"
+            :style="
+                col.tdStyle(row) +
+                `padding-left: ${setTrPadding(
+                    level,
+                    (row.children || []).length > 0,
+                    colIndex
+                )}px;`
+            "
         >
-            <template #icon="{}">
+            <!-- <template #icon="{}">
                 <DlIcon
                     v-if="(row.children || []).length > 0 && colIndex === 0"
                     style="margin-right: 5px"
                     :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
                     @click="emitUpdateExpandedRow"
                 />
-            </template>
+            </template> -->
             <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
                 {{ getCellValue(col, row) }}
             </template>
@@ -69,7 +85,7 @@ import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
 import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
 import { getRowKey } from '../utils/getRowKey'
 import { DlTableRow } from '../../DlTable/types'
-import { setTrSpacing } from '../utils/trSpacing'
+import { setTrSpacing, setTrPadding } from '../utils/trSpacing'
 
 export default defineComponent({
     name: 'DlTrTreeView',
@@ -98,6 +114,10 @@ export default defineComponent({
         noHover: {
             type: Boolean,
             default: false
+        },
+        level: {
+            type: Number,
+            default: 1
         },
         rowIndex: {
             type: Number,
@@ -130,22 +150,6 @@ export default defineComponent({
         modelValue: {
             type: [String, Boolean],
             default: null
-        },
-        slotName: {
-            type: String,
-            default: null
-        },
-        computedRows: {
-            type: Array as PropType<DlTableRow[]>,
-            default: () => [] as DlTableRow[]
-        },
-        cellValue: {
-            type: String,
-            default: null
-        },
-        slotsProps: {
-            type: Object as PropType<Record<string, any>>,
-            default: () => ({})
         }
     },
     emit: [
@@ -199,10 +203,7 @@ export default defineComponent({
             context.emit('update:model-value', adding, evt)
         }
 
-        const getTdStyles = (
-            row: (typeof props.computedRows)[number],
-            colIndex: number
-        ) => {
+        const getTdStyles = (row: any, colIndex: number) => {
             let styles = ''
             if (colIndex === 0) {
                 styles = 'max-width: 100px; box-sizing: border-box;'
@@ -317,6 +318,7 @@ export default defineComponent({
             onTrContextMenu,
             emitUpdateModelValue,
             getTdStyles,
+            setTrPadding,
             emitUpdateExpandedRow,
             getCellValue,
             hasSlotByName,
