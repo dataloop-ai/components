@@ -359,141 +359,241 @@ export default defineComponent({
         event: 'update:model-value'
     },
     props: {
+        /**
+         * The text value of the input
+         */
         modelValue: {
             type: [String, Number],
             default: null
         },
+        /**
+         * An array of InputFile objects contained and modeled in the input
+         */
         files: {
             type: Array as PropType<InputFile[]>,
             default: (): InputFile[] => []
         },
+        /**
+         * Input height
+         */
         height: {
             type: String,
             default: null
         },
+        /**
+         * Input max height
+         */
         maxHeight: {
             type: String,
             default: '100px'
         },
-
+        /**
+         * The input will expand like a textarea while typing
+         */
         expandable: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input width
+         */
         width: {
             type: String,
             default: '100%'
         },
+        /**
+         * Input max-width
+         */
         maxWidth: {
             type: String,
             default: 'fit-content'
         },
+        /**
+         * General size: s,m,l
+         */
         size: {
             type: String as PropType<TInputSizes>,
             default: InputSizes.l
         },
+        /**
+         * Input placeholder
+         */
         placeholder: {
             type: String,
             default: ''
         },
+        /**
+         * Text to be displayed above the input as title
+         */
         title: {
             type: String,
             default: ''
         },
+        /**
+         * Whether or not this field is required
+         */
         required: {
             type: Boolean,
             default: false
         },
+        /**
+         * Whether or not this field is optional
+         */
         optional: {
             type: Boolean,
             default: false
         },
+        /**
+         * Text to be displayed in a tooltip while hovering over the info icon
+         */
         tooltip: {
             type: String,
             default: ''
         },
+        /**
+         * Type "password" will mask the characters
+         */
         type: {
             type: String,
             default: 'text'
         },
+        /**
+         * Message displayed above the input
+         */
         topMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Input will have a red asterisk
+         */
         redAsterisk: {
             type: Boolean,
             default: false
         },
+        /**
+         * Message to be displayed when in info mode
+         */
         infoMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Message to be displayed when in error mode
+         */
         errorMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Input will be in error mode
+         */
         error: {
             type: Boolean,
             default: false
         },
+        /**
+         * Message to be displayed when in warning mode
+         */
         warningMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Input will be in warning mode
+         */
         warning: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be disabled
+         */
         disabled: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be readonly
+         */
         readonly: {
             type: Boolean,
             default: false
         },
+        /**
+         * Maximum amount of characters the user can type
+         */
         maxLength: {
             type: Number,
             default: null
         },
+        /**
+         * Input will show a counter for how many characters have been typed
+         */
         showCounter: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be in dense mode
+         */
         dense: Boolean,
+        /**
+         * Input will not have a clear text button
+         */
         hideClearButton: {
             type: Boolean,
             default: false
         },
+        /**
+         * Count the characters backwards
+         */
         counterReverse: {
             type: Boolean,
             default: false
         },
+        /**
+         * An array of InputSuggestion objects containing the suggestions the input will show while typing
+         */
         autoSuggestItems: {
             type: Array as PropType<InputSuggestion[]>,
             default: (): InputSuggestion[] => []
         },
+        /**
+         * Highlight when a suggestion is matched
+         */
         highlightMatches: {
             type: Boolean,
             default: false
         },
+        /**
+         * Width of the suggestion menu
+         */
         suggestMenuWidth: {
             type: String,
             default: 'auto'
         },
+        /**
+         * Tooltip showed when hovering over the clear button
+         */
         clearButtonTooltip: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be  in fit-content mode
+         */
         fitContent: Boolean,
+        /**
+         * CSS margin for input
+         */
         margin: {
             type: String,
             default: null
         },
-        debounce: {
-            type: Number,
-            default: 100
-        },
+        /**
+         * The color of the highlighted text
+         */
         syntaxHighlightColor: {
             type: String,
             default: 'var(--dl-color-secondary)'
@@ -554,7 +654,7 @@ export default defineComponent({
             return (
                 word.startsWith('@') ||
                 props.autoSuggestItems.some(
-                    (s) => s.suggestion.trim() === word.trim()
+                    (s) => s.suggestion?.trim() === word?.trim()
                 )
             )
         }
