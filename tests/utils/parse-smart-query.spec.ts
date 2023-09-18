@@ -156,3 +156,48 @@ describe('stringifySmartQuery', () => {
         expect(result).toEqual(string)
     })
 })
+
+describe(replaceJSDatesWithStringifiedDates.name, () => {
+    const time = 1685059200000
+    const date = '26/05/2023'
+
+    it('should work on a simple object', () => {
+        const obj = {
+            createdAt: time
+        }
+        const result = replaceJSDatesWithStringifiedDates(obj, ['createdAt'])
+        expect(result).toEqual({
+            createdAt: date
+        })
+    })
+
+    it('should work on a nested object', () => {
+        const obj = {
+            createdAt: time,
+            nested: {
+                createdAt: time
+            }
+        }
+        const result = replaceJSDatesWithStringifiedDates(obj, ['createdAt'])
+        expect(result).toEqual({
+            createdAt: date,
+            nested: {
+                createdAt: date
+            }
+        })
+    })
+
+    it('should work with $ operators', () => {
+        const obj = {
+            createdAt: {
+                $gt: time
+            }
+        }
+        const result = replaceJSDatesWithStringifiedDates(obj, ['createdAt'])
+        expect(result).toEqual({
+            createdAt: {
+                $gt: date
+            }
+        })
+    })
+})

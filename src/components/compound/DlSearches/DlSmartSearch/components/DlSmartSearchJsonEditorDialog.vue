@@ -1,5 +1,4 @@
 <template>
-    <!-- todo: Add support for saved queries-->
     <div>
         <dl-dialog-box
             v-model="isOpen"
@@ -21,10 +20,9 @@
                         style="margin-bottom: 10px"
                     >
                         <dl-select
-                            disabled
                             :model-value="selectedOption"
                             width="200px"
-                            :options="options"
+                            :options="selectOptions"
                             placeholder="New Query"
                             @update:model-value="onQuerySelect"
                         />
@@ -48,7 +46,7 @@
             <template #footer>
                 <div class="json-editor-footer">
                     <dl-button
-                        :disabled="true || canDelete"
+                        :disabled="!hasActiveFilter"
                         icon="icon-dl-delete"
                         label="Delete Query"
                         flat
@@ -58,15 +56,18 @@
                     />
                     <div class="json-editor-footer-actions">
                         <dl-button
-                            disabled
                             style="margin-right: 14px"
                             outlined
                             label="Save As"
                             @click="showSaveDialog = true"
                         />
                         <dl-button
-                            label="Search"
-                            @click="search"
+                            :label="
+                                hasActiveFilter ? 'Save & Search' : 'Search'
+                            "
+                            @click="
+                                () => (hasActiveFilter ? saveQuery() : search())
+                            "
                         />
                     </div>
                 </div>
@@ -97,6 +98,7 @@
                     <dl-button
                         :disabled="!newQueryName"
                         outlined
+                        style="margin-right: 5px"
                         @click="saveQuery"
                     >
                         Save
@@ -124,7 +126,8 @@
                     size="h3"
                     style="display: flex; justify-content: center"
                 >
-                    Are you sure you want to delete {{ selectedOption.label }}?
+                    Are you sure you want to delete
+                    {{ selectedOption.label }}?
                 </dl-typography>
             </template>
             <template #footer>
@@ -146,8 +149,6 @@ import {
     toRefs,
     computed,
     nextTick,
-    onMounted,
-    getCurrentInstance,
     watch
 } from 'vue-demi'
 import { DlSelect } from '../../../DlSelect'
@@ -158,8 +159,8 @@ import { DlJsonEditor } from '../../../DlJsonEditor'
 import { DlTypography } from '../../../../essential'
 import { DlInput } from '../../../DlInput'
 import { stateManager } from '../../../../../StateManager'
-import { isEqual } from 'lodash'
-import { registerToWindow } from '../../../../../utils'
+import { cloneDeep, isEqual, uniqBy } from 'lodash'
+import { DlSmartSearchFilter } from '../types'
 
 export default defineComponent({
     components: {
@@ -183,43 +184,104 @@ export default defineComponent({
         },
         json: {
             required: true,
-            type: String
+            type: Object as PropType<Record<string, any>>
         },
         options: {
             required: false,
             type: Array as PropType<DlSelectOption[]>,
             default: () => [] as DlSelectOption[]
+        },
+        selectedFilter: {
+            required: false,
+            type: String,
+            default: null
         }
     },
-    emits: ['update:modelValue', 'search', 'change', 'update:options'],
+    emits: [
+        'update:modelValue',
+        'search',
+        'change',
+        'update:options',
+        'save',
+        'delete',
+        'select'
+    ],
     setup(props, { emit }) {
-        const { modelValue, options, json } = toRefs(props)
+        const { modelValue, options, json, selectedFilter } = toRefs(props)
 
         const isOpen = computed({
             get: () => modelValue.value,
             set: (val) => emit('update:modelValue', val)
         })
 
+        const currentQuery = ref<{ [key: string]: any }>(cloneDeep(json.value))
         const jsonEditor = ref<any>(null)
         const showSaveDialog = ref(false)
         const showDeleteDialog = ref(false)
-        const stringifiedJSON = ref(json.value)
         const newQueryName = ref('')
+
+        const selectOptions = computed<DlSelectOption[]>(() => {
+            return uniqBy(
+                [
+                    {
+                        label: 'New Query',
+                        value: cloneDeep(json.value ?? {})
+                    }
+                ].concat(options.value),
+                'label'
+            )
+        })
         const selectedOption = ref<DlSelectOption>(
-            options.value.find((o) => isEqual(o.value, json.value)) ?? {
+            options.value.find((o) => isEqual(o.value, currentQuery.value)) ?? {
                 label: 'New Query',
-                value: json.value
+                value: currentQuery.value
             }
         )
 
+        watch(
+            selectedFilter,
+            () => {
+                selectedOption.value = options.value.find(
+                    (o) => o.label === selectedFilter.value
+                ) ?? {
+                    label: 'New Query',
+                    value: currentQuery.value
+                }
+
+                if (selectedOption.value.label !== 'New Query') {
+                    currentQuery.value = cloneDeep(selectedOption.value.value)
+                }
+            },
+            { immediate: true }
+        )
+
         const alignJSON = () => {
-            jsonEditor.value.format()
+            jsonEditor.value?.format()
         }
 
         const onQuerySelect = (option: DlSelectOption) => {
-            selectedOption.value = option
-            stringifiedJSON.value = option.value
+            if (option.label === selectedOption.value.label) {
+                return
+            }
+
+            selectedOption.value = cloneDeep(option)
+            currentQuery.value = cloneDeep(option.value)
+            nextTick(() => {
+                alignJSON()
+                // wtf oa ?
+                nextTick(() => {
+                    alignJSON()
+                })
+            })
+            emit('select', option)
         }
+
+        const stringifiedJSON = computed<string>({
+            get: () => JSON.stringify(currentQuery.value),
+            set: (val) => {
+                currentQuery.value = toObject(val)
+            }
+        })
 
         const toObject = (json: string) => {
             try {
@@ -231,9 +293,8 @@ export default defineComponent({
         }
 
         const search = () => {
-            const parsed = toObject(stringifiedJSON.value)
-            if (!parsed) return
-            emit('search', parsed)
+            if (!currentQuery.value) return
+            emit('search', currentQuery.value)
             isOpen.value = false
         }
 
@@ -244,16 +305,23 @@ export default defineComponent({
         }
 
         const saveQuery = (searchAfterSave = false) => {
-            const newOptions = options.value.concat([
-                {
-                    label: newQueryName.value,
-                    value: stringifiedJSON.value
-                }
-            ])
+            let toSave: DlSmartSearchFilter = hasActiveFilter.value
+                ? selectedOption.value
+                : ({} as DlSmartSearchFilter)
+            toSave = Object.assign({}, toSave, {
+                label: hasActiveFilter.value
+                    ? selectedOption.value.label
+                    : newQueryName.value,
+                value: currentQuery.value
+            })
 
+            const newOptions = options.value.concat([toSave])
+
+            emit('save', toSave)
             emit('update:options', newOptions)
 
             showSaveDialog.value = false
+            newQueryName.value = ''
             nextTick(() => {
                 if (searchAfterSave) {
                     search()
@@ -261,25 +329,38 @@ export default defineComponent({
             })
         }
 
-        const canDelete = computed(
+        const hasActiveFilter = computed(
             () => selectedOption.value.label !== 'New Query'
         )
 
         const deleteQuery = () => {
+            const toDelete = options.value.find(
+                (o: DlSelectOption) => o.label === selectedOption.value.label
+            )
             const newOptions = options.value.filter(
-                (o: DlSelectOption) => o.value !== selectedOption.value.label
+                (o: DlSelectOption) => o.label !== selectedOption.value.label
             )
 
+            emit('delete', toDelete)
             emit('update:options', newOptions)
             selectedOption.value = {
                 label: 'New Query',
-                value: '{}'
+                value: {}
             }
+            currentQuery.value = {}
             showDeleteDialog.value = false
         }
 
         watch(json, () => {
-            stringifiedJSON.value = json.value
+            currentQuery.value = cloneDeep(json.value)
+            nextTick(() => {
+                alignJSON()
+            })
+        })
+        watch(isOpen, () => {
+            nextTick(() => {
+                alignJSON()
+            })
         })
 
         return {
@@ -288,11 +369,12 @@ export default defineComponent({
             showSaveDialog,
             stringifiedJSON,
             selectedOption,
-            canDelete,
+            hasActiveFilter,
             alignJSON,
             onQuerySelect,
             newQueryName,
             showDeleteDialog,
+            selectOptions,
             search,
             onChange,
             saveQuery,
