@@ -10,19 +10,32 @@
         @dblclick="onTrDoubleClick($event, row, rowIndex)"
         @contextmenu="onTrContextMenu($event, row, rowIndex)"
     >
-        <td v-if="hasDraggableRows" style="width: 25px">
-            <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
+        <td
+            v-if="hasDraggableRows"
+            style="width: 25px"
+        >
+            <dl-icon
+                class="draggable-icon"
+                icon="icon-dl-drag"
+                size="12px"
+            />
         </td>
         <td style="width: 12px">
             <DlIcon
                 v-if="(row.children || []).length > 0"
                 style="margin-right: 5px"
-                :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
+                :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
                 @click="emitUpdateExpandedRow"
             />
         </td>
-        <td v-if="hasSelectionMode" class="dl-table--col-auto-with">
-            <slot name="body-selection" v-bind="bindBodySelection">
+        <td
+            v-if="hasSelectionMode"
+            class="dl-table--col-auto-with"
+        >
+            <slot
+                name="body-selection"
+                v-bind="bindBodySelection"
+            >
                 <DlCheckbox
                     style="padding-left: 10px"
                     :color="color"
@@ -42,11 +55,11 @@
             :class="col.tdClass(row)"
             :style="
                 col.tdStyle(row) +
-                `padding-left: ${setTrPadding(
-                    level,
-                    (row.children || []).length > 0,
-                    colIndex
-                )}px;`
+                    `padding-left: ${setTrPadding(
+                        level,
+                        (row.children || []).length > 0,
+                        colIndex
+                    )}px;`
             "
         >
             <!-- <template #icon="{}">
@@ -175,6 +188,8 @@ export default defineComponent({
             }
         )
 
+        console.log({ row: row.value.name, level: props.level })
+
         const emitRowClick = (
             event: MouseEvent,
             row: Record<string, any>,
@@ -207,12 +222,11 @@ export default defineComponent({
             let styles = ''
             if (colIndex === 0) {
                 styles = 'max-width: 100px; box-sizing: border-box;'
-                styles =
-                    styles +
-                    setTrSpacing({
-                        ...row,
-                        colIndex
-                    })
+                // styles = styles
+                // setTrSpacing({
+                //     ...row,
+                //     colIndex
+                // })
             }
 
             return styles

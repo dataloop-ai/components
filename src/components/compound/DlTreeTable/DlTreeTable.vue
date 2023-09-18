@@ -98,11 +98,10 @@ export default defineComponent({
             rowsArr.some((o) => {
                 if (getRowKey.value(o) === name) {
                     if (isVue2) {
-                        set(o, 'expanded', isExpanded)
+                        set(o, 'isExpanded', isExpanded)
                     } else {
-                        o.expanded = isExpanded
+                        o.isExpanded = isExpanded
                     }
-                    // o.expanded = isExpanded
                     updateNestedRows(o, isExpanded)
                 } else {
                     if ((o.children || []).length > 0) {
@@ -122,16 +121,16 @@ export default defineComponent({
                         // r.isExpandedParent = isExpanded
 
                         if (isVue2) {
-                            set(r, 'isExpandedParent', isExpanded)
+                            set(r, 'isExpanded', isExpanded)
                         } else {
-                            r.isExpandedParent = isExpanded
+                            r.isExpanded = isExpanded
                         }
 
                         if (!isExpanded) {
                             if (isVue2) {
-                                set(r, 'expanded', isExpanded)
+                                set(r, 'isExpanded', isExpanded)
                             } else {
-                                r.expanded = isExpanded
+                                r.isExpanded = isExpanded
                             }
 
                             // r.expanded = isExpanded
@@ -289,10 +288,8 @@ export default defineComponent({
                         row,
                         index
                     ),
-                    onUpdateExpandedRow: updateExpandedRow(
-                        !row.expanded,
-                        getRowKey.value(row)
-                    )
+                    onUpdateExpandedRow: () =>
+                        updateExpandedRow(!row.isExpanded, getRowKey.value(row))
                 },
                 () => children
             )
@@ -346,7 +343,13 @@ export default defineComponent({
                     )
                 )
 
-                const childrenTrWrapper = renderComponent('tr', {}, tdEl)
+                const childrenTrWrapper = renderComponent(
+                    'tr',
+                    {
+                        class: row.isExpanded ? '' : 'display-none'
+                    },
+                    tdEl
+                )
 
                 children.push(childrenTrWrapper)
             }
@@ -421,16 +424,16 @@ export default defineComponent({
                     'tbody',
                     // props.draggable ? Sortable : 'tbody',
                     {
-                        list: [row],
-                        itemKey: getRowKey.value,
-                        tag: 'tbody',
-                        options: {
-                            handle: '.draggable-icon',
-                            swap: true,
-                            animation: 120,
-                            fallbackOnBody: true,
-                            swapThreshold: 0.85
-                        }
+                        // list: [row],
+                        // itemKey: getRowKey.value,
+                        // tag: 'tbody',
+                        // options: {
+                        //     handle: '.draggable-icon',
+                        //     swap: true,
+                        //     animation: 120,
+                        //     fallbackOnBody: true,
+                        //     swapThreshold: 0.85
+                        // }
                     },
                     // {
                     //     // item: ({ element, index }) => renderTr(element, index)

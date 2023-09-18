@@ -1,18 +1,40 @@
 <template>
-    <div :id="uuid" ref="rootRef" :class="containerClass">
-        <div ref="dragRef" class="dl-table__drag" />
+    <div
+        :id="uuid"
+        ref="rootRef"
+        :class="containerClass"
+    >
+        <div
+            ref="dragRef"
+            class="dl-table__drag"
+        />
         <!-- Top Slots -->
-        <div v-if="hasTopSlots" class="dl-table__top row items-center">
-            <slot v-bind="marginalsScope" name="top">
+        <div
+            v-if="hasTopSlots"
+            class="dl-table__top row items-center"
+        >
+            <slot
+                v-bind="marginalsScope"
+                name="top"
+            >
                 <slot
                     v-if="hasTopSelectionMode"
                     v-bind="marginalsScope"
                     name="top-selection"
                 />
 
-                <div v-else class="dl-table__control">
-                    <slot name="top-left" v-bind="marginalsScope">
-                        <div v-if="title" class="dl-table__control">
+                <div
+                    v-else
+                    class="dl-table__control"
+                >
+                    <slot
+                        name="top-left"
+                        v-bind="marginalsScope"
+                    >
+                        <div
+                            v-if="title"
+                            class="dl-table__control"
+                        >
                             <div :class="titleClasses">
                                 {{ title }}
                             </div>
@@ -22,7 +44,10 @@
 
                 <div class="dl-table__separator col" />
                 <div class="dl-table__control">
-                    <slot name="top-right" v-bind="marginalsScope" />
+                    <slot
+                        name="top-right"
+                        v-bind="marginalsScope"
+                    />
                 </div>
             </slot>
         </div>
@@ -118,14 +143,20 @@
                                 :colspan="computedColspan"
                                 class="relative-position"
                             >
-                                <dl-progress-bar indeterminate :color="color" />
+                                <dl-progress-bar
+                                    indeterminate
+                                    :color="color"
+                                />
                             </th>
                         </tr>
                     </slot>
                 </thead>
             </template>
             <template #default="props">
-                <slot name="table-body" v-bind="props">
+                <slot
+                    name="table-body"
+                    v-bind="props"
+                >
                     <template v-if="!isEmpty && !hasSlotBody">
                         <slot
                             v-bind="
@@ -149,8 +180,8 @@
                                     isRowSelected(getRowKey(props.item))
                                         ? 'selected'
                                         : hasAnyAction
-                                        ? ' cursor-pointer'
-                                        : ''
+                                            ? ' cursor-pointer'
+                                            : ''
                                 "
                                 :no-hover="noHover"
                                 @click="
@@ -267,8 +298,14 @@
         </DlVirtualScroll>
         <!--  -->
 
-        <div v-else class="dl-table__middle scroll">
-            <table class="dl-table" :class="additionalClasses">
+        <div
+            v-else
+            class="dl-table__middle scroll"
+        >
+            <table
+                class="dl-table"
+                :class="additionalClasses"
+            >
                 <thead>
                     <slot
                         v-if="!hideHeader"
@@ -372,7 +409,10 @@
                                 :colspan="computedColspan"
                                 class="relative-position"
                             >
-                                <dl-progress-bar indeterminate :color="color" />
+                                <dl-progress-bar
+                                    indeterminate
+                                    :color="color"
+                                />
                             </th>
                         </tr>
                     </slot>
@@ -385,8 +425,14 @@
                     }"
                 >
                     <tbody class="dl-virtual-scroll__content">
-                        <slot name="top-row" :cols="computedCols" />
-                        <slot name="table-body" :computed-rows="computedRows">
+                        <slot
+                            name="top-row"
+                            :cols="computedCols"
+                        />
+                        <slot
+                            name="table-body"
+                            :computed-rows="computedRows"
+                        >
                             <slot
                                 v-for="(row, pageIndex) in computedRows"
                                 v-bind="
@@ -410,8 +456,8 @@
                                         isRowSelected(getRowKey(row))
                                             ? 'selected'
                                             : hasAnyAction
-                                            ? ' cursor-pointer'
-                                            : ''
+                                                ? ' cursor-pointer'
+                                                : ''
                                     "
                                     :no-hover="noHover"
                                     @click="onTrClick($event, row, pageIndex)"
@@ -493,160 +539,6 @@
                                         </slot>
                                     </DlTd>
                                 </DlTr>
-                                <tr :key="getRowKey(row)">
-                                    <td
-                                        :colspan="computedColspan"
-                                        style="padding: 0"
-                                    >
-                                        <table>
-                                            <tbody>
-                                                <DlTr
-                                                    v-if="!isEmpty"
-                                                    :key="getRowKey(row)"
-                                                    style="
-                                                        width: 100%;
-                                                        max-width: 100%;
-                                                        border-collapse: separate;
-                                                        border-spacing: 0;
-                                                    "
-                                                    :has-any-action="
-                                                        hasAnyAction
-                                                    "
-                                                    :class="
-                                                        isRowSelected(
-                                                            getRowKey(row)
-                                                        )
-                                                            ? 'selected'
-                                                            : hasAnyAction
-                                                            ? ' cursor-pointer'
-                                                            : ''
-                                                    "
-                                                    :no-hover="noHover"
-                                                    @click="
-                                                        onTrClick(
-                                                            $event,
-                                                            row,
-                                                            pageIndex
-                                                        )
-                                                    "
-                                                    @dblclick="
-                                                        onTrDblClick(
-                                                            $event,
-                                                            row,
-                                                            pageIndex
-                                                        )
-                                                    "
-                                                    @contextmenu="
-                                                        onTrContextMenu(
-                                                            $event,
-                                                            row,
-                                                            pageIndex
-                                                        )
-                                                    "
-                                                >
-                                                    <td
-                                                        v-if="hasDraggableRows"
-                                                        class="dl-table__drag-icon"
-                                                        style="width: 25px"
-                                                    >
-                                                        <dl-icon
-                                                            class="draggable-icon"
-                                                            icon="icon-dl-drag"
-                                                            size="12px"
-                                                        />
-                                                    </td>
-                                                    <td
-                                                        v-if="hasSelectionMode"
-                                                        class="dl-table--col-auto-with"
-                                                    >
-                                                        <slot
-                                                            name="body-selection"
-                                                            v-bind="
-                                                                getBodySelectionScope(
-                                                                    {
-                                                                        key: getRowKey(
-                                                                            row
-                                                                        ),
-                                                                        row,
-                                                                        pageIndex
-                                                                    }
-                                                                )
-                                                            "
-                                                        >
-                                                            <DlCheckbox
-                                                                :color="color"
-                                                                :model-value="
-                                                                    isRowSelected(
-                                                                        getRowKey(
-                                                                            row
-                                                                        )
-                                                                    )
-                                                                "
-                                                                @update:model-value="
-                                                                    (
-                                                                        adding,
-                                                                        evt
-                                                                    ) =>
-                                                                        updateSelection(
-                                                                            [
-                                                                                getRowKey(
-                                                                                    row
-                                                                                )
-                                                                            ],
-                                                                            [
-                                                                                row
-                                                                            ],
-                                                                            adding,
-                                                                            evt
-                                                                        )
-                                                                "
-                                                            />
-                                                        </slot>
-                                                    </td>
-                                                    <DlTd
-                                                        v-for="col in computedCols"
-                                                        :key="col.name"
-                                                        :class="
-                                                            col.tdClass(row)
-                                                        "
-                                                        :style="
-                                                            col.tdStyle(row)
-                                                        "
-                                                    >
-                                                        <slot
-                                                            v-bind="
-                                                                getBodyCellScope(
-                                                                    {
-                                                                        key: getRowKey(
-                                                                            row
-                                                                        ),
-                                                                        row,
-                                                                        pageIndex,
-                                                                        col
-                                                                    }
-                                                                )
-                                                            "
-                                                            :name="
-                                                                hasSlotByName(
-                                                                    `body-cell-${col.name}`
-                                                                )
-                                                                    ? `body-cell-${col.name}`
-                                                                    : 'body-cell'
-                                                            "
-                                                        >
-                                                            {{
-                                                                getCellValue(
-                                                                    col,
-                                                                    row
-                                                                )
-                                                            }}
-                                                        </slot>
-                                                    </DlTd>
-                                                </DlTr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
                             </slot>
                         </slot>
 
@@ -667,13 +559,19 @@
                                 </div>
                             </DlTd>
                         </DlTr>
-                        <slot name="bottom-row" :cols="computedCols" />
+                        <slot
+                            name="bottom-row"
+                            :cols="computedCols"
+                        />
                     </tbody>
                 </slot>
             </table>
         </div>
 
-        <div v-if="!hideBottom" :class="bottomClasses">
+        <div
+            v-if="!hideBottom"
+            :class="bottomClasses"
+        >
             <div
                 v-if="nothingToDisplay && !hideNoData"
                 class="dl-table__control"
@@ -682,8 +580,14 @@
                     {{ noDataMessage }}
                 </slot>
             </div>
-            <div v-else class="dl-table__control">
-                <slot name="bottom" v-bind="marginalsScope">
+            <div
+                v-else
+                class="dl-table__control"
+            >
+                <slot
+                    name="bottom"
+                    v-bind="marginalsScope"
+                >
                     <div
                         v-if="hasBotomSelectionBanner"
                         class="dl-table__control"
@@ -693,7 +597,10 @@
                         </div>
                     </div>
 
-                    <slot name="pagination" v-bind="marginalsScope">
+                    <slot
+                        name="pagination"
+                        v-bind="marginalsScope"
+                    >
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
@@ -710,7 +617,10 @@
             </div>
         </div>
 
-        <slot v-if="loading" name="loading" />
+        <slot
+            v-if="loading"
+            name="loading"
+        />
     </div>
 </template>
 

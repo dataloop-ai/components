@@ -6,12 +6,9 @@ let renderComponent: (
     slots: any
 ) => VueDemiModule.VNode
 
-let renderFunction
-
 const VueDemi: any = VueDemiModule
 
 if (VueDemi.isVue3) {
-    renderFunction = VueDemi.h
     renderComponent = function (component, props, slots) {
         return VueDemi.h(component, props, slots)
     }
@@ -25,7 +22,7 @@ export function removeElement(el: Element) {
     }
 }
 
-export { renderComponent, renderFunction }
+export { renderComponent }
 
 // <template>
 //     <DlTable

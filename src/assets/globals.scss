@@ -14,9 +14,14 @@ body {
     background-color: var(--dl-color-bg);
 }
 
+
 // tranform
 .rotate-180 {
     transform: rotate(180deg);
+}
+
+.display-none {
+    display: none !important;
 }
 
 .text {
@@ -34,21 +39,26 @@ body {
 }
 
 .dl-text-transform {
-    &--uppercase{
+    &--uppercase {
         text-transform: uppercase;
     }
-    &--lowercase{
+
+    &--lowercase {
         text-transform: lowercase;
     }
-    &--capitalize{
+
+    &--capitalize {
         text-transform: capitalize;
     }
-    &--none{
+
+    &--none {
         text-transform: none;
     }
+
     &--default {
+
         &,
-        & > * {
+        &>* {
             text-transform: capitalize;
         }
     }
@@ -150,6 +160,7 @@ body {
 .full-width {
     width: 100%;
 }
+
 .full-height {
     height: 100%;
 }
@@ -339,7 +350,9 @@ html {
 [disabled] {
     opacity: 0.6 !important;
 }
-[disabled], [disabled] * {
+
+[disabled],
+[disabled] * {
     outline: 0 !important;
     cursor: not-allowed !important;
 }
