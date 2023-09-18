@@ -7,6 +7,6 @@ export const KEY_CODE = {
     UP: 38
 } as const
 
-export type KEY_CODE = typeof KEY_CODE[keyof typeof KEY_CODE]
+export type KEY_CODE = (typeof KEY_CODE)[keyof typeof KEY_CODE]
 
 export const keyCodes = Object.values(KEY_CODE)
