@@ -17,6 +17,7 @@
             :highlight-matches="highlightMatches"
             :dense="dense"
             :suggest-menu-width="suggestMenuWidth"
+            :debounce="debounce"
             @input="onChange"
             @focus="onFocus"
             @blur="onBlur"
@@ -88,7 +89,8 @@ export default defineComponent({
         highlightMatches: { type: Boolean, default: false },
         dense: { type: Boolean, default: false },
         withSearchButton: { type: Boolean, default: false },
-        suggestMenuWidth: { type: String, default: 'auto' }
+        suggestMenuWidth: { type: String, default: 'auto' },
+        debounce: { type: Number, default: 0 }
     },
     emits: [
         'input',
@@ -152,6 +154,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 100%;
+    gap: 10px;
 }
 
 .text-input-area {

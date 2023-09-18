@@ -143,7 +143,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, ref } from 'vue-demi'
 import { DlInput, DlButton, DlIcon } from '../components'
-import { InputFile } from '../components/compound/DlInput/types'
+import { DlInputFile } from '../components/compound/DlInput/types'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
@@ -159,7 +159,7 @@ export default defineComponent({
         const errorFieldValue = ref<string>('')
         const saveInputValue = ref<string>('')
 
-        const files = ref<InputFile[]>([])
+        const files = ref<DlInputFile[]>([])
         const addFile = (e: Event) => {
             const input = e.target as HTMLInputElement
             const file = input.files[0]
@@ -180,7 +180,7 @@ export default defineComponent({
             }
             input.value = ''
         }
-        const updateFiles = (val: InputFile[]) => {
+        const updateFiles = (val: DlInputFile[]) => {
             console.log(val)
             files.value = val
         }

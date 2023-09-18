@@ -3,7 +3,7 @@ import {
     getSelectionOffset,
     setSelectionOffset
 } from '../../../utils'
-import { InputSuggestion } from './types'
+import { DlInputSuggestion } from './types'
 
 export function addEventListenersToElement(
     element: HTMLElement,
@@ -29,7 +29,10 @@ export function setInnerHTMLWithCursor(
     setSelectionOffset(inputEl, start, end)
 }
 
-export function getSuggestItems(suggestions: InputSuggestion[], text: string) {
+export function getSuggestItems(
+    suggestions: DlInputSuggestion[],
+    text: string
+) {
     if (!text.trim()) {
         return suggestions
     }

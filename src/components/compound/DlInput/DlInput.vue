@@ -334,7 +334,7 @@ import {
 } from './utils'
 import { v4 } from 'uuid'
 import { setCaretAtTheEnd } from '../../../utils'
-import { InputFile, InputSuggestion } from './types'
+import { DlInputFile, DlInputSuggestion } from './types'
 import InputFileElement from './components/InputFileElement.vue'
 import { stateManager } from '../../../StateManager'
 
@@ -370,8 +370,8 @@ export default defineComponent({
          * An array of InputFile objects contained and modeled in the input
          */
         files: {
-            type: Array as PropType<InputFile[]>,
-            default: (): InputFile[] => []
+            type: Array as PropType<DlInputFile[]>,
+            default: (): DlInputFile[] => []
         },
         /**
          * Input height
@@ -556,8 +556,8 @@ export default defineComponent({
          * An array of InputSuggestion objects containing the suggestions the input will show while typing
          */
         autoSuggestItems: {
-            type: Array as PropType<InputSuggestion[]>,
-            default: (): InputSuggestion[] => []
+            type: Array as PropType<DlInputSuggestion[]>,
+            default: (): DlInputSuggestion[] => []
         },
         /**
          * Highlight when a suggestion is matched
@@ -597,6 +597,13 @@ export default defineComponent({
         syntaxHighlightColor: {
             type: String,
             default: 'var(--dl-color-secondary)'
+        },
+        /**
+         * Debounce time for input
+         */
+        debounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: [
@@ -613,7 +620,7 @@ export default defineComponent({
         const mouseOverClear = ref(false)
         const highlightedIndex = ref(-1)
         const isMenuOpen = ref(false)
-        const suggestItems = computed<InputSuggestion[]>(() => {
+        const suggestItems = computed<DlInputSuggestion[]>(() => {
             if (!props.modelValue) return []
             return getSuggestItems(
                 props.autoSuggestItems,
@@ -638,7 +645,7 @@ export default defineComponent({
             }
         }
 
-        const emitAddFile = (file: InputFile) => {
+        const emitAddFile = (file: DlInputFile) => {
             const newFiles = cloneDeep(props.files)
             newFiles.push(file)
             emit('file-update', newFiles)
@@ -833,7 +840,10 @@ export default defineComponent({
             if (stateManager.disableDebounce) {
                 return this.onBlur.bind(this)
             }
-            const debounced = debounce(this.onBlur.bind(this), 50)
+            const debounced = debounce(
+                this.onBlur.bind(this),
+                this.debounce ?? 50
+            )
             return debounced
         },
         inputLength(): number {
@@ -880,10 +890,10 @@ export default defineComponent({
                 return
             }
         },
-        onClick(e: Event, item: InputSuggestion) {
+        onClick(e: Event, item: DlInputSuggestion) {
             this.onAutoSuggestClick(e, item.suggestion)
         },
-        onChange(e: InputEvent): void {
+        onChange(e: Event): void {
             this.isMenuOpen = true
             this.updateSyntax()
             const target = e.target as HTMLElement
@@ -908,11 +918,11 @@ export default defineComponent({
                 })
             })
         },
-        handleZoomImage(file: InputFile) {
+        handleZoomImage(file: DlInputFile) {
             this.currentZoomImage = file.image
             this.zoomImageModel = true
         },
-        handleRenameFileModal(file: InputFile) {
+        handleRenameFileModal(file: DlInputFile) {
             this.currentFile = file
             this.renameFileModel = true
         },
@@ -1183,6 +1193,16 @@ export default defineComponent({
 
         &--both-adornments {
             width: calc(100% - 28px - 28px);
+        }
+
+        &--l {
+            line-height: 16px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        &--large {
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         &--m {

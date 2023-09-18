@@ -1,10 +1,10 @@
-export interface InputSuggestion {
+export interface DlInputSuggestion {
     suggestion: string
     image: string
     click: boolean
 }
 
-export interface InputFile {
+export interface DlInputFile {
     id: string
     name: string
     image: string

@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import { InputFile } from '../types'
+import { DlInputFile } from '../types'
 import { DlIcon } from '../../../essential'
 export default defineComponent({
     components: {
@@ -52,7 +52,7 @@ export default defineComponent({
     },
     props: {
         file: {
-            type: Object as PropType<InputFile>,
+            type: Object as PropType<DlInputFile>,
             default: null
         }
     },
