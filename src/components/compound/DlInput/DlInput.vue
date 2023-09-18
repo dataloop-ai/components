@@ -70,6 +70,15 @@
                 <div class="row center full-width full-height">
                     <div :class="wrapperClasses">
                         <div
+                            v-if="hasPrepend"
+                            :class="[
+                                ...adornmentClasses,
+                                'dl-input__adornment-container--pos-left'
+                            ]"
+                        >
+                            <slot name="prepend" />
+                        </div>
+                        <div
                             ref="input"
                             :contenteditable="!readonly"
                             :class="inputClasses"
@@ -82,15 +91,6 @@
                             @paste="handlePaste"
                         >
                             <span v-if="readonly">{{ modelValue }}</span>
-                        </div>
-                        <div
-                            v-if="hasPrepend"
-                            :class="[
-                                ...adornmentClasses,
-                                'dl-input__adornment-container--pos-left'
-                            ]"
-                        >
-                            <slot name="prepend" />
                         </div>
                         <div
                             :class="[
@@ -1074,7 +1074,6 @@ export default defineComponent({
         width: 100%;
 
         &--prepend {
-            padding-left: 28px;
             width: calc(100% - 10px - 28px);
         }
 
