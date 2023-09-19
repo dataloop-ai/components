@@ -917,10 +917,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .root-container {
     width: var(--dl-select-width);
-    &--s {
-        display: flex;
-        align-items: center;
-    }
+    &--s,
     &--small {
         display: flex;
         align-items: center;
@@ -935,9 +932,10 @@ export default defineComponent({
         align-items: center;
         color: var(--dl-color-lighter);
 
+        &--s,
         &--small {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin-bottom: 0;
+            margin-right: 4px;
         }
     }
 
