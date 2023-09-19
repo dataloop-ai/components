@@ -137,6 +137,43 @@
                 </template>
             </dl-input>
         </div>
+
+        <p>input with tooltip and no title</p>
+        <div>
+            <dl-input
+                class="input-parts"
+                placeholder="Select option"
+                tooltip="test me tooltip"
+            >
+                <template #action>
+                    <dl-button
+                        dense
+                        flat
+                        icon="icon-dl-add"
+                        size="m"
+                    />
+                </template>
+            </dl-input>
+        </div>
+
+        <p>input with tooltip and no title size small</p>
+        <div>
+            <dl-input
+                class="input-parts"
+                placeholder="Select option"
+                tooltip="test me tooltip"
+                size="small"
+            >
+                <template #action>
+                    <dl-button
+                        dense
+                        flat
+                        icon="icon-dl-add"
+                        size="m"
+                    />
+                </template>
+            </dl-input>
+        </div>
     </div>
 </template>
 <script lang="ts">

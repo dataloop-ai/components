@@ -7,13 +7,13 @@ import {
 } from '../../../src/components/compound/DlTable/hooks/tablePagination'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-const pagination = reactive({
+const pagination = reactive<TablePagination>({
     sortBy: 'field',
     descending: false,
     page: 1,
     rowsPerPage: 10,
     rowsNumber: 50,
-    maxPages: 5
+    maxDisplayRange: 5
 })
 
 const emitFn = vi.fn()
@@ -63,10 +63,10 @@ describe('useTablePaginationState', () => {
 
         describe('otherwise', () => {
             it('should fix the wrong pagination params and emit the "update:pagination" event', () => {
-                const newPagination = {
+                const newPagination: TablePagination = {
                     ...pagination,
                     page: -1,
-                    maxPages: 8,
+                    maxDisplayRange: 8,
                     rowsPerPage: -20
                 }
                 setPagination(newPagination)
@@ -76,7 +76,7 @@ describe('useTablePaginationState', () => {
                     descending: false,
                     directionLinks: true,
                     itemsName: 'Rows',
-                    maxPages: 8,
+                    maxDisplayRange: 8,
                     min: 1,
                     page: 1,
                     rowsNumber: 50,
@@ -86,7 +86,7 @@ describe('useTablePaginationState', () => {
                     withLegend: true,
                     withQuickNavigation: true,
                     withRowsPerPage: true
-                })
+                } as TablePagination)
             })
         })
     })

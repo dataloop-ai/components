@@ -1089,11 +1089,10 @@ export default defineComponent({
         display: flex;
         align-items: center;
 
+        &--small,
         &--s {
-            margin: 4px auto auto;
-        }
-        &--small {
-            margin: 4px auto auto;
+            margin-bottom: 0;
+            margin-right: 4px;
         }
     }
 
