@@ -69,7 +69,6 @@ export function useTablePaginationState(
                     ? rowsPerPageOptions.value[0]
                     : 5,
                 min: 1,
-                // todo: calculate based on width of element
                 maxDisplayRange: 7,
                 boundaryNumbers: true,
                 boundaryLinks: true,

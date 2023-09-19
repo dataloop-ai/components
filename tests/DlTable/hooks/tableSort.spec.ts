@@ -28,7 +28,7 @@ const pagination: TablePagination = {
     page: 1,
     rowsPerPage: 10,
     rowsNumber: 50,
-    maxPages: 5
+    maxDisplayRange: 7
 }
 
 const colList: DlTableColumn[] = []

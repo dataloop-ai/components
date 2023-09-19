@@ -129,9 +129,9 @@ export default defineComponent({
             type: Number,
             required: true
         },
-        maxPages: {
+        maxDisplayRange: {
             type: Number,
-            default: 0,
+            default: 7,
             validator: (v: number) => v >= 0
         },
         disabled: Boolean,
@@ -235,26 +235,32 @@ export default defineComponent({
             this.ellipsesStart = false
             this.ellipsesEnd = false
 
-            let maxPages = Math.max(
-                this.maxPages,
+            let maxDisplayRange = Math.max(
+                this.maxDisplayRange,
                 3 + (this.boundaryNumbers ? 2 : 0)
             )
 
             this.pgFrom = this.boundaryNumbers ? this.min + 1 : this.min
             this.pgTo = this.boundaryNumbers ? this.max - 1 : this.max
 
-            if (this.maxPages && maxPages < this.max - this.min + 1) {
-                maxPages = 1 + Math.floor(maxPages / 2) * 2
+            if (
+                this.maxDisplayRange &&
+                maxDisplayRange < this.max - this.min + 1
+            ) {
+                maxDisplayRange = 1 + Math.floor(maxDisplayRange / 2) * 2
 
                 this.pgFrom = Math.max(
                     this.min,
                     Math.min(
-                        this.max - maxPages + 1,
-                        this.value - Math.floor(maxPages / 2)
+                        this.max - maxDisplayRange + 1,
+                        this.value - Math.floor(maxDisplayRange / 2)
                     )
                 )
 
-                this.pgTo = Math.min(this.max, this.pgFrom + maxPages - 1)
+                this.pgTo = Math.min(
+                    this.max,
+                    this.pgFrom + maxDisplayRange - 1
+                )
 
                 if (this.boundaryNumbers) {
                     this.pgFrom += 1

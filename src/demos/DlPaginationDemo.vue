@@ -14,8 +14,8 @@
                 title="max"
             />
             <dl-input
-                v-model="maxPages"
-                title="maxPages"
+                v-model="maxDisplayRange"
+                title="maxDisplayRange"
             />
             <dl-input
                 v-model="itemsName"
@@ -60,7 +60,7 @@
                 :boundary-numbers="boundaryNumbers"
                 :boundary-links="boundaryLinks"
                 :direction-links="directionLinks"
-                :max-pages="maxPages"
+                :max-display-range="maxDisplayRange"
                 :disabled="disabled"
                 :with-legend="withLegend"
                 :total-items="total"
@@ -101,7 +101,7 @@ export default defineComponent({
         return {
             page: 18,
             max: 119,
-            maxPages: 6,
+            maxDisplayRange: 6,
             rowsPerPage: 10,
             boundaryNumbers: true,
             boundaryLinks: true,

@@ -10,7 +10,7 @@ describe('DlPagination', () => {
         beforeAll(() => {
             wrapper = mount(DlPagination, {
                 props: {
-                    maxPages: 6,
+                    maxDisplayRange: 7,
                     totalItems: 1002,
                     rowsPerPage: 50,
                     modelValue: 2

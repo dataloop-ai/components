@@ -13,7 +13,7 @@
                 :boundary-numbers="boundaryNumbers"
                 :boundary-links="boundaryLinks"
                 :direction-links="directionLinks"
-                :max-pages="maxPages"
+                :max-display-range="maxDisplayRange"
                 :disabled="disabled"
                 :with-legend="withLegend"
                 :total-items="total"
@@ -41,7 +41,7 @@ export default defineComponent({
         const boundaryNumbers = ref(true)
         const boundaryLinks = ref(true)
         const directionLinks = ref(true)
-        const maxPages = ref(6)
+        const maxDisplayRange = ref(6)
         const disabled = ref(false)
         const withLegend = ref(true)
         const total = ref(200)
@@ -55,7 +55,7 @@ export default defineComponent({
             boundaryNumbers,
             boundaryLinks,
             directionLinks,
-            maxPages,
+            maxDisplayRange,
             disabled,
             withLegend,
             total,

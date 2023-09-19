@@ -441,7 +441,7 @@ export default {
                 page: 1,
                 rowsPerPage: 25,
                 rowsNumber: 10,
-                maxPages: 4
+                maxDisplayRange: 7
             },
             table: {
                 type: { summary: 'object' },
@@ -452,7 +452,7 @@ export default {
                         page: 1,
                         rowsPerPage: 25,
                         rowsNumber: 10,
-                        maxPages: 4
+                        maxDisplayRange: 7
                     }
                 }
             }

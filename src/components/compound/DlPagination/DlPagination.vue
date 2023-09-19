@@ -19,7 +19,7 @@
                     :model-value="value"
                     :min="min"
                     :max="max"
-                    :max-pages="maxPages"
+                    :max-display-range="maxDisplayRange"
                     :disabled="disabled"
                     :boundary-numbers="boundaryNumbers"
                     :boundary-links="boundaryLinks"
@@ -79,9 +79,9 @@ export default defineComponent({
             type: Number,
             default: 1
         },
-        maxPages: {
+        maxDisplayRange: {
             type: Number,
-            default: 0,
+            default: 7,
             validator: (v: number) => v >= 0
         },
         rowsPerPage: {
