@@ -112,7 +112,6 @@
                 :virtual-scroll="vScroll"
                 style="height: 500px"
                 :rows-per-page-options="rowsPerPageOptions"
-                :pagination="{ maxPages: 6 }"
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
@@ -165,7 +164,6 @@
                     :virtual-scroll="vScroll"
                     style="height: 500px"
                     :rows-per-page-options="rowsPerPageOptions"
-                    :pagination="{ maxPages: 6 }"
                     @row-click="log"
                     @th-click="log"
                     @update:selected="updateSeleted"
@@ -299,7 +297,6 @@
                         style="height: 500px"
                         row-key="index"
                         virtual-scroll
-                        :pagination="{ maxPages: 6 }"
                         @virtual-scroll="onScroll"
                     />
                 </div>
@@ -330,7 +327,6 @@
                     :virtual-scroll="vScroll"
                     style="height: 200px"
                     :rows-per-page-options="rowsPerPageOptions"
-                    :pagination="{ maxPages: 6 }"
                     @row-click="log"
                     @update:selected="updateSeleted"
                 >
@@ -366,7 +362,6 @@
                     :virtual-scroll="vScroll"
                     style="height: 200px"
                     :rows-per-page-options="rowsPerPageOptions"
-                    :pagination="{ maxPages: 6 }"
                     @row-click="log"
                     @update:selected="updateSeleted"
                 >
@@ -399,7 +394,6 @@
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Table Title"
-                    :pagination="{ maxPages: 6 }"
                 />
             </div>
             <div>
@@ -408,7 +402,6 @@
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Custom Cells"
-                    :pagination="{ maxPages: 6 }"
                 >
                     <template #body-cell-name="{ row }">
                         {{ row.name }}
@@ -422,7 +415,6 @@
                     :columns="tableColumns"
                     title="Editable Columns"
                     has-visible-columns
-                    :pagination="{ maxPages: 6 }"
                 >
                     <template #body-cell-row-actions="{ row }">
                         {{ row }} actiosnsss
@@ -454,6 +446,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
+import { DlTablePagination } from '../types'
 
 const columns = [
     {
@@ -689,12 +682,12 @@ export default defineComponent({
             }
         }
 
-        const pagination = ref({
+        const pagination = ref<DlTablePagination>({
             sortBy: 'desc',
             descending: false,
             page: 2,
             rowsPerPage: 3,
-            maxPages: 8
+            maxDisplayRange: 9
             // rowsNumber: xx if getting data from a server
         })
 

@@ -16,7 +16,7 @@ export type TablePagination = {
     page?: number
     rowsPerPage?: number
     rowsNumber?: number
-    maxPages?: number
+    maxDisplayRange?: number
 }
 
 function samePagination(oldPag: TablePagination, newPag: TablePagination) {
@@ -69,7 +69,8 @@ export function useTablePaginationState(
                     ? rowsPerPageOptions.value[0]
                     : 5,
                 min: 1,
-                maxPages: 0,
+                // todo: calculate based on width of element
+                maxDisplayRange: 7,
                 boundaryNumbers: true,
                 boundaryLinks: true,
                 directionLinks: true,
