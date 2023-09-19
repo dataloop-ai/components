@@ -16,6 +16,7 @@ export type TablePagination = {
     page?: number
     rowsPerPage?: number
     rowsNumber?: number
+    /** The maximum range to display before truncating */
     maxDisplayRange?: number
 }
 
