@@ -13,17 +13,9 @@ const setTrSpacing = (item: Record<string, any>) => {
 const setTrPadding = (level = 1, hasChildren = false, colIndex = 0) => {
     let paddingLeft = 0
 
-    if (hasChildren && colIndex == 0) {
+    if (colIndex == 0) {
         paddingLeft = (level - 1) * 16
         return paddingLeft
-    }
-
-    if (colIndex === 0) {
-        paddingLeft = level * 16
-    }
-
-    if (!hasChildren && colIndex === 0) {
-        paddingLeft = 16
     }
 
     return paddingLeft

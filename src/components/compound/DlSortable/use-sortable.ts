@@ -26,6 +26,21 @@ type SortableOptionsProp = Omit<
     | 'onChange'
 >
 
+export const emits = [
+    'unchoose',
+    'choose',
+    'start',
+    'end',
+    'add',
+    'update',
+    'sort',
+    'remove',
+    'filter',
+    'move',
+    'clone',
+    'change'
+]
+
 type ExposedProps = {
     rootRef: Ref<HTMLDivElement | null>
     sortable: Ref<Sortable | null>
@@ -70,7 +85,7 @@ export const useSortableProps = {
 }
 
 export function useSortable(vm: Record<string, any>) {
-    const { props, emit, slots, refs } = vm
+    const { props, emit } = vm
     const isDragging = ref(false)
     const rootRef = ref<HTMLElement | null>(null)
     const sortable = ref<Sortable | null>(null)

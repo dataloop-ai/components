@@ -11,14 +11,15 @@
 <script lang="ts">
 import { defineComponent, getCurrentInstance } from 'vue-demi'
 import DlTable from '../DlTable/DlTable.vue'
-import { useSortable, useSortableProps } from './use-sortable'
+import { useSortable, useSortableProps, emits } from './use-sortable'
 
 export default defineComponent({
     components: {
         DlTable
     },
     props: useSortableProps,
-    setup(props, { slots }) {
+    emits,
+    setup(props) {
         const vm = getCurrentInstance()
 
         const { element, getKey, rootRef } = useSortable(vm)

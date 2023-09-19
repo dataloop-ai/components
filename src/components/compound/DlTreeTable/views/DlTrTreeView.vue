@@ -62,14 +62,6 @@
                     )}px;`
             "
         >
-            <!-- <template #icon="{}">
-                <DlIcon
-                    v-if="(row.children || []).length > 0 && colIndex === 0"
-                    style="margin-right: 5px"
-                    :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
-                    @click="emitUpdateExpandedRow"
-                />
-            </template> -->
             <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
                 {{ getCellValue(col, row) }}
             </template>
@@ -188,7 +180,7 @@ export default defineComponent({
             }
         )
 
-        console.log({ row: row.value.name, level: props.level })
+        // console.log({ row: row.value.name, level: props.level })
 
         const emitRowClick = (
             event: MouseEvent,

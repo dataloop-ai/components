@@ -100,6 +100,7 @@
                     @row-click="onRowClick"
                     @th-click="log"
                     @selected-items="selectedItems"
+                    @row-reorder="(newRows) => (tableRows = newRows)"
                 />
             </div>
             <!-- <div style="padding-top: 300px">
@@ -279,7 +280,7 @@
 
 <script lang="ts">
 import { DlOptionGroup, DlSwitch, DlInput, DlTreeTable } from '../components'
-import { defineComponent, ref, computed, nextTick } from 'vue-demi'
+import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
 
 const columns = [
@@ -617,7 +618,7 @@ export default defineComponent({
         const denseState = ref([])
         const virtualScroll = ref([])
         const resizableState = ref([])
-        const tableRows = ref(cloneDeep(rows2))
+        const tableRows = ref(rows2)
         const tableRowsVS = ref(cloneDeep(rows2))
         const draggable = ref('both')
         const tableColumns = ref(columns)
@@ -638,6 +639,11 @@ export default defineComponent({
         allRows.forEach((row, index) => {
             row.index = index
         })
+
+        // setTimeout(() => {
+        //     console.log('eee')
+        //     tableRows.value.unshift(tableRows.value[1])
+        // }, 5000)
 
         const pageSize = 50
         const lastPageNumber = Math.ceil(allRows.length / pageSize)
@@ -672,6 +678,10 @@ export default defineComponent({
             page: 2,
             rowsPerPage: 3
             // rowsNumber: xx if getting data from a server
+        })
+
+        watch(tableRows, (val) => {
+            console.log(val)
         })
 
         const pagesNumber = computed(() => {
