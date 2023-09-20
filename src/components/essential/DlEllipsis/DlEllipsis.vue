@@ -2,7 +2,7 @@
     <div
         class="dl-ellipsis"
         :class="multiline ? 'dl-ellipsis__multiline' : ''"
-        :styles="cssVars"
+        :style="cssVars"
     >
         <p
             v-if="multiline"
@@ -144,11 +144,9 @@ export default defineComponent({
         const fullText = computed(() => props.text)
 
         const cssVars = computed<Record<string, string | number>>(() => {
-            const vars: Record<string, string | number> = {}
-            if (props.multiline) {
-                vars['--max-lines'] = props.linesDisplayed
+            return {
+                '--max-lines': props.linesDisplayed
             }
-            return vars
         })
 
         onMounted(() => {
