@@ -116,7 +116,8 @@ export default defineComponent({
             rightText,
             shouldShowTooltip,
             fullText,
-            dlEllipsisRef
+            dlEllipsisRef,
+            hasEllipsis
         }
     }
 })
