@@ -109,7 +109,7 @@ export default defineComponent({
          * Number of lines to display
          * must be used with multiline
          */
-        linesDisplayed: {
+        maxLines: {
             type: Number,
             default: 3
         }
@@ -145,7 +145,7 @@ export default defineComponent({
 
         const cssVars = computed<Record<string, string | number>>(() => {
             return {
-                '--max-lines': props.linesDisplayed
+                '--max-lines': props.maxLines
             }
         })
 
