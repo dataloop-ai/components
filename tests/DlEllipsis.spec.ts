@@ -11,7 +11,9 @@ const props = {
     splitPosition: 0.5,
     tooltip: true,
     tooltipPosition: 'top middle',
-    tooltipOffset: [0, 25]
+    tooltipOffset: [0, 25],
+    multiline: false,
+    linesDisplayed: 3
 }
 
 describe('DlEllipsis', () => {
