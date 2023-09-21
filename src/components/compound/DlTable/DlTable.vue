@@ -1373,6 +1373,10 @@ export default defineComponent({
             () => !!slots['header-selection']
         )
 
+        const reorderColumns = (sourceIndex: number, targetIndex: number) => {
+            emit('col-reorder', sourceIndex, targetIndex)
+        }
+
         // expose public methods and needed computed props
         Object.assign(vm.proxy, {
             resetVirtualScroll,
@@ -1382,7 +1386,8 @@ export default defineComponent({
             firstPage,
             prevPage,
             nextPage,
-            lastPage
+            lastPage,
+            reorderColumns
         })
 
         const slotNames = computed(() => {

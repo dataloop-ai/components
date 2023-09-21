@@ -101,6 +101,7 @@
                     @th-click="log"
                     @selected-items="selectedItems"
                     @row-reorder="reorderRows"
+                    @col-reorder="log"
                 />
             </div>
             <!-- <div style="padding-top: 300px">

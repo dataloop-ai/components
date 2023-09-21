@@ -115,6 +115,7 @@
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
+                @col-reorder="log"
             />
 
             <div style="margin-top: 100px">
