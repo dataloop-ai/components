@@ -2,6 +2,7 @@
     <td
         :class="classes"
         :style="styles"
+        :data-col-index="colIndex"
     >
         <div
             ref="tableTd"
@@ -33,6 +34,10 @@ export default defineComponent({
         bgColor: {
             type: String,
             default: ''
+        },
+        colIndex: {
+            type: Number,
+            default: null
         }
     },
     setup(props) {

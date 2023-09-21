@@ -5,6 +5,8 @@
         :data-id="props.row.id"
         :class="trClasses"
         v-bind="$attrs"
+        class="dl-th"
+        :data-col-index="colIndex"
         v-on="listeners"
     >
         <slot />
@@ -21,6 +23,10 @@ export default defineComponent({
         props: { type: Object, default: () => {} },
         noHover: Boolean,
         children: {
+            type: Number,
+            default: null
+        },
+        colIndex: {
             type: Number,
             default: null
         }

@@ -61,6 +61,7 @@
                         colIndex
                     )}px;`
             "
+            :col-index="colIndex"
         >
             <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
                 {{ getCellValue(col, row) }}
@@ -90,7 +91,7 @@ import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
 import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
 import { getRowKey } from '../utils/getRowKey'
 import { DlTableRow } from '../../DlTable/types'
-import { setTrSpacing, setTrPadding } from '../utils/trSpacing'
+import { setTrPadding } from '../utils/trSpacing'
 
 export default defineComponent({
     name: 'DlTrTreeView',

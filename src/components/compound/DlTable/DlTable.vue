@@ -118,7 +118,7 @@
                             />
 
                             <slot
-                                v-for="col in computedCols"
+                                v-for="(col, colIndex) in computedCols"
                                 v-bind="getHeaderScope({ col })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
@@ -129,6 +129,7 @@
                                 <DlTh
                                     :key="col.name"
                                     :props="getHeaderScope({ col })"
+                                    :col-index="colIndex"
                                 >
                                     {{ col.label }}
                                 </DlTh>
@@ -250,7 +251,7 @@
                                     </slot>
                                 </td>
                                 <slot
-                                    v-for="col in computedCols"
+                                    v-for="(col, colIndex) in computedCols"
                                     v-bind="
                                         getBodyCellScope({
                                             key: getRowKey(props.item),
@@ -269,6 +270,7 @@
                                         :class="col.tdClass(props.item)"
                                         :style="col.tdStyle(props.item)"
                                         :no-hover="noHover"
+                                        :col-index="colIndex"
                                     >
                                         {{ getCellValue(col, props.item) }}
                                     </DlTd>
@@ -355,7 +357,7 @@
                             />
 
                             <slot
-                                v-for="col in computedCols"
+                                v-for="(col, colIndex) in computedCols"
                                 v-bind="getHeaderScope({ col, onThClick })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
@@ -366,6 +368,7 @@
                                 <DlTh
                                     :key="col.name"
                                     :props="getHeaderScope({ col })"
+                                    :col-index="colIndex"
                                     @click="onThClick($event, col.name)"
                                 >
                                     {{ col.label }}
@@ -513,10 +516,11 @@
                                         </slot>
                                     </td>
                                     <DlTd
-                                        v-for="col in computedCols"
+                                        v-for="(col, colIndex) in computedCols"
                                         :key="col.name"
                                         :class="col.tdClass(row)"
                                         :style="col.tdStyle(row)"
+                                        :col-index="colIndex"
                                     >
                                         <slot
                                             v-bind="
@@ -653,11 +657,7 @@ import { useTableRowSelection } from './hooks/tableRowSelection'
 import { useTableColumnSelection } from './hooks/tableColumnSelection'
 import { useTableRowExpand } from './hooks/tableRowExpand'
 import { useTableActions } from './hooks/tableActions'
-import {
-    applyDraggableRows,
-    applyDraggableColumns,
-    applyTreeDraggableRows
-} from '../../../utils/draggable-table'
+import { applyDraggableColumns } from '../../../utils/draggable-table'
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
@@ -688,13 +688,6 @@ const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
     commonVirtPropsObj[p] = {}
 })
-
-const applyDrag = (isTreeTable: boolean) => {
-    if (isTreeTable) {
-        return applyTreeDraggableRows
-    }
-    return applyDraggableRows
-}
 
 export default defineComponent({
     name: 'DlTable',
@@ -885,8 +878,7 @@ export default defineComponent({
                 removeDraggableColumns = applyDraggableColumns(
                     tableEl,
                     vm,
-                    vm.refs.dragRef as HTMLDivElement,
-                    rootRef.value
+                    vm.refs.dragRef as HTMLDivElement
                 )
             }
         })
@@ -917,8 +909,7 @@ export default defineComponent({
                     removeDraggableColumns = applyDraggableColumns(
                         tableEl,
                         vm,
-                        vm.refs.dragRef as HTMLDivElement,
-                        rootRef.value
+                        vm.refs.dragRef as HTMLDivElement
                     )
                 }
             },

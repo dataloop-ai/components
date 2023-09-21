@@ -2,6 +2,8 @@
     <th
         :style="headerStyle"
         :class="thClasses"
+        class="dl-th"
+        :data-col-index="colIndex"
         @click="onClick"
     >
         <div
@@ -40,7 +42,11 @@ export default defineComponent({
     },
     props: {
         props: { type: Object, default: null },
-        autoWidth: Boolean
+        autoWidth: Boolean,
+        colIndex: {
+            type: Number,
+            default: null
+        }
     },
     emits: ['click'],
 
