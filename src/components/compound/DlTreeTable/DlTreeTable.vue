@@ -397,6 +397,10 @@ export default defineComponent({
         const handleStartEvent = (event: any) =>
             (prevMouseY = event.originalEvent.clientY)
 
+        const reorderColumns = (sourceIndex: number, targetIndex: number) => {
+            emit('col-reorder', sourceIndex, targetIndex)
+        }
+
         const renderTBody = () => {
             if (isEmpty(tableRootRef.value)) return null
             const children = tableRows.value.map((row, i) => {
@@ -452,6 +456,7 @@ export default defineComponent({
         }
 
         return {
+            reorderColumns,
             log,
             dlTableRef,
             isRowSelected,
@@ -511,7 +516,8 @@ export default defineComponent({
                 emptyStateProps: this.emptyStateProps,
                 noDataLabel: this.noDataLabel,
                 onRowClick: this.emitRowClick,
-                'onUpdate:selected': this.updateSelected
+                'onUpdate:selected': this.updateSelected,
+                onColReorder: this.reorderColumns
             },
             {
                 'header-selection': () =>
