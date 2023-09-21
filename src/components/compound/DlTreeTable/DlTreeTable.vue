@@ -15,7 +15,6 @@ import {
 import { DlCheckbox } from '../../essential'
 import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
-import { cloneDeep } from 'lodash'
 import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
@@ -27,6 +26,11 @@ import { renderComponent } from '../../../utils/render-fn'
 import { isEmpty } from 'lodash'
 import SortableJs from 'sortablejs'
 import { v4 } from 'uuid'
+import { moveNestedRow } from './utils/moveNestedRow'
+import { getElementAbove } from '../../../utils'
+import { SortingMovement } from '../DlTable/types'
+
+let prevMouseY = 0
 
 export default defineComponent({
     name: 'DlTreeTable',
@@ -45,15 +49,18 @@ export default defineComponent({
         const borderState = ref([])
         const denseState = ref([])
         const resizableState = ref([])
-        // const tableRows = ref(props.rows)
-        // const tableColumns = ref(props.columns)
         const hasFlatTreeData = true
+
+        const sortingMovement = ref<SortingMovement>({
+            lastId: null,
+            direction: 'up'
+        })
 
         const uuid = `dl-tree-table-${v4()}`
 
         const mainTbodyUuid = `dl-tree-table-tbody-${v4()}`
 
-        const vm = getCurrentInstance()
+        const mainTableKey = ref()
 
         const { rows: tableRows, columns: tableColumns } = toRefs(props)
 
@@ -154,13 +161,6 @@ export default defineComponent({
 
             updateSelection(childrenKeys, childrenCollection, adding, event)
         }
-
-        // const headerSelectedValue = computed(() => {
-        //     return someRowsSelected.value === true
-        //         ? null
-        //         : allRowsSelected.value
-        // })
-
         const headerSelectedValue = computed(() => {
             if (selectedData.value.length === tableRows.value.length)
                 return true
@@ -207,10 +207,6 @@ export default defineComponent({
 
         const log = console.log
 
-        // const rednerTBodySlots = () => {
-        //     return renderComponent('')
-        // }
-
         const tbodySlotsData = computed(() =>
             (dlTableRef.value?.computedCols || []).filter(
                 (item: DlTableColumn) => hasSlotByName(`body-cell-${item.name}`)
@@ -254,7 +250,7 @@ export default defineComponent({
                     level,
                     class: 'nested-element',
                     'data-level': level,
-                    'data-row': JSON.stringify(row),
+                    'data-id': row.id,
                     hasAnyAction: tableRootRef.value.hasAnyAction,
                     noHover: tableRootRef.value.noHover,
                     hasDraggableRows: tableRootRef.value.hasDraggableRows,
@@ -342,6 +338,9 @@ export default defineComponent({
                             itemKey: getRowKey.value,
                             tag: 'table',
                             class: 'nested-table',
+                            onEnd: handleEndEvent,
+                            onChange: handleChangeEvent,
+                            onStart: handleStartEvent,
                             options: {
                                 group: 'nested',
                                 animation: 150,
@@ -370,102 +369,36 @@ export default defineComponent({
 
             return children
         }
-        const nestedQuery = '.nested-sortable'
-        const identifier = 'sortableId'
-
-        function serialize(sortable) {
-            const serialized = []
-
-            const children = [].slice.call(sortable.children)
-
-            for (const i in children) {
-                const nested = children[i].querySelector('')
-
-                console.log(nested)
-                if (nested) {
-                    console.log(JSON.parse(nested.dataset.row))
-                }
-                // serialized.push({
-                //     id: children[i].dataset[identifier],
-                //     children: nested ? serialize(nested) : []
-                // })
-            }
-            return serialized
-        }
-
-        function serializeFn(sortable) {
-            const serialized = []
-
-            const children = [].slice.call(sortable.children)
-
-            for (const i in children) {
-                const el = {}
-                const nested = children[i].querySelector('.nested-element')
-
-                console.log(nested)
-                if (nested) {
-                    console.log(JSON.parse(nested.dataset.row))
-                }
-
-                // if(nested) {
-                //     Object.assign(el, nested.)
-                // }
-
-                serialized.push({
-                    id: children[i].dataset[identifier],
-                    children: nested ? serialize(nested) : []
-                })
-            }
-            return serialized
-        }
-
-        // function serializeNode(node) {
-        //     const serializedNode = {
-        //         tagName: node.tagName,
-        //         attributes: {},
-        //         children: []
-        //     }
-
-        //     // Serialize attributes
-        //     for (const attr of node.attributes) {
-        //         serializedNode.attributes[attr.name] = attr.value
-        //     }
-
-        //     // Serialize child nodes
-        //     for (const childNode of node.childNodes) {
-        //         if (childNode.nodeType === Node.ELEMENT_NODE) {
-        //             serializedNode.children.push(serializeNode(childNode))
-        //         }
-        //     }
-
-        //     return serializedNode
-        // }
-
-        const swapArrayLocs = (arr, oldIndex, newIndex) => {
-            [arr[oldIndex], arr[newIndex]] = [arr[newIndex], arr[oldIndex]]
-
-            // arr.splice(newIndex, 0, arr[oldIndex])
-
-            const root = document.getElementById(mainTbodyUuid)
-
-            console.log(serializeFn(root))
-
-            emit('row-reorder', arr)
-        }
 
         const handleEndEvent = (event: SortableJs.SortableEvent) => {
-            console.log(event)
-            swapArrayLocs(
-                cloneDeep(tableRows.value),
-                event.oldIndex,
-                event.newIndex
+            emit(
+                'row-reorder',
+                moveNestedRow(tableRows.value, event, sortingMovement.value)
             )
+            mainTableKey.value = v4()
         }
 
-        const renderTBody = () => {
-            // console.log(tableRootRef.value)
-            if (isEmpty(tableRootRef.value)) return null
+        const handleChangeEvent = (event: any) => {
+            const originalEvent = event.originalEvent
+            const passedElement = getElementAbove(
+                originalEvent.srcElement,
+                'dl-tr'
+            ) as HTMLElement
+            const currentY = originalEvent.clientY
+            if (currentY > prevMouseY) {
+                sortingMovement.value.direction = 'down'
+            } else if (currentY < prevMouseY) {
+                sortingMovement.value.direction = 'up'
+            }
+            prevMouseY = currentY
+            sortingMovement.value.lastId = passedElement.dataset.id
+        }
 
+        const handleStartEvent = (event: any) =>
+            (prevMouseY = event.originalEvent.clientY)
+
+        const renderTBody = () => {
+            if (isEmpty(tableRootRef.value)) return null
             const children = tableRows.value.map((row, i) => {
                 return renderComponent(
                     'tbody',
@@ -496,7 +429,10 @@ export default defineComponent({
                                 itemKey: getRowKey.value,
                                 tag: 'table',
                                 id: mainTbodyUuid,
+                                key: mainTableKey.value,
                                 onEnd: handleEndEvent,
+                                onChange: handleChangeEvent,
+                                onStart: handleStartEvent,
                                 class: 'nested-table',
                                 options: {
                                     group: 'nested',

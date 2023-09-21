@@ -99,7 +99,6 @@ export function useSortable(vm: Record<string, any>) {
         rootRef,
         (newDraggable) => {
             console.log('Iobanii catalan')
-            console.log('adding sortable on', newDraggable)
             if (newDraggable) {
                 sortable.value = new Sortable(newDraggable, {
                     ...props.options,

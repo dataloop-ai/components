@@ -2,6 +2,7 @@
     <tr
         ref="dlTrTreeRef"
         :data-level="props.row.level"
+        :data-id="props.row.id"
         :class="trClasses"
         v-bind="$attrs"
         v-on="listeners"
@@ -60,7 +61,7 @@ export default defineComponent({
     watch: {
         'props.row': {
             handler(row: DlTableRow) {
-                ;(this.$refs.dlTrTreeRef as any).setAttribute(
+                (this.$refs.dlTrTreeRef as any).setAttribute(
                     'data-is-visible',
                     row.isExpandedParent || row.level === 1
                 )
@@ -68,7 +69,7 @@ export default defineComponent({
             deep: true
         },
         childrenComputed(value) {
-            ;(this.$refs.dlTrTreeRef as any).setAttribute(
+            (this.$refs.dlTrTreeRef as any).setAttribute(
                 'data-children',
                 value
             )
@@ -79,7 +80,7 @@ export default defineComponent({
     },
     methods: {
         setAttributeChildren() {
-            ;(this.$refs.dlTrTreeRef as any).setAttribute(
+            (this.$refs.dlTrTreeRef as any).setAttribute(
                 'data-children',
                 this.children
             )

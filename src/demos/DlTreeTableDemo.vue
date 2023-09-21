@@ -100,7 +100,7 @@
                     @row-click="onRowClick"
                     @th-click="log"
                     @selected-items="selectedItems"
-                    @row-reorder="(newRows) => (tableRows = newRows)"
+                    @row-reorder="reorderRows"
                 />
             </div>
             <!-- <div style="padding-top: 300px">
@@ -282,6 +282,8 @@
 import { DlOptionGroup, DlSwitch, DlInput, DlTreeTable } from '../components'
 import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
+import { DlTableRow } from '../types'
+import { v4 } from 'uuid'
 
 const columns = [
     {
@@ -323,6 +325,7 @@ const columns = [
 
 const rows = [
     {
+        id: v4(),
         name: 'Frozen Yogurt',
         calories: 159,
         fat: 6.0,
@@ -333,6 +336,7 @@ const rows = [
         iron: '1%'
     },
     {
+        id: v4(),
         name: 'Ice cream sandwich',
         calories: 237,
         fat: 9.0,
@@ -343,6 +347,7 @@ const rows = [
         iron: '1%'
     },
     {
+        id: v4(),
         name: 'Eclair',
         calories: 262,
         fat: 16.0,
@@ -353,6 +358,7 @@ const rows = [
         iron: '7%'
     },
     {
+        id: v4(),
         name: 'Cupcake',
         calories: 305,
         fat: 3.7,
@@ -363,6 +369,7 @@ const rows = [
         iron: '8%'
     },
     {
+        id: v4(),
         name: 'Gingerbread',
         calories: 356,
         fat: 16.0,
@@ -373,6 +380,7 @@ const rows = [
         iron: '16%'
     },
     {
+        id: v4(),
         name: 'Jelly bean',
         calories: 375,
         fat: 0.0,
@@ -383,6 +391,7 @@ const rows = [
         iron: '0%'
     },
     {
+        id: v4(),
         name: 'Lollipop',
         calories: 392,
         fat: 0.2,
@@ -393,6 +402,8 @@ const rows = [
         iron: '2%'
     },
     {
+        id: v4(),
+
         name: 'Honeycomb',
         calories: 408,
         fat: 3.2,
@@ -403,6 +414,8 @@ const rows = [
         iron: '45%'
     },
     {
+        id: v4(),
+
         name: 'Donut',
         calories: 452,
         fat: 25.0,
@@ -413,6 +426,7 @@ const rows = [
         iron: '22%'
     },
     {
+        id: v4(),
         name: 'KitKat',
         calories: 518,
         fat: 26.0,
@@ -423,6 +437,7 @@ const rows = [
         iron: '6%'
     },
     ...times(100, (index) => ({
+        id: v4(),
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,
@@ -436,6 +451,7 @@ const rows = [
 
 const rows2 = [
     {
+        id: v4(),
         name: 'Frozen Yogurt',
         calories: 159,
         fat: 6,
@@ -446,6 +462,7 @@ const rows2 = [
         iron: '1%',
         children: [
             {
+                id: v4(),
                 name: 'Eclair1',
                 calories: 262,
                 fat: 16,
@@ -458,6 +475,7 @@ const rows2 = [
         ]
     },
     {
+        id: v4(),
         name: 'Eclair2',
         calories: 262,
         fat: 16,
@@ -468,6 +486,7 @@ const rows2 = [
         iron: '7%'
     },
     {
+        id: v4(),
         name: 'Ice cream sandwich',
         calories: 237,
         fat: 9,
@@ -478,6 +497,7 @@ const rows2 = [
         iron: '1%',
         children: [
             {
+                id: v4(),
                 name: 'Eclair3.0',
                 calories: 262,
                 fat: 16,
@@ -488,6 +508,7 @@ const rows2 = [
                 iron: '7%'
             },
             {
+                id: v4(),
                 name: 'Eclair3',
                 calories: 262,
                 fat: 16,
@@ -498,6 +519,7 @@ const rows2 = [
                 iron: '7%',
                 children: [
                     {
+                        id: v4(),
                         name: 'Eclair4',
                         calories: 262,
                         fat: 16,
@@ -508,6 +530,7 @@ const rows2 = [
                         iron: '7%',
                         children: [
                             {
+                                id: v4(),
                                 name: 'Eclair5',
                                 calories: 262,
                                 fat: 16,
@@ -518,6 +541,7 @@ const rows2 = [
                                 iron: '7%',
                                 children: [
                                     {
+                                        id: v4(),
                                         name: 'Eclair6',
                                         calories: 262,
                                         fat: 16,
@@ -528,6 +552,7 @@ const rows2 = [
                                         iron: '7%',
                                         children: [
                                             {
+                                                id: v4(),
                                                 name: 'EclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclair',
                                                 calories: 262,
                                                 fat: 16,
@@ -548,6 +573,7 @@ const rows2 = [
         ]
     },
     {
+        id: v4(),
         name: 'Eclair7',
         calories: 262,
         fat: 16,
@@ -558,6 +584,7 @@ const rows2 = [
         iron: '7%',
         children: [
             {
+                id: v4(),
                 name: 'Eclair8',
                 calories: 262,
                 fat: 16,
@@ -570,6 +597,7 @@ const rows2 = [
         ]
     },
     {
+        id: v4(),
         name: 'Eclair9',
         calories: 262,
         fat: 16,
@@ -580,6 +608,7 @@ const rows2 = [
         iron: '7%'
     },
     ...times(5, (index) => ({
+        id: v4(),
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,
@@ -640,11 +669,6 @@ export default defineComponent({
             row.index = index
         })
 
-        // setTimeout(() => {
-        //     console.log('eee')
-        //     tableRows.value.unshift(tableRows.value[1])
-        // }, 5000)
-
         const pageSize = 50
         const lastPageNumber = Math.ceil(allRows.length / pageSize)
 
@@ -678,10 +702,6 @@ export default defineComponent({
             page: 2,
             rowsPerPage: 3
             // rowsNumber: xx if getting data from a server
-        })
-
-        watch(tableRows, (val) => {
-            console.log(val)
         })
 
         const pagesNumber = computed(() => {
@@ -745,7 +765,13 @@ export default defineComponent({
         const onRowClick = (item: any) => {
             // console.log('onRowClick TreeTableDemo: ', item)
         }
+
+        const reorderRows = (newRows: any[]) => {
+            console.log(newRows)
+            tableRows.value = newRows
+        }
         return {
+            reorderRows,
             filter,
             selectedData,
             selection,
