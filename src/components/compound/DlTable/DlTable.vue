@@ -721,8 +721,6 @@ export default defineComponent({
             rows
         } = toRefs(props)
 
-        console.log(slots)
-
         const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed<boolean>(
