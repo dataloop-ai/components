@@ -657,7 +657,7 @@ import { useTableRowSelection } from './hooks/tableRowSelection'
 import { useTableColumnSelection } from './hooks/tableColumnSelection'
 import { useTableRowExpand } from './hooks/tableRowExpand'
 import { useTableActions } from './hooks/tableActions'
-import { applyDraggableColumns } from '../../../utils/draggable-table'
+import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
@@ -668,21 +668,12 @@ import {
     DlMenu,
     DlList
 } from '../../essential'
-import { ResizableManager } from './utils'
 import { DlButton } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
-import { flatTreeData } from '../DlTreeTable/utils/flatTreeData'
 import { stopAndPrevent } from '../../../utils'
 import { DlVirtualScrollEvent } from '../../types'
-import Sortable from '../DlTreeTable/Sortable.vue'
-
-// Vue.directive('sortable', {
-//     update(options) {
-//         Sortable.create(this.el, options)
-//     }
-// })
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -755,6 +746,13 @@ export default defineComponent({
                 ? props.rowKey
                 : (row: Record<string, any>) => row[props.rowKey as string]
         )
+
+        const isResizing = ref(false)
+        const isDragging = ref(false)
+        const setIsResizing = (val: boolean) => (isResizing.value = val)
+        const setIsDragging = (val: boolean) => (isDragging.value = val)
+        const getIsDragging = () => isDragging.value
+        const getIsResizing = () => isResizing.value
 
         // table slots
         const hasSlotByName = (name: string) => !!slots[name]
@@ -832,10 +830,8 @@ export default defineComponent({
             ['columns', 'both'].includes(draggable.value)
         )
 
-        const removeDraggableRows = () => {}
         let removeDraggableColumns = () => {}
 
-        let resizableManager: ResizableManager | null = null
         let tableEl: HTMLTableElement = null
 
         const totalItemsCount = computed(() => {
@@ -846,22 +842,9 @@ export default defineComponent({
             tableEl = (rootRef.value as HTMLDivElement).querySelector(
                 'table.dl-table'
             ) as HTMLTableElement
-            resizableManager = new ResizableManager()
-
-            // thElemets.value = Array.from(
-            //     rootRef.value.getElementsByTagName('thead')[0].children[0]
-            //         .children
-            // ).map((el: HTMLElement) => ({
-            //     width: el.getBoundingClientRect().width + 'px'
-            // }))
-
-            // console.dir(
-            //     rootRef.value.getElementsByTagName('thead')[0].children[0]
-            //         .children[0]
-            // )
 
             if (props.resizable === true) {
-                resizableManager.addResizeCapability(tableEl)
+                applyResizableColumns(tableEl, vm)
             }
 
             if (hasDraggableRows.value === true) {
@@ -873,7 +856,7 @@ export default defineComponent({
             }
 
             if (hasDraggableColumns.value === true) {
-                removeDraggableColumns = applyDraggableColumns(
+                applyDraggableColumns(
                     tableEl,
                     vm,
                     vm.refs.dragRef as HTMLDivElement
@@ -889,8 +872,7 @@ export default defineComponent({
                 ) as HTMLTableElement
 
                 if (props.resizable) {
-                    resizableManager.removeResizeCapability()
-                    resizableManager.addResizeCapability(tableEl)
+                    applyResizableColumns(tableEl, vm)
                 }
 
                 if (hasDraggableRows.value === true) {
@@ -903,8 +885,7 @@ export default defineComponent({
                 }
 
                 if (hasDraggableColumns.value === true) {
-                    removeDraggableColumns()
-                    removeDraggableColumns = applyDraggableColumns(
+                    applyDraggableColumns(
                         tableEl,
                         vm,
                         vm.refs.dragRef as HTMLDivElement
@@ -919,11 +900,7 @@ export default defineComponent({
         watch(
             () => props.resizable,
             (value: boolean) => {
-                if (value) {
-                    resizableManager.addResizeCapability(tableEl)
-                } else {
-                    resizableManager.removeResizeCapability()
-                }
+                applyResizableColumns(tableEl, vm)
             }
         )
 
@@ -952,8 +929,7 @@ export default defineComponent({
                         removeDraggableColumns = applyDraggableColumns(
                             tableEl,
                             vm,
-                            vm.refs.dragRef as HTMLDivElement,
-                            rootRef.value
+                            vm.refs.dragRef as HTMLDivElement
                         )
                     } else {
                         removeDraggableColumns()
@@ -987,10 +963,8 @@ export default defineComponent({
         watch(
             [computedPagination, dense],
             () => {
-                if (tableEl && props.resizable && resizableManager) {
+                if (tableEl && props.resizable) {
                     const tableHeight = tableEl.offsetHeight || 0
-
-                    resizableManager.updateResizersHeight(tableHeight)
                 }
             },
             { deep: true, flush: 'post' }
@@ -1385,7 +1359,12 @@ export default defineComponent({
             prevPage,
             nextPage,
             lastPage,
-            reorderColumns
+            reorderColumns,
+            setIsResizing,
+            setIsDragging,
+            getIsResizing,
+            getIsDragging,
+            hasDraggableColumns: hasDraggableColumns.value
         })
 
         const slotNames = computed(() => {

@@ -1,30 +1,25 @@
 <template>
     <th
+        ref="tableTh"
         :style="headerStyle"
         :class="thClasses"
-        class="dl-th"
         :data-col-index="colIndex"
         @click="onClick"
     >
-        <div
-            ref="tableTh"
-            class="dl-table-cell-inner-div"
-        >
-            <dl-icon
-                v-if="isSortable && align === 'right'"
-                :class="iconClass"
-                icon="icon-dl-arrow-up"
-            />
-            <dl-tooltip v-if="hasEllipsis">
-                <slot />
-            </dl-tooltip>
+        <dl-icon
+            v-if="isSortable && align === 'right'"
+            :class="iconClass"
+            icon="icon-dl-arrow-up"
+        />
+        <dl-tooltip v-if="hasEllipsis">
             <slot />
-            <dl-icon
-                v-if="isSortable && ['left', 'center'].includes(align)"
-                :class="iconClass"
-                icon="icon-dl-arrow-up"
-            />
-        </div>
+        </dl-tooltip>
+        <slot />
+        <dl-icon
+            v-if="isSortable && ['left', 'center'].includes(align)"
+            :class="iconClass"
+            icon="icon-dl-arrow-up"
+        />
     </th>
 </template>
 
@@ -87,10 +82,10 @@ export default defineComponent({
         }
 
         const thClasses = computed(() => {
-            let className = ''
+            let className = 'dl-th'
 
             if (props.autoWidth) {
-                className = 'dl-table--col-auto-width'
+                className = className.concat(' dl-table--col-auto-width')
             }
 
             if (column.value.thClass) {

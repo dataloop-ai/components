@@ -1,19 +1,15 @@
 <template>
     <td
+        ref="tableTd"
         :class="classes"
         :style="styles"
         :data-col-index="colIndex"
     >
-        <div
-            ref="tableTd"
-            class="dl-table-cell-inner-div"
-        >
-            <slot name="icon" />
-            <dl-tooltip v-if="hasEllipsis">
-                <slot />
-            </dl-tooltip>
+        <slot name="icon" />
+        <dl-tooltip v-if="hasEllipsis">
             <slot />
-        </div>
+        </dl-tooltip>
+        <slot />
     </td>
 </template>
 

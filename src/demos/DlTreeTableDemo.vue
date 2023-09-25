@@ -302,17 +302,29 @@ const columns = [
         field: 'calories',
         sortable: true
     },
-    { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-    { name: 'protein', label: 'Protein (g)', field: 'protein' },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+    {
+        name: 'fat',
+        label: 'Fat (g)',
+        field: 'fat',
+        sortable: true,
+        align: 'center'
+    },
+    { name: 'carbs', label: 'Carbs (g)', field: 'carbs', align: 'center' },
+    {
+        name: 'protein',
+        label: 'Protein (g)',
+        field: 'protein',
+        align: 'center'
+    },
+    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', align: 'center' },
     {
         name: 'calcium',
         label: 'Calcium (%)',
         field: 'calcium',
         sortable: true,
         sort: (a: string | number, b: string | number) =>
-            parseInt(a as string, 10) - parseInt(b as string, 10)
+            parseInt(a as string, 10) - parseInt(b as string, 10),
+        align: 'center'
     },
     {
         name: 'iron',
@@ -320,7 +332,8 @@ const columns = [
         field: 'iron',
         sortable: true,
         sort: (a: string | number, b: string | number) =>
-            parseInt(a as string, 10) - parseInt(b as string, 10)
+            parseInt(a as string, 10) - parseInt(b as string, 10),
+        align: 'center'
     }
 ]
 
@@ -643,7 +656,7 @@ export default defineComponent({
         const loading = ref(false)
         const dense = ref(false)
         const vScroll = ref(false)
-        const resizable = ref(false)
+        const resizable = ref(true)
         const borderState = ref([])
         const denseState = ref([])
         const virtualScroll = ref([])

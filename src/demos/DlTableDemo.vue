@@ -288,6 +288,7 @@
                         :separator="separator"
                         :draggable="draggable"
                         :filter="filter"
+                        :resizable="resizable"
                         :selection="selection"
                         :dense="dense"
                         title="Treats"
@@ -459,19 +460,30 @@ const columns = [
         align: 'center',
         label: 'Calories',
         field: 'calories',
-        sortable: true,
-        textTransform: 'lowercase'
+        sortable: true
     },
-    { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-    { name: 'protein', label: 'Protein (g)', field: 'protein' },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+    {
+        name: 'fat',
+        label: 'Fat (g)',
+        field: 'fat',
+        sortable: true,
+        align: 'center'
+    },
+    { name: 'carbs', label: 'Carbs (g)', field: 'carbs', align: 'center' },
+    {
+        name: 'protein',
+        label: 'Protein (g)',
+        field: 'protein',
+        align: 'center'
+    },
+    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', align: 'center' },
     {
         name: 'calcium',
         label: 'Calcium (%)',
         field: 'calcium',
         sortable: true,
         textTransform: 'lowercase',
+        align: 'center',
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     },
@@ -481,6 +493,7 @@ const columns = [
         field: 'iron',
         sortable: true,
         textTransform: 'lowercase',
+        align: 'center',
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     }
@@ -805,7 +818,7 @@ export default defineComponent({
             this.resizable = val.length !== 0
         },
         log(...args: any[]) {
-            console.log(...args)
+            // console.log(...args)
         },
         filterMethod(
             rows: Record<string, any>[],

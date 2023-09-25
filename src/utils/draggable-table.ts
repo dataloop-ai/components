@@ -2,6 +2,7 @@ import { getElementAbove } from './get-element-above'
 import { removeAllChildNodes } from './remove-child-nodes'
 import { browseNestedNodes } from './browse-nested-nodes'
 import { swapNodes } from './swap-nodes'
+import { removeTableVerticalBorders } from './table-columns'
 
 export function applyDraggableColumns(
     table: HTMLTableElement,
@@ -19,6 +20,9 @@ export function applyDraggableColumns(
     thead.addEventListener('mousedown', handleMousedown)
 
     function handleMousedown(event: MouseEvent) {
+        if (!vm.proxy.hasDraggableColumns || vm.proxy.getIsResizing()) return
+        vm.proxy.setIsDragging(true)
+        removeTableVerticalBorders(table)
         const eventTarget = event.target as HTMLElement
         draggableClone.appendChild(generateColumnClone(eventTarget))
         handleMousemove(event)
@@ -30,6 +34,7 @@ export function applyDraggableColumns(
         window.removeEventListener('mousemove', handleMousemove)
         window.removeEventListener('mouseup', handleMouseup)
         removeAllChildNodes(draggableClone)
+        vm.proxy.setIsDragging(false)
         vm.proxy.reorderColumns(
             originalColIndex - colIndexOffset,
             targetColIndex - colIndexOffset
@@ -48,6 +53,7 @@ export function applyDraggableColumns(
             event.clientX - draggableClone.getBoundingClientRect().width / 2
         }px`
         const newTargetColIndex = getColIndex(closestCell)
+        if (newTargetColIndex === undefined) return
         if (
             newTargetColIndex !== targetColIndex &&
             newTargetColIndex !== sourceColIndex
@@ -134,7 +140,7 @@ function getTreeTableColumn(
     ] as HTMLElement
     const thColIndex = th.dataset.colIndex
     const newTable = table.cloneNode(true) as HTMLTableElement
-    const width = th.getBoundingClientRect().width * 2
+    const width = th.getBoundingClientRect().width
     browseNestedNodes(
         newTable,
         (el) => el.dataset.colIndex && el.dataset.colIndex !== thColIndex, // if
@@ -144,6 +150,7 @@ function getTreeTableColumn(
         (el) => !!el.dataset.colIndex, // else if
         (el) => {
             el.style.width = `${width}px` // then
+            el.classList.remove('vertical-border')
         }
     )
     newTable.style.width = `${width}px`
@@ -153,8 +160,8 @@ function getTreeTableColumn(
 
 function swapTableColumns(
     table: HTMLTableElement,
-    columnIndex1: number,
-    columnIndex2: number
+    sourceIndex: number,
+    targetIndex: number
 ): void {
     const rows = table.rows
 
@@ -162,14 +169,14 @@ function swapTableColumns(
         const row = rows[i]
         const cells = row.cells
 
-        const tempCell = cells[columnIndex1].cloneNode(true) as HTMLElement
-        cells[columnIndex1].parentNode!.replaceChild(
-            cells[columnIndex2].cloneNode(true),
-            cells[columnIndex1]
+        const tempCell = cells[sourceIndex].cloneNode(true) as HTMLElement
+        cells[sourceIndex].parentNode!.replaceChild(
+            cells[targetIndex].cloneNode(true),
+            cells[sourceIndex]
         )
-        cells[columnIndex2].parentNode!.replaceChild(
+        cells[targetIndex].parentNode!.replaceChild(
             tempCell,
-            cells[columnIndex2]
+            cells[targetIndex]
         )
     }
 }
