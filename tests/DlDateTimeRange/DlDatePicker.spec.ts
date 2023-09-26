@@ -11,6 +11,7 @@ import {
     it,
     vi
 } from 'vitest'
+import moment from 'moment'
 
 vi.useFakeTimers('modern' as any)
 vi.setSystemTime(new Date(1990, 12, 1))
@@ -195,7 +196,9 @@ describe('DlDatePicker', () => {
                     to: date
                 })
 
-                expect(wrapper.vm.dateInterval.to).toEqual(date)
+                expect(wrapper.vm.dateInterval.to).toEqual(
+                    moment(date).endOf('day').toDate()
+                )
             })
             it('should change calendar state when not disabled', () => {
                 wrapper.vm.handleMonthNext()
