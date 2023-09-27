@@ -884,6 +884,7 @@ export default defineComponent({
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 if (inputRef) inputRef.value = ''
                 this.searchTerm = ''
+                this.searchInputValue = ''
                 this.$emit('filter', '')
             }
         },
