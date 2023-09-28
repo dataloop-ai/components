@@ -1,6 +1,18 @@
 <template>
-    <div class="dl-ellipsis">
+    <div
+        class="dl-ellipsis"
+        :class="multiline ? 'dl-ellipsis__multiline' : ''"
+        :style="cssVars"
+    >
+        <p
+            v-if="multiline"
+            ref="dlEllipsisRef"
+            class="dl-ellipsis__multiline-text"
+        >
+            {{ fullText }}
+        </p>
         <span
+            v-if="!multiline"
             ref="dlEllipsisRef"
             class="dl-ellipsis__left"
         >
@@ -11,14 +23,14 @@
             <span v-else>{{ leftText }}</span>
         </span>
         <span
-            v-if="rightText"
+            v-if="!multiline && rightText"
             class="dl-ellipsis__right"
         >
             {{ rightText }}
         </span>
         <dl-tooltip
             v-if="shouldShowTooltip"
-            :max-width="'max-content'"
+            :max-width="'30vw'"
             :self="tooltipPosition"
             :anchor="tooltipPosition"
             :offset="tooltipOffset"
@@ -33,7 +45,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue-demi'
+import {
+    defineComponent,
+    ref,
+    computed,
+    onMounted,
+    getCurrentInstance
+} from 'vue-demi'
 import { DlTooltip } from '../../shared'
 import { useSizeObserver } from '../../../hooks/use-size-observer'
 
@@ -79,6 +97,21 @@ export default defineComponent({
         tooltipOffset: {
             type: Array,
             default: () => [0, 25]
+        },
+        /**
+         * Allows to display multiline text
+         */
+        multiline: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Number of lines to display
+         * must be used with multiline
+         */
+        maxLines: {
+            type: Number,
+            default: 3
         }
     },
     // TODO: fix type issue here
@@ -110,13 +143,27 @@ export default defineComponent({
         )
         const fullText = computed(() => props.text)
 
+        const cssVars = computed<Record<string, string | number>>(() => {
+            return {
+                '--max-lines': props.maxLines
+            }
+        })
+
+        onMounted(() => {
+            const vm = getCurrentInstance()
+            // @ts-ignore
+            window.vm = vm
+        })
+
         return {
             hasDefaultSlot,
             leftText,
             rightText,
             shouldShowTooltip,
             fullText,
-            dlEllipsisRef
+            dlEllipsisRef,
+            hasEllipsis,
+            cssVars
         }
     }
 })
@@ -136,6 +183,33 @@ export default defineComponent({
     &__right {
         flex: 1 0 auto;
         overflow: hidden;
+    }
+
+    &__multiline {
+        /* Set the number of lines to display */
+        display: -webkit-box;
+        /* Enable text ellipsis */
+        overflow: hidden;
+        /* Allow text to break into multiple lines */
+        -webkit-box-orient: vertical;
+        /* Enable vertical scrolling if necessary */
+        overflow-y: auto;
+        /* Hide the horizontal scrollbar */
+        overflow-x: hidden;
+
+        &-text {
+            /* Set the number of lines to display */
+            display: -webkit-box;
+            -webkit-line-clamp: var(
+                --max-lines,
+                3
+            ); /* Adjust this value as needed */
+            /* Enable text ellipsis */
+            overflow: hidden;
+            /* Allow text to break into multiple lines */
+            -webkit-box-orient: vertical;
+            white-space: normal;
+        }
     }
 }
 </style>

@@ -25,16 +25,16 @@ export default {
                 type: { summary: 'number' }
             }
         },
-        maxPages: {
-            name: 'maxPages',
+        maxDisplayRange: {
+            name: 'maxDisplayRange',
             type: { name: 'number', required: false, min: 0 },
-            defaultValue: 0,
+            defaultValue: 7,
             control: 'number',
             description:
                 'Maximum number of page links to display at a time; 0 means Infinite',
             table: {
                 type: { summary: 'number' },
-                defaultValue: { summary: 0 }
+                defaultValue: { summary: 7 }
             }
         },
         rowsPerPage: {
@@ -207,7 +207,7 @@ export default {
 }
 
 const totalItems = 375
-const maxPages = 6
+const maxDisplayRange = 6
 
 const Template = (args) => ({
     components: { DlPagination },
@@ -229,7 +229,7 @@ const Template = (args) => ({
 export const Preview = Template.bind({})
 Preview.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     boundaryNumbers: true,
     boundaryLinks: true,
     directionLinks: true,
@@ -259,7 +259,7 @@ const DefaultTemplate = (args) => ({
 export const Default = DefaultTemplate.bind({})
 Default.args = {
     totalItems,
-    maxPages
+    maxDisplayRange
 }
 
 const DisabledTemplate = (args) => ({
@@ -286,7 +286,7 @@ const DisabledTemplate = (args) => ({
 export const Disabled = DisabledTemplate.bind({})
 Disabled.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     disabled: true
 }
 
@@ -314,7 +314,7 @@ const BoundaryNumbersTemplate = (args) => ({
 export const BoundaryNumbers = BoundaryNumbersTemplate.bind({})
 BoundaryNumbers.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     boundaryNumbers: true
 }
 
@@ -342,7 +342,7 @@ const BoundaryLinksTemplate = (args) => ({
 export const BoundaryLinks = BoundaryLinksTemplate.bind({})
 BoundaryLinks.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     boundaryLinks: true
 }
 
@@ -370,7 +370,7 @@ const DirectionLinksTemplate = (args) => ({
 export const DirectionLinks = DirectionLinksTemplate.bind({})
 DirectionLinks.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     directionLinks: true
 }
 
@@ -398,7 +398,7 @@ const WithQuickNavigationTemplate = (args) => ({
 export const WithQuickNavigation = WithQuickNavigationTemplate.bind({})
 WithQuickNavigation.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     withQuickNavigation: true
 }
 
@@ -426,7 +426,7 @@ const WithRowsPerPageTemplate = (args) => ({
 export const WithRowsPerPage = WithRowsPerPageTemplate.bind({})
 WithRowsPerPage.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     withRowsPerPage: true
 }
 
@@ -454,6 +454,6 @@ const WithLegendTemplate = (args) => ({
 export const WithLegend = WithLegendTemplate.bind({})
 WithLegend.args = {
     totalItems,
-    maxPages,
+    maxDisplayRange,
     withLegend: true
 }
