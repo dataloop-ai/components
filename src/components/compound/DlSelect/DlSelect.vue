@@ -439,14 +439,6 @@ export default defineComponent({
             emit('change', val)
             emit('selected', val)
         }
-        const handleSelectedItem = (value: any) => {
-            selectedIndex.value = props.options.findIndex(
-                (option: string | Record<string, string | number> | number) =>
-                    isEqual(option as any, value)
-            )
-
-            handleModelValueUpdate(value)
-        }
 
         return {
             uuid: `dl-select-${v4()}`,
@@ -456,7 +448,6 @@ export default defineComponent({
             highlightedIndex,
             selectedIndex,
             setHighlightedIndex,
-            handleSelectedItem,
             handleModelValueUpdate,
             searchTerm, // todo: merge this sometime
             searchInputValue
@@ -743,6 +734,9 @@ export default defineComponent({
                     isEqual(option, this.modelValue)
             )
         },
+        handleSelectedItem(value: DlSelectOptionType) {
+            this.selectOption(value)
+        },
         getOptionValue(option: any) {
             return option?.value ?? option
         },
@@ -796,19 +790,10 @@ export default defineComponent({
             this.selectedIndex = -1
             this.closeMenu()
         },
-        selectOption(selected: any) {
+        selectOption(selectedOption: DlSelectOptionType) {
             if (this.multiselect) {
                 return
             }
-
-            this.selectedIndex = this.options.findIndex(
-                (el: string | Record<string, string | number> | number) =>
-                    isEqual(el, selected)
-            )
-            const selectedOption =
-                this.selectedIndex === -1
-                    ? undefined
-                    : this.options[this.selectedIndex]
 
             if (this.searchable) {
                 const searchInput = this.$refs.searchInput as HTMLInputElement
