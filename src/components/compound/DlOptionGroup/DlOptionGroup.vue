@@ -128,7 +128,8 @@ export default defineComponent({
                         : 'flex-end',
                 '--option-group-width':
                     this.leftLabel && !this.inline ? '100%' : 'auto',
-                '--option-group-max-width': this.maxWidth
+                '--option-group-max-width': this.maxWidth,
+                '--option-group-gap': this.isInMenu ? '0px' : '10px'
             }
         }
     },
@@ -175,7 +176,7 @@ export default defineComponent({
 }
 .option-group-wrapper.column {
     flex-direction: column;
-    gap: 10px;
+    gap: var(--option-group-gap);
 }
 
 .option {
