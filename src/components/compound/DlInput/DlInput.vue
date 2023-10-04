@@ -642,7 +642,8 @@ export default defineComponent({
                 ]
             }
 
-            const regex = new RegExp(key, 'g')
+            const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+            const regex = new RegExp(escapedKey, 'g')
 
             const matches = [...item.matchAll(regex)]
 

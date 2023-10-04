@@ -30,7 +30,7 @@ export default defineComponent({
     },
     setup() {
         const searchValue = ref<string>('')
-        const suggestItems = ['foo', 'foo bar', 'bar', 'bar foo']
+        const suggestItems = ['foo', 'foo bar', 'bar', 'bar foo', '!@#$%^&*(){}[+-*]']
         return { searchValue, suggestItems }
     }
 })
