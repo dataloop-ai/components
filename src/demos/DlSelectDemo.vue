@@ -177,6 +177,15 @@
             searchable
             capitalized-options
         />
+        Tree options with readonly options
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="treeOptionsWithReadonly"
+            size="m"
+            multiselect
+            searchable
+            capitalized-options
+        />
         With Fit
         <dl-select
             v-model="selectedWithFit"
@@ -604,6 +613,67 @@ const treeOptions = [
     }
 ]
 
+const treeOptionsWithReadonly = [
+    {
+        label: 'Without children',
+        value: 'r0',
+        readonly: true
+    },
+    {
+        label: 'child 1',
+        value: 'r1'
+    },
+    {
+        label: 'child 2',
+        value: 'r2'
+    },
+    {
+        label: 'child 3',
+        value: 'r3'
+    },
+    {
+        label: 'With children',
+        value: 'r4',
+        readonly: true,
+        children: [
+            { label: 'child 1', value: 'c1' },
+            { label: 'child 2', value: 'c2' },
+            { label: 'child 3', value: 'c3' },
+            { label: 'child 4', value: 'c4' },
+            { label: 'child 5', value: 'c5' }
+        ]
+    },
+    {
+        label: 'With children & readonly child',
+        value: 'r5',
+        children: [
+            { label: 'child 1', value: 'c1' },
+            { label: 'child 2', value: 'c2' },
+            { label: 'child 3', value: 'c3', readonly: true },
+            { label: 'child 4', value: 'c4' },
+            { label: 'child 5', value: 'c5' }
+        ]
+    },
+    {
+        label: 'Readonly option with children & readonly child',
+        value: 'r6',
+        readonly: true,
+        children: [
+            { label: 'child 1', value: 'c6' },
+            { label: 'child 2', value: 'c7' },
+            {
+                label: 'child 3',
+                value: 'c8',
+                readonly: true,
+                children: [
+                    { label: 'child 4', value: 'c9' },
+                    { label: 'child 5', value: 'c10' }
+                ]
+            }
+        ]
+    }
+]
+
 export default defineComponent({
     components: { DlSelect, DlIcon, DlChip, DlBadge },
     data() {
@@ -626,11 +696,13 @@ export default defineComponent({
             },
             searchOptions: defaultOptions,
             treeOptions,
+            treeOptionsWithReadonly,
             selectedBySearch: undefined,
             selectedByFilteringSearch: [],
             selectedWithEmitValue: 'c1',
             selectedWithChildren: [],
             selectedWithChildrenSearch: [],
+            selectedWithChildrenAndReadonly: [],
             selectedWithChildrenCapitalized: [],
             tasksFilter: [],
             showAllOption: true,
