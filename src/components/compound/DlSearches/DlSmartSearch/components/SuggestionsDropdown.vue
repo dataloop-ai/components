@@ -18,6 +18,7 @@
             @hide="onHide"
             @highlightedIndex="setHighlightedIndex"
             @handleSelectedItem="handleSelectedItem"
+            @escapeKey="onEscapeKey"
         >
             <dl-list>
                 <dl-list-item
@@ -37,6 +38,7 @@
 import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlMenu, DlList } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
+import { emit } from 'process'
 
 export default defineComponent({
     components: {
@@ -81,7 +83,7 @@ export default defineComponent({
             default: 1
         }
     },
-    emits: ['set-input-value', 'update:model-value'],
+    emits: ['set-input-value', 'update:model-value', 'escapeKey'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -109,6 +111,11 @@ export default defineComponent({
             return `#dl-smart-search-input-text-area-${props.parentId}`
         })
 
+        const onEscapeKey = () => {
+            emit('escapeKey')
+            emit('update:model-value', false)
+        }
+
         return {
             defaultTarget,
             setHighlightedIndex,
@@ -117,7 +124,8 @@ export default defineComponent({
             onShow,
             onHide,
             emitModelValue,
-            handleOption
+            handleOption,
+            onEscapeKey
         }
     }
 })
