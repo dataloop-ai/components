@@ -170,7 +170,7 @@ export default defineComponent({
     emits: [
         ...useModelToggleEmits,
         'click',
-        'escape-key',
+        'escapeKey',
         'highlightedIndex',
         'handleSelectedItem'
     ],
@@ -385,7 +385,7 @@ export default defineComponent({
         }
 
         function onEscapeKey(evt: AnchorEvent) {
-            emit('escape-key')
+            emit('escapeKey')
             hide(evt)
         }
 
