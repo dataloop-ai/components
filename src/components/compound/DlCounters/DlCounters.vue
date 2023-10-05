@@ -12,13 +12,13 @@
             >
                 <div :class="computeClass('item-content')">
                     <dl-kpi
-                        :counter="kpiValue(item.value)"
+                        :counter="kpiValue(item)"
                         :counter-font-size="counterFontSize"
                         :title="capitalize(item.text)"
                         :title-font-size="titleFontSize"
                         :subtitle="item.subtext && capitalize(item.subtext)"
                         :subtitle-font-size="subtitleFontSize"
-                        :info-message="null"
+                        :info-message="kpiInfoMessage(item)"
                         :progress="null"
                         :small="small"
                     />
@@ -89,11 +89,14 @@ export default defineComponent({
         computeClass(value: string): (string | boolean)[] {
             return [value, this.small && `${value}--small`]
         },
-        kpiValue(value: string | number) {
+        kpiValue(item: DlCounterItem) {
             return {
-                value: value ?? 0,
-                format: DlKpiCounterFormat.long
+                value: item.value ?? 0,
+                format: item.format ?? DlKpiCounterFormat.long
             }
+        },
+        kpiInfoMessage(item: DlCounterItem) {
+            return item.infoMessage || null
         }
     }
 })
