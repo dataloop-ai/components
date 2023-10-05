@@ -365,7 +365,7 @@ export default defineComponent({
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
                 const json = toJSON(cleanedAliases)
-                if (!isEqual(json, modelValue.value)) {
+                if (isValid.value && !isEqual(json, modelValue.value)) {
                     emit('update:model-value', json)
                 }
                 return json
@@ -570,6 +570,10 @@ export default defineComponent({
                 return
             }
 
+            if (!isValid.value) {
+                return
+            }
+
             const toSearch = updateJSONQuery()
             if (toSearch) {
                 emit('search', toSearch)
@@ -721,6 +725,10 @@ export default defineComponent({
             return focused.value || searchQuery.value.length
                 ? ''
                 : props.placeholder
+        })
+
+        const isValid = computed(() => {
+            return computedStatus.value.type !== 'error'
         })
 
         //#endregion
