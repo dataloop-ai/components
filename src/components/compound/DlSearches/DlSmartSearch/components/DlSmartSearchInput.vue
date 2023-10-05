@@ -70,14 +70,14 @@
             :offset="menuOffset"
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
-            @escape-key="onEscapeKey"
+            @escapekey="onEscapeKey"
         />
         <dl-menu
             v-if="showDatePicker && focused"
             v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
-            @escape-key="onEscapeKey"
+            @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
@@ -582,11 +582,20 @@ export default defineComponent({
         }
 
         const onEscapeKey = () => {
-            if (
-                showDatePicker.value ||
-                !focused.value ||
-                showSuggestions.value
-            ) {
+            if (!focused.value) {
+                return
+            }
+
+            if (showDatePicker.value) {
+                showDatePicker.value = false
+                showSuggestions.value = true
+                datePickerSelection.value = null
+                setCaret(input.value)
+                return
+            }
+
+            if (showSuggestions.value) {
+                showSuggestions.value = false
                 return
             }
 
