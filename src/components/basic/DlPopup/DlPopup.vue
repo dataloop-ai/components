@@ -4,7 +4,7 @@
         v-bind="menuProps"
         :model-value="modelV"
         @click="handleClick"
-        @escape-key="handleEscape"
+        @escapekey="handleEscape"
         @before-show="handleBeforeShow"
         @before-hide="handleBeforeHide"
         @show="handleShow"
@@ -175,12 +175,7 @@ export default defineComponent({
             default: 1
         }
     },
-    emits: [
-        ...useModelToggleEmits,
-        'click',
-        'escape-key',
-        'close-button-click'
-    ],
+    emits: [...useModelToggleEmits, 'click', 'escapekey', 'close-button-click'],
     setup(props, { attrs, slots, emit }) {
         const vm = getCurrentInstance()
 
@@ -217,7 +212,7 @@ export default defineComponent({
         }
 
         const handleEscape = () => {
-            emit('escape-key')
+            emit('escapekey')
         }
 
         const handleCloseClick = () => {

@@ -18,7 +18,7 @@
             @hide="onHide"
             @highlightedIndex="setHighlightedIndex"
             @handleSelectedItem="handleSelectedItem"
-            @escapeKey="onEscapeKey"
+            @escapekey="onEscapeKey"
         >
             <dl-list>
                 <dl-list-item
@@ -38,7 +38,6 @@
 import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlMenu, DlList } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
-import { emit } from 'process'
 
 export default defineComponent({
     components: {
@@ -83,7 +82,7 @@ export default defineComponent({
             default: 1
         }
     },
-    emits: ['set-input-value', 'update:model-value', 'escapeKey'],
+    emits: ['set-input-value', 'update:model-value', 'escapekey'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -112,7 +111,7 @@ export default defineComponent({
         })
 
         const onEscapeKey = () => {
-            emit('escapeKey')
+            emit('escapekey')
             emit('update:model-value', false)
         }
 
