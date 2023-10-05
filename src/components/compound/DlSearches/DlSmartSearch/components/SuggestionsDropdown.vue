@@ -18,6 +18,7 @@
             @hide="onHide"
             @highlightedIndex="setHighlightedIndex"
             @handleSelectedItem="handleSelectedItem"
+            @escapekey="onEscapeKey"
         >
             <dl-list>
                 <dl-list-item
@@ -81,7 +82,7 @@ export default defineComponent({
             default: 1
         }
     },
-    emits: ['set-input-value', 'update:model-value'],
+    emits: ['set-input-value', 'update:model-value', 'escapekey'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -109,6 +110,11 @@ export default defineComponent({
             return `#dl-smart-search-input-text-area-${props.parentId}`
         })
 
+        const onEscapeKey = () => {
+            emit('escapekey')
+            emit('update:model-value', false)
+        }
+
         return {
             defaultTarget,
             setHighlightedIndex,
@@ -117,7 +123,8 @@ export default defineComponent({
             onShow,
             onHide,
             emitModelValue,
-            handleOption
+            handleOption,
+            onEscapeKey
         }
     }
 })

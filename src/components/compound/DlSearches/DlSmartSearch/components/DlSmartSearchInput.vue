@@ -30,6 +30,7 @@
                         :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
+                        @keyup.esc="onKeyPress"
                         @input="onInput"
                         @click.stop.prevent="focus"
                         @blur="blur"
@@ -69,12 +70,14 @@
             :offset="menuOffset"
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
+            @escapekey="onEscapeKey"
         />
         <dl-menu
             v-if="showDatePicker && focused"
             v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
+            @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
@@ -362,7 +365,7 @@ export default defineComponent({
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
                 const json = toJSON(cleanedAliases)
-                if (!isEqual(json, modelValue.value)) {
+                if (isValid.value && !isEqual(json, modelValue.value)) {
                     emit('update:model-value', json)
                 }
                 return json
@@ -371,7 +374,7 @@ export default defineComponent({
                     error: e,
                     message: 'Could not translate given JSON to a valid Scheme'
                 })
-                return modelValue.value
+                return null
             }
         }
 
@@ -410,6 +413,15 @@ export default defineComponent({
             emit('focus')
         }
 
+        const processBlur = () => {
+            input.value.scrollLeft = 0
+            input.value.scrollTop = 0
+            focused.value = false
+            expanded.value = true
+            updateJSONQuery()
+            emit('blur')
+        }
+
         const blur = (
             e: Event | null = null,
             options: { force?: boolean } = {}
@@ -430,12 +442,7 @@ export default defineComponent({
                     return
                 }
 
-                input.value.scrollLeft = 0
-                input.value.scrollTop = 0
-                focused.value = false
-                expanded.value = true
-                updateJSONQuery()
-                emit('blur')
+                processBlur()
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
@@ -468,24 +475,19 @@ export default defineComponent({
         })
 
         const onKeyPress = (e: KeyboardEvent) => {
+            if (e.code === 'Escape' || e.key === 'Escape') {
+                e.preventDefault()
+                e.stopPropagation()
+
+                onEscapeKey()
+                return
+            }
+
             if (e.code === 'Enter' || e.key === 'Enter') {
                 e.preventDefault()
                 e.stopPropagation()
 
-                if (showSuggestions.value || showDatePicker.value) {
-                    return
-                }
-
-                if (endsWithOperator.value) {
-                    return
-                }
-
-                if (!input.value.innerHTML.length) {
-                    return
-                }
-
-                emit('search', updateJSONQuery())
-                showSuggestions.value = false
+                onEnterKey()
                 return
             }
 
@@ -553,6 +555,52 @@ export default defineComponent({
                 })
                 return ''
             }
+        }
+
+        const onEnterKey = () => {
+            if (showSuggestions.value || showDatePicker.value) {
+                return
+            }
+
+            if (endsWithOperator.value) {
+                return
+            }
+
+            if (!input.value.innerHTML.length) {
+                return
+            }
+
+            if (!isValid.value) {
+                return
+            }
+
+            const toSearch = updateJSONQuery()
+            if (toSearch) {
+                emit('search', toSearch)
+                showSuggestions.value = false
+            }
+        }
+
+        const onEscapeKey = () => {
+            if (!focused.value) {
+                return
+            }
+
+            if (showDatePicker.value) {
+                showDatePicker.value = false
+                showSuggestions.value = true
+                datePickerSelection.value = null
+                setCaret(input.value)
+                return
+            }
+
+            if (showSuggestions.value) {
+                showSuggestions.value = false
+                return
+            }
+
+            input.value.blur()
+            processBlur()
         }
         //#endregion
 
@@ -688,6 +736,10 @@ export default defineComponent({
                 : props.placeholder
         })
 
+        const isValid = computed(() => {
+            return computedStatus.value.type !== 'error'
+        })
+
         //#endregion
 
         //#region watcher
@@ -792,7 +844,8 @@ export default defineComponent({
             onDateSelection,
             computedStatus,
             setInputFromSuggestion,
-            inputPlaceholder
+            inputPlaceholder,
+            onEscapeKey
         }
     }
 })

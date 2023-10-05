@@ -122,6 +122,7 @@ export default defineComponent({
             dir: 'string',
             thumbnail: 'string',
             createdAt: 'date',
+            date2: 'date',
             annotated: 'boolean',
             hidden: 'boolean',
             metadata: {

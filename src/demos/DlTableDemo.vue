@@ -416,8 +416,8 @@
                     title="Editable Columns"
                     has-visible-columns
                 >
-                    <template #body-cell-row-actions="{ row }">
-                        {{ row }} actiosnsss
+                    <template #body-cell-row-actions="">
+                        <dl-button label="test button" />
                     </template>
                 </DlTable>
             </div>
