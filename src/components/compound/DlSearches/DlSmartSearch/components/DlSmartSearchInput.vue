@@ -30,6 +30,7 @@
                         :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
+                        @keyup.esc="onKeyPress"
                         @input="onInput"
                         @click.stop.prevent="focus"
                         @blur="blur"
@@ -69,12 +70,14 @@
             :offset="menuOffset"
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
+            @escape-key="onEscapeKey"
         />
         <dl-menu
             v-if="showDatePicker && focused"
             v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
+            @escape-key="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
@@ -410,6 +413,15 @@ export default defineComponent({
             emit('focus')
         }
 
+        const processBlur = () => {
+            input.value.scrollLeft = 0
+            input.value.scrollTop = 0
+            focused.value = false
+            expanded.value = true
+            updateJSONQuery()
+            emit('blur')
+        }
+
         const blur = (
             e: Event | null = null,
             options: { force?: boolean } = {}
@@ -430,12 +442,7 @@ export default defineComponent({
                     return
                 }
 
-                input.value.scrollLeft = 0
-                input.value.scrollTop = 0
-                focused.value = false
-                expanded.value = true
-                updateJSONQuery()
-                emit('blur')
+                processBlur()
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
@@ -468,6 +475,11 @@ export default defineComponent({
         })
 
         const onKeyPress = (e: KeyboardEvent) => {
+            if (e.code === 'Escape' || e.key === 'Escape') {
+                onEscapeKey()
+                return
+            }
+
             if (e.code === 'Enter' || e.key === 'Enter') {
                 e.preventDefault()
                 e.stopPropagation()
@@ -553,6 +565,19 @@ export default defineComponent({
                 })
                 return ''
             }
+        }
+
+        const onEscapeKey = () => {
+            if (
+                showDatePicker.value ||
+                !focused.value ||
+                showSuggestions.value
+            ) {
+                return
+            }
+
+            input.value.blur()
+            processBlur()
         }
         //#endregion
 
@@ -792,7 +817,8 @@ export default defineComponent({
             onDateSelection,
             computedStatus,
             setInputFromSuggestion,
-            inputPlaceholder
+            inputPlaceholder,
+            onEscapeKey
         }
     }
 })
