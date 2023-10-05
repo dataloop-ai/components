@@ -29,17 +29,15 @@
         />
 
         <h1>in menu : The chosen options are {{ switchValue }}</h1>
-        <dl-button
-            label="Menu"
-            @click="$refs.menu.show()"
-        >
+        <dl-button label="Menu">
             <dl-menu
                 ref="menu"
-                fit-container
+                fit-content
             >
                 <dl-option-group
                     v-model="switchValue"
-                    type="checkbox"
+                    left-label
+                    type="switch"
                     :options="options"
                 />
             </dl-menu>

@@ -232,6 +232,7 @@
                             :count="getOptionCount(item)"
                             :children="getOptionChildren(item)"
                             :capitalized="capitalizedOptions"
+                            :readonly="isReadonlyOption(item)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(item)"
                             @selected="handleSelected"
@@ -272,6 +273,7 @@
                             :count="getOptionCount(option)"
                             :children="getOptionChildren(option)"
                             :capitalized="capitalizedOptions"
+                            :readonly="isReadonlyOption(option)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
                             @selected="handleSelected"
@@ -751,6 +753,9 @@ export default defineComponent({
                 ? option?.children
                 : null
         },
+        isReadonlyOption(option: any) {
+            return !!option?.readonly
+        },
         getOptionCount(option: any) {
             return option?.count ?? null
         },
@@ -791,7 +796,7 @@ export default defineComponent({
             this.closeMenu()
         },
         selectOption(selectedOption: DlSelectOptionType) {
-            if (this.multiselect) {
+            if (this.multiselect || this.isReadonlyOption(selectedOption)) {
                 return
             }
 
