@@ -374,7 +374,7 @@ export default defineComponent({
                     error: e,
                     message: 'Could not translate given JSON to a valid Scheme'
                 })
-                return modelValue.value
+                return null
             }
         }
 
@@ -476,6 +476,9 @@ export default defineComponent({
 
         const onKeyPress = (e: KeyboardEvent) => {
             if (e.code === 'Escape' || e.key === 'Escape') {
+                e.preventDefault()
+                e.stopPropagation()
+
                 onEscapeKey()
                 return
             }
@@ -484,20 +487,7 @@ export default defineComponent({
                 e.preventDefault()
                 e.stopPropagation()
 
-                if (showSuggestions.value || showDatePicker.value) {
-                    return
-                }
-
-                if (endsWithOperator.value) {
-                    return
-                }
-
-                if (!input.value.innerHTML.length) {
-                    return
-                }
-
-                emit('search', updateJSONQuery())
-                showSuggestions.value = false
+                onEnterKey()
                 return
             }
 
@@ -564,6 +554,26 @@ export default defineComponent({
                     message: 'Could not translate given JSON to a valid Scheme'
                 })
                 return ''
+            }
+        }
+
+        const onEnterKey = () => {
+            if (showSuggestions.value || showDatePicker.value) {
+                return
+            }
+
+            if (endsWithOperator.value) {
+                return
+            }
+
+            if (!input.value.innerHTML.length) {
+                return
+            }
+
+            const toSearch = updateJSONQuery()
+            if (toSearch) {
+                emit('search', toSearch)
+                showSuggestions.value = false
             }
         }
 
