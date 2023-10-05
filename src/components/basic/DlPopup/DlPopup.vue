@@ -201,7 +201,7 @@ export default defineComponent({
         'show',
         'before-show',
         'hide',
-        'escape-key',
+        'escapeKey',
         'before-hide',
         'update:model-value'
     ],
@@ -402,7 +402,7 @@ export default defineComponent({
         }
 
         function onEscapeKey(evt: AnchorEvent) {
-            proxy.$emit('escape-key')
+            proxy.$emit('escapeKey')
             if (!props.disableCloseByEsc) {
                 hide(evt)
             }
