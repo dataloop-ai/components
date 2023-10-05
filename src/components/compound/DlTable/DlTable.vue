@@ -147,6 +147,7 @@
                             <DlTh
                                 v-if="hasVisibleColumns"
                                 key="header-cell-visible-columns"
+                                class="visible-columns-justify-end"
                             >
                                 <dl-button
                                     text-color="dl-color-medium"
@@ -317,6 +318,7 @@
                                 <DlTd
                                     v-if="hasVisibleColumns"
                                     key="body-cell-row-actions"
+                                    class="visible-columns-justify-end"
                                 >
                                     <slot
                                         v-bind="
@@ -446,6 +448,7 @@
                             <DlTh
                                 v-if="hasVisibleColumns"
                                 key="header-cell-visible-columns"
+                                class="visible-columns-justify-end"
                             >
                                 <dl-button
                                     text-color="dl-color-medium"
@@ -601,6 +604,7 @@
                                 <DlTd
                                     v-if="hasVisibleColumns"
                                     key="body-cell-row-actions"
+                                    class="visible-columns-justify-end"
                                 >
                                     <slot
                                         v-bind="
@@ -713,7 +717,6 @@ import {
     getCurrentInstance,
     ComputedRef,
     onMounted,
-    toRef,
     toRefs
 } from 'vue-demi'
 import { props } from './utils/props'

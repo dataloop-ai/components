@@ -509,3 +509,9 @@
     border-bottom: 1px solid var(--dl-color-separator);
   }
 }
+
+.visible-columns-justify-end {
+  &::v-deep div { 
+    justify-content: flex-end;
+  }
+}
