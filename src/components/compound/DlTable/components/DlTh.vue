@@ -110,7 +110,7 @@ export default defineComponent({
             isSortable: !hasOptionalProps.value
                 ? false
                 : column?.value?.sortable ?? false,
-            thClasses: (attrs.class ?? '') + ' ' + thClasses.value,
+            thClasses: ((attrs.class ?? '') + ' ' + thClasses.value).trim(),
             align: column?.value?.align ?? 'left',
             iconClass: column?.value?.iconClass ?? null,
             hasOptionalProps,
