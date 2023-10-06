@@ -4,7 +4,7 @@ export function splitByQuotes(input: string, split: string) {
         .replace('o', '[\\(\\{\\[]')
         .replace('c', '[\\)\\}\\]]')
         .replace('t', '[\'"]')
-        .replace('e', '[\\\\]')
+        .replace('e', '[\\)\\]]')
     const r = new RegExp(pattern, 'gi')
     const stack: string[] = []
     let buffer: string[] = []
