@@ -239,6 +239,8 @@ export const useSuggestions = (
                 )
 
                 if (!value) continue
+
+                localSuggestions = getMatches(localSuggestions, value)
             } else if (
                 dataType === 'datetime' ||
                 dataType === 'date' ||
@@ -247,6 +249,8 @@ export const useSuggestions = (
                 localSuggestions = [dateSuggestionPattern]
 
                 if (!value) continue
+
+                localSuggestions = getMatches(localSuggestions, value)
             } else {
                 localSuggestions = []
             }
