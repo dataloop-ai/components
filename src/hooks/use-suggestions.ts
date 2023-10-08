@@ -239,8 +239,6 @@ export const useSuggestions = (
                 )
 
                 if (!value) continue
-
-                localSuggestions = getMatches(localSuggestions, value)
             } else if (
                 dataType === 'datetime' ||
                 dataType === 'date' ||
@@ -249,8 +247,6 @@ export const useSuggestions = (
                 localSuggestions = [dateSuggestionPattern]
 
                 if (!value) continue
-
-                localSuggestions = getMatches(localSuggestions, value)
             } else {
                 localSuggestions = []
             }
@@ -447,10 +443,15 @@ const getOperatorByDataType = (dataType: string) => {
         return []
     }
 
-    const operators = Object.keys(operatorToDataTypeMap).filter((key) => {
+    let operators = Object.keys(operatorToDataTypeMap).filter((key) => {
         const value = operatorToDataTypeMap[key]
         return value.length === 0 || value.includes(dataType)
     })
+
+    if (dataType === 'date' || dataType === 'datetime') {
+        const toExclude = ['$in', '$nin']
+        operators = operators.filter((s) => !toExclude.includes(s))
+    }
 
     return operators
 }
