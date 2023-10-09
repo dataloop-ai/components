@@ -28,11 +28,18 @@
                 :readonly="readonly"
                 :mode="mode"
                 @change="onChange"
+                @focus="onFocus"
+                @blur="onBlur"
             />
         </div>
         <span>JSON: {{ jsonModel }}</span>
         <div>
+            <div>changes</div>
             {{ changes }}
+        </div>
+        <div>
+            <div>events</div>
+            {{ events }}
         </div>
 
         <dl-button @click="dialogState = !dialogState">
@@ -87,9 +94,17 @@ export default defineComponent({
         const readonly = ref(false)
         const mode = ref(DlJsonEditorModes.text)
         const changes = ref<any[]>([])
+        const events = ref<string[]>([])
 
         const onChange = (change: any) => {
             changes.value.push(change)
+        }
+
+        const onFocus = () => {
+            events.value.push('focus')
+        }
+        const onBlur = () => {
+            events.value.push('blur')
         }
 
         return {
@@ -100,7 +115,10 @@ export default defineComponent({
             readonly,
             mode,
             changes,
-            onChange
+            events,
+            onChange,
+            onFocus,
+            onBlur
         }
     }
 })
