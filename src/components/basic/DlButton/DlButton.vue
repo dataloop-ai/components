@@ -47,10 +47,12 @@
             </div>
         </button>
         <dl-tooltip
-            v-if="tooltip"
+            v-if="tooltip || hasTooltipSlot"
             style="pointer-events: auto"
         >
-            {{ tooltip }}
+            <slot name="tooltip">
+                {{ tooltip }}
+            </slot>
         </dl-tooltip>
     </div>
 </template>
@@ -272,6 +274,9 @@ export default defineComponent({
         },
         hasContent(): boolean {
             return !!this.$slots.default || this.hasLabel
+        },
+        hasTooltipSlot(): boolean {
+            return !!this.$slots.tooltip
         },
         cssButtonVars(): Record<string, string> {
             let colors: Record<string, string> = {}

@@ -38,6 +38,33 @@
                 }
             ]"
         />
+        <dl-counters
+            small
+            :items="[
+                {
+                    value: 100000000,
+                    text: 'lorem',
+                    format: 'short',
+                    infoMessage:
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                },
+                {
+                    value: '154h:35m:20s',
+                    text: 'ipsum lorem',
+                    subtext:
+                        'Cupidatat est labore et nisi do culpa veniam reprehenderit anim consectetur dolor mollit.',
+                    format: 'hms',
+                    infoMessage: '154h:35m:20s'
+                },
+                {
+                    value: 6789,
+                    text: 'lorem lorem ipsum',
+                    subtext: 'Minim exercitation ipsum elit cillum magna.',
+                    format: 'short',
+                    infoMessage: '6789'
+                }
+            ]"
+        />
     </div>
 </template>
 

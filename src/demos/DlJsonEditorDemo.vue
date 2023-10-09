@@ -27,9 +27,13 @@
                 v-model="jsonModel"
                 :readonly="readonly"
                 :mode="mode"
+                @change="onChange"
             />
         </div>
         <span>JSON: {{ jsonModel }}</span>
+        <div>
+            {{ changes }}
+        </div>
 
         <dl-button @click="dialogState = !dialogState">
             JsonEditor
@@ -82,6 +86,11 @@ export default defineComponent({
         const jsonEditorEl = ref(null)
         const readonly = ref(false)
         const mode = ref(DlJsonEditorModes.text)
+        const changes = ref<any[]>([])
+
+        const onChange = (change: any) => {
+            changes.value.push(change)
+        }
 
         return {
             jsonModel,
@@ -89,7 +98,9 @@ export default defineComponent({
             dialogJsonModel,
             jsonEditorEl,
             readonly,
-            mode
+            mode,
+            changes,
+            onChange
         }
     }
 })

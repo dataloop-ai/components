@@ -18,6 +18,30 @@ const defaultValue = [
     }
 ]
 
+const formattedValuesItems = [
+    {
+        value: 100000000,
+        text: 'lorem',
+        format: 'short',
+        infoMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    },
+    {
+        value: '154h:35m:20s',
+        text: 'ipsum lorem',
+        subtext:
+            'Cupidatat est labore et nisi do culpa veniam reprehenderit anim consectetur dolor mollit.',
+        format: 'hms',
+        infoMessage: '154h:35m:20s'
+    },
+    {
+        value: 6789,
+        text: 'lorem lorem ipsum',
+        subtext: 'Minim exercitation ipsum elit cillum magna.',
+        format: 'short',
+        infoMessage: '6789'
+    }
+]
+
 export default {
     title: 'Library/Components/DlCounters',
     component: DlCounters,
@@ -140,4 +164,25 @@ export const Small = SmallTemplate.bind({})
 Small.args = {
     small: true,
     items: defaultValue
+}
+
+const FormattedValuesTemplate = (args) => ({
+    components: { DlCounters },
+    setup() {
+        return { args }
+    },
+    template: `
+    <div style="padding: 50px;">
+        <DlCounters
+            small
+            v-bind="args" 
+        />
+    </div>
+  `
+})
+
+export const FormattedValues = FormattedValuesTemplate.bind({})
+FormattedValues.args = {
+    small: true,
+    items: formattedValuesItems
 }
