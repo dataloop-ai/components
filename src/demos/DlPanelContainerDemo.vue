@@ -1,5 +1,31 @@
 <template>
     <div style="width: 700px">
+        <div style="height: 1000px">
+            <dl-panel-container
+                v-model="collapseP1"
+                :direction="direction"
+                :resizable="resizable"
+                :collapsable="collapsable"
+                width="500px"
+                style="height: 100%"
+            >
+                <dl-panel
+                    resizable
+                    collapsable
+                >
+                    <div>
+                        <h3>RESIZABLE & COLLAPSABLE</h3>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur adipisicing
+                            elit. Excepturi, rerum harum aut sunt recusandae
+                            obcaecati necessitatibus. Alias nulla aliquid,
+                            dolorem qui, nesciunt hic iste ratione voluptates
+                            magni optio quae. Vero!
+                        </p>
+                    </div>
+                </dl-panel>
+            </dl-panel-container>
+        </div>
         <div class="dl-panel-container-demo">
             <dl-panel-container
                 v-model="collapseP1"
