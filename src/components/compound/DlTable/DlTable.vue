@@ -892,29 +892,29 @@ export default defineComponent({
         })
 
         console.log('after apply draggalbe ')
-        // watch(
-        //     hasVirtScroll,
-        //     () => {
-        //         tableEl = (rootRef.value as HTMLDivElement).querySelector(
-        //             'table.dl-table'
-        //         ) as HTMLTableElement
+        watch(
+            hasVirtScroll,
+            () => {
+                tableEl = (rootRef.value as HTMLDivElement).querySelector(
+                    'table.dl-table'
+                ) as HTMLTableElement
 
-        //         if (props.resizable) {
-        //             applyResizableColumns(tableEl, vm)
-        //         }
+                if (props.resizable) {
+                    applyResizableColumns(tableEl, vm)
+                }
 
-        //         if (hasDraggableColumns.value === true) {
-        //             applyDraggableColumns(
-        //                 tableEl,
-        //                 vm,
-        //                 vm.refs.dragRef as HTMLDivElement
-        //             )
-        //         }
-        //     },
-        //     {
-        //         flush: 'post'
-        //     }
-        // )
+                if (hasDraggableColumns.value === true) {
+                    applyDraggableColumns(
+                        tableEl,
+                        vm,
+                        vm.refs.dragRef as HTMLDivElement
+                    )
+                }
+            },
+            {
+                flush: 'post'
+            }
+        )
 
         watch(
             () => props.resizable,
@@ -940,23 +940,23 @@ export default defineComponent({
             }
         )
 
-        // watch(
-        //     () => props.draggable,
-        //     () => {
-        //         if (tableEl) {
-        //             if (hasDraggableColumns.value === true) {
-        //                 applyDraggableColumns(
-        //                     tableEl,
-        //                     vm,
-        //                     vm.refs.dragRef as HTMLDivElement
-        //                 )
-        //             } else {
-        //                 removeDraggableColumns()
-        //             }
-        //         }
-        //     },
-        //     { immediate: true }
-        // )
+        watch(
+            () => props.draggable,
+            () => {
+                if (tableEl) {
+                    if (hasDraggableColumns.value === true) {
+                        applyDraggableColumns(
+                            tableEl,
+                            vm,
+                            vm.refs.dragRef as HTMLDivElement
+                        )
+                    } else {
+                        removeDraggableColumns()
+                    }
+                }
+            },
+            { immediate: true }
+        )
 
         watch(
             [
@@ -1059,13 +1059,13 @@ export default defineComponent({
         const additionalClasses = computed(() => {
             const classes: string[] = []
 
-            // if (hasDraggableRows.value === true) {
-            //     classes.push('dl-table--draggable-rows')
-            // }
+            if (hasDraggableRows.value === true) {
+                classes.push('dl-table--draggable-rows')
+            }
 
-            // if (hasDraggableColumns.value === true) {
-            //     classes.push('dl-table--draggable-columns')
-            // }
+            if (hasDraggableColumns.value === true) {
+                classes.push('dl-table--draggable-columns')
+            }
 
             return classes
         })
