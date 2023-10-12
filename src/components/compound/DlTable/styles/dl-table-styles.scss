@@ -183,6 +183,11 @@
         }
     }
 
+    td,
+    th {
+        box-sizing: border-box;
+    }
+
     &--no-wrap {
         th,
         td {
@@ -503,8 +508,4 @@
         position: relative;
         border-bottom: 1px solid var(--dl-color-separator);
     }
-}
-
-.resize-ready {
-    cursor: ew-resize !important;
 }

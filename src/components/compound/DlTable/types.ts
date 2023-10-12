@@ -39,6 +39,7 @@ export type DlTableColumn = {
     headerStyle?: string
     headerClasses?: string
     textTransform?: DlTextTransformOptions
+    width?: number
 }
 
 export type DlTableFilterMethod = (

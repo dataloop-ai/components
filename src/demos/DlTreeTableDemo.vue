@@ -76,6 +76,19 @@
                             ]"
                         />
                     </div>
+                    <div>
+                        <p>Draggable</p>
+                        <DlOptionGroup
+                            v-model="draggable"
+                            inline
+                            :options="[
+                                { label: 'rows', value: 'rows' },
+                                { label: 'columns', value: 'columns' },
+                                { label: 'both', value: 'both' },
+                                { label: 'none', value: 'none' }
+                            ]"
+                        />
+                    </div>
                 </div>
             </div>
             <div style="margin-top: 100px">
@@ -101,7 +114,7 @@
                     @th-click="log"
                     @selected-items="selectedItems"
                     @row-reorder="reorderRows"
-                    @col-reorder="log"
+                    @col-update="updateColumns"
                 />
             </div>
             <!-- <div style="padding-top: 300px">
@@ -150,7 +163,6 @@
                     </template>
                 </DlTreeTable>
             </div> -->
-
             <!-- <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
                 <DlTreeTable
@@ -180,7 +192,7 @@
                     style="height: 500px"
                 >
                     <template #table-body>
-                        <div class="custom-body-slot">
+                        <div style="width: 100px">
                             Custom body slot inside tree table
                         </div>
                     </template>
@@ -239,42 +251,6 @@
                     </template>
                 </DlTreeTable>
             </div> -->
-            <!-- <div>
-                    <DlTreeTable
-                        :separator="separator"
-                        :columns="tableColumns"
-                        :bordered="bordered"
-                        :draggable="draggable"
-                        :dense="dense"
-                        class="sticky-header"
-                        :filter="filter"
-                        :selection="selection"
-                        :loading="loading"
-                        :rows="tableRows"
-                        :resizable="resizable"
-                        row-key="name"
-                        color="dl-color-secondary"
-                        title="Table Title"
-                        :virtual-scroll="vScroll"
-                        style="height: 500px"
-                        :rows-per-page-options="rowsPerPageOptions"
-                        is-empty
-                        hide-pagination
-                        :empty-state-props="{
-                            responsive: false,
-                            style: 'min-height: 350px; width: 300px;',
-                            bgSize: '130px',
-                            bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                            title: 'Lorem ipsum',
-                            subtitle:
-                                'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                            info: 'To learn more about this analytics, read our documentation.'
-                        }"
-                        @row-click="onRowClick"
-                        @th-click="log"
-                        @selectedItems="selectedItems"
-                    />
-                </div> -->
         </div>
     </div>
 </template>
@@ -283,7 +259,6 @@
 import { DlOptionGroup, DlSwitch, DlInput, DlTreeTable } from '../components'
 import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
-import { DlTableRow } from '../types'
 import { v4 } from 'uuid'
 
 const columns = [
@@ -293,30 +268,46 @@ const columns = [
         label: 'Dessert (100g serving)',
         align: 'left',
         field: 'name',
-        sortable: true
+        sortable: true,
+        width: 100
     },
     {
         name: 'calories',
         align: 'center',
         label: 'Calories',
         field: 'calories',
-        sortable: true
+        sortable: true,
+        width: 100
     },
     {
         name: 'fat',
         label: 'Fat (g)',
         field: 'fat',
         sortable: true,
-        align: 'center'
+        align: 'center',
+        width: 100
     },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs', align: 'center' },
+    {
+        name: 'carbs',
+        label: 'Carbs (g)',
+        field: 'carbs',
+        align: 'center',
+        width: 100
+    },
     {
         name: 'protein',
         label: 'Protein (g)',
         field: 'protein',
-        align: 'center'
+        align: 'center',
+        width: 100
     },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', align: 'center' },
+    {
+        name: 'sodium',
+        label: 'Sodium (mg)',
+        field: 'sodium',
+        align: 'center',
+        width: 100
+    },
     {
         name: 'calcium',
         label: 'Calcium (%)',
@@ -324,7 +315,8 @@ const columns = [
         sortable: true,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10),
-        align: 'center'
+        align: 'center',
+        width: 100
     },
     {
         name: 'iron',
@@ -333,7 +325,8 @@ const columns = [
         sortable: true,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10),
-        align: 'center'
+        align: 'center',
+        width: 100
     }
 ]
 
@@ -474,6 +467,7 @@ const rows2 = [
         sodium: 87,
         calcium: '14%',
         iron: '1%',
+        isExpanded: false,
         children: [
             {
                 id: v4(),
@@ -484,7 +478,8 @@ const rows2 = [
                 protein: 6,
                 sodium: 337,
                 calcium: '6%',
-                iron: '7%'
+                iron: '7%',
+                isExpanded: false
             }
         ]
     },
@@ -497,7 +492,8 @@ const rows2 = [
         protein: 6,
         sodium: 337,
         calcium: '6%',
-        iron: '7%'
+        iron: '7%',
+        isExpanded: false
     },
     {
         id: v4(),
@@ -509,6 +505,7 @@ const rows2 = [
         sodium: 129,
         calcium: '8%',
         iron: '1%',
+        isExpanded: false,
         children: [
             {
                 id: v4(),
@@ -519,7 +516,8 @@ const rows2 = [
                 protein: 6,
                 sodium: 337,
                 calcium: '6%',
-                iron: '7%'
+                iron: '7%',
+                isExpanded: false
             },
             {
                 id: v4(),
@@ -531,6 +529,7 @@ const rows2 = [
                 sodium: 337,
                 calcium: '6%',
                 iron: '7%',
+                isExpanded: false,
                 children: [
                     {
                         id: v4(),
@@ -542,6 +541,7 @@ const rows2 = [
                         sodium: 337,
                         calcium: '6%',
                         iron: '7%',
+                        isExpanded: false,
                         children: [
                             {
                                 id: v4(),
@@ -553,6 +553,7 @@ const rows2 = [
                                 sodium: 337,
                                 calcium: '6%',
                                 iron: '7%',
+                                isExpanded: false,
                                 children: [
                                     {
                                         id: v4(),
@@ -564,6 +565,7 @@ const rows2 = [
                                         sodium: 337,
                                         calcium: '6%',
                                         iron: '7%',
+                                        isExpanded: false,
                                         children: [
                                             {
                                                 id: v4(),
@@ -574,7 +576,8 @@ const rows2 = [
                                                 protein: 6,
                                                 sodium: 337,
                                                 calcium: '6%',
-                                                iron: '7%'
+                                                iron: '7%',
+                                                isExpanded: false
                                             }
                                         ]
                                     }
@@ -596,6 +599,7 @@ const rows2 = [
         sodium: 337,
         calcium: '6%',
         iron: '7%',
+        isExpanded: false,
         children: [
             {
                 id: v4(),
@@ -606,7 +610,8 @@ const rows2 = [
                 protein: 6,
                 sodium: 337,
                 calcium: '6%',
-                iron: '7%'
+                iron: '7%',
+                isExpanded: false
             }
         ]
     },
@@ -619,7 +624,8 @@ const rows2 = [
         protein: 6,
         sodium: 337,
         calcium: '6%',
-        iron: '7%'
+        iron: '7%',
+        isExpanded: false
     },
     ...times(5, (index) => ({
         id: v4(),
@@ -630,7 +636,8 @@ const rows2 = [
         protein: 7,
         sodium: 54,
         calcium: '12%',
-        iron: '6%'
+        iron: '6%',
+        isExpanded: false
     }))
 ]
 
@@ -656,7 +663,7 @@ export default defineComponent({
         const loading = ref(false)
         const dense = ref(false)
         const vScroll = ref(false)
-        const resizable = ref(true)
+        const resizable = ref(false)
         const borderState = ref([])
         const denseState = ref([])
         const virtualScroll = ref([])
@@ -781,11 +788,14 @@ export default defineComponent({
         }
 
         const reorderRows = (newRows: any[]) => {
-            console.log(newRows)
             tableRows.value = newRows
+        }
+        const updateColumns = (newColumns: any) => {
+            tableColumns.value = newColumns
         }
         return {
             reorderRows,
+            updateColumns,
             filter,
             selectedData,
             selection,
@@ -882,13 +892,5 @@ export default defineComponent({
         /* height of all previous header rows */
         top: 40px;
     }
-}
-.custom-body-slot {
-    padding: 20px;
-    font-size: 35px;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    justify-content: center;
 }
 </style>

@@ -20,10 +20,9 @@
                 size="12px"
             />
         </td>
-        <td style="width: 12px">
+        <td class="chevron-icon">
             <DlIcon
                 v-if="(row.children || []).length > 0"
-                style="margin-right: 5px"
                 :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
                 @click="emitUpdateExpandedRow"
             />
@@ -55,11 +54,13 @@
             :class="col.tdClass(row)"
             :style="
                 col.tdStyle(row) +
-                    `padding-left: ${setTrPadding(
-                        level,
-                        (row.children || []).length > 0,
-                        colIndex
-                    )}px;`
+                    `padding-left: ${
+                        setTrPadding(
+                            level,
+                            (row.children || []).length > 0,
+                            colIndex
+                        ) + 1
+                    }px;`
             "
             :col-index="colIndex"
         >
@@ -83,7 +84,8 @@ import {
     onMounted,
     ref,
     toRefs,
-    watch
+    watch,
+    getCurrentInstance
 } from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
@@ -158,7 +160,7 @@ export default defineComponent({
             default: null
         }
     },
-    emit: [
+    emits: [
         'rowClick',
         'rowDblClick',
         'rowContextMenu',
@@ -170,6 +172,8 @@ export default defineComponent({
         const childrenCount = ref(0)
         const { row } = toRefs(props)
 
+        const vm = getCurrentInstance()
+
         watch(
             row,
             () => {
@@ -180,8 +184,6 @@ export default defineComponent({
                 flush: 'post'
             }
         )
-
-        // console.log({ row: row.value.name, level: props.level })
 
         const emitRowClick = (
             event: MouseEvent,
@@ -240,6 +242,14 @@ export default defineComponent({
                     : row[col.field]
             return col?.format !== void 0 ? col.format(val, row) : val
         }
+
+        watch(
+            () => props.row,
+            (val) => {
+                // console.log(val)
+            },
+            { deep: true, immediate: true }
+        )
 
         const hasSlotByName = (name: string) => !!context.slots[name]
 
@@ -317,6 +327,7 @@ export default defineComponent({
         })
 
         return {
+            log: console.log,
             visibleChildren,
             childrenCount,
             getRowKey,
@@ -338,4 +349,11 @@ export default defineComponent({
 })
 </script>
 
-<style scoped src="../../DlTable/styles/dl-table-styles.scss" lang="scss" />
+<style scoped lang="scss">
+@import '../../DlTable/styles/dl-table-styles.scss';
+.chevron-icon {
+    cursor: pointer;
+    width: 25px;
+    padding: 5px;
+}
+</style>

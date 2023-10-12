@@ -54,33 +54,33 @@ const element = {
 export const useSortableProps = {
     props: {
         type: Object as PropType<Record<string, any>>,
-        default: {}
+        default: () => {}
     },
     /** All SortableJS options are supported; events are handled by the `defineEmits` below and should be used with v-on */
     options: {
         type: Object as PropType<SortableOptionsProp>,
-        default: {},
-        required: false
+        default: () => {}
     },
     /** Your list of items **/
     list: {
         type: [Array, Object],
-        default: () => [] as any[],
-        required: true
+        default: () => [] as any[]
     },
     /** The name of the key present in each item in the list that corresponds to a unique value. */
     itemKey: {
         type: [String, Function] as PropType<
             string | ((item: any) => string | number | Symbol)
         >,
-        default: '',
-        required: true
+        default: ''
     },
     /** The element type to render as. */
     tag: {
         type: String as PropType<string>,
-        default: 'div',
-        required: false
+        default: 'div'
+    },
+    isSortable: {
+        type: Boolean,
+        default: false
     }
 }
 
@@ -97,10 +97,9 @@ export function useSortable(vm: Record<string, any>) {
 
     watch(
         rootRef,
-        (newDraggable) => {
-            console.log('Iobanii catalan')
-            if (newDraggable) {
-                sortable.value = new Sortable(newDraggable, {
+        (newRootRef) => {
+            if (newRootRef) {
+                sortable.value = new Sortable(newRootRef, {
                     ...props.options,
                     onChoose: (event) => emit('choose', event),
                     onUnchoose: (event) => emit('unchoose', event),
@@ -121,7 +120,6 @@ export function useSortable(vm: Record<string, any>) {
                     onSort: (event) => emit('sort', event),
                     onRemove: (event) => emit('remove', event),
                     onFilter: (event) => emit('filter', event),
-                    // See https://github.com/MaxLeiter/sortablejs-vue3/pull/56 for context on `attrs`.
                     // onMove: (event, originalEvent) =>
                     //     'onMoveCapture' in attrs
                     //         ? (<

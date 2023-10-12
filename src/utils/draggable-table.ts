@@ -1,29 +1,53 @@
 import { getElementAbove } from './get-element-above'
 import { removeAllChildNodes } from './remove-child-nodes'
-import { browseNestedNodes } from './browse-nested-nodes'
-import { swapNodes } from './swap-nodes'
-import { removeTableVerticalBorders } from './table-columns'
+import {
+    calculateColIndexOffset,
+    getColIndex,
+    getTableColumn,
+    getTreeTableColumn,
+    justifyMouseInsideTargetCell,
+    removeTableVerticalBorders,
+    swapTableColumns,
+    swapTreeTableColumns
+} from './table-columns'
+import { watch } from 'vue-demi'
 
 export function applyDraggableColumns(
     table: HTMLTableElement,
     vm?: any,
     draggableClone?: HTMLDivElement
 ) {
+    return
     const isTreeTable = vm.props.isTreeTable
     let originalColIndex: number = null
     let sourceColIndex: number = null
     let targetColIndex: number = null
+    let sourceCellWidth: number = null
 
     const colIndexOffset = calculateColIndexOffset(table)
 
-    const thead = table.querySelector('thead')
-    thead.addEventListener('mousedown', handleMousedown)
+    watch(
+        () => vm.props.columns,
+        () => {
+            if (!vm.vnode.el) return
+            table = vm.vnode.el.querySelector('table')
+            draggableClone = document.querySelector('.dl-table__drag')
+            const thead = table.querySelector('thead')
+            thead.addEventListener('mousedown', handleMousedown)
+        },
+        {
+            flush: 'post',
+            immediate: true
+        }
+    )
 
     function handleMousedown(event: MouseEvent) {
+        console.log('col mousedown')
         if (!vm.proxy.hasDraggableColumns || vm.proxy.getIsResizing()) return
         vm.proxy.setIsDragging(true)
         removeTableVerticalBorders(table)
         const eventTarget = event.target as HTMLElement
+        sourceCellWidth = eventTarget.getBoundingClientRect().width
         draggableClone.appendChild(generateColumnClone(eventTarget))
         handleMousemove(event)
         window.addEventListener('mousemove', handleMousemove)
@@ -53,7 +77,19 @@ export function applyDraggableColumns(
             event.clientX - draggableClone.getBoundingClientRect().width / 2
         }px`
         const newTargetColIndex = getColIndex(closestCell)
-        if (newTargetColIndex === undefined) return
+
+        if (
+            newTargetColIndex === undefined ||
+            !justifyMouseInsideTargetCell(
+                event,
+                closestCell,
+                newTargetColIndex,
+                sourceColIndex,
+                sourceCellWidth
+            )
+        )
+            return
+
         if (
             newTargetColIndex !== targetColIndex &&
             newTargetColIndex !== sourceColIndex
@@ -77,123 +113,4 @@ export function applyDraggableColumns(
             ? getTreeTableColumn(table, sourceColIndex)
             : getTableColumn(table, sourceColIndex)
     }
-
-    return () => {}
-}
-
-function getColIndex(el: Node) {
-    if (!el) return
-    return Array.from(el.parentElement.children).indexOf(el as HTMLElement)
-}
-
-function calculateColIndexOffset(table: HTMLTableElement) {
-    let colIndexOffset = 0
-    const innerTable = table.querySelector('.inner-table')
-    Array.from((innerTable || table).querySelector('tr').children).forEach(
-        (th) => {
-            if (th.classList.contains('empty-col')) {
-                colIndexOffset++
-            }
-        }
-    )
-    return colIndexOffset
-}
-
-function getTableColumn(
-    table: HTMLTableElement,
-    columnIndex: number
-): HTMLTableElement {
-    const rowCount = table.rows.length
-
-    const originalColumnWidth = table.rows[0].cells[columnIndex].offsetWidth
-    const originalColumnHeight = table.rows[0].offsetHeight
-
-    const columnTable: HTMLTableElement = document.createElement('table')
-    const columnTbody: HTMLTableSectionElement = document.createElement('tbody')
-    columnTable.appendChild(columnTbody)
-
-    for (let i = 0; i < rowCount; i++) {
-        const row = table.rows[i]
-        if (row.cells.length > columnIndex) {
-            const columnRow: HTMLTableRowElement = document.createElement('tr')
-            const cell: HTMLTableCellElement = row.cells[columnIndex].cloneNode(
-                true
-            ) as HTMLTableCellElement
-
-            cell.style.width = originalColumnWidth + 'px'
-            columnRow.style.height = originalColumnHeight + 'px'
-
-            columnRow.appendChild(cell)
-            columnTbody.appendChild(columnRow)
-        }
-    }
-
-    return columnTable
-}
-
-function getTreeTableColumn(
-    table: HTMLTableElement,
-    columnIndex: number
-): HTMLTableElement {
-    const th = table.querySelector('thead').children[0].children[
-        columnIndex
-    ] as HTMLElement
-    const thColIndex = th.dataset.colIndex
-    const newTable = table.cloneNode(true) as HTMLTableElement
-    const width = th.getBoundingClientRect().width
-    browseNestedNodes(
-        newTable,
-        (el) => el.dataset.colIndex && el.dataset.colIndex !== thColIndex, // if
-        (el) => {
-            el.parentNode?.removeChild(el) // then
-        },
-        (el) => !!el.dataset.colIndex, // else if
-        (el) => {
-            el.style.width = `${width}px` // then
-            el.classList.remove('vertical-border')
-        }
-    )
-    newTable.style.width = `${width}px`
-    newTable.style.overflow = 'hidden'
-    return newTable
-}
-
-function swapTableColumns(
-    table: HTMLTableElement,
-    sourceIndex: number,
-    targetIndex: number
-): void {
-    const rows = table.rows
-
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i]
-        const cells = row.cells
-
-        const tempCell = cells[sourceIndex].cloneNode(true) as HTMLElement
-        cells[sourceIndex].parentNode!.replaceChild(
-            cells[targetIndex].cloneNode(true),
-            cells[sourceIndex]
-        )
-        cells[targetIndex].parentNode!.replaceChild(
-            tempCell,
-            cells[targetIndex]
-        )
-    }
-}
-
-function swapTreeTableColumns(
-    table: HTMLTableElement,
-    sourceIndex: number,
-    targeIndex: number
-): void {
-    browseNestedNodes(
-        table,
-        (el) =>
-            (el.tagName === 'TH' || el.tagName === 'TD') &&
-            getColIndex(el) === targeIndex,
-        (targetEl) => {
-            const parent = targetEl.parentElement
-            swapNodes(targetEl, parent.children[sourceIndex] as HTMLElement)
-        }
-    )
 }

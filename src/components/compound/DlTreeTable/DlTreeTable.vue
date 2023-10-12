@@ -1,18 +1,17 @@
 <script lang="ts">
 import {
-    Vue,
     computed,
     ComputedRef,
     defineComponent,
     isVue2,
     set,
     ref,
-    h,
     VNode,
     toRefs,
-    getCurrentInstance
+    watch
 } from 'vue-demi'
 import { DlCheckbox } from '../../essential'
+import { DlEmptyState } from '../../basic'
 import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
@@ -20,10 +19,9 @@ import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
 import { props } from './props'
 import { emits } from './emits'
-import Sortable from '../DlSortable/Sortable.vue'
-import TableSortable from '../DlSortable/TableSortable.vue'
+import Sortable from '../DlSortable/SortableJS.vue'
 import { renderComponent } from '../../../utils/render-fn'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import SortableJs from 'sortablejs'
 import { v4 } from 'uuid'
 import { moveNestedRow } from './utils/moveNestedRow'
@@ -39,7 +37,7 @@ export default defineComponent({
         DlTrTreeView,
         DlCheckbox,
         Sortable,
-        TableSortable
+        DlEmptyState
     },
     props,
     emits,
@@ -50,6 +48,8 @@ export default defineComponent({
         const denseState = ref([])
         const resizableState = ref([])
         const hasFlatTreeData = true
+
+        const vue2h = ref()
 
         const sortingMovement = ref<SortingMovement>({
             lastId: null,
@@ -62,7 +62,19 @@ export default defineComponent({
 
         const mainTableKey = ref()
 
-        const { rows: tableRows, columns: tableColumns } = toRefs(props)
+        // const { rows: tableRows, columns: tableColumns } = toRefs(props)
+        const tableRows = ref(props.rows)
+        watch(
+            () => props.rows,
+            (val) => (tableRows.value = val)
+        )
+        const tableColumns = ref(props.columns)
+        watch(
+            () => props.columns,
+            (val) => (tableColumns.value = val)
+        )
+
+        const isDataEmpty = computed(() => !props.rows.length)
 
         const hasEmptyStateProps = computed(() =>
             props.emptyStateProps
@@ -71,16 +83,16 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            if (props.draggable) {
-                return dlTableRef.value?.rootRef?.computedRows || []
-            }
+            // if (props.draggable) {
+            //     return dlTableRef.value?.rootRef?.computedRows || []
+            // }
             return dlTableRef.value?.computedRows || []
         })
 
         const tableRootRef = computed(() => {
-            if (props.draggable) {
-                return dlTableRef.value || {}
-            }
+            // if (props.draggable) {
+            //     return dlTableRef.value || {}
+            // }
             return dlTableRef.value || {}
         })
 
@@ -88,6 +100,10 @@ export default defineComponent({
             typeof props.rowKey === 'function'
                 ? props.rowKey
                 : (row: Record<string, any>) => row[props.rowKey as string]
+        )
+
+        const hasDraggableRows = computed(() =>
+            ['rows', 'both'].includes(props.draggable)
         )
 
         const {
@@ -104,7 +120,7 @@ export default defineComponent({
         } = useTreeTableRowSelection(
             props as unknown as DlTableProps,
             emit,
-            tableRows,
+            tableRows as ComputedRef<DlTableRow[]>,
             getRowKey as ComputedRef<(val: string | DlTableRow) => any>
         )
 
@@ -113,7 +129,8 @@ export default defineComponent({
             name: string,
             rowsArr: DlTableRow[] = tableRows.value
         ) => {
-            rowsArr.some((o) => {
+            const newRows = cloneDeep(rowsArr)
+            newRows.forEach((o) => {
                 if (getRowKey.value(o) === name) {
                     if (isVue2) {
                         set(o, 'isExpanded', isExpanded)
@@ -127,15 +144,21 @@ export default defineComponent({
                     }
                 }
             })
+            tableRows.value = newRows
         }
 
-        const updateNestedRows = (
-            row: (typeof tableRows.value)[number],
-            isExpanded: boolean
-        ) => {
+        watch(
+            tableRows,
+            (val) => {
+                console.log(val)
+            },
+            { deep: true }
+        )
+
+        const updateNestedRows = (row: DlTableRow, isExpanded: boolean) => {
             if ((row.children || []).length > 0) {
                 const isParentExpanded = row.isExpanded
-                row.children.forEach((r: (typeof tableRows.value)[number]) => {
+                row.children.forEach((r: DlTableRow) => {
                     if (!isParentExpanded) {
                         if (isVue2) {
                             set(r, 'isExpanded', isParentExpanded)
@@ -229,146 +252,174 @@ export default defineComponent({
             )
         }
 
-        const renderDlTrTree = (
-            row: DlTableRow,
-            index: number,
-            children: DlTableRow[] = [],
-            level: number = 1
-        ) =>
-            renderComponent(
-                DlTrTreeView,
-                {
-                    row,
-                    rowIndex: index,
-                    rowKey: props.rowKey,
-                    isRowSelected: isRowSelected(
-                        props.rowKey,
-                        getRowKey.value(row)
-                    )
-                        ? 'selected'
-                        : '',
-                    level,
-                    class: 'nested-element',
-                    'data-level': level,
-                    'data-id': row.id,
-                    hasAnyAction: tableRootRef.value.hasAnyAction,
-                    noHover: tableRootRef.value.noHover,
-                    hasDraggableRows: tableRootRef.value.hasDraggableRows,
-                    hasSelectionMode: tableRootRef.value.hasSelectionMode,
-                    bindBodySelection: tableRootRef.value.getBodySelectionScope(
-                        {
-                            key: getRowKey.value(row),
-                            row,
-                            pageIndex: index
-                        }
-                    ),
-                    bindBodyCellScope: (col: DlTableColumn) =>
-                        tableRootRef.value.getBodyCellScope({
-                            key: getRowKey.value(row),
-                            row,
-                            pageIndex: index,
-                            col
-                        }),
+        const computedCellSlots = computed(() => {
+            const obj: any = {}
+            tbodySlotsData.value.forEach((item: DlTableColumn) => {
+                const slot = slots[`body-cell-${item.name}`]
+                obj[`body-cell-${item.name}`] = slot
+            })
+            return obj
+        })
 
-                    key: getRowKey.value(row),
-                    color: props.color,
-                    computedCols: tableRootRef.value.computedCols,
-                    modelValue: isRowSelected(
-                        props.rowKey,
-                        getRowKey.value(row)
-                    ),
-                    'onUpdate:modelValue': (adding: boolean, evt: Event) =>
-                        updateSelectionHierarchy(adding, evt, row),
-                    onRowClick: tableRootRef.value.onTrClick(event, row, index),
-                    onRowDoubleClick: tableRootRef.value.onTrDblClick(
-                        event,
-                        row,
-                        index
-                    ),
-                    onTrContextMenu: tableRootRef.value.onTrContextMenu(
-                        event,
-                        row,
-                        index
-                    ),
-                    onUpdateExpandedRow: () =>
-                        updateExpandedRow(!row.isExpanded, getRowKey.value(row))
-                },
-                () => children
-            )
+        // const renderDlTrTree = (
+        //     row: DlTableRow,
+        //     index: number,
+        //     children: DlTableRow[] = [],
+        //     level: number = 1
+        // ) => {
+        //     const currentSlots = {
+        //         default: () => children,
+        //         ...computedCellSlots.value
+        //     }
+        //     return renderComponent(vue2h.value, DlTrTreeView, {
+        //         row,
+        //         rowIndex: index,
+        //         rowKey: props.rowKey,
+        //         isRowSelected: isRowSelected(props.rowKey, getRowKey.value(row))
+        //             ? 'selected'
+        //             : '',
+        //         level,
+        //         class: 'nested-element',
+        //         'data-level': level,
+        //         'data-id': row.id,
+        //         hasAnyAction: tableRootRef.value.hasAnyAction,
+        //         noHover: tableRootRef.value.noHover,
+        //         hasDraggableRows: hasDraggableRows.value,
+        //         hasSelectionMode: tableRootRef.value.hasSelectionMode,
+        //         bindBodySelection: tableRootRef.value.getBodySelectionScope({
+        //             key: getRowKey.value(row),
+        //             row,
+        //             pageIndex: index
+        //         }),
+        //         bindBodyCellScope: (col: DlTableColumn) =>
+        //             tableRootRef.value.getBodyCellScope({
+        //                 key: getRowKey.value(row),
+        //                 row,
+        //                 pageIndex: index,
+        //                 col
+        //             }),
 
-        const renderTr = (
-            row: DlTableRow,
-            index: number,
-            level: number = 1
-        ) => {
-            const children = []
+        //         key: getRowKey.value(row),
+        //         color: props.color,
+        //         computedCols: tableRootRef.value.computedCols,
+        //         modelValue: isRowSelected(props.rowKey, getRowKey.value(row)),
+        //         scopedSlots: currentSlots,
+        //         'onUpdate:modelValue': (adding: boolean, evt: Event) => {
+        //             updateSelectionHierarchy(adding, evt, row)
+        //         },
+        //         onRowClick: () => {
+        //             tableRootRef.value.onTrClick(event, row, index)
+        //         },
+        //         onRowDblClick: () => {
+        //             tableRootRef.value.onTrDblClick(event, row, index)
+        //         },
+        //         onRowContextMenu: () => {
+        //             tableRootRef.value.onTrContextMenu(event, row, index)
+        //         },
+        //         onUpdateExpandedRow: () =>
+        //             updateExpandedRow(!row.isExpanded, getRowKey.value(row)),
+        //         on: {
+        //             'update:modelValue': (adding: boolean, evt: Event) => {
+        //                 updateSelectionHierarchy(adding, evt, row)
+        //             },
+        //             rowClick: () => {
+        //                 tableRootRef.value.onTrClick(event, row, index)
+        //             },
+        //             rowDblClick: () => {
+        //                 tableRootRef.value.onTrDblClick(event, row, index)
+        //             },
+        //             rowContextMenu: () => {
+        //                 tableRootRef.value.onTrContextMenu(event, row, index)
+        //             },
+        //             updateExpandedRow: () =>
+        //                 updateExpandedRow(!row.isExpanded, getRowKey.value(row))
+        //         }
+        //     })
+        // }
 
-            children.push(renderDlTrTree(row, index, [], level))
+        // const renderTr = (
+        //     row: DlTableRow,
+        //     index: number,
+        //     level: number = 1
+        // ) => {
+        //     const children = []
 
-            const tbodyEls: VNode[] = []
+        //     children.push(renderDlTrTree(row, index, [], level))
 
-            if ((row.children || []).length > 0) {
-                //TODO CHECK INDEX var
-                level = level + 1
+        //     const tbodyEls: VNode[] = []
 
-                row.children.forEach((childRow: DlTableRow, i: number) => {
-                    tbodyEls.push(
-                        renderComponent(
-                            'tbody',
-                            {
-                                key: getRowKey.value(childRow),
-                                'data-level': level,
-                                class: 'nested-tbody'
-                            },
-                            renderTr(childRow, i, level)
-                        )
-                    )
-                })
+        //     if ((row.children || []).length > 0) {
+        //         //TODO CHECK INDEX var
+        //         level++
 
-                const tdEl = renderComponent(
-                    'td',
-                    {
-                        colspan: tableRootRef.value.computedColspan,
-                        style: 'padding: 0'
-                    },
-                    renderComponent(
-                        TableSortable,
-                        {
-                            list: [],
-                            itemKey: getRowKey.value,
-                            tag: 'table',
-                            class: 'nested-table',
-                            onEnd: handleEndEvent,
-                            onChange: handleChangeEvent,
-                            onStart: handleStartEvent,
-                            options: {
-                                group: 'nested',
-                                animation: 150,
-                                fallbackOnBody: true,
-                                invertSwap: true,
-                                swapThreshold: 0.5
-                            }
-                        },
-                        () => tbodyEls
-                    )
-                )
+        //         row.children.forEach((childRow: DlTableRow, i: number) => {
+        //             tbodyEls.push(
+        //                 renderComponent(
+        //                     vue2h.value,
+        //                     'tbody',
+        //                     {
+        //                         key: getRowKey.value(childRow),
+        //                         'data-level': level,
+        //                         class: 'nested-tbody'
+        //                     },
+        //                     renderTr(childRow, i, level)
+        //                 ) as VNode
+        //             )
+        //         })
 
-                const childrenTrWrapper = renderComponent(
-                    'tr',
-                    {
-                        class:
-                            (row.isExpanded ? '' : 'display-none') +
-                            ' dl-tr--no-hover' +
-                            ' nested-element'
-                    },
-                    tdEl
-                )
+        //         const tdEl = renderComponent(
+        //             vue2h.value,
+        //             'td',
+        //             {
+        //                 colspan: tableRootRef.value.computedColspan,
+        //                 style: 'padding: 0'
+        //             },
+        //             renderComponent(
+        //                 vue2h.value,
+        //                 Sortable,
+        //                 {
+        //                     list: [],
+        //                     itemKey: getRowKey.value,
+        //                     tag: 'table',
+        //                     class: 'nested-table',
+        //                     isSortable: hasDraggableRows.value,
+        //                     onEnd: handleEndEvent,
+        //                     onChange: handleChangeEvent,
+        //                     onStart: handleStartEvent,
+        //                     on: {
+        //                         end: handleEndEvent,
+        //                         change: handleChangeEvent,
+        //                         start: handleStartEvent
+        //                     },
+        //                     options: {
+        //                         group: 'nested',
+        //                         animation: 150,
+        //                         fallbackOnBody: true,
+        //                         invertSwap: true,
+        //                         swapThreshold: 0.5
+        //                     }
+        //                 },
+        //                 isVue2 ? tbodyEls : () => tbodyEls
+        //             )
+        //         )
 
-                children.push(childrenTrWrapper)
-            }
+        //         const childrenTrWrapper = renderComponent(
+        //             vue2h.value,
+        //             'tr',
+        //             {
+        //                 class:
+        //                     (row.isExpanded ? '' : 'display-none') +
+        //                     ' dl-tr--no-hover' +
+        //                     ' nested-element'
+        //             },
+        //             tdEl
+        //         )
 
-            return children
-        }
+        //         children.push(childrenTrWrapper)
+        //     }
+
+        //     return children
+        // }
 
         const handleEndEvent = (event: SortableJs.SortableEvent) => {
             emit(
@@ -397,66 +448,105 @@ export default defineComponent({
         const handleStartEvent = (event: any) =>
             (prevMouseY = event.originalEvent.clientY)
 
-        const reorderColumns = (sourceIndex: number, targetIndex: number) => {
-            emit('col-reorder', sourceIndex, targetIndex)
+        const updateColumns = (newColumns: DlTableColumn[]) => {
+            emit('col-update', newColumns)
         }
+
+        // const renderEmptyState = () =>
+        //     renderComponent(
+        //         vue2h.value,
+        //         'td',
+        //         { colspan: '100%' },
+        //         renderComponent(
+        //             vue2h.value,
+        //             'div',
+        //             {
+        //                 class: 'flex justify-center full-width'
+        //             },
+        //             renderComponent(
+        //                 vue2h.value,
+        //                 DlEmptyState,
+        //                 props.emptyStateProps,
+        //                 (): [] => []
+        //             )
+        //         )
+        //     )
 
         const renderTBody = () => {
             if (isEmpty(tableRootRef.value)) return null
-            const children = tableRows.value.map((row, i) => {
-                return renderComponent(
-                    'tbody',
-                    {
-                        'data-level': 1,
-                        key: getRowKey.value(row) + i,
-                        class: 'nested-tbody'
-                    },
-                    renderTr(row, i)
-                )
-            })
+            // const children = tableRows.value.map((row, i) => {
+            //     const rowBodySlot = slots['row-body']
+            //     const [renderRow] = rowBodySlot
+            //         ? rowBodySlot({ row })
+            //         : [renderTr(row, i)]
+            //     return renderComponent(
+            //         vue2h.value,
+            //         'tbody',
+            //         {
+            //             'data-level': 1,
+            //             key: getRowKey.value(row) + i,
+            //             class: 'nested-tbody'
+            //         },
+            //         renderRow
+            //     )
+            // })
 
-            const tableBody = renderComponent(
-                'tbody',
-                {},
-                renderComponent(
-                    'tr',
-                    {
-                        class: 'dl-tr--no-hover'
-                    },
-                    renderComponent(
-                        'td',
-                        { colspan: tableRootRef.value.computedColspan },
-                        renderComponent(
-                            TableSortable,
-                            {
-                                list: [],
-                                itemKey: getRowKey.value,
-                                tag: 'table',
-                                id: mainTbodyUuid,
-                                key: mainTableKey.value,
-                                onEnd: handleEndEvent,
-                                onChange: handleChangeEvent,
-                                onStart: handleStartEvent,
-                                class: 'nested-table',
-                                options: {
-                                    group: 'nested',
-                                    animation: 150,
-                                    fallbackOnBody: true,
-                                    invertSwap: true,
-                                    swapThreshold: 0.5
-                                }
-                            },
-                            () => children
-                        )
-                    )
-                )
-            )
+            // const tableBody = renderComponent(
+            //     vue2h.value,
+            //     'tbody',
+            //     {},
+            //     renderComponent(
+            //         vue2h.value,
+            //         'tr',
+            //         {
+            //             class: 'dl-tr--no-hover'
+            //         },
+            //         renderComponent(
+            //             vue2h.value,
+            //             'td',
+            //             { colspan: tableRootRef.value.computedColspan },
+            //             renderComponent(
+            //                 vue2h.value,
+            //                 Sortable,
+            //                 {
+            //                     list: [],
+            //                     itemKey: getRowKey.value,
+            //                     tag: 'table',
+            //                     id: mainTbodyUuid,
+            //                     key: mainTableKey.value,
+            //                     isSortable: hasDraggableRows.value,
+            //                     onEnd: handleEndEvent,
+            //                     onChange: handleChangeEvent,
+            //                     onStart: handleStartEvent,
+            //                     on: {
+            //                         end: handleEndEvent,
+            //                         change: handleChangeEvent,
+            //                         start: handleStartEvent
+            //                     },
+            //                     class: 'nested-table',
+            //                     options: {
+            //                         group: 'nested',
+            //                         animation: 150,
+            //                         fallbackOnBody: true,
+            //                         invertSwap: true,
+            //                         swapThreshold: 0.5
+            //                     }
+            //                 },
+            //                 isVue2 ? children : () => children
+            //             )
+            //         )
+            //     )
+            // )
 
-            return tableBody
+            return []
+
+            // return tableBody
         }
 
         return {
-            reorderColumns,
+            // renderEmptyState,
+            isDataEmpty,
+            updateColumns,
             log,
             dlTableRef,
             isRowSelected,
@@ -484,56 +574,64 @@ export default defineComponent({
             renderTBody,
             tableRootRef,
             uuid,
-            mainTbodyUuid
+            mainTbodyUuid,
+            vue2h
         }
     },
-    render() {
-        return renderComponent(
-            // this.$props.draggable ? TableSortable : DlTable,
-            DlTable,
-            {
-                ref: 'dlTableRef',
-                id: this.uuid,
-                selected: this.selectedData,
-                separator: this.separator,
-                columns: this.tableColumns,
-                bordered: this.bordered,
-                draggable: this.draggable,
-                dense: this.dense,
-                filter: this.filter,
-                isTreeTable: true,
-                selection: this.selection,
-                loading: this.loading,
-                rows: this.tableRows,
-                resizable: this.resizable,
-                rowKey: this.rowKey,
-                color: this.color,
-                title: this.title,
-                virtualScroll: this.virtualScroll,
-                rowsPerPageOptions: this.rowsPerPageOptions,
-                hidePagination: this.hidePagination,
-                isEmpty: this.isEmpty,
-                emptyStateProps: this.emptyStateProps,
-                noDataLabel: this.noDataLabel,
-                onRowClick: this.emitRowClick,
-                'onUpdate:selected': this.updateSelected,
-                onColReorder: this.reorderColumns
+    render(vue2h: any) {
+        this.vue2h = vue2h
+        const tbody = this.$slots['table-body'] ?? this.renderTBody
+        return renderComponent(vue2h, DlTable, {
+            ref: 'dlTableRef',
+            draggable: this.draggable,
+            id: this.uuid,
+            selected: this.selectedData,
+            separator: this.separator,
+            columns: this.tableColumns,
+            bordered: this.bordered,
+            dense: this.dense,
+            filter: this.filter,
+            isTreeTable: true,
+            selection: this.selection,
+            loading: this.loading,
+            rows: this.tableRows,
+            resizable: this.resizable,
+            rowKey: this.rowKey,
+            color: this.color,
+            title: this.title,
+            virtualScroll: this.virtualScroll,
+            rowsPerPageOptions: this.rowsPerPageOptions,
+            hidePagination: this.hidePagination,
+            isEmpty: this.isDataEmpty,
+            emptyStateProps: this.emptyStateProps,
+            noDataLabel: this.noDataLabel,
+            onRowClick: this.emitRowClick,
+            'onUpdate:selected': this.updateSelected,
+            onColUpdate: this.updateColumns,
+            on: {
+                rowClick: this.emitRowClick,
+                'update:selected': this.updateSelected,
+                colUpdate: this.updateColumns
             },
-            {
+            scopedSlots: {
                 'header-selection': () =>
                     renderComponent(
+                        vue2h,
                         DlCheckbox,
                         {
                             color: this.color,
                             modelValue: this.headerSelectedValue,
                             indeterminateValue: true,
-                            'onUpdate:modelValue': this.onMultipleSelectionSet
+                            'onUpdate:modelValue': this.onMultipleSelectionSet,
+                            on: {
+                                'update:modelValue': this.onMultipleSelectionSet
+                            }
                         },
                         (): [] => []
                     ),
-                tbody: this.renderTBody
+                tbody
             }
-        )
+        })
     }
 })
 </script>
@@ -559,7 +657,7 @@ table {
 }
 
 tbody {
-    display: table-row-group;
+    // display: table-row-group;
     vertical-align: middle;
     border-color: inherit;
 }

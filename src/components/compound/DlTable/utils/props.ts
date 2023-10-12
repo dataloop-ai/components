@@ -110,6 +110,10 @@ export const props = {
         type: Boolean,
         default: false
     },
+    fitAllColumns: {
+        type: Boolean,
+        default: true
+    },
     ...useTableActionsProps,
     ...commonVirtScrollProps,
     ...useTableRowExpandProps,

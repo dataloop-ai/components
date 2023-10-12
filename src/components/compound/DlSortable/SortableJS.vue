@@ -1,7 +1,16 @@
 <template>
     <component
         :is="$props.tag"
+        v-if="isSortable"
         ref="rootRef"
+        v-bind="props"
+        :class="$props.class"
+    >
+        <slot />
+    </component>
+    <component
+        :is="$props.tag"
+        v-else
         v-bind="props"
         :class="$props.class"
     >
@@ -10,20 +19,15 @@
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance } from 'vue-demi'
-import DlTable from '../DlTable/DlTable.vue'
 import { useSortable, useSortableProps, emits } from './use-sortable'
 
 export default defineComponent({
-    components: {
-        DlTable
-    },
     props: useSortableProps,
     emits,
-    setup(props) {
+    setup() {
         const vm = getCurrentInstance()
-
-        const { element, getKey, rootRef } = useSortable(vm)
-        return { element, getKey, rootRef }
+        const { getKey, rootRef } = useSortable(vm)
+        return { getKey, rootRef }
     }
 })
 </script>

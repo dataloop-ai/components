@@ -1,13 +1,16 @@
 import { browseNestedNodes } from './browse-nested-nodes'
 import { watch } from 'vue-demi'
 import {
+    calculateColIndexOffset,
     getColIndex,
+    getColumnsWithUpdatedWidth,
+    getMouseLimits,
     removeTableVerticalBorders,
     setColumnVerticalBorder
 } from './table-columns'
 
-const RESIZE_SENSITIVITY_OFFSET = 20
 const MIN_CELL_WIDTH = 40
+const RESIZE_SENSITIVITY_OFFSET = 20
 
 export function applyResizableColumns(table: HTMLTableElement, vm: any) {
     let mousePosition: 'start' | 'end' | 'default' = 'default'
@@ -16,8 +19,10 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
     watch(
         () => vm.proxy.getIsDragging(),
         () => {
+            table = vm.vnode.el?.querySelector('table')
             const thArray = Array.from(
-                table.querySelector('thead').querySelector('tr').children
+                table?.querySelector('thead')?.querySelector('tr').children ||
+                    []
             ) as HTMLElement[]
 
             thArray.forEach((th) => {
@@ -25,7 +30,7 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
                 th.addEventListener('mouseleave', handleMouseleave)
             })
         },
-        { immediate: true }
+        { immediate: true, flush: 'post' }
     )
 
     function handleMouseleave(event: MouseEvent) {
@@ -47,7 +52,7 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
         const eventTarget = event.target as HTMLElement
         const { width, x } = eventTarget.getBoundingClientRect()
         const mouseOffsetInside = event.clientX - x
-        const { start, end } = getMouseLimits(width)
+        const { start, end } = getMouseLimits(width, RESIZE_SENSITIVITY_OFFSET)
         const addListener =
             mouseOffsetInside <= start || mouseOffsetInside >= end
         mousePosition = addListener
@@ -70,6 +75,7 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
         const th = event.target as HTMLElement
         if (th.tagName !== 'TH') return
         targetIndex = getColIndex(th)
+        if (targetIndex - calculateColIndexOffset(table) === 0) return
         if (mousePosition === 'start') targetIndex--
         window.addEventListener('mousemove', resizeColumn)
         window.addEventListener('mouseup', stopResizing)
@@ -79,6 +85,8 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
         window.removeEventListener('mousemove', resizeColumn)
         window.removeEventListener('mouseup', stopResizing)
         removeTableVerticalBorders(table)
+        const newColumns = getColumnsWithUpdatedWidth(table, vm.props.columns)
+        vm.proxy.updateColumns(newColumns)
     }
 
     function resizeColumn(event: MouseEvent) {
@@ -92,18 +100,10 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 targetIndex &&
                 getColIndex(el) === targetIndex &&
-                fromStartToMouse >= MIN_CELL_WIDTH,
+                fromStartToMouse >= MIN_CELL_WIDTH, // if
             (el) => {
-                el.style.width = `${fromStartToMouse}px`
+                el.style.width = `${fromStartToMouse}px` // then
             }
         )
-    }
-}
-
-function getMouseLimits(width: number) {
-    const end = width - RESIZE_SENSITIVITY_OFFSET
-    return {
-        start: width - end,
-        end
     }
 }

@@ -1,6 +1,7 @@
 <template>
     <div
         :id="uuid"
+        :key="tableKey"
         ref="rootRef"
         :class="containerClass"
     >
@@ -79,7 +80,7 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
-                                style="width: 25px"
+                                style="width: 25px; padding: 5px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
@@ -112,9 +113,9 @@
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-with empty-col chevron-header"
                                 :data-resizable="false"
-                                style="width: 12px"
+                                style="width: 25px"
                             />
 
                             <slot
@@ -158,7 +159,7 @@
                     name="table-body"
                     v-bind="props"
                 >
-                    <template v-if="!isEmpty && !hasSlotBody">
+                    <template v-if="!isDataEmpty && !hasSlotBody">
                         <slot
                             v-bind="
                                 getBodyScope({
@@ -278,7 +279,7 @@
                             </DlTr>
                         </slot>
                     </template>
-                    <DlTr v-if="isEmpty">
+                    <DlTr v-if="isDataEmpty">
                         <DlTd colspan="100%">
                             <div class="flex justify-center full-width">
                                 <dl-empty-state v-bind="emptyStateProps">
@@ -353,7 +354,7 @@
                                 v-if="isTreeTable"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
-                                style="width: 12px"
+                                style="width: 25px; padding: 5px"
                             />
 
                             <slot
@@ -427,7 +428,23 @@
                         class: 'dl-virtual-scroll__content'
                     }"
                 >
-                    <tbody class="dl-virtual-scroll__content">
+                    <Sortable
+                        :key="tbodyKey"
+                        ref="tbody"
+                        tag="tbody"
+                        class="nested-table dl-virtual-scroll__content"
+                        v-bind="{
+                            onEnd: handleSortableEvent
+                        }"
+                        :is-sortable="hasDraggableRows"
+                        :options="{
+                            group: 'nested',
+                            animation: 150,
+                            fallbackOnBody: true,
+                            invertSwap: true,
+                            swapThreshold: 0.5
+                        }"
+                    >
                         <slot
                             name="top-row"
                             :cols="computedCols"
@@ -452,7 +469,7 @@
                                 name="row-body"
                             >
                                 <DlTr
-                                    v-if="!isEmpty"
+                                    v-if="!isDataEmpty"
                                     :key="getRowKey(row)"
                                     :has-any-action="hasAnyAction"
                                     :class="
@@ -546,7 +563,7 @@
                             </slot>
                         </slot>
 
-                        <DlTr v-if="isEmpty && hasEmptyStateProps">
+                        <DlTr v-if="isDataEmpty && hasEmptyStateProps">
                             <DlTd colspan="100%">
                                 <div class="flex justify-center full-width">
                                     <dl-empty-state v-bind="emptyStateProps">
@@ -567,7 +584,7 @@
                             name="bottom-row"
                             :cols="computedCols"
                         />
-                    </tbody>
+                    </Sortable>
                 </slot>
             </table>
         </div>
@@ -638,7 +655,8 @@ import {
     ComputedRef,
     onMounted,
     toRef,
-    toRefs
+    toRefs,
+    nextTick
 } from 'vue-demi'
 import { props } from './utils/props'
 import { emits } from './utils/emits'
@@ -672,8 +690,11 @@ import { DlButton } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
-import { stopAndPrevent } from '../../../utils'
+import { stopAndPrevent, setAllColumnWidths } from '../../../utils'
 import { DlVirtualScrollEvent } from '../../types'
+import Sortable from '../DlSortable/SortableJS.vue'
+import { SortableEvent } from 'sortablejs'
+import { insertAtIndex } from './utils/insertAtIndex'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -695,7 +716,8 @@ export default defineComponent({
         DlButton,
         DlOptionGroup,
         DlMenu,
-        DlList
+        DlList,
+        Sortable
     },
     props,
     emits,
@@ -712,6 +734,10 @@ export default defineComponent({
             rows
         } = toRefs(props)
 
+        const tbodyKey = ref()
+        const tableKey = ref()
+        const getTableKey = () => tableKey.value
+
         const rootRef = ref<HTMLDivElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed<boolean>(
@@ -723,6 +749,8 @@ export default defineComponent({
                 ? Object.keys(props.emptyStateProps).length > 0
                 : false
         )
+
+        const isDataEmpty = computed(() => !props.rows.length)
 
         const groupOptions = computed(() =>
             (props.columns as DlTableColumn[]).map((item) => ({
@@ -826,11 +854,12 @@ export default defineComponent({
         const hasDraggableRows = computed(() =>
             ['rows', 'both'].includes(draggable.value)
         )
+
         const hasDraggableColumns = computed(() =>
             ['columns', 'both'].includes(draggable.value)
         )
 
-        let removeDraggableColumns = () => {}
+        const removeDraggableColumns = () => {}
 
         let tableEl: HTMLTableElement = null
 
@@ -843,64 +872,64 @@ export default defineComponent({
                 'table.dl-table'
             ) as HTMLTableElement
 
+            nextTick(() => {
+                setAllColumnWidths(tableEl, props.columns, props.fitAllColumns)
+            })
+
             if (props.resizable === true) {
                 applyResizableColumns(tableEl, vm)
             }
 
-            if (hasDraggableRows.value === true) {
-                // removeDraggableRows = applyDrag(props.isTreeTable)(
-                //     tableEl,
-                //     vm,
-                //     rootRef.value
-                // )
-            }
-
             if (hasDraggableColumns.value === true) {
+                console.log('apply draggable columns ')
                 applyDraggableColumns(
                     tableEl,
                     vm,
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
+            console.log('after apply draggalbe mounted ')
         })
 
+        console.log('after apply draggalbe ')
+        // watch(
+        //     hasVirtScroll,
+        //     () => {
+        //         tableEl = (rootRef.value as HTMLDivElement).querySelector(
+        //             'table.dl-table'
+        //         ) as HTMLTableElement
+
+        //         if (props.resizable) {
+        //             applyResizableColumns(tableEl, vm)
+        //         }
+
+        //         if (hasDraggableColumns.value === true) {
+        //             applyDraggableColumns(
+        //                 tableEl,
+        //                 vm,
+        //                 vm.refs.dragRef as HTMLDivElement
+        //             )
+        //         }
+        //     },
+        //     {
+        //         flush: 'post'
+        //     }
+        // )
+
         watch(
-            hasVirtScroll,
+            () => props.resizable,
             () => {
-                tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                    'table.dl-table'
-                ) as HTMLTableElement
-
-                if (props.resizable) {
-                    applyResizableColumns(tableEl, vm)
-                }
-
-                if (hasDraggableRows.value === true) {
-                    // removeDraggableRows()
-                    // removeDraggableRows = applyDrag(props.isTreeTable)(
-                    //     tableEl,
-                    //     vm,
-                    //     rootRef.value
-                    // )
-                }
-
-                if (hasDraggableColumns.value === true) {
-                    applyDraggableColumns(
-                        tableEl,
-                        vm,
-                        vm.refs.dragRef as HTMLDivElement
-                    )
-                }
-            },
-            {
-                flush: 'post'
+                applyResizableColumns(tableEl, vm)
             }
         )
 
         watch(
-            () => props.resizable,
-            (value: boolean) => {
-                applyResizableColumns(tableEl, vm)
+            () => props.columns,
+            (val) => {
+                setAllColumnWidths(rootRef.value, val, props.fitAllColumns)
+            },
+            {
+                flush: 'post'
             }
         )
 
@@ -911,33 +940,23 @@ export default defineComponent({
             }
         )
 
-        watch(
-            () => props.draggable,
-            () => {
-                if (tableEl) {
-                    if (hasDraggableRows.value === true) {
-                        // removeDraggableRows = applyDrag(props.isTreeTable)(
-                        //     tableEl,
-                        //     vm,
-                        //     rootRef.value
-                        // )
-                    } else {
-                        // removeDraggableRows()
-                    }
-
-                    if (hasDraggableColumns.value === true) {
-                        removeDraggableColumns = applyDraggableColumns(
-                            tableEl,
-                            vm,
-                            vm.refs.dragRef as HTMLDivElement
-                        )
-                    } else {
-                        removeDraggableColumns()
-                    }
-                }
-            },
-            { immediate: true }
-        )
+        // watch(
+        //     () => props.draggable,
+        //     () => {
+        //         if (tableEl) {
+        //             if (hasDraggableColumns.value === true) {
+        //                 applyDraggableColumns(
+        //                     tableEl,
+        //                     vm,
+        //                     vm.refs.dragRef as HTMLDivElement
+        //                 )
+        //             } else {
+        //                 removeDraggableColumns()
+        //             }
+        //         }
+        //     },
+        //     { immediate: true }
+        // )
 
         watch(
             [
@@ -956,6 +975,8 @@ export default defineComponent({
                 }
             }
         )
+
+        console.log('before pagination')
 
         const { innerPagination, computedPagination, setPagination } =
             useTablePaginationState(vm, getCellValue)
@@ -1033,16 +1054,18 @@ export default defineComponent({
             return filtered
         })
 
+        console.log('bfore addiiton classes')
+
         const additionalClasses = computed(() => {
             const classes: string[] = []
 
-            if (hasDraggableRows.value === true) {
-                classes.push('dl-table--draggable-rows')
-            }
+            // if (hasDraggableRows.value === true) {
+            //     classes.push('dl-table--draggable-rows')
+            // }
 
-            if (hasDraggableColumns.value === true) {
-                classes.push('dl-table--draggable-columns')
-            }
+            // if (hasDraggableColumns.value === true) {
+            //     classes.push('dl-table--draggable-columns')
+            // }
 
             return classes
         })
@@ -1345,8 +1368,25 @@ export default defineComponent({
             () => !!slots['header-selection']
         )
 
+        const handleSortableEvent = (event: SortableEvent) => {
+            const { oldIndex, newIndex } = event
+            const newRows = insertAtIndex(props.rows, oldIndex, newIndex)
+            tbodyKey.value = v4()
+            emit('row-reorder', newRows)
+        }
+
         const reorderColumns = (sourceIndex: number, targetIndex: number) => {
-            emit('col-reorder', sourceIndex, targetIndex)
+            const newColumns = insertAtIndex(
+                props.columns,
+                sourceIndex,
+                targetIndex
+            )
+            tableKey.value = v4()
+            emit('col-update', newColumns)
+        }
+
+        const updateColumns = (newColumns: DlTableColumn[]) => {
+            emit('col-update', newColumns)
         }
 
         // expose public methods and needed computed props
@@ -1359,12 +1399,14 @@ export default defineComponent({
             prevPage,
             nextPage,
             lastPage,
+            updateColumns,
             reorderColumns,
             setIsResizing,
             setIsDragging,
             getIsResizing,
             getIsDragging,
-            hasDraggableColumns: hasDraggableColumns.value
+            // hasDraggableColumns: hasDraggableColumns.value,
+            getTableKey
         })
 
         const slotNames = computed(() => {
@@ -1381,7 +1423,14 @@ export default defineComponent({
             emit('update-visible-columns', columns)
         }
 
+        console.log('before return')
+
         return {
+            log: console.log,
+            isDataEmpty,
+            handleSortableEvent,
+            tbodyKey,
+            tableKey,
             uuid: `dl-table-${v4()}`,
             rootRef,
             containerClass,
@@ -1465,5 +1514,9 @@ tr {
     display: table-row;
     vertical-align: inherit;
     border-color: inherit;
+}
+th,
+td {
+    box-sizing: border-box;
 }
 </style>

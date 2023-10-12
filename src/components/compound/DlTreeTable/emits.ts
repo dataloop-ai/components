@@ -5,7 +5,7 @@ export const emits = [
     'request',
     'virtual-scroll',
     'row-reorder',
-    'col-reorder',
+    'col-update',
     'row-click',
     'th-click',
     'row-dblclick',

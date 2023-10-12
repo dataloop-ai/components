@@ -115,7 +115,8 @@
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
-                @col-reorder="log"
+                @col-update="updateColumns"
+                @row-reorder="reorderRows"
             />
 
             <div style="margin-top: 100px">
@@ -444,6 +445,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
+import { DlTableRow } from '../types'
 
 const columns = [
     {
@@ -453,30 +455,46 @@ const columns = [
         align: 'left',
         field: 'name',
         sortable: true,
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
+        width: 100
     },
     {
         name: 'calories',
         align: 'center',
         label: 'Calories',
         field: 'calories',
-        sortable: true
+        sortable: true,
+        width: 100
     },
     {
         name: 'fat',
         label: 'Fat (g)',
         field: 'fat',
         sortable: true,
-        align: 'center'
+        align: 'center',
+        width: 100
     },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs', align: 'center' },
+    {
+        name: 'carbs',
+        label: 'Carbs (g)',
+        field: 'carbs',
+        align: 'center',
+        width: 100
+    },
     {
         name: 'protein',
         label: 'Protein (g)',
         field: 'protein',
-        align: 'center'
+        align: 'center',
+        width: 100
     },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', align: 'center' },
+    {
+        name: 'sodium',
+        label: 'Sodium (mg)',
+        field: 'sodium',
+        align: 'center',
+        width: 100
+    },
     {
         name: 'calcium',
         label: 'Calcium (%)',
@@ -484,6 +502,7 @@ const columns = [
         sortable: true,
         textTransform: 'lowercase',
         align: 'center',
+        width: 100,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     },
@@ -494,6 +513,7 @@ const columns = [
         sortable: true,
         textTransform: 'lowercase',
         align: 'center',
+        width: 100,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     }
@@ -756,7 +776,18 @@ export default defineComponent({
             setPagination({ page: pagesNumber.value })
         }
 
+        const reorderRows = (newRows: any) => {
+            tableRows.value = newRows
+        }
+
+        const updateColumns = (newColumns: any) => {
+            console.log(newColumns)
+            tableColumns.value = newColumns
+        }
+
         return {
+            reorderRows,
+            updateColumns,
             filter,
             selected,
             selection,
