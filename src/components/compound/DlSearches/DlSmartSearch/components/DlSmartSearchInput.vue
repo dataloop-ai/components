@@ -505,6 +505,12 @@ export default defineComponent({
             datePickerSelection.value = value
             searchQuery.value = replaceDateInterval(searchQuery.value, value)
             input.value.innerHTML = searchQuery.value
+            showDatePicker.value = false
+            datePickerSelection.value = null
+
+            showSuggestions.value = true
+            setCaret(input.value)
+            return
         }
 
         const readModelValue = (val: { [key: string]: any }) => {
