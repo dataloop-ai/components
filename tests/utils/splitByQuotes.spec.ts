@@ -33,4 +33,30 @@ describe('splitByQuotes', () => {
             '"(1, 2)"'
         ])
     })
+
+    it('should handle mixed quotes correctly', () => {
+        expect(splitByQuotes('"word1" \'word2\'', ' ')).toEqual([
+            '"word1"',
+            "'word2'"
+        ]);
+    });
+
+    it('should handle nested quotes correctly', () => {
+        expect(splitByQuotes('"word1 \'nested\' word2"', ' ')).toEqual([
+            '"word1 \'nested\' word2"'
+        ]);
+    });
+
+    it('should handle input of only quotes', () => {
+        expect(splitByQuotes('""', ' ')).toEqual(['""']);
+        expect(splitByQuotes("''", ' ')).toEqual(["''"]);
+    });
+
+    it('should handle escaped quotes correctly', () => {
+        expect(splitByQuotes('word1 \\"word2\\"', ' ')).toEqual([
+            'word1',
+            '\\"word2\\"'
+        ]);
+    });
+
 })
