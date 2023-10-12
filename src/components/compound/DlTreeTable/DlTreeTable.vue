@@ -205,8 +205,8 @@ export default defineComponent({
         const emitSelectedItems = (payload: any) => {
             emit('selected-items', payload)
         }
-        const emitRowClick = (payload: any) => {
-            emit('row-click', payload)
+        const emitRowClick = (...payload: any) => {
+            emit('row-click', ...payload)
         }
         const emitThClick = (payload: any) => {
             emit('th-click', payload)

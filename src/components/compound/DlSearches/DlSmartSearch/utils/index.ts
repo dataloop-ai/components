@@ -38,7 +38,11 @@ export const isEndingWithDateIntervalPattern = (str: string) => {
 
 export const replaceDateInterval = (str: string, date: DateInterval) => {
     const newStr = `${formatDate(date.from)}`
-    const replaced = replaceLastOccurrence(str, newStr, datePatternNoBrackets)
+    const replaced = replaceFirstOrLastOccurrence(
+        str,
+        newStr,
+        datePatternNoBrackets
+    )
     return replaced
 }
 
@@ -46,16 +50,39 @@ const formatDate = (date: Date | string | number): string => {
     return moment.utc(date).format('DD/MM/YYYY')
 }
 
-const replaceLastOccurrence = (
+const replaceFirstOrLastOccurrence = (
     string: string,
     replaceValue: string,
     pattern: RegExp
 ) => {
-    const matches = string.match(pattern)
+    const regex = RegExp(pattern, 'g')
 
-    return matches && matches.length
-        ? string.replace(matches[matches.length - 1], replaceValue)
-        : string
+    let firstMatch
+    let lastMatch
+    let match
+
+    while ((match = regex.exec(string))) {
+        if (match[0] === 'dd/mm/yyyy' && !firstMatch) {
+            firstMatch = match
+        }
+        lastMatch = match
+    }
+
+    if (firstMatch) {
+        const modifiedString =
+            string.slice(0, firstMatch.index) +
+            string.slice(firstMatch.index).replace(firstMatch[0], replaceValue)
+
+        return modifiedString
+    } else if (lastMatch) {
+        const modifiedString =
+            string.slice(0, lastMatch.index) +
+            string.slice(lastMatch.index).replace(lastMatch[0], replaceValue)
+
+        return modifiedString
+    }
+
+    return string
 }
 
 export function getTabItems(filters: Filters) {
@@ -112,19 +139,25 @@ export function replaceJSDatesWithStringifiedDates(
     const toReturn = cloneDeep(json)
 
     for (const key of Object.keys(toReturn)) {
-        if (typeof toReturn[key] === 'object') {
-            toReturn[key] = replaceJSDatesWithStringifiedDates(
-                toReturn[key],
-                dateKeys
-            )
-            continue
-        }
-
         const value = toReturn[key]
         const keyToCheck = key.split('.').pop()
 
         if (dateKeys.includes(keyToCheck)) {
-            toReturn[key] = formatToStringDate(value)
+            if (typeof value === 'object') {
+                const testKey = Object.keys(toReturn[key])[0]
+                if (['$gt', '$gte', '$lt', '$lte'].includes(testKey)) {
+                    toReturn[key][testKey] = formatToStringDate(
+                        toReturn[key][testKey]
+                    )
+                }
+            } else {
+                toReturn[key] = formatToStringDate(value)
+            }
+        } else if (typeof value === 'object') {
+            toReturn[key] = replaceJSDatesWithStringifiedDates(
+                toReturn[key],
+                dateKeys
+            )
         }
     }
 

@@ -4,7 +4,17 @@
         :class="identifierClass"
         style="width: 100%"
     >
+        <div
+            v-if="readonly"
+            :class="[{ 'readonly-option': true }, { capitalized }]"
+            :style="`padding-left: ${10 + depth * 30}px;`"
+        >
+            <slot>
+                {{ label ? (capitalized ? label.toLowerCase() : label) : null }}
+            </slot>
+        </div>
         <dl-list-item
+            v-else
             class="option"
             :class="{ highlighted: highlightSelected && isSelected }"
             :with-wave="withWave"
@@ -87,6 +97,7 @@
                     :highlight-selected="highlightSelected"
                     :with-wave="withWave"
                     :capitalized="capitalized"
+                    :readonly="isReadonlyOption(child)"
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect"
                     @deselected="handleSingleDeselect"
@@ -136,7 +147,8 @@ export default defineComponent({
         },
         depth: { type: Number, default: 0 },
         label: { type: String, default: null },
-        capitalized: { type: Boolean, default: false }
+        capitalized: { type: Boolean, default: false },
+        readonly: { type: Boolean, default: false }
     },
     emits: [
         'update:model-value',
@@ -147,7 +159,7 @@ export default defineComponent({
     ],
     data() {
         return {
-            showChildren: false,
+            showChildren: !!this.readonly,
             componentId: v4(),
             uuid: `dl-select-option-${v4()}`
         }
@@ -216,6 +228,9 @@ export default defineComponent({
         },
         getValue(option: any) {
             return typeof option === 'object' ? option.value : null
+        },
+        isReadonlyOption(option: any) {
+            return !!option?.readonly
         }
     }
 })
@@ -268,5 +283,14 @@ export default defineComponent({
 
 .capitalized .checkbox-label {
     text-transform: capitalize !important;
+}
+
+.readonly-option {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--dl-color-lighter);
 }
 </style>

@@ -161,10 +161,26 @@
             multiselect
             searchable
         />
+        <dl-select
+            v-model="selectedWithChildrenSearch"
+            :options="treeOptions"
+            size="m"
+            multiselect
+            clearable
+        />
         Capitalized options
         <dl-select
             v-model="selectedWithChildrenCapitalized"
             :options="treeOptions"
+            size="m"
+            multiselect
+            searchable
+            capitalized-options
+        />
+        Tree options with readonly options
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="treeOptionsWithReadonly"
             size="m"
             multiselect
             searchable
@@ -383,6 +399,117 @@
                 </div>
             </template>
         </dl-select>
+
+        Select clearable
+        <dl-select
+            v-model="selectedOption"
+            :options="[
+                {
+                    subLabel: 'not so high',
+                    label: 'High',
+                    value: 'high',
+                    bgColor: 'dl-color-negative'
+                },
+                {
+                    subLabel: 'not so medium',
+                    label: 'Medium',
+                    value: 'medium',
+                    bgColor: 'dl-color-warning',
+                    textColor: 'dl-color-darker'
+                },
+                {
+                    subLabel: 'not so low',
+                    label: 'Low',
+                    value: 'low',
+                    bgColor: 'dl-color-positive',
+                    textColor: 'dl-color-darker'
+                }
+            ]"
+            clearable
+            style="margin-bottom: 150px"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
+
+        Select with tooltip no title
+        <dl-select
+            v-model="selectedOption"
+            :options="[
+                {
+                    subLabel: 'not so high',
+                    label: 'High',
+                    value: 'high',
+                    bgColor: 'dl-color-negative'
+                },
+                {
+                    subLabel: 'not so medium',
+                    label: 'Medium',
+                    value: 'medium',
+                    bgColor: 'dl-color-warning',
+                    textColor: 'dl-color-darker'
+                },
+                {
+                    subLabel: 'not so low',
+                    label: 'Low',
+                    value: 'low',
+                    bgColor: 'dl-color-positive',
+                    textColor: 'dl-color-darker'
+                }
+            ]"
+            clearable
+            style="margin-bottom: 150px"
+            tooltip="test tooltip"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
+
+        Select with tooltip no title size small
+        <dl-select
+            v-model="selectedOption"
+            :options="[
+                {
+                    subLabel: 'not so high',
+                    label: 'High',
+                    value: 'high',
+                    bgColor: 'dl-color-negative'
+                },
+                {
+                    subLabel: 'not so medium',
+                    label: 'Medium',
+                    value: 'medium',
+                    bgColor: 'dl-color-warning',
+                    textColor: 'dl-color-darker'
+                },
+                {
+                    subLabel: 'not so low',
+                    label: 'Low',
+                    value: 'low',
+                    bgColor: 'dl-color-positive',
+                    textColor: 'dl-color-darker'
+                }
+            ]"
+            clearable
+            style="margin-bottom: 150px"
+            size="small"
+            tooltip="test tooltip"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
     </div>
 </template>
 
@@ -486,6 +613,67 @@ const treeOptions = [
     }
 ]
 
+const treeOptionsWithReadonly = [
+    {
+        label: 'Without children',
+        value: 'r0',
+        readonly: true
+    },
+    {
+        label: 'child 1',
+        value: 'r1'
+    },
+    {
+        label: 'child 2',
+        value: 'r2'
+    },
+    {
+        label: 'child 3',
+        value: 'r3'
+    },
+    {
+        label: 'With children',
+        value: 'r4',
+        readonly: true,
+        children: [
+            { label: 'child 1', value: 'c1' },
+            { label: 'child 2', value: 'c2' },
+            { label: 'child 3', value: 'c3' },
+            { label: 'child 4', value: 'c4' },
+            { label: 'child 5', value: 'c5' }
+        ]
+    },
+    {
+        label: 'With children & readonly child',
+        value: 'r5',
+        children: [
+            { label: 'child 1', value: 'c1' },
+            { label: 'child 2', value: 'c2' },
+            { label: 'child 3', value: 'c3', readonly: true },
+            { label: 'child 4', value: 'c4' },
+            { label: 'child 5', value: 'c5' }
+        ]
+    },
+    {
+        label: 'Readonly option with children & readonly child',
+        value: 'r6',
+        readonly: true,
+        children: [
+            { label: 'child 1', value: 'c6' },
+            { label: 'child 2', value: 'c7' },
+            {
+                label: 'child 3',
+                value: 'c8',
+                readonly: true,
+                children: [
+                    { label: 'child 4', value: 'c9' },
+                    { label: 'child 5', value: 'c10' }
+                ]
+            }
+        ]
+    }
+]
+
 export default defineComponent({
     components: { DlSelect, DlIcon, DlChip, DlBadge },
     data() {
@@ -508,11 +696,13 @@ export default defineComponent({
             },
             searchOptions: defaultOptions,
             treeOptions,
+            treeOptionsWithReadonly,
             selectedBySearch: undefined,
             selectedByFilteringSearch: [],
             selectedWithEmitValue: 'c1',
             selectedWithChildren: [],
             selectedWithChildrenSearch: [],
+            selectedWithChildrenAndReadonly: [],
             selectedWithChildrenCapitalized: [],
             tasksFilter: [],
             showAllOption: true,

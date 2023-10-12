@@ -4,7 +4,10 @@
         :style="cssVars"
         class="dl-smart-search-input"
     >
-        <div class="dl-smart-search-input__search-bar-wrapper">
+        <div
+            class="dl-smart-search-input__search-bar-wrapper"
+            @click="focus()"
+        >
             <div
                 ref="searchBar"
                 :class="searchBarClasses"
@@ -24,9 +27,10 @@
                         ref="input"
                         :class="inputClass"
                         :style="textareaStyles"
-                        :placeholder="placeholder"
+                        :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
                         @keypress="onKeyPress"
+                        @keyup.esc="onKeyPress"
                         @input="onInput"
                         @click.stop.prevent="focus"
                         @blur="blur"
@@ -66,12 +70,14 @@
             :offset="menuOffset"
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
+            @escapekey="onEscapeKey"
         />
         <dl-menu
             v-if="showDatePicker && focused"
             v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
+            @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
                 <dl-date-picker
@@ -99,6 +105,7 @@ import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
+import { setCaretAtTheEnd } from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
@@ -107,7 +114,6 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
-    setCaret,
     updateEditor,
     isEligibleToChange,
     createColorSchema,
@@ -191,7 +197,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['update:model-value', 'focus', 'blur', 'input'],
+    emits: ['update:model-value', 'focus', 'blur', 'input', 'search', 'error'],
     setup(props, { emit }) {
         //#region refs
         const input = ref<HTMLInputElement>(null)
@@ -214,7 +220,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
-        const searchQuery = ref<string>(stringifySmartQuery(modelValue.value))
+        const searchQuery = ref<string>('')
         const focused = ref(false)
         const isOverflowing = ref(false)
         const isTyping = ref(false)
@@ -349,17 +355,26 @@ export default defineComponent({
             setInputValue(
                 clearPartlyTypedSuggestion(input.value.innerText, stringValue)
             )
-            setCaret(input.value)
+            setCaretAtTheEnd(input.value)
         }
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
 
         const updateJSONQuery = () => {
-            const bracketless = removeBrackets(searchQuery.value)
-            const cleanedAliases = revertAliases(bracketless, aliases.value)
-            const json = toJSON(cleanedAliases)
-            if (!isEqual(json, modelValue.value)) {
-                emit('update:model-value', json)
+            try {
+                const bracketless = removeBrackets(searchQuery.value)
+                const cleanedAliases = revertAliases(bracketless, aliases.value)
+                const json = toJSON(cleanedAliases)
+                if (isValid.value && !isEqual(json, modelValue.value)) {
+                    emit('update:model-value', json)
+                }
+                return json
+            } catch (e) {
+                emit('error', {
+                    error: e,
+                    message: 'Could not translate given JSON to a valid Scheme'
+                })
+                return null
             }
         }
 
@@ -385,6 +400,10 @@ export default defineComponent({
                 return
             }
 
+            if (focused.value) {
+                return
+            }
+
             input.value.scrollTo(0, input.value.scrollHeight)
             input.value.scrollLeft = input.value.scrollWidth
 
@@ -394,7 +413,21 @@ export default defineComponent({
             emit('focus')
         }
 
-        const blur = () => {
+        const processBlur = () => {
+            input.value.scrollLeft = 0
+            input.value.scrollTop = 0
+            focused.value = false
+            expanded.value = true
+            updateJSONQuery()
+            emit('blur')
+        }
+
+        const blur = (
+            e: Event | null = null,
+            options: { force?: boolean } = {}
+        ) => {
+            const { force } = options
+
             if (showDatePicker.value) {
                 return
             }
@@ -405,12 +438,11 @@ export default defineComponent({
                     return
                 }
 
-                input.value.scrollLeft = 0
-                input.value.scrollTop = 0
-                focused.value = false
-                expanded.value = true
-                updateJSONQuery()
-                emit('blur')
+                if (!focused.value && !force) {
+                    return
+                }
+
+                processBlur()
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
@@ -427,9 +459,40 @@ export default defineComponent({
             }
         }
 
+        const endsWithOperator = computed(() => {
+            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+
+            for (const op of operators) {
+                if (
+                    searchQuery.value.endsWith(op) ||
+                    searchQuery.value.endsWith(`${op} `)
+                ) {
+                    return true
+                }
+            }
+
+            return false
+        })
+
         const onKeyPress = (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
+            if (e.code === 'Escape' || e.key === 'Escape') {
                 e.preventDefault()
+                e.stopPropagation()
+
+                onEscapeKey()
+                return
+            }
+
+            if (e.code === 'Enter' || e.key === 'Enter') {
+                e.preventDefault()
+                e.stopPropagation()
+
+                onEnterKey()
+                return
+            }
+
+            if (!focused.value) {
+                focus()
             }
         }
 
@@ -476,14 +539,68 @@ export default defineComponent({
         }
 
         const fromJSON = (value: { [key: string]: any }) => {
-            const replacedDate = replaceJSDatesWithStringifiedDates(
-                value,
-                dateKeys.value
-            )
+            try {
+                const replacedDate = replaceJSDatesWithStringifiedDates(
+                    value,
+                    dateKeys.value
+                )
 
-            const stringQuery = stringifySmartQuery(replacedDate)
-            const aliased = setAliases(stringQuery, aliases.value)
-            return aliased
+                const stringQuery = stringifySmartQuery(replacedDate)
+                const aliased = setAliases(stringQuery, aliases.value)
+                return aliased
+            } catch (e) {
+                emit('error', {
+                    error: e,
+                    message: 'Could not translate given JSON to a valid Scheme'
+                })
+                return ''
+            }
+        }
+
+        const onEnterKey = () => {
+            if (showSuggestions.value || showDatePicker.value) {
+                return
+            }
+
+            if (endsWithOperator.value) {
+                return
+            }
+
+            if (!input.value.innerHTML.length) {
+                return
+            }
+
+            if (!isValid.value) {
+                return
+            }
+
+            const toSearch = updateJSONQuery()
+            if (toSearch) {
+                emit('search', toSearch)
+                showSuggestions.value = false
+            }
+        }
+
+        const onEscapeKey = () => {
+            if (!focused.value) {
+                return
+            }
+
+            if (showDatePicker.value) {
+                showDatePicker.value = false
+                showSuggestions.value = true
+                datePickerSelection.value = null
+                setCaretAtTheEnd(input.value)
+                return
+            }
+
+            if (showSuggestions.value) {
+                showSuggestions.value = false
+                return
+            }
+
+            input.value.blur()
+            processBlur()
         }
         //#endregion
 
@@ -612,6 +729,17 @@ export default defineComponent({
                 message: error.value
             }
         })
+
+        const inputPlaceholder = computed(() => {
+            return focused.value || searchQuery.value.length
+                ? ''
+                : props.placeholder
+        })
+
+        const isValid = computed(() => {
+            return computedStatus.value.type !== 'error'
+        })
+
         //#endregion
 
         //#region watcher
@@ -671,7 +799,7 @@ export default defineComponent({
                     isEllipsisActive(input.value) || hasEllipsis.value
             }
             window.addEventListener('mousemove', () => (isTyping.value = false))
-            blur()
+            blur(null, { force: true })
         })
         onBeforeUnmount(() => {
             window.removeEventListener(
@@ -715,7 +843,9 @@ export default defineComponent({
             onInput,
             onDateSelection,
             computedStatus,
-            setInputFromSuggestion
+            setInputFromSuggestion,
+            inputPlaceholder,
+            onEscapeKey
         }
     }
 })
@@ -751,6 +881,7 @@ export default defineComponent({
         padding-left: 10px;
         overflow-y: auto;
         background-color: var(--dl-color-panel-background);
+        cursor: text;
 
         font-size: 12px;
         line-height: 14px;
@@ -785,6 +916,8 @@ export default defineComponent({
 
         &--disabled {
             border-color: var(--dl-color-separator);
+            color: var(--dl-color-disabled);
+            cursor: not-allowed;
         }
     }
 
@@ -831,8 +964,10 @@ export default defineComponent({
         color: var(--dl-color-darker);
         background-color: var(--dl-color-panel-background);
 
-        ::placeholder {
+        &::before {
             color: var(--dl-color-lighter);
+            /* In case this causes render shadowing move to use html/injection approach */
+            content: attr(placeholder);
         }
         & > * {
             display: flex;

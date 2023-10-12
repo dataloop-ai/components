@@ -412,13 +412,17 @@
                 </DlTable>
             </div>
             <div>
-                <p>With editable columns</p>
+                <p>With visible columns</p>
                 <DlTable
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    has-editable-columns
-                />
+                    has-visible-columns
+                >
+                    <template #body-cell-row-actions="">
+                        <dl-button label="test button" />
+                    </template>
+                </DlTable>
             </div>
         </div>
         <div>
@@ -446,6 +450,7 @@ import {
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
 import { DlTableRow } from '../types'
+import { DlTablePagination } from '../types'
 
 const columns = [
     {
@@ -456,7 +461,8 @@ const columns = [
         field: 'name',
         sortable: true,
         textTransform: 'uppercase',
-        width: 100
+        width: 100,
+        hint: 'test hint'
     },
     {
         name: 'calories',
@@ -620,7 +626,7 @@ const rows = [
         calcium: '12%',
         iron: '6%'
     },
-    ...times(100, (index) => ({
+    ...times(1000, (index) => ({
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,
@@ -710,11 +716,12 @@ export default defineComponent({
             }
         }
 
-        const pagination = ref({
+        const pagination = ref<DlTablePagination>({
             sortBy: 'desc',
             descending: false,
             page: 2,
-            rowsPerPage: 3
+            rowsPerPage: 3,
+            maxDisplayRange: 9
             // rowsNumber: xx if getting data from a server
         })
 

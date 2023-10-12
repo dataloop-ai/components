@@ -4,23 +4,23 @@
         :style="cssVars"
         :class="rootContainerClasses"
     >
-        <div class="row">
+        <div class="row full-width full-height">
             <div
                 :class="`${
                     isSmall ? 'col' : 'row  full-width  full-height'
                 } top`"
-                :style="`${isSmall ? 'flex-grow: 0; max-width: 25%;' : ''}`"
+                :style="`${isSmall ? 'flex-grow: 0;' : ''}`"
             >
                 <div
                     v-if="!!title.length || !!tooltip.length"
                     :class="{
-                        'dl-text-input__title-container': true,
-                        'dl-text-input__title-container--s': isSmall
+                        'dl-input__title-container': true,
+                        'dl-input__title-container--s': isSmall
                     }"
                 >
                     <label
                         v-if="!!title.length"
-                        class="dl-text-input__title"
+                        class="dl-input__title"
                         :style="`${isSmall ? 'width: 90%' : 'width: 100%'}`"
                     >
                         <dl-ellipsis>
@@ -35,7 +35,7 @@
                     </label>
                     <span v-if="!!tooltip.length">
                         <dl-icon
-                            class="dl-text-input__tooltip-icon"
+                            class="dl-input__tooltip-icon"
                             icon="icon-dl-info"
                             size="12px"
                         />
@@ -51,8 +51,8 @@
                 <div
                     v-if="!!topMessage.length"
                     :class="{
-                        'dl-text-input__top-message-container': true,
-                        'dl-text-input__top-message-container--s': isSmall
+                        'dl-input__top-message-container': true,
+                        'dl-input__top-message-container--s': isSmall
                     }"
                 >
                     <dl-info-error-message
@@ -68,48 +68,51 @@
                 } bottom-section full-width full-height`"
             >
                 <div class="row center full-width full-height">
-                    <div style="flex-grow: 1; height: 100%; position: relative">
-                        <input
-                            ref="input"
-                            :value="modelValue"
-                            :class="inputClasses"
-                            :placeholder="placeholder"
-                            :maxlength="maxLength"
-                            :type="showPass ? 'text' : type"
-                            :disabled="disabled"
-                            :readonly="readonly"
-                            @input="debouncedInput"
-                            @focus="onFocus"
-                            @blur="debouncedBlur"
-                            @keyup.enter="onKeyPress"
-                        >
+                    <div :class="wrapperClasses">
                         <div
                             v-if="hasPrepend"
                             :class="[
                                 ...adornmentClasses,
-                                'dl-text-input__adornment-container--pos-left'
+                                'dl-input__adornment-container--pos-left'
                             ]"
                         >
                             <slot name="prepend" />
                         </div>
                         <div
-                            v-if="hasAppend"
+                            ref="input"
+                            :contenteditable="!readonly"
+                            :class="inputClasses"
+                            :placeholder="placeholder"
+                            @input="onChange"
+                            @focus="onFocus"
+                            @blur="onBlur"
+                            @keydown="onKeydown"
+                            @keyup.enter="onEnterPress"
+                            @paste="handlePaste"
+                        >
+                            <span v-if="readonly">{{ modelValue }}</span>
+                        </div>
+                        <div
                             :class="[
                                 ...adornmentClasses,
-                                'dl-text-input__adornment-container--pos-right'
+                                'dl-input__adornment-container--pos-right'
                             ]"
                         >
-                            <slot name="append" />
+                            <slot
+                                v-if="hasAppend"
+                                name="append"
+                            />
                             <span
                                 v-if="showClearButton"
                                 v-show="focused || mouseOverClear"
+                                class="dl-input__adornment-container--clear"
                                 @mouseenter="mouseOverClear = true"
                                 @mouseleave="mouseOverClear = false"
                             >
                                 <dl-button
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
-                                    size="s"
+                                    :size="clearIconSize"
                                     text-color="dl-color-darker"
                                     flat
                                     fluid
@@ -135,17 +138,6 @@
                             </span>
                         </div>
                     </div>
-                    <div
-                        v-if="hasAction"
-                        style="
-                            width: fit-content;
-                            display: flex;
-                            align-items: center;
-                            margin-left: 10px;
-                        "
-                    >
-                        <slot name="action" />
-                    </div>
                     <dl-menu
                         v-if="showSuggestItems"
                         v-model="isMenuOpen"
@@ -154,7 +146,7 @@
                         :offset="[0, 3]"
                         fit-container
                         :fit-content="fitContent"
-                        :arrow-nav-items="suggestItems"
+                        :arrow-nav-items="stringSuggestions"
                         @click="onMenuShow"
                         @highlightedIndex="setHighlightedIndex"
                         @handleSelectedItem="handleSelectedItem"
@@ -165,20 +157,25 @@
                         >
                             <dl-list-item
                                 v-for="(item, suggestIndex) in suggestItems"
-                                :key="item"
+                                :key="item.suggestion"
                                 clickable
                                 style="font-size: 12px"
                                 :highlighted="suggestIndex === highlightedIndex"
                                 @click="onClick($event, item)"
                             >
+                                <img
+                                    v-if="item.image"
+                                    :src="item.image"
+                                    class="dl-input__suggestion--image"
+                                >
                                 <span
                                     v-for="(word, index) in getSuggestWords(
-                                        item,
+                                        item.suggestion,
                                         modelValue
                                     )"
                                     :key="JSON.stringify(word) + index"
                                     :class="{
-                                        'dl-text-input__suggestion--highlighted':
+                                        'dl-input__suggestion--highlighted':
                                             word.highlighted
                                     }"
                                 >
@@ -199,7 +196,7 @@
                 <div class="row bottom full-width full-height">
                     <div
                         v-if="bottomMessage"
-                        class="row full-width dl-text-input__bottom-message-container"
+                        class="row full-width dl-input__bottom-message-container"
                         style="justify-content: space-between"
                     >
                         <div>
@@ -235,7 +232,7 @@
                         <div>
                             <span
                                 v-if="showCounter && maxLength && maxLength > 0"
-                                class="dl-text-input__counter"
+                                class="dl-input__counter"
                             >
                                 {{ characterCounter }}
                             </span>
@@ -243,19 +240,102 @@
                     </div>
                 </div>
             </div>
+            <div
+                v-if="files.length"
+                class="dl-input__files"
+            >
+                <input-file-element
+                    v-for="file in files"
+                    :key="file.id"
+                    :file="file"
+                    @remove-file="emitRemoveFile"
+                    @zoom-image="handleZoomImage"
+                    @rename-file="handleRenameFileModal"
+                />
+            </div>
+        </div>
+        <dl-dialog-box
+            v-if="currentZoomImage"
+            v-model="zoomImageModel"
+            volatile
+            width="60vw"
+            style="--dl-dialog-box-content-padding: 0"
+        >
+            <template #body>
+                <img
+                    class="dl-input__zoom-image"
+                    :src="currentZoomImage"
+                >
+            </template>
+        </dl-dialog-box>
+        <dl-dialog-box
+            v-model="renameFileModel"
+            volatile
+            :style="`--dl-dialog-box-header-height: 25px;
+                     --dl-dialog-box-footer-height: 25px;`"
+        >
+            <template #header>
+                <dl-dialog-box-header
+                    title="Rename File"
+                    close-button
+                    @onClose="renameFileModel = false"
+                />
+            </template>
+            <template #body>
+                <dl-input
+                    v-model="newFileName"
+                    title="Name"
+                    red-asterisk
+                    min-width="80%"
+                    hide-clear-button
+                    :placeholder="`Enter new file ${currentFile.name}`"
+                />
+            </template>
+            <template #footer>
+                <dl-dialog-box-footer>
+                    <div style="display: flex; justify-content: flex-end">
+                        <dl-button @click="handleRenameFile">
+                            Rename
+                        </dl-button>
+                    </div>
+                </dl-dialog-box-footer>
+            </template>
+        </dl-dialog-box>
+        <div
+            v-if="hasAction"
+            class="dl-input__action"
+        >
+            <slot name="action" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { debounce } from 'lodash'
+import { debounce, cloneDeep } from 'lodash'
 import { computed, defineComponent, PropType, ref } from 'vue-demi'
 import { DlInfoErrorMessage, DlTooltip } from '../../shared'
 import { DlListItem } from '../../basic'
 import { DlMenu, DlIcon, DlList, DlEllipsis } from '../../essential'
+import {
+    DlDialogBox,
+    DlDialogBoxHeader,
+    DlDialogBoxFooter
+} from '../../compound/DlDialogBox'
 import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
+import {
+    addEventListenersToElement,
+    clearSuggestion,
+    getSuggestItems,
+    isArrayBufferImage,
+    readBlob,
+    readClipboard,
+    setInnerHTMLWithCursor
+} from './utils'
 import { v4 } from 'uuid'
+import { setCaretAtTheEnd } from '../../../utils'
+import { DlInputFile, DlInputSuggestion } from './types'
+import InputFileElement from './components/InputFileElement.vue'
 import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
@@ -268,134 +348,286 @@ export default defineComponent({
         DlMenu,
         DlList,
         DlListItem,
-        DlEllipsis
+        DlEllipsis,
+        DlDialogBox,
+        DlDialogBoxHeader,
+        DlDialogBoxFooter,
+        InputFileElement
     },
     model: {
         prop: 'modelValue',
         event: 'update:model-value'
     },
     props: {
+        /**
+         * The text value of the input
+         */
         modelValue: {
             type: [String, Number],
             default: null
         },
+        /**
+         * An array of InputFile objects contained and modeled in the input
+         */
+        files: {
+            type: Array as PropType<DlInputFile[]>,
+            default: (): DlInputFile[] => []
+        },
+        /**
+         * Input height
+         */
+        height: {
+            type: String,
+            default: null
+        },
+        /**
+         * Input max height
+         */
+        maxHeight: {
+            type: String,
+            default: '100px'
+        },
+        /**
+         * The input will expand like a textarea while typing
+         */
+        expandable: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Input width
+         */
+        width: {
+            type: String,
+            default: '100%'
+        },
+        /**
+         * Input max-width
+         */
+        maxWidth: {
+            type: String,
+            default: 'fit-content'
+        },
+        /**
+         * General size: s,m,l
+         */
         size: {
             type: String as PropType<TInputSizes>,
             default: InputSizes.l
         },
+        /**
+         * Input placeholder
+         */
         placeholder: {
             type: String,
             default: ''
         },
+        /**
+         * Text to be displayed above the input as title
+         */
         title: {
             type: String,
             default: ''
         },
+        /**
+         * Whether or not this field is required
+         */
         required: {
             type: Boolean,
             default: false
         },
+        /**
+         * Whether or not this field is optional
+         */
         optional: {
             type: Boolean,
             default: false
         },
+        /**
+         * Text to be displayed in a tooltip while hovering over the info icon
+         */
         tooltip: {
             type: String,
             default: ''
         },
+        /**
+         * Type "password" will mask the characters
+         */
         type: {
             type: String,
             default: 'text'
         },
+        /**
+         * Message displayed above the input
+         */
         topMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Input will have a red asterisk
+         */
         redAsterisk: {
             type: Boolean,
             default: false
         },
+        /**
+         * Message to be displayed when in info mode
+         */
         infoMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Message to be displayed when in error mode
+         */
         errorMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Input will be in error mode
+         */
         error: {
             type: Boolean,
             default: false
         },
+        /**
+         * Message to be displayed when in warning mode
+         */
         warningMessage: {
             type: String,
             default: ''
         },
+        /**
+         * Input will be in warning mode
+         */
         warning: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be disabled
+         */
         disabled: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be readonly
+         */
         readonly: {
             type: Boolean,
             default: false
         },
+        /**
+         * Maximum amount of characters the user can type
+         */
         maxLength: {
             type: Number,
             default: null
         },
+        /**
+         * Input will show a counter for how many characters have been typed
+         */
         showCounter: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be in dense mode
+         */
         dense: Boolean,
+        /**
+         * Input will not have a clear text button
+         */
         hideClearButton: {
             type: Boolean,
             default: false
         },
+        /**
+         * Count the characters backwards
+         */
         counterReverse: {
             type: Boolean,
             default: false
         },
+        /**
+         * An array of InputSuggestion objects containing the suggestions the input will show while typing
+         */
         autoSuggestItems: {
-            type: Array as PropType<string[]>,
-            default: (): string[] => []
+            type: Array as PropType<DlInputSuggestion[]>,
+            default: (): DlInputSuggestion[] => []
         },
+        /**
+         * Highlight when a suggestion is matched
+         */
         highlightMatches: {
             type: Boolean,
             default: false
         },
+        /**
+         * Width of the suggestion menu
+         */
         suggestMenuWidth: {
             type: String,
             default: 'auto'
         },
+        /**
+         * Tooltip showed when hovering over the clear button
+         */
         clearButtonTooltip: {
             type: Boolean,
             default: false
         },
+        /**
+         * Input will be  in fit-content mode
+         */
         fitContent: Boolean,
+        /**
+         * CSS margin for input
+         */
         margin: {
             type: String,
             default: null
         },
+        /**
+         * The color of the highlighted text
+         */
+        syntaxHighlightColor: {
+            type: String,
+            default: 'var(--dl-color-secondary)'
+        },
+        /**
+         * Debounce time for input
+         */
         debounce: {
             type: Number,
             default: 100
         }
     },
-    emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
+    emits: [
+        'input',
+        'focus',
+        'blur',
+        'clear',
+        'enter',
+        'file-update',
+        'update:model-value',
+        'suggestion-click'
+    ],
     setup(props, { emit }) {
         const mouseOverClear = ref(false)
         const highlightedIndex = ref(-1)
         const isMenuOpen = ref(false)
-        const suggestItems = computed<string[]>(() => {
-            return props.autoSuggestItems.filter((item) =>
-                item.includes(`${props.modelValue}`)
+        const suggestItems = computed<DlInputSuggestion[]>(() => {
+            if (!props.modelValue) return []
+            return getSuggestItems(
+                props.autoSuggestItems,
+                props.modelValue?.toString()
             )
         })
+        const input = ref(null)
 
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
@@ -403,14 +635,55 @@ export default defineComponent({
         const handleSelectedItem = (value: any) => {
             onAutoSuggestClick(null, value)
         }
-        const inputRef = ref<HTMLInputElement>(null)
-        const onAutoSuggestClick = (
-            e: Event,
-            item: string | HTMLInputElement
-        ): void => {
-            emit('input', item, e)
-            emit('update:model-value', item)
-            inputRef.value = item as HTMLInputElement
+        const onAutoSuggestClick = (e: Event, item: string): void => {
+            const newValue = clearSuggestion(props.modelValue.toString(), item)
+            if (!props.maxLength || newValue.length < props.maxLength) {
+                emit('input', newValue, e)
+                emit('update:model-value', newValue)
+                input.value.innerHTML = newValue
+                setCaretAtTheEnd(input.value)
+            }
+        }
+
+        const emitAddFile = (file: DlInputFile) => {
+            const newFiles = cloneDeep(props.files)
+            newFiles.push(file)
+            emit('file-update', newFiles)
+        }
+        const emitRemoveFile = (fileId: string) => {
+            emit(
+                'file-update',
+                props.files.filter((file) => file.id !== fileId)
+            )
+        }
+
+        const isSpecialWord = (word: string) => {
+            return (
+                word.startsWith('@') ||
+                props.autoSuggestItems.some(
+                    (s) => s.suggestion?.trim() === word?.trim()
+                )
+            )
+        }
+
+        const updateSyntax = () => {
+            setInnerHTMLWithCursor(input.value, (text) => {
+                const words = text.split(' ').map((word) => {
+                    if (isSpecialWord(word)) {
+                        return `<span class="clickable" style="color: ${props.syntaxHighlightColor}">${word}</span>`
+                    }
+                    return word
+                })
+                input.value.innerHTML = words.join(' ')
+            })
+            Array.from(input.value.children).forEach((el: any) => {
+                if (!isSpecialWord(el.innerText)) return
+                addEventListenersToElement(el, {
+                    click: () => {
+                        emit('suggestion-click', el.innerText)
+                    }
+                })
+            })
         }
 
         return {
@@ -420,13 +693,22 @@ export default defineComponent({
             isMenuOpen,
             setHighlightedIndex,
             handleSelectedItem,
-            mouseOverClear
+            mouseOverClear,
+            input,
+            emitAddFile,
+            emitRemoveFile,
+            updateSyntax
         }
     },
     data() {
         return {
-            uuid: `dl-text-input-${v4()}`,
+            uuid: `dl-input-${v4()}`,
             showPass: false,
+            zoomImageModel: false,
+            renameFileModel: false,
+            currentZoomImage: null,
+            currentFile: null,
+            newFileName: null,
             focused: false
         }
     },
@@ -440,12 +722,12 @@ export default defineComponent({
             )
         },
         rootContainerClasses(): string[] {
-            const classes = ['dl-text-input']
+            const classes = ['dl-input']
             if (this.isSmall) {
-                classes.push('dl-text-input--s')
+                classes.push('dl-input--s')
             }
             if (this.dense) {
-                classes.push('dl-text-input--dense')
+                classes.push('dl-input--dense')
             }
             return classes
         },
@@ -466,45 +748,50 @@ export default defineComponent({
             }
             return {
                 '--dl-input-margin': inputMargin,
-                '--dl-input-border-color-hover': this.getBorderColor
+                '--dl-input-border-color-hover': this.getBorderColor,
+                '--dl-input-height': this.height ? this.height : null,
+                '--dl-input-align-items':
+                    this.expandable || this.height ? 'flex-start' : 'center',
+                '--dl-input-max-width': this.maxWidth,
+                '--dl-input-width': this.width,
+                '--dl-input-max-height': this.maxHeight,
+                '--dl-input-white-space': this.expandable ? 'normal' : 'nowrap'
             }
         },
         inputClasses(): string[] {
-            const classes = [
-                'dl-text-input__input',
-                `dl-text-input__input--${this.size}`
-            ]
+            const classes = ['dl-input__input', `dl-input__input--${this.size}`]
 
             if (this.hasPrepend) {
-                classes.push('dl-text-input__input--prepend')
+                classes.push('dl-input__input--prepend')
             }
             if (this.hasAppend) {
-                classes.push('dl-text-input__input--append')
+                classes.push('dl-input__input--append')
             }
             if (this.hasPrepend && this.hasAppend) {
-                classes.push('dl-text-input__input--both-adornments')
+                classes.push('dl-input__input--both-adornments')
             }
-            if (this.error) {
-                classes.push('dl-text-input__input--error')
-            } else if (this.warning) {
-                classes.push('dl-text-input__input--warning')
+            if (this.type === 'password' && !this.showPass) {
+                classes.push('dl-input__input--password')
             }
 
             return classes
         },
         asteriskClasses(): string[] {
-            const classes = ['dl-text-input__asterisk']
+            const classes = ['dl-input__asterisk']
 
             if (this.redAsterisk) {
-                classes.push('dl-text-input__asterisk--red')
+                classes.push('dl-input__asterisk--red')
             }
 
             return classes
         },
         adornmentClasses(): string[] {
             return [
-                'dl-text-input__adornment-container',
-                `dl-text-input__adornment-container--${this.size}`
+                'dl-input__adornment-container',
+                `dl-input__adornment-container--${this.size}`,
+                `dl-input__adornment-container--${
+                    this.expandable ? 'expandable' : ''
+                }`
             ]
         },
         isSmall(): boolean {
@@ -527,6 +814,10 @@ export default defineComponent({
         hasAction(): boolean {
             return !!this.$slots.action && !this.isSmall
         },
+        clearIconSize(): string {
+            if (this.isSmall) return '7px'
+            return 's'
+        },
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
         },
@@ -543,17 +834,23 @@ export default defineComponent({
             return !this.$slots.append && this.type === 'password'
         },
         showSuggestItems(): boolean {
-            return !!this.suggestItems.length && !!this.modelValue
+            return !!this.suggestItems?.length && !!this.modelValue
         },
         debouncedBlur(): any {
             if (stateManager.disableDebounce) {
                 return this.onBlur.bind(this)
             }
-            const debounced = debounce(this.onBlur.bind(this), 50)
+            const debounced = debounce(
+                this.onBlur.bind(this),
+                this.debounce ?? 50
+            )
             return debounced
         },
         inputLength(): number {
             return `${this.modelValue}`.length
+        },
+        isWithinMaxLength(): boolean {
+            return !this.maxLength || this.inputLength < this.maxLength
         },
         characterCounter(): string {
             if (!this.maxLength) {
@@ -566,37 +863,85 @@ export default defineComponent({
 
             return `${chars}/${this.maxLength}`
         },
-        wrapperClasses(): string {
-            let classes = 'flex items-center'
-
-            if (this.isSmall) {
-                classes += ' no-wrap'
+        wrapperClasses(): string[] {
+            const classes = [
+                'dl-input__wrapper',
+                `dl-input__wrapper--${this.size}`
+            ]
+            if (this.disabled) {
+                classes.push('dl-input__wrapper--disabled')
+            }
+            if (this.error) {
+                classes.push('dl-input__wrapper--error')
+            } else if (this.warning) {
+                classes.push('dl-input__wrapper--warning')
             }
 
             return classes
         },
-        debouncedInput(): any {
-            if (stateManager.disableDebounce) {
-                return this.onChange.bind(this)
-            }
-            const debounced = debounce(this.onChange.bind(this), this.debounce)
-            return debounced
+        stringSuggestions() {
+            return this.suggestItems.map((item) => item.suggestion)
         }
     },
     methods: {
-        onClick(e: Event, item: string) {
-            this.onAutoSuggestClick(e, item)
+        onKeydown(e: KeyboardEvent) {
+            if (!this.isWithinMaxLength && e.key !== 'Backspace') {
+                e.preventDefault()
+                return
+            }
         },
-        onChange(e: any): void {
+        onClick(e: Event, item: DlInputSuggestion) {
+            this.onAutoSuggestClick(e, item.suggestion)
+        },
+        onChange(e: Event): void {
             this.isMenuOpen = true
-            this.$emit('input', e.target.value, e)
-            this.$emit('update:model-value', e.target.value)
+            this.updateSyntax()
+            const target = e.target as HTMLElement
+            this.$emit('input', target.innerText, e)
+            this.$emit('update:model-value', target.innerText)
+        },
+        handlePaste() {
+            readClipboard().then((items) => {
+                if (items.some((item) => item.type === 'text/plain')) return 0
+                items.forEach((item) => {
+                    readBlob(item.data).then((blobData) => {
+                        if (isArrayBufferImage(blobData)) {
+                            const objectUrl = URL.createObjectURL(item.data)
+                            this.emitAddFile({
+                                id: v4(),
+                                name: `new_image_${this.files.length + 1}`,
+                                image: objectUrl,
+                                data: blobData
+                            })
+                        }
+                    })
+                })
+            })
+        },
+        handleZoomImage(file: DlInputFile) {
+            this.currentZoomImage = file.image
+            this.zoomImageModel = true
+        },
+        handleRenameFileModal(file: DlInputFile) {
+            this.currentFile = file
+            this.renameFileModel = true
+        },
+        handleRenameFile() {
+            const newFiles = cloneDeep(this.files)
+            const fileToRenameIndex = newFiles.findIndex(
+                (file) => file.id === this.currentFile.id
+            )
+            newFiles[fileToRenameIndex].name = this.newFileName
+            this.$emit('file-update', newFiles)
+            this.renameFileModel = false
         },
         focus(): void {
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.focus()
         },
         onFocus(e: InputEvent): void {
+            const el = e.target as HTMLElement
+            el.scroll(el.scrollWidth, 0)
             this.focused = true
             this.$emit('focus', e)
         },
@@ -605,11 +950,13 @@ export default defineComponent({
             inputRef.blur()
         },
         onBlur(e: InputEvent): void {
+            const el = e.target as HTMLElement
+            el.scroll(0, 0)
             this.focused = false
             this.$emit('blur', e)
         },
-        onKeyPress(e: any): void {
-            this.$emit('enter', e.target.value, e)
+        onEnterPress(e: any): void {
+            this.$emit('enter', e.target.innerText, e)
         },
         onClear(e: any): void {
             this.$emit('clear', this.modelValue)
@@ -617,7 +964,7 @@ export default defineComponent({
             this.$emit('update:model-value', '')
 
             const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.value = ''
+            inputRef.innerHTML = ''
             inputRef.focus()
         },
         onPassShowClick(): void {
@@ -707,7 +1054,15 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.dl-text-input {
+[contenteditable='true']:empty:before {
+    content: attr(placeholder);
+    pointer-events: none;
+    display: block;
+    opacity: 0.5;
+    -webkit-text-security: none;
+}
+
+.dl-input {
     margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
@@ -722,6 +1077,9 @@ export default defineComponent({
         -moz-appearance: textfield;
     }
 
+    display: flex;
+    align-items: center;
+
     &--dense {
         padding: 0;
     }
@@ -731,11 +1089,10 @@ export default defineComponent({
         display: flex;
         align-items: center;
 
+        &--small,
         &--s {
-            margin: 4px auto auto;
-        }
-        &--small {
-            margin: 4px auto auto;
+            margin-bottom: 0;
+            margin-right: 4px;
         }
     }
 
@@ -774,35 +1131,81 @@ export default defineComponent({
         }
     }
 
-    &__input {
+    &__wrapper {
+        // flex-grow: 1;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
         border: 1px solid var(--dl-color-separator);
+        min-width: var(--dl-input-width);
+        max-width: var(--dl-input-max-width);
+        max-height: var(--dl-input-max-height);
+        height: var(--dl-input-height);
+        &:hover {
+            border-color: var(--dl-input-border-color-hover);
+        }
+        &--error {
+            border-color: var(--dl-color-negative);
+        }
+        &--warning {
+            border-color: var(--dl-input-border-color-hover);
+        }
+        &--disabled {
+            border-color: var(--dl-color-separator);
+            color: var(--dl-color-disabled);
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        &--s {
+            height: 18px;
+        }
+    }
+
+    &__input {
+        display: inline-block;
+        font-family: Arial, Helvetica, sans-serif;
+        border-right: none;
         border-radius: 2px;
         color: var(--dl-color-darker);
-        width: calc(100% - 20px);
+        white-space: var(--dl-input-white-space);
+        font-size: var(--dl-font-size-body);
+        overflow: hidden scroll;
+        text-overflow: ellipsis;
         box-sizing: content-box;
-        height: 12px;
-        padding: 10px;
+        word-wrap: break-word;
         outline: none;
         background: none;
         transition: border 0.3s;
-        font-size: var(--dl-font-size-body);
+        min-height: 10px;
+        padding: 10px;
         position: relative;
+        line-height: 10px;
+        width: 100%;
 
         &--prepend {
-            padding-left: 28px;
             width: calc(100% - 10px - 28px);
         }
 
         &--append {
-            padding-right: 28px;
-            width: calc(100% - 10px - 28px);
+            margin-right: 10px;
         }
 
         &--both-adornments {
             width: calc(100% - 28px - 28px);
         }
 
+        &--l {
+            line-height: 16px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        &--large {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
         &--m {
+            line-height: 12px;
             padding-top: 7px;
             padding-bottom: 7px;
         }
@@ -813,7 +1216,7 @@ export default defineComponent({
 
         &--s {
             padding-top: 4px;
-            padding-bottom: 3px;
+            padding-bottom: 4px;
             padding-right: 5px;
         }
         &--small {
@@ -823,16 +1226,8 @@ export default defineComponent({
             padding-right: 5px;
         }
 
-        &--error {
-            border-color: var(--dl-color-negative);
-            &:hover {
-            }
-        }
-
-        &--warning {
-            border-color: var(--dl-input-border-color-hover);
-            &:hover {
-            }
+        &--password {
+            -webkit-text-security: disc;
         }
 
         &::placeholder {
@@ -846,13 +1241,9 @@ export default defineComponent({
 
         &:focus {
             border-color: var(--dl-input-border-color-hover);
+            text-overflow: clip;
         }
 
-        &:disabled {
-            border-color: var(--dl-color-separator);
-            color: var(--dl-color-disabled);
-            cursor: not-allowed;
-        }
         &:read-only {
             border-color: var(--dl-color-separator);
             cursor: text;
@@ -865,47 +1256,14 @@ export default defineComponent({
     &__adornment-container {
         display: flex;
         justify-content: center;
-        align-items: center;
-        position: absolute;
-        width: 28px;
-
-        &--l {
-            height: 34px;
+        align-items: var(--dl-input-align-items);
+        width: 30px;
+        &--expandable {
+            margin-top: 3px;
+            margin-right: 3px;
         }
-
-        &--large {
-            height: 34px;
-        }
-
-        &--m {
-            height: 28px;
-        }
-
-        &--medium {
-            height: 28px;
-        }
-
         &--s {
-            margin-top: 1px;
-            height: 20px;
-        }
-
-        &--small {
-            height: 20px;
-        }
-
-        &--pos-left {
-            top: 0;
-            left: 0;
-        }
-
-        &--pos-right {
-            top: 0;
-            right: 0;
-        }
-        &--pos-right-out {
-            top: 0;
-            right: -30px;
+            height: 100%;
         }
     }
 
@@ -928,6 +1286,30 @@ export default defineComponent({
             border-radius: 2px;
             color: var(--dl-color-text-darker-buttons);
         }
+        &--image {
+            margin-right: 5px;
+            border-radius: 50%;
+            height: 30px;
+            width: 30px;
+        }
+    }
+
+    &__files {
+        display: flex;
+        gap: 16px;
+        overflow-y: scroll;
+    }
+
+    &__zoom-image {
+        width: 100%;
+        object-fit: contain;
+    }
+
+    &__action {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
     }
 }
 </style>

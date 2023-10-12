@@ -17,8 +17,11 @@
                 :schema="schema"
                 :color-schema="colorSchema"
                 :strict="strict"
+                :placeholder="placeholder"
                 @focus="isFocused = true"
                 @blur="isFocused = false"
+                @search="emitSearchQuery"
+                @error="$emit('error', $event)"
             />
         </div>
         <div class="dl-smart-search__buttons">
@@ -34,7 +37,7 @@
                                 height: '28px'
                             }"
                             :disabled="disabled"
-                            @click="$emit('search-query', queryObject)"
+                            @click="$emit('search', queryObject)"
                         />
                     </div>
                     <div
@@ -61,11 +64,11 @@
         </div>
         <dl-smart-search-json-editor-dialog
             v-model="showJSONEditor"
-            :json="stringifiedJSON"
-            @search="emitSearchQuery"
+            :json="modelValue"
+            :options="selectOptions"
+            @search="handleJSONSearch"
             @change="handleJSONChange"
         />
-        <!-- todo: Add support for saved queries-->
     </div>
 </template>
 <script lang="ts">
@@ -73,7 +76,7 @@ import { defineComponent, PropType, ref, computed, toRefs } from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlSmartSearchInput, DlSmartSearchJsonEditorDialog } from './components'
 import { Schema, Alias } from '../../../../hooks/use-suggestions'
-import { Filters, ColorSchema, SearchStatus } from './types'
+import { ColorSchema, SearchStatus, DlSmartSearchFilter } from './types'
 import { v4 } from 'uuid'
 import { stateManager } from '../../../../StateManager'
 
@@ -113,8 +116,8 @@ export default defineComponent({
             })
         },
         filters: {
-            type: Object as PropType<Filters>,
-            default: () => ({} as Filters)
+            type: Array as PropType<DlSmartSearchFilter[]>,
+            default: () => [] as DlSmartSearchFilter[]
         },
         disabled: {
             type: Boolean,
@@ -130,9 +133,19 @@ export default defineComponent({
         strict: {
             type: Boolean,
             default: false
+        },
+        placeholder: {
+            type: String,
+            default: ''
         }
     },
-    emits: ['save-query', 'remove-query', 'search-query', 'update:model-value'],
+    emits: [
+        'save-filter',
+        'remove-filter',
+        'update:model-value',
+        'search',
+        'error'
+    ],
     setup(props, { emit }) {
         //#region props
         const { modelValue, filters, width } = toRefs(props)
@@ -167,8 +180,6 @@ export default defineComponent({
         //#endregion
 
         //#region computed
-        const stringifiedJSON = computed(() => JSON.stringify(modelValue.value))
-
         const cssVars = computed(() => ({
             '--dl-smart-search-max-width': isFocused.value
                 ? '100%'
@@ -184,24 +195,9 @@ export default defineComponent({
             }
         })
 
-        const selectedOptions = computed(() => {
-            const options: Record<string, string>[] = [
-                {
-                    label: 'New Query',
-                    value: '{}'
-                }
-            ]
-
-            const queryFilters = filters.value?.saved ?? []
-            for (const filter of queryFilters) {
-                options.push({
-                    label: filter.name,
-                    value: filter.query
-                })
-            }
-
-            return options
-        })
+        const selectOptions = computed<DlSmartSearchFilter[]>(
+            () => filters.value ?? []
+        )
         //#endregion
 
         //#region methods
@@ -221,11 +217,15 @@ export default defineComponent({
             }
         }
 
-        const emitSearchQuery = (query: string) => {
+        const emitSearchQuery = (value?: { [key: string]: any }) => {
+            emit('search', value ?? queryObject.value)
+        }
+
+        const handleJSONSearch = (query: string) => {
             const json = toObject(query)
             if (!json) return
             queryObject.value = json
-            emit('search-query', json)
+            emitSearchQuery(json)
         }
 
         const handleJSONChange = (val: string) => {
@@ -255,10 +255,10 @@ export default defineComponent({
             preventUpdate,
             selectedOption,
             cssVars,
-            selectedOptions,
+            selectOptions,
             emitSearchQuery,
             showJSONEditor,
-            stringifiedJSON,
+            handleJSONSearch,
             handleJSONChange
         }
     }

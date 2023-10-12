@@ -47,10 +47,12 @@
             </div>
         </button>
         <dl-tooltip
-            v-if="tooltip"
+            v-if="tooltip || hasTooltipSlot"
             style="pointer-events: auto"
         >
-            {{ tooltip }}
+            <slot name="tooltip">
+                {{ tooltip }}
+            </slot>
         </dl-tooltip>
     </div>
 </template>
@@ -214,10 +216,24 @@ export default defineComponent({
         },
         getIconColor(): string {
             if (this.disabled) {
-                return 'dl-color-disabled'
+                return setTextColor({
+                    disabled: this.disabled,
+                    outlined: this.outlined,
+                    flat: this.flat,
+                    color: this.color,
+                    filled: this.filled,
+                    shaded: this.shaded,
+                    textColor: this.iconColor ?? this.textColor
+                })
             }
             if (this.mouseOver) {
-                return 'dl-color-hover'
+                return setColorOnHover({
+                    disabled: this.disabled,
+                    outlined: this.outlined,
+                    shaded: this.shaded,
+                    flat: this.flat,
+                    color: this.iconColor ?? this.textColor
+                })
             }
 
             if (this.iconColor) {
@@ -258,6 +274,9 @@ export default defineComponent({
         },
         hasContent(): boolean {
             return !!this.$slots.default || this.hasLabel
+        },
+        hasTooltipSlot(): boolean {
+            return !!this.$slots.tooltip
         },
         cssButtonVars(): Record<string, string> {
             let colors: Record<string, string> = {}
@@ -332,20 +351,6 @@ export default defineComponent({
                         shaded: this.shaded,
                         flat: this.flat,
                         color: this.textColor
-                    }),
-                    '--dl-button-icon-color-hover': setColorOnHover({
-                        disabled: this.disabled,
-                        outlined: this.outlined,
-                        shaded: this.shaded,
-                        flat: this.flat,
-                        color: this.getIconColor
-                    }),
-                    '--dl-icon-color': setColorOnHover({
-                        disabled: this.disabled,
-                        outlined: this.outlined,
-                        shaded: this.shaded,
-                        flat: this.flat,
-                        color: this.getIconColor
                     }),
                     '--dl-button-border-hover': setBorderOnHover({
                         disabled: this.disabled,
@@ -519,9 +524,6 @@ export default defineComponent({
 
 .dl-button-icon {
     transition: var(--dl-button-text-transition-duration);
-    &:hover:enabled:not(:active) {
-        color: var(--dl-button-icon-color-hover);
-    }
 }
 
 .dl-button-container {

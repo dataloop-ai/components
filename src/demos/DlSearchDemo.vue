@@ -8,7 +8,6 @@
             placeholder="Search here"
             :auto-suggest-items="suggestItems"
         />
-
         <dl-search
             v-model="searchValue"
             size="m"

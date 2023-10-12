@@ -8,8 +8,16 @@ export function shouldIgnoreKey(evt: KeyboardEvent) {
     )
 }
 
-export function isKeyCode(evt: KeyboardEvent, keyCodes: number) {
-    return shouldIgnoreKey(evt) ? false : [keyCodes].includes(evt.keyCode)
+export function isKeyCode(evt: KeyboardEvent, key: number | string) {
+    if (!key) {
+        return false
+    }
+
+    return shouldIgnoreKey(evt)
+        ? false
+        : [key].includes(evt.key) ||
+              [key].includes(evt.keyCode) ||
+              [key].includes(evt.code)
 }
 
 export function onKeyDownComposition(evt: KeyboardEvent) {

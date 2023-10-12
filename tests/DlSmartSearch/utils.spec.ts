@@ -49,6 +49,10 @@ describe('formatToNumericDate', () => {
     })
 })
 
+/**
+ * TODO: these tests dont hold up to new design and need to be replaced.
+ * We do not have from to anymore.
+ */
 describe('replaceDateInterval', () => {
     it('should replace the last occurrence of the value that matches the "dateIntervalPattern"', () => {
         const string =

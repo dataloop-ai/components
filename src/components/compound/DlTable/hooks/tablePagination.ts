@@ -16,7 +16,8 @@ export type TablePagination = {
     page?: number
     rowsPerPage?: number
     rowsNumber?: number
-    maxPages?: number
+    /** The maximum range to display before truncating */
+    maxDisplayRange?: number
 }
 
 function samePagination(oldPag: TablePagination, newPag: TablePagination) {
@@ -69,7 +70,7 @@ export function useTablePaginationState(
                     ? rowsPerPageOptions.value[0]
                     : 5,
                 min: 1,
-                maxPages: 0,
+                maxDisplayRange: 7,
                 boundaryNumbers: true,
                 boundaryLinks: true,
                 directionLinks: true,

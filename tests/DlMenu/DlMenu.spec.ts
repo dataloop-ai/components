@@ -48,7 +48,6 @@ describe('DlMenu', () => {
             noParentEvent: false,
             noRefocus: false,
             offset: [0, 0],
-            'onUpdate:modelValue': undefined,
             persistent: false,
             scrollTarget: null,
             self: 'top left',
@@ -58,7 +57,8 @@ describe('DlMenu', () => {
             transitionDuration: 300,
             arrowNavItems: [],
             zIndex: 'var(--dl-z-index-menu)',
-            triggerPercentage: 1
+            triggerPercentage: 1,
+            toggleKey: 'Enter'
         })
         expect(wrapper.vm.showing).toBe(false)
     })

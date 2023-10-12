@@ -40,6 +40,7 @@ export type DlTableColumn = {
     headerClasses?: string
     textTransform?: DlTextTransformOptions
     width?: number
+    hint?: string
 }
 
 export type DlTableFilterMethod = (
@@ -55,13 +56,9 @@ export type DlTableSortMethod = (
     descending: boolean
 ) => DlTableRow[]
 
-export type DlTablePagination = {
-    page: number
-    rowsPerPage: number
-    rowsNumber?: number
-    sortBy?: string | null
-    descending?: boolean
-}
+import { TablePagination } from './hooks/tablePagination'
+
+export type DlTablePagination = TablePagination
 
 export type DlTableRequestProp = {
     pagination: DlTablePagination

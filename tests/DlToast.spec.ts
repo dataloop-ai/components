@@ -44,7 +44,7 @@ describe('DlToastMessage component', () => {
         })
 
         it('should the right compute transition prop', function () {
-            expect(wrapper.vm.transition).toEqual({
+            expect(wrapper.vm.transitionState).toEqual({
                 enter: 'dl-toast--fade-in-up',
                 leave: 'dl-toast--fade-out'
             })

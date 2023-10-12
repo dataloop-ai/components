@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { DlTh } from '../../src/components'
 import { beforeAll, describe, expect, it } from 'vitest'
+import { stringStyleToRecord } from '../../src/utils'
 
 describe('DlTh', () => {
     describe('When mounting', () => {
@@ -38,7 +39,9 @@ describe('DlTh', () => {
                 expect(wrapper.vm.thClasses).toBe('dl-table--col-auto-width')
             })
             it('should compute right styles', () => {
-                expect(wrapper.vm.headerStyle).toBe('')
+                expect(wrapper.vm.headerStyle[1]).toEqual(
+                    stringStyleToRecord('')
+                )
             })
         })
         describe('When set props', () => {
@@ -62,7 +65,9 @@ describe('DlTh', () => {
                 )
             })
             it('should compute right styles', () => {
-                expect(wrapper.vm.headerStyle).toBe('color: red;')
+                expect(wrapper.vm.headerStyle[1]).toEqual(
+                    stringStyleToRecord('color: red;')
+                )
             })
         })
         describe('When emit click', () => {

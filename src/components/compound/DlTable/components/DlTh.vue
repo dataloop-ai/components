@@ -24,8 +24,10 @@
 </template>
 
 <script lang="ts">
+import { isString } from 'lodash'
 import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
+import { stringStyleToRecord } from '../../../../utils'
 import { DlIcon } from '../../../essential'
 import { DlTooltip } from '../../../shared'
 
@@ -45,7 +47,7 @@ export default defineComponent({
     },
     emits: ['click'],
 
-    setup(props, { emit }) {
+    setup(props, { emit, attrs }) {
         const vm = getCurrentInstance()
         const tableTh = ref(null)
 
@@ -105,21 +107,25 @@ export default defineComponent({
 
         const onClick = !hasOptionalProps.value ? onClickFn : handleClick
 
-        const state = {
+        return {
             isSortable: !hasOptionalProps.value
                 ? false
                 : column?.value?.sortable ?? false,
-            thClasses,
+            thClasses: ((attrs.class ?? '') + ' ' + thClasses.value).trim(),
             align: column?.value?.align ?? 'left',
             iconClass: column?.value?.iconClass ?? null,
             hasOptionalProps,
-            headerStyle: column.value.headerStyle ?? '',
+            headerStyle: [
+                isString(attrs.style)
+                    ? stringStyleToRecord(attrs.style)
+                    : attrs.style,
+                stringStyleToRecord(column.value.headerStyle ?? '')
+            ] as any,
             tableTh,
             hasEllipsis,
-            onClick
+            onClick,
+            column
         }
-
-        return state
     }
 })
 </script>

@@ -134,6 +134,14 @@
                     ]"
                 >
                     <dl-icon
+                        v-if="clearable && hasSelection"
+                        class=".dl-select__clear-button"
+                        icon="icon-dl-close"
+                        :size="withoutBorders ? '10px' : '12px'"
+                        style="margin-right: 3px; cursor: pointer"
+                        @click.prevent.stop="clearSelection"
+                    />
+                    <dl-icon
                         :icon="dropdownIcon"
                         :color="chevronIconColor"
                         class="expand-icon"
@@ -224,6 +232,7 @@
                             :count="getOptionCount(item)"
                             :children="getOptionChildren(item)"
                             :capitalized="capitalizedOptions"
+                            :readonly="isReadonlyOption(item)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(item)"
                             @selected="handleSelected"
@@ -264,6 +273,7 @@
                             :count="getOptionCount(option)"
                             :children="getOptionChildren(option)"
                             :capitalized="capitalizedOptions"
+                            :readonly="isReadonlyOption(option)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
                             @selected="handleSelected"
@@ -388,7 +398,7 @@ export default defineComponent({
         },
         capitalizedOptions: { type: Boolean, default: false },
         withoutDropdownIconPadding: { type: Boolean, default: false },
-        clearButtonTooltip: { type: Boolean, default: false },
+        clearable: { type: Boolean, default: false },
         dropdownMaxHeight: { type: String, default: '30vh' },
         preserveSearch: { type: Boolean, default: false },
         disabledTooltip: { type: String, default: 'Disabled' },
@@ -431,14 +441,6 @@ export default defineComponent({
             emit('change', val)
             emit('selected', val)
         }
-        const handleSelectedItem = (value: any) => {
-            selectedIndex.value = props.options.findIndex(
-                (option: string | Record<string, string | number> | number) =>
-                    isEqual(option as any, value)
-            )
-
-            handleModelValueUpdate(value)
-        }
 
         return {
             uuid: `dl-select-${v4()}`,
@@ -448,13 +450,15 @@ export default defineComponent({
             highlightedIndex,
             selectedIndex,
             setHighlightedIndex,
-            handleSelectedItem,
             handleModelValueUpdate,
             searchTerm, // todo: merge this sometime
             searchInputValue
         }
     },
     computed: {
+        hasSelection(): boolean {
+            return !!this.modelValueLength || this.selectedIndex !== -1
+        },
         filteredOptions(): DlSelectOptionType[] {
             if (this.customFilter || this.searchTerm === '') {
                 return this.options
@@ -729,11 +733,11 @@ export default defineComponent({
 
             this.selectedIndex = this.options.findIndex(
                 (option: string | Record<string, string | number> | number) =>
-                    isEqual(
-                        (option as any).value,
-                        (this.modelValue as any).value
-                    )
+                    isEqual(option, this.modelValue)
             )
+        },
+        handleSelectedItem(value: DlSelectOptionType) {
+            this.selectOption(value)
         },
         getOptionValue(option: any) {
             return option?.value ?? option
@@ -748,6 +752,9 @@ export default defineComponent({
             return option?.children && option?.children?.length
                 ? option?.children
                 : null
+        },
+        isReadonlyOption(option: any) {
+            return !!option?.readonly
         },
         getOptionCount(option: any) {
             return option?.count ?? null
@@ -778,22 +785,20 @@ export default defineComponent({
             this.$emit('change', toEmit)
         },
         clearSelection(): void {
+            let toEmit: any[] | string = []
+            if (this.isModelValuePrimitiveType) {
+                toEmit = ''
+            }
+
+            this.$emit('update:model-value', toEmit)
+            this.$emit('change', toEmit)
             this.selectedIndex = -1
             this.closeMenu()
         },
-        selectOption(selected: any) {
-            if (this.multiselect) {
+        selectOption(selectedOption: DlSelectOptionType) {
+            if (this.multiselect || this.isReadonlyOption(selectedOption)) {
                 return
             }
-
-            this.selectedIndex = this.options.findIndex(
-                (el: string | Record<string, string | number> | number) =>
-                    isEqual(el, selected)
-            )
-            const selectedOption =
-                this.selectedIndex === -1
-                    ? undefined
-                    : this.options[this.selectedIndex]
 
             if (this.searchable) {
                 const searchInput = this.$refs.searchInput as HTMLInputElement
@@ -869,6 +874,7 @@ export default defineComponent({
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 if (inputRef) inputRef.value = ''
                 this.searchTerm = ''
+                this.searchInputValue = ''
                 this.$emit('filter', '')
             }
         },
@@ -902,10 +908,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .root-container {
     width: var(--dl-select-width);
-    &--s {
-        display: flex;
-        align-items: center;
-    }
+    &--s,
     &--small {
         display: flex;
         align-items: center;
@@ -920,9 +923,10 @@ export default defineComponent({
         align-items: center;
         color: var(--dl-color-lighter);
 
+        &--s,
         &--small {
-            margin-right: 5px;
-            margin-bottom: 0px;
+            margin-bottom: 0;
+            margin-right: 4px;
         }
     }
 

@@ -40,15 +40,12 @@ body {
     &--uppercase {
         text-transform: uppercase;
     }
-
     &--lowercase {
         text-transform: lowercase;
     }
-
     &--capitalize {
         text-transform: capitalize;
     }
-
     &--none {
         text-transform: none;
     }
@@ -160,6 +157,11 @@ body {
 
 .full-height {
     height: 100%;
+}
+
+.clickable:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 :root {
@@ -343,7 +345,6 @@ html {
 [disabled] {
     opacity: 0.6 !important;
 }
-
 [disabled],
 [disabled] * {
     outline: 0 !important;

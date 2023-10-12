@@ -10,7 +10,7 @@ describe('PageNavigation', () => {
             wrapper = mount(PageNavigation, {
                 props: {
                     max: 10,
-                    maxPages: 6
+                    maxDisplayRange: 6
                 }
             })
         })
@@ -58,7 +58,7 @@ describe('PageNavigation', () => {
                 await wrapper.setProps({
                     boundaryNumbers: true,
                     max: 100,
-                    maxPages: 6,
+                    maxDisplayRange: 6,
                     modelValue: 20
                 })
                 btns = wrapper.findAll('button')
@@ -70,8 +70,8 @@ describe('PageNavigation', () => {
         })
     })
     describe('Validator test', () => {
-        it('should not pass the validation for the "max pages" value ', () => {
-            const validator = PageNavigation.props.maxPages.validator
+        it('should not pass the validation for the "maxDisplayRange" value ', () => {
+            const validator = PageNavigation.props.maxDisplayRange.validator
 
             expect(validator(-1)).toBe(false)
             expect(validator(10)).toBe(true)

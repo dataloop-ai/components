@@ -78,6 +78,7 @@ import { CalendarDate, Calendar } from './models'
 import { defineComponent, PropType } from 'vue-demi'
 import { DateInterval } from './types'
 import { v4 } from 'uuid'
+import moment from 'moment'
 
 const HOVER_TIMEOUT = 700
 
@@ -193,13 +194,18 @@ export default defineComponent({
         },
         updateModelValue(value: DateInterval) {
             if (this.disabled) return
-            this.$emit('update:model-value', value)
-            this.$emit('change', value)
+            const valueToUse = value
+            if (value && moment(value.from).isSame(value.to)) {
+                valueToUse.to = moment(value.from).endOf('day').toDate()
+            }
+            this.$emit('update:model-value', valueToUse)
+            this.$emit('change', valueToUse)
         },
 
         updateDateInterval(value: DateInterval) {
             if (this.disabled) return
             this.dateInterval = value
+            this.updateModelValue(value)
         },
 
         handleDateNext() {

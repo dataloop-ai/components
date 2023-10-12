@@ -50,7 +50,6 @@ export const props = {
     virtualScroll: Boolean,
     hidePagination: Boolean,
     hideSelectedBanner: Boolean,
-    hasEditableColumns: Boolean,
     selectedRowsLabel: {
         type: Function,
         default: (val: number) => `${val} records selected`

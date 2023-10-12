@@ -58,7 +58,13 @@
             :color-schema="colorSchema"
             :strict="strictState"
             :disabled="switchState"
+            @search="onSearchEmitted"
         />
+
+        <div>
+            <div>EMITED SEARCH:</div>
+            <div>count {{ searchEmitted }} last: {{ lastSearch }}</div>
+        </div>
 
         <dl-smart-search-input
             v-model="queryObject2"
@@ -70,6 +76,19 @@
         />
         {{ queryObject }}
         {{ queryObject2 }}
+
+        <br>
+        <br>
+        With placeholder
+        <dl-smart-search-input
+            v-model="queryObject"
+            :aliases="aliases"
+            :schema="schema"
+            :color-schema="colorSchema"
+            :strict="strictState"
+            :disabled="switchState"
+            placeholder="I am a placeholder"
+        />
     </div>
 </template>
 
@@ -81,7 +100,7 @@ import {
     DlCheckbox,
     DlInput
 } from '../../components'
-import { DlSmartSearchFilters, Query } from '../../components/types'
+import { DlSmartSearchFilter, Query } from '../../components/types'
 import { parseSmartQuery } from '../../utils'
 
 export default defineComponent({
@@ -103,6 +122,7 @@ export default defineComponent({
             dir: 'string',
             thumbnail: 'string',
             createdAt: 'date',
+            date2: 'date',
             annotated: 'boolean',
             hidden: 'boolean',
             metadata: {
@@ -176,29 +196,47 @@ export default defineComponent({
                 key: 'metadata.system.width'
             }
         ]
+        const filters: DlSmartSearchFilter[] = [
+            {
+                label: 'Query 1',
+                value: { q: 1 }
+            },
+            {
+                label: 'Query 2',
+                value: { query2: 'query2' }
+            },
+            {
+                label: 'Query 3',
+                value: { query3: 'query3' }
+            },
+            {
+                label: 'Query 4',
+                value: { age: 12, name: 'john' }
+            }
+        ]
 
-        const filters: DlSmartSearchFilters = {
-            saved: [
-                {
-                    name: 'Query 1',
-                    query: '{"q": 1}'
-                },
-                {
-                    name: 'Query 2',
-                    query: '{"query2": "query2"}'
-                },
-                {
-                    name: 'Query 3',
-                    query: '{"query3": "query3"}'
-                },
-                {
-                    name: 'Query 4',
-                    query: '{"age": 12, "name": "john"}'
-                }
-            ],
-            recent: [],
-            suggested: []
-        }
+        // const filters: DlSmartSearchFilters = {
+        //     saved: [
+        //         {
+        //             name: 'Query 1',
+        //             query: {"q": 1}
+        //         },
+        //         {
+        //             name: 'Query 2',
+        //             query: {"query2": "query2"}
+        //         },
+        //         {
+        //             name: 'Query 3',
+        //             query: {"query3": "query3"}
+        //         },
+        //         {
+        //             name: 'Query 4',
+        //             query: {"age": 12, "name": "john"}
+        //         }
+        //     ],
+        //     recent: [],
+        //     suggested: []
+        // }
 
         return {
             schema,
@@ -211,7 +249,9 @@ export default defineComponent({
             queryObject: {},
             queryObject2: {},
             textQuery: '',
-            filters
+            filters,
+            lastSearch: null,
+            searchEmitted: 0
         }
     },
     watch: {
@@ -228,27 +268,37 @@ export default defineComponent({
                 this.isLoading = false
             }, 2000)
 
-            if (this.filters.recent[-1]?.name !== queryString) {
-                this.filters.recent.push({
-                    name: queryString || query.name,
-                    query: query.query
-                })
-            }
+            // if (this.filters.recent[-1]?.name !== queryString) {
+            //     this.filters.recent.push({
+            //         name: queryString || query.name,
+            //         query: query.query
+            //     })
+            // }
         },
-        handleSaveQuery(query: Query, type: string) {
-            const saveQueryIndex = this.filters[type].findIndex(
-                (q: Query) => q.name === query.name || q.query === query.query
-            )
-            if (saveQueryIndex !== -1) {
-                this.filters[type][saveQueryIndex] = query
-            } else {
-                this.filters[type].push(query)
-            }
+        // handleSaveQuery(query: Query, type: string) {
+        //     const saveQueryIndex = this.filters[type].findIndex(
+        //         (q: Query) => q.name === query.name || q.query === query.query
+        //     )
+        //     if (saveQueryIndex !== -1) {
+        //         this.filters[type][saveQueryIndex] = query
+        //     } else {
+        //         this.filters[type].push(query)
+        //     }
+        // },
+        // handleRemoveQuery(query: Query, type: string) {
+        //     this.filters[type] = this.filters[type].filter(
+        //         (q: Query) => q.name !== query.name
+        //     )
+        // },
+        handleSaveQuery(query: DlSmartSearchFilter) {
+            this.filters.push(query)
         },
-        handleRemoveQuery(query: Query, type: string) {
-            this.filters[type] = this.filters[type].filter(
-                (q: Query) => q.name !== query.name
-            )
+        handleRemoveQuery(query: DlSmartSearchFilter) {
+            this.filters = this.filters.filter((q) => q.label !== q.label)
+        },
+        onSearchEmitted(query: Query) {
+            this.searchEmitted++
+            this.lastSearch = query
         }
     }
 })
