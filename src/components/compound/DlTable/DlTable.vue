@@ -69,7 +69,7 @@
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead>
+                <thead v-if="!isDataEmpty">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -309,7 +309,7 @@
                 class="dl-table"
                 :class="additionalClasses"
             >
-                <thead>
+                <thead v-if="!isDataEmpty">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -799,6 +799,7 @@ export default defineComponent({
         // table class names
         const __containerClass = computed(() => {
             let classNames = `dl-table__container dl-table--${props.separator}-separator column no-wrap dl-table--no-wrap`
+            console.log(classNames)
 
             if (props.bordered) {
                 classNames = classNames + ' dl-table--bordered'
@@ -885,6 +886,14 @@ export default defineComponent({
                 )
             }
         })
+
+        watch(
+            () => props.rows,
+            (val) => {
+                console.log(containerClass.value)
+            },
+            { flush: 'post' }
+        )
 
         watch(
             hasVirtScroll,

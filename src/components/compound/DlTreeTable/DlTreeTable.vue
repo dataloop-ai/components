@@ -83,16 +83,10 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            // if (props.draggable) {
-            //     return dlTableRef.value?.rootRef?.computedRows || []
-            // }
             return dlTableRef.value?.computedRows || []
         })
 
         const tableRootRef = computed(() => {
-            // if (props.draggable) {
-            //     return dlTableRef.value || {}
-            // }
             return dlTableRef.value || {}
         })
 
@@ -129,8 +123,7 @@ export default defineComponent({
             name: string,
             rowsArr: DlTableRow[] = tableRows.value
         ) => {
-            const newRows = cloneDeep(rowsArr)
-            newRows.forEach((o) => {
+            rowsArr.some((o) => {
                 if (getRowKey.value(o) === name) {
                     if (isVue2) {
                         set(o, 'isExpanded', isExpanded)
@@ -144,24 +137,31 @@ export default defineComponent({
                     }
                 }
             })
-            tableRows.value = newRows
         }
-
-        const updateNestedRows = (row: DlTableRow, isExpanded: boolean) => {
+        const updateNestedRows = (
+            row: (typeof computedRows.value)[number],
+            isExpanded: boolean
+        ) => {
             if ((row.children || []).length > 0) {
-                const isParentExpanded = row.isExpanded
-                row.children.forEach((r: DlTableRow) => {
-                    if (!isParentExpanded) {
+                row.children.forEach(
+                    (r: (typeof computedRows.value)[number]) => {
                         if (isVue2) {
-                            set(r, 'isExpanded', isParentExpanded)
+                            set(r, 'isExpanded', isExpanded)
                         } else {
-                            r.isExpanded = isParentExpanded
+                            r.isExpanded = isExpanded
                         }
 
-                        // r.expanded = isExpanded
-                        updateNestedRows(r, isExpanded)
+                        if (!isExpanded) {
+                            if (isVue2) {
+                                set(r, 'isExpanded', isExpanded)
+                            } else {
+                                r.isExpanded = isExpanded
+                            }
+
+                            updateNestedRows(r, isExpanded)
+                        }
                     }
-                })
+                )
             }
         }
         const updateSelectionHierarchy = (
