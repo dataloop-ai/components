@@ -267,7 +267,7 @@ export default defineComponent({
                 return ' cursor-pointer'
             }
 
-            return ''
+            return 'dl-tr'
         }
 
         const getExpandedvisibleChildren = (): void => {

@@ -868,30 +868,24 @@ export default defineComponent({
         })
 
         onMounted(() => {
-            tableEl = (rootRef.value as HTMLDivElement).querySelector(
+            tableEl = document.querySelector(
                 'table.dl-table'
             ) as HTMLTableElement
-
             nextTick(() => {
                 setAllColumnWidths(tableEl, props.columns, props.fitAllColumns)
             })
-
             if (props.resizable === true) {
                 applyResizableColumns(tableEl, vm)
             }
-
             if (hasDraggableColumns.value === true) {
-                console.log('apply draggable columns ')
                 applyDraggableColumns(
                     tableEl,
                     vm,
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
-            console.log('after apply draggalbe mounted ')
         })
 
-        console.log('after apply draggalbe ')
         watch(
             hasVirtScroll,
             () => {
@@ -976,8 +970,6 @@ export default defineComponent({
             }
         )
 
-        console.log('before pagination')
-
         const { innerPagination, computedPagination, setPagination } =
             useTablePaginationState(vm, getCellValue)
 
@@ -1053,8 +1045,6 @@ export default defineComponent({
 
             return filtered
         })
-
-        console.log('bfore addiiton classes')
 
         const additionalClasses = computed(() => {
             const classes: string[] = []
@@ -1422,8 +1412,6 @@ export default defineComponent({
             visibleColumnsState.value = columns
             emit('update-visible-columns', columns)
         }
-
-        console.log('before return')
 
         return {
             log: console.log,

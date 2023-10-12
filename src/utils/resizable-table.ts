@@ -1,5 +1,5 @@
 import { browseNestedNodes } from './browse-nested-nodes'
-import { watch } from 'vue-demi'
+import { isVue2, watch } from 'vue-demi'
 import {
     calculateColIndexOffset,
     getColIndex,
@@ -19,7 +19,8 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
     watch(
         () => vm.proxy.getIsDragging(),
         () => {
-            table = vm.vnode.el?.querySelector('table')
+            const vnodeEl = isVue2 ? vm.vnode.elm : vm.vnode.el
+            table = vnodeEl?.querySelector('table')
             const thArray = Array.from(
                 table?.querySelector('thead')?.querySelector('tr').children ||
                     []

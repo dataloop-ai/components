@@ -81,6 +81,10 @@ export const useSortableProps = {
     isSortable: {
         type: Boolean,
         default: false
+    },
+    className: {
+        type: String,
+        default: ''
     }
 }
 
@@ -133,8 +137,8 @@ export function useSortable(vm: Record<string, any>) {
                     onChange: (event) => emit('change', event)
                 })
             }
-        },
-        { deep: true }
+        }
+        // { deep: true }
     )
 
     watch(

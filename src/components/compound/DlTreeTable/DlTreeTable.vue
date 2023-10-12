@@ -147,14 +147,6 @@ export default defineComponent({
             tableRows.value = newRows
         }
 
-        watch(
-            tableRows,
-            (val) => {
-                console.log(val)
-            },
-            { deep: true }
-        )
-
         const updateNestedRows = (row: DlTableRow, isExpanded: boolean) => {
             if ((row.children || []).length > 0) {
                 const isParentExpanded = row.isExpanded
@@ -279,7 +271,7 @@ export default defineComponent({
                     ? 'selected'
                     : '',
                 level,
-                class: 'nested-element',
+                class: 'nested-element dl-tr',
                 'data-level': level,
                 'data-id': row.id,
                 hasAnyAction: tableRootRef.value.hasAnyAction,
@@ -487,7 +479,7 @@ export default defineComponent({
                         key: getRowKey.value(row) + i,
                         class: 'nested-tbody'
                     },
-                    renderRow
+                    isVue2 ? [renderRow] : renderRow
                 )
             })
 
@@ -578,7 +570,13 @@ export default defineComponent({
     },
     render(vue2h: any) {
         this.vue2h = vue2h
-        const tbody = this.$slots['table-body'] ?? this.renderTBody
+        const tableBodySlot = isVue2
+            ? this.$slots['table-body'] &&
+              (() => (this.$slots['table-body'] as any)?.pop())
+            : this.$slots['table-body']
+        const tbody =
+            tableBodySlot ??
+            (this.isDataEmpty ? this.renderEmptyState : this.renderTBody)
         return renderComponent(vue2h, DlTable, {
             ref: 'dlTableRef',
             draggable: this.draggable,
@@ -609,7 +607,7 @@ export default defineComponent({
             on: {
                 rowClick: this.emitRowClick,
                 'update:selected': this.updateSelected,
-                colUpdate: this.updateColumns
+                'col-update': this.updateColumns
             },
             scopedSlots: {
                 'header-selection': () =>

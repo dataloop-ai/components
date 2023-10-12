@@ -117,7 +117,7 @@
                     @col-update="updateColumns"
                 />
             </div>
-            <!-- <div style="padding-top: 300px">
+            <div style="padding-top: 300px">
                 <p>Custom body cell</p>
                 <DlTreeTable
                     :separator="separator"
@@ -162,7 +162,7 @@
                         </span>
                     </template>
                 </DlTreeTable>
-            </div> -->
+            </div>
             <!-- <div style="margin-top: 100px">
                 <p>Infinite scrolling</p>
                 <DlTreeTable
@@ -182,7 +182,7 @@
                     style="height: 500px"
                 />
             </div> -->
-            <!-- <div style="margin-top: 100px">
+            <div style="margin-top: 100px">
                 <p>Custom table body slot</p>
                 <DlTreeTable
                     class="sticky-header"
@@ -197,8 +197,8 @@
                         </div>
                     </template>
                 </DlTreeTable>
-            </div> -->
-            <!-- <div style="margin-top: 100px">
+            </div>
+            <div style="margin-top: 100px">
                 <p>Custom row body slot</p>
                 <DlTreeTable
                     class="sticky-header"
@@ -217,8 +217,8 @@
                         </tr>
                     </template>
                 </DlTreeTable>
-            </div> -->
-            <!-- <div style="margin-top: 100px">
+            </div>
+            <div style="margin-top: 100px">
                 <p>Empty State</p>
                 <DlTreeTable
                     :separator="separator"
@@ -250,13 +250,19 @@
                         </div>
                     </template>
                 </DlTreeTable>
-            </div> -->
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DlOptionGroup, DlSwitch, DlInput, DlTreeTable } from '../components'
+import {
+    DlOptionGroup,
+    DlSwitch,
+    DlInput,
+    DlTreeTable,
+    DlIcon
+} from '../components'
 import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
 import { v4 } from 'uuid'
@@ -652,7 +658,8 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlTreeTable
+        DlTreeTable,
+        DlIcon
     },
     setup() {
         const filter = ref('')

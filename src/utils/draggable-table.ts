@@ -10,14 +10,13 @@ import {
     swapTableColumns,
     swapTreeTableColumns
 } from './table-columns'
-import { watch } from 'vue-demi'
+import { isVue2, watch } from 'vue-demi'
 
 export function applyDraggableColumns(
     table: HTMLTableElement,
     vm?: any,
     draggableClone?: HTMLDivElement
 ) {
-    return
     const isTreeTable = vm.props.isTreeTable
     let originalColIndex: number = null
     let sourceColIndex: number = null
@@ -29,8 +28,9 @@ export function applyDraggableColumns(
     watch(
         () => vm.props.columns,
         () => {
-            if (!vm.vnode.el) return
-            table = vm.vnode.el.querySelector('table')
+            const vnodeEl = isVue2 ? vm.vnode.elm : vm.vnode.el
+            if (!vnodeEl) return
+            table = vnodeEl.querySelector('table')
             draggableClone = document.querySelector('.dl-table__drag')
             const thead = table.querySelector('thead')
             thead.addEventListener('mousedown', handleMousedown)
@@ -42,7 +42,6 @@ export function applyDraggableColumns(
     )
 
     function handleMousedown(event: MouseEvent) {
-        console.log('col mousedown')
         if (!vm.proxy.hasDraggableColumns || vm.proxy.getIsResizing()) return
         vm.proxy.setIsDragging(true)
         removeTableVerticalBorders(table)
