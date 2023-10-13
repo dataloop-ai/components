@@ -659,25 +659,38 @@ import {
     onMounted,
     toRef,
     toRefs,
-    nextTick
+    nextTick,
+    PropType
 } from 'vue-demi'
-import { props } from './utils/props'
 import { emits } from './utils/emits'
 import {
     useTablePagination,
+    useTablePaginationProps,
     useTablePaginationState
 } from './hooks/tablePagination'
 import DlTr from './components/DlTr.vue'
 import DlTh from './components/DlTh.vue'
 import DlTd from './components/DlTd.vue'
-import { commonVirtPropsList } from '../../shared/DlVirtualScroll/useVirtualScroll'
+import {
+    commonVirtPropsList,
+    commonVirtScrollProps
+} from '../../shared/DlVirtualScroll/useVirtualScroll'
 import DlVirtualScroll from '../../shared/DlVirtualScroll/DlVirtualScroll.vue'
-import { useTableFilter } from './hooks/tableFilter'
-import { useTableSort } from './hooks/tableSort'
-import { useTableRowSelection } from './hooks/tableRowSelection'
-import { useTableColumnSelection } from './hooks/tableColumnSelection'
-import { useTableRowExpand } from './hooks/tableRowExpand'
-import { useTableActions } from './hooks/tableActions'
+import { useTableFilter, useTableFilterProps } from './hooks/tableFilter'
+import { useTableSort, useTableSortProps } from './hooks/tableSort'
+import {
+    useTableRowSelection,
+    useTableRowSelectionProps
+} from './hooks/tableRowSelection'
+import {
+    useTableColumnSelection,
+    useTableColumnSelectionProps
+} from './hooks/tableColumnSelection'
+import {
+    useTableRowExpand,
+    useTableRowExpandProps
+} from './hooks/tableRowExpand'
+import { useTableActions, useTableActionsProps } from './hooks/tableActions'
 import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
@@ -694,7 +707,7 @@ import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { stopAndPrevent, setAllColumnWidths } from '../../../utils'
-import { DlVirtualScrollEvent } from '../../types'
+import { DlEmptyStateProps, DlVirtualScrollEvent } from '../../types'
 import Sortable from '../DlSortable/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
@@ -723,7 +736,236 @@ export default defineComponent({
         DlList,
         Sortable
     },
-    props,
+    props: {
+        /**
+         * Array of DlTableColumn objects
+         */
+        columns: { type: Array, default: () => [] as Record<string, any>[] },
+        /**
+         * Array of DlTableRow objects
+         */
+        rows: {
+            type: Array,
+            default: () => [] as Record<string, any>[]
+        },
+        /**
+         * Specify which key will identify each row
+         */
+        rowKey: {
+            type: [String, Function],
+            default: 'id'
+        },
+        /**
+         * Surrounded by a border
+         */
+        bordered: Boolean,
+        /**
+         * Borders inside the table: horizontal, vertical, cell or none
+         */
+        separator: {
+            type: String,
+            default: 'horizontal',
+            validator: (v: string) =>
+                ['horizontal', 'vertical', 'cell', 'none'].includes(v)
+        },
+        /**
+         * Type of the draggable functionality: rows, columns or both
+         */
+        draggable: {
+            type: String,
+            default: 'none',
+            validator: (v: string) =>
+                ['rows', 'columns', 'none', 'both'].includes(v)
+        },
+        /**
+         * Title to be displayed next to the table
+         */
+        title: { type: String, default: '' },
+        /**
+         * Text color
+         */
+        color: {
+            type: String,
+            default: 'dl-color-darker'
+        },
+        /**
+         * Show a loading animation on the table
+         */
+        loading: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         *  Cells shrinks in size
+         */
+        dense: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Resizable columns
+         */
+        resizable: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the "No data" message
+         */
+        hideNoData: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the header
+         */
+        hideHeader: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the footer
+         */
+        hideBottom: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Enable virtual scroll
+         */
+        virtualScroll: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Hide table pagination
+         */
+        hidePagination: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Hide selected banner
+         */
+        hideSelectedBanner: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Function to generate the label visible when selecting rows
+         */
+        selectedRowsLabel: {
+            type: Function,
+            default: (val: number) => `${val} records selected`
+        },
+        /**
+         * Label visible when loading is active
+         */
+        loadingLabel: {
+            type: String,
+            default: 'Loading...'
+        },
+        /**
+         * Label visible when there are no results
+         */
+        noResultsLabel: {
+            type: String,
+            default: 'There are no results to display'
+        },
+        /**
+         * Label visible when data is empty
+         */
+        noDataLabel: {
+            type: String,
+            default: 'No data available'
+        },
+        /**
+         * Virtual scroll target
+         */
+        virtualScrollTarget: {
+            type: Object as PropType<HTMLElement>,
+            default: null as unknown as PropType<HTMLElement>
+        },
+        /**
+         *  CSS class for the title
+         */
+        titleClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * Styles to be applied to the table container
+         */
+        tableStyle: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * CSS class for the table container
+         */
+        tableClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * Styles to be applies to the table header
+         */
+        tableHeaderStyle: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * CSS class for the table header
+         */
+        tableHeaderClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        noHover: Boolean,
+        /**
+         * Indicates the data is empty
+         */
+        isEmpty: Boolean,
+        /**
+         * Props for the empty state component
+         */
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () =>
+                ({
+                    title: '',
+                    subtitle: 'No data to show yet',
+                    icon: 'icon-dl-dataset-filled'
+                } as unknown as PropType<DlEmptyStateProps>)
+        },
+        /**
+         * Scrolling delay
+         */
+        scrollDebounce: {
+            type: Number,
+            default: 100
+        },
+        isTreeTable: {
+            type: Boolean,
+            default: false
+        },
+        fitAllColumns: {
+            type: Boolean,
+            default: true
+        },
+        isTbodyCustom: {
+            type: Boolean,
+            default: false
+        },
+        ...useTableActionsProps,
+        ...commonVirtScrollProps,
+        ...useTableRowExpandProps,
+        ...useTablePaginationProps,
+        ...useTableFilterProps,
+        ...useTableSortProps,
+        ...useTableColumnSelectionProps,
+        ...useTableRowSelectionProps
+    },
     emits,
     setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
@@ -860,7 +1102,11 @@ export default defineComponent({
                 'table.dl-table'
             ) as HTMLTableElement
             nextTick(() => {
-                setAllColumnWidths(tableEl, props.columns, props.fitAllColumns)
+                setAllColumnWidths(
+                    tableEl,
+                    props.columns as DlTableColumn[],
+                    props.fitAllColumns
+                )
             })
             if (props.resizable === true) {
                 applyResizableColumns(tableEl, vm)
@@ -907,8 +1153,12 @@ export default defineComponent({
 
         watch(
             () => props.columns,
-            (val) => {
-                setAllColumnWidths(rootRef.value, val, props.fitAllColumns)
+            (newColumns) => {
+                setAllColumnWidths(
+                    rootRef.value,
+                    newColumns as DlTableColumn[],
+                    props.fitAllColumns
+                )
             },
             {
                 flush: 'post'

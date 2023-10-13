@@ -7,8 +7,8 @@ import {
     set,
     ref,
     VNode,
-    toRefs,
-    watch
+    watch,
+    PropType
 } from 'vue-demi'
 import { DlCheckbox } from '../../essential'
 import { DlEmptyState } from '../../basic'
@@ -17,17 +17,25 @@ import DlTrTreeView from './views/DlTrTreeView.vue'
 import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
-import { props } from './props'
 import { emits } from './emits'
 import Sortable from '../DlSortable/SortableJS.vue'
 import { renderComponent } from '../../../utils/render-fn'
-import { cloneDeep, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import SortableJs from 'sortablejs'
 import { v4 } from 'uuid'
 import { moveNestedRow } from './utils/moveNestedRow'
 import { getElementAbove } from '../../../utils'
 import { SortingMovement } from '../DlTable/types'
 import { getContainerClass } from '../DlTable/utils/tableClasses'
+import { DlEmptyStateProps } from '../../types'
+import { useTableActionsProps } from '../DlTable/hooks/tableActions'
+import { commonVirtScrollProps } from '../../shared/DlVirtualScroll/useVirtualScroll'
+import { useTableRowExpandProps } from '../DlTable/hooks/tableRowExpand'
+import { useTablePaginationProps } from '../DlTable/hooks/tablePagination'
+import { useTableFilterProps } from '../DlTable/hooks/tableFilter'
+import { useTableSortProps } from '../DlTable/hooks/tableSort'
+import { useTableColumnSelectionProps } from '../DlTable/hooks/tableColumnSelection'
+import { useTableRowSelectionProps } from '../DlTable/hooks/tableRowSelection'
 
 let prevMouseY = 0
 
@@ -40,7 +48,224 @@ export default defineComponent({
         Sortable,
         DlEmptyState
     },
-    props,
+    props: {
+        /**
+         * Array of DlTableColumn objects
+         */
+        columns: { type: Array, default: () => [] as Record<string, any>[] },
+        /**
+         * Array of DlTableRow objects
+         */
+        rows: {
+            type: Array,
+            default: () => [] as Record<string, any>[]
+        },
+        /**
+         * Specify which key will identify each row
+         */
+        rowKey: {
+            type: [String, Function],
+            default: 'id'
+        },
+        /**
+         * Surrounded by a border
+         */
+        bordered: Boolean,
+        /**
+         * Borders inside the table: horizontal, vertical, cell or none
+         */
+        separator: {
+            type: String,
+            default: 'horizontal',
+            validator: (v: string) =>
+                ['horizontal', 'vertical', 'cell', 'none'].includes(v)
+        },
+        /**
+         * Type of the draggable functionality: rows, columns or both
+         */
+        draggable: {
+            type: String,
+            default: 'none',
+            validator: (v: string) =>
+                ['rows', 'columns', 'none', 'both'].includes(v)
+        },
+        /**
+         * Title to be displayed next to the table
+         */
+        title: { type: String, default: '' },
+        /**
+         * Text color
+         */
+        color: {
+            type: String,
+            default: 'dl-color-darker'
+        },
+        /**
+         * Show a loading animation on the table
+         */
+        loading: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         *  Cells shrinks in size
+         */
+        dense: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Resizable columns
+         */
+        resizable: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the "No data" message
+         */
+        hideNoData: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the header
+         */
+        hideHeader: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the footer
+         */
+        hideBottom: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Enable virtual scroll
+         */
+        virtualScroll: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Hide table pagination
+         */
+        hidePagination: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Hide selected banner
+         */
+        hideSelectedBanner: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Function to generate the label visible when selecting rows
+         */
+        selectedRowsLabel: {
+            type: Function,
+            default: (val: number) => `${val} records selected`
+        },
+        /**
+         * Label visible when loading is active
+         */
+        loadingLabel: {
+            type: String,
+            default: 'Loading...'
+        },
+        /**
+         * Label visible when there are no results
+         */
+        noResultsLabel: {
+            type: String,
+            default: 'There are no results to display'
+        },
+        /**
+         * Label visible when data is empty
+         */
+        noDataLabel: {
+            type: String,
+            default: 'No data available'
+        },
+        /**
+         * Virtual scroll target
+         */
+        virtualScrollTarget: {
+            type: Object as PropType<HTMLElement>,
+            default: null as unknown as PropType<HTMLElement>
+        },
+        /**
+         *  CSS class for the title
+         */
+        titleClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * Styles to be applied to the table container
+         */
+        tableStyle: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * CSS class for the table container
+         */
+        tableClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * Styles to be applies to the table header
+         */
+        tableHeaderStyle: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        /**
+         * CSS class for the table header
+         */
+        tableHeaderClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
+        noHover: Boolean,
+        /**
+         * Indicates the data is empty
+         */
+        isEmpty: Boolean,
+        /**
+         * Props for the empty state component
+         */
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () =>
+                ({
+                    title: '',
+                    subtitle: 'No data to show yet',
+                    icon: 'icon-dl-dataset-filled'
+                } as unknown as PropType<DlEmptyStateProps>)
+        },
+        /**
+         * Scrolling delay
+         */
+        scrollDebounce: {
+            type: Number,
+            default: 100
+        },
+        ...useTableActionsProps,
+        ...commonVirtScrollProps,
+        ...useTableRowExpandProps,
+        ...useTablePaginationProps,
+        ...useTableFilterProps,
+        ...useTableSortProps,
+        ...useTableColumnSelectionProps,
+        ...useTableRowSelectionProps
+    },
     emits,
     setup(props, { emit, slots }) {
         const dlTableRef = ref(null)
