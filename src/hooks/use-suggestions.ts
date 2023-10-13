@@ -153,25 +153,43 @@ export const useSuggestions = (
         const expressions = mapWordsToExpressions(mergedWords)
 
         for (const { field, operator, value, keyword } of expressions) {
-            let matchedField: Suggestion | null = null
-            let matchedOperator: Suggestion | null = null
-            let matchedKeyword: Suggestion | null = null
+            let matchedField = null;
+            let matchedOperator = null;
+            let matchedKeyword = null;
 
-            if (!field) continue
+            if (!field) {
+                continue;
+            }
 
-            const fieldSeparated: any = field.split('.')
+            // Split field by dot to handle nested parameters
+            const fieldSeparated = field.split('.');
+            let currentField = fieldSeparated[0];
 
-            if (fieldSeparated.length > 1) {
-                localSuggestions = []
-                matchedField = field
+            // Check if there's a match for the currentField
+            const match = getMatch(localSuggestions, currentField);
+            if (match) {
+                localSuggestions = getMatches(localSuggestions, currentField);
+                matchedField = currentField;
             } else {
-                localSuggestions = getMatches(localSuggestions, field)
-                matchedField = getMatch(localSuggestions, field)
+                localSuggestions = [];
+                continue;
+            }
+
+            // Handle the remaining nested fields
+            for (let i = 1; i < fieldSeparated.length; i++) {
+                currentField += `.${fieldSeparated[i]}`;
+                const nestedMatch = getMatch(localSuggestions, currentField);
+                if (nestedMatch) {
+                    localSuggestions = getMatches(localSuggestions, currentField);
+                } else {
+                    localSuggestions = [];
+                    break;
+                }
             }
 
             if (!matchedField && isNextCharSpace(input, field)) {
-                localSuggestions = []
-                continue
+                localSuggestions = [];
+                continue;
             }
 
             if (
@@ -179,97 +197,107 @@ export const useSuggestions = (
                 (!isNextCharSpace(input, matchedField) &&
                     fieldSeparated.length === 1)
             ) {
-                continue
+                continue;
             }
 
-            const dataType = getDataType(schema, aliases, matchedField)
+            const dataType = getDataType(schema, aliases, matchedField);
             if (!dataType) {
-                localSuggestions = []
-                continue
+                localSuggestions = [];
+                continue;
             }
 
             if (operator && (!value || value === '')) {
-                const valueSuggestion = getValueSuggestions(dataType, operator)
+                const valueSuggestion = getValueSuggestions(dataType, operator);
                 if (valueSuggestion) {
-                    localSuggestions = valueSuggestion
-                    continue
+                    localSuggestions = valueSuggestion;
+                    continue;
                 }
             }
 
-            const ops: string[] = Array.isArray(dataType)
+            const ops = Array.isArray(dataType)
                 ? getGenericOperators()
-                : getOperatorByDataType(dataType)
+                : getOperatorByDataType(dataType);
 
-            localSuggestions = getOperators(ops)
+            localSuggestions = getOperators(ops);
 
             if (!operator) {
-                const dotSeparated = matchedField.split('.').filter((el) => el)
-                let fieldOf = schema
+                const dotSeparated = matchedField.split('.').filter((el) => el);
+                let fieldOf = schema;
                 for (const key of dotSeparated) {
-                    fieldOf = fieldOf[key] as Schema
+                    fieldOf = fieldOf[key] as Schema;
                 }
 
                 if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
-                    const toConcat: string[] = []
+                    const toConcat = [];
                     for (const key of Object.keys(fieldOf)) {
-                        if (key === '*') continue
-                        toConcat.push(`.${key}`)
+                        if (key === '*') {
+                            continue;
+                        }
+                        toConcat.push(`.${key}`);
                     }
-                    localSuggestions = localSuggestions.concat(toConcat)
+                    localSuggestions = localSuggestions.concat(toConcat);
                 }
 
-                continue
+                continue;
             }
 
-            localSuggestions = getMatches(localSuggestions, operator)
-            matchedOperator = getMatch(localSuggestions, operator)
+            localSuggestions = getMatches(localSuggestions, operator);
+            matchedOperator = getMatch(localSuggestions, operator);
 
             if (!matchedOperator && isNextCharSpace(input, operator)) {
-                localSuggestions = []
-                continue
+                localSuggestions = [];
+                continue;
             }
 
             if (!matchedOperator || !isNextCharSpace(input, matchedOperator)) {
-                continue
+                continue;
             }
 
             if (Array.isArray(dataType)) {
                 localSuggestions = dataType.filter(
                     (type) => !knownDataTypes.includes(type)
-                )
+                );
 
-                if (!value) continue
+                if (!value) {
+                    continue;
+                }
 
-                localSuggestions = getMatches(localSuggestions, value)
+                localSuggestions = getMatches(localSuggestions, value);
             } else if (
                 dataType === 'datetime' ||
                 dataType === 'date' ||
                 dataType === 'time'
             ) {
-                localSuggestions = [dateSuggestionPattern]
+                localSuggestions = [dateSuggestionPattern];
 
-                if (!value) continue
+                if (!value) {
+                    continue;
+                }
 
-                localSuggestions = getMatches(localSuggestions, value)
+                localSuggestions = getMatches(localSuggestions, value);
             } else {
-                localSuggestions = []
+                localSuggestions = [];
             }
 
             if (!value || !isNextCharSpace(input, value)) {
-                continue
+                continue;
             }
 
-            localSuggestions = [Logical.AND, Logical.OR]
+            localSuggestions = [Logical.AND, Logical.OR];
 
-            if (!keyword) continue
+            if (!keyword) {
+                continue;
+            }
 
-            localSuggestions = getMatches(localSuggestions, keyword)
-            matchedKeyword = getMatch(localSuggestions, keyword)
+            localSuggestions = getMatches(localSuggestions, keyword);
+            matchedKeyword = getMatch(localSuggestions, keyword);
 
-            if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword))
-                continue
+            if (!matchedKeyword || !isNextCharSpace(input, matchedKeyword)) {
+                continue;
+            }
 
-            localSuggestions = sortedSuggestions
+            localSuggestions = sortedSuggestions;
+
         }
 
         error.value = input.length
