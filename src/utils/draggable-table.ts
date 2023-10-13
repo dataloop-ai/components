@@ -33,6 +33,7 @@ export function applyDraggableColumns(
             table = vnodeEl.querySelector('table')
             draggableClone = document.querySelector('.dl-table__drag')
             const thead = table.querySelector('thead')
+            if (!thead) return
             thead.addEventListener('mousedown', handleMousedown)
         },
         {

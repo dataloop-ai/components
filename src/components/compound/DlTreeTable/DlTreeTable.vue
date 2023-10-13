@@ -600,6 +600,7 @@ export default defineComponent({
             hidePagination: this.hidePagination,
             isEmpty: this.isDataEmpty,
             emptyStateProps: this.emptyStateProps,
+            isTbodyCustom: !!this.$slots['table-body'],
             noDataLabel: this.noDataLabel,
             onRowClick: this.emitRowClick,
             'onUpdate:selected': this.updateSelected,

@@ -69,7 +69,7 @@
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead>
+                <thead v-if="hasThead">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -309,7 +309,10 @@
                 class="dl-table"
                 :class="additionalClasses"
             >
-                <thead>
+                <thead
+                    v-if="hasThead"
+                    :colspan="columns.length"
+                >
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -795,6 +798,10 @@ export default defineComponent({
                 !!slots['top-selection']
         )
         //
+
+        const hasThead = computed(() => {
+            return props.isTbodyCustom || !isDataEmpty.value
+        })
 
         // table class names
         const __containerClass = computed(() => {
@@ -1416,6 +1423,7 @@ export default defineComponent({
         return {
             log: console.log,
             isDataEmpty,
+            hasThead,
             handleSortableEvent,
             tbodyKey,
             tableKey,

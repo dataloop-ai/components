@@ -113,6 +113,10 @@ export const props = {
         type: Boolean,
         default: true
     },
+    isTbodyCustom: {
+        type: Boolean,
+        default: false
+    },
     ...useTableActionsProps,
     ...commonVirtScrollProps,
     ...useTableRowExpandProps,
