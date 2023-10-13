@@ -198,7 +198,7 @@ export default defineComponent({
             row: DlTableRow,
             rowIndex: number
         ) => {
-            context.emit('rowDoubleClick', evt, row, rowIndex)
+            context.emit('rowDblClick', evt, row, rowIndex)
         }
 
         const onTrContextMenu = (

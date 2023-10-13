@@ -143,7 +143,7 @@ export function useSortable(vm: Record<string, any>) {
 
     watch(
         () => props.options,
-        (options) => {
+        (options: SortableOptionsProp) => {
             if (options && sortable?.value) {
                 for (const property in options) {
                     sortable.value.option(
