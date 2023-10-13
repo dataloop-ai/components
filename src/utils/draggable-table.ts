@@ -49,7 +49,6 @@ export function applyDraggableColumns(
         const eventTarget = event.target as HTMLElement
         sourceCellWidth = eventTarget.getBoundingClientRect().width
         draggableClone.appendChild(generateColumnClone(eventTarget))
-        handleMousemove(event)
         window.addEventListener('mousemove', handleMousemove)
         window.addEventListener('mouseup', handleMouseup)
     }
