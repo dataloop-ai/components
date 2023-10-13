@@ -698,6 +698,7 @@ import { DlVirtualScrollEvent } from '../../types'
 import Sortable from '../DlSortable/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
+import { getContainerClass } from './utils/tableClasses'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -803,29 +804,9 @@ export default defineComponent({
             return props.isTbodyCustom || !isDataEmpty.value
         })
 
-        // table class names
-        const __containerClass = computed(() => {
-            let classNames = `dl-table__container dl-table--${props.separator}-separator column no-wrap dl-table--no-wrap`
-
-            if (props.bordered) {
-                classNames = classNames + ' dl-table--bordered'
-            }
-
-            if (props.dense) {
-                classNames = classNames + ' dl-table--dense'
-            }
-
-            return classNames
-        })
-
         const containerClass = computed(() => {
-            let classNames = __containerClass.value
-
-            if (props.loading) {
-                classNames = classNames + ' dl-table--loading'
-            }
-
-            return classNames
+            const { separator, bordered, dense, loading } = props
+            return getContainerClass(separator, bordered, dense, loading)
         })
 
         const nothingToDisplay = computed(() => computedRows.value.length === 0)
@@ -965,7 +946,7 @@ export default defineComponent({
                 tableClass,
                 tableHeaderStyle,
                 tableHeaderClass,
-                __containerClass
+                containerClass
             ],
             () => {
                 if (

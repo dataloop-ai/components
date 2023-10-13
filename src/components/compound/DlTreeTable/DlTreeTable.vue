@@ -27,6 +27,7 @@ import { v4 } from 'uuid'
 import { moveNestedRow } from './utils/moveNestedRow'
 import { getElementAbove } from '../../../utils'
 import { SortingMovement } from '../DlTable/types'
+import { getContainerClass } from '../DlTable/utils/tableClasses'
 
 let prevMouseY = 0
 
@@ -228,21 +229,10 @@ export default defineComponent({
             )
         )
 
-        const getTBodyCell = (
-            name: string,
-            row: DlTableRow,
-            col: DlTableColumn,
-            index: number
-        ) => {
-            return slots[name](
-                dlTableRef.value.getBodySelectionScope({
-                    key: getRowKey.value(row),
-                    row,
-                    col,
-                    pageIndex: index
-                })
-            )
-        }
+        const containerClass = computed(() => {
+            const { separator, bordered, dense, loading } = props
+            return getContainerClass(separator, bordered, dense, loading)
+        })
 
         const computedCellSlots = computed(() => {
             const obj: any = {}
@@ -565,7 +555,8 @@ export default defineComponent({
             tableRootRef,
             uuid,
             mainTbodyUuid,
-            vue2h
+            vue2h,
+            containerClass
         }
     },
     render(vue2h: any) {
@@ -605,6 +596,7 @@ export default defineComponent({
             onRowClick: this.emitRowClick,
             'onUpdate:selected': this.updateSelected,
             onColUpdate: this.updateColumns,
+            class: this.containerClass,
             on: {
                 rowClick: this.emitRowClick,
                 'update:selected': this.updateSelected,
