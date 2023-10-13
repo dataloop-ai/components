@@ -712,6 +712,7 @@ import Sortable from '../DlSortable/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
 import { getContainerClass } from './utils/tableClasses'
+import { isEqual } from 'lodash'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -1609,6 +1610,7 @@ export default defineComponent({
                 sourceIndex,
                 targetIndex
             )
+            if (isEqual(newColumns, props.columns)) return
             tableKey.value = v4()
             emit('col-update', newColumns)
         }

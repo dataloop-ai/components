@@ -9,10 +9,12 @@
         @click="emitRowClick($event, row, rowIndex)"
         @dblclick="onTrDoubleClick($event, row, rowIndex)"
         @contextmenu="onTrContextMenu($event, row, rowIndex)"
+        @mouseenter="isDragIconVisible = true"
+        @mouseleave="isDragIconVisible = false"
     >
         <td
             v-if="hasDraggableRows"
-            style="width: 25px"
+            :style="`width: 25px; opacity: ${isDragIconVisible ? '1' : '0'}`"
         >
             <dl-icon
                 class="draggable-icon"
@@ -171,6 +173,7 @@ export default defineComponent({
         const visibleChildren = ref(0)
         const childrenCount = ref(0)
         const { row } = toRefs(props)
+        const isDragIconVisible = ref(false)
 
         const vm = getCurrentInstance()
 
@@ -330,6 +333,7 @@ export default defineComponent({
             log: console.log,
             visibleChildren,
             childrenCount,
+            isDragIconVisible,
             getRowKey,
             emitRowClick,
             onTrDoubleClick,
