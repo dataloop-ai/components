@@ -99,47 +99,32 @@ export function useSortable(vm: Record<string, any>) {
         return props.itemKey
     })
 
-    watch(
-        rootRef,
-        (newRootRef) => {
-            if (newRootRef) {
-                sortable.value = new Sortable(newRootRef, {
-                    ...props.options,
-                    onChoose: (event) => emit('choose', event),
-                    onUnchoose: (event) => emit('unchoose', event),
-                    onStart: (event) => {
-                        isDragging.value = true
-                        emit('start', event)
-                    },
-                    onEnd: (event) => {
-                        // This is a hack to move the event to the end of the event queue.
-                        // cf this issue: https://github.com/SortableJS/Sortable/issues/1184
-                        setTimeout(() => {
-                            isDragging.value = false
-                            emit('end', event)
-                        })
-                    },
-                    onAdd: (event) => emit('add', event),
-                    onUpdate: (event) => emit('update', event),
-                    onSort: (event) => emit('sort', event),
-                    onRemove: (event) => emit('remove', event),
-                    onFilter: (event) => emit('filter', event),
-                    // onMove: (event, originalEvent) =>
-                    //     'onMoveCapture' in attrs
-                    //         ? (<
-                    //               (
-                    //                   event: Sortable.MoveEvent,
-                    //                   originalEvent: Event
-                    //               ) => void
-                    //           >attrs.onMoveCapture)(event, originalEvent)
-                    //         : emit('move', event, originalEvent),
-                    onClone: (event) => emit('clone', event),
-                    onChange: (event) => emit('change', event)
-                })
-            }
+    watch(rootRef, (newRootRef) => {
+        if (newRootRef) {
+            sortable.value = new Sortable(newRootRef, {
+                ...props.options,
+                onChoose: (event) => emit('choose', event),
+                onUnchoose: (event) => emit('unchoose', event),
+                onStart: (event) => {
+                    isDragging.value = true
+                    emit('start', event)
+                },
+                onEnd: (event) => {
+                    setTimeout(() => {
+                        isDragging.value = false
+                        emit('end', event)
+                    })
+                },
+                onAdd: (event) => emit('add', event),
+                onUpdate: (event) => emit('update', event),
+                onSort: (event) => emit('sort', event),
+                onRemove: (event) => emit('remove', event),
+                onFilter: (event) => emit('filter', event),
+                onClone: (event) => emit('clone', event),
+                onChange: (event) => emit('change', event)
+            })
         }
-        // { deep: true }
-    )
+    })
 
     watch(
         () => props.options,

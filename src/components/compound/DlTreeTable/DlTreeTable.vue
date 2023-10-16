@@ -8,7 +8,8 @@ import {
     ref,
     VNode,
     watch,
-    PropType
+    PropType,
+    toRefs
 } from 'vue-demi'
 import { DlCheckbox } from '../../essential'
 import { DlEmptyState } from '../../basic'
@@ -18,7 +19,7 @@ import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { getFromChildren } from './utils/getFromChildren'
 import { emits } from './emits'
-import Sortable from '../DlSortable/SortableJS.vue'
+import Sortable from '../DlTable/components/SortableJS.vue'
 import { renderComponent } from '../../../utils/render-fn'
 import { isEmpty } from 'lodash'
 import SortableJs from 'sortablejs'
@@ -288,17 +289,7 @@ export default defineComponent({
 
         const mainTableKey = ref()
 
-        // const { rows: tableRows, columns: tableColumns } = toRefs(props)
-        const tableRows = ref(props.rows)
-        watch(
-            () => props.rows,
-            (val) => (tableRows.value = val)
-        )
-        const tableColumns = ref(props.columns)
-        watch(
-            () => props.columns,
-            (val) => (tableColumns.value = val)
-        )
+        const { rows: tableRows, columns: tableColumns } = toRefs(props)
 
         const isDataEmpty = computed(() => !props.rows.length)
 
@@ -446,8 +437,6 @@ export default defineComponent({
             }
         }
 
-        const log = console.log
-
         const tbodySlotsData = computed(() =>
             (dlTableRef.value?.computedCols || []).filter(
                 (item: DlTableColumn) => hasSlotByName(`body-cell-${item.name}`)
@@ -517,7 +506,7 @@ export default defineComponent({
                 onRowClick: () => {
                     tableRootRef.value.onTrClick(event, row, index)
                 },
-                onRowDblClick: () => {
+                onRowDoubleClick: () => {
                     tableRootRef.value.onTrDblClick(event, row, index)
                 },
                 onRowContextMenu: () => {
@@ -532,7 +521,7 @@ export default defineComponent({
                     rowClick: () => {
                         tableRootRef.value.onTrClick(event, row, index)
                     },
-                    rowDblClick: () => {
+                    rowDoubleClick: () => {
                         tableRootRef.value.onTrDblClick(event, row, index)
                     },
                     rowContextMenu: () => {
@@ -752,7 +741,6 @@ export default defineComponent({
             renderEmptyState,
             isDataEmpty,
             updateColumns,
-            log,
             dlTableRef,
             isRowSelected,
             hasFlatTreeData,
@@ -791,8 +779,7 @@ export default defineComponent({
               (() => (this.$slots['table-body'] as any)?.pop())
             : this.$slots['table-body']
         const tbody =
-            tableBodySlot ??
-            (this.isDataEmpty ? this.renderEmptyState : this.renderTBody)
+            tableBodySlot ?? (this.isDataEmpty ? null : this.renderTBody)
         return renderComponent(vue2h, DlTable, {
             ref: 'dlTableRef',
             draggable: this.draggable,
@@ -816,7 +803,6 @@ export default defineComponent({
             hidePagination: this.hidePagination,
             isEmpty: this.isDataEmpty,
             emptyStateProps: this.emptyStateProps,
-            isTbodyCustom: !!this.$slots['table-body'],
             noDataLabel: this.noDataLabel,
             onRowClick: this.emitRowClick,
             'onUpdate:selected': this.updateSelected,

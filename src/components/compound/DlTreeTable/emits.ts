@@ -8,7 +8,7 @@ export const emits = [
     'col-update',
     'row-click',
     'th-click',
-    'row-dblclick',
+    'row-double-click',
     'row-contextmenu',
     'update-visible-columns',
     ...useTableRowExpandEmits,

@@ -19,7 +19,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, getCurrentInstance } from 'vue-demi'
-import { useSortable, useSortableProps, emits } from './use-sortable'
+import { useSortable, useSortableProps, emits } from '../hooks/use-sortable'
 
 export default defineComponent({
     props: useSortableProps,

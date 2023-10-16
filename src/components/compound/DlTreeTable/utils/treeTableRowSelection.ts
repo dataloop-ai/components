@@ -59,7 +59,6 @@ export function useTreeTableRowSelection(
     })
 
     const someRowsSelected = computed(() => {
-        console.log('updates')
         return (
             allRowsSelected.value !== true &&
             computedRows.value.some(
@@ -86,7 +85,6 @@ export function useTreeTableRowSelection(
     ) {
         emit('selection', { rows, added, keys, evt })
 
-        console.log({ added })
         /*
         const payload =
             singleSelection.value === true

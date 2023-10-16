@@ -1,6 +1,4 @@
 <template>
-    <!-- v-show="row.isExpandedParent || row.level === 1" -->
-
     <DlTrTree
         :class="rowClass"
         :no-hover="noHover"
@@ -164,7 +162,7 @@ export default defineComponent({
     },
     emits: [
         'rowClick',
-        'rowDblClick',
+        'rowDoubleClick',
         'rowContextMenu',
         'update:model-value',
         'updateExpandedRow'
@@ -201,7 +199,7 @@ export default defineComponent({
             row: DlTableRow,
             rowIndex: number
         ) => {
-            context.emit('rowDblClick', evt, row, rowIndex)
+            context.emit('rowDoubleClick', evt, row, rowIndex)
         }
 
         const onTrContextMenu = (
@@ -220,11 +218,6 @@ export default defineComponent({
             let styles = ''
             if (colIndex === 0) {
                 styles = 'max-width: 100px; box-sizing: border-box;'
-                // styles = styles
-                // setTrSpacing({
-                //     ...row,
-                //     colIndex
-                // })
             }
 
             return styles
@@ -245,14 +238,6 @@ export default defineComponent({
                     : row[col.field]
             return col?.format !== void 0 ? col.format(val, row) : val
         }
-
-        watch(
-            () => props.row,
-            (val) => {
-                // console.log(val)
-            },
-            { deep: true, immediate: true }
-        )
 
         const hasSlotByName = (name: string) => !!context.slots[name]
 
@@ -330,7 +315,6 @@ export default defineComponent({
         })
 
         return {
-            log: console.log,
             visibleChildren,
             childrenCount,
             isDragIconVisible,

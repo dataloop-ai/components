@@ -708,7 +708,7 @@ import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
 import { stopAndPrevent, setAllColumnWidths } from '../../../utils'
 import { DlEmptyStateProps, DlVirtualScrollEvent } from '../../types'
-import Sortable from '../DlSortable/SortableJS.vue'
+import Sortable from './components/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
 import { getContainerClass } from './utils/tableClasses'
@@ -954,10 +954,6 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
-        isTbodyCustom: {
-            type: Boolean,
-            default: false
-        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -1044,7 +1040,7 @@ export default defineComponent({
         //
 
         const hasThead = computed(() => {
-            return props.isTbodyCustom || !isDataEmpty.value
+            return !isDataEmpty.value || !!slots['tbody']
         })
 
         const containerClass = computed(() => {
@@ -1654,7 +1650,6 @@ export default defineComponent({
         }
 
         return {
-            log: console.log,
             isDataEmpty,
             hasThead,
             handleSortableEvent,
