@@ -380,17 +380,13 @@
                 </DlTable>
             </div>
             <div>
-                <p>With visible columns</p>
+                <p>With editable columns</p>
                 <DlTable
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    has-visible-columns
-                >
-                    <template #body-cell-row-actions="">
-                        <dl-button label="test button" />
-                    </template>
-                </DlTable>
+                    has-editable-columns
+                />
             </div>
         </div>
         <div>

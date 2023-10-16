@@ -163,25 +163,6 @@
                     </template>
                 </DlTreeTable>
             </div>
-            <!-- <div style="margin-top: 100px">
-                <p>Infinite scrolling</p>
-                <DlTreeTable
-                    :separator="separator"
-                    :columns="tableColumns"
-                    :bordered="bordered"
-                    :draggable="draggable"
-                    :resizable="resizable"
-                    :dense="dense"
-                    class="sticky-header"
-                    :loading="loading"
-                    :rows="tableRowsVS"
-                    :selection="selection"
-                    virtual-scroll
-                    row-key="name"
-                    color="dl-color-secondary"
-                    style="height: 500px"
-                />
-            </div> -->
             <div style="margin-top: 100px">
                 <p>Custom table body slot</p>
                 <DlTreeTable
@@ -217,6 +198,15 @@
                         </tr>
                     </template>
                 </DlTreeTable>
+            </div>
+            <div>
+                <p>With editable columns</p>
+                <DlTreeTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Editable Columns"
+                    has-editable-columns
+                />
             </div>
             <div style="margin-top: 100px">
                 <p>Empty State</p>

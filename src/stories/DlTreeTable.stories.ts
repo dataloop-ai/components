@@ -567,6 +567,27 @@ export const CustomTableBody: Story = {
     }
 }
 
+export const EditableColumns: Story = {
+    render: (args, { argTypes }) => {
+        return {
+            components: { DlTreeTable, DlIcon },
+            props: args,
+            setup: setupFunction,
+            template: `
+            <div style="width: 900px">
+            <p>With editable columns</p>
+            <DlTreeTable
+                :rows="tableRows"
+                :columns="tableColumns"
+                title="Editable Columns"
+                has-editable-columns
+            />
+            </div>
+            `
+        }
+    }
+}
+
 export const EmptyState: Story = {
     render: (args, { argTypes }) => {
         return {

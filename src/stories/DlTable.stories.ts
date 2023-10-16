@@ -501,6 +501,33 @@ export const InfiniteScrolling: Story = {
     }
 }
 
+export const EditableColumns: Story = {
+    args: {
+        rowKey: 'name',
+        color: 'dl-color-secondary',
+        title: 'Table Title',
+        style: 'height: 500px'
+    },
+    render: (args, { argTypes }) => {
+        return {
+            components: { DlTable },
+            props: args,
+            setup: setupFunction,
+            template: `
+            <div style="width: 900px">
+            <p>With editable columns</p>
+            <DlTable
+                :rows="tableRows"
+                :columns="tableColumns"
+                title="Editable Columns"
+                has-editable-columns
+            />
+            </div>
+            `
+        }
+    }
+}
+
 export const EmptyData: Story = {
     args: {
         rowKey: 'name',

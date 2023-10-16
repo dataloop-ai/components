@@ -928,6 +928,13 @@ export default defineComponent({
          */
         isEmpty: Boolean,
         /**
+         * Will add another column with a button opening a menu which lets the user choose the visible columns
+         */
+        hasEditableColumns: {
+            type: Boolean,
+            default: false
+        },
+        /**
          * Props for the empty state component
          */
         emptyStateProps: {
