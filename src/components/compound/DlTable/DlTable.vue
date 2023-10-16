@@ -1003,7 +1003,11 @@ export default defineComponent({
         const isDataEmpty = computed(() => !props.rows.length)
 
         const groupOptions = computed(() =>
-            (props.columns as DlTableColumn[]).map((item) => ({
+            (
+                props.columns.filter(
+                    (col) => !(col as DlTableColumn).required
+                ) as DlTableColumn[]
+            ).map((item) => ({
                 label: item.label,
                 value: item.name
             }))
