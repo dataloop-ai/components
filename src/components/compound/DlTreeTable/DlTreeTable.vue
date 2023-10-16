@@ -214,6 +214,13 @@ export default defineComponent({
             default: null as unknown as PropType<any[]>
         },
         /**
+         * Will add another column with a button opening a menu which lets the user choose the visible columns
+         */
+        visibleColumns: {
+            type: Array as PropType<DlTableColumn[]>,
+            default: (): [] => []
+        },
+        /**
          * CSS class for the table container
          */
         tableClass: {
@@ -804,6 +811,7 @@ export default defineComponent({
             isEmpty: this.isDataEmpty,
             emptyStateProps: this.emptyStateProps,
             noDataLabel: this.noDataLabel,
+            visibleColumns: this.visibleColumns,
             onRowClick: this.emitRowClick,
             'onUpdate:selected': this.updateSelected,
             onColUpdate: this.updateColumns,

@@ -385,7 +385,7 @@
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    has-editable-columns
+                    :visible-columns="tableColumns.slice(0, -1)"
                 />
             </div>
         </div>

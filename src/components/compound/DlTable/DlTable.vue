@@ -379,7 +379,7 @@
                                 </DlTh>
                             </slot>
                             <DlTh
-                                v-if="hasEditableColumns"
+                                v-if="visibleColumns?.length"
                                 key="visibleColsBtn"
                             >
                                 <dl-button
@@ -930,9 +930,9 @@ export default defineComponent({
         /**
          * Will add another column with a button opening a menu which lets the user choose the visible columns
          */
-        hasEditableColumns: {
-            type: Boolean,
-            default: false
+        visibleColumns: {
+            type: Array as PropType<DlTableColumn[]>,
+            default: (): [] => []
         },
         /**
          * Props for the empty state component
@@ -1007,14 +1007,14 @@ export default defineComponent({
                 props.columns.filter(
                     (col) => !(col as DlTableColumn).required
                 ) as DlTableColumn[]
-            ).map((item) => ({
+            )?.map((item) => ({
                 label: item.label,
                 value: item.name
             }))
         )
 
         const visibleColumnsState = ref(
-            (props.columns as DlTableColumn[]).map((col) => col.name)
+            (props.visibleColumns as DlTableColumn[])?.map((col) => col.name)
         )
 
         const computedVisibleCols = computed(() =>
