@@ -57,7 +57,7 @@ export default defineComponent({
             default: Mode.text
         }
     },
-    emits: ['update:model-value', 'align-text', 'change'],
+    emits: ['update:model-value', 'align-text', 'change', 'focus', 'blur'],
     setup(props, { emit }) {
         const { modelValue, indentation, readonly, mode } = toRefs(props)
 
@@ -128,7 +128,13 @@ export default defineComponent({
                 readOnly: readonly.value || mode.value === Mode.tree,
                 mainMenuBar: false,
                 navigationBar: false,
-                statusBar: false
+                statusBar: false,
+                onFocus: () => {
+                    emit('focus')
+                },
+                onBlur: () => {
+                    emit('blur')
+                }
             }
 
             // There is type instantiation issue with JSONEditor,
