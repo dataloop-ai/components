@@ -85,7 +85,7 @@
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-with"
+                                class="dl-table--col-auto-width"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
@@ -328,7 +328,7 @@
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-with"
+                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
 
