@@ -1629,7 +1629,6 @@ export default defineComponent({
             setIsDragging,
             getIsResizing,
             getIsDragging,
-            // hasDraggableColumns: hasDraggableColumns.value,
             getTableKey
         })
 
