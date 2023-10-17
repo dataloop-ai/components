@@ -196,7 +196,11 @@ export default defineComponent({
             if (this.disabled) return
             const valueToUse = value
             if (value && moment(value.from).isSame(value.to)) {
-                valueToUse.to = moment(value.from).endOf('day').toDate()
+                if (this.type === 'day')
+                    valueToUse.to = moment(value.from).endOf('day').toDate()
+                else {
+                    valueToUse.to = moment(value.from).endOf('month').toDate()
+                }
             }
             this.$emit('update:model-value', valueToUse)
             this.$emit('change', valueToUse)

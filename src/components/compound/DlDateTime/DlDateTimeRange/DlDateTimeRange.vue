@@ -225,17 +225,17 @@ export default defineComponent({
             const lastMonth = CustomDate.subtract(1, 'months')
                 .startOf('month')
                 .toDate()
-
+            const today = CustomDate.endOf('day').toDate()
             return [
                 {
                     title: 'this month',
                     key: MONTH_SIDEBAR_OPTION.this_month,
-                    value: { from: thisMonth, to: thisMonth }
+                    value: { from: thisMonth, to: today }
                 },
                 {
                     title: 'last month',
                     key: MONTH_SIDEBAR_OPTION.last_month,
-                    value: { from: lastMonth, to: lastMonth }
+                    value: { from: lastMonth, to: thisMonth }
                 },
                 {
                     title: 'last 3 months',
@@ -469,9 +469,10 @@ export default defineComponent({
 
             if (option.key === DAY_SIDEBAR_OPTION.custom_by_month) {
                 this.handleTypeChange('month')
+                this.updateDateInterval(option.value)
+            } else {
+                this.updateDateIntervalWithAutoClose(option.value)
             }
-
-            this.updateDateInterval(option.value)
         },
         handleMonthTypeOptionClick(option: MonthTypeOption) {
             this.currentSidebarOption = option.key as MONTH_SIDEBAR_OPTION
@@ -483,9 +484,10 @@ export default defineComponent({
 
             if (option.key === MONTH_SIDEBAR_OPTION.custom_by_day) {
                 this.handleTypeChange('day')
+                this.updateDateInterval(option.value)
+            } else {
+                this.updateDateIntervalWithAutoClose(option.value)
             }
-
-            this.updateDateInterval(option.value)
         }
     }
 })
