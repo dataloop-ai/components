@@ -711,6 +711,7 @@ import { DlEmptyStateProps, DlVirtualScrollEvent } from '../../types'
 import Sortable from './components/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
+import { getCellValue } from './utils/getCellValue'
 import { getContainerClass } from './utils/tableClasses'
 import { isEqual } from 'lodash'
 
@@ -1442,20 +1443,6 @@ export default defineComponent({
             nextPage,
             lastPage
         }))
-
-        function getCellValue(
-            col: Record<string, any>,
-            row: Record<string, any>
-        ) {
-            if (!col) {
-                return
-            }
-            const val =
-                typeof col?.field === 'function'
-                    ? col?.field(row)
-                    : row[col.field]
-            return col?.format ? col.format(val, row) : val
-        }
 
         function resetVirtualScroll() {
             if (hasVirtScroll.value === true) {

@@ -379,6 +379,17 @@
                     :visible-columns="tableColumns.slice(0, -1)"
                 />
             </div>
+            <div>
+                <p>With nested field value</p>
+                <div style="font-size: 12px">
+                    Row array looks like this: {{ rows2 }}
+                </div>
+                <DlTable
+                    :rows="rows2"
+                    :columns="columns2"
+                    title="Nested Field"
+                />
+            </div>
         </div>
         <div>
             <p>With empty data</p>
@@ -402,7 +413,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
-import { DlTablePagination } from '../types'
+import { DlTablePagination, DlTableRow } from '../types'
 
 const columns = [
     {
@@ -474,6 +485,34 @@ const columns = [
         width: 100,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
+    }
+]
+
+const rows2 = [
+    {
+        name: {
+            title: 'Row 1',
+            subtitle: 'This row...'
+        }
+    },
+    {
+        name: {
+            title: 'Row 2',
+            subtitle: 'This other row...'
+        }
+    }
+]
+const columns2 = [
+    {
+        name: 'name',
+        required: true,
+        label: 'Nested value',
+        align: 'left',
+        field: 'name.subtitle',
+        sortable: true,
+        textTransform: 'uppercase',
+        width: 100,
+        hint: 'test hint'
     }
 ]
 
@@ -772,7 +811,9 @@ export default defineComponent({
             nextPage,
             prevPage,
             isLastPage,
-            isFirstPage
+            isFirstPage,
+            rows2,
+            columns2
         }
     },
 

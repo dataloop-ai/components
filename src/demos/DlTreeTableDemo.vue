@@ -209,6 +209,17 @@
                     :visible-columns="tableColumns.slice(0, -1)"
                 />
             </div>
+            <div>
+                <p>With nested field value</p>
+                <div style="font-size: 12px">
+                    Row array looks like this: {{ rows2 }}
+                </div>
+                <DlTreeTable
+                    :rows="rows2"
+                    :columns="columns2"
+                    title="Nested Field"
+                />
+            </div>
             <div style="margin-top: 100px">
                 <p>Empty State</p>
                 <DlTreeTable
@@ -257,6 +268,7 @@ import {
 import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
 import { v4 } from 'uuid'
+import { DlTableRow } from '../types'
 
 const columns = [
     {
@@ -328,132 +340,6 @@ const columns = [
 ]
 
 const rows = [
-    {
-        id: v4(),
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-    },
-    {
-        id: v4(),
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%'
-    },
-    {
-        id: v4(),
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%'
-    },
-    {
-        id: v4(),
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%'
-    },
-    {
-        id: v4(),
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%'
-    },
-    {
-        id: v4(),
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%'
-    },
-    {
-        id: v4(),
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%'
-    },
-    {
-        id: v4(),
-
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%'
-    },
-    {
-        id: v4(),
-
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%'
-    },
-    {
-        id: v4(),
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    },
-    ...times(100, (index) => ({
-        id: v4(),
-        name: 'KitKat' + index,
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    }))
-]
-
-const rows2 = [
     {
         id: v4(),
         name: 'Frozen Yogurt',
@@ -638,11 +524,33 @@ const rows2 = [
     }))
 ]
 
-type Rows = (typeof rows)[0]
-
-interface RowsWithIndex extends Rows {
-    index?: number
-}
+const rows2 = [
+    {
+        name: {
+            title: 'Row 1',
+            subtitle: 'This row...'
+        }
+    },
+    {
+        name: {
+            title: 'Row 2',
+            subtitle: 'This other row...'
+        }
+    }
+]
+const columns2 = [
+    {
+        name: 'name',
+        required: true,
+        label: 'Nested value',
+        align: 'left',
+        field: 'name.subtitle',
+        sortable: true,
+        textTransform: 'uppercase',
+        width: 100,
+        hint: 'test hint'
+    }
+]
 
 export default defineComponent({
     components: {
@@ -666,8 +574,8 @@ export default defineComponent({
         const denseState = ref([])
         const virtualScroll = ref([])
         const resizableState = ref([])
-        const tableRows = ref(rows2)
-        const tableRowsVS = ref(cloneDeep(rows2))
+        const tableRows = ref(rows)
+        const tableRowsVS = ref(cloneDeep(rows))
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const rowsPerPageOptions = ref([10, 12, 14, 16])
@@ -676,7 +584,7 @@ export default defineComponent({
 
         const nextPageNumber = ref(2)
 
-        let allRows: RowsWithIndex[] = []
+        let allRows: DlTableRow[] = []
         for (let i = 0; i < 100; i++) {
             allRows = allRows.concat(
                 cloneDeep(rows)
@@ -823,7 +731,9 @@ export default defineComponent({
             prevPage,
             isLastPage,
             isFirstPage,
-            onRowClick
+            onRowClick,
+            rows2,
+            columns2
         }
     },
 

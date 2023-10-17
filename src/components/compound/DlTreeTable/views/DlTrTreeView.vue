@@ -94,6 +94,7 @@ import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
 import { getRowKey } from '../utils/getRowKey'
 import { DlTableRow } from '../../DlTable/types'
 import { setTrPadding } from '../utils/trSpacing'
+import { getCellValue } from '../../DlTable/utils/getCellValue'
 
 export default defineComponent({
     name: 'DlTrTreeView',
@@ -224,19 +225,6 @@ export default defineComponent({
         }
         const emitUpdateExpandedRow = () => {
             context.emit('updateExpandedRow')
-        }
-        const getCellValue = (
-            col: Record<string, any>,
-            row: Record<string, any>
-        ) => {
-            if (!col) {
-                return
-            }
-            const val =
-                typeof col?.field === 'function'
-                    ? col.field(row)
-                    : row[col.field]
-            return col?.format !== void 0 ? col.format(val, row) : val
         }
 
         const hasSlotByName = (name: string) => !!context.slots[name]
