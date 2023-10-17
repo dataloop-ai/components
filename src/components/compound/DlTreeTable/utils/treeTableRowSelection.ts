@@ -16,7 +16,7 @@ export const useTreeTableRowSelectionProps = {
     }
 }
 
-export const useTreeTableRowSelectionEmits = ['selection', 'selectedItems']
+export const useTreeTableRowSelectionEmits = ['selection', 'selected-iitems']
 
 export function useTreeTableRowSelection(
     props: DlTableProps,
@@ -49,21 +49,23 @@ export function useTreeTableRowSelection(
         return props.selection === 'multiple'
     })
 
-    const allRowsSelected = computed(
-        () =>
+    const allRowsSelected = computed(() => {
+        return (
             computedRows.value.length > 0 &&
             computedRows.value.every(
                 (row) => selectedKeys.value[getRowKey.value(row)] === true
             )
-    )
+        )
+    })
 
-    const someRowsSelected = computed(
-        () =>
+    const someRowsSelected = computed(() => {
+        return (
             allRowsSelected.value !== true &&
             computedRows.value.some(
                 (row) => selectedKeys.value[getRowKey.value(row)] === true
             )
-    )
+        )
+    })
 
     const rowsSelectedNumber = computed(() => selectedRows.value.length)
 
@@ -82,6 +84,7 @@ export function useTreeTableRowSelection(
         evt?: (event: string, val: any) => void
     ) {
         emit('selection', { rows, added, keys, evt })
+
         /*
         const payload =
             singleSelection.value === true

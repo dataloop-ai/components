@@ -1,5 +1,10 @@
 import { DlTextTransformOptions } from '../../shared/types'
 
+export interface SortingMovement {
+    lastId: string
+    direction: 'up' | 'down'
+}
+
 export type DlTableProps = {
     columns: DlTableColumn[]
     rows: DlTableRow[]
@@ -34,6 +39,7 @@ export type DlTableColumn = {
     headerStyle?: string
     headerClasses?: string
     textTransform?: DlTextTransformOptions
+    width?: number
     hint?: string
 }
 

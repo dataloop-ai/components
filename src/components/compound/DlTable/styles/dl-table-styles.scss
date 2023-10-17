@@ -3,6 +3,11 @@
 }
 
 .dl-table {
+    .vertical-border {
+        border-left: 1px solid var(--dl-color-medium);
+        border-right: 1px solid var(--dl-color-medium);
+    }
+
     width: 100%;
     max-width: 100%;
     border-collapse: separate;
@@ -178,6 +183,11 @@
         }
     }
 
+    td,
+    th {
+        box-sizing: border-box;
+    }
+
     &--no-wrap {
         th,
         td {
@@ -281,11 +291,12 @@
     }
 
     &--col-auto-width {
-        width: 1px;
+        width: 25px;
     }
 
     &--col-checkbox-wrapper {
         text-align: left;
+        width: 25px;
     }
 
     &__top {
@@ -316,11 +327,9 @@
             background-color: inherit;
             color: var(--dl-color-darker);
 
-            .dl-table-cell-inner-div {
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
-            }
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
 
             &:before,
             &:after {
@@ -357,7 +366,7 @@
     }
 
     &__drag {
-        position: absolute;
+        position: fixed;
         top: -99999px;
         left: -99999px;
         z-index: 10000;
@@ -473,6 +482,10 @@
     tbody tr:not(:last-child) > td {
         border-bottom-width: 1px;
     }
+
+    tbody:not(:last-child) > tr > td {
+        border-bottom-width: 1px;
+    }
 }
 
 .dl-table--vertical-separator,
@@ -495,11 +508,5 @@
     .dl-table__top {
         position: relative;
         border-bottom: 1px solid var(--dl-color-separator);
-    }
-}
-
-.visible-columns-justify-end {
-    &::v-deep div {
-        justify-content: flex-end;
     }
 }

@@ -216,7 +216,7 @@ export default defineComponent({
             }
         },
         contentStyle(): Record<string, any> {
-            return {
+            const styles: Record<string, any> = {
                 'padding-top':
                     this.hasHeader && this.headerHeight
                         ? this.headerHeight
@@ -226,6 +226,15 @@ export default defineComponent({
                         ? this.footerHeight
                         : 0 + 'px'
             }
+
+            if (this.isEmpty) {
+                styles['display'] = 'flex'
+                styles['justify-content'] = 'center'
+                styles['height'] = '100%'
+                styles['max-height'] = '100%'
+            }
+
+            return styles
         },
         position(): 'left' | 'right' {
             return this.direction === 'right' ? 'left' : 'right'

@@ -265,16 +265,13 @@ export default defineComponent({
             ]
         }
 
-        const log = console.log
-
         return {
             heavyList,
             basicList,
             horizontalList,
             customList,
             columns,
-            cardData,
-            log
+            cardData
         }
     }
 })
