@@ -1,8 +1,5 @@
 <template>
-    <div
-        ref="wrapper"
-        class="widget-wrapper"
-    >
+    <div ref="wrapper" class="widget-wrapper">
         <div
             :id="uuid"
             ref="widget"
@@ -32,41 +29,27 @@
                         v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
-                        <template
-                            v-for="(_, slot) in $slots"
-                            #[slot]="props"
-                        >
-                            <slot
-                                :name="slot"
-                                v-bind="props"
-                            />
+                        <template v-for="(_, slot) in $slots" #[slot]="props">
+                            <slot :name="slot" v-bind="props" />
                         </template>
                     </dl-empty-state>
-                    <slot
-                        v-if="!isEmpty"
-                        name="content"
-                    />
+                    <slot v-if="!isEmpty" name="content" />
                 </div>
 
-                <div
-                    v-if="!isEmpty"
-                    class="dl-widget__description"
-                >
+                <div v-if="!isEmpty" class="dl-widget__description">
                     <slot name="description" />
                 </div>
             </slot>
         </div>
-        <div
-            ref="clone"
-            class="drag-clone"
-        />
+        <div ref="clone" class="drag-clone" />
     </div>
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
 import { computed, defineComponent, ref, toRef, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
-import { getElementAbove, addMouseEnter, removeMouseEnter } from '../utils'
+import { addMouseEnter, removeMouseEnter } from '../utils'
+import { getElementAbove } from '../../../utils'
 import { DlEmptyStateProps } from '../DlEmptyState/types'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 

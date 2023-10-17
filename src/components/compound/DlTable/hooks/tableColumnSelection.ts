@@ -131,7 +131,8 @@ export function useTableColumnSelection(
             ? props.tableColspan
             : computedCols.value.length +
                   (hasSelectionMode.value === true ? 1 : 0) +
-                  (hasDraggableRows.value === true ? 1 : 0)
+                  (hasDraggableRows.value === true ? 1 : 0) +
+                  (props.isTreeTable ? 1 : 0)
     })
 
     return {

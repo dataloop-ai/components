@@ -1,18 +1,30 @@
 <template>
     <DlTrTree
-        v-show="row.isExpandedParent || row.level === 1"
         :class="rowClass"
         :no-hover="noHover"
         :children="childrenCount"
+        :props="{ row }"
         @click="emitRowClick($event, row, rowIndex)"
         @dblclick="onTrDoubleClick($event, row, rowIndex)"
         @contextmenu="onTrContextMenu($event, row, rowIndex)"
+        @mouseenter="isDragIconVisible = true"
+        @mouseleave="isDragIconVisible = false"
     >
-        <td v-if="hasDraggableRows">
+        <td
+            v-if="hasDraggableRows"
+            :style="`width: 25px; opacity: ${isDragIconVisible ? '1' : '0'}`"
+        >
             <dl-icon
                 class="draggable-icon"
                 icon="icon-dl-drag"
                 size="12px"
+            />
+        </td>
+        <td class="chevron-icon">
+            <DlIcon
+                v-if="(row.children || []).length > 0"
+                :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
+                @click="emitUpdateExpandedRow"
             />
         </td>
         <td
@@ -40,16 +52,18 @@
             v-for="(col, colIndex) in computedCols"
             :key="colIndex"
             :class="col.tdClass(row)"
-            :style="col.tdStyle(row) + getTdStyles(row, colIndex)"
+            :style="
+                col.tdStyle(row) +
+                    `padding-left: ${
+                        setTrPadding(
+                            level,
+                            (row.children || []).length > 0,
+                            colIndex
+                        ) + 1
+                    }px;`
+            "
+            :col-index="colIndex"
         >
-            <template #icon="{}">
-                <DlIcon
-                    v-if="(row.children || []).length > 0 && colIndex === 0"
-                    style="margin-right: 5px"
-                    :icon="`icon-dl-${row.expanded ? 'down' : 'right'}-chevron`"
-                    @click="emitUpdateExpandedRow"
-                />
-            </template>
             <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
                 {{ getCellValue(col, row) }}
             </template>
@@ -70,7 +84,8 @@ import {
     onMounted,
     ref,
     toRefs,
-    watch
+    watch,
+    getCurrentInstance
 } from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
@@ -78,7 +93,8 @@ import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
 import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
 import { getRowKey } from '../utils/getRowKey'
 import { DlTableRow } from '../../DlTable/types'
-import { setTrSpacing } from '../utils/trSpacing'
+import { setTrPadding } from '../utils/trSpacing'
+import { getCellValue } from '../../DlTable/utils/getCellValue'
 
 export default defineComponent({
     name: 'DlTrTreeView',
@@ -107,6 +123,10 @@ export default defineComponent({
         noHover: {
             type: Boolean,
             default: false
+        },
+        level: {
+            type: Number,
+            default: 1
         },
         rowIndex: {
             type: Number,
@@ -139,35 +159,22 @@ export default defineComponent({
         modelValue: {
             type: [String, Boolean],
             default: null
-        },
-        slotName: {
-            type: String,
-            default: null
-        },
-        computedRows: {
-            type: Array as PropType<DlTableRow[]>,
-            default: () => [] as DlTableRow[]
-        },
-        cellValue: {
-            type: String,
-            default: null
-        },
-        slotsProps: {
-            type: Object as PropType<Record<string, any>>,
-            default: () => ({})
         }
     },
-    emit: [
+    emits: [
         'rowClick',
-        'rowDblClick',
+        'rowDoubleClick',
         'rowContextMenu',
         'update:model-value',
         'updateExpandedRow'
     ],
     setup(props, context) {
-        const visibleChildren = ref(1)
-        const childrenCount = ref(1)
+        const visibleChildren = ref(0)
+        const childrenCount = ref(0)
         const { row } = toRefs(props)
+        const isDragIconVisible = ref(false)
+
+        const vm = getCurrentInstance()
 
         watch(
             row,
@@ -208,38 +215,16 @@ export default defineComponent({
             context.emit('update:model-value', adding, evt)
         }
 
-        const getTdStyles = (
-            row: (typeof props.computedRows)[number],
-            colIndex: number
-        ) => {
+        const getTdStyles = (row: any, colIndex: number) => {
             let styles = ''
             if (colIndex === 0) {
                 styles = 'max-width: 100px; box-sizing: border-box;'
-                styles =
-                    styles +
-                    setTrSpacing({
-                        ...row,
-                        colIndex
-                    })
             }
 
             return styles
         }
         const emitUpdateExpandedRow = () => {
             context.emit('updateExpandedRow')
-        }
-        const getCellValue = (
-            col: Record<string, any>,
-            row: Record<string, any>
-        ) => {
-            if (!col) {
-                return
-            }
-            const val =
-                typeof col?.field === 'function'
-                    ? col.field(row)
-                    : row[col.field]
-            return col?.format !== void 0 ? col.format(val, row) : val
         }
 
         const hasSlotByName = (name: string) => !!context.slots[name]
@@ -258,7 +243,7 @@ export default defineComponent({
                 return ' cursor-pointer'
             }
 
-            return ''
+            return 'dl-tr'
         }
 
         const getExpandedvisibleChildren = (): void => {
@@ -320,12 +305,14 @@ export default defineComponent({
         return {
             visibleChildren,
             childrenCount,
+            isDragIconVisible,
             getRowKey,
             emitRowClick,
             onTrDoubleClick,
             onTrContextMenu,
             emitUpdateModelValue,
             getTdStyles,
+            setTrPadding,
             emitUpdateExpandedRow,
             getCellValue,
             hasSlotByName,
@@ -338,4 +325,11 @@ export default defineComponent({
 })
 </script>
 
-<style scoped src="../../DlTable/styles/dl-table-styles.scss" lang="scss" />
+<style scoped lang="scss">
+@import '../../DlTable/styles/dl-table-styles.scss';
+.chevron-icon {
+    cursor: pointer;
+    width: 25px;
+    padding: 5px;
+}
+</style>

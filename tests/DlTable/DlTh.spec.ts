@@ -21,7 +21,7 @@ describe('DlTh', () => {
             expect(wrapper.exists()).toBe(true)
         })
         it('should compute right class name', () => {
-            expect(wrapper.vm.thClasses).toBe('')
+            expect(wrapper.vm.thClasses).toBe('dl-th')
         })
         describe('When change autoWidth prop', () => {
             beforeAll(async () => {
@@ -36,7 +36,9 @@ describe('DlTh', () => {
             })
 
             it('should compute right class name', () => {
-                expect(wrapper.vm.thClasses).toBe('dl-table--col-auto-width')
+                expect(wrapper.vm.thClasses).toBe(
+                    'dl-th dl-table--col-auto-width'
+                )
             })
             it('should compute right styles', () => {
                 expect(wrapper.vm.headerStyle[1]).toEqual(
@@ -61,7 +63,7 @@ describe('DlTh', () => {
             })
             it('should compute right class name', () => {
                 expect(wrapper.vm.thClasses).toBe(
-                    'dl-table--col-auto-width styled'
+                    'dl-th dl-table--col-auto-width styled'
                 )
             })
             it('should compute right styles', () => {
