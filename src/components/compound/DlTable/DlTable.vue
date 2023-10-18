@@ -142,7 +142,7 @@
                                 key="visibleColsBtn"
                             >
                                 <slot
-                                    name="visible-columns-button"
+                                    name="header-cell-visible-columns-button"
                                     :computed-visible-cols="computedVisibleCols"
                                     :group-options="groupOptions"
                                     :handle-visible-columns-update="
@@ -156,7 +156,7 @@
                                         tooltip="Manage columns"
                                     >
                                         <slot
-                                            name="visible-columns-menu"
+                                            name="header-cell-visible-columns-menu"
                                             :computed-visible-cols="
                                                 computedVisibleCols
                                             "
@@ -167,7 +167,7 @@
                                         >
                                             <dl-menu>
                                                 <slot
-                                                    name="visible-columns-menu-content"
+                                                    name="header-cell-visible-columns-menu-content"
                                                     :computed-visible-cols="
                                                         computedVisibleCols
                                                     "
