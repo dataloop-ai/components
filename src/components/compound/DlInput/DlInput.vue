@@ -899,23 +899,27 @@ export default defineComponent({
             this.$emit('input', target.innerText, e)
             this.$emit('update:model-value', target.innerText)
         },
-        handlePaste() {
-            readClipboard().then((items) => {
-                if (items.some((item) => item.type === 'text/plain')) return 0
-                items.forEach((item) => {
-                    readBlob(item.data).then((blobData) => {
-                        if (isArrayBufferImage(blobData)) {
-                            const objectUrl = URL.createObjectURL(item.data)
-                            this.emitAddFile({
-                                id: v4(),
-                                name: `new_image_${this.files.length + 1}`,
-                                image: objectUrl,
-                                data: blobData
-                            })
-                        }
+        async handlePaste() {
+            const content = await readClipboard()
+
+            for (const item of content) {
+                if (item.type === 'text/plain') {
+                    return
+                }
+            }
+
+            for (const item of content) {
+                const data = await readBlob(item.data)
+                if (isArrayBufferImage(data)) {
+                    const objectUrl = URL.createObjectURL(item.data)
+                    this.emitAddFile({
+                        id: v4(),
+                        name: `new_image_${this.files.length + 1}`,
+                        image: objectUrl,
+                        data
                     })
-                })
-            })
+                }
+            }
         },
         handleZoomImage(file: DlInputFile) {
             this.currentZoomImage = file.image
