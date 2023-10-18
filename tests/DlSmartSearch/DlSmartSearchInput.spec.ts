@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -410,7 +410,9 @@ describe('DlSmartSearchInput', () => {
             // @ts-ignore // handled in jest setup
             await window.delay(500)
             await wrapper.vm.$nextTick()
+        })
 
+        beforeEach(async () => {
             wrapper.vm.onKeyPress({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -424,6 +426,10 @@ describe('DlSmartSearchInput', () => {
 
         it('will emit search with model value', () => {
             expect(wrapper.emitted().search).toEqual([[{ name: 'test' }]])
+        })
+
+        it('will not emit search when the query did not change', () => {
+            expect(wrapper.emitted().search.length).toBe(1)
         })
     })
 
