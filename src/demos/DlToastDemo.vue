@@ -154,7 +154,7 @@ export default defineComponent({
                         const vNode = h(DlButton, {
                             label: 'Click me',
                             props: { label: 'Click Me' }
-                        })
+                        } as any)
                         return vNode
                     }
                 }

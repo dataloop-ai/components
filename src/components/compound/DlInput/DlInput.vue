@@ -683,6 +683,10 @@ export default defineComponent({
             })
         }
 
+        const stringSuggestions = computed<string[]>(() => {
+            return suggestItems.value.map((item) => item.suggestion)
+        })
+
         return {
             suggestItems,
             highlightedIndex,
@@ -694,7 +698,8 @@ export default defineComponent({
             input,
             emitAddFile,
             emitRemoveFile,
-            updateSyntax
+            updateSyntax,
+            stringSuggestions
         }
     },
     data() {
@@ -875,9 +880,6 @@ export default defineComponent({
             }
 
             return classes
-        },
-        stringSuggestions() {
-            return this.suggestItems.map((item) => item.suggestion)
         }
     },
     methods: {

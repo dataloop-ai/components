@@ -36,7 +36,9 @@ export function getSuggestItems(
     if (!text.trim()) {
         return suggestions
     }
-    const lastKeyword = text.toLowerCase().split(' ').at(-1)
+    const lowered = text.toLowerCase()
+    const split = lowered.split(' ')
+    const lastKeyword = split[split.length - 1]
     return suggestions.filter((item) => {
         const lowercasedSuggestion = item.suggestion.toLowerCase()
         return (
@@ -47,24 +49,27 @@ export function getSuggestItems(
 }
 
 export async function readClipboard(): Promise<{ type: string; data: any }[]> {
-    return navigator.clipboard
-        .read()
-        .then((items: ClipboardItem[]) => {
-            const promises: Promise<{ type: string; data: any }>[] = []
+    // removing typing of clipboard for now as it causes conflicts somehow
 
-            items.forEach((item) => {
-                item.types.forEach((type) => {
-                    promises.push(
-                        item.getType(type).then((data) => ({ type, data }))
-                    )
-                })
-            })
+    const fetchItemType = async (item: any, type: string) => {
+        const itemType: Blob = await item.getType(type)
+        return { type: itemType.type, data: itemType }
+    }
+    const promises: Promise<{ type: string; data: any }>[] = []
 
-            return Promise.all(promises)
-        })
-        .catch((error) => {
-            return []
-        })
+    const clipboard = navigator.clipboard as any
+    try {
+        const content: any = await clipboard.read()
+        for (const item of content) {
+            for (const type of item.types) {
+                promises.push(fetchItemType(item, type))
+            }
+        }
+
+        return Promise.all(promises)
+    } catch (e) {
+        return []
+    }
 }
 
 export function readBlob(blob: Blob): Promise<ArrayBuffer> {

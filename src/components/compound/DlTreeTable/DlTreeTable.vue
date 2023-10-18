@@ -779,6 +779,8 @@ export default defineComponent({
             containerClass
         }
     },
+    // adding ignore here as overloading the render function like this is not a known type
+    // @ts-ignore
     render(vue2h: any) {
         this.vue2h = vue2h
         const tableBodySlot = isVue2
