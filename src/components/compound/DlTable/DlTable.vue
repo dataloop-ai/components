@@ -135,6 +135,35 @@
                                     {{ col.label }}
                                 </DlTh>
                             </slot>
+
+                            <DlTh
+                                v-if="visibleColumns && visibleColumns.length"
+                                key="visibleColsBtn"
+                            >
+                                <dl-button
+                                    text-color="dl-color-medium"
+                                    flat
+                                    icon="icon-dl-column"
+                                >
+                                    <dl-menu>
+                                        <dl-list separator>
+                                            <dl-option-group
+                                                :model-value="
+                                                    computedVisibleCols
+                                                "
+                                                :options="groupOptions"
+                                                :left-label="true"
+                                                max-width="250px"
+                                                type="switch"
+                                                class="table-options"
+                                                @update:model-value="
+                                                    handleVisibleColumnsUpdate
+                                                "
+                                            />
+                                        </dl-list>
+                                    </dl-menu>
+                                </dl-button>
+                            </DlTh>
                         </DlTr>
 
                         <tr

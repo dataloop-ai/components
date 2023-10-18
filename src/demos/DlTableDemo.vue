@@ -379,6 +379,17 @@
                     :visible-columns="tableColumns.slice(0, -1)"
                 />
             </div>
+            <div style="max-height: 200px">
+                <p>Virtual With editable columns</p>
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Editable Columns"
+                    :visible-columns="tableColumns.slice(0, -1)"
+                    virtual-scroll
+                    style="height: 100%"
+                />
+            </div>
             <div>
                 <p>With nested field value</p>
                 <div style="font-size: 12px">
