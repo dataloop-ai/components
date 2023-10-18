@@ -1,6 +1,11 @@
 <template>
     <div>
         <dl-input
+            placeholder="placeholder input readonly"
+            readonly
+        />
+
+        <dl-input
             v-model="textInputValue"
             max-width="100%"
             style="width: 920px"

@@ -90,7 +90,14 @@
                             @keyup.enter="onEnterPress"
                             @paste="handlePaste"
                         >
-                            <span v-if="readonly">{{ modelValue }}</span>
+                            <span
+                                v-if="readonly"
+                                :class="
+                                    showPlaceholder ? 'placeholder-string' : ''
+                                "
+                            >{{
+                                showPlaceholder ? placeholder : modelValue
+                            }}</span>
                         </div>
                         <div
                             :class="[
@@ -309,7 +316,7 @@
 
 <script lang="ts">
 import { debounce, cloneDeep } from 'lodash'
-import { computed, defineComponent, PropType, ref } from 'vue-demi'
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue-demi'
 import { DlInfoErrorMessage, DlTooltip } from '../../shared'
 import { DlListItem } from '../../basic'
 import { DlMenu, DlIcon, DlList, DlEllipsis } from '../../essential'
@@ -617,11 +624,19 @@ export default defineComponent({
         const mouseOverClear = ref(false)
         const highlightedIndex = ref(-1)
         const isMenuOpen = ref(false)
+        const {
+            modelValue,
+            autoSuggestItems,
+            maxLength,
+            files,
+            syntaxHighlightColor
+        } = toRefs(props)
+
         const suggestItems = computed<DlInputSuggestion[]>(() => {
-            if (!props.modelValue) return []
+            if (!modelValue.value) return []
             return getSuggestItems(
-                props.autoSuggestItems,
-                props.modelValue?.toString()
+                autoSuggestItems.value,
+                modelValue.value?.toString()
             )
         })
         const input = ref(null)
@@ -633,8 +648,8 @@ export default defineComponent({
             onAutoSuggestClick(null, value)
         }
         const onAutoSuggestClick = (e: Event, item: string): void => {
-            const newValue = clearSuggestion(props.modelValue.toString(), item)
-            if (!props.maxLength || newValue.length < props.maxLength) {
+            const newValue = clearSuggestion(modelValue.value.toString(), item)
+            if (!maxLength.value || newValue.length < maxLength.value) {
                 emit('input', newValue, e)
                 emit('update:model-value', newValue)
                 input.value.innerHTML = newValue
@@ -643,21 +658,21 @@ export default defineComponent({
         }
 
         const emitAddFile = (file: DlInputFile) => {
-            const newFiles = cloneDeep(props.files)
+            const newFiles = cloneDeep(files.value)
             newFiles.push(file)
             emit('file-update', newFiles)
         }
         const emitRemoveFile = (fileId: string) => {
             emit(
                 'file-update',
-                props.files.filter((file) => file.id !== fileId)
+                files.value.filter((file) => file.id !== fileId)
             )
         }
 
         const isSpecialWord = (word: string) => {
             return (
                 word.startsWith('@') ||
-                props.autoSuggestItems.some(
+                autoSuggestItems.value.some(
                     (s) => s.suggestion?.trim() === word?.trim()
                 )
             )
@@ -667,7 +682,7 @@ export default defineComponent({
             setInnerHTMLWithCursor(input.value, (text) => {
                 const words = text.split(' ').map((word) => {
                     if (isSpecialWord(word)) {
-                        return `<span class="clickable" style="color: ${props.syntaxHighlightColor}">${word}</span>`
+                        return `<span class="clickable" style="color: ${syntaxHighlightColor.value}">${word}</span>`
                     }
                     return word
                 })
@@ -687,6 +702,10 @@ export default defineComponent({
             return suggestItems.value.map((item) => item.suggestion)
         })
 
+        const showPlaceholder = computed<boolean>(
+            () => !modelValue.value || !modelValue.value.length
+        )
+
         return {
             suggestItems,
             highlightedIndex,
@@ -699,7 +718,8 @@ export default defineComponent({
             emitAddFile,
             emitRemoveFile,
             updateSyntax,
-            stringSuggestions
+            stringSuggestions,
+            showPlaceholder
         }
     },
     data() {
@@ -1235,6 +1255,7 @@ export default defineComponent({
             -webkit-text-security: disc;
         }
 
+        .placeholder-string,
         &::placeholder {
             color: var(--dl-color-lighter);
             opacity: 1;
