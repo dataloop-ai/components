@@ -368,6 +368,9 @@
                     <template #body-cell-name="{ row }">
                         {{ row.name }}
                     </template>
+                    <template #body-cell-row-actions>
+                        <dl-button label="ActionButton" />
+                    </template>
                 </DlTable>
             </div>
             <div>
@@ -377,6 +380,15 @@
                     :columns="tableColumns"
                     title="Editable Columns"
                     :visible-columns="tableColumns.slice(0, -1)"
+                />
+            </div>
+            <div>
+                <p>Virtual With editable columns</p>
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    :visible-columns="tableColumns.slice(0, -1)"
+                    virtual-scroll
                 />
             </div>
             <div>
@@ -413,7 +425,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
-import { DlTablePagination, DlTableRow } from '../types'
+import { DlTablePagination } from '../types'
 
 const columns = [
     {

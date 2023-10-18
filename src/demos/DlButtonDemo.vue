@@ -332,6 +332,13 @@
                 filled
             />
         </div>
+        <div style="display: flex; flex-direction: column">
+            <h3>button with tooltip</h3>
+            <dl-button
+                label="test me"
+                tooltip="test me please"
+            />
+        </div>
     </div>
 </template>
 

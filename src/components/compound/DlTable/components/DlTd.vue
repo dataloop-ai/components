@@ -5,7 +5,7 @@
         :style="styles"
         :data-col-index="colIndex"
     >
-        <dl-tooltip v-if="hasEllipsis">
+        <dl-tooltip v-if="!noTooltip && hasEllipsis">
             <slot />
         </dl-tooltip>
         <slot />
@@ -34,7 +34,8 @@ export default defineComponent({
         colIndex: {
             type: Number,
             default: null
-        }
+        },
+        noTooltip: Boolean
     },
     setup(props) {
         const vm = getCurrentInstance()
