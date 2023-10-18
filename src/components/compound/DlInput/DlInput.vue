@@ -1195,10 +1195,12 @@ export default defineComponent({
         }
 
         &--l {
+            line-height: 16px;
             padding-top: 10px;
             padding-bottom: 10px;
         }
         &--large {
+            line-height: 16px;
             padding-top: 10px;
             padding-bottom: 10px;
         }

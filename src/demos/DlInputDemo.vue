@@ -116,6 +116,26 @@
                 size="m"
             />
         </div>
+        <div
+            class="row"
+            style="align-items: center"
+        >
+            <dl-input
+                max-width="220px"
+                class="input-parts"
+                style="width: 440px"
+                title="Min expandable"
+                dense
+                expandable
+                size="s"
+            />
+            <dl-button
+                dense
+                flat
+                icon="icon-dl-add"
+                size="m"
+            />
+        </div>
         <dl-input
             :model-value="'Readonly text'"
             title="Readonly"
