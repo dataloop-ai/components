@@ -379,7 +379,7 @@
                                 </DlTh>
                             </slot>
                             <DlTh
-                                v-if="visibleColumns?.length"
+                                v-if="visibleColumns && visibleColumns.length"
                                 key="visibleColsBtn"
                             >
                                 <dl-button
