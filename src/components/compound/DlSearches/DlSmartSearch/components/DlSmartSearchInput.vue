@@ -360,7 +360,16 @@ export default defineComponent({
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
 
+        let lastSearchQuery: string;
+
         const updateJSONQuery = () => {
+
+            if (lastSearchQuery === searchQuery.value) {
+                return null
+            } else {
+                lastSearchQuery = searchQuery.value
+            }
+
             try {
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
