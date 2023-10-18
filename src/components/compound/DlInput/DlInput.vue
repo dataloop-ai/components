@@ -104,10 +104,7 @@
                             />
                             <span
                                 v-if="showClearButton"
-                                v-show="focused || mouseOverClear"
                                 class="dl-input__adornment-container--clear"
-                                @mouseenter="mouseOverClear = true"
-                                @mouseleave="mouseOverClear = false"
                             >
                                 <dl-button
                                     ref="input-clear-button"
@@ -686,6 +683,10 @@ export default defineComponent({
             })
         }
 
+        const stringSuggestions = computed<string[]>(() => {
+            return suggestItems.value.map((item) => item.suggestion)
+        })
+
         return {
             suggestItems,
             highlightedIndex,
@@ -697,7 +698,8 @@ export default defineComponent({
             input,
             emitAddFile,
             emitRemoveFile,
-            updateSyntax
+            updateSyntax,
+            stringSuggestions
         }
     },
     data() {
@@ -878,9 +880,6 @@ export default defineComponent({
             }
 
             return classes
-        },
-        stringSuggestions() {
-            return this.suggestItems.map((item) => item.suggestion)
         }
     },
     methods: {
@@ -1195,6 +1194,7 @@ export default defineComponent({
         }
 
         &--l {
+            min-height: 16px;
             line-height: 16px;
             padding-top: 10px;
             padding-bottom: 10px;
@@ -1262,7 +1262,12 @@ export default defineComponent({
         &--expandable {
             margin-top: 3px;
             margin-right: 3px;
+            &.dl-input__adornment-container--l {
+                margin-top: 5px;
+                margin-right: 5px;
+            }
         }
+
         &--s {
             height: 100%;
         }
