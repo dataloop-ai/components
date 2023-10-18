@@ -133,7 +133,25 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                 >
-                                    {{ col.label }}
+                                    <div
+                                        style="
+                                            width: 100%;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 2px;
+                                        "
+                                    >
+                                        {{ col.label }}
+                                        <dl-icon
+                                            v-if="col.hint"
+                                            icon="icon-dl-info"
+                                            size="10px"
+                                        >
+                                            <dl-tooltip>
+                                                {{ col.hint }}
+                                            </dl-tooltip>
+                                        </dl-icon>
+                                    </div>
                                 </DlTh>
                             </slot>
 
@@ -318,31 +336,34 @@
                                         />
                                     </slot>
                                 </td>
-                                <slot
+                                <DlTd
                                     v-for="(col, colIndex) in computedCols"
-                                    v-bind="
-                                        getBodyCellScope({
-                                            key: getRowKey(props.item),
-                                            row: props.item,
-                                            pageIndex: props.pageIndex,
-                                            col
-                                        })
-                                    "
-                                    :name="
-                                        hasSlotByName(`body-cell-${col.name}`)
-                                            ? `body-cell-${col.name}`
-                                            : 'body-cell'
-                                    "
+                                    :key="col.name"
+                                    :class="col.tdClass(props.item)"
+                                    :style="col.tdStyle(props.item)"
+                                    :no-hover="noHover"
+                                    :col-index="colIndex"
                                 >
-                                    <DlTd
-                                        :class="col.tdClass(props.item)"
-                                        :style="col.tdStyle(props.item)"
-                                        :no-hover="noHover"
-                                        :col-index="colIndex"
+                                    <slot
+                                        v-bind="
+                                            getBodyCellScope({
+                                                key: getRowKey(props.item),
+                                                row: props.item,
+                                                pageIndex: props.pageIndex,
+                                                col
+                                            })
+                                        "
+                                        :name="
+                                            hasSlotByName(
+                                                `body-cell-${col.name}`
+                                            )
+                                                ? `body-cell-${col.name}`
+                                                : 'body-cell'
+                                        "
                                     >
                                         {{ getCellValue(col, props.item) }}
-                                    </DlTd>
-                                </slot>
+                                    </slot>
+                                </DlTd>
                                 <DlTd
                                     v-if="showRowActions"
                                     key="visibleColumnsSlot"
@@ -466,7 +487,25 @@
                                     :col-index="colIndex"
                                     @click="onThClick($event, col.name)"
                                 >
-                                    {{ col.label }}
+                                    <div
+                                        style="
+                                            width: 100%;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 2px;
+                                        "
+                                    >
+                                        {{ col.label }}
+                                        <dl-icon
+                                            v-if="col.hint"
+                                            icon="icon-dl-info"
+                                            size="10px"
+                                        >
+                                            <dl-tooltip>
+                                                {{ col.hint }}
+                                            </dl-tooltip>
+                                        </dl-icon>
+                                    </div>
                                 </DlTh>
                             </slot>
                             <DlTh
@@ -811,7 +850,6 @@ import {
     getCurrentInstance,
     ComputedRef,
     onMounted,
-    toRef,
     toRefs,
     nextTick,
     PropType
