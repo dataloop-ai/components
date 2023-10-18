@@ -104,10 +104,7 @@
                             />
                             <span
                                 v-if="showClearButton"
-                                v-show="focused || mouseOverClear"
                                 class="dl-input__adornment-container--clear"
-                                @mouseenter="mouseOverClear = true"
-                                @mouseleave="mouseOverClear = false"
                             >
                                 <dl-button
                                     ref="input-clear-button"
