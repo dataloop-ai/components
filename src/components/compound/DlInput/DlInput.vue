@@ -1195,6 +1195,7 @@ export default defineComponent({
         }
 
         &--l {
+            line-height: 16px;
             padding-top: 10px;
             padding-bottom: 10px;
         }
@@ -1260,7 +1261,12 @@ export default defineComponent({
         &--expandable {
             margin-top: 3px;
             margin-right: 3px;
+            &.dl-input__adornment-container--l {
+                margin-top: 5px;
+                margin-right: 5px;
+            }
         }
+
         &--s {
             height: 100%;
         }
