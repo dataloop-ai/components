@@ -141,29 +141,65 @@
                                 v-if="visibleColumns && visibleColumns.length"
                                 key="visibleColsBtn"
                             >
-                                <dl-button
-                                    text-color="dl-color-medium"
-                                    flat
-                                    icon="icon-dl-column"
+                                <slot
+                                    name="visible-columns-button"
+                                    :computed-visible-cols="computedVisibleCols"
+                                    :group-options="groupOptions"
+                                    :handle-visible-columns-update="
+                                        handleVisibleColumnsUpdate
+                                    "
                                 >
-                                    <dl-menu>
-                                        <dl-list separator>
-                                            <dl-option-group
-                                                :model-value="
-                                                    computedVisibleCols
-                                                "
-                                                :options="groupOptions"
-                                                :left-label="true"
-                                                max-width="250px"
-                                                type="switch"
-                                                class="table-options"
-                                                @update:model-value="
-                                                    handleVisibleColumnsUpdate
-                                                "
-                                            />
-                                        </dl-list>
-                                    </dl-menu>
-                                </dl-button>
+                                    <dl-button
+                                        text-color="dl-color-medium"
+                                        flat
+                                        icon="icon-dl-column"
+                                        tooltip="Manage columns"
+                                    >
+                                        <slot
+                                            name="visible-columns-menu"
+                                            :computed-visible-cols="
+                                                computedVisibleCols
+                                            "
+                                            :group-options="groupOptions"
+                                            :handle-visible-columns-update="
+                                                handleVisibleColumnsUpdate
+                                            "
+                                        >
+                                            <dl-menu>
+                                                <slot
+                                                    name="visible-columns-menu-content"
+                                                    :computed-visible-cols="
+                                                        computedVisibleCols
+                                                    "
+                                                    :group-options="
+                                                        groupOptions
+                                                    "
+                                                    :handle-visible-columns-update="
+                                                        handleVisibleColumnsUpdate
+                                                    "
+                                                >
+                                                    <dl-list separator>
+                                                        <dl-option-group
+                                                            :model-value="
+                                                                computedVisibleCols
+                                                            "
+                                                            :options="
+                                                                groupOptions
+                                                            "
+                                                            :left-label="true"
+                                                            max-width="250px"
+                                                            type="switch"
+                                                            class="table-options"
+                                                            @update:model-value="
+                                                                handleVisibleColumnsUpdate
+                                                            "
+                                                        />
+                                                    </dl-list>
+                                                </slot>
+                                            </dl-menu>
+                                        </slot>
+                                    </dl-button>
+                                </slot>
                             </DlTh>
                         </DlTr>
 

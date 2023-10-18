@@ -100,6 +100,11 @@
                             }}</span>
                         </div>
                         <div
+                            v-if="
+                                hasAppend ||
+                                    showClearButton ||
+                                    showShowPassButton
+                            "
                             :class="[
                                 ...adornmentClasses,
                                 'dl-input__adornment-container--pos-right'
@@ -703,7 +708,7 @@ export default defineComponent({
         })
 
         const showPlaceholder = computed<boolean>(
-            () => !modelValue.value || !modelValue.value.length
+            () => !modelValue.value || !String(modelValue.value)?.length
         )
 
         return {
@@ -786,7 +791,11 @@ export default defineComponent({
             if (this.hasPrepend) {
                 classes.push('dl-input__input--prepend')
             }
-            if (this.hasAppend) {
+            if (
+                this.hasAppend ||
+                this.showClearButton ||
+                this.showShowPassButton
+            ) {
                 classes.push('dl-input__input--append')
             }
             if (this.hasPrepend && this.hasAppend) {
@@ -826,12 +835,7 @@ export default defineComponent({
             return !!this.$slots.prepend
         },
         hasAppend(): boolean {
-            return (
-                (!!this.$slots.append ||
-                    !this.hideClearButton ||
-                    this.type === 'password') &&
-                !this.isSmall
-            )
+            return !!this.$slots.append && !this.isSmall
         },
         hasAction(): boolean {
             return !!this.$slots.action && !this.isSmall
@@ -897,6 +901,9 @@ export default defineComponent({
                 classes.push('dl-input__wrapper--error')
             } else if (this.warning) {
                 classes.push('dl-input__wrapper--warning')
+            }
+            if (this.readonly) {
+                classes.push('dl-input__wrapper--readonly')
             }
 
             return classes
@@ -1164,6 +1171,11 @@ export default defineComponent({
         max-width: var(--dl-input-max-width);
         max-height: var(--dl-input-max-height);
         height: var(--dl-input-height);
+
+        &--readonly {
+            border-color: var(--dl-color-separator) !important;
+        }
+
         &:hover {
             border-color: var(--dl-input-border-color-hover);
         }
@@ -1341,6 +1353,11 @@ export default defineComponent({
         display: flex;
         align-items: center;
         margin-left: 10px;
+    }
+
+    .clickable:hover {
+        cursor: pointer;
+        text-decoration: underline;
     }
 }
 </style>
