@@ -1195,6 +1195,7 @@ export default defineComponent({
         }
 
         &--l {
+            min-height: 16px;
             line-height: 16px;
             padding-top: 10px;
             padding-bottom: 10px;
