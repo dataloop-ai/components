@@ -306,6 +306,29 @@
                                         {{ getCellValue(col, props.item) }}
                                     </DlTd>
                                 </slot>
+                                <DlTd
+                                    v-if="showRowActions"
+                                    key="body-cell-row-actions"
+                                    class="visible-columns-justify-end"
+                                    no-tooltip
+                                >
+                                    <slot
+                                        v-bind="
+                                            getBodyCellScope({
+                                                key: getRowKey(props.item),
+                                                row: props.item,
+                                                pageIndex: props.pageIndex
+                                            })
+                                        "
+                                        :name="
+                                            hasSlotByName(
+                                                `body-cell-row-actions`
+                                            )
+                                                ? `body-cell-row-actions`
+                                                : 'body-cell'
+                                        "
+                                    />
+                                </DlTd>
                             </DlTr>
                         </slot>
                     </template>
@@ -409,10 +432,13 @@
                                 </DlTh>
                             </slot>
                             <DlTh
-                                v-if="visibleColumns && visibleColumns.length"
+                                v-if="showRowActions"
                                 key="visibleColsBtn"
                             >
                                 <dl-button
+                                    v-if="
+                                        visibleColumns && visibleColumns.length
+                                    "
                                     text-color="dl-color-medium"
                                     flat
                                     icon="icon-dl-column"
@@ -591,6 +617,29 @@
                                         >
                                             {{ getCellValue(col, row) }}
                                         </slot>
+                                    </DlTd>
+                                    <DlTd
+                                        v-if="showRowActions"
+                                        key="body-cell-row-actions"
+                                        class="visible-columns-justify-end"
+                                        no-tooltip
+                                    >
+                                        <slot
+                                            v-bind="
+                                                getBodyCellScope({
+                                                    key: getRowKey(row),
+                                                    row: row,
+                                                    pageIndex: pageIndex
+                                                })
+                                            "
+                                            :name="
+                                                hasSlotByName(
+                                                    `body-cell-row-actions`
+                                                )
+                                                    ? `body-cell-row-actions`
+                                                    : 'body-cell'
+                                            "
+                                        />
                                     </DlTd>
                                 </DlTr>
                             </slot>
@@ -1684,6 +1733,12 @@ export default defineComponent({
             emit('update-visible-columns', columns)
         }
 
+        const showRowActions = computed<boolean>(
+            () =>
+                !!(props.visibleColumns && props.visibleColumns.length) ||
+                !!hasSlotByName(`body-cell-row-actions`)
+        )
+
         return {
             containerStyle,
             isDataEmpty,
@@ -1748,7 +1803,8 @@ export default defineComponent({
             visibleColumnsState,
             handleVisibleColumnsUpdate,
             computedVisibleCols,
-            totalItemsCount
+            totalItemsCount,
+            showRowActions
         }
     }
 })

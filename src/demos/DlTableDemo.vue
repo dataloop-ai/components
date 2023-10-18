@@ -368,6 +368,9 @@
                     <template #body-cell-name="{ row }">
                         {{ row.name }}
                     </template>
+                    <template #body-cell-row-actions>
+                        <dl-button label="ActionButton" />
+                    </template>
                 </DlTable>
             </div>
             <div>
@@ -422,7 +425,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
-import { DlTablePagination, DlTableRow } from '../types'
+import { DlTablePagination } from '../types'
 
 const columns = [
     {
