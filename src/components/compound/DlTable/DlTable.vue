@@ -3,6 +3,7 @@
         :id="uuid"
         :key="tableKey"
         ref="rootRef"
+        :style="containerStyle"
         :class="containerClass"
     >
         <div
@@ -1089,6 +1090,14 @@ export default defineComponent({
             return getContainerClass(separator, bordered, dense, loading)
         })
 
+        const containerStyle = computed(() => {
+            if (props.virtualScroll) {
+                return {
+                    height: 'var(--dl-table-height, 500px)'
+                }
+            }
+        })
+
         const nothingToDisplay = computed(() => computedRows.value.length === 0)
 
         const titleClasses = computed(
@@ -1676,6 +1685,7 @@ export default defineComponent({
         }
 
         return {
+            containerStyle,
             isDataEmpty,
             hasThead,
             handleSortableEvent,
