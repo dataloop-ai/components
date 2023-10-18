@@ -41,6 +41,7 @@
             <div class="sidebar">
                 <dl-search
                     v-model="filterTerm"
+                    placeholder="Search by component name"
                     style="margin-bottom: 5px"
                 />
 

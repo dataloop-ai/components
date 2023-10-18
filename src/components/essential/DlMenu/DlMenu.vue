@@ -210,6 +210,8 @@ export default defineComponent({
                 (props.square === true ? ' dl-menu--square' : '')
         )
 
+        const isInitialized = ref(false)
+
         const { hide } = useModelToggle({
             showing,
             canShow,
@@ -356,6 +358,8 @@ export default defineComponent({
             conditionalHandler(!hiding, () => {
                 refocusTarget = null
             })
+
+            isInitialized.value = false
         }
 
         function configureScrollTarget() {
@@ -393,6 +397,27 @@ export default defineComponent({
             const el = innerRef.value
 
             if (el === null || anchorEl.value === null) {
+                return
+            }
+
+            if ((vm.parent.proxy as any).draggable) {
+                if (!isInitialized.value) {
+                    isInitialized.value = true
+                    setPosition({
+                        el,
+                        offset: props.offset as number[],
+                        anchorEl: anchorEl.value as HTMLElement,
+                        anchorOrigin: anchorOrigin.value,
+                        selfOrigin: selfOrigin.value,
+                        absoluteOffset,
+                        fitContainer: props.fitContainer,
+                        fitContent: props.fitContent,
+                        cover: props.cover,
+                        maxHeight: props.maxHeight,
+                        maxWidth: props.maxWidth
+                    })
+                }
+
                 return
             }
 

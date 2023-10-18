@@ -22,7 +22,8 @@ import {
     watch
 } from 'vue-demi'
 import { getGridTemplate, swapElementsInMatrix } from './utils'
-import { isCustomEvent, getElementAbove } from '../utils'
+import { isCustomEvent } from '../utils'
+import { getElementAbove } from '../../../utils'
 import { DlGridMode } from './types'
 
 export default defineComponent({

@@ -7,6 +7,7 @@
     >
         <dl-input
             ref="input"
+            class="text-input-area"
             type="text"
             clear-button-tooltip
             :size="size"
@@ -16,6 +17,7 @@
             :highlight-matches="highlightMatches"
             :dense="dense"
             :suggest-menu-width="suggestMenuWidth"
+            :debounce="debounce"
             @input="onChange"
             @focus="onFocus"
             @blur="onBlur"
@@ -87,7 +89,8 @@ export default defineComponent({
         highlightMatches: { type: Boolean, default: false },
         dense: { type: Boolean, default: false },
         withSearchButton: { type: Boolean, default: false },
-        suggestMenuWidth: { type: String, default: 'auto' }
+        suggestMenuWidth: { type: String, default: 'auto' },
+        debounce: { type: Number, default: 0 }
     },
     emits: [
         'input',
@@ -108,6 +111,7 @@ export default defineComponent({
             return BUTTON_SIZES[this.size]
         },
         identifierClass(): string {
+            if (!this.placeholder) return 'dl-search'
             return `dl-search-${this.placeholder}`.replaceAll(' ', '-')
         },
         buttonClasses(): string[] {
@@ -150,6 +154,11 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 100%;
+    gap: 10px;
+}
+
+.text-input-area {
+    flex-grow: 1;
 }
 
 ::v-deep .dl-text-input {

@@ -14,6 +14,10 @@ export * from './colors'
 export * from './teleport'
 export * from './parse-smart-query'
 export * from './stringStyleToRecord'
+export * from './get-element-above'
+export * from './resizable-table'
+export * from './draggable-table'
+export * from './table-columns'
 
 export const isMobileOrTablet = () => {
     let check = false

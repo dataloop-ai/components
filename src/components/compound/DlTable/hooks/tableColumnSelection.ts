@@ -5,9 +5,7 @@ import { DlTableProps, DlTableColumn, DlTableRow } from '../types'
 import { TablePagination } from './tablePagination'
 
 export const useTableColumnSelectionProps = {
-    // todo: fix later the
-    visibleColumns: { type: Array, required: false, default: null as any },
-    hasVisibleColumns: Boolean
+    visibleColumns: { type: Array, required: false, default: null as any }
 }
 
 export function useTableColumnSelection(
@@ -131,7 +129,8 @@ export function useTableColumnSelection(
             ? props.tableColspan
             : computedCols.value.length +
                   (hasSelectionMode.value === true ? 1 : 0) +
-                  (hasDraggableRows.value === true ? 1 : 0)
+                  (hasDraggableRows.value === true ? 1 : 0) +
+                  (props.isTreeTable ? 1 : 0)
     })
 
     return {

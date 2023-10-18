@@ -110,7 +110,7 @@ function renderText(text: string, colorSchema: SyntaxColorSchema) {
     return output?.join('')
 }
 
-export function setCaret(target: HTMLElement) {
+export function setCaretAtTheEnd(target: HTMLElement) {
     const range = document.createRange()
     const sel = window.getSelection()
     range.selectNodeContents(target)

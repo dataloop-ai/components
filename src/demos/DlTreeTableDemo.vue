@@ -2,49 +2,14 @@
     <div style="width: 900px; align-items: inherit">
         <div>
             <div class="settings">
-                <dl-switch
-                    left-label="bordered"
-                    value="bordered"
-                    :model-value="borderState"
-                    @update:model-value="updateBorderedState"
-                />
-                <dl-switch
-                    left-label="dense"
-                    value="dense"
-                    :model-value="denseState"
-                    @update:model-value="updateDenseState"
-                />
-                <dl-switch
-                    left-label="virtual scroll"
-                    value="vScroll"
-                    :model-value="virtualScroll"
-                    @update:model-value="updateVirtualScrollState"
-                />
-                <dl-switch
-                    left-label="resizable"
-                    value="resizable"
-                    :model-value="resizableState"
-                    @update:model-value="updateResizableState"
-                />
-                <dl-input
-                    v-model="filter"
-                    title="Filter"
-                    style="width: 220px"
-                    placeholder="Filter option"
-                    size="m"
-                    type="text"
-                />
-                <div>
-                    <div>
-                        <p>Separator</p>
+                <div class="left-panel">
+                    <div class="option-group">
+                        <p>Separator:</p>
                         <DlOptionGroup
                             v-model="separator"
                             inline
                             :options="[
-                                {
-                                    label: 'Horizontal (default)',
-                                    value: 'horizontal'
-                                },
+                                { label: 'Horizontal', value: 'horizontal' },
                                 { label: 'Vertical', value: 'vertical' },
                                 { label: 'Cell', value: 'cell' },
                                 { label: 'None', value: 'none' }
@@ -52,28 +17,77 @@
                         />
                     </div>
 
-                    <div>
-                        <p>Selection</p>
+                    <div class="option-group">
+                        <p>Draggable:</p>
                         <DlOptionGroup
-                            v-model="selection"
+                            v-model="draggable"
                             inline
                             :options="[
-                                { label: 'none', value: 'none' },
-                                { label: 'single', value: 'single' },
-                                { label: 'multiple', value: 'multiple' }
+                                { label: 'Rows', value: 'rows' },
+                                { label: 'Columns', value: 'columns' },
+                                { label: 'Both', value: 'both' },
+                                { label: 'None', value: 'none' }
                             ]"
                         />
                     </div>
 
-                    <div>
-                        <p>Loading</p>
+                    <div class="option-group">
+                        <p>Selection:</p>
                         <DlOptionGroup
-                            v-model="loading"
+                            v-model="selection"
                             inline
                             :options="[
-                                { label: 'True', value: true },
-                                { label: 'False', value: false }
+                                { label: 'None', value: 'none' },
+                                { label: 'Single', value: 'single' },
+                                { label: 'Multiple', value: 'multiple' }
                             ]"
+                        />
+                    </div>
+
+                    <div class="filter-container">
+                        <label for="filter">Filter:</label>
+                        <dl-input
+                            id="filter"
+                            v-model="filter"
+                            placeholder="Filter"
+                            size="s"
+                            type="text"
+                        />
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <button
+                        class="btn"
+                        @click="addRowPerPage"
+                    >
+                        Add Rows/Page
+                    </button>
+
+                    <div class="option-group">
+                        <dl-switch
+                            left-label="Bordered"
+                            value="bordered"
+                            :model-value="borderState"
+                            @update:model-value="updateBorderedState"
+                        />
+                        <dl-switch
+                            left-label="Dense"
+                            value="dense"
+                            :model-value="denseState"
+                            @update:model-value="updateDenseState"
+                        />
+                        <dl-switch
+                            left-label="Virtual Scroll"
+                            value="vScroll"
+                            :model-value="virtualScroll"
+                            @update:model-value="updateVirtualScrollState"
+                        />
+                        <dl-switch
+                            left-label="Resizable"
+                            value="resizable"
+                            :model-value="resizableState"
+                            @update:model-value="updateResizableState"
                         />
                     </div>
                 </div>
@@ -99,7 +113,9 @@
                     :rows-per-page-options="rowsPerPageOptions"
                     @row-click="onRowClick"
                     @th-click="log"
-                    @selectedItems="selectedItems"
+                    @selected-items="selectedItems"
+                    @row-reorder="reorderRows"
+                    @col-update="updateColumns"
                 />
             </div>
             <div style="padding-top: 300px">
@@ -148,26 +164,6 @@
                     </template>
                 </DlTreeTable>
             </div>
-
-            <div style="margin-top: 100px">
-                <p>Infinite scrolling</p>
-                <DlTreeTable
-                    :separator="separator"
-                    :columns="tableColumns"
-                    :bordered="bordered"
-                    :draggable="draggable"
-                    :resizable="resizable"
-                    :dense="dense"
-                    class="sticky-header"
-                    :loading="loading"
-                    :rows="tableRowsVS"
-                    :selection="selection"
-                    virtual-scroll
-                    row-key="name"
-                    color="dl-color-secondary"
-                    style="height: 500px"
-                />
-            </div>
             <div style="margin-top: 100px">
                 <p>Custom table body slot</p>
                 <DlTreeTable
@@ -178,7 +174,7 @@
                     style="height: 500px"
                 >
                     <template #table-body>
-                        <div class="custom-body-slot">
+                        <div style="width: 100px">
                             Custom body slot inside tree table
                         </div>
                     </template>
@@ -203,6 +199,26 @@
                         </tr>
                     </template>
                 </DlTreeTable>
+            </div>
+            <div>
+                <p>With editable columns</p>
+                <DlTreeTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    title="Editable Columns"
+                    :visible-columns="tableColumns.slice(0, -1)"
+                />
+            </div>
+            <div>
+                <p>With nested field value</p>
+                <div style="font-size: 12px">
+                    Row array looks like this: {{ rows2 }}
+                </div>
+                <DlTreeTable
+                    :rows="rows2"
+                    :columns="columns2"
+                    title="Nested Field"
+                />
             </div>
             <div style="margin-top: 100px">
                 <p>Empty State</p>
@@ -236,42 +252,6 @@
                         </div>
                     </template>
                 </DlTreeTable>
-                <div>
-                    <DlTreeTable
-                        :separator="separator"
-                        :columns="tableColumns"
-                        :bordered="bordered"
-                        :draggable="draggable"
-                        :dense="dense"
-                        class="sticky-header"
-                        :filter="filter"
-                        :selection="selection"
-                        :loading="loading"
-                        :rows="tableRows"
-                        :resizable="resizable"
-                        row-key="name"
-                        color="dl-color-secondary"
-                        title="Table Title"
-                        :virtual-scroll="vScroll"
-                        style="height: 500px"
-                        :rows-per-page-options="rowsPerPageOptions"
-                        is-empty
-                        hide-pagination
-                        :empty-state-props="{
-                            responsive: false,
-                            style: 'min-height: 350px; width: 300px;',
-                            bgSize: '130px',
-                            bgImage: `url(https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/usage.svg)`,
-                            title: 'Lorem ipsum',
-                            subtitle:
-                                'Lorem ipsum dolor sit amet consectetur. Senectus condimentum dolor sit',
-                            info: 'To learn more about this analytics, read our documentation.'
-                        }"
-                        @row-click="onRowClick"
-                        @th-click="log"
-                        @selectedItems="selectedItems"
-                    />
-                </div>
             </div>
         </div>
     </div>
@@ -285,8 +265,10 @@ import {
     DlTreeTable,
     DlIcon
 } from '../components'
-import { defineComponent, ref, computed, nextTick } from 'vue-demi'
+import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
+import { v4 } from 'uuid'
+import { DlTableRow } from '../types'
 
 const columns = [
     {
@@ -295,26 +277,55 @@ const columns = [
         label: 'Dessert (100g serving)',
         align: 'left',
         field: 'name',
-        sortable: true
+        sortable: true,
+        width: 100
     },
     {
         name: 'calories',
         align: 'center',
         label: 'Calories',
         field: 'calories',
-        sortable: true
+        sortable: true,
+        width: 100
     },
-    { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-    { name: 'protein', label: 'Protein (g)', field: 'protein' },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+    {
+        name: 'fat',
+        label: 'Fat (g)',
+        field: 'fat',
+        sortable: true,
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'carbs',
+        label: 'Carbs (g)',
+        field: 'carbs',
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'protein',
+        label: 'Protein (g)',
+        field: 'protein',
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'sodium',
+        label: 'Sodium (mg)',
+        field: 'sodium',
+        align: 'center',
+        width: 100
+    },
     {
         name: 'calcium',
         label: 'Calcium (%)',
         field: 'calcium',
         sortable: true,
         sort: (a: string | number, b: string | number) =>
-            parseInt(a as string, 10) - parseInt(b as string, 10)
+            parseInt(a as string, 10) - parseInt(b as string, 10),
+        align: 'center',
+        width: 100
     },
     {
         name: 'iron',
@@ -322,125 +333,15 @@ const columns = [
         field: 'iron',
         sortable: true,
         sort: (a: string | number, b: string | number) =>
-            parseInt(a as string, 10) - parseInt(b as string, 10)
+            parseInt(a as string, 10) - parseInt(b as string, 10),
+        align: 'center',
+        width: 100
     }
 ]
 
 const rows = [
     {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-    },
-    {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%'
-    },
-    {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%'
-    },
-    {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%'
-    },
-    {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%'
-    },
-    {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%'
-    },
-    {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%'
-    },
-    {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%'
-    },
-    {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%'
-    },
-    {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    },
-    ...times(100, (index) => ({
-        name: 'KitKat' + index,
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    }))
-]
-
-const rows2 = [
-    {
+        id: v4(),
         name: 'Frozen Yogurt',
         calories: 159,
         fat: 6,
@@ -449,8 +350,10 @@ const rows2 = [
         sodium: 87,
         calcium: '14%',
         iron: '1%',
+        isExpanded: false,
         children: [
             {
+                id: v4(),
                 name: 'Eclair1',
                 calories: 262,
                 fat: 16,
@@ -458,11 +361,13 @@ const rows2 = [
                 protein: 6,
                 sodium: 337,
                 calcium: '6%',
-                iron: '7%'
+                iron: '7%',
+                isExpanded: false
             }
         ]
     },
     {
+        id: v4(),
         name: 'Eclair2',
         calories: 262,
         fat: 16,
@@ -470,9 +375,11 @@ const rows2 = [
         protein: 6,
         sodium: 337,
         calcium: '6%',
-        iron: '7%'
+        iron: '7%',
+        isExpanded: false
     },
     {
+        id: v4(),
         name: 'Ice cream sandwich',
         calories: 237,
         fat: 9,
@@ -481,8 +388,10 @@ const rows2 = [
         sodium: 129,
         calcium: '8%',
         iron: '1%',
+        isExpanded: false,
         children: [
             {
+                id: v4(),
                 name: 'Eclair3.0',
                 calories: 262,
                 fat: 16,
@@ -490,9 +399,11 @@ const rows2 = [
                 protein: 6,
                 sodium: 337,
                 calcium: '6%',
-                iron: '7%'
+                iron: '7%',
+                isExpanded: false
             },
             {
+                id: v4(),
                 name: 'Eclair3',
                 calories: 262,
                 fat: 16,
@@ -501,8 +412,10 @@ const rows2 = [
                 sodium: 337,
                 calcium: '6%',
                 iron: '7%',
+                isExpanded: false,
                 children: [
                     {
+                        id: v4(),
                         name: 'Eclair4',
                         calories: 262,
                         fat: 16,
@@ -511,8 +424,10 @@ const rows2 = [
                         sodium: 337,
                         calcium: '6%',
                         iron: '7%',
+                        isExpanded: false,
                         children: [
                             {
+                                id: v4(),
                                 name: 'Eclair5',
                                 calories: 262,
                                 fat: 16,
@@ -521,8 +436,10 @@ const rows2 = [
                                 sodium: 337,
                                 calcium: '6%',
                                 iron: '7%',
+                                isExpanded: false,
                                 children: [
                                     {
+                                        id: v4(),
                                         name: 'Eclair6',
                                         calories: 262,
                                         fat: 16,
@@ -531,8 +448,10 @@ const rows2 = [
                                         sodium: 337,
                                         calcium: '6%',
                                         iron: '7%',
+                                        isExpanded: false,
                                         children: [
                                             {
+                                                id: v4(),
                                                 name: 'EclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclairEclair',
                                                 calories: 262,
                                                 fat: 16,
@@ -540,7 +459,8 @@ const rows2 = [
                                                 protein: 6,
                                                 sodium: 337,
                                                 calcium: '6%',
-                                                iron: '7%'
+                                                iron: '7%',
+                                                isExpanded: false
                                             }
                                         ]
                                     }
@@ -553,6 +473,7 @@ const rows2 = [
         ]
     },
     {
+        id: v4(),
         name: 'Eclair7',
         calories: 262,
         fat: 16,
@@ -561,8 +482,10 @@ const rows2 = [
         sodium: 337,
         calcium: '6%',
         iron: '7%',
+        isExpanded: false,
         children: [
             {
+                id: v4(),
                 name: 'Eclair8',
                 calories: 262,
                 fat: 16,
@@ -570,11 +493,13 @@ const rows2 = [
                 protein: 6,
                 sodium: 337,
                 calcium: '6%',
-                iron: '7%'
+                iron: '7%',
+                isExpanded: false
             }
         ]
     },
     {
+        id: v4(),
         name: 'Eclair9',
         calories: 262,
         fat: 16,
@@ -582,9 +507,11 @@ const rows2 = [
         protein: 6,
         sodium: 337,
         calcium: '6%',
-        iron: '7%'
+        iron: '7%',
+        isExpanded: false
     },
-    ...times(100, (index) => ({
+    ...times(5, (index) => ({
+        id: v4(),
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,
@@ -592,15 +519,38 @@ const rows2 = [
         protein: 7,
         sodium: 54,
         calcium: '12%',
-        iron: '6%'
+        iron: '6%',
+        isExpanded: false
     }))
 ]
 
-type Rows = (typeof rows)[0]
-
-interface RowsWithIndex extends Rows {
-    index?: number
-}
+const rows2 = [
+    {
+        name: {
+            title: 'Row 1',
+            subtitle: 'This row...'
+        }
+    },
+    {
+        name: {
+            title: 'Row 2',
+            subtitle: 'This other row...'
+        }
+    }
+]
+const columns2 = [
+    {
+        name: 'name',
+        required: true,
+        label: 'Nested value',
+        align: 'left',
+        field: 'name.subtitle',
+        sortable: true,
+        textTransform: 'uppercase',
+        width: 100,
+        hint: 'test hint'
+    }
+]
 
 export default defineComponent({
     components: {
@@ -624,8 +574,8 @@ export default defineComponent({
         const denseState = ref([])
         const virtualScroll = ref([])
         const resizableState = ref([])
-        const tableRows = ref(cloneDeep(rows2))
-        const tableRowsVS = ref(cloneDeep(rows2))
+        const tableRows = ref(rows)
+        const tableRowsVS = ref(cloneDeep(rows))
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const rowsPerPageOptions = ref([10, 12, 14, 16])
@@ -634,7 +584,7 @@ export default defineComponent({
 
         const nextPageNumber = ref(2)
 
-        let allRows: RowsWithIndex[] = []
+        let allRows: DlTableRow[] = []
         for (let i = 0; i < 100; i++) {
             allRows = allRows.concat(
                 cloneDeep(rows)
@@ -742,7 +692,16 @@ export default defineComponent({
         const onRowClick = (item: any) => {
             // console.log('onRowClick TreeTableDemo: ', item)
         }
+
+        const reorderRows = (newRows: any[]) => {
+            tableRows.value = newRows
+        }
+        const updateColumns = (newColumns: any) => {
+            tableColumns.value = newColumns
+        }
         return {
+            reorderRows,
+            updateColumns,
             filter,
             selectedData,
             selection,
@@ -772,7 +731,9 @@ export default defineComponent({
             prevPage,
             isLastPage,
             isFirstPage,
-            onRowClick
+            onRowClick,
+            rows2,
+            columns2
         }
     },
 
@@ -810,14 +771,65 @@ export default defineComponent({
 <style scoped lang="scss">
 .settings {
     display: flex;
-    width: 100%;
-    max-width: 600px;
+    align-items: flex-start;
     gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    & > * {
-        flex-grow: 1;
-    }
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+p {
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0;
+}
+
+.dl-switch {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 12px;
 }
 
 .sticky-header {
@@ -839,13 +851,5 @@ export default defineComponent({
         /* height of all previous header rows */
         top: 40px;
     }
-}
-.custom-body-slot {
-    padding: 20px;
-    font-size: 35px;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    justify-content: center;
 }
 </style>
