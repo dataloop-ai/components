@@ -27,7 +27,7 @@ export type DlTableFilter = string | Record<string, any>
 export type DlTableColumn = {
     name: string
     label: string
-    field: string | ((row: DlTableRow) => string)
+    field?: string | ((row: DlTableRow) => string)
     required?: boolean
     align?: 'right' | 'left' | 'center'
     sortable?: boolean

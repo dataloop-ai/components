@@ -14,8 +14,13 @@ export function getCellValue(
 }
 
 function getNestedProperty(obj: Record<string, any>, propertyPath: string) {
+    if (!propertyPath) {
+        return obj
+    }
+
     const pathArray = propertyPath.split('.')
     let value = obj
+
     for (const prop of pathArray) {
         if (value && value.hasOwnProperty(prop)) {
             value = value[prop]

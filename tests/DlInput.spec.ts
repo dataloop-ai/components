@@ -231,13 +231,13 @@ describe('DlInput component', () => {
         })
         it('should emit adding a new file', () => {
             wrapper.vm.emitAddFile(mockFile)
-            expect(
-                wrapper.emitted()['file-update'].at(-1)[0].length
-            ).toBeGreaterThan(1)
+            const emitted = wrapper.emitted()['file-update']
+            expect(emitted[emitted.length - 1][0].length).toBeGreaterThan(1)
         })
         it('should emit removing a file', () => {
             wrapper.vm.emitRemoveFile(mockFile.id)
-            expect(wrapper.emitted()['file-update'].at(-1)[0].length).toBe(0)
+            const emitted = wrapper.emitted()['file-update']
+            expect(emitted[emitted.length - 1][0].length).toBe(0)
         })
     })
     describe('triggering events', () => {

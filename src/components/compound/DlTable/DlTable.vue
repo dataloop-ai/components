@@ -139,11 +139,12 @@
 
                             <DlTh
                                 v-if="visibleColumns && visibleColumns.length"
-                                key="visibleColsBtn"
+                                key="visibleColumnsSlot"
+                                :col-index="-1"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
-                                    :computed-visible-cols="computedVisibleCols"
+                                    :visible-columns-state="visibleColumnsState"
                                     :group-options="groupOptions"
                                     :handle-visible-columns-update="
                                         handleVisibleColumnsUpdate
@@ -157,8 +158,8 @@
                                     >
                                         <slot
                                             name="header-cell-visible-columns-menu"
-                                            :computed-visible-cols="
-                                                computedVisibleCols
+                                            :visible-columns-state="
+                                                visibleColumnsState
                                             "
                                             :group-options="groupOptions"
                                             :handle-visible-columns-update="
@@ -168,8 +169,8 @@
                                             <dl-menu>
                                                 <slot
                                                     name="header-cell-visible-columns-menu-content"
-                                                    :computed-visible-cols="
-                                                        computedVisibleCols
+                                                    :visible-columns-state="
+                                                        visibleColumnsState
                                                     "
                                                     :group-options="
                                                         groupOptions
@@ -344,8 +345,9 @@
                                 </slot>
                                 <DlTd
                                     v-if="showRowActions"
-                                    key="body-cell-row-actions"
+                                    key="visibleColumnsSlot"
                                     class="visible-columns-justify-end"
+                                    :col-index="-1"
                                     no-tooltip
                                 >
                                     <slot
@@ -469,34 +471,70 @@
                             </slot>
                             <DlTh
                                 v-if="showRowActions"
-                                key="visibleColsBtn"
+                                key="visibleColumnsSlot"
                             >
-                                <dl-button
-                                    v-if="
-                                        visibleColumns && visibleColumns.length
+                                <slot
+                                    name="header-cell-visible-columns-button"
+                                    :computed-visible-cols="computedVisibleCols"
+                                    :group-options="groupOptions"
+                                    :handle-visible-columns-update="
+                                        handleVisibleColumnsUpdate
                                     "
-                                    text-color="dl-color-medium"
-                                    flat
-                                    icon="icon-dl-column"
                                 >
-                                    <dl-menu>
-                                        <dl-list separator>
-                                            <dl-option-group
-                                                :model-value="
-                                                    computedVisibleCols
-                                                "
-                                                :options="groupOptions"
-                                                :left-label="true"
-                                                max-width="250px"
-                                                type="switch"
-                                                class="table-options"
-                                                @update:model-value="
-                                                    handleVisibleColumnsUpdate
-                                                "
-                                            />
-                                        </dl-list>
-                                    </dl-menu>
-                                </dl-button>
+                                    <dl-button
+                                        v-if="
+                                            visibleColumns &&
+                                                visibleColumns.length
+                                        "
+                                        text-color="dl-color-medium"
+                                        flat
+                                        icon="icon-dl-column"
+                                    >
+                                        <slot
+                                            name="header-cell-visible-columns-menu"
+                                            :computed-visible-cols="
+                                                computedVisibleCols
+                                            "
+                                            :group-options="groupOptions"
+                                            :handle-visible-columns-update="
+                                                handleVisibleColumnsUpdate
+                                            "
+                                        >
+                                            <dl-menu>
+                                                <slot
+                                                    name="header-cell-visible-columns-menu-content"
+                                                    :computed-visible-cols="
+                                                        computedVisibleCols
+                                                    "
+                                                    :group-options="
+                                                        groupOptions
+                                                    "
+                                                    :handle-visible-columns-update="
+                                                        handleVisibleColumnsUpdate
+                                                    "
+                                                >
+                                                    <dl-list separator>
+                                                        <dl-option-group
+                                                            :model-value="
+                                                                computedVisibleCols
+                                                            "
+                                                            :options="
+                                                                groupOptions
+                                                            "
+                                                            :left-label="true"
+                                                            max-width="250px"
+                                                            type="switch"
+                                                            class="table-options"
+                                                            @update:model-value="
+                                                                handleVisibleColumnsUpdate
+                                                            "
+                                                        />
+                                                    </dl-list>
+                                                </slot>
+                                            </dl-menu>
+                                        </slot>
+                                    </dl-button>
+                                </slot>
                             </DlTh>
                         </DlTr>
 
@@ -656,8 +694,9 @@
                                     </DlTd>
                                     <DlTd
                                         v-if="showRowActions"
-                                        key="body-cell-row-actions"
+                                        key="visibleColumnsSlot"
                                         class="visible-columns-justify-end"
+                                        :col-index="-1"
                                         no-tooltip
                                     >
                                         <slot
@@ -1097,7 +1136,25 @@ export default defineComponent({
             dense,
             draggable,
             virtualScroll,
-            rows
+            rows,
+            visibleColumns,
+            rowKey,
+            titleClass,
+            emptyStateProps,
+            hideNoData,
+            loading,
+            loadingLabel,
+            filter,
+            noResultsLabel,
+            noDataLabel,
+            columns,
+            fitAllColumns,
+            resizable,
+            hidePagination,
+            hideSelectedBanner,
+            color,
+            virtualScrollStickySizeStart,
+            noHover
         } = toRefs(props)
 
         const tbodyKey = ref()
@@ -1111,12 +1168,12 @@ export default defineComponent({
         )
 
         const hasEmptyStateProps = computed(() =>
-            props.emptyStateProps
+            emptyStateProps.value
                 ? Object.keys(props.emptyStateProps).length > 0
                 : false
         )
 
-        const isDataEmpty = computed(() => !props.rows.length)
+        const isDataEmpty = computed(() => !rows.value.length)
 
         const groupOptions = computed(() =>
             (
@@ -1130,7 +1187,7 @@ export default defineComponent({
         )
 
         const visibleColumnsState = ref(
-            (props.visibleColumns as DlTableColumn[])?.map((col) => col.name)
+            (visibleColumns.value as DlTableColumn[])?.map((col) => col.name)
         )
 
         const computedVisibleCols = computed(() =>
@@ -1140,9 +1197,9 @@ export default defineComponent({
         const { hasAnyAction } = useTableActions(props) // todo: does not work
 
         const getRowKey = computed(() =>
-            typeof props.rowKey === 'function'
-                ? props.rowKey
-                : (row: Record<string, any>) => row[props.rowKey as string]
+            typeof rowKey.value === 'function'
+                ? rowKey.value
+                : (row: Record<string, any>) => row[rowKey.value as string]
         )
 
         const isResizing = ref(false)
@@ -1176,7 +1233,7 @@ export default defineComponent({
         })
 
         const containerStyle = computed(() => {
-            if (props.virtualScroll) {
+            if (virtualScroll.value) {
                 return {
                     height: 'var(--dl-table-height, 500px)'
                 }
@@ -1186,13 +1243,13 @@ export default defineComponent({
         const nothingToDisplay = computed(() => computedRows.value.length === 0)
 
         const titleClasses = computed(
-            () => 'dl-table__title ' + (props.titleClass || '')
+            () => 'dl-table__title ' + (titleClass.value || '')
         )
 
         const bottomClasses = computed(() => {
             let classNames = 'dl-table__bottom row items-center'
 
-            if (nothingToDisplay.value && !props.hideNoData) {
+            if (nothingToDisplay.value && !hideNoData.value) {
                 // TODO add styles for this class
                 classNames = classNames + ' dl-table__bottom--nodata'
             }
@@ -1202,15 +1259,15 @@ export default defineComponent({
         //
 
         const noDataMessage = computed(() => {
-            if (props.loading) {
-                return props.loadingLabel
+            if (loading.value) {
+                return loadingLabel.value
             }
 
-            if (props.filter) {
-                return props.noResultsLabel
+            if (filter.value) {
+                return noResultsLabel.value
             }
 
-            return props.noDataLabel
+            return noDataLabel.value
         })
 
         const hasDraggableRows = computed(() =>
@@ -1236,11 +1293,11 @@ export default defineComponent({
             nextTick(() => {
                 setAllColumnWidths(
                     tableEl,
-                    props.columns as DlTableColumn[],
-                    props.fitAllColumns
+                    columns.value as DlTableColumn[],
+                    fitAllColumns.value
                 )
             })
-            if (props.resizable === true) {
+            if (resizable.value === true) {
                 applyResizableColumns(tableEl, vm)
             }
             if (hasDraggableColumns.value === true) {
@@ -1259,7 +1316,7 @@ export default defineComponent({
                     'table.dl-table'
                 ) as HTMLTableElement
 
-                if (props.resizable) {
+                if (resizable.value) {
                     applyResizableColumns(tableEl, vm)
                 }
 
@@ -1276,15 +1333,12 @@ export default defineComponent({
             }
         )
 
-        watch(
-            () => props.resizable,
-            () => {
-                applyResizableColumns(tableEl, vm)
-            }
-        )
+        watch(resizable, () => {
+            applyResizableColumns(tableEl, vm)
+        })
 
         watch(
-            () => props.columns,
+            columns,
             (newColumns) => {
                 setAllColumnWidths(
                     rootRef.value,
@@ -1298,14 +1352,15 @@ export default defineComponent({
         )
 
         watch(
-            () => (props as any).visibleColummns,
-            (value) => {
+            visibleColumns,
+            (value: string[]) => {
                 visibleColumnsState.value = value
-            }
+            },
+            { immediate: true, deep: true }
         )
 
         watch(
-            () => props.draggable,
+            draggable,
             () => {
                 if (tableEl) {
                     if (hasDraggableColumns.value === true) {
@@ -1367,10 +1422,10 @@ export default defineComponent({
 
             const { sortBy, descending } = computedPagination.value
 
-            if (props.filter) {
+            if (filter.value) {
                 filtered = computedFilterMethod.value(
                     rows.value,
-                    props.filter,
+                    filter.value,
                     computedCols.value,
                     getCellValue
                 )
@@ -1431,7 +1486,7 @@ export default defineComponent({
         })
 
         const displayPagination = computed(
-            () => !(props.hidePagination || nothingToDisplay.value)
+            () => !(hidePagination.value || nothingToDisplay.value)
         )
 
         const {
@@ -1499,7 +1554,7 @@ export default defineComponent({
 
         const hasBotomSelectionBanner = computed(() => {
             return (
-                props.hideSelectedBanner !== true &&
+                hideSelectedBanner.value !== true &&
                 hasSelectionMode.value === true &&
                 rowsSelectedNumber.value > 0
             )
@@ -1528,8 +1583,8 @@ export default defineComponent({
                 cols: computedCols.value,
                 sort,
                 colsMap: computedColsMap.value,
-                color: props.color,
-                dense: props.dense
+                color: color.value,
+                dense: dense.value
             })
 
             if (multipleSelection.value === true) {
@@ -1590,7 +1645,7 @@ export default defineComponent({
                 )
                 const offsetTop =
                     rowEl.offsetTop -
-                    (props.virtualScrollStickySizeStart as number)
+                    (virtualScrollStickySizeStart.value as number)
                 const direction =
                     offsetTop < scrollTarget.scrollTop ? 'decrease' : 'increase'
 
@@ -1642,12 +1697,13 @@ export default defineComponent({
         function injectBodyCommonScope(data: Record<string, any>) {
             Object.assign(data, {
                 cols: computedCols.value,
+                visibleColumnsState: visibleColumnsState.value,
                 colsMap: computedColsMap.value,
                 sort,
                 rowIndex: firstRowIndex.value + data.pageIndex,
-                color: props.color,
-                dense: props.dense,
-                noHover: props.noHover
+                color: color.value,
+                dense: dense.value,
+                noHover: noHover.value
             })
 
             if (hasSelectionMode.value === true) {
@@ -1716,18 +1772,18 @@ export default defineComponent({
 
         const handleSortableEvent = (event: SortableEvent) => {
             const { oldIndex, newIndex } = event
-            const newRows = insertAtIndex(props.rows, oldIndex, newIndex)
+            const newRows = insertAtIndex(rows.value, oldIndex, newIndex)
             tbodyKey.value = v4()
             emit('row-reorder', newRows)
         }
 
         const reorderColumns = (sourceIndex: number, targetIndex: number) => {
             const newColumns = insertAtIndex(
-                props.columns,
+                columns.value,
                 sourceIndex,
                 targetIndex
             )
-            if (isEqual(newColumns, props.columns)) return
+            if (isEqual(newColumns, columns.value)) return
             tableKey.value = v4()
             emit('col-update', newColumns)
         }
@@ -1771,7 +1827,7 @@ export default defineComponent({
 
         const showRowActions = computed<boolean>(
             () =>
-                !!(props.visibleColumns && props.visibleColumns.length) ||
+                !!(visibleColumns.value && visibleColumns.value.length) ||
                 !!hasSlotByName(`body-cell-row-actions`)
         )
 

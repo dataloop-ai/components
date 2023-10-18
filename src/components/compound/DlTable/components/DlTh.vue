@@ -25,7 +25,13 @@
 
 <script lang="ts">
 import { isString } from 'lodash'
-import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
+import {
+    defineComponent,
+    getCurrentInstance,
+    computed,
+    ref,
+    toRefs
+} from 'vue-demi'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
 import { stringStyleToRecord } from '../../../../utils'
 import { DlIcon } from '../../../essential'
@@ -73,7 +79,11 @@ export default defineComponent({
             return col
         })
 
-        if (!column.value) {
+        const colIndex = computed(() => {
+            return props.props?.colIndex ?? props.colIndex
+        })
+
+        if (!column.value || colIndex.value === -1) {
             return {
                 headerStyle: '',
                 thClasses: '',

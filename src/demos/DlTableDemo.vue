@@ -380,7 +380,11 @@
                     :columns="tableColumns"
                     title="Editable Columns"
                     :visible-columns="tableColumns.slice(0, -1)"
-                />
+                >
+                    <template #body-cell-row-actions>
+                        <dl-button label="ActionButton" />
+                    </template>
+                </DlTable>
             </div>
             <div>
                 <p>Virtual With editable columns</p>

@@ -83,17 +83,18 @@ export default defineComponent({
             return colmap ?? props.props?.col
         })
 
-        if (!hasOptionalProps.value) {
+        const colIndex = computed(() => {
+            return props.props?.colIndex ?? props.colIndex
+        })
+
+        if (!hasOptionalProps.value || !column.value || colIndex.value === -1) {
+            // return empty if !column if you dont want line.
             return {
                 classes: tdClasses,
                 styles: tdStyles,
                 tableTd,
                 hasEllipsis
             }
-        }
-
-        if (!column.value) {
-            return
         }
 
         const { row } = props.props
