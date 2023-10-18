@@ -1,5 +1,9 @@
 <template>
-    <div ref="grid" :style="gridStyles" :class="gridClass">
+    <div
+        ref="grid"
+        :style="gridStyles"
+        :class="gridClass"
+    >
         <slot />
     </div>
 </template>
