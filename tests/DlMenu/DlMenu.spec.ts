@@ -58,7 +58,9 @@ describe('DlMenu', () => {
             arrowNavItems: [],
             zIndex: 'var(--dl-z-index-menu)',
             triggerPercentage: 1,
-            toggleKey: 'Enter'
+            toggleKey: 'Enter',
+            width: 'auto',
+            height: 'auto'
         })
         expect(wrapper.vm.showing).toBe(false)
     })

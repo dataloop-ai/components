@@ -111,8 +111,6 @@ export default defineComponent({
         title: { type: String, default: '' },
         subtitle: { type: String, default: '' },
         withCloseButton: Boolean,
-        height: { type: String, default: 'auto' },
-        width: { type: String, default: 'auto' },
         draggable: Boolean,
         isEmpty: Boolean,
         emptyStateProps: {
@@ -151,8 +149,9 @@ export default defineComponent({
             type: String as PropType<Element | string>,
             default: null
         },
-
         touchPosition: Boolean,
+        height: { type: String, default: 'auto' },
+        width: { type: String, default: 'auto' },
         maxHeight: { type: String, default: 'auto' },
         maxWidth: { type: String, default: 'auto' },
         menuClass: {
@@ -230,8 +229,6 @@ export default defineComponent({
             title,
             subtitle,
             withCloseButton,
-            height,
-            width,
             isEmpty,
             emptyStateProps,
             modelValue,

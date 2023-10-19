@@ -133,7 +133,14 @@ export default defineComponent({
         },
 
         touchPosition: Boolean,
-
+        width: {
+            type: String,
+            default: 'auto'
+        },
+        height: {
+            type: String,
+            default: 'auto'
+        },
         maxHeight: {
             type: String,
             default: null
@@ -480,7 +487,9 @@ export default defineComponent({
                 attrs.style,
                 transitionStyle.value,
                 {
-                    '--menu-z-index': props.zIndex ?? 'var(--dl-z-index-menu)'
+                    '--menu-z-index': props.zIndex ?? 'var(--dl-z-index-menu)',
+                    '--menu-height': props.height,
+                    '--menu-width': props.width
                 }
             ] as any,
             selectedItem,
@@ -495,6 +504,8 @@ export default defineComponent({
     position: fixed !important;
     display: inline-block;
     max-width: 95vw;
+    height: var(--menu-height);
+    width: var(--menu-width);
     border: 1px solid var(--dl-color-separator);
 
     box-shadow: var(--dl-menu-shadow);

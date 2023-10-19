@@ -224,6 +224,39 @@
                 </template>
             </dl-popup>
         </dl-button>
+        <dl-button label="Open Popup with  height and width">
+            <dl-popup
+                title="Edit Item Description"
+                additional-info="Some additional information"
+                subtitle="Some text for better explanation."
+                with-close-button
+                :style="{ '--dl-popup-padding': '0px' }"
+                height="50px"
+                width="500px"
+            >
+                <dl-text-area
+                    v-model="text"
+                    :max-length="100"
+                    show-counter
+                    placeholder="Type your text"
+                    width="203px"
+                />
+                <template #close-button>
+                    <dl-button
+                        flat
+                        style="padding-bottom: 0; padding-top: 0"
+                        label="clear"
+                        size="m"
+                        @click="handleClear"
+                    />
+                </template>
+                <template #footer>
+                    <dl-button fluid>
+                        Save
+                    </dl-button>
+                </template>
+            </dl-popup>
+        </dl-button>
     </div>
 </template>
 <script lang="ts">
