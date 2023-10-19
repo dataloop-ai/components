@@ -148,8 +148,8 @@ export default defineComponent({
         },
         ...CommonProps,
         ...ColumnChartProps
-    },
-    setup(props: any) {
+    } as { [key: string]: any },
+    setup(props) {
         const { variables } = useThemeVariables()
         const {
             data,
