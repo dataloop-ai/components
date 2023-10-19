@@ -2,95 +2,94 @@
     <div style="width: 900px; align-items: inherit">
         <div>
             <div class="settings">
-                <button @click="addRowPerPage">
-                    Add Row Per Page
-                </button>
-                <dl-switch
-                    left-label="bordered"
-                    value="bordered"
-                    :model-value="borderState"
-                    @update:model-value="updateBorderedState"
-                />
-                <dl-switch
-                    left-label="dense"
-                    value="dense"
-                    :model-value="denseState"
-                    @update:model-value="updateDenseState"
-                />
-                <dl-switch
-                    left-label="virtual scroll"
-                    value="vScroll"
-                    :model-value="virtualScroll"
-                    @update:model-value="updateVirtualScrollState"
-                />
-                <dl-switch
-                    left-label="resizable"
-                    value="resizable"
-                    :model-value="resizableState"
-                    @update:model-value="updateResizableState"
-                />
-                <dl-input
-                    v-model="filter"
-                    title="Filter"
-                    style="width: 220px"
-                    placeholder="Filter option"
-                    size="m"
-                    type="text"
-                />
-                <div>
-                    <p>Separator</p>
-                    <DlOptionGroup
-                        v-model="separator"
-                        inline
-                        :options="[
-                            {
-                                label: 'Horizontal (default)',
-                                value: 'horizontal'
-                            },
-                            { label: 'Vertical', value: 'vertical' },
-                            { label: 'Cell', value: 'cell' },
-                            { label: 'None', value: 'none' }
-                        ]"
-                    />
+                <div class="left-panel">
+                    <div class="option-group">
+                        <p>Separator:</p>
+                        <DlOptionGroup
+                            v-model="separator"
+                            inline
+                            :options="[
+                                { label: 'Horizontal', value: 'horizontal' },
+                                { label: 'Vertical', value: 'vertical' },
+                                { label: 'Cell', value: 'cell' },
+                                { label: 'None', value: 'none' }
+                            ]"
+                        />
+                    </div>
+
+                    <div class="option-group">
+                        <p>Draggable:</p>
+                        <DlOptionGroup
+                            v-model="draggable"
+                            inline
+                            :options="[
+                                { label: 'Rows', value: 'rows' },
+                                { label: 'Columns', value: 'columns' },
+                                { label: 'Both', value: 'both' },
+                                { label: 'None', value: 'none' }
+                            ]"
+                        />
+                    </div>
+
+                    <div class="option-group">
+                        <p>Selection:</p>
+                        <DlOptionGroup
+                            v-model="selection"
+                            inline
+                            :options="[
+                                { label: 'None', value: 'none' },
+                                { label: 'Single', value: 'single' },
+                                { label: 'Multiple', value: 'multiple' }
+                            ]"
+                        />
+                    </div>
+
+                    <div class="filter-container">
+                        <label for="filter">Filter:</label>
+                        <dl-input
+                            id="filter"
+                            v-model="filter"
+                            placeholder="Filter"
+                            size="s"
+                            type="text"
+                        />
+                    </div>
                 </div>
 
-                <div>
-                    <p>Draggable</p>
-                    <DlOptionGroup
-                        v-model="draggable"
-                        inline
-                        :options="[
-                            { label: 'rows', value: 'rows' },
-                            { label: 'columns', value: 'columns' },
-                            { label: 'both', value: 'both' },
-                            { label: 'none', value: 'none' }
-                        ]"
-                    />
-                </div>
+                <div class="right-panel">
+                    <button
+                        class="btn"
+                        @click="addRowPerPage"
+                    >
+                        Add Rows/Page
+                    </button>
 
-                <div>
-                    <p>Selection</p>
-                    <DlOptionGroup
-                        v-model="selection"
-                        inline
-                        :options="[
-                            { label: 'none', value: 'none' },
-                            { label: 'single', value: 'single' },
-                            { label: 'multiple', value: 'multiple' }
-                        ]"
-                    />
-                </div>
-
-                <div>
-                    <p>Loading</p>
-                    <DlOptionGroup
-                        v-model="loading"
-                        inline
-                        :options="[
-                            { label: 'True', value: true },
-                            { label: 'False', value: false }
-                        ]"
-                    />
+                    <div class="option-group">
+                        <dl-switch
+                            left-label="Bordered"
+                            value="bordered"
+                            :model-value="borderState"
+                            @update:model-value="updateBorderedState"
+                        />
+                        <dl-switch
+                            left-label="Dense"
+                            value="dense"
+                            :model-value="denseState"
+                            @update:model-value="updateDenseState"
+                        />
+                        <dl-switch
+                            left-label="Virtual Scroll"
+                            value="vScroll"
+                            :model-value="virtualScroll"
+                            @update:model-value="updateVirtualScrollState"
+                        />
+                        <dl-switch
+                            left-label="Resizable"
+                            value="resizable"
+                            :model-value="resizableState"
+                            @update:model-value="updateResizableState"
+                        />
+                    </div>
                 </div>
             </div>
             <DlTable
@@ -115,37 +114,12 @@
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
+                @col-update="updateColumns"
+                @row-reorder="reorderRows"
             />
 
             <div style="margin-top: 100px">
-                <DlTable
-                    :selected="selected"
-                    :separator="separator"
-                    :columns="tableColumns"
-                    :bordered="bordered"
-                    :dense="dense"
-                    class="sticky-header"
-                    :filter="filter"
-                    :selection="selection"
-                    :loading="loading"
-                    :rows="tableRows"
-                    :resizable="resizable"
-                    row-key="name"
-                    color="dl-color-secondary"
-                    title="Table Title"
-                    :virtual-scroll="vScroll"
-                    style="height: 500px"
-                    :rows-per-page-options="rowsPerPageOptions"
-                    hide-pagination
-                    is-empty
-                    @row-click="log"
-                    @th-click="log"
-                    @update:selected="updateSeleted"
-                />
-            </div>
-
-            <div style="margin-top: 100px">
-                Custom Slot `row-body`
+                Custom Slot row-body
                 <DlTable
                     :selected="selected"
                     :separator="separator"
@@ -169,14 +143,9 @@
                     @update:selected="updateSeleted"
                 >
                     <template #row-body="props">
-                        <dl-tr :props="props">
-                            <dl-td
-                                v-for="(value, key) in Object.keys(props.row)"
-                                :key="key"
-                            >
-                                {{ props.row[value] }}
-                            </dl-td>
-                        </dl-tr>
+                        <div style="width: 300px">
+                            Custom row: {{ props.row.name }}
+                        </div>
                     </template>
                 </DlTable>
             </div>
@@ -287,6 +256,7 @@
                         :separator="separator"
                         :draggable="draggable"
                         :filter="filter"
+                        :resizable="resizable"
                         :selection="selection"
                         :dense="dense"
                         title="Treats"
@@ -331,14 +301,10 @@
                     @update:selected="updateSeleted"
                 >
                     <template #pagination>
-                        <div style="background-color: #4db1d3">
-                            &lt slot#pagination >
-                        </div>
+                        <div>&lt slot#pagination ></div>
                     </template>
                     <template #no-data>
-                        <div style="background-color: #734145">
-                            &lt slot#no-data > should not be visible
-                        </div>
+                        <div>&lt slot#no-data > should not be visible</div>
                     </template>
                 </DlTable>
                 <h4>case 2: table with no data</h4>
@@ -366,14 +332,10 @@
                     @update:selected="updateSeleted"
                 >
                     <template #pagination>
-                        <div style="background-color: #734145">
-                            &lt slot#pagination > should not be visible
-                        </div>
+                        <div>&lt slot#pagination > should not be visible</div>
                     </template>
                     <template #no-data>
-                        <div style="background-color: #2f3c4b">
-                            &lt slot#no-data >
-                        </div>
+                        <div>&lt slot#no-data ></div>
                     </template>
                 </DlTable>
             </div>
@@ -406,20 +368,43 @@
                     <template #body-cell-name="{ row }">
                         {{ row.name }}
                     </template>
+                    <template #body-cell-row-actions>
+                        <dl-button label="ActionButton" />
+                    </template>
                 </DlTable>
             </div>
             <div>
-                <p>With visible columns</p>
+                <p>With editable columns</p>
                 <DlTable
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    has-visible-columns
+                    :visible-columns="tableColumns.slice(0, -1)"
                 >
-                    <template #body-cell-row-actions="">
-                        <dl-button label="test button" />
+                    <template #body-cell-row-actions>
+                        <dl-button label="ActionButton" />
                     </template>
                 </DlTable>
+            </div>
+            <div>
+                <p>Virtual With editable columns</p>
+                <DlTable
+                    :rows="tableRows"
+                    :columns="tableColumns"
+                    :visible-columns="tableColumns.slice(0, -1)"
+                    virtual-scroll
+                />
+            </div>
+            <div>
+                <p>With nested field value</p>
+                <div style="font-size: 12px">
+                    Row array looks like this: {{ rows2 }}
+                </div>
+                <DlTable
+                    :rows="rows2"
+                    :columns="columns2"
+                    title="Nested Field"
+                />
             </div>
         </div>
         <div>
@@ -440,9 +425,7 @@ import {
     DlOptionGroup,
     DlSwitch,
     DlInput,
-    DlButton,
-    DlTr,
-    DlTd
+    DlButton
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
@@ -457,6 +440,7 @@ const columns = [
         field: 'name',
         sortable: true,
         textTransform: 'uppercase',
+        width: 100,
         hint: 'test hint'
     },
     {
@@ -465,18 +449,45 @@ const columns = [
         label: 'Calories',
         field: 'calories',
         sortable: true,
-        textTransform: 'lowercase'
+        width: 100
     },
-    { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-    { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-    { name: 'protein', label: 'Protein (g)', field: 'protein' },
-    { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
+    {
+        name: 'fat',
+        label: 'Fat (g)',
+        field: 'fat',
+        sortable: true,
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'carbs',
+        label: 'Carbs (g)',
+        field: 'carbs',
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'protein',
+        label: 'Protein (g)',
+        field: 'protein',
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'sodium',
+        label: 'Sodium (mg)',
+        field: 'sodium',
+        align: 'center',
+        width: 100
+    },
     {
         name: 'calcium',
         label: 'Calcium (%)',
         field: 'calcium',
         sortable: true,
         textTransform: 'lowercase',
+        align: 'center',
+        width: 100,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
     },
@@ -486,8 +497,38 @@ const columns = [
         field: 'iron',
         sortable: true,
         textTransform: 'lowercase',
+        align: 'center',
+        width: 100,
         sort: (a: string | number, b: string | number) =>
             parseInt(a as string, 10) - parseInt(b as string, 10)
+    }
+]
+
+const rows2 = [
+    {
+        name: {
+            title: 'Row 1',
+            subtitle: 'This row...'
+        }
+    },
+    {
+        name: {
+            title: 'Row 2',
+            subtitle: 'This other row...'
+        }
+    }
+]
+const columns2 = [
+    {
+        name: 'name',
+        required: true,
+        label: 'Nested value',
+        align: 'left',
+        field: 'name.subtitle',
+        sortable: true,
+        textTransform: 'uppercase',
+        width: 100,
+        hint: 'test hint'
     }
 ]
 
@@ -616,9 +657,7 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlButton,
-        DlTr,
-        DlTd
+        DlButton
     },
     setup() {
         const filter = ref('')
@@ -749,7 +788,18 @@ export default defineComponent({
             setPagination({ page: pagesNumber.value })
         }
 
+        const reorderRows = (newRows: any) => {
+            tableRows.value = newRows
+        }
+
+        const updateColumns = (newColumns: any) => {
+            console.log(newColumns)
+            tableColumns.value = newColumns
+        }
+
         return {
+            reorderRows,
+            updateColumns,
             filter,
             selected,
             selection,
@@ -777,7 +827,9 @@ export default defineComponent({
             nextPage,
             prevPage,
             isLastPage,
-            isFirstPage
+            isFirstPage,
+            rows2,
+            columns2
         }
     },
 
@@ -811,7 +863,7 @@ export default defineComponent({
             this.resizable = val.length !== 0
         },
         log(...args: any[]) {
-            console.log(...args)
+            // console.log(...args)
         },
         filterMethod(
             rows: Record<string, any>[],
@@ -839,14 +891,65 @@ export default defineComponent({
 <style scoped lang="scss">
 .settings {
     display: flex;
-    width: 100%;
-    max-width: 600px;
+    align-items: flex-start;
     gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    & > * {
-        flex-grow: 1;
-    }
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+p {
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0;
+}
+
+.dl-switch {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 12px;
 }
 
 .sticky-header {

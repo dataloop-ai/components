@@ -9,9 +9,9 @@ const state: { prevToastId: any; toasts: { [key: string]: any } } = {
     toasts: {}
 }
 
-export const useToast = (globalProps = {}) => {
+export const useToast = (globalProps: { [key: string]: any } = {}) => {
     return {
-        open(options: DlToastProps | string) {
+        open(options: DlToastProps | string, slots: { message?: any } = {}) {
             let message = null
             if (typeof options === 'string') message = options
 
@@ -26,8 +26,13 @@ export const useToast = (globalProps = {}) => {
                 globalProps,
                 options,
                 {
-                    remove: () => {
+                    removed: () => {
                         delete state.toasts[defaultProps.identifier]
+                    },
+                    on: {
+                        removed: () => {
+                            delete state.toasts[defaultProps.identifier]
+                        }
                     }
                 }
             )
@@ -54,7 +59,8 @@ export const useToast = (globalProps = {}) => {
             state.toasts[defaultProps.identifier] = createComponent(
                 toastComponent,
                 propsData,
-                document.body
+                document.body,
+                slots
             )
         },
         success(options: DlToastProps | string) {

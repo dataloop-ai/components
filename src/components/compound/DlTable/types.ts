@@ -1,5 +1,10 @@
 import { DlTextTransformOptions } from '../../shared/types'
 
+export interface SortingMovement {
+    lastId: string
+    direction: 'up' | 'down'
+}
+
 export type DlTableProps = {
     columns: DlTableColumn[]
     rows: DlTableRow[]
@@ -22,7 +27,7 @@ export type DlTableFilter = string | Record<string, any>
 export type DlTableColumn = {
     name: string
     label: string
-    field: string | ((row: DlTableRow) => string)
+    field?: string | ((row: DlTableRow) => string)
     required?: boolean
     align?: 'right' | 'left' | 'center'
     sortable?: boolean
@@ -34,6 +39,7 @@ export type DlTableColumn = {
     headerStyle?: string
     headerClasses?: string
     textTransform?: DlTextTransformOptions
+    width?: number
     hint?: string
 }
 

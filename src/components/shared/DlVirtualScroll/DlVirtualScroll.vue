@@ -255,7 +255,8 @@ export default defineComponent({
             )
 
             if (isDefined(slots.before)) {
-                child = slots.before().concat(child)
+                const before = slots.before()
+                child = before ? before.concat(child) : child
             }
 
             return mergeSlot(slots.after, child)

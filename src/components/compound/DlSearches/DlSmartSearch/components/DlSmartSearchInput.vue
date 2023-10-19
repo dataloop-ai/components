@@ -105,6 +105,7 @@ import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
+import { setCaretAtTheEnd } from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
@@ -113,7 +114,6 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
-    setCaret,
     updateEditor,
     isEligibleToChange,
     createColorSchema,
@@ -355,15 +355,14 @@ export default defineComponent({
             setInputValue(
                 clearPartlyTypedSuggestion(input.value.innerText, stringValue)
             )
-            setCaret(input.value)
+            setCaretAtTheEnd(input.value)
         }
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
 
-        let lastSearchQuery: string;
+        let lastSearchQuery: string
 
         const updateJSONQuery = () => {
-
             if (lastSearchQuery === searchQuery.value) {
                 return null
             } else {
@@ -599,7 +598,7 @@ export default defineComponent({
                 showDatePicker.value = false
                 showSuggestions.value = true
                 datePickerSelection.value = null
-                setCaret(input.value)
+                setCaretAtTheEnd(input.value)
                 return
             }
 

@@ -1,17 +1,14 @@
 <template>
     <td
+        ref="tableTd"
         :class="classes"
         :style="styles"
+        :data-col-index="colIndex"
     >
-        <div
-            ref="tableTd"
-            class="dl-table-cell-inner-div"
-        >
-            <dl-tooltip v-if="hasEllipsis">
-                <slot />
-            </dl-tooltip>
+        <dl-tooltip v-if="!noTooltip && hasEllipsis">
             <slot />
-        </div>
+        </dl-tooltip>
+        <slot />
     </td>
 </template>
 
@@ -33,7 +30,12 @@ export default defineComponent({
         bgColor: {
             type: String,
             default: ''
-        }
+        },
+        colIndex: {
+            type: Number,
+            default: null
+        },
+        noTooltip: Boolean
     },
     setup(props) {
         const vm = getCurrentInstance()
@@ -81,17 +83,18 @@ export default defineComponent({
             return colmap ?? props.props?.col
         })
 
-        if (!hasOptionalProps.value) {
+        const colIndex = computed(() => {
+            return props.props?.colIndex ?? props.colIndex
+        })
+
+        if (!hasOptionalProps.value || !column.value || colIndex.value === -1) {
+            // return empty if !column if you dont want line.
             return {
                 classes: tdClasses,
                 styles: tdStyles,
                 tableTd,
                 hasEllipsis
             }
-        }
-
-        if (!column.value) {
-            return
         }
 
         const { row } = props.props

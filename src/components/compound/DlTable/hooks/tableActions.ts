@@ -5,7 +5,7 @@ export const useTableActionsV2Props = {
         type: Function,
         default: null as Function | null
     },
-    rowDblclick: {
+    rowDoubleClick: {
         type: Function,
         default: null as Function | null
     },
@@ -20,7 +20,7 @@ export const useTableActionsV3Props = {
         type: Function,
         default: null as Function | null
     },
-    onRowDblclick: {
+    onRowDoubleClick: {
         type: Function,
         default: null as Function | null
     },
@@ -40,7 +40,7 @@ export function useTableActions(props: any) {
     )
 
     const hasDblClickEvent = computed(() =>
-        Boolean(props.onRowDblclick || props.rowDblclick)
+        Boolean(props.onRowDoubleClick || props.rowDoubleClick)
     )
 
     const hasContextMenuEvent = computed(() =>

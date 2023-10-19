@@ -66,7 +66,8 @@
 import { v4 } from 'uuid'
 import { computed, defineComponent, ref, toRef, PropType } from 'vue-demi'
 import { DlIcon } from '../../essential'
-import { getElementAbove, addMouseEnter, removeMouseEnter } from '../utils'
+import { addMouseEnter, removeMouseEnter } from '../utils'
+import { getElementAbove } from '../../../utils'
 import { DlEmptyStateProps } from '../DlEmptyState/types'
 import DlEmptyState from '../DlEmptyState/DlEmptyState.vue'
 

@@ -1,34 +1,37 @@
 <template>
     <th
+        ref="tableTh"
         :style="headerStyle"
         :class="thClasses"
+        :data-col-index="colIndex"
         @click="onClick"
     >
-        <div
-            ref="tableTh"
-            class="dl-table-cell-inner-div"
-        >
-            <dl-icon
-                v-if="isSortable && align === 'right'"
-                :class="iconClass"
-                icon="icon-dl-arrow-up"
-            />
-            <dl-tooltip v-if="hasEllipsis">
-                <slot />
-            </dl-tooltip>
+        <dl-icon
+            v-if="isSortable && align === 'right'"
+            :class="iconClass"
+            icon="icon-dl-arrow-up"
+        />
+        <dl-tooltip v-if="hasEllipsis">
             <slot />
-            <dl-icon
-                v-if="isSortable && ['left', 'center'].includes(align)"
-                :class="iconClass"
-                icon="icon-dl-arrow-up"
-            />
-        </div>
+        </dl-tooltip>
+        <slot />
+        <dl-icon
+            v-if="isSortable && ['left', 'center'].includes(align)"
+            :class="iconClass"
+            icon="icon-dl-arrow-up"
+        />
     </th>
 </template>
 
 <script lang="ts">
 import { isString } from 'lodash'
-import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
+import {
+    defineComponent,
+    getCurrentInstance,
+    computed,
+    ref,
+    toRefs
+} from 'vue-demi'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
 import { stringStyleToRecord } from '../../../../utils'
 import { DlIcon } from '../../../essential'
@@ -42,7 +45,11 @@ export default defineComponent({
     },
     props: {
         props: { type: Object, default: null },
-        autoWidth: Boolean
+        autoWidth: Boolean,
+        colIndex: {
+            type: Number,
+            default: null
+        }
     },
     emits: ['click'],
 
@@ -72,7 +79,11 @@ export default defineComponent({
             return col
         })
 
-        if (!column.value) {
+        const colIndex = computed(() => {
+            return props.props?.colIndex ?? props.colIndex
+        })
+
+        if (!column.value || colIndex.value === -1) {
             return {
                 headerStyle: '',
                 thClasses: '',
@@ -83,10 +94,10 @@ export default defineComponent({
         }
 
         const thClasses = computed(() => {
-            let className = ''
+            let className = 'dl-th'
 
             if (props.autoWidth) {
-                className = 'dl-table--col-auto-width'
+                className = className.concat(' dl-table--col-auto-width')
             }
 
             if (column.value.thClass) {
