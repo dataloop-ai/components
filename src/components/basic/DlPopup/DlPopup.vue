@@ -169,10 +169,11 @@ export default defineComponent({
         },
         /**
          * the % of the parent element that triggers the tooltips visibility
+         * @default 0 - no hide occurs when trigger % is 0
          */
         triggerPercentage: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
     emits: [...useModelToggleEmits, 'click', 'escapekey', 'close-button-click'],

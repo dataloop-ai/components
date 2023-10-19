@@ -421,12 +421,12 @@ export default defineComponent({
                 return
             }
 
-            const isAnchorElVisible = await CheckAnchorElVisibility(
-                anchorEl.value,
-                {
-                    triggerPercentage: props.triggerPercentage
-                }
-            )
+            const isAnchorElVisible =
+                props.triggerPercentage === 0
+                    ? true
+                    : await CheckAnchorElVisibility(anchorEl.value, {
+                          triggerPercentage: props.triggerPercentage
+                      })
 
             if (!isAnchorElVisible) {
                 hide()
