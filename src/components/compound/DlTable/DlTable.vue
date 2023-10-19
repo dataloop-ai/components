@@ -1224,9 +1224,7 @@ export default defineComponent({
             }))
         )
 
-        const visibleColumnsState = ref(
-            (visibleColumns.value as DlTableColumn[])?.map((col) => col.name)
-        )
+        const visibleColumnsState = ref(visibleColumns.value)
 
         const computedVisibleCols = computed(() =>
             computedCols.value.map((col) => col.name)
