@@ -360,10 +360,9 @@ export default defineComponent({
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
 
-        let lastSearchQuery: string;
+        let lastSearchQuery: string
 
         const updateJSONQuery = () => {
-
             if (lastSearchQuery === searchQuery.value) {
                 return null
             } else {

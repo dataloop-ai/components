@@ -83,7 +83,14 @@ import {
     ColumnChartProps,
     defaultLineChartProps
 } from '../../types/props'
-import { defineComponent, reactive, watch, ref, computed } from 'vue-demi'
+import {
+    defineComponent,
+    reactive,
+    watch,
+    ref,
+    computed,
+    toRefs
+} from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -141,9 +148,19 @@ export default defineComponent({
         },
         ...CommonProps,
         ...ColumnChartProps
-    },
-    setup(props, { slots }) {
+    } as { [key: string]: any },
+    setup(props) {
         const { variables } = useThemeVariables()
+        const {
+            data,
+            options,
+            rootClass,
+            chartClass,
+            brushClass,
+            legendClass,
+            brushProps,
+            legendProps
+        } = toRefs(props)
 
         const chartWidth = ref('100%')
 
@@ -176,8 +193,8 @@ export default defineComponent({
             value: {
                 min: 0,
                 max:
-                    props.data.datasets.length > 0
-                        ? orderBy(props.data.datasets, (o) => o.data.length)[0]
+                    data.value.datasets.length > 0
+                        ? orderBy(data.value.datasets, (o) => o.data.length)[0]
                               .data.length - 1
                         : 1
             }
@@ -191,7 +208,7 @@ export default defineComponent({
                 }
             }
             const datasets: DatasetController<'scatter'> = updateKeys(
-                props.data.datasets,
+                data.value.datasets,
                 [
                     'backgroundColor',
                     'pointBackgroundColor',
@@ -216,9 +233,9 @@ export default defineComponent({
             })
 
             const chartProps = cloneDeep({
-                options: props.options,
+                options: options.value,
                 data: {
-                    ...props.data,
+                    ...data.value,
                     datasets
                 }
             })
@@ -229,8 +246,8 @@ export default defineComponent({
         const chartWrapperClasses = computed(() => {
             const classes = 'dl-scatter-chart-wrapper'
 
-            if (props.rootClass) {
-                classes.concat(' ', props.rootClass)
+            if (rootClass.value) {
+                classes.concat(' ', rootClass.value)
             }
 
             return classes
@@ -239,8 +256,8 @@ export default defineComponent({
         const chartClasses = computed(() => {
             const classes = 'dl-scatter-chart'
 
-            if (props.chartClass) {
-                classes.concat(' ', props.chartClass)
+            if (chartClass.value) {
+                classes.concat(' ', chartClass.value)
             }
 
             return classes
@@ -249,8 +266,8 @@ export default defineComponent({
         const brushClasses = computed(() => {
             const classes = 'dl-brush'
 
-            if (props.brushClass) {
-                classes.concat(' ', props.brushClass)
+            if (brushClass.value) {
+                classes.concat(' ', brushClass.value)
             }
 
             return classes
@@ -259,19 +276,19 @@ export default defineComponent({
         const legendClasses = computed(() => {
             const classes = 'dl-legend'
 
-            if (props.legendClass) {
-                classes.concat(' ', props.legendClass)
+            if (legendClass.value) {
+                classes.concat(' ', legendClass.value)
             }
 
             return classes
         })
 
         const brushProperties = computed(() => {
-            return merge(defaultLineChartProps.brushProps, props.brushProps)
+            return merge(defaultLineChartProps.brushProps, brushProps.value)
         })
 
         const legendProperties = computed(() => {
-            return merge(defaultLineChartProps.legendProps, props.legendProps)
+            return merge(defaultLineChartProps.legendProps, legendProps.value)
         })
 
         const cssVars = computed(() => {
@@ -297,12 +314,12 @@ export default defineComponent({
                 replaceColor
             )
 
-        const chartData = ref(replaceDataColors(props.data))
+        const chartData = ref(replaceDataColors(data.value))
 
         const legendDatasets = ref(
             unionBy(
-                props.legendProps?.datasets || [],
-                props.data?.datasets || [],
+                legendProps.value?.datasets || [],
+                data.value?.datasets || [],
                 'label'
             )
         )
@@ -452,7 +469,7 @@ export default defineComponent({
                 merge(
                     { onResize, onHover },
                     defaultLineChartProps.options,
-                    props.options
+                    options.value
                 ),
                 ['color'],
                 replaceColor
@@ -460,7 +477,7 @@ export default defineComponent({
         )
 
         watch(
-            () => chart.value?.scales?.x?.width,
+            () => chart.value?.scales?.x?.width ?? null,
             (val: string) => {
                 if (val) {
                     chartWidth.value = `${
@@ -487,7 +504,7 @@ export default defineComponent({
             chart.value.update()
         }
 
-        const xLabels = ref(props.data.labels)
+        const xLabels = ref(data.value?.labels ?? [])
 
         const onHoverLegend = (
             item: BarControllerDatasetOptions,
@@ -545,18 +562,24 @@ export default defineComponent({
         }
 
         const labelStyles = computed(() => {
-            const options = merge(
+            const mergedOptions = merge(
                 {},
                 defaultLineChartProps.options,
-                props.options
+                options.value
             )
 
             return {
-                title: options.scales.x.title.text,
-                titleSize: `${options.scales.x.title.font.size}px`,
-                titleColor: options.scales.x.title.color.replace('--', ''),
-                labelColor: options.scales.x.ticks.color.replace('--', ''),
-                fontSize: `${options.scales.x.ticks.font.size}px`
+                title: mergedOptions.scales.x.title.text,
+                titleSize: `${mergedOptions.scales.x.title.font.size}px`,
+                titleColor: mergedOptions.scales.x.title.color.replace(
+                    '--',
+                    ''
+                ),
+                labelColor: mergedOptions.scales.x.ticks.color.replace(
+                    '--',
+                    ''
+                ),
+                fontSize: `${mergedOptions.scales.x.ticks.font.size}px`
             }
         })
 
@@ -568,7 +591,7 @@ export default defineComponent({
             legendDatasets.value.splice(index, 1, {
                 ...legendDatasets.value[index],
                 hidden: !!item.hidden
-            })
+            } as any)
 
             chart.value.update()
         }
@@ -582,7 +605,7 @@ export default defineComponent({
                     merge(
                         { onResize, onHover },
                         defaultLineChartProps.options,
-                        props.options
+                        options.value
                     ),
                     ['color'],
                     replaceColor
@@ -596,7 +619,7 @@ export default defineComponent({
         })
 
         watch(
-            [props.data, props.options],
+            [data, options],
             ([newData = {}, newOptions = {}]) => {
                 chartData.value = replaceDataColors(newData as ChartData)
 

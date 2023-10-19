@@ -1,11 +1,15 @@
-import { computed, ComputedRef, Ref } from 'vue-demi'
+import { computed, ComputedRef, PropType, Ref } from 'vue-demi'
 
 import { isNumber } from '../../../../utils/is'
 import { DlTableProps, DlTableColumn, DlTableRow } from '../types'
 import { TablePagination } from './tablePagination'
 
 export const useTableColumnSelectionProps = {
-    visibleColumns: { type: Array, required: false, default: null as any }
+    visibleColumns: {
+        type: Array as PropType<string[]>,
+        required: false,
+        default: null as any
+    }
 }
 
 export function useTableColumnSelection(
