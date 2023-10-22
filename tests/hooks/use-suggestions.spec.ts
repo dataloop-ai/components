@@ -1,3 +1,4 @@
+import { toRef } from 'vue'
 import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
@@ -49,7 +50,8 @@ const sortString = (a, b) =>
 describe('use-suggestions', () => {
     const { suggestions, error, findSuggestions } = useSuggestions(
         schema,
-        aliases
+        aliases,
+        { strict: toRef(false) }
     )
 
     it('suggestions should have the aliases when the input is empty', () => {
@@ -75,6 +77,11 @@ describe('use-suggestions', () => {
     it('suggestions should be empty when none of the fields were matched', () => {
         findSuggestions('evel ')
         expect(suggestions.value).toEqual([])
+    })
+
+    it('suggestions should have AND and OR when non-matched field is followed by the value and space', () => {
+        findSuggestions('evel = value ')
+        expect(suggestions.value).toEqual(['AND', 'OR'])
     })
 
     it('suggestions should be empty when the alias does not exist in the schema', () => {
