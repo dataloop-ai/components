@@ -321,7 +321,14 @@
 
 <script lang="ts">
 import { debounce, cloneDeep } from 'lodash'
-import { computed, defineComponent, PropType, ref, toRefs } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    onMounted,
+    PropType,
+    ref,
+    toRefs
+} from 'vue-demi'
 import { DlInfoErrorMessage, DlTooltip } from '../../shared'
 import { DlListItem } from '../../basic'
 import { DlMenu, DlIcon, DlList, DlEllipsis } from '../../essential'
@@ -710,6 +717,10 @@ export default defineComponent({
         const showPlaceholder = computed<boolean>(
             () => !modelValue.value || !String(modelValue.value)?.length
         )
+
+        onMounted(() => {
+            input.value.innerHTML = modelValue.value
+        })
 
         return {
             suggestItems,
