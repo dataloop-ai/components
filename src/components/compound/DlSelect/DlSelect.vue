@@ -284,10 +284,12 @@
                                 :opt="option"
                                 name="option"
                             >
-                                <span
-                                    class="inner-option"
-                                    v-html="getOptionHtml(option)"
-                                />
+                                <dl-ellipsis>
+                                    <span
+                                        class="inner-option"
+                                        v-html="getOptionHtml(option)"
+                                    />
+                                </dl-ellipsis>
                             </slot>
                         </dl-select-option>
                     </div>
@@ -328,6 +330,7 @@ import {
     DlItemSection,
     DlVirtualScroll
 } from '../../shared'
+import { DlEllipsis } from '../../essential'
 import { defineComponent, PropType, ref } from 'vue-demi'
 import {
     getLabel,
@@ -352,7 +355,8 @@ export default defineComponent({
         DlMenu,
         DlTooltip,
         DlSelectOption,
-        DlVirtualScroll
+        DlVirtualScroll,
+        DlEllipsis
     },
     model: {
         prop: 'modelValue',
