@@ -17,7 +17,7 @@
         <slot />
         <span class="th-icons">
             <dl-icon
-                v-if="props?.col?.hint"
+                v-if="hasHint"
                 icon="icon-dl-info"
                 size="10px"
                 style="max-width: 30%"
@@ -80,6 +80,10 @@ export default defineComponent({
             return !!Object.keys(props.props ?? {})
         })
 
+        const hasHint = computed(() => {
+            return !!props.props?.col?.hint
+        })
+
         const column = computed(() => {
             let col: any
             const name = vm.vnode.key as string
@@ -131,6 +135,7 @@ export default defineComponent({
         const onClick = !hasOptionalProps.value ? onClickFn : handleClick
 
         return {
+            hasHint,
             isSortable: !hasOptionalProps.value
                 ? false
                 : column?.value?.sortable ?? false,
