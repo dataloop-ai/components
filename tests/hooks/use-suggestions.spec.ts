@@ -72,7 +72,8 @@ describe('use-suggestions', () => {
                 'StartTime',
                 'Level',
                 'No-Schema',
-                'metadata'
+                'metadata',
+                'Arr'
             ].sort(sortString)
         )
     })
@@ -184,6 +185,7 @@ describe('use-suggestions', () => {
                 'Completed',
                 'metadata',
                 'Age',
+                'Arr',
                 'StartTime',
                 'No-Schema'
             ].sort(sortString)
