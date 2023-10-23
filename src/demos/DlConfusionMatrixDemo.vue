@@ -61,7 +61,13 @@ const getMatrix = (size: number) => {
 }
 
 const getLabels = (size: number) => {
-    const items = ['Van', 'Truck', 'Motorcycle', 'Car', 'Bus']
+    const items = [
+        'Van',
+        'Truck',
+        'MotorcycleLooooooooooooooooooooooooooong',
+        'Car',
+        'Bus'
+    ]
 
     // const items = [
     //     { title: 'Van', image: 'https://picsum.photos/200/200' },

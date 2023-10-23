@@ -1,8 +1,8 @@
 import { getRootStyles } from '../utils/getRootStyles'
-import { inject, watch, reactive } from 'vue-demi'
+import { inject, watch, reactive, Ref } from 'vue-demi'
 
 export const useThemeVariables = () => {
-    const isDark = inject('theme')
+    const isDark = inject('theme') as Ref
 
     const variables = reactive(getRootStyles())
 
@@ -14,6 +14,6 @@ export const useThemeVariables = () => {
         { deep: true }
     )
 
-    if (variables) return { variables }
+    if (variables) return { variables, isDark }
     return
 }
