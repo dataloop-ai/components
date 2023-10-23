@@ -11,7 +11,9 @@
             :header-title="headerTitle"
             :hide-close-button="hideCloseButton"
             @close="closeStepper"
-        />
+        >
+            <slot name="header-title" />
+        </dl-stepper-header>
         <div class="dl-stepper-content">
             <dl-stepper-sidebar
                 :steps="steps"
