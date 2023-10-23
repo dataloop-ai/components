@@ -74,9 +74,25 @@
             {{ date }}
         </div>
         <div class="dl-dtr--input">
+            <div style="width: 500px">
+                <dl-date-time-range
+                    v-model="date"
+                    :type="type"
+                    :available-range="range ? availableRange : null"
+                    :mode="mode"
+                    :show-time="showTime"
+                    :auto-close="autoClose"
+                    @set-type="handleSetType"
+                    @change="handleModelValueUpdate"
+                />
+            </div>
+        </div>
+        <div style="width: 500px">
+            With 100% width
             <dl-date-time-range
                 v-model="date"
                 :type="type"
+                width="100%"
                 :available-range="range ? availableRange : null"
                 :mode="mode"
                 :show-time="showTime"
