@@ -219,7 +219,9 @@ import {
     computed,
     defineComponent,
     getCurrentInstance,
+    inject,
     PropType,
+    Ref,
     ref
 } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
@@ -297,7 +299,7 @@ export default defineComponent({
     },
     setup(props) {
         const vm = getCurrentInstance()
-        const { variables } = useThemeVariables()
+        const { variables, isDark } = useThemeVariables()
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
             max: Math.min(props.matrix.length, props.cellDisplayLimit)
@@ -317,12 +319,21 @@ export default defineComponent({
         }
 
         const getCellTextColor = (value: number) => {
-            const isDark =
-                document.documentElement.getAttribute('data-theme') ===
-                'dark-mode'
-            if (isDark) return 'var(--dl-color-text-buttons)'
+            if (isDark.value) return 'var(--dl-color-text-buttons)'
             return `var(--dl-color-text${value < 0.5 ? '-darker' : ''}-buttons)`
         }
+
+        const gradationDarkColor = computed(() => {
+            return isDark.value
+                ? getCellBackground()
+                : 'var(--dl-color-secondary)'
+        })
+
+        const gradationLightColor = computed(() => {
+            return isDark.value
+                ? 'var(--dl-color-text-darker-buttons)'
+                : 'var(--dl-color-text-buttons)'
+        })
 
         const calculateXAxisElOffset = (index: number): number[] => {
             let el = vm.refs[`xAxis-${index}`] as HTMLElement
@@ -355,7 +366,9 @@ export default defineComponent({
             rotateXLabels,
             calculateXAxisElOffset,
             debouncedCalculateXAxisElOffset,
-            isDisposed
+            isDisposed,
+            gradationDarkColor,
+            gradationLightColor
         }
     },
     computed: {
@@ -389,7 +402,8 @@ export default defineComponent({
             return {
                 '--matrix-rows': this.matrix.length,
                 '--cell-dimensions': `${this.cellWidth}px`,
-                '--general-color': this.getCellBackground()
+                '--gradation-dark': this.gradationDarkColor,
+                '--gradation-light': this.gradationLightColor
             }
         },
         gradationValues(): number[] {
@@ -627,8 +641,8 @@ export default defineComponent({
     &__gradient {
         width: 40%;
         background-image: linear-gradient(
-            var(--general-color),
-            var(--dl-color-text-buttons)
+            var(--gradation-dark),
+            var(--gradation-light)
         );
     }
     &__gradation {
