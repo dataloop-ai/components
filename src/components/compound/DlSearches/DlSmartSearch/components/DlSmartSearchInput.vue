@@ -598,6 +598,7 @@ export default defineComponent({
                 showDatePicker.value = false
                 showSuggestions.value = true
                 datePickerSelection.value = null
+                setInputValue(searchQuery.value + ' ', { noEmit: true })
                 setCaretAtTheEnd(input.value)
                 return
             }

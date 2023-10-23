@@ -292,6 +292,25 @@ describe('DlSmartSearchInput', () => {
                     [{ 'metadata.nesting.age': 21 }]
                 ])
             })
+
+            it('should open date picker after typing a date patten, and append a space after selecting a date there', async () => {
+                wrapper.vm.focused = true
+                wrapper.vm.debouncedSetInputValue('StartTime = (dd/mm/yyyy)')
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+
+                expect(wrapper.vm.showDatePicker).toBeTruthy()
+
+                wrapper.vm.onDateSelection({ from: new Date(), to: new Date() })
+                wrapper.vm.onEscapeKey()
+                //@ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+
+                expect(wrapper.vm.showDatePicker).toBeFalsy()
+                expect(wrapper.vm.searchQuery.endsWith(' ')).toBeTruthy()
+            })
         })
 
         describe('when querying with a set scheme', () => {
