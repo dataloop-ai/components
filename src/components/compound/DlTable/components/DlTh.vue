@@ -15,11 +15,24 @@
             <slot />
         </dl-tooltip>
         <slot />
-        <dl-icon
-            v-if="isSortable && ['left', 'center'].includes(align)"
-            :class="iconClass"
-            icon="icon-dl-arrow-up"
-        />
+        <span class="th-icons">
+            <dl-icon
+                v-if="props?.col?.hint"
+                icon="icon-dl-info"
+                size="10px"
+                style="max-width: 30%"
+            >
+                <dl-tooltip>
+                    {{ props.col.hint }}
+                </dl-tooltip>
+            </dl-icon>
+            <dl-icon
+                v-if="isSortable && ['left', 'center'].includes(align)"
+                style="margin-top: 2px"
+                :class="iconClass"
+                icon="icon-dl-arrow-up"
+            />
+        </span>
     </th>
 </template>
 

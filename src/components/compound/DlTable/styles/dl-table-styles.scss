@@ -8,6 +8,21 @@
         border-right: 1px solid var(--dl-color-medium);
     }
 
+    .inner-th {
+        max-width: 70%;
+        display: inline-block;
+        overflow: hidden;
+        margin-right: 5px;
+        position: relative;
+    }
+    .th-icons {
+        display: flex;
+        align-items: center;
+        top: 10px;
+        right: 0;
+        position: absolute;
+    }
+
     width: 100%;
     max-width: 100%;
     border-collapse: separate;

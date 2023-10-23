@@ -133,25 +133,9 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                 >
-                                    <div
-                                        style="
-                                            width: 100%;
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 2px;
-                                        "
-                                    >
+                                    <span class="inner-th">
                                         {{ col.label }}
-                                        <dl-icon
-                                            v-if="col.hint"
-                                            icon="icon-dl-info"
-                                            size="10px"
-                                        >
-                                            <dl-tooltip>
-                                                {{ col.hint }}
-                                            </dl-tooltip>
-                                        </dl-icon>
-                                    </div>
+                                    </span>
                                 </DlTh>
                             </slot>
 
@@ -487,25 +471,9 @@
                                     :col-index="colIndex"
                                     @click="onThClick($event, col.name)"
                                 >
-                                    <div
-                                        style="
-                                            width: 100%;
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 2px;
-                                        "
-                                    >
+                                    <span class="inner-th">
                                         {{ col.label }}
-                                        <dl-icon
-                                            v-if="col.hint"
-                                            icon="icon-dl-info"
-                                            size="10px"
-                                        >
-                                            <dl-tooltip>
-                                                {{ col.hint }}
-                                            </dl-tooltip>
-                                        </dl-icon>
-                                    </div>
+                                    </span>
                                 </DlTh>
                             </slot>
                             <DlTh
