@@ -54,7 +54,10 @@
                             class="legend-avatar"
                             :src="labelImages[index]"
                         >
-                        <span v-else>
+                        <span
+                            v-else
+                            class="label"
+                        >
                             {{ label }}
                         </span>
                         <dl-tooltip :offset="[0, 0]">
@@ -121,10 +124,7 @@
                         </div>
                     </div>
                 </div>
-                <div
-                    class="x-axis"
-                    style="margin-top: 10px"
-                >
+                <div class="x-axis">
                     <div
                         v-for="(label, index) in visibleLabels"
                         :key="index"
@@ -133,6 +133,7 @@
                             flex-grow: 100;
                             width: 100%;
                             justify-content: center;
+                            overflow: hidden;
                         "
                     >
                         <span
@@ -156,16 +157,20 @@
                                     class="legend-avatar"
                                     :src="labelImages[index]"
                                 >
-                                <span v-else>
+                                <span
+                                    v-else
+                                    class="label"
+                                >
                                     {{ label }}
                                 </span>
                             </span>
-                            <dl-tooltip
-                                self="top middle"
-                                :offset="debouncedCalculateXAxisElOffset(index)"
-                            >
-                                {{ labelStrings[index] }}</dl-tooltip>
                         </span>
+                        <dl-tooltip
+                            self="top middle"
+                            :offset="debouncedCalculateXAxisElOffset(index)"
+                        >
+                            {{ labelStrings[index] }}
+                        </dl-tooltip>
                     </div>
                 </div>
                 <dl-brush
@@ -330,7 +335,7 @@ export default defineComponent({
             }
             const height = el.clientHeight
             const offsetHeight = -1 * (height / 2)
-            return [0, offsetHeight]
+            return [0, offsetHeight + 30]
         }
 
         const debouncedCalculateXAxisElOffset = computed(() => {
@@ -524,6 +529,12 @@ export default defineComponent({
     align-items: center;
 }
 
+.label {
+    transform: translateX(40%);
+    display: block;
+    text-align: start;
+}
+
 .label-tag {
     font-size: 0.8em;
     color: var(--dl-color-medium);
@@ -541,7 +552,7 @@ export default defineComponent({
     width: 100%;
     display: flex;
     justify-content: space-evenly;
-    margin-top: 10px;
+    margin: 10px 0px 15px 0px;
     min-height: 100px;
     max-height: 100px;
     &__element {
@@ -568,6 +579,7 @@ export default defineComponent({
 }
 .y-axis-outer {
     overflow: hidden;
+    margin-right: 10px;
     width: 200px;
 }
 .y-axis,
