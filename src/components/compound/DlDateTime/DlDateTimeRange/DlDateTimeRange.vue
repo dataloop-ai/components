@@ -7,6 +7,7 @@
             :text="dateInputText"
             :input-style="dateInputStyle"
             :disabled="disabled"
+            :width="width"
         >
             <dl-menu
                 ref="dateTimeRangeMenu"
@@ -131,6 +132,10 @@ export default defineComponent({
         placeholder: {
             type: String,
             default: 'Set Due Date'
+        },
+        width: {
+            type: String,
+            default: 'fit-content'
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],

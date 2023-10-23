@@ -5,6 +5,7 @@
             'dl-date-input-focused': focused && !disabled,
             'dl-date-input-disabled': disabled
         }"
+        :style="cssVars"
     >
         <dl-icon
             icon="icon-dl-date"
@@ -42,11 +43,22 @@ export default defineComponent({
         inputStyle: {
             type: Object as PropType<Record<string, any>>,
             default: () => ({})
+        },
+        width: {
+            type: String,
+            default: 'fit-content'
         }
     },
     data() {
         return {
             focused: false
+        }
+    },
+    computed: {
+        cssVars(): Record<string, string> {
+            return {
+                '--dl-date-input-width': this.width
+            }
         }
     }
 })
@@ -59,7 +71,7 @@ export default defineComponent({
     border-radius: 2px;
     padding: 5px 10px;
     display: flex;
-    justify-content: center;
+    width: var(--dl-date-input-width);
     align-items: center;
     height: 28px;
     box-sizing: border-box;
