@@ -53,9 +53,12 @@ const sortString = (a, b) =>
     a.localeCompare(b, undefined, { sensitivity: 'base' })
 
 describe('use-suggestions', () => {
+    const schemaRef = toRef(schema)
+    const aliasesRef = toRef(aliases)
+
     const { suggestions, error, findSuggestions } = useSuggestions(
-        schema,
-        aliases,
+        schemaRef,
+        aliasesRef,
         { strict: toRef(false) }
     )
 
