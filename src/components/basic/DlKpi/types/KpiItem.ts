@@ -12,7 +12,8 @@ export enum DlKpiCounterFormat {
 export type DlKpiCounterType = {
     /* for string it should be have 0h:0m:0s format */
     value: number | string
-    format: DlKpiCounterFormat
+    format?: DlKpiCounterFormat
+    unit?: string
 }
 
 export type DlKpiProgressType = {
