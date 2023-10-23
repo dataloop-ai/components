@@ -379,7 +379,9 @@
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    :visible-columns="tableColumns.slice(0, -1)"
+                    :visible-columns="
+                        tableColumns.slice(0, -1).map((c) => c.name)
+                    "
                 >
                     <template #body-cell-row-actions>
                         <dl-button label="ActionButton" />
@@ -391,7 +393,9 @@
                 <DlTable
                     :rows="tableRows"
                     :columns="tableColumns"
-                    :visible-columns="tableColumns.slice(0, -1)"
+                    :visible-columns="
+                        tableColumns.slice(0, -1).map((c) => c.name)
+                    "
                     virtual-scroll
                 />
             </div>
