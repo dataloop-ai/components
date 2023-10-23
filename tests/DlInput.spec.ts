@@ -265,4 +265,18 @@ describe('DlInput component', () => {
             expect(wrapper.vm.showPass).toBe(true)
         })
     })
+    describe('input with preset value', () => {
+        let wrapper: any
+        beforeAll(() => {
+            wrapper = mount(DlInput, {
+                props: {
+                    modelValue: 'text'
+                }
+            })
+        })
+
+        it('should set input value', () => {
+            expect(wrapper.vm.$refs.input.innerHTML).toMatch('text')
+        })
+    })
 })

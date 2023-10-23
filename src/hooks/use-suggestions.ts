@@ -170,7 +170,10 @@ export const useSuggestions = (
             }
 
             if (!matchedField && isNextCharSpace(input, field)) {
-                localSuggestions = []
+                localSuggestions =
+                    value && input.endsWith(space)
+                        ? [Logical.AND, Logical.OR]
+                        : []
                 continue
             }
 

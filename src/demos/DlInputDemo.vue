@@ -219,7 +219,7 @@ export default defineComponent({
         const warningFieldValue = ref<string>('')
         const sizeSFieldValue = ref<string>('')
         const errorFieldValue = ref<string>('')
-        const saveInputValue = ref<string>('')
+        const saveInputValue = ref<string>('Test vaaalueeee')
 
         const files = ref<DlInputFile[]>([])
         const addFile = (e: Event) => {
