@@ -246,7 +246,7 @@ describe('use-suggestions', () => {
             expect(error.value).toBe(null)
         })
 
-        describe.only('When using nested field with array', () => {
+        describe('When using nested field with array', () => {
             it('should be valid for correct value', () => {
                 findSuggestions('Arr = "c"')
                 expect(error.value).toBe(null)

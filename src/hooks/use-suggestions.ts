@@ -122,9 +122,10 @@ export const useSuggestions = (
     options: { strict?: Ref<boolean> } = {}
 ) => {
     const { strict } = options
-    const initialSuggestions = Object.keys(schema)
     const aliasesArray = aliases.value ?? []
     const schemaValue = schema.value ?? {}
+
+    const initialSuggestions = Object.keys(schemaValue)
     const aliasedKeys = aliasesArray.map((alias) => alias.key)
     const aliasedSuggestions = initialSuggestions.map((suggestion) =>
         aliasedKeys.includes(suggestion)
