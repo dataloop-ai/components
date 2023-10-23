@@ -117,20 +117,20 @@ const mergeWords = (words: string[]) => {
 }
 
 export const useSuggestions = (
-    schema: Schema,
-    aliases: Alias[],
+    schema: Ref<Schema>,
+    aliases: Ref<Alias[]>,
     options: { strict?: Ref<boolean> } = {}
 ) => {
     const { strict } = options
     const initialSuggestions = Object.keys(schema)
-    const aliasedKeys = aliases.map((alias) => alias.key)
+    const aliasedKeys = aliases.value.map((alias) => alias.key)
     const aliasedSuggestions = initialSuggestions.map((suggestion) =>
         aliasedKeys.includes(suggestion)
-            ? aliases.find((alias) => alias.key === suggestion)?.alias
+            ? aliases.value.find((alias) => alias.key === suggestion)?.alias
             : suggestion
     )
 
-    for (const alias of aliases) {
+    for (const alias of aliases.value) {
         if (aliasedSuggestions.includes(alias.alias)) {
             continue
         }
@@ -185,7 +185,11 @@ export const useSuggestions = (
                 continue
             }
 
-            const dataType = getDataType(schema, aliases, matchedField)
+            const dataType = getDataType(
+                schema.value,
+                aliases.value,
+                matchedField
+            )
             if (!dataType) {
                 localSuggestions = []
                 continue
@@ -207,7 +211,7 @@ export const useSuggestions = (
 
             if (!operator) {
                 const dotSeparated = matchedField.split('.').filter((el) => el)
-                let fieldOf = schema
+                let fieldOf = schema.value
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
@@ -276,7 +280,7 @@ export const useSuggestions = (
         }
 
         error.value = input.length
-            ? getError(schema, aliases, expressions, { strict })
+            ? getError(schema.value, aliases.value, expressions, { strict })
             : null
 
         suggestions.value = localSuggestions
@@ -337,7 +341,8 @@ const getError = (
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
             if (acc === 'warning') return acc
-            const key: string = getAliasObjByAlias(aliases, field)?.key ?? field
+            const fieldKey: string =
+                getAliasObjByAlias(aliases, field)?.key ?? field
 
             /**
              * Handle nested keys to validate if the key exists in the schema or not.
@@ -352,14 +357,31 @@ const getError = (
                 }
             }
 
-            const isValid = isInputAllowed(key, keys)
-            if (!keys.includes(key) && !isValid) {
+            function hasValidExpression(
+                arr: string[],
+                pattern: RegExp
+            ): boolean {
+                for (const item of arr) {
+                    if (pattern.test(item)) {
+                        return true
+                    }
+                }
+                return false
+            }
+
+            const pattern = new RegExp(`${fieldKey}\\.\\d`)
+            const isValid = isInputAllowed(fieldKey, keys)
+            if (
+                !keys.includes(fieldKey) &&
+                !hasValidExpression(keys, pattern) &&
+                !isValid
+            ) {
                 return strict.value ? errors.INVALID_EXPRESSION : 'warning'
             }
 
             const valid = isValidByDataType(
                 validateBracketValues(value),
-                getDataType(schema, aliases, key),
+                getDataType(schema, aliases, fieldKey),
                 operator
             )
 

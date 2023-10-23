@@ -9,7 +9,8 @@ export const schema: Schema = {
     metadata: {
         nesting: {
             age: 'number',
-            valid: 'boolean'
+            valid: 'boolean',
+            arrVal: ['a', 'b', 'c', 'string']
         },
         date: 'date',
         start: 'datetime',
@@ -29,6 +30,10 @@ export const aliases: Alias[] = [
     {
         alias: 'Age',
         key: 'metadata.nesting.age'
+    },
+    {
+        alias: 'Arr',
+        key: 'metadata.nesting.arrVal'
     },
     {
         alias: 'StartTime',
@@ -236,6 +241,13 @@ describe('use-suggestions', () => {
         it('should be valid for correct level value', () => {
             findSuggestions('Level = "high"')
             expect(error.value).toBe(null)
+        })
+
+        describe.only('When using nested field with array', () => {
+            it('should be valid for correct value', () => {
+                findSuggestions('Arr = "c"')
+                expect(error.value).toBe(null)
+            })
         })
     })
 })
