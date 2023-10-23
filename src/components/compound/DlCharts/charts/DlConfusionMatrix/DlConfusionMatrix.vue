@@ -219,9 +219,7 @@ import {
     computed,
     defineComponent,
     getCurrentInstance,
-    inject,
     PropType,
-    Ref,
     ref
 } from 'vue-demi'
 import DlBrush from '../../components/DlBrush.vue'
@@ -299,7 +297,7 @@ export default defineComponent({
     },
     setup(props) {
         const vm = getCurrentInstance()
-        const { variables, isDark } = useThemeVariables()
+        const { variables, isDark = { value: false } } = useThemeVariables()
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
             max: Math.min(props.matrix.length, props.cellDisplayLimit)
