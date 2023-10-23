@@ -154,6 +154,10 @@
                                     "
                                 >
                                     <div
+                                        v-if="
+                                            visibleColumns &&
+                                                visibleColumns.length
+                                        "
                                         class="visible-columns-justify-end"
                                         style="width: 100%; display: flex"
                                     >
@@ -219,7 +223,7 @@
                             class="dl-table__progress"
                         >
                             <th
-                                :colspan="computedColspan"
+                                :colspan="progressbarColSpan"
                                 class="relative-position"
                             >
                                 <dl-progress-bar
@@ -499,6 +503,10 @@
                                     "
                                 >
                                     <div
+                                        v-if="
+                                            visibleColumns &&
+                                                visibleColumns.length
+                                        "
                                         class="visible-columns-justify-end"
                                         style="width: 100%; display: flex"
                                     >
@@ -564,7 +572,7 @@
                             class="dl-table__progress"
                         >
                             <th
-                                :colspan="computedColspan"
+                                :colspan="progressbarColSpan"
                                 class="relative-position"
                             >
                                 <dl-progress-bar
@@ -1534,6 +1542,10 @@ export default defineComponent({
                 visibleColumnsState
             )
 
+        const progressbarColSpan = computed(() => {
+            return computedColspan.value + (showRowActions.value ? 1 : 0)
+        })
+
         const { columnToSort, computedSortMethod, sort } = useTableSort(
             props as unknown as DlTableProps,
             computedPagination,
@@ -1862,6 +1874,7 @@ export default defineComponent({
             computedRows,
             computedCols,
             computedColspan,
+            progressbarColSpan,
             getRowKey,
             additionalClasses,
             getHeaderScope,

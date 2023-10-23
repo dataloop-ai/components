@@ -65,14 +65,6 @@
         top: 0;
     }
 
-    /* this is when the loading indicator appears */
-    &--loading {
-        thead tr:last-child th {
-            /* height of all previous header rows */
-            top: 38px;
-        }
-    }
-
     .trigger-icon {
         margin-right: 5px;
     }

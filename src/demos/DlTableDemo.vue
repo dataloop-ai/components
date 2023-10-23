@@ -151,6 +151,38 @@
             </div>
 
             <div style="margin-top: 100px">
+                Loading WIth custom row
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    :bordered="bordered"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="true"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="id"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                >
+                    <template #row-body="props">
+                        <div style="width: 300px">
+                            Custom row: {{ props.row.name }}
+                        </div>
+                    </template>
+                </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
                 <DlTable
                     :selected="selected"
                     :separator="separator"
@@ -382,6 +414,7 @@
                     :visible-columns="
                         tableColumns.slice(0, -1).map((c) => c.name)
                     "
+                    loading
                 >
                     <template #body-cell-row-actions>
                         <dl-button label="ActionButton" />
