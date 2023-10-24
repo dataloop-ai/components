@@ -62,7 +62,7 @@
             type="__dltable"
             :class="tableClass"
             :style="tableStyle"
-            :table-colspan="computedColspan"
+            :table-colspan="colspanWithActionsRow"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
@@ -133,32 +133,17 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                 >
-                                    <div
-                                        style="
-                                            width: 100%;
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 2px;
-                                        "
-                                    >
+                                    <span class="inner-th">
                                         {{ col.label }}
-                                        <dl-icon
-                                            v-if="col.hint"
-                                            icon="icon-dl-info"
-                                            size="10px"
-                                        >
-                                            <dl-tooltip>
-                                                {{ col.hint }}
-                                            </dl-tooltip>
-                                        </dl-icon>
-                                    </div>
+                                    </span>
                                 </DlTh>
                             </slot>
 
                             <DlTh
-                                v-if="visibleColumns && visibleColumns.length"
+                                v-if="showRowActions"
                                 key="visibleColumnsSlot"
                                 :col-index="-1"
+                                no-tooltip
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -168,56 +153,67 @@
                                         handleVisibleColumnsUpdate
                                     "
                                 >
-                                    <dl-button
-                                        text-color="dl-color-medium"
-                                        flat
-                                        icon="icon-dl-column"
-                                        tooltip="Manage columns"
+                                    <div
+                                        v-if="
+                                            visibleColumns &&
+                                                visibleColumns.length
+                                        "
+                                        class="visible-columns-justify-end"
+                                        style="width: 100%; display: flex"
                                     >
-                                        <slot
-                                            name="header-cell-visible-columns-menu"
-                                            :visible-columns-state="
-                                                visibleColumnsState
-                                            "
-                                            :group-options="groupOptions"
-                                            :handle-visible-columns-update="
-                                                handleVisibleColumnsUpdate
-                                            "
+                                        <dl-button
+                                            text-color="dl-color-medium"
+                                            flat
+                                            icon="icon-dl-column"
+                                            tooltip="Manage columns"
                                         >
-                                            <dl-menu>
-                                                <slot
-                                                    name="header-cell-visible-columns-menu-content"
-                                                    :visible-columns-state="
-                                                        visibleColumnsState
-                                                    "
-                                                    :group-options="
-                                                        groupOptions
-                                                    "
-                                                    :handle-visible-columns-update="
-                                                        handleVisibleColumnsUpdate
-                                                    "
-                                                >
-                                                    <dl-list separator>
-                                                        <dl-option-group
-                                                            :model-value="
-                                                                computedVisibleCols
-                                                            "
-                                                            :options="
-                                                                groupOptions
-                                                            "
-                                                            :left-label="true"
-                                                            max-width="250px"
-                                                            type="switch"
-                                                            class="table-options"
-                                                            @update:model-value="
-                                                                handleVisibleColumnsUpdate
-                                                            "
-                                                        />
-                                                    </dl-list>
-                                                </slot>
-                                            </dl-menu>
-                                        </slot>
-                                    </dl-button>
+                                            <slot
+                                                name="header-cell-visible-columns-menu"
+                                                :visible-columns-state="
+                                                    visibleColumnsState
+                                                "
+                                                :group-options="groupOptions"
+                                                :handle-visible-columns-update="
+                                                    handleVisibleColumnsUpdate
+                                                "
+                                            >
+                                                <dl-menu>
+                                                    <slot
+                                                        name="header-cell-visible-columns-menu-content"
+                                                        :visible-columns-state="
+                                                            visibleColumnsState
+                                                        "
+                                                        :group-options="
+                                                            groupOptions
+                                                        "
+                                                        :handle-visible-columns-update="
+                                                            handleVisibleColumnsUpdate
+                                                        "
+                                                    >
+                                                        <dl-list separator>
+                                                            <dl-option-group
+                                                                :model-value="
+                                                                    computedVisibleCols
+                                                                "
+                                                                :options="
+                                                                    groupOptions
+                                                                "
+                                                                :left-label="
+                                                                    true
+                                                                "
+                                                                max-width="250px"
+                                                                type="switch"
+                                                                class="table-options"
+                                                                @update:model-value="
+                                                                    handleVisibleColumnsUpdate
+                                                                "
+                                                            />
+                                                        </dl-list>
+                                                    </slot>
+                                                </dl-menu>
+                                            </slot>
+                                        </dl-button>
+                                    </div>
                                 </slot>
                             </DlTh>
                         </DlTr>
@@ -227,7 +223,7 @@
                             class="dl-table__progress"
                         >
                             <th
-                                :colspan="computedColspan"
+                                :colspan="colspanWithActionsRow"
                                 class="relative-position"
                             >
                                 <dl-progress-bar
@@ -418,6 +414,7 @@
             class="dl-table__middle scroll"
         >
             <table
+                ref="tableRef"
                 class="dl-table"
                 :class="additionalClasses"
             >
@@ -487,92 +484,86 @@
                                     :col-index="colIndex"
                                     @click="onThClick($event, col.name)"
                                 >
-                                    <div
-                                        style="
-                                            width: 100%;
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 2px;
-                                        "
-                                    >
+                                    <span class="inner-th">
                                         {{ col.label }}
-                                        <dl-icon
-                                            v-if="col.hint"
-                                            icon="icon-dl-info"
-                                            size="10px"
-                                        >
-                                            <dl-tooltip>
-                                                {{ col.hint }}
-                                            </dl-tooltip>
-                                        </dl-icon>
-                                    </div>
+                                    </span>
                                 </DlTh>
                             </slot>
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                :col-index="-1"
+                                no-tooltip
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
-                                    :computed-visible-cols="computedVisibleCols"
+                                    :visible-columns-state="visibleColumnsState"
                                     :group-options="groupOptions"
                                     :handle-visible-columns-update="
                                         handleVisibleColumnsUpdate
                                     "
                                 >
-                                    <dl-button
+                                    <div
                                         v-if="
                                             visibleColumns &&
                                                 visibleColumns.length
                                         "
-                                        text-color="dl-color-medium"
-                                        flat
-                                        icon="icon-dl-column"
+                                        class="visible-columns-justify-end"
+                                        style="width: 100%; display: flex"
                                     >
-                                        <slot
-                                            name="header-cell-visible-columns-menu"
-                                            :computed-visible-cols="
-                                                computedVisibleCols
-                                            "
-                                            :group-options="groupOptions"
-                                            :handle-visible-columns-update="
-                                                handleVisibleColumnsUpdate
-                                            "
+                                        <dl-button
+                                            text-color="dl-color-medium"
+                                            flat
+                                            icon="icon-dl-column"
+                                            tooltip="Manage columns"
                                         >
-                                            <dl-menu>
-                                                <slot
-                                                    name="header-cell-visible-columns-menu-content"
-                                                    :computed-visible-cols="
-                                                        computedVisibleCols
-                                                    "
-                                                    :group-options="
-                                                        groupOptions
-                                                    "
-                                                    :handle-visible-columns-update="
-                                                        handleVisibleColumnsUpdate
-                                                    "
-                                                >
-                                                    <dl-list separator>
-                                                        <dl-option-group
-                                                            :model-value="
-                                                                computedVisibleCols
-                                                            "
-                                                            :options="
-                                                                groupOptions
-                                                            "
-                                                            :left-label="true"
-                                                            max-width="250px"
-                                                            type="switch"
-                                                            class="table-options"
-                                                            @update:model-value="
-                                                                handleVisibleColumnsUpdate
-                                                            "
-                                                        />
-                                                    </dl-list>
-                                                </slot>
-                                            </dl-menu>
-                                        </slot>
-                                    </dl-button>
+                                            <slot
+                                                name="header-cell-visible-columns-menu"
+                                                :visible-columns-state="
+                                                    visibleColumnsState
+                                                "
+                                                :group-options="groupOptions"
+                                                :handle-visible-columns-update="
+                                                    handleVisibleColumnsUpdate
+                                                "
+                                            >
+                                                <dl-menu>
+                                                    <slot
+                                                        name="header-cell-visible-columns-menu-content"
+                                                        :visible-columns-state="
+                                                            visibleColumnsState
+                                                        "
+                                                        :group-options="
+                                                            groupOptions
+                                                        "
+                                                        :handle-visible-columns-update="
+                                                            handleVisibleColumnsUpdate
+                                                        "
+                                                    >
+                                                        <dl-list separator>
+                                                            <dl-option-group
+                                                                :model-value="
+                                                                    computedVisibleCols
+                                                                "
+                                                                :options="
+                                                                    groupOptions
+                                                                "
+                                                                :left-label="
+                                                                    true
+                                                                "
+                                                                max-width="250px"
+                                                                type="switch"
+                                                                class="table-options"
+                                                                @update:model-value="
+                                                                    handleVisibleColumnsUpdate
+                                                                "
+                                                            />
+                                                        </dl-list>
+                                                    </slot>
+                                                </dl-menu>
+                                            </slot>
+                                        </dl-button>
+                                    </div>
                                 </slot>
                             </DlTh>
                         </DlTr>
@@ -582,7 +573,7 @@
                             class="dl-table__progress"
                         >
                             <th
-                                :colspan="computedColspan"
+                                :colspan="colspanWithActionsRow"
                                 class="relative-position"
                             >
                                 <dl-progress-bar
@@ -1200,6 +1191,7 @@ export default defineComponent({
         const getTableKey = () => tableKey.value
 
         const rootRef = ref<HTMLDivElement>(null)
+        const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed<boolean>(
             () => virtualScroll.value === true
@@ -1323,9 +1315,9 @@ export default defineComponent({
         })
 
         onMounted(() => {
-            tableEl = document.querySelector(
-                'table.dl-table'
-            ) as HTMLTableElement
+            tableEl =
+                tableRef.value ||
+                (document.querySelector('table.dl-table') as HTMLTableElement)
             nextTick(() => {
                 setAllColumnWidths(
                     tableEl,
@@ -1356,6 +1348,14 @@ export default defineComponent({
                     applyResizableColumns(tableEl, vm)
                 }
 
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableRef.value,
+                        props.columns as DlTableColumn[],
+                        props.fitAllColumns
+                    )
+                })
+
                 if (hasDraggableColumns.value === true) {
                     applyDraggableColumns(
                         tableEl,
@@ -1376,11 +1376,13 @@ export default defineComponent({
         watch(
             columns,
             (newColumns) => {
-                setAllColumnWidths(
-                    rootRef.value,
-                    newColumns as DlTableColumn[],
-                    props.fitAllColumns
-                )
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableRef.value,
+                        newColumns as DlTableColumn[],
+                        props.fitAllColumns
+                    )
+                })
             },
             {
                 flush: 'post'
@@ -1551,6 +1553,10 @@ export default defineComponent({
                 hasDraggableRows,
                 visibleColumnsState
             )
+
+        const colspanWithActionsRow = computed(() => {
+            return computedColspan.value + (showRowActions.value ? 1 : 0)
+        })
 
         const { columnToSort, computedSortMethod, sort } = useTableSort(
             props as unknown as DlTableProps,
@@ -1880,6 +1886,7 @@ export default defineComponent({
             computedRows,
             computedCols,
             computedColspan,
+            colspanWithActionsRow,
             getRowKey,
             additionalClasses,
             getHeaderScope,
@@ -1932,7 +1939,8 @@ export default defineComponent({
             handleVisibleColumnsUpdate,
             computedVisibleCols,
             totalItemsCount,
-            showRowActions
+            showRowActions,
+            tableRef
         }
     }
 })

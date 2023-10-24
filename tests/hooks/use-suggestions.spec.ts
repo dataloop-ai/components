@@ -9,7 +9,8 @@ export const schema: Schema = {
     metadata: {
         nesting: {
             age: 'number',
-            valid: 'boolean'
+            valid: 'boolean',
+            arrVal: ['a', 'b', 'c', 'string']
         },
         date: 'date',
         start: 'datetime',
@@ -31,6 +32,10 @@ export const aliases: Alias[] = [
         key: 'metadata.nesting.age'
     },
     {
+        alias: 'Arr',
+        key: 'metadata.nesting.arrVal'
+    },
+    {
         alias: 'StartTime',
         key: 'metadata.start'
     },
@@ -48,9 +53,12 @@ const sortString = (a, b) =>
     a.localeCompare(b, undefined, { sensitivity: 'base' })
 
 describe('use-suggestions', () => {
+    const schemaRef = toRef(schema)
+    const aliasesRef = toRef(aliases)
+
     const { suggestions, error, findSuggestions } = useSuggestions(
-        schema,
-        aliases,
+        schemaRef,
+        aliasesRef,
         { strict: toRef(false) }
     )
 
@@ -64,7 +72,8 @@ describe('use-suggestions', () => {
                 'StartTime',
                 'Level',
                 'No-Schema',
-                'metadata'
+                'metadata',
+                'Arr'
             ].sort(sortString)
         )
     })
@@ -176,6 +185,7 @@ describe('use-suggestions', () => {
                 'Completed',
                 'metadata',
                 'Age',
+                'Arr',
                 'StartTime',
                 'No-Schema'
             ].sort(sortString)
@@ -236,6 +246,13 @@ describe('use-suggestions', () => {
         it('should be valid for correct level value', () => {
             findSuggestions('Level = "high"')
             expect(error.value).toBe(null)
+        })
+
+        describe('When using nested field with array', () => {
+            it('should be valid for correct value', () => {
+                findSuggestions('Arr = "c"')
+                expect(error.value).toBe(null)
+            })
         })
     })
 })

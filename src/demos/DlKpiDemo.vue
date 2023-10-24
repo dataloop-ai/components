@@ -11,8 +11,7 @@
                     :title="kpi.title"
                     :info-message="kpi.infoMessage"
                     :progress="kpi.progress"
-                    :with-border="true"
-                    :with-progress-bar="true"
+                    :bordered="true"
                 />
             </div>
         </div>
@@ -27,7 +26,7 @@
                     :title="kpiThree.title"
                     :info-message="kpiThree.infoMessage"
                     :progress="kpiThree.progress"
-                    :with-border="true"
+                    :bordered="true"
                 />
             </div>
         </div>
@@ -42,7 +41,7 @@
                     :title="kpiFour.title"
                     :info-message="kpiFour.infoMessage"
                     :progress="kpiFour.progress"
-                    :with-border="true"
+                    :bordered="true"
                 />
             </div>
         </div>
@@ -57,7 +56,7 @@
                     :title="kpiFive.title"
                     :info-message="kpiFive.infoMessage"
                     :progress="kpiFive.progress"
-                    :is-small="true"
+                    :small="true"
                 />
             </div>
         </div>
@@ -73,8 +72,7 @@
                     :title="kpiSix.title"
                     :info-message="kpiSix.infoMessage"
                     :progress="kpiSix.progress"
-                    :with-border="false"
-                    :with-progress-bar="true"
+                    :bordered="false"
                 />
             </div>
         </div>

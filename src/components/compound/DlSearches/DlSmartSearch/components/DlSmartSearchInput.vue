@@ -237,8 +237,8 @@ export default defineComponent({
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
         const { suggestions, error, findSuggestions } = useSuggestions(
-            schema.value,
-            aliases.value,
+            schema,
+            aliases,
             { strict }
         )
         //#endregion
@@ -465,6 +465,9 @@ export default defineComponent({
             if (!focused.value) {
                 focus()
             }
+            nextTick(() => {
+                findSuggestions('')
+            })
         }
 
         const endsWithOperator = computed(() => {

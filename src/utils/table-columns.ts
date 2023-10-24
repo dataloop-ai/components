@@ -3,7 +3,7 @@ import { DlTableColumn } from '../types'
 import { browseNestedNodes } from './browse-nested-nodes'
 import { swapNodes } from './swap-nodes'
 
-const DEFAULT_COL_WIDTH = 10
+const DEFAULT_COL_WIDTH = 'fit-content'
 
 export function setColumnVerticalBorder(
     table: HTMLTableElement,
@@ -186,7 +186,10 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                targetEl.style.width = `${col.width ?? DEFAULT_COL_WIDTH}px` // then
+                targetEl.style.width = col.width
+                    ? `${col.width}px`
+                    : DEFAULT_COL_WIDTH
+                // then
             }
         )
     })

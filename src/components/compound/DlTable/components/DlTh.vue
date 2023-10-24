@@ -15,11 +15,27 @@
             <slot />
         </dl-tooltip>
         <slot />
-        <dl-icon
-            v-if="isSortable && ['left', 'center'].includes(align)"
-            :class="iconClass"
-            icon="icon-dl-arrow-up"
-        />
+        <span
+            class="th-icons"
+            :style="{ top: props?.dense ? '5px' : '10px' }"
+        >
+            <dl-icon
+                v-if="hasHint"
+                icon="icon-dl-info"
+                size="10px"
+                style="max-width: 30%"
+            >
+                <dl-tooltip>
+                    {{ props.col.hint }}
+                </dl-tooltip>
+            </dl-icon>
+            <dl-icon
+                v-if="isSortable && ['left', 'center'].includes(align)"
+                style="margin-top: 2px"
+                :class="iconClass"
+                icon="icon-dl-arrow-up"
+            />
+        </span>
     </th>
 </template>
 
@@ -67,6 +83,10 @@ export default defineComponent({
             return !!Object.keys(props.props ?? {})
         })
 
+        const hasHint = computed(() => {
+            return !!props.props?.col?.hint
+        })
+
         const column = computed(() => {
             let col: any
             const name = vm.vnode.key as string
@@ -89,7 +109,8 @@ export default defineComponent({
                 thClasses: '',
                 isSortable: false,
                 hasEllipsis: false,
-                onClick: onClickFn
+                onClick: onClickFn,
+                hasHint
             }
         }
 
@@ -118,6 +139,7 @@ export default defineComponent({
         const onClick = !hasOptionalProps.value ? onClickFn : handleClick
 
         return {
+            hasHint,
             isSortable: !hasOptionalProps.value
                 ? false
                 : column?.value?.sortable ?? false,

@@ -117,20 +117,23 @@ const mergeWords = (words: string[]) => {
 }
 
 export const useSuggestions = (
-    schema: Schema,
-    aliases: Alias[],
+    schema: Ref<Schema>,
+    aliases: Ref<Alias[]>,
     options: { strict?: Ref<boolean> } = {}
 ) => {
     const { strict } = options
-    const initialSuggestions = Object.keys(schema)
-    const aliasedKeys = aliases.map((alias) => alias.key)
+    const aliasesArray = aliases.value ?? []
+    const schemaValue = schema.value ?? {}
+
+    const initialSuggestions = Object.keys(schemaValue)
+    const aliasedKeys = aliasesArray.map((alias) => alias.key)
     const aliasedSuggestions = initialSuggestions.map((suggestion) =>
         aliasedKeys.includes(suggestion)
-            ? aliases.find((alias) => alias.key === suggestion)?.alias
+            ? aliasesArray.find((alias) => alias.key === suggestion)?.alias
             : suggestion
     )
 
-    for (const alias of aliases) {
+    for (const alias of aliasesArray) {
         if (aliasedSuggestions.includes(alias.alias)) {
             continue
         }
@@ -185,7 +188,11 @@ export const useSuggestions = (
                 continue
             }
 
-            const dataType = getDataType(schema, aliases, matchedField)
+            const dataType = getDataType(
+                schemaValue,
+                aliasesArray,
+                matchedField
+            )
             if (!dataType) {
                 localSuggestions = []
                 continue
@@ -207,7 +214,7 @@ export const useSuggestions = (
 
             if (!operator) {
                 const dotSeparated = matchedField.split('.').filter((el) => el)
-                let fieldOf = schema
+                let fieldOf = schemaValue
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
@@ -276,7 +283,7 @@ export const useSuggestions = (
         }
 
         error.value = input.length
-            ? getError(schema, aliases, expressions, { strict })
+            ? getError(schemaValue, aliasesArray, expressions, { strict })
             : null
 
         suggestions.value = localSuggestions
@@ -337,7 +344,8 @@ const getError = (
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
             if (acc === 'warning') return acc
-            const key: string = getAliasObjByAlias(aliases, field)?.key ?? field
+            const fieldKey: string =
+                getAliasObjByAlias(aliases, field)?.key ?? field
 
             /**
              * Handle nested keys to validate if the key exists in the schema or not.
@@ -352,14 +360,31 @@ const getError = (
                 }
             }
 
-            const isValid = isInputAllowed(key, keys)
-            if (!keys.includes(key) && !isValid) {
+            function hasValidExpression(
+                arr: string[],
+                pattern: RegExp
+            ): boolean {
+                for (const item of arr) {
+                    if (pattern.test(item)) {
+                        return true
+                    }
+                }
+                return false
+            }
+
+            const pattern = new RegExp(`${fieldKey}\\.\\d`)
+            const isValid = isInputAllowed(fieldKey, keys)
+            if (
+                !keys.includes(fieldKey) &&
+                !hasValidExpression(keys, pattern) &&
+                !isValid
+            ) {
                 return strict.value ? errors.INVALID_EXPRESSION : 'warning'
             }
 
             const valid = isValidByDataType(
                 validateBracketValues(value),
-                getDataType(schema, aliases, key),
+                getDataType(schema, aliases, fieldKey),
                 operator
             )
 
@@ -440,7 +465,8 @@ const isValidBoolean = (str: string) => {
 const isValidString = (str: string) => {
     const match = str.match(/(?<=\")(.*?)(?=\")|(?<=\')(.*?)(?=\')/)
     if (!match) return false
-    return match[0] === removeQuotes(str.trim())
+    const trimmed = str.trim()
+    return match[0] === trimmed.substring(1, trimmed.length - 1)
 }
 
 const getOperatorByDataType = (dataType: string) => {
@@ -570,12 +596,60 @@ const isNextCharSpace = (input: string, str: string) => {
 const matchStringEnd = (input: string, str: string) =>
     input.lastIndexOf(str + '" ') > -1 || input.lastIndexOf(str + "' ") > -1
 
-export const removeBrackets = (str: string) => {
+const removeAllBrackets = (str: string) => {
     return str.replace(/\(/g, '').replace(/\)/g, '')
 }
 
-const removeQuotes = (str: string) => {
-    return str.replaceAll('"', '').replaceAll("'", '')
+export const removeBrackets = (str: string) => {
+    const quotesAt = []
+    for (let i = 0; i < str.length; i++) {
+        if (/['"]/.test(str.charAt(i))) {
+            quotesAt.push(i)
+        }
+    }
+
+    let result = removeAllBrackets(str.substring(0, quotesAt[0]))
+
+    let skipFrom = 0;
+        let skipTo = 1
+    while (quotesAt[skipFrom] !== undefined) {
+        // skip as far as isValidString fails
+        while (
+            !isValidString(
+                str.substring(
+                    quotesAt[skipFrom],
+                    (quotesAt[skipTo] || str.length) + 1
+                )
+            )
+        ) {
+            skipTo++
+            if (!quotesAt[skipTo]) break
+        }
+
+        // this is either unifished invalid string or finished valid string - keep it as is
+        result += str.substring(
+            quotesAt[skipFrom],
+            (quotesAt[skipTo] || str.length) + 1
+        )
+
+        if (quotesAt[skipTo]) {
+            // there might still be something after the string
+            skipFrom = skipTo + 1
+            result += removeAllBrackets(
+                str.substring(
+                    quotesAt[skipTo] + 1,
+                    quotesAt[skipFrom] || str.length
+                )
+            )
+
+            skipTo = skipFrom + 1
+        } else {
+            // there is nothing left
+            break
+        }
+    }
+
+    return result
 }
 
 const getValueSuggestions = (dataType: string | string[], operator: string) => {

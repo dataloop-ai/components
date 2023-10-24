@@ -293,6 +293,21 @@ describe('DlSmartSearchInput', () => {
                 ])
             })
 
+            it('should keep the brackets between quotes in string values', async () => {
+                wrapper.vm.focused = true
+                wrapper.vm.debouncedSetInputValue(`name = '(test).*.(b)'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                wrapper.vm.blur()
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(
+                    wrapper.emitted()['update:model-value'].slice(-1)
+                ).toEqual([[{ name: '(test).*.(b)' }]])
+            })
+
             it('should open date picker after typing a date patten, and append a space after selecting a date there', async () => {
                 wrapper.vm.focused = true
                 wrapper.vm.debouncedSetInputValue('StartTime = (dd/mm/yyyy)')
