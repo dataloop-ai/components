@@ -3,7 +3,7 @@ import { DlTableColumn } from '../types'
 import { browseNestedNodes } from './browse-nested-nodes'
 import { swapNodes } from './swap-nodes'
 
-const DEFAULT_COL_WIDTH = 10
+const DEFAULT_COL_WIDTH = 'fit-content'
 
 export function setColumnVerticalBorder(
     table: HTMLTableElement,
@@ -171,16 +171,6 @@ export function justifyMouseInsideTargetCell(
     )
 }
 
-function fitWidthToContent(el: HTMLElement, colWidth: number) {
-    if (el.tagName !== 'TH') return colWidth
-    const textNode = Array.from(el.querySelector('.inner-th').childNodes).find(
-        (node) => node.nodeType === 3
-    )
-    const fontSize = parseInt(window.getComputedStyle(el).fontSize)
-    const width = (textNode.nodeValue.length * fontSize) / 2
-    return width > 100 ? width : 100
-}
-
 export function setAllColumnWidths(
     table: HTMLElement,
     columns: DlTableColumn[],
@@ -196,8 +186,10 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                const width = fitWidthToContent(targetEl, col.width)
-                targetEl.style.width = `${width ?? DEFAULT_COL_WIDTH}px` // then
+                targetEl.style.width = col.width
+                    ? `${col.width}px`
+                    : DEFAULT_COL_WIDTH
+                // then
             }
         )
     })
