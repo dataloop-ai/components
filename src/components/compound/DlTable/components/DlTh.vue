@@ -17,7 +17,7 @@
         <slot />
         <span
             class="th-icons"
-            :style="{ top: props?.dense ? '5px' : '10px' }"
+            :style="{ top: isDense ? '5px' : '10px' }"
         >
             <dl-icon
                 v-if="hasHint"
@@ -87,6 +87,15 @@ export default defineComponent({
             return !!props.props?.col?.hint
         })
 
+        const isDense = computed(() => {
+            // @ts-ignore
+            return (
+                !!props.props?.dense ||
+                !!props.dense ||
+                !!props.props?.col?.dense
+            )
+        })
+
         const column = computed(() => {
             let col: any
             const name = vm.vnode.key as string
@@ -110,7 +119,8 @@ export default defineComponent({
                 isSortable: false,
                 hasEllipsis: false,
                 onClick: onClickFn,
-                hasHint
+                hasHint,
+                isDense
             }
         }
 
@@ -140,6 +150,7 @@ export default defineComponent({
 
         return {
             hasHint,
+            isDense,
             isSortable: !hasOptionalProps.value
                 ? false
                 : column?.value?.sortable ?? false,
