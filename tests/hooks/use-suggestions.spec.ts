@@ -53,9 +53,12 @@ const sortString = (a, b) =>
     a.localeCompare(b, undefined, { sensitivity: 'base' })
 
 describe('use-suggestions', () => {
+    const schemaRef = toRef(schema)
+    const aliasesRef = toRef(aliases)
+
     const { suggestions, error, findSuggestions } = useSuggestions(
-        schema,
-        aliases,
+        schemaRef,
+        aliasesRef,
         { strict: toRef(false) }
     )
 
@@ -69,7 +72,8 @@ describe('use-suggestions', () => {
                 'StartTime',
                 'Level',
                 'No-Schema',
-                'metadata'
+                'metadata',
+                'Arr'
             ].sort(sortString)
         )
     })
@@ -181,6 +185,7 @@ describe('use-suggestions', () => {
                 'Completed',
                 'metadata',
                 'Age',
+                'Arr',
                 'StartTime',
                 'No-Schema'
             ].sort(sortString)
@@ -243,7 +248,7 @@ describe('use-suggestions', () => {
             expect(error.value).toBe(null)
         })
 
-        describe.only('When using nested field with array', () => {
+        describe('When using nested field with array', () => {
             it('should be valid for correct value', () => {
                 findSuggestions('Arr = "c"')
                 expect(error.value).toBe(null)

@@ -122,15 +122,18 @@ export const useSuggestions = (
     options: { strict?: Ref<boolean> } = {}
 ) => {
     const { strict } = options
-    const initialSuggestions = Object.keys(schema)
-    const aliasedKeys = aliases.value.map((alias) => alias.key)
+    const aliasesArray = aliases.value ?? []
+    const schemaValue = schema.value ?? {}
+
+    const initialSuggestions = Object.keys(schemaValue)
+    const aliasedKeys = aliasesArray.map((alias) => alias.key)
     const aliasedSuggestions = initialSuggestions.map((suggestion) =>
         aliasedKeys.includes(suggestion)
-            ? aliases.value.find((alias) => alias.key === suggestion)?.alias
+            ? aliasesArray.find((alias) => alias.key === suggestion)?.alias
             : suggestion
     )
 
-    for (const alias of aliases.value) {
+    for (const alias of aliasesArray) {
         if (aliasedSuggestions.includes(alias.alias)) {
             continue
         }
@@ -186,8 +189,8 @@ export const useSuggestions = (
             }
 
             const dataType = getDataType(
-                schema.value,
-                aliases.value,
+                schemaValue,
+                aliasesArray,
                 matchedField
             )
             if (!dataType) {
@@ -211,7 +214,7 @@ export const useSuggestions = (
 
             if (!operator) {
                 const dotSeparated = matchedField.split('.').filter((el) => el)
-                let fieldOf = schema.value
+                let fieldOf = schemaValue
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
@@ -280,7 +283,7 @@ export const useSuggestions = (
         }
 
         error.value = input.length
-            ? getError(schema.value, aliases.value, expressions, { strict })
+            ? getError(schemaValue, aliasesArray, expressions, { strict })
             : null
 
         suggestions.value = localSuggestions

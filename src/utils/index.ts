@@ -18,6 +18,7 @@ export * from './get-element-above'
 export * from './resizable-table'
 export * from './draggable-table'
 export * from './table-columns'
+export * from './formatNumber'
 
 export const isMobileOrTablet = () => {
     let check = false

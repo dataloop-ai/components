@@ -106,7 +106,8 @@ export default defineComponent({
                 thClasses: '',
                 isSortable: false,
                 hasEllipsis: false,
-                onClick: onClickFn
+                onClick: onClickFn,
+                hasHint
             }
         }
 

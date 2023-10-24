@@ -5,9 +5,7 @@
     >
         <div class="kpi_box__counter">
             <dl-typography
-                :color="
-                    counter.value ? 'dl-color-secondary' : 'dl-color-medium'
-                "
+                :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
                 variant="h1"
                 :size="counterFontSizeComputed"
             >
@@ -75,7 +73,7 @@ export default defineComponent({
     },
     props: {
         counter: {
-            type: Object as PropType<DlKpiCounterType>,
+            type: Object as PropType<DlKpiCounterType | number>,
             default: () => ({} as DlKpiCounterType)
         },
         counterFontSize: {
@@ -104,7 +102,7 @@ export default defineComponent({
         },
         infoMessage: {
             type: String,
-            default: 'No data',
+            default: null,
             required: false
         },
         progress: {
@@ -136,7 +134,9 @@ export default defineComponent({
 
         const cssVars = computed(() => {
             return {
-                '--dl-kpi-border': props.bordered ? '1px solid #e4e4e4' : '',
+                '--dl-kpi-border': props.bordered
+                    ? '1px solid var(--dl-color-separator)'
+                    : '',
                 '--dl-kpi-title-max-width': isSingleWord(props.title)
                     ? '100%'
                     : '90%', // todo: caused a bug with single words
@@ -146,6 +146,13 @@ export default defineComponent({
             }
         })
 
+        const hasValue = computed(() => {
+            if (typeof props.counter === 'number') {
+                return true
+            }
+            return !!(props.counter as DlKpiCounterType).value
+        })
+
         const counterFontSizeComputed = computed(() =>
             props.small ? '20px' : props.counterFontSize
         )
@@ -153,7 +160,7 @@ export default defineComponent({
             props.small ? '14px' : props.titleFontSize
         )
 
-        const formatCounter = (counter: DlKpiCounterType) => {
+        const formatCounter = (counter: DlKpiCounterType | number) => {
             if (counter === null) {
                 return emptyString
             }
@@ -214,6 +221,7 @@ export default defineComponent({
         return {
             progressValue,
             formatCounter,
+            hasValue,
             cssVars,
             titleFontSizeComputed,
             counterFontSizeComputed

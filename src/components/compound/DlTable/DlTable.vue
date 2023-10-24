@@ -62,7 +62,7 @@
             type="__dltable"
             :class="tableClass"
             :style="tableStyle"
-            :table-colspan="computedColspan"
+            :table-colspan="colspanWithActionsRow"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
@@ -223,7 +223,7 @@
                             class="dl-table__progress"
                         >
                             <th
-                                :colspan="progressbarColSpan"
+                                :colspan="colspanWithActionsRow"
                                 class="relative-position"
                             >
                                 <dl-progress-bar
@@ -572,7 +572,7 @@
                             class="dl-table__progress"
                         >
                             <th
-                                :colspan="progressbarColSpan"
+                                :colspan="colspanWithActionsRow"
                                 class="relative-position"
                             >
                                 <dl-progress-bar
@@ -1542,7 +1542,7 @@ export default defineComponent({
                 visibleColumnsState
             )
 
-        const progressbarColSpan = computed(() => {
+        const colspanWithActionsRow = computed(() => {
             return computedColspan.value + (showRowActions.value ? 1 : 0)
         })
 
@@ -1874,7 +1874,7 @@ export default defineComponent({
             computedRows,
             computedCols,
             computedColspan,
-            progressbarColSpan,
+            colspanWithActionsRow,
             getRowKey,
             additionalClasses,
             getHeaderScope,
