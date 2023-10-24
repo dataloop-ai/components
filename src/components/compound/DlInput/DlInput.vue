@@ -66,6 +66,7 @@
                 :class="`${
                     isSmall ? 'col' : 'row'
                 } bottom-section full-width full-height`"
+                :style="{ cursor: disabled ? 'not-allowed' : '' }"
             >
                 <div class="row center full-width full-height">
                     <div :class="wrapperClasses">
@@ -80,7 +81,7 @@
                         </div>
                         <div
                             ref="input"
-                            :contenteditable="!readonly"
+                            :contenteditable="!readonly && !disabled"
                             :class="inputClasses"
                             :placeholder="placeholder"
                             @input="onChange"
@@ -91,10 +92,11 @@
                             @paste="handlePaste"
                         >
                             <span
-                                v-if="readonly"
-                                :class="
-                                    showPlaceholder ? 'placeholder-string' : ''
-                                "
+                                v-if="readonly || disabled"
+                                :class="{
+                                    'placeholder-string': showPlaceholder,
+                                    'placeholder-string--disabled': disabled
+                                }"
                             >{{
                                 showPlaceholder ? placeholder : modelValue
                             }}</span>
@@ -719,7 +721,9 @@ export default defineComponent({
         )
 
         onMounted(() => {
-            input.value.innerHTML = modelValue.value
+            if (String(modelValue.value ?? '').length) {
+                input.value.innerHTML = modelValue.value
+            }
         })
 
         return {
@@ -814,6 +818,10 @@ export default defineComponent({
             }
             if (this.type === 'password' && !this.showPass) {
                 classes.push('dl-input__input--password')
+            }
+
+            if (this.disabled) {
+                classes.push('dl-input__input--disabled')
             }
 
             return classes
@@ -1299,6 +1307,12 @@ export default defineComponent({
             &:hover {
                 border-color: var(--dl-color-separator) !important;
             }
+        }
+
+        .placeholder-string--disabled,
+        &--disabled {
+            color: var(--dl-color-disabled);
+            pointer-events: none;
         }
     }
 
