@@ -6,6 +6,11 @@
         />
 
         <dl-input
+            placeholder="placeholder input disabled"
+            disabled
+        />
+
+        <dl-input
             v-model="textInputValue"
             max-width="100%"
             style="width: 920px"
