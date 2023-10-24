@@ -8,3 +8,8 @@ export enum DlGridMode {
     FLEX = 'flex',
     LAYOUT = 'layout'
 }
+
+export interface GridItem {
+    id: string | number
+    [key: string]: any
+}

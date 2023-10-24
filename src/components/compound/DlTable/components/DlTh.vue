@@ -88,7 +88,8 @@ export default defineComponent({
         })
 
         const isDense = computed(() => {
-            return !!props.props?.dense
+            // @ts-ignore
+            return !!props.props?.dense || !!props.props?.col?.dense
         })
 
         const column = computed(() => {

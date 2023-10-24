@@ -25,6 +25,11 @@ export interface ScrollDetails {
     offsetEnd: number
 }
 
+export interface GridStyles {
+    gridStyles: object
+    gridClass: string
+}
+
 const aggBucketSize = 1000
 
 const scrollToEdges = [
@@ -828,7 +833,12 @@ export function useVirtualScroll({
         }
     }
 
-    function padVirtualScroll(tag: string, content: any[], create: Function) {
+    function padVirtualScroll(
+        tag: string,
+        content: any[],
+        create: Function,
+        styles: GridStyles
+    ) {
         const paddingSize =
             props.virtualScrollHorizontal === true ? 'width' : 'height'
 
@@ -874,9 +884,10 @@ export function useVirtualScroll({
             create(
                 tag,
                 {
-                    class: 'dl-virtual-scroll__content',
+                    class: `dl-virtual-scroll__content ${styles?.gridClass}`,
+                    style: styles?.gridStyles,
                     key: 'content',
-                    ref: contentRef,
+                    ref: styles ? 'grid' : contentRef,
                     tabindex: -1
                 },
                 content.flat()
