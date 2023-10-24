@@ -477,7 +477,6 @@ const columns = [
         field: 'name',
         sortable: true,
         textTransform: 'uppercase',
-        width: 100,
         hint: 'test hint'
     },
     {
