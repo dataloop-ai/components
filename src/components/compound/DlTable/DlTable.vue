@@ -177,7 +177,7 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-menu>
+                                                <dl-popup dense>
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -190,7 +190,7 @@
                                                             handleVisibleColumnsUpdate
                                                         "
                                                     >
-                                                        <dl-list separator>
+                                                        <dl-list>
                                                             <dl-option-group
                                                                 :model-value="
                                                                     computedVisibleCols
@@ -210,7 +210,7 @@
                                                             />
                                                         </dl-list>
                                                     </slot>
-                                                </dl-menu>
+                                                </dl-popup>
                                             </slot>
                                         </dl-button>
                                     </div>
@@ -527,7 +527,7 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-menu>
+                                                <dl-popup dense>
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -540,7 +540,7 @@
                                                             handleVisibleColumnsUpdate
                                                         "
                                                     >
-                                                        <dl-list separator>
+                                                        <dl-list>
                                                             <dl-option-group
                                                                 :model-value="
                                                                     computedVisibleCols
@@ -560,7 +560,7 @@
                                                             />
                                                         </dl-list>
                                                     </slot>
-                                                </dl-menu>
+                                                </dl-popup>
                                             </slot>
                                         </dl-button>
                                     </div>
@@ -878,14 +878,8 @@ import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
-import {
-    DlIcon,
-    DlCheckbox,
-    DlProgressBar,
-    DlMenu,
-    DlList
-} from '../../essential'
-import { DlButton } from '../../basic'
+import { DlIcon, DlCheckbox, DlProgressBar, DlList } from '../../essential'
+import { DlButton, DlPopup } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
@@ -917,7 +911,7 @@ export default defineComponent({
         DlEmptyState,
         DlButton,
         DlOptionGroup,
-        DlMenu,
+        DlPopup,
         DlList,
         Sortable
     },

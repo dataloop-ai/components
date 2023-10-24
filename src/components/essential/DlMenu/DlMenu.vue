@@ -500,6 +500,13 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.dl-popup__menu {
+    --dl-popup-padding: 16px;
+    &--dense {
+        --dl-popup-padding: 0;
+    }
+}
+
 .dl-menu {
     position: fixed !important;
     display: inline-block;

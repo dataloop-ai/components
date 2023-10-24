@@ -7,7 +7,6 @@
             :styles="{ gridStyles, gridClass }"
         >
             <slot
-                :key="item.id"
                 name="item-slot"
                 v-bind="{ item }"
             />
