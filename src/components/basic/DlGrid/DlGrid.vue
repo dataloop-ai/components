@@ -2,6 +2,7 @@
     <div v-if="hasVirtualScroll">
         <dl-virtual-scroll
             v-slot="{ item }"
+            :scroll-debounce="scrollDebounce"
             style="height: 500px"
             :items="items"
             :styles="{ gridStyles, gridClass }"
@@ -73,6 +74,10 @@ export default defineComponent({
         mode: {
             type: String as PropType<DlGridMode>,
             default: DlGridMode.LAYOUT
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['update:model-value', 'layout-changed'],
