@@ -15,7 +15,10 @@
             <slot />
         </dl-tooltip>
         <slot />
-        <span class="th-icons">
+        <span
+            class="th-icons"
+            :style="{ top: props?.dense ? '5px' : '10px' }"
+        >
             <dl-icon
                 v-if="hasHint"
                 icon="icon-dl-info"
