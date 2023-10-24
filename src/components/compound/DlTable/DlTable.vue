@@ -414,6 +414,7 @@
             class="dl-table__middle scroll"
         >
             <table
+                ref="tableRef"
                 class="dl-table"
                 :class="additionalClasses"
             >
@@ -1190,6 +1191,7 @@ export default defineComponent({
         const getTableKey = () => tableKey.value
 
         const rootRef = ref<HTMLDivElement>(null)
+        const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
         const hasVirtScroll = computed<boolean>(
             () => virtualScroll.value === true
@@ -1313,9 +1315,9 @@ export default defineComponent({
         })
 
         onMounted(() => {
-            tableEl = document.querySelector(
-                'table.dl-table'
-            ) as HTMLTableElement
+            tableEl =
+                tableRef.value ||
+                (document.querySelector('table.dl-table') as HTMLTableElement)
             nextTick(() => {
                 setAllColumnWidths(
                     tableEl,
@@ -1927,7 +1929,8 @@ export default defineComponent({
             handleVisibleColumnsUpdate,
             computedVisibleCols,
             totalItemsCount,
-            showRowActions
+            showRowActions,
+            tableRef
         }
     }
 })
