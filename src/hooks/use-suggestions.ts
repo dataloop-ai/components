@@ -465,7 +465,8 @@ const isValidBoolean = (str: string) => {
 const isValidString = (str: string) => {
     const match = str.match(/(?<=\")(.*?)(?=\")|(?<=\')(.*?)(?=\')/)
     if (!match) return false
-    return match[0] === removeQuotes(str.trim())
+    const trimmed = str.trim()
+    return match[0] === trimmed.substring(1, trimmed.length - 1)
 }
 
 const getOperatorByDataType = (dataType: string) => {
@@ -595,12 +596,60 @@ const isNextCharSpace = (input: string, str: string) => {
 const matchStringEnd = (input: string, str: string) =>
     input.lastIndexOf(str + '" ') > -1 || input.lastIndexOf(str + "' ") > -1
 
-export const removeBrackets = (str: string) => {
+const removeAllBrackets = (str: string) => {
     return str.replace(/\(/g, '').replace(/\)/g, '')
 }
 
-const removeQuotes = (str: string) => {
-    return str.replaceAll('"', '').replaceAll("'", '')
+export const removeBrackets = (str: string) => {
+    const quotesAt = []
+    for (let i = 0; i < str.length; i++) {
+        if (/['"]/.test(str.charAt(i))) {
+            quotesAt.push(i)
+        }
+    }
+
+    let result = removeAllBrackets(str.substring(0, quotesAt[0]))
+
+    let skipFrom = 0;
+        let skipTo = 1
+    while (quotesAt[skipFrom] !== undefined) {
+        // skip as far as isValidString fails
+        while (
+            !isValidString(
+                str.substring(
+                    quotesAt[skipFrom],
+                    (quotesAt[skipTo] || str.length) + 1
+                )
+            )
+        ) {
+            skipTo++
+            if (!quotesAt[skipTo]) break
+        }
+
+        // this is either unifished invalid string or finished valid string - keep it as is
+        result += str.substring(
+            quotesAt[skipFrom],
+            (quotesAt[skipTo] || str.length) + 1
+        )
+
+        if (quotesAt[skipTo]) {
+            // there might still be something after the string
+            skipFrom = skipTo + 1
+            result += removeAllBrackets(
+                str.substring(
+                    quotesAt[skipTo] + 1,
+                    quotesAt[skipFrom] || str.length
+                )
+            )
+
+            skipTo = skipFrom + 1
+        } else {
+            // there is nothing left
+            break
+        }
+    }
+
+    return result
 }
 
 const getValueSuggestions = (dataType: string | string[], operator: string) => {
