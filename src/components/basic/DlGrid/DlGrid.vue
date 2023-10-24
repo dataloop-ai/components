@@ -92,7 +92,7 @@ export default defineComponent({
                 : 'dl-grid-wrapper__flex'
         )
 
-        const hasVirtualScroll = computed(() => props.items?.length > 100)
+        const hasVirtualScroll = computed(() => !!props.items)
 
         const gridStyles = computed(() => {
             const gridStyles: Dictionary<string | number> = {
