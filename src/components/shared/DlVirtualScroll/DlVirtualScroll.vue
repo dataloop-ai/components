@@ -13,14 +13,15 @@ import {
     isVue2,
     h,
     onUnmounted,
-    toRefs
+    toRefs,
+    PropType
 } from 'vue-demi'
 import getTableMiddle from '../../compound/DlTable/utils/getTableMiddle'
 import { listenOpts, mergeSlot } from '../../../utils'
 import { getScrollTarget } from '../../../utils/scroll'
 import { DlList } from '../../essential/DlList'
 import { DlMarkupTable } from '../../basic/DlMarkupTable'
-import { useVirtualScroll } from './useVirtualScroll'
+import { useVirtualScroll, GridStyles } from './useVirtualScroll'
 import { stateManager } from '../../../StateManager'
 
 const comps = {
@@ -89,6 +90,11 @@ export default defineComponent({
             default: 'list',
             validator: (v: (typeof typeOptions)[number]) =>
                 typeOptions.includes(v)
+        },
+
+        styles: {
+            type: Object as PropType<GridStyles>,
+            default: null
         },
 
         itemsFn: { type: Function, default: null },
@@ -251,7 +257,8 @@ export default defineComponent({
                     type.value as 'list' | 'table' | '__dltable'
                 ] || 'div',
                 virtualScrollScope.value.map(slots.default),
-                create
+                create,
+                props.styles
             )
 
             if (isDefined(slots.before)) {

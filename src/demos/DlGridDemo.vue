@@ -1,8 +1,33 @@
 <template>
     <div class="widgets-demo-wrapper">
-        <div>
+        <div class="select-wrapper">
+            <div style="width: 40%">
+                <p>Select mode:</p>
+                <dl-select
+                    v-model="activeMode"
+                    :options="[flex, grid, layout]"
+                />
+            </div>
+            <div style="width: 40%">
+                <p>Select content type:</p>
+                <dl-select
+                    v-model="activeContentType"
+                    :options="[
+                        { value: 'images', label: 'Images' },
+                        { value: 'widgets', label: 'Widgets' },
+                        {
+                            value: 'prop',
+                            label: 'Prop + ItemSlot + VirtualScroll'
+                        }
+                    ]"
+                />
+            </div>
+        </div>
+
+        <div v-if="activeMode === layout">
             <h3>Layout mode</h3>
             <dl-button
+                v-if="activeContentType.value === 'widgets'"
                 class="select-layout__button"
                 style="width: 200px; margin-bottom: 20px"
                 @click="addWidget(layout)"
@@ -10,6 +35,7 @@
                 Add widget
             </dl-button>
             <dl-grid
+                v-if="activeContentType.value === 'widgets'"
                 :key="cmWidgets.length"
                 v-model="cmLayout"
                 :max-elements-per-row="cmMaxWidgetsPerRow"
@@ -46,10 +72,22 @@
                     </template>
                 </dl-widget>
             </dl-grid>
+            <dl-grid
+                v-if="activeContentType.value === 'images'"
+                v-model="cmLayout"
+                :mode="layout"
+            >
+                <img
+                    v-for="img in images"
+                    :key="img.id"
+                    :src="img.src"
+                >
+            </dl-grid>
         </div>
-        <div>
+        <div v-else-if="activeMode === grid">
             <h3>Grid mode</h3>
             <dl-button
+                v-if="activeContentType.value === 'widgets'"
                 class="select-layout__button"
                 style="width: 200px; margin-bottom: 20px"
                 @click="addWidget(grid)"
@@ -57,6 +95,7 @@
                 Add widget
             </dl-button>
             <dl-grid
+                v-if="activeContentType.value === 'widgets'"
                 :key="dmWidgets.length"
                 v-model="dmLayout"
                 :max-elements-per-row="dmMaxWidgetsPerRow"
@@ -93,10 +132,22 @@
                     </template>
                 </dl-widget>
             </dl-grid>
+            <dl-grid
+                v-if="activeContentType.value === 'images'"
+                v-model="dmLayout"
+                :mode="layout"
+            >
+                <img
+                    v-for="img in images"
+                    :key="img.id"
+                    :src="img.src"
+                >
+            </dl-grid>
         </div>
-        <div>
+        <div v-else-if="activeMode === flex">
             <h3>Flex mode</h3>
             <dl-button
+                v-if="activeContentType.value === 'widgets'"
                 class="select-layout__button"
                 style="width: 200px; margin-bottom: 20px"
                 @click="addWidget(flex)"
@@ -104,6 +155,7 @@
                 Add widget
             </dl-button>
             <dl-grid
+                v-if="activeContentType.value === 'widgets'"
                 :key="fmWidgets.length"
                 :mode="flex"
             >
@@ -140,13 +192,38 @@
                     </template>
                 </dl-widget>
             </dl-grid>
+            <dl-grid
+                v-if="activeContentType.value === 'images'"
+                :mode="layout"
+            >
+                <img
+                    v-for="img in images"
+                    :key="img.id"
+                    :src="img.src"
+                >
+            </dl-grid>
+        </div>
+        <div v-if="activeContentType.value === 'prop'">
+            <dl-grid :items="images">
+                <template #item-slot="{ item }">
+                    <img :src="item.src">
+                </template>
+            </dl-grid>
         </div>
     </div>
 </template>
 
 <script lang="ts">
+import { v4 } from 'uuid'
 import { defineComponent, Ref, ref } from 'vue-demi'
-import { DlWidget, DlGrid, DlBarChart, DlIcon, DlButton } from '../components'
+import {
+    DlWidget,
+    DlGrid,
+    DlBarChart,
+    DlIcon,
+    DlButton,
+    DlSelect
+} from '../components'
 import { DlGridMode } from '../types'
 
 const data = {
@@ -173,9 +250,16 @@ export default defineComponent({
         DlWidget,
         DlBarChart,
         DlIcon,
-        DlButton
+        DlButton,
+        DlSelect
     },
     setup() {
+        const activeMode = ref('layout')
+        const activeContentType = ref({
+            value: 'images',
+            label: 'Images'
+        })
+
         const cmLayout: Ref<string[][]> = ref([
             ['a', 'b', 'c'],
             ['d', 'e']
@@ -266,6 +350,13 @@ export default defineComponent({
             return template
         }
 
+        const images = []
+        for (let i = 0; i < 101; i++) {
+            images.push({
+                id: v4(),
+                src: 'https://picsum.photos/200/200'
+            })
+        }
         return {
             data,
             deleteWidget,
@@ -281,13 +372,22 @@ export default defineComponent({
             dmMaxWidgetsPerRow,
             layout: DlGridMode.LAYOUT,
             flex: DlGridMode.FLEX,
-            grid: DlGridMode.GRID
+            grid: DlGridMode.GRID,
+            activeMode,
+            activeContentType,
+            images
         }
     }
 })
 </script>
 
 <style lang="scss" scoped>
+.select-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
 .widgets-demo-wrapper {
     display: flex;
     flex-direction: column;
@@ -296,8 +396,6 @@ export default defineComponent({
     gap: 20px;
 
     & > * {
-        display: flex;
-        flex-direction: column;
         gap: 10px;
         border: 1px solid var(--dl-color-separator);
         padding: 10px;
