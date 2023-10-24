@@ -1348,6 +1348,14 @@ export default defineComponent({
                     applyResizableColumns(tableEl, vm)
                 }
 
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableRef.value,
+                        props.columns as DlTableColumn[],
+                        props.fitAllColumns
+                    )
+                })
+
                 if (hasDraggableColumns.value === true) {
                     applyDraggableColumns(
                         tableEl,
@@ -1368,11 +1376,13 @@ export default defineComponent({
         watch(
             columns,
             (newColumns) => {
-                setAllColumnWidths(
-                    rootRef.value,
-                    newColumns as DlTableColumn[],
-                    props.fitAllColumns
-                )
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableRef.value,
+                        newColumns as DlTableColumn[],
+                        props.fitAllColumns
+                    )
+                })
             },
             {
                 flush: 'post'
