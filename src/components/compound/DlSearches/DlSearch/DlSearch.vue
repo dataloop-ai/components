@@ -10,6 +10,7 @@
             class="text-input-area"
             type="text"
             clear-button-tooltip
+            style="width: 100%"
             :size="size"
             :model-value="modelValue"
             :placeholder="placeholder"
@@ -50,6 +51,7 @@ import { defineComponent, PropType } from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlIcon } from '../../../essential'
 import { DlInput } from '../../DlInput'
+import { DlInputSuggestion } from '../../DlInput/types'
 
 const SearchSizes = {
     l: 'l',
@@ -83,8 +85,8 @@ export default defineComponent({
         },
         placeholder: { type: String, default: '' },
         autoSuggestItems: {
-            type: Array as PropType<string[]>,
-            default: (): string[] => []
+            type: Array as PropType<DlInputSuggestion[]>,
+            default: (): DlInputSuggestion[] => []
         },
         highlightMatches: { type: Boolean, default: false },
         dense: { type: Boolean, default: false },

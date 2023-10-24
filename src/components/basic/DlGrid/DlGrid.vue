@@ -3,7 +3,7 @@
         <dl-virtual-scroll
             v-slot="{ item }"
             :scroll-debounce="scrollDebounce"
-            style="height: 500px"
+            style="height: var(--dl-virtual-scroll-height, 500px)"
             :items="items"
             :styles="{ gridStyles, gridClass }"
         >

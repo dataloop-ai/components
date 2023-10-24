@@ -1,7 +1,7 @@
 export interface DlInputSuggestion {
     suggestion: string
-    image: string
-    click: boolean
+    image?: string
+    click?: boolean
 }
 
 export interface DlInputFile {
