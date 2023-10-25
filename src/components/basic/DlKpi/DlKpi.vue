@@ -123,7 +123,8 @@ export default defineComponent({
             type: Boolean,
             default: false,
             required: false
-        }
+        },
+        dense: Boolean
     },
     setup(props) {
         const progressValue = (progress: DlKpiProgressType) => {
@@ -137,8 +138,8 @@ export default defineComponent({
 
         const isSingleWord = (text: string) => text?.split(' ').length === 1
 
-        const cssVars = computed(() => {
-            return {
+        const cssVars = computed<Record<string, string>>(() => {
+            const vars: Record<string, string> = {
                 '--dl-kpi-border': props.bordered
                     ? '1px solid var(--dl-color-separator)'
                     : '',
@@ -149,6 +150,11 @@ export default defineComponent({
                     ? '100%'
                     : '90%'
             }
+
+            if (props.dense) {
+                vars['--dl-kpi-padding'] = '0'
+            }
+            return vars
         })
 
         const hasValue = computed(() => {

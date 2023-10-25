@@ -1,7 +1,7 @@
 <template>
     <div
         class="dl-tabs-wrapper"
-        :class="{ 'full-width': fullWidth }"
+        :class="{ 'full-width': fullWidth || fluid }"
         :style="cssVars"
     >
         <tabs-wrapper
@@ -9,7 +9,7 @@
             :is-scrollable="isOverflowing"
             :is-at-end="isAtEnd"
             :is-at-start="isAtStart"
-            class="dl-tabs-root"
+            :class="{ 'full-width': fullWidth, 'dl-tabs-root': true }"
             :is-vertical="vertical"
             @left-arrow-click="handleLeft"
             @right-arrow-click="handleRight"
@@ -66,6 +66,7 @@ export default defineComponent({
         items: { type: Array as PropType<DlTabDetails[]>, required: true },
         vertical: { type: Boolean, default: false },
         fullWidth: { type: Boolean, default: false },
+        fluid: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
         fontSize: { type: String, default: '18px' },

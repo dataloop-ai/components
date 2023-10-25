@@ -26,6 +26,7 @@ import {
 } from 'vanilla-jsoneditor'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../StateManager'
+import { nextTick } from 'process'
 
 export default defineComponent({
     model: {
@@ -149,6 +150,10 @@ export default defineComponent({
 
             jsonEditor.value?.set({
                 text: modelValue.value
+            })
+
+            nextTick(() => {
+                jsonEditor.value?.refresh()
             })
         }
 
