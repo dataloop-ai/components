@@ -17,7 +17,7 @@
             <div
                 ref="dlTabsRef"
                 class="dl-tabs-container"
-                :class="{ 'full-width': fullWidth }"
+                :class="{ 'full-width': fullWidth || fluid }"
                 role="tablist"
             >
                 <dl-tab
