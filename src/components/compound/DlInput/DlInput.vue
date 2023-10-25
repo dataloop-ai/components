@@ -6,9 +6,7 @@
     >
         <div class="row full-width full-height">
             <div
-                :class="`${
-                    isSmall ? 'col' : 'row  full-width  full-height'
-                } top`"
+                :class="`${isSmall ? 'col' : 'row  full-width'} top`"
                 :style="`${isSmall ? 'flex-grow: 0;' : ''}`"
             >
                 <div
@@ -204,7 +202,7 @@
                         </dl-list>
                     </dl-menu>
                 </div>
-                <div class="row bottom full-width full-height">
+                <div class="row bottom full-width">
                     <div
                         v-if="bottomMessage"
                         class="row full-width dl-input__bottom-message-container"
@@ -990,7 +988,9 @@ export default defineComponent({
         },
         onFocus(e: InputEvent): void {
             const el = e.target as HTMLElement
-            el.scroll(el.scrollWidth, 0)
+            if (this.modelValue) {
+                el.scroll(el.scrollWidth, 0)
+            }
             this.focused = true
             this.$emit('focus', e)
         },
@@ -1106,7 +1106,7 @@ export default defineComponent({
 [contenteditable='true']:empty:before {
     content: attr(placeholder);
     pointer-events: none;
-    display: block;
+    display: inline;
     opacity: 0.5;
     -webkit-text-security: none;
 }

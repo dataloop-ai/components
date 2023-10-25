@@ -39,12 +39,13 @@
                     "
                 >
                     <dl-input
-                        placeholder="placeholder input readonly"
-                        readonly
+                        width="100px"
+                        max-width="100px"
+                        placeholder="placeholder input"
                     />
                     <p
                         style="
-                            margin: 0;
+                            margin: 5px;
                             color: var(--dl-color-medium);
                             font-size: 10px;
                         "
@@ -54,7 +55,7 @@
                 </div>
                 <p
                     style="
-                        margin: 0;
+                        margin: 5px;
                         color: var(--dl-color-medium);
                         font-size: 10px;
                         margin-bottom: 20px;

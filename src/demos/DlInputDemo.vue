@@ -13,6 +13,7 @@
         <dl-input
             v-model="textInputValue"
             max-width="100%"
+            width="100%"
             style="width: 920px"
             title="Input with full width"
             placeholder="and suggestions"
