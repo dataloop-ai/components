@@ -8,7 +8,7 @@
                 :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
                 variant="h1"
                 :size="counterFontSizeComputed"
-                :style="counter.unit && { 'text-transform': 'none' }"
+                :style="(counter as DlKpiCounterType)?.unit && { 'text-transform': 'none' }"
             >
                 {{ formatCounter(counter) }}
             </dl-typography>
