@@ -8,6 +8,7 @@
                 :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
                 variant="h1"
                 :size="counterFontSizeComputed"
+                :style="counter.unit && { 'text-transform': 'none' }"
             >
                 {{ formatCounter(counter) }}
             </dl-typography>
@@ -61,7 +62,11 @@ import {
     DlKpiProgressType
 } from './types/KpiItem'
 import { DlProgressBar, DlTypography } from '../../essential'
-import { abbreviateNumber, numberWithComma } from '../../../utils/formatNumber'
+import {
+    abbreviateBytes,
+    abbreviateNumber,
+    numberWithComma
+} from '../../../utils/formatNumber'
 import KpiInfo from './components/KpiInfo.vue'
 
 export default defineComponent({
@@ -177,7 +182,11 @@ export default defineComponent({
                 return emptyString
             }
             if (typeof counter.value === 'number') {
-                return formatNumberCounter(counter.value, counter.format)
+                return formatNumberCounter(
+                    counter.value,
+                    counter.format,
+                    counter.unit
+                )
             }
             if (typeof counter.value === 'string') {
                 if (!counter.value.length) {
@@ -212,12 +221,21 @@ export default defineComponent({
             }
         }
 
-        const formatNumberCounter = (amount: number, format = '') => {
+        const formatNumberCounter = (
+            amount: number,
+            format = '',
+            unit = ''
+        ) => {
             if (isNaN(amount)) {
                 return emptyString
             }
             if (amount === 0) {
                 return 0
+            }
+            if (unit === 'bytes') {
+                return (
+                    abbreviateBytes(amount as number) as string
+                ).toUpperCase()
             }
             return format === 'short'
                 ? (abbreviateNumber(amount as number) as string).toLowerCase()
