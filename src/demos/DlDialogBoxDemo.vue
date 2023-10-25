@@ -30,15 +30,28 @@
                 />
             </template>
             <template #body>
-                <p
+                <div
                     style="
-                        margin: 0;
-                        color: var(--dl-color-medium);
-                        font-size: 10px;
+                        display: flex;
+                        align-content: center;
+                        width: 100%;
+                        height: 100%;
                     "
                 >
-                    Updated by rotemshaham@dataloop.ai
-                </p>
+                    <dl-input
+                        placeholder="placeholder input readonly"
+                        readonly
+                    />
+                    <p
+                        style="
+                            margin: 0;
+                            color: var(--dl-color-medium);
+                            font-size: 10px;
+                        "
+                    >
+                        Updated by rotemshaham@dataloop.ai
+                    </p>
+                </div>
                 <p
                     style="
                         margin: 0;
@@ -214,7 +227,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import { DlButton, DlDialogBox, DlSwitch } from '../components'
+import { DlButton, DlDialogBox, DlSwitch, DlInput } from '../components'
 import { DlDialogBoxHeader, DlDialogBoxFooter } from '../components'
 
 export default defineComponent({
@@ -224,7 +237,8 @@ export default defineComponent({
         DlButton,
         DlDialogBox,
         DlDialogBoxHeader,
-        DlDialogBoxFooter
+        DlDialogBoxFooter,
+        DlInput
     },
     setup() {
         const modalOne = ref<any>(null)
