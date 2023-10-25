@@ -87,6 +87,14 @@ import { DlKpiCounterFormat, DlKpiItem } from '../components/types'
 const kpiData: DlKpiItem[] = [
     {
         counter: {
+            value: 123456,
+            unit: 'bytes'
+        },
+        title: 'Bytes KiloBytes MegaBytes GigaBytes TeraBytes PetaBytes We have all the bytes',
+        infoMessage: 'info message'
+    },
+    {
+        counter: {
             value: 200000000,
             format: DlKpiCounterFormat.short
         },

@@ -13,3 +13,13 @@ export function abbreviateNumber(nr: number) {
         compactDisplay: 'short'
     }).format(nr)
 }
+
+export function abbreviateBytes(nr: number) {
+    if (!nr) return '0'
+    return new Intl.NumberFormat('en-US', {
+        notation: 'compact',
+        style: 'unit',
+        unit: 'byte',
+        unitDisplay: 'narrow'
+    }).format(nr)
+}
