@@ -1,7 +1,7 @@
 <template>
     <div
         class="dl-tabs-wrapper"
-        :class="{ 'full-width': fullWidth }"
+        :class="{ 'full-width': fullWidth || fluid }"
         :style="cssVars"
     >
         <tabs-wrapper
@@ -66,6 +66,7 @@ export default defineComponent({
         items: { type: Array as PropType<DlTabDetails[]>, required: true },
         vertical: { type: Boolean, default: false },
         fullWidth: { type: Boolean, default: false },
+        fluid: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
         fontSize: { type: String, default: '18px' },
