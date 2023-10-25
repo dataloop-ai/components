@@ -33,25 +33,43 @@
                 <div
                     style="
                         display: flex;
+                        flex-direction: column;
                         align-content: center;
                         width: 100%;
                         height: 100%;
                     "
                 >
-                    <dl-input
-                        width="100px"
-                        max-width="100px"
-                        placeholder="placeholder input"
-                    />
-                    <p
-                        style="
-                            margin: 5px;
-                            color: var(--dl-color-medium);
-                            font-size: 10px;
-                        "
-                    >
-                        Updated by rotemshaham@dataloop.ai
-                    </p>
+                    <div style="display: flex; width: 100%">
+                        <dl-input
+                            title="Group Name"
+                            placeholder="Enter Group Name"
+                            dense
+                            required
+                            red-asterisk
+                            :max-length="50"
+                            info-message=" "
+                            show-counter
+                            :error="true"
+                            :error-message="'This is an error message'"
+                        />
+                    </div>
+
+                    <div style="display: flex; width: 100%">
+                        <dl-input
+                            width="100px"
+                            max-width="100px"
+                            placeholder="placeholder input"
+                        />
+                        <p
+                            style="
+                                margin: 5px;
+                                color: var(--dl-color-medium);
+                                font-size: 10px;
+                            "
+                        >
+                            Updated by rotemshaham@dataloop.ai
+                        </p>
+                    </div>
                 </div>
                 <p
                     style="
