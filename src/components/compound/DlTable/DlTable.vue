@@ -781,7 +781,7 @@
             :class="bottomClasses"
         >
             <div
-                v-if="nothingToDisplay && !hideNoData"
+                v-if="nothingToDisplay && !hideNoData && !isDataEmpty"
                 class="dl-table__control"
             >
                 <slot name="no-data">
