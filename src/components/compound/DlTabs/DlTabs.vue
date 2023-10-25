@@ -9,7 +9,7 @@
             :is-scrollable="isOverflowing"
             :is-at-end="isAtEnd"
             :is-at-start="isAtStart"
-            class="dl-tabs-root"
+            :class="{ 'full-width': fullWidth, 'dl-tabs-root': true }"
             :is-vertical="vertical"
             @left-arrow-click="handleLeft"
             @right-arrow-click="handleRight"
