@@ -15,7 +15,7 @@ export function abbreviateNumber(nr: number) {
 }
 
 export function abbreviateBytes(nr: number) {
-    if (!nr) return '0'
+    if (!nr) return '0B'
     return new Intl.NumberFormat('en-US', {
         notation: 'compact',
         style: 'unit',
