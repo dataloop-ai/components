@@ -8,7 +8,7 @@
                 :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
                 variant="h1"
                 :size="counterFontSizeComputed"
-                :style="counter.unit && { 'text-transform': 'none' }"
+                :style="typographyStyles"
             >
                 {{ formatCounter(counter) }}
             </dl-typography>
@@ -171,6 +171,14 @@ export default defineComponent({
             props.small ? '14px' : props.titleFontSize
         )
 
+        const typographyStyles = computed<Record<string, string>>(() => {
+            const styles: Record<string, string> = {}
+            if (typeof props.counter !== 'number' && props.counter.unit) {
+                styles['text-transform'] = 'none'
+            }
+            return styles
+        })
+
         const formatCounter = (counter: DlKpiCounterType | number) => {
             if (counter === null) {
                 return emptyString
@@ -248,7 +256,8 @@ export default defineComponent({
             hasValue,
             cssVars,
             titleFontSizeComputed,
-            counterFontSizeComputed
+            counterFontSizeComputed,
+            typographyStyles
         }
     }
 })
