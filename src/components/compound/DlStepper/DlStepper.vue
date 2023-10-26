@@ -70,7 +70,11 @@
                     @prev="$emit('prev')"
                     @done="$emit('done')"
                     @close="closeStepper"
-                />
+                >
+                    <template #footer>
+                        <slot name="footer" />
+                    </template>
+                </dl-stepper-footer>
             </div>
         </div>
     </dl-stepper-container>
