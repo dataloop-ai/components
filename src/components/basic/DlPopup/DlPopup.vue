@@ -3,6 +3,9 @@
         ref="menuRef"
         v-bind="menuProps"
         :model-value="modelV"
+        :menu-class="`dl-popup__menu${dense ? ' dl-popup__menu--dense' : ''}${
+            menuClass ? ' ' + menuClass : ''
+        }`"
         @click="handleClick"
         @escapekey="handleEscape"
         @before-show="handleBeforeShow"
@@ -68,7 +71,6 @@ import {
     defineComponent,
     getCurrentInstance,
     ref,
-    watch,
     computed,
     PropType,
     Ref,
@@ -173,7 +175,8 @@ export default defineComponent({
         triggerPercentage: {
             type: Number,
             default: 0
-        }
+        },
+        dense: Boolean
     },
     emits: [...useModelToggleEmits, 'click', 'escapekey', 'close-button-click'],
     setup(props, { attrs, slots, emit }) {

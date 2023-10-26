@@ -1,5 +1,20 @@
 <template>
+    <div v-if="hasVirtualScroll">
+        <dl-virtual-scroll
+            v-slot="{ item }"
+            :scroll-debounce="scrollDebounce"
+            style="height: var(--dl-virtual-scroll-height, 500px)"
+            :items="items"
+            :styles="{ gridStyles, gridClass }"
+        >
+            <slot
+                name="item-slot"
+                v-bind="{ item }"
+            />
+        </dl-virtual-scroll>
+    </div>
     <div
+        v-else
         ref="grid"
         :style="gridStyles"
         :class="gridClass"
@@ -24,9 +39,13 @@ import {
 import { getGridTemplate, swapElementsInMatrix } from './utils'
 import { isCustomEvent } from '../utils'
 import { getElementAbove } from '../../../utils'
-import { DlGridMode } from './types'
+import { DlGridMode, GridItem } from './types'
+import { DlVirtualScroll } from '../../shared/DlVirtualScroll'
 
 export default defineComponent({
+    components: {
+        DlVirtualScroll
+    },
     model: {
         prop: 'modelValue',
         event: 'update:model-value'
@@ -34,6 +53,10 @@ export default defineComponent({
     props: {
         modelValue: {
             type: Array as PropType<(string | number)[][]>,
+            default: null
+        },
+        items: {
+            type: Array as PropType<GridItem[]>,
             default: null
         },
         rowGap: {
@@ -51,6 +74,10 @@ export default defineComponent({
         mode: {
             type: String as PropType<DlGridMode>,
             default: DlGridMode.LAYOUT
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['update:model-value', 'layout-changed'],
@@ -70,10 +97,16 @@ export default defineComponent({
                 : 'dl-grid-wrapper__flex'
         )
 
+        const hasVirtualScroll = computed(() => !!props.items)
+
         const gridStyles = computed(() => {
             const gridStyles: Dictionary<string | number> = {
                 '--row-gap': rowGap.value,
-                '--column-gap': columnGap.value
+                '--column-gap': columnGap.value,
+                display: 'grid',
+                rowGap: 'var(--row-gap)',
+                columnGap: 'var(--column-gap)',
+                gridTemplateColumns: 'repeat(var(--element-per-row), 1fr)'
             }
 
             if (!isGridMode.value) {
@@ -112,7 +145,7 @@ export default defineComponent({
         }
 
         const applyGridElementStyles = () => {
-            const childrenElements = Array.from(grid.value.children)
+            const childrenElements = Array.from(grid.value?.children || [])
             const layoutOrder = modelValue.value?.flat() ?? []
 
             // The check is needed to avoid errors and incorrect behavior
@@ -186,7 +219,8 @@ export default defineComponent({
             isFlexMode,
             gridClass,
             gridStyles,
-            grid
+            grid,
+            hasVirtualScroll
         }
     }
 })
@@ -194,12 +228,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dl-grid-wrapper {
-    &__grid {
-        display: grid;
-        row-gap: var(--row-gap);
-        column-gap: var(--column-gap);
-        grid-template-columns: repeat(var(--element-per-row), 1fr);
-    }
     &__flex {
         display: flex;
         gap: var(--row-gap);

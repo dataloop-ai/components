@@ -70,7 +70,7 @@
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead v-if="hasThead">
+                <thead>
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -166,6 +166,7 @@
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
+                                            :disabled="isDataEmpty"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -177,7 +178,7 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-menu>
+                                                <dl-popup dense>
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -190,7 +191,7 @@
                                                             handleVisibleColumnsUpdate
                                                         "
                                                     >
-                                                        <dl-list separator>
+                                                        <dl-list>
                                                             <dl-option-group
                                                                 :model-value="
                                                                     computedVisibleCols
@@ -210,7 +211,7 @@
                                                             />
                                                         </dl-list>
                                                     </slot>
-                                                </dl-menu>
+                                                </dl-popup>
                                             </slot>
                                         </dl-button>
                                     </div>
@@ -418,10 +419,7 @@
                 class="dl-table"
                 :class="additionalClasses"
             >
-                <thead
-                    v-if="hasThead"
-                    :colspan="columns.length"
-                >
+                <thead :colspan="columns.length">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -516,6 +514,7 @@
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
+                                            :disabled="isDataEmpty"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -527,7 +526,7 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-menu>
+                                                <dl-popup dense>
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -540,7 +539,7 @@
                                                             handleVisibleColumnsUpdate
                                                         "
                                                     >
-                                                        <dl-list separator>
+                                                        <dl-list>
                                                             <dl-option-group
                                                                 :model-value="
                                                                     computedVisibleCols
@@ -560,7 +559,7 @@
                                                             />
                                                         </dl-list>
                                                     </slot>
-                                                </dl-menu>
+                                                </dl-popup>
                                             </slot>
                                         </dl-button>
                                     </div>
@@ -750,23 +749,6 @@
                             </slot>
                         </slot>
 
-                        <DlTr v-if="isDataEmpty && hasEmptyStateProps">
-                            <DlTd colspan="100%">
-                                <div class="flex justify-center full-width">
-                                    <dl-empty-state v-bind="emptyStateProps">
-                                        <template
-                                            v-for="(_, slot) in $slots"
-                                            #[slot]="emptyStateProps"
-                                        >
-                                            <slot
-                                                :name="slot"
-                                                v-bind="emptyStateProps"
-                                            />
-                                        </template>
-                                    </dl-empty-state>
-                                </div>
-                            </DlTd>
-                        </DlTr>
                         <slot
                             name="bottom-row"
                             :cols="computedCols"
@@ -785,7 +767,26 @@
                 class="dl-table__control"
             >
                 <slot name="no-data">
-                    {{ noDataMessage }}
+                    <DlTr v-if="isDataEmpty && hasEmptyStateProps && !loading">
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center full-width">
+                                <dl-empty-state v-bind="emptyStateProps">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="emptyStateProps"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="emptyStateProps"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
+                        </DlTd>
+                    </DlTr>
+                    <div v-else>
+                        {{ noDataMessage }}
+                    </div>
                 </slot>
             </div>
             <div
@@ -878,14 +879,8 @@ import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
 import { DlTableRow, DlTableProps, DlTableColumn } from './types'
 import { DlPagination } from '../DlPagination'
-import {
-    DlIcon,
-    DlCheckbox,
-    DlProgressBar,
-    DlMenu,
-    DlList
-} from '../../essential'
-import { DlButton } from '../../basic'
+import { DlIcon, DlCheckbox, DlProgressBar, DlList } from '../../essential'
+import { DlButton, DlPopup } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
@@ -917,7 +912,7 @@ export default defineComponent({
         DlEmptyState,
         DlButton,
         DlOptionGroup,
-        DlMenu,
+        DlPopup,
         DlList,
         Sortable
     },
@@ -1108,10 +1103,6 @@ export default defineComponent({
         },
         noHover: Boolean,
         /**
-         * Indicates the data is empty
-         */
-        isEmpty: Boolean,
-        /**
          * Will add another column with a button opening a menu which lets the user choose the visible columns
          */
         visibleColumns: {
@@ -1250,11 +1241,6 @@ export default defineComponent({
                 !!slots['top-selection']
         )
         //
-
-        const hasThead = computed(() => {
-            return !isDataEmpty.value || !!slots['tbody']
-        })
-
         const containerClass = computed(() => {
             const { separator, bordered, dense, loading } = props
             return getContainerClass(separator, bordered, dense, loading)
@@ -1876,7 +1862,6 @@ export default defineComponent({
         return {
             containerStyle,
             isDataEmpty,
-            hasThead,
             handleSortableEvent,
             tbodyKey,
             tableKey,

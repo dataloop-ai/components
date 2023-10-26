@@ -1,5 +1,6 @@
 <template>
     <div
+        id="DlConfusionMatrix"
         :style="`max-width: ${maxWidth}`"
         class="confusion-matrix-container"
     >
@@ -524,7 +525,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .confusion-matrix-container {
     margin: auto;
 }

@@ -375,12 +375,16 @@
             <div>
                 <p>Test reactive cells</p>
                 first row:
-                <div class="row">
+                <div
+                    class="row"
+                    style="width: 100%; margin-bottom: 60px"
+                >
                     <dl-input
                         v-for="(value, key) in tableRows[0]"
                         :key="key"
                         v-model="tableRows[0][key]"
                         :title="key"
+                        max-width="50px"
                     />
                 </div>
 

@@ -8,6 +8,7 @@
                 :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
                 variant="h1"
                 :size="counterFontSizeComputed"
+                :style="typographyStyles"
             >
                 {{ formatCounter(counter) }}
             </dl-typography>
@@ -61,7 +62,11 @@ import {
     DlKpiProgressType
 } from './types/KpiItem'
 import { DlProgressBar, DlTypography } from '../../essential'
-import { abbreviateNumber, numberWithComma } from '../../../utils/formatNumber'
+import {
+    abbreviateBytes,
+    abbreviateNumber,
+    numberWithComma
+} from '../../../utils/formatNumber'
 import KpiInfo from './components/KpiInfo.vue'
 
 export default defineComponent({
@@ -118,7 +123,8 @@ export default defineComponent({
             type: Boolean,
             default: false,
             required: false
-        }
+        },
+        dense: Boolean
     },
     setup(props) {
         const progressValue = (progress: DlKpiProgressType) => {
@@ -132,8 +138,8 @@ export default defineComponent({
 
         const isSingleWord = (text: string) => text?.split(' ').length === 1
 
-        const cssVars = computed(() => {
-            return {
+        const cssVars = computed<Record<string, string>>(() => {
+            const vars: Record<string, string> = {
                 '--dl-kpi-border': props.bordered
                     ? '1px solid var(--dl-color-separator)'
                     : '',
@@ -144,6 +150,11 @@ export default defineComponent({
                     ? '100%'
                     : '90%'
             }
+
+            if (props.dense) {
+                vars['--dl-kpi-padding'] = '0'
+            }
+            return vars
         })
 
         const hasValue = computed(() => {
@@ -160,6 +171,14 @@ export default defineComponent({
             props.small ? '14px' : props.titleFontSize
         )
 
+        const typographyStyles = computed<Record<string, string>>(() => {
+            const styles: Record<string, string> = {}
+            if (typeof props.counter !== 'number' && props.counter.unit) {
+                styles['text-transform'] = 'none'
+            }
+            return styles
+        })
+
         const formatCounter = (counter: DlKpiCounterType | number) => {
             if (counter === null) {
                 return emptyString
@@ -171,7 +190,11 @@ export default defineComponent({
                 return emptyString
             }
             if (typeof counter.value === 'number') {
-                return formatNumberCounter(counter.value, counter.format)
+                return formatNumberCounter(
+                    counter.value,
+                    counter.format,
+                    counter.unit
+                )
             }
             if (typeof counter.value === 'string') {
                 if (!counter.value.length) {
@@ -206,12 +229,21 @@ export default defineComponent({
             }
         }
 
-        const formatNumberCounter = (amount: number, format = '') => {
+        const formatNumberCounter = (
+            amount: number,
+            format = '',
+            unit = ''
+        ) => {
             if (isNaN(amount)) {
                 return emptyString
             }
             if (amount === 0) {
                 return 0
+            }
+            if (unit === 'bytes') {
+                return (
+                    abbreviateBytes(amount as number) as string
+                ).toUpperCase()
             }
             return format === 'short'
                 ? (abbreviateNumber(amount as number) as string).toLowerCase()
@@ -224,7 +256,8 @@ export default defineComponent({
             hasValue,
             cssVars,
             titleFontSizeComputed,
-            counterFontSizeComputed
+            counterFontSizeComputed,
+            typographyStyles
         }
     }
 })

@@ -22,6 +22,7 @@
                 @blur="isFocused = false"
                 @search="emitSearchQuery"
                 @error="$emit('error', $event)"
+                @clear="$emit('clear')"
             />
         </div>
         <div class="dl-smart-search__buttons">
@@ -144,7 +145,8 @@ export default defineComponent({
         'remove-filter',
         'update:model-value',
         'search',
-        'error'
+        'error',
+        'clear'
     ],
     setup(props, { emit }) {
         //#region props

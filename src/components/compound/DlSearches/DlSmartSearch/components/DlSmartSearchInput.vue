@@ -197,7 +197,15 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['update:model-value', 'focus', 'blur', 'input', 'search', 'error'],
+    emits: [
+        'update:model-value',
+        'focus',
+        'blur',
+        'input',
+        'search',
+        'error',
+        'clear'
+    ],
     setup(props, { emit }) {
         //#region refs
         const input = ref<HTMLInputElement>(null)
@@ -462,6 +470,7 @@ export default defineComponent({
             searchQuery.value = ''
             input.value.innerHTML = ''
             emit('update:model-value', {})
+            emit('clear')
             if (!focused.value) {
                 focus()
             }

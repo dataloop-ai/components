@@ -21,6 +21,7 @@
                         :info-message="kpiInfoMessage(item)"
                         :progress="null"
                         :small="small"
+                        :dense="dense"
                     />
                 </div>
                 <div class="divider" />
@@ -33,7 +34,7 @@
 import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { DlKpi } from '../../basic'
-import { DlKpiCounterFormat } from '../../types'
+import { DlKpiCounterFormat, DlKpiCounterType } from '../../types'
 import { DlCounterItem } from './types'
 
 export default defineComponent({
@@ -68,7 +69,8 @@ export default defineComponent({
         subtitleFontSize: {
             type: String,
             default: '12px'
-        }
+        },
+        dense: Boolean
     },
     data() {
         return {
@@ -77,9 +79,15 @@ export default defineComponent({
     },
     computed: {
         cssVars(): Record<string, string> {
-            return {
+            const vars: Record<string, string> = {
                 '--dl-counter-spacing': this.spacing
             }
+
+            if (this.dense) {
+                vars['--dl-counters-padding'] = '0'
+            }
+
+            return vars
         }
     },
     methods: {
@@ -93,7 +101,7 @@ export default defineComponent({
             return {
                 value: item.value ?? 0,
                 format: item.format ?? DlKpiCounterFormat.long
-            }
+            } as DlKpiCounterType
         },
         kpiInfoMessage(item: DlCounterItem) {
             return item.infoMessage || null
@@ -104,7 +112,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-counters-container {
-    padding: 10px;
+    padding: var(--dl-counters-padding, 10px);
     width: fit-content;
 }
 

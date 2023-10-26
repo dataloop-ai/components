@@ -11,8 +11,23 @@
         />
 
         <dl-input
+            style="width: 500px"
+            title="Group Name"
+            placeholder="Enter Group Name"
+            dense
+            required
+            red-asterisk
+            :max-length="50"
+            info-message=" "
+            show-counter
+            :error="true"
+            :error-message="'This is an error message'"
+        />
+
+        <dl-input
             v-model="textInputValue"
             max-width="100%"
+            width="100%"
             style="width: 920px"
             title="Input with full width"
             placeholder="and suggestions"
