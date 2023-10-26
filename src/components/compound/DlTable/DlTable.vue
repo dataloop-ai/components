@@ -401,10 +401,7 @@
                             </DlTr>
                             <tr
                                 v-if="isRowExpanded(props.item)"
-                                :key="
-                                    getRowKey(props.item)?.toString() +
-                                        '-expanded'
-                                "
+                                :key="getRowExpandedKey(props.item)"
                             >
                                 <td :colspan="columns.length + 1">
                                     <slot
@@ -792,9 +789,7 @@
                                 </DlTr>
                                 <tr
                                     v-if="isRowExpanded(row)"
-                                    :key="
-                                        getRowKey(row)?.toString() + '-expanded'
-                                    "
+                                    :key="getRowExpandedKey(row)"
                                 >
                                     <td :colspan="columns.length + 1">
                                         <slot
@@ -1932,6 +1927,10 @@ export default defineComponent({
                 : 'icon-dl-down-chevron'
         }
 
+        const getRowExpandedKey = (row: DlTableRow) => {
+            return getRowKey.value(row)?.toString() + '-expanded'
+        }
+
         return {
             containerStyle,
             isDataEmpty,
@@ -2002,7 +2001,8 @@ export default defineComponent({
             showRowActions,
             tableRef,
             getRowExpandedIcon,
-            computedPagination
+            computedPagination,
+            getRowExpandedKey
         }
     }
 })
