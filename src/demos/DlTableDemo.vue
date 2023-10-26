@@ -167,7 +167,16 @@
                     @update:expanded="updateExpanded"
                 >
                     <template #body-cell-expandable-content="{ row }">
-                        <div class="expanded-row">
+                        <div
+                            v-if="
+                                [
+                                    tableRows[0].name,
+                                    tableRows[1].name,
+                                    tableRows[2].name
+                                ].includes(row.name)
+                            "
+                            class="expanded-row"
+                        >
                             This is some more information about {{ row.name }}
                         </div>
                     </template>

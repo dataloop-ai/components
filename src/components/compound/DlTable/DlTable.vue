@@ -412,7 +412,7 @@
                                         name="body-cell-expandable-content"
                                     >
                                         <div class="expanded-row">
-                                            No data text
+                                            {{ emptyExpandableMessage }}
                                         </div>
                                     </slot>
                                 </td>
@@ -802,7 +802,7 @@
                                             name="body-cell-expandable-content"
                                         >
                                             <div class="expanded-row">
-                                                No data text
+                                                {{ emptyExpandableMessage }}
                                             </div>
                                         </slot>
                                     </td>
@@ -1200,6 +1200,10 @@ export default defineComponent({
         expandableRows: {
             type: Boolean,
             default: false
+        },
+        emptyExpandableMessage: {
+            type: String,
+            default: 'No data'
         },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
