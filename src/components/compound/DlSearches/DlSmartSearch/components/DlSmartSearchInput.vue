@@ -471,6 +471,7 @@ export default defineComponent({
             input.value.innerHTML = ''
             emit('update:model-value', {})
             emit('clear')
+            emit('search', {})
             if (!focused.value) {
                 focus()
             }
