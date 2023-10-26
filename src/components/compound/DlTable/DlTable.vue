@@ -138,6 +138,7 @@
                                     :key="col.name"
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
+                                    :pagination="computedPagination"
                                 >
                                     <span class="inner-th">
                                         {{ col.label }}
@@ -516,6 +517,7 @@
                                     :key="col.name"
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
+                                    :pagination="computedPagination"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span class="inner-th">
@@ -1995,7 +1997,8 @@ export default defineComponent({
             totalItemsCount,
             showRowActions,
             tableRef,
-            getRowExpandedIcon
+            getRowExpandedIcon,
+            computedPagination
         }
     }
 })

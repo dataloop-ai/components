@@ -10,7 +10,7 @@
             class="text-input-area"
             type="text"
             clear-button-tooltip
-            style="width: 100%"
+            :style="inputStyles"
             :size="size"
             :model-value="modelValue"
             :placeholder="placeholder"
@@ -36,8 +36,10 @@
         </dl-input>
         <dl-button
             v-show="withSearchButton"
+            ref="button"
             :size="buttonSize"
             :class="buttonClasses"
+            style="margin-left: 15px"
             @click="onSearchButtonPress"
         >
             Search
@@ -109,6 +111,16 @@ export default defineComponent({
         }
     },
     computed: {
+        inputStyles(): Record<string, string> {
+            const button = this.$refs.button as any
+            const buttonEl = button?.$el as HTMLElement
+            const buttonWidth = buttonEl?.clientWidth + 13 ?? 0
+
+            return {
+                'max-width': '100%',
+                width: `calc(100% - ${buttonWidth}px)`
+            }
+        },
         buttonSize(): string {
             return BUTTON_SIZES[this.size]
         },
@@ -156,7 +168,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 10px;
 }
 
 .text-input-area {

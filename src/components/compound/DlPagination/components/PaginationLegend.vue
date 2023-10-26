@@ -28,7 +28,7 @@ export default defineComponent({
         }
     },
     computed: {
-        paginationContent() {
+        paginationContent(): string {
             return (
                 `Showing ${this.from}-${this.to}` +
                 (this.total ? ` of ${this.total} ${this.itemsName}` : '')

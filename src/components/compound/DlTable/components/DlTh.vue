@@ -5,11 +5,18 @@
         :class="thClasses"
         :data-col-index="colIndex"
         @click="onClick"
+        @mouseenter="iconHover = true"
+        @mouseleave="iconHover = false"
     >
         <dl-icon
             v-if="isSortable && align === 'right'"
             :class="iconClass"
-            icon="icon-dl-arrow-up"
+            :icon="computedSortIcon"
+            :style="
+                !isCurrentlySorted && !iconHover
+                    ? 'display: none !important;'
+                    : ''
+            "
         />
         <dl-tooltip v-if="hasEllipsis">
             <slot />
@@ -33,7 +40,12 @@
                 v-if="isSortable && ['left', 'center'].includes(align)"
                 style="margin-top: 2px"
                 :class="iconClass"
-                icon="icon-dl-arrow-up"
+                :icon="computedSortIcon"
+                :style="
+                    !isCurrentlySorted && !iconHover
+                        ? 'display: none !important;'
+                        : ''
+                "
             />
         </span>
     </th>
@@ -41,13 +53,7 @@
 
 <script lang="ts">
 import { isString } from 'lodash'
-import {
-    defineComponent,
-    getCurrentInstance,
-    computed,
-    ref,
-    toRefs
-} from 'vue-demi'
+import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
 import { stringStyleToRecord } from '../../../../utils'
 import { DlIcon } from '../../../essential'
@@ -65,6 +71,10 @@ export default defineComponent({
         colIndex: {
             type: Number,
             default: null
+        },
+        pagination: {
+            type: Object,
+            default: () => ({})
         }
     },
     emits: ['click'],
@@ -72,12 +82,23 @@ export default defineComponent({
     setup(props, { emit, attrs }) {
         const vm = getCurrentInstance()
         const tableTh = ref(null)
+        const iconHover = ref(false)
 
         const { hasEllipsis } = useSizeObserver(tableTh)
 
         const onClickFn = (event: Event, name: string) => {
             emit('click', event, name)
         }
+
+        const isCurrentlySorted = computed(() => {
+            return props.props?.col?.name === props.pagination.sortBy
+        })
+
+        const computedSortIcon = computed<string>(() => {
+            return props.pagination.descending
+                ? 'icon-dl-arrowdown'
+                : 'icon-dl-arrow-up'
+        })
 
         const hasOptionalProps = computed(() => {
             return !!Object.keys(props.props ?? {})
@@ -163,7 +184,10 @@ export default defineComponent({
             tableTh,
             hasEllipsis,
             onClick,
-            column
+            column,
+            computedSortIcon,
+            isCurrentlySorted,
+            iconHover
         }
     }
 })
