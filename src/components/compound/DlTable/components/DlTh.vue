@@ -5,11 +5,18 @@
         :class="thClasses"
         :data-col-index="colIndex"
         @click="onClick"
+        @mouseenter="iconHover = true"
+        @mouseleave="iconHover = false"
     >
         <dl-icon
             v-if="isSortable && align === 'right'"
             :class="iconClass"
             :icon="computedSortIcon"
+            :style="
+                !isCurrentlySorted && !iconHover
+                    ? 'display: none !important;'
+                    : ''
+            "
         />
         <dl-tooltip v-if="hasEllipsis">
             <slot />
@@ -34,6 +41,11 @@
                 style="margin-top: 2px"
                 :class="iconClass"
                 :icon="computedSortIcon"
+                :style="
+                    !isCurrentlySorted && !iconHover
+                        ? 'display: none !important;'
+                        : ''
+                "
             />
         </span>
     </th>
@@ -70,6 +82,7 @@ export default defineComponent({
     setup(props, { emit, attrs }) {
         const vm = getCurrentInstance()
         const tableTh = ref(null)
+        const iconHover = ref(false)
 
         const { hasEllipsis } = useSizeObserver(tableTh)
 
@@ -77,8 +90,11 @@ export default defineComponent({
             emit('click', event, name)
         }
 
-        const computedSortIcon = computed(() => {
-            if (props.props?.col?.name !== props.pagination.sortBy) return ''
+        const isCurrentlySorted = computed(() => {
+            return props.props?.col?.name === props.pagination.sortBy
+        })
+
+        const computedSortIcon = computed<string>(() => {
             return props.pagination.descending
                 ? 'icon-dl-arrowdown'
                 : 'icon-dl-arrow-up'
@@ -169,7 +185,9 @@ export default defineComponent({
             hasEllipsis,
             onClick,
             column,
-            computedSortIcon
+            computedSortIcon,
+            isCurrentlySorted,
+            iconHover
         }
     }
 })
