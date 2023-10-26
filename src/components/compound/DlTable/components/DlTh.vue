@@ -9,7 +9,7 @@
         <dl-icon
             v-if="isSortable && align === 'right'"
             :class="iconClass"
-            icon="icon-dl-arrow-up"
+            :icon="computedSortIcon"
         />
         <dl-tooltip v-if="hasEllipsis">
             <slot />
@@ -33,7 +33,7 @@
                 v-if="isSortable && ['left', 'center'].includes(align)"
                 style="margin-top: 2px"
                 :class="iconClass"
-                icon="icon-dl-arrow-up"
+                :icon="computedSortIcon"
             />
         </span>
     </th>
@@ -41,13 +41,7 @@
 
 <script lang="ts">
 import { isString } from 'lodash'
-import {
-    defineComponent,
-    getCurrentInstance,
-    computed,
-    ref,
-    toRefs
-} from 'vue-demi'
+import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
 import { stringStyleToRecord } from '../../../../utils'
 import { DlIcon } from '../../../essential'
@@ -65,6 +59,10 @@ export default defineComponent({
         colIndex: {
             type: Number,
             default: null
+        },
+        pagination: {
+            type: Object,
+            default: () => ({})
         }
     },
     emits: ['click'],
@@ -78,6 +76,14 @@ export default defineComponent({
         const onClickFn = (event: Event, name: string) => {
             emit('click', event, name)
         }
+
+        const computedSortIcon = computed(() => {
+            if (props.props?.col?.name !== props.pagination.sortBy) return ''
+            //to-do: icon-dl-arrow-down doesnt show up
+            return props.pagination.descending
+                ? 'icon-dl-arrow-down'
+                : 'icon-dl-arrow-up'
+        })
 
         const hasOptionalProps = computed(() => {
             return !!Object.keys(props.props ?? {})
@@ -163,7 +169,8 @@ export default defineComponent({
             tableTh,
             hasEllipsis,
             onClick,
-            column
+            column,
+            computedSortIcon
         }
     }
 })
