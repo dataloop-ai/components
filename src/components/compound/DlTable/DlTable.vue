@@ -1917,7 +1917,7 @@ export default defineComponent({
         const handleVisibleColumnsUpdate = (columns: string[]) => {
             if (columns.length < 1) return
             visibleColumnsState.value = columns
-            emit('update-visible-columns', columns)
+            emit('update:visible-columns', columns)
         }
 
         const showRowActions = computed<boolean>(
