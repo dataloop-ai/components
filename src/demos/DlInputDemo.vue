@@ -1,5 +1,20 @@
 <template>
     <div>
+        <div>
+            <input v-model="textVal">
+
+            <div>This is to test v-model reactivity</div>
+            <dl-input
+                v-model="textVal"
+                placeholder="testestestset"
+                disabled
+            />
+            <dl-input
+                v-model="textVal"
+                disabled
+            />
+        </div>
+
         <dl-input
             placeholder="placeholder input readonly"
             readonly
@@ -267,8 +282,11 @@ export default defineComponent({
             files.value = val
         }
 
+        const textVal = ref<string>('test me')
+
         return {
             log: console.log,
+            textVal,
             textInputValue,
             passFieldValue,
             warningFieldValue,

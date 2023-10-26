@@ -343,7 +343,8 @@ import {
     onMounted,
     PropType,
     ref,
-    toRefs
+    toRefs,
+    watch
 } from 'vue-demi'
 import { DlInfoErrorMessage, DlTooltip } from '../../shared'
 import { DlListItem } from '../../basic'
@@ -733,6 +734,14 @@ export default defineComponent({
         const showPlaceholder = computed<boolean>(
             () => !modelValue.value || !String(modelValue.value)?.length
         )
+
+        watch(modelValue, (value: string | number) => {
+            if (String(value ?? '').length) {
+                input.value.innerHTML = value
+            } else {
+                input.value.innerHTML = ''
+            }
+        })
 
         onMounted(() => {
             if (String(modelValue.value ?? '').length) {
