@@ -151,6 +151,54 @@
             </div>
 
             <div style="margin-top: 100px">
+                Expandable Rows
+                <DlTable
+                    :expanded="expanded"
+                    :columns="tableColumns"
+                    expandable-rows
+                    class="sticky-header"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @update:expanded="updateExpanded"
+                >
+                    <template #body-cell-expandable-content="{ row }">
+                        <div
+                            v-if="
+                                [
+                                    tableRows[0].name,
+                                    tableRows[1].name,
+                                    tableRows[2].name
+                                ].includes(row.name)
+                            "
+                            class="expanded-row"
+                        >
+                            This is some more information about {{ row.name }}
+                        </div>
+                        <div
+                            v-else-if="
+                                [
+                                    tableRows[3].name,
+                                    tableRows[4].name,
+                                    tableRows[5].name
+                                ].includes(row.name)
+                            "
+                            class="expanded-row"
+                        >
+                            <img
+                                src="https://popcat.click/twitter-card.jpg"
+                                style="width: 150px; height: 150px"
+                            >
+                        </div>
+                    </template>
+                </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
                 Loading WIth custom row
                 <DlTable
                     :selected="selected"
@@ -702,6 +750,7 @@ export default defineComponent({
     setup() {
         const filter = ref('')
         const selected = ref([])
+        const expanded = ref([])
         const selection = ref('none')
         const separator = ref('horizontal')
         const bordered = ref(false)
@@ -842,6 +891,7 @@ export default defineComponent({
             updateColumns,
             filter,
             selected,
+            expanded,
             selection,
             separator,
             bordered,
@@ -879,7 +929,11 @@ export default defineComponent({
                 this.rowsPerPageOptions[this.rowsPerPageOptions.length - 1] + 2
             )
         },
+        updateExpanded(payload: any) {
+            this.expanded = payload
+        },
         updateSeleted(payload: any) {
+            console.log(payload)
             this.selected = payload
         },
         updateBorderedState(val: boolean[]): void {
@@ -990,6 +1044,12 @@ p {
 label {
     font-weight: bold;
     font-size: 12px;
+}
+
+.expanded-row {
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
 }
 
 .sticky-header {
