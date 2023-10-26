@@ -77,7 +77,7 @@ describe('DlDatePicker', () => {
                 [
                     {
                         from: date,
-                        to: date3
+                        to: moment(date3).endOf('day').toDate()
                     }
                 ]
             ])
@@ -86,7 +86,7 @@ describe('DlDatePicker', () => {
             wrapper.vm.handleMouseenter(date3)
             expect(wrapper.vm.dateInterval).toEqual({
                 from: date,
-                to: date3
+                to: moment(date3).endOf('day').toDate()
             })
         })
         it('should update the calendar state on modelValue change', async () => {
