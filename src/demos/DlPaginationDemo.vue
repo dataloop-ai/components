@@ -1,24 +1,29 @@
 <template>
     <div style="align-items: stretch">
-        <div class="row">
+        <div>
             <dl-input
                 v-model="rowsPerPage"
+                width="100px"
                 title="rowsPerPage"
             />
             <dl-input
                 v-model="total"
+                width="100px"
                 title="total items"
             />
             <dl-input
                 v-model="max"
+                width="100px"
                 title="max"
             />
             <dl-input
                 v-model="maxDisplayRange"
+                width="100px"
                 title="maxDisplayRange"
             />
             <dl-input
                 v-model="itemsName"
+                width="100px"
                 title="itemsName"
             />
         </div>
@@ -106,7 +111,7 @@ export default defineComponent({
             boundaryNumbers: true,
             boundaryLinks: true,
             directionLinks: true,
-            total: 200,
+            total: 999,
             withQuickNavigation: true,
             disabled: false,
             itemsName: 'Rows',

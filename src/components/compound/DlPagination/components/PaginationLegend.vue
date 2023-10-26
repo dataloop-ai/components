@@ -1,7 +1,6 @@
 <template>
     <div class="dl-pagination--legend">
-        <span>Showing {{ from }}-{{ to
-        }}<span v-if="total"> of {{ total }} {{ itemsName }} </span></span>
+        {{ paginationContent }}
     </div>
 </template>
 
@@ -27,6 +26,14 @@ export default defineComponent({
             type: String,
             default: 'rows'
         }
+    },
+    computed: {
+        paginationContent() {
+            return (
+                `Showing ${this.from}-${this.to}` +
+                (this.total ? ` of ${this.total} ${this.itemsName}` : '')
+            )
+        }
     }
 })
 </script>
@@ -36,5 +43,8 @@ export default defineComponent({
     justify-content: flex-end;
     display: flex;
     color: var(--dl-color-lighter);
+    height: 100%;
+    min-width: min-content;
+    overflow-y: scroll;
 }
 </style>
