@@ -195,11 +195,11 @@ export default defineComponent({
         updateModelValue(value: DateInterval) {
             if (this.disabled) return
             const valueToUse = value
-            if (value && moment(value.from).isSame(value.to)) {
-                if (this.type === 'day')
-                    valueToUse.to = moment(value.from).endOf('day').toDate()
-                else {
-                    valueToUse.to = moment(value.from).endOf('month').toDate()
+            if (value) {
+                if (this.type === 'day') {
+                    valueToUse.to = moment(value.to).endOf('day').toDate()
+                } else {
+                    valueToUse.to = moment(value.to).endOf('month').toDate()
                 }
             }
             this.$emit('update:model-value', valueToUse)
