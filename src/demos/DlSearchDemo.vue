@@ -33,6 +33,29 @@
             :auto-suggest-items="suggestItems"
             style="height: 28px"
         />
+
+        <div style="width: 100%">
+            search in flex div
+            <div style="display: flex; width: 30%">
+                <dl-search
+                    v-model="searchValue"
+                    size="l"
+                    with-search-button
+                    highlight-matches
+                    style="width: 100%; max-width: 100%"
+                    placeholder="Search here"
+                    :auto-suggest-items="suggestItems"
+                />
+            </div>
+            <div style="display: flex; width: 30%">
+                <dl-search
+                    v-model="searchValue"
+                    size="l"
+                    style="width: 100%; max-width: 100%"
+                    placeholder="Search here"
+                />
+            </div>
+        </div>
     </div>
 </template>
 
