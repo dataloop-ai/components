@@ -735,9 +735,11 @@ export default defineComponent({
             () => !modelValue.value || !String(modelValue.value)?.length
         )
 
-        watch(modelValue, (value: string | number) => {
-            if (String(value ?? '').length) {
-                input.value.innerHTML = value
+        watch(modelValue, () => {
+            if (String(modelValue.value ?? '').length) {
+                if (input.value.innerHTML !== modelValue.value) {
+                    input.value.innerHTML = modelValue.value
+                }
             } else {
                 input.value.innerHTML = ''
             }
