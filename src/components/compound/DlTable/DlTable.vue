@@ -70,7 +70,7 @@
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead v-if="hasThead">
+                <thead>
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -166,6 +166,7 @@
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
+                                            :disabled="isDataEmpty"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -418,10 +419,7 @@
                 class="dl-table"
                 :class="additionalClasses"
             >
-                <thead
-                    v-if="hasThead"
-                    :colspan="columns.length"
-                >
+                <thead :colspan="columns.length">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -516,6 +514,7 @@
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
+                                            :disabled="isDataEmpty"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -750,23 +749,6 @@
                             </slot>
                         </slot>
 
-                        <DlTr v-if="isDataEmpty && hasEmptyStateProps">
-                            <DlTd colspan="100%">
-                                <div class="flex justify-center full-width">
-                                    <dl-empty-state v-bind="emptyStateProps">
-                                        <template
-                                            v-for="(_, slot) in $slots"
-                                            #[slot]="emptyStateProps"
-                                        >
-                                            <slot
-                                                :name="slot"
-                                                v-bind="emptyStateProps"
-                                            />
-                                        </template>
-                                    </dl-empty-state>
-                                </div>
-                            </DlTd>
-                        </DlTr>
                         <slot
                             name="bottom-row"
                             :cols="computedCols"
@@ -781,11 +763,30 @@
             :class="bottomClasses"
         >
             <div
-                v-if="nothingToDisplay && !hideNoData && !isDataEmpty"
+                v-if="nothingToDisplay && !hideNoData"
                 class="dl-table__control"
             >
                 <slot name="no-data">
-                    {{ noDataMessage }}
+                    <DlTr v-if="isDataEmpty && hasEmptyStateProps && !loading">
+                        <DlTd colspan="100%">
+                            <div class="flex justify-center full-width">
+                                <dl-empty-state v-bind="emptyStateProps">
+                                    <template
+                                        v-for="(_, slot) in $slots"
+                                        #[slot]="emptyStateProps"
+                                    >
+                                        <slot
+                                            :name="slot"
+                                            v-bind="emptyStateProps"
+                                        />
+                                    </template>
+                                </dl-empty-state>
+                            </div>
+                        </DlTd>
+                    </DlTr>
+                    <div v-else>
+                        {{ noDataMessage }}
+                    </div>
                 </slot>
             </div>
             <div
@@ -1102,10 +1103,6 @@ export default defineComponent({
         },
         noHover: Boolean,
         /**
-         * Indicates the data is empty
-         */
-        isEmpty: Boolean,
-        /**
          * Will add another column with a button opening a menu which lets the user choose the visible columns
          */
         visibleColumns: {
@@ -1244,11 +1241,6 @@ export default defineComponent({
                 !!slots['top-selection']
         )
         //
-
-        const hasThead = computed(() => {
-            return !isDataEmpty.value || !!slots['tbody']
-        })
-
         const containerClass = computed(() => {
             const { separator, bordered, dense, loading } = props
             return getContainerClass(separator, bordered, dense, loading)
@@ -1870,7 +1862,6 @@ export default defineComponent({
         return {
             containerStyle,
             isDataEmpty,
-            hasThead,
             handleSortableEvent,
             tbodyKey,
             tableKey,
