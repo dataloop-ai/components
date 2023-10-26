@@ -79,9 +79,8 @@ export default defineComponent({
 
         const computedSortIcon = computed(() => {
             if (props.props?.col?.name !== props.pagination.sortBy) return ''
-            //to-do: icon-dl-arrow-down doesnt show up
             return props.pagination.descending
-                ? 'icon-dl-arrow-down'
+                ? 'icon-dl-arrowdown'
                 : 'icon-dl-arrow-up'
         })
 
