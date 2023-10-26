@@ -179,6 +179,21 @@
                         >
                             This is some more information about {{ row.name }}
                         </div>
+                        <div
+                            v-else-if="
+                                [
+                                    tableRows[3].name,
+                                    tableRows[4].name,
+                                    tableRows[5].name
+                                ].includes(row.name)
+                            "
+                            class="expanded-row"
+                        >
+                            <img
+                                src="https://popcat.click/twitter-card.jpg"
+                                style="width: 150px; height: 150px"
+                            >
+                        </div>
                     </template>
                 </DlTable>
             </div>
