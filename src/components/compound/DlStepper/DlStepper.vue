@@ -70,7 +70,14 @@
                     @prev="$emit('prev')"
                     @done="$emit('done')"
                     @close="closeStepper"
-                />
+                >
+                    <template #footer>
+                        <slot
+                            v-if="hasFooterSlot"
+                            name="footer"
+                        />
+                    </template>
+                </dl-stepper-footer>
             </div>
         </div>
     </dl-stepper-container>
@@ -196,6 +203,9 @@ export default defineComponent({
                 '--dl-stepper-width': this.width,
                 '--dl-stepper-bg': getColor(this.bgColor, 'dl-color-fill-third')
             }
+        },
+        hasFooterSlot(): boolean {
+            return !!this.$slots.footer
         }
     },
     watch: {
