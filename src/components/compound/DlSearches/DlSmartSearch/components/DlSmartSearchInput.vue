@@ -331,59 +331,47 @@ export default defineComponent({
             let stringValue = ''
             let caretPosition = 0
             if (searchQuery.value.length) {
-                const queryLeftSide = searchQuery.value.substring(
+                let queryLeftSide = searchQuery.value.substring(
                     0,
                     caretAt.value
                 )
-                const queryRightSide = removeLeadingExpression(
-                    searchQuery.value.substring(caretAt.value).trimStart()
-                )
+                let queryRightSide = searchQuery.value.substring(caretAt.value)
 
-                let query = queryLeftSide
-                    .replace(new RegExp(' ', 'g'), ' ')
-                    .split(' ')
-                    .map((string: string) => string.trim())
-                    .filter((string: string) => !!string.length)
-
-                if (query.length > 1) {
-                    if (query[query.length - 1] === '') {
-                        stringValue = [...query, value, '']
-                            .join(' ')
-                            .replace('  ', ' ')
-                    } else {
-                        if (query[query.length - 1].endsWith('.')) {
-                            query[query.length - 1] = query[
-                                query.length - 1
-                            ].replace('.', '')
-                        } else if (
-                            value
-                                .toLowerCase()
-                                .startsWith(
-                                    query[query.length - 1].toLowerCase()
-                                )
-                        ) {
-                            query = query.slice(0, query.length - 1)
-                        }
-                        stringValue = [...query, value, ''].join(' ')
+                if (value.startsWith('.')) {
+                    // dot notation case
+                    queryLeftSide = queryLeftSide.trim().replace(/\.$/, '')
+                    if (!queryRightSide.startsWith(' ')) {
+                        // remove text leftovers on the right
+                        queryRightSide = removeLeadingExpression(queryRightSide)
                     }
+                    // remove leading space on the right side
+                    queryRightSide = queryRightSide.trimStart()
+                } else if (queryLeftSide.endsWith(' ')) {
+                    // caret after space: replace whatever is there on the right side with the value
+                    queryLeftSide = queryLeftSide.trimEnd() + ' '
+                    queryRightSide =
+                        removeLeadingExpression(queryRightSide).trimStart()
+                } else if (/\.\S+$/.test(queryLeftSide)) {
+                    // if there are dots in left side expression, suggestions have an operator
+                    // looks like a bug in findSuggestions TODO find it - for now work around it here
+                    const leftover = queryRightSide.match(/^\S+/)?.[0] || ''
+                    queryLeftSide += leftover + ' '
+                    queryRightSide = removeLeadingExpression(
+                        queryRightSide.substring(leftover.length).trimStart()
+                    ).trimStart()
+                } else if (queryRightSide.startsWith(' ')) {
+                    // this| situation: replace whatever is there on the left side with the value
+                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
+                    queryRightSide = queryRightSide.trimStart()
                 } else {
-                    if (query[query.length - 1].endsWith('.')) {
-                        query[query.length - 1] = query[
-                            query.length - 1
-                        ].replace('.', '')
-                    } else if (
-                        value
-                            .toLowerCase()
-                            .startsWith(query[query.length - 1].toLowerCase())
-                    ) {
-                        query = query.slice(0, query.length - 1)
-                    }
-
-                    stringValue = [...query, value, ''].join(' ')
+                    // this|situation: replace whatever is there on both sides with the value
+                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
+                    queryRightSide =
+                        removeLeadingExpression(queryRightSide).trimStart()
                 }
 
-                caretPosition = stringValue.length
-                stringValue += queryRightSide
+                stringValue = queryLeftSide + value + ' ' + queryRightSide
+                caretPosition = stringValue.length - queryRightSide.length
             } else {
                 stringValue = value + ' '
                 caretPosition = stringValue.length
@@ -849,7 +837,10 @@ export default defineComponent({
         }
 
         const watchKeyUp = (e: KeyboardEvent) => {
-            if (focused.value && e.key.startsWith('Arrow')) {
+            if (
+                focused.value &&
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+            ) {
                 setInputValue(searchQuery.value, { noEmit: true })
             }
         }

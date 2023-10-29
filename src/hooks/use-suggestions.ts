@@ -659,8 +659,8 @@ export const removeLeadingExpression = (str: string) => {
             return str.substring(i).trimStart()
         }
     }
-    // return everything after 1st space, or the whole string
-    return str.match(/ (.*)$/)?.[1] || str
+    // return everything after 1st space, or an empty string
+    return str.match(/ (.*)$/)?.[1] || ''
 }
 
 const getValueSuggestions = (dataType: string | string[], operator: string) => {
