@@ -124,8 +124,7 @@ import {
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,
-    revertAliases,
-    clearPartlyTypedSuggestion
+    revertAliases
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -260,9 +259,9 @@ export default defineComponent({
         //#region methods
         const setInputValue = (
             value: string,
-            options: { noEmit?: boolean } = {}
+            options: { noEmit?: boolean; testCaret?: number } = {}
         ) => {
-            const { noEmit } = options
+            const { noEmit, testCaret } = options
 
             showSuggestions.value = false
 
@@ -271,8 +270,9 @@ export default defineComponent({
                 value = value.trimEnd()
             }
 
-            const specialSuggestions = suggestions.value.filter((suggestion) =>
-                suggestion.startsWith('.')
+            const specialSuggestions = suggestions.value.filter(
+                (suggestion) =>
+                    typeof suggestion === 'string' && suggestion.startsWith('.')
             )
 
             for (const suggestion of specialSuggestions) {
@@ -289,7 +289,9 @@ export default defineComponent({
             // find value left side before current input value is altered by any code below
             // to match previous behavior, move the caret to the end if setInputValue has been passed new value
             caretAt.value =
-                value === input.value.innerText
+                testCaret !== undefined
+                    ? testCaret
+                    : value === input.value.innerText
                     ? getSelectionOffset(input.value)[0]
                     : value.length
 
@@ -378,9 +380,7 @@ export default defineComponent({
                 caretPosition = stringValue.length
             }
 
-            setInputValue(
-                clearPartlyTypedSuggestion(input.value.innerText, stringValue)
-            )
+            setInputValue(stringValue)
             setSelectionOffset(input.value, caretPosition, caretPosition)
         }
 
