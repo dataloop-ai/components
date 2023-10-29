@@ -339,7 +339,7 @@ export default defineComponent({
 
                 if (value.startsWith('.')) {
                     // dot notation case
-                    queryLeftSide = queryLeftSide.trim().replace(/\.$/, '')
+                    queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
                     if (!queryRightSide.startsWith(' ')) {
                         // remove text leftovers on the right
                         queryRightSide = removeLeadingExpression(queryRightSide)
@@ -349,8 +349,9 @@ export default defineComponent({
                 } else if (queryLeftSide.endsWith(' ')) {
                     // caret after space: replace whatever is there on the right side with the value
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
-                    queryRightSide =
-                        removeLeadingExpression(queryRightSide).trimStart()
+                    queryRightSide = removeLeadingExpression(
+                        queryRightSide.trimStart()
+                    ).trimStart()
                 } else if (/\.\S+$/.test(queryLeftSide)) {
                     // if there are dots in left side expression, suggestions have an operator
                     // looks like a bug in findSuggestions TODO find it - for now work around it here
