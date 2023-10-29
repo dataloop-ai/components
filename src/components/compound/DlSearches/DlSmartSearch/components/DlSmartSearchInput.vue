@@ -105,7 +105,11 @@ import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
-import { setCaretAtTheEnd } from '../../../../../utils'
+import {
+    getSelectionOffset,
+    setCaretAtTheEnd,
+    setSelectionOffset
+} from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
@@ -128,7 +132,8 @@ import {
     Schema,
     Alias,
     useSuggestions,
-    removeBrackets
+    removeBrackets,
+    removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 
@@ -228,6 +233,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
+        const caretAt = ref(0)
         const searchQuery = ref<string>('')
         const focused = ref(false)
         const isOverflowing = ref(false)
@@ -277,6 +283,16 @@ export default defineComponent({
 
             searchQuery.value = value
 
+            // TODO
+            // here the value is finalized - this should be inner function entry point
+
+            // find value left side before current input value is altered by any code below
+            // to match previous behavior, move the caret to the end if setInputValue has been passed new value
+            caretAt.value =
+                value === input.value.innerText
+                    ? getSelectionOffset(input.value)[0]
+                    : value.length
+
             if (value !== input.value.innerText) {
                 input.value.innerHTML = value
             }
@@ -303,7 +319,7 @@ export default defineComponent({
             scroll.value = input.value.offsetHeight > 40
 
             nextTick(() => {
-                findSuggestions(value)
+                findSuggestions(value.substring(0, caretAt.value))
             })
 
             if (!noEmit) {
@@ -313,8 +329,17 @@ export default defineComponent({
 
         const setInputFromSuggestion = (value: string) => {
             let stringValue = ''
+            let caretPosition = 0
             if (searchQuery.value.length) {
-                let query = searchQuery.value
+                const queryLeftSide = searchQuery.value.substring(
+                    0,
+                    caretAt.value
+                )
+                const queryRightSide = removeLeadingExpression(
+                    searchQuery.value.substring(caretAt.value).trimStart()
+                )
+
+                let query = queryLeftSide
                     .replace(new RegExp(' ', 'g'), ' ')
                     .split(' ')
                     .map((string: string) => string.trim())
@@ -356,14 +381,18 @@ export default defineComponent({
 
                     stringValue = [...query, value, ''].join(' ')
                 }
+
+                caretPosition = stringValue.length
+                stringValue += queryRightSide
             } else {
                 stringValue = value + ' '
+                caretPosition = stringValue.length
             }
 
             setInputValue(
                 clearPartlyTypedSuggestion(input.value.innerText, stringValue)
             )
-            setCaretAtTheEnd(input.value)
+            setSelectionOffset(input.value, caretPosition, caretPosition)
         }
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
@@ -815,19 +844,28 @@ export default defineComponent({
         )
         //#endregion
 
+        const watchMouseMove = () => {
+            isTyping.value = false
+        }
+
+        const watchKeyUp = (e: KeyboardEvent) => {
+            if (focused.value && e.key.startsWith('Arrow')) {
+                setInputValue(searchQuery.value, { noEmit: true })
+            }
+        }
+
         onMounted(() => {
             if (!expanded.value) {
                 isOverflowing.value =
                     isEllipsisActive(input.value) || hasEllipsis.value
             }
-            window.addEventListener('mousemove', () => (isTyping.value = false))
+            window.addEventListener('mousemove', watchMouseMove)
+            window.addEventListener('keyup', watchKeyUp)
             blur(null, { force: true })
         })
         onBeforeUnmount(() => {
-            window.removeEventListener(
-                'mousemove',
-                () => (isTyping.value = false)
-            )
+            window.removeEventListener('mousemove', watchMouseMove)
+            window.removeEventListener('keyup', watchKeyUp)
         })
 
         return {

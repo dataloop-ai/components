@@ -610,8 +610,8 @@ export const removeBrackets = (str: string) => {
 
     let result = removeAllBrackets(str.substring(0, quotesAt[0]))
 
-    let skipFrom = 0;
-        let skipTo = 1
+    let skipFrom = 0
+    let skipTo = 1
     while (quotesAt[skipFrom] !== undefined) {
         // skip as far as isValidString fails
         while (
@@ -650,6 +650,17 @@ export const removeBrackets = (str: string) => {
     }
 
     return result
+}
+
+export const removeLeadingExpression = (str: string) => {
+    // scan for a substring that isValidString
+    for (let i = 2; i < str.length; i++) {
+        if (isValidString(str.substring(0, i))) {
+            return str.substring(i).trimStart()
+        }
+    }
+    // return everything after 1st space, or the whole string
+    return str.match(/ (.*)$/)?.[1] || str
 }
 
 const getValueSuggestions = (dataType: string | string[], operator: string) => {
