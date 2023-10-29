@@ -13,6 +13,7 @@
                 v-model="textVal"
                 disabled
             />
+            <dl-input v-model="trimmedValue" />
         </div>
 
         <dl-input
@@ -238,7 +239,7 @@
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent, ref } from 'vue-demi'
+import { computed, defineComponent, ref } from 'vue-demi'
 import { DlInput, DlButton, DlIcon } from '../components'
 import { DlInputFile } from '../components/compound/DlInput/types'
 export default defineComponent({
@@ -284,9 +285,20 @@ export default defineComponent({
 
         const textVal = ref<string>('test me')
 
+        const val = ref('')
+        const trimmedValue = computed<string>({
+            get: () => {
+                return val.value.trim()
+            },
+            set: (value: string) => {
+                val.value = value.trim()
+            }
+        })
+
         return {
             log: console.log,
             textVal,
+            trimmedValue,
             textInputValue,
             passFieldValue,
             warningFieldValue,
