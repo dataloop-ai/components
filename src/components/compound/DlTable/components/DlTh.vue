@@ -75,6 +75,10 @@ export default defineComponent({
         pagination: {
             type: Object,
             default: () => ({})
+        },
+        padding: {
+            type: String,
+            default: '0 10px'
         }
     },
     emits: ['click'],
@@ -176,6 +180,9 @@ export default defineComponent({
             iconClass: column?.value?.iconClass ?? null,
             hasOptionalProps,
             headerStyle: [
+                {
+                    padding: props.padding
+                },
                 isString(attrs.style)
                     ? stringStyleToRecord(attrs.style)
                     : attrs.style,

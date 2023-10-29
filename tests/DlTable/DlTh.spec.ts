@@ -41,7 +41,7 @@ describe('DlTh', () => {
                 )
             })
             it('should compute right styles', () => {
-                expect(wrapper.vm.headerStyle[1]).toEqual(
+                expect(wrapper.vm.headerStyle[2]).toEqual(
                     stringStyleToRecord('')
                 )
             })
@@ -67,7 +67,8 @@ describe('DlTh', () => {
                 )
             })
             it('should compute right styles', () => {
-                expect(wrapper.vm.headerStyle[1]).toEqual(
+                console.log(wrapper.vm.headerStyle)
+                expect(wrapper.vm.headerStyle[2]).toEqual(
                     stringStyleToRecord('color: red;')
                 )
             })

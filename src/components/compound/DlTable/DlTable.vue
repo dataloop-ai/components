@@ -1923,8 +1923,8 @@ export default defineComponent({
 
         const getRowExpandedIcon = (row: DlTableRow) => {
             return isRowExpanded(row)
-                ? 'icon-dl-up-chevron'
-                : 'icon-dl-down-chevron'
+                ? 'icon-dl-down-chevron'
+                : 'icon-dl-right-chevron'
         }
 
         const getRowExpandedKey = (row: DlTableRow) => {
