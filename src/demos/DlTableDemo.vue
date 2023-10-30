@@ -467,6 +467,7 @@
                         tableColumns.slice(0, -1).map((c) => c.name)
                     "
                     loading
+                    :resizable="true"
                 >
                     <template #body-cell-row-actions>
                         <dl-button label="ActionButton" />
