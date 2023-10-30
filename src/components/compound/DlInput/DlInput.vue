@@ -753,6 +753,8 @@ export default defineComponent({
                 nextTick(() => {
                     if (!isInternalChange.value && val) {
                         input.value.innerHTML = val
+                            .toString()
+                            .replace(/ /g, '&nbsp;')
                     } else {
                         isInternalChange.value = false
                     }
