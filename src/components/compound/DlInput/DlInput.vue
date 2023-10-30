@@ -753,6 +753,7 @@ export default defineComponent({
                 nextTick(() => {
                     if (!isInternalChange.value && val) {
                         input.value.innerHTML = val
+                    } else {
                         isInternalChange.value = false
                     }
                 })
