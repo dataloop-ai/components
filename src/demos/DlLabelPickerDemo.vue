@@ -1,7 +1,11 @@
 <template>
     <div>
         <div>Label picker component</div>
-        <DlLabelPicker :items="items" />
+        <DlLabelPicker
+            :items="items"
+            @selected-label="setSelectedEvent"
+        />
+        <div>last selected: {{ lastSelected }}</div>
     </div>
 </template>
 
@@ -63,7 +67,11 @@ export default defineComponent({
     },
     setup() {
         const items = ref(rows)
-        return { items }
+        const lastSelected = ref<DlLabelPickerItem>(null)
+        const setSelectedEvent = (item: DlLabelPickerItem) => {
+            lastSelected.value = item
+        }
+        return { items, lastSelected, setSelectedEvent }
     }
 })
 </script>

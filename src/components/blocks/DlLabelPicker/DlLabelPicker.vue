@@ -27,7 +27,7 @@
             :loading="false"
             :filter="inputValue"
             :rows="items"
-            row-key="identifier"
+            row-key="name"
             color="dl-color-secondary"
             @row-click="handleRowClick"
         >
@@ -78,8 +78,6 @@ export default defineComponent({
         ]
 
         const inputValue = ref('')
-        const isInputActive = ref(false)
-        const inputBorderLeft = ref('2px solid transparent')
         const currentSelectedLabel = ref<DlLabelPickerItem>(null)
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
@@ -103,16 +101,16 @@ export default defineComponent({
         })
 
         const inputStyles = computed(() => {
+            if (!selectedColor.value) {
+                return {}
+            }
             return { 'border-left': `2px solid ${selectedColor.value}` }
         })
 
         return {
             handleRowClick,
             inputValue,
-            inputBorderLeft,
-            isInputActive,
             columns,
-            selectedColor,
             placeHolderText,
             inputStyles
         }
