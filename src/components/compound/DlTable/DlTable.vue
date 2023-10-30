@@ -1750,7 +1750,14 @@ export default defineComponent({
             }
         }
 
+        const prevScroll = ref<DlVirtualScrollEvent>(null)
+
         function onVScroll(info: DlVirtualScrollEvent) {
+            if (isEqual(prevScroll.value, info)) {
+                return
+            }
+
+            prevScroll.value = info
             emit('virtual-scroll', info)
         }
 

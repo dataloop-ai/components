@@ -101,6 +101,50 @@
                 @change="handleModelValueUpdate"
             />
         </div>
+        <div style="width: 500px">
+            <div
+                v-if="date"
+                class="row"
+                style="
+                    width: 100%;
+                    align-items: center;
+                    justify-content: center;
+                "
+            >
+                to
+                <input
+                    type="date"
+                    :disabled="!range"
+                    :value="date.from"
+                    class="dl-dtr--range-input"
+                    placeholder="from"
+                    @input="date.from = new Date($event.target.value)"
+                >
+
+                from
+                <input
+                    type="date"
+                    :disabled="!range"
+                    :value="date.to"
+                    class="dl-dtr--range-input"
+                    placeholder="from"
+                    @input="date.to = new Date($event.target.value)"
+                >
+            </div>
+
+            vmodel date: {{ date }}
+            <dl-date-time-range
+                v-model="date"
+                :type="type"
+                width="100%"
+                :available-range="range ? availableRange : null"
+                :mode="mode"
+                :show-time="showTime"
+                :auto-close="autoClose"
+                @set-type="handleSetType"
+                @change="handleModelValueUpdate"
+            />
+        </div>
     </div>
 </template>
 <script lang="ts">
