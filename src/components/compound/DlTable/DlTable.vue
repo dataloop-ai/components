@@ -113,6 +113,12 @@
                             </th>
 
                             <th
+                                v-if="expandableRows"
+                                style="width: 26px"
+                                class="dl-table--col-auto-with dl-table--col-icon-wrapper"
+                            />
+
+                            <th
                                 v-if="isTreeTable"
                                 class="dl-table--col-auto-with empty-col chevron-header"
                                 :data-resizable="false"
@@ -334,6 +340,12 @@
                                         />
                                     </slot>
                                 </td>
+                                <td v-if="expandableRows">
+                                    <dl-icon
+                                        :icon="getRowExpandedIcon(props.item)"
+                                        @click="updateExpanded(props.item)"
+                                    />
+                                </td>
                                 <DlTd
                                     v-for="(col, colIndex) in computedCols"
                                     :key="col.name"
@@ -387,6 +399,21 @@
                                     />
                                 </DlTd>
                             </DlTr>
+                            <tr
+                                v-if="isRowExpanded(props.item)"
+                                :key="getRowExpandedKey(props.item)"
+                            >
+                                <td :colspan="columns.length + 1">
+                                    <slot
+                                        v-bind="{ row: props.item }"
+                                        name="body-cell-expandable-content"
+                                    >
+                                        <div class="expanded-row">
+                                            {{ emptyExpandableMessage }}
+                                        </div>
+                                    </slot>
+                                </td>
+                            </tr>
                         </slot>
                     </template>
                     <DlTr v-if="isDataEmpty">
@@ -460,6 +487,12 @@
                                     />
                                 </slot>
                             </th>
+
+                            <th
+                                v-if="expandableRows"
+                                style="width: 26px"
+                                class="dl-table--col-auto-with dl-table--col-icon-wrapper"
+                            />
 
                             <th
                                 v-if="isTreeTable"
@@ -696,6 +729,12 @@
                                             />
                                         </slot>
                                     </td>
+                                    <td v-if="expandableRows">
+                                        <dl-icon
+                                            :icon="getRowExpandedIcon(row)"
+                                            @click="updateExpanded(row)"
+                                        />
+                                    </td>
                                     <DlTd
                                         v-for="(col, colIndex) in computedCols"
                                         :key="col.name"
@@ -748,6 +787,21 @@
                                         />
                                     </DlTd>
                                 </DlTr>
+                                <tr
+                                    v-if="isRowExpanded(row)"
+                                    :key="getRowExpandedKey(row)"
+                                >
+                                    <td :colspan="columns.length + 1">
+                                        <slot
+                                            v-bind="{ row }"
+                                            name="body-cell-expandable-content"
+                                        >
+                                            <div class="expanded-row">
+                                                {{ emptyExpandableMessage }}
+                                            </div>
+                                        </slot>
+                                    </td>
+                                </tr>
                             </slot>
                         </slot>
 
@@ -1138,6 +1192,14 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
+        expandableRows: {
+            type: Boolean,
+            default: false
+        },
+        emptyExpandableMessage: {
+            type: String,
+            default: 'No data'
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -1523,7 +1585,6 @@ export default defineComponent({
             allRowsSelected,
             someRowsSelected,
             rowsSelectedNumber,
-
             isRowSelected,
             clearSelection,
             updateSelection
@@ -1533,7 +1594,6 @@ export default defineComponent({
             computedRows,
             getRowKey as ComputedRef<(val: string | DlTableRow) => any>
         )
-
         const { colList, computedCols, computedColsMap, computedColspan } =
             useTableColumnSelection(
                 props as unknown as DlTableProps,
@@ -1691,7 +1751,14 @@ export default defineComponent({
             }
         }
 
+        const prevScroll = ref<DlVirtualScrollEvent>(null)
+
         function onVScroll(info: DlVirtualScrollEvent) {
+            if (isEqual(prevScroll.value, info)) {
+                return
+            }
+
+            prevScroll.value = info
             emit('virtual-scroll', info)
         }
 
@@ -1752,8 +1819,8 @@ export default defineComponent({
                 data,
                 'expand',
                 () => isRowExpanded(data.key),
-                (adding) => {
-                    updateExpanded(data.key, adding)
+                () => {
+                    updateExpanded(data.key)
                 }
             )
         }
@@ -1854,7 +1921,7 @@ export default defineComponent({
         const handleVisibleColumnsUpdate = (columns: string[]) => {
             if (columns.length < 1) return
             visibleColumnsState.value = columns
-            emit('update-visible-columns', columns)
+            emit('update:visible-columns', columns)
         }
 
         const showRowActions = computed<boolean>(
@@ -1862,6 +1929,16 @@ export default defineComponent({
                 !!(visibleColumns.value && visibleColumns.value.length) ||
                 !!hasSlotByName(`body-cell-row-actions`)
         )
+
+        const getRowExpandedIcon = (row: DlTableRow) => {
+            return isRowExpanded(row)
+                ? 'icon-dl-down-chevron'
+                : 'icon-dl-right-chevron'
+        }
+
+        const getRowExpandedKey = (row: DlTableRow) => {
+            return getRowKey.value(row)?.toString() + '-expanded'
+        }
 
         return {
             containerStyle,
@@ -1909,6 +1986,8 @@ export default defineComponent({
             getBodySelectionScope,
             hasAnyAction,
             updateSelection,
+            updateExpanded,
+            isRowExpanded,
             setPagination,
             hasLoadingSlot,
             displayPagination,
@@ -1930,7 +2009,9 @@ export default defineComponent({
             totalItemsCount,
             showRowActions,
             tableRef,
-            computedPagination
+            getRowExpandedIcon,
+            computedPagination,
+            getRowExpandedKey
         }
     }
 })

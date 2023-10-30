@@ -1,7 +1,8 @@
 import { isUndefined } from 'lodash'
 import { ref, watch } from 'vue-demi'
+import { DlTableRow } from '../types'
 
-function getVal(val: string[]) {
+function getVal(val: DlTableRow[]) {
     return Array.isArray(val) ? val.slice() : []
 }
 
@@ -21,11 +22,11 @@ export function useTableRowExpand(props: any, emit: Function) {
         }
     )
 
-    function isRowExpanded(key: string) {
-        return innerExpanded.value.includes(key)
+    function isRowExpanded(row: DlTableRow) {
+        return innerExpanded.value.includes(row)
     }
 
-    function setExpanded(val: string[]) {
+    function setExpanded(val: DlTableRow[]) {
         if (props.expanded !== null && !isUndefined(props.expanded)) {
             emit('update:expanded', val)
         } else {
@@ -33,13 +34,13 @@ export function useTableRowExpand(props: any, emit: Function) {
         }
     }
 
-    function updateExpanded(key: string, add: boolean) {
+    function updateExpanded(row: DlTableRow) {
         const target = innerExpanded.value.slice()
-        const index = target.indexOf(key)
+        const index = target.indexOf(row)
 
-        if (add === true) {
+        if (!isRowExpanded(row)) {
             if (index === -1) {
-                target.push(key)
+                target.push(row)
                 setExpanded(target)
             }
         } else if (index !== -1) {

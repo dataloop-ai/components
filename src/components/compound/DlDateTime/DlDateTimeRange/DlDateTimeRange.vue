@@ -422,6 +422,9 @@ export default defineComponent({
                 this.updateDateInterval(null)
             },
             deep: true
+        },
+        modelValue(value: DateInterval | null) {
+            this.dateInterval = value
         }
     },
     methods: {

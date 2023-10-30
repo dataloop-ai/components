@@ -54,7 +54,7 @@ export function useTableColumnSelection(
                 : colList.value
 
         const updatedCols = cols.map((col) => {
-            const align = col.align || 'right'
+            const align = col.align || 'left'
             const alignClass = ` text-${align}`
 
             const transform: string = col.textTransform || 'default'

@@ -151,6 +151,54 @@
             </div>
 
             <div style="margin-top: 100px">
+                Expandable Rows
+                <DlTable
+                    :expanded="expanded"
+                    :columns="tableColumns"
+                    expandable-rows
+                    class="sticky-header"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @update:expanded="updateExpanded"
+                >
+                    <template #body-cell-expandable-content="{ row }">
+                        <div
+                            v-if="
+                                [
+                                    tableRows[0].name,
+                                    tableRows[1].name,
+                                    tableRows[2].name
+                                ].includes(row.name)
+                            "
+                            class="expanded-row"
+                        >
+                            This is some more information about {{ row.name }}
+                        </div>
+                        <div
+                            v-else-if="
+                                [
+                                    tableRows[3].name,
+                                    tableRows[4].name,
+                                    tableRows[5].name
+                                ].includes(row.name)
+                            "
+                            class="expanded-row"
+                        >
+                            <img
+                                src="https://popcat.click/twitter-card.jpg"
+                                style="width: 150px; height: 150px"
+                            >
+                        </div>
+                    </template>
+                </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
                 Loading WIth custom row
                 <DlTable
                     :selected="selected"
@@ -458,6 +506,67 @@
                 no-data-label="NOoooooOOOOOoooooo"
             />
         </div>
+        <div>
+            <p>With alignments</p>
+            <DlTable
+                :expanded="expanded"
+                :columns="tableColumnsAligned"
+                expandable-rows
+                class="sticky-header"
+                :rows="tableRows"
+                row-key="id"
+                style="height: 500px"
+                :rows-per-page-options="rowsPerPageOptions"
+                @row-click="log"
+                @th-click="log"
+                @update:selected="updateSeleted"
+                @update:expanded="updateExpanded"
+            >
+                <template #body-cell-carbs="{ row }">
+                    <div class="row">
+                        {{ row.carbs }}
+                        <dl-avatar
+                            tooltip="popcat@gmail.com"
+                            size="15px"
+                        >
+                            <img
+                                src="https://popcat.click/twitter-card.jpg"
+                                style="width: 15px; height: 15px"
+                            >
+                        </dl-avatar>
+                    </div>
+                </template>
+                <template #body-cell-expandable-content="{ row }">
+                    <div
+                        v-if="
+                            [
+                                tableRows[0].name,
+                                tableRows[1].name,
+                                tableRows[2].name
+                            ].includes(row.name)
+                        "
+                        class="expanded-row"
+                    >
+                        This is some more information about {{ row.name }}
+                    </div>
+                    <div
+                        v-else-if="
+                            [
+                                tableRows[3].name,
+                                tableRows[4].name,
+                                tableRows[5].name
+                            ].includes(row.name)
+                        "
+                        class="expanded-row"
+                    >
+                        <img
+                            src="https://popcat.click/twitter-card.jpg"
+                            style="width: 150px; height: 150px"
+                        >
+                    </div>
+                </template>
+            </DlTable>
+        </div>
     </div>
 </template>
 
@@ -686,6 +795,78 @@ const rows = [
     }))
 ]
 
+const columnsAligned = [
+    {
+        name: 'name',
+        required: true,
+        label: 'Dessert (100g serving)asdfasdfasdfasdf',
+        align: 'left',
+        field: 'name',
+        sortable: true,
+        textTransform: 'uppercase',
+        hint: 'test hint'
+    },
+    {
+        name: 'calories',
+        align: 'right',
+        label: 'Caloriesasdfasdfasdfasdfasdf',
+        field: 'calories',
+        sortable: true,
+        width: 100
+    },
+    {
+        name: 'fat',
+        label: 'Fat (g)',
+        field: 'fat',
+        sortable: true,
+        align: 'center',
+        width: 100
+    },
+    {
+        name: 'carbs',
+        label: 'Carbs (g)',
+        field: 'carbs',
+        align: 'right',
+        width: 100
+    },
+    {
+        name: 'protein',
+        label: 'Protein (g)',
+        field: 'protein',
+        align: 'left',
+        width: 100
+    },
+    {
+        name: 'sodium',
+        label: 'Sodium (mg)',
+        field: 'sodium',
+        align: 'right',
+        width: 100
+    },
+    {
+        name: 'calcium',
+        label: 'Calcium (%)',
+        field: 'calcium',
+        sortable: true,
+        textTransform: 'lowercase',
+        align: 'right',
+        width: 100,
+        sort: (a: string | number, b: string | number) =>
+            parseInt(a as string, 10) - parseInt(b as string, 10)
+    },
+    {
+        name: 'iron',
+        label: 'Iron (%)',
+        field: 'iron',
+        sortable: true,
+        textTransform: 'lowercase',
+        align: 'left',
+        width: 100,
+        sort: (a: string | number, b: string | number) =>
+            parseInt(a as string, 10) - parseInt(b as string, 10)
+    }
+]
+
 type Rows = (typeof rows)[0]
 
 interface RowsWithIndex extends Rows {
@@ -703,6 +884,7 @@ export default defineComponent({
     setup() {
         const filter = ref('')
         const selected = ref([])
+        const expanded = ref([])
         const selection = ref('none')
         const separator = ref('horizontal')
         const bordered = ref(false)
@@ -717,6 +899,7 @@ export default defineComponent({
         const tableRows = ref(cloneDeep(rows))
         const draggable = ref('both')
         const tableColumns = ref(columns)
+        const tableColumnsAligned = ref(columnsAligned)
         const rowsPerPageOptions = ref([10, 12, 14, 16])
 
         const infiniteLoading = ref(false)
@@ -843,6 +1026,7 @@ export default defineComponent({
             updateColumns,
             filter,
             selected,
+            expanded,
             selection,
             separator,
             bordered,
@@ -870,7 +1054,8 @@ export default defineComponent({
             isLastPage,
             isFirstPage,
             rows2,
-            columns2
+            columns2,
+            tableColumnsAligned
         }
     },
 
@@ -880,7 +1065,11 @@ export default defineComponent({
                 this.rowsPerPageOptions[this.rowsPerPageOptions.length - 1] + 2
             )
         },
+        updateExpanded(payload: any) {
+            this.expanded = payload
+        },
         updateSeleted(payload: any) {
+            console.log(payload)
             this.selected = payload
         },
         updateBorderedState(val: boolean[]): void {
@@ -991,6 +1180,12 @@ p {
 label {
     font-weight: bold;
     font-size: 12px;
+}
+
+.expanded-row {
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
 }
 
 .sticky-header {

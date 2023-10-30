@@ -18,7 +18,7 @@ describe('DlTd', () => {
             expect(wrapper.vm.classes).toBe('dl-td')
         })
         it('should have the right styles', () => {
-            expect(wrapper.vm.styles).toBe('')
+            expect(wrapper.vm.styles).toBe('padding: 0 10px;')
         })
         it('should the right ellipsis prop', () => {
             expect(wrapper.vm.hasEllipsis).toBe(false)
@@ -51,7 +51,9 @@ describe('DlTd', () => {
             })
 
             it('should have the right styles', () => {
-                expect(wrapper.vm.styles).toBe('background: red')
+                expect(wrapper.vm.styles).toBe(
+                    'padding: 0 10px;background: red'
+                )
             })
         })
     })

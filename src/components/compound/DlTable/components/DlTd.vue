@@ -35,7 +35,11 @@ export default defineComponent({
             type: Number,
             default: null
         },
-        noTooltip: Boolean
+        noTooltip: Boolean,
+        padding: {
+            type: String,
+            default: '0 10px'
+        }
     },
     setup(props) {
         const vm = getCurrentInstance()
@@ -63,7 +67,7 @@ export default defineComponent({
         })
 
         const tdStyles = computed(() => {
-            let styles = ''
+            let styles = `padding: ${props.padding};`
 
             if (props.bgColor) {
                 styles = styles.concat(

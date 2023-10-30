@@ -25,6 +25,7 @@
             name="John"
         />
         <dl-avatar
+            name="test"
             tooltip="popcat@gmail.com"
             size="72px"
         >
