@@ -262,6 +262,10 @@ export default defineComponent({
             )
         }
 
+        const show = () => (menuRef.value as any)?.show()
+
+        const hide = () => (menuRef.value as any)?.hide()
+
         return {
             menuProps,
             modelV,
@@ -280,7 +284,9 @@ export default defineComponent({
             handleBeforeHide,
             handleShow,
             handleHide,
-            updateModelValue
+            updateModelValue,
+            hide,
+            show
         }
     }
 })
