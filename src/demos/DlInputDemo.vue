@@ -6,12 +6,20 @@
             <div>This is to test v-model reactivity</div>
             <dl-input
                 v-model="textVal"
-                placeholder="testestestset"
+                placeholder="Test reactivity"
+            />
+            <dl-input
+                v-model="textVal"
+                placeholder="Test reactivity disabled"
                 disabled
             />
             <dl-input
                 v-model="textVal"
                 disabled
+            />
+            <dl-input
+                v-model="textVal"
+                readonly
             />
             <dl-input v-model="trimmedValue" />
         </div>
@@ -288,10 +296,10 @@ export default defineComponent({
         const val = ref('')
         const trimmedValue = computed<string>({
             get: () => {
-                return val.value.trim()
+                return textVal.value.trim()
             },
             set: (value: string) => {
-                val.value = value.trim()
+                textVal.value = value
             }
         })
 
