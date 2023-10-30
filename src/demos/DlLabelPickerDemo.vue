@@ -8,7 +8,9 @@
 <script lang="ts">
 import { DlLabelPicker } from '../components'
 import { defineComponent, ref } from 'vue-demi'
-const rows = [
+import { DlLabelPickerItem } from '../types'
+
+const rows: DlLabelPickerItem[] = [
     {
         identifier: 'a',
         displayLabel: 'Frozen Yogurt',
@@ -17,20 +19,41 @@ const rows = [
             {
                 identifier: 'b',
                 displayLabel: 'hello',
-                color: '#ffff00'
+                color: '#ffff00',
+                children: [
+                    {
+                        identifier: 'c',
+                        displayLabel: 'test 2',
+                        color: '#00ff00',
+                        children: [
+                            {
+                                identifier: 'd',
+                                displayLabel: 'test 3',
+                                color: '#ff00aa',
+                                children: []
+                            }
+                        ]
+                    },
+                    {
+                        identifier: 'd',
+                        displayLabel: 'test 4',
+                        color: '#ff00ff',
+                        children: []
+                    }
+                ]
             }
         ]
     },
     {
         identifier: 'c',
-        displayLabel: 'test 2',
-        color: '#00ff00',
+        displayLabel: 'test 5',
+        color: '#f0ffaf',
         children: []
     },
     {
         identifier: 'd',
-        displayLabel: 'test 3',
-        color: '#ff00ff',
+        displayLabel: 'test 6',
+        color: '#2f3fff',
         children: []
     }
 ]
