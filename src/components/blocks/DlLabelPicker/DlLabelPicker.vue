@@ -27,7 +27,7 @@
             :loading="false"
             :filter="inputValue"
             :rows="items"
-            row-key="name"
+            row-key="identifier"
             color="dl-color-secondary"
             @row-click="handleRowClick"
         >
