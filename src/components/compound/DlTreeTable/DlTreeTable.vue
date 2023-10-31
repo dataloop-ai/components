@@ -294,7 +294,7 @@ export default defineComponent({
 
         const mainTbodyUuid = `dl-tree-table-tbody-${v4()}`
 
-        const mainTableKey = ref()
+        const mainTableKey = ref(v4())
 
         const { rows: tableRows, columns: tableColumns } = toRefs(props)
 
@@ -317,7 +317,8 @@ export default defineComponent({
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
                 ? props.rowKey
-                : (row: Record<string, any>) => row[props.rowKey as string]
+                : (row: Record<string, any>) =>
+                      row[props.rowKey as string] ?? ''
         )
 
         const hasDraggableRows = computed(() =>
