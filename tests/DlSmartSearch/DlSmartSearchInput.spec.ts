@@ -331,7 +331,7 @@ describe('DlSmartSearchInput', () => {
                 const testString = `level = low AND metadata.test = 'ok'`
                 const resultString1 = `completed = low AND metadata.test = 'ok'`
                 const resultString2 = `level != low AND metadata.test = 'ok'`
-                const resultString3 = `level = low OR metadata.test = 'ok'`
+                const resultString3 = `level = low OR AND metadata.test = 'ok'`
                 const resultString4 = `level = high AND metadata.test = 'ok'`
                 const resultString5 = `level = low AND metadata.nesting = 'ok'`
                 beforeAll(async () => {
@@ -372,7 +372,7 @@ describe('DlSmartSearchInput', () => {
                     testReplacingWithSuggestion(6, 1, resultString2)
                 )
                 it(
-                    'should be able to replace logical operator',
+                    'should not be able to replace logical operator',
                     testReplacingWithSuggestion(12, 1, resultString3)
                 )
                 it(

@@ -339,7 +339,13 @@ export default defineComponent({
                 )
                 let queryRightSide = searchQuery.value.substring(caretAt.value)
 
-                if (value.startsWith('.')) {
+                if (['AND', 'OR'].includes(value)) {
+                    // do not replace text if the value is AND or OR
+                    const leftover = queryLeftSide.match(/\S+$/)?.[0] || ''
+                    queryLeftSide =
+                        queryLeftSide.replace(/\S+$/, '').trimEnd() + ' '
+                    queryRightSide = leftover + queryRightSide
+                } else if (value.startsWith('.')) {
                     // dot notation case
                     queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
                     if (!queryRightSide.startsWith(' ')) {
