@@ -815,7 +815,7 @@
         </div>
 
         <div
-            v-if="!hideBottom"
+            v-if="!hideBottom || (nothingToDisplay && !hideNoData)"
             :class="bottomClasses"
         >
             <div
