@@ -348,6 +348,7 @@
                         row-key="index"
                         virtual-scroll
                         @virtual-scroll="onScroll"
+                        @col-update="updateColumns"
                     />
                 </div>
             </div>
