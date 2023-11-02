@@ -332,7 +332,7 @@
 </template>
 
 <script lang="ts">
-import { debounce, cloneDeep } from 'lodash'
+import { debounce as debounceFunc, cloneDeep } from 'lodash'
 import {
     computed,
     defineComponent,
@@ -393,7 +393,7 @@ export default defineComponent({
          */
         modelValue: {
             type: [String, Number],
-            default: null
+            default: null as string
         },
         /**
          * An array of InputFile objects contained and modeled in the input
@@ -633,6 +633,20 @@ export default defineComponent({
         debounce: {
             type: Number,
             default: 100
+        },
+        /**
+         * Auto trim input value after debounce time
+         */
+        autoTrim: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Debounce time for input
+         */
+        trimDebounce: {
+            type: Number,
+            default: 500
         }
     },
     emits: [
@@ -657,7 +671,10 @@ export default defineComponent({
             syntaxHighlightColor,
             placeholder,
             readonly,
-            disabled
+            disabled,
+            autoTrim,
+            debounce,
+            trimDebounce
         } = toRefs(props)
 
         const isInternalChange = ref(false)
@@ -667,7 +684,7 @@ export default defineComponent({
             return getSuggestItems(
                 autoSuggestItems.value,
                 modelValue.value?.toString()
-            )
+            ) as DlInputSuggestion[]
         })
         const input = ref(null)
 
@@ -678,13 +695,45 @@ export default defineComponent({
             onAutoSuggestClick(null, value)
         }
 
-        const onChange = (e: KeyboardEvent) => {
+        const handleValueTrim = () => {
+            nextTick(() => {
+                const trimmed = String(modelValue.value).trim()
+                if (trimmed !== String(modelValue.value)) {
+                    isInternalChange.value = true
+
+                    input.value.innerHTML = trimmed
+                        .toString()
+                        .replace(/ /g, '&nbsp;')
+                    updateSyntax()
+                    setCaretAtTheEnd(input.value)
+
+                    emit('input', trimmed)
+                    emit('update:model-value', trimmed)
+                }
+            })
+        }
+
+        const debouncedHandleValueTrim = computed<Function>(() => {
+            if (stateManager.disableDebounce) {
+                return handleValueTrim.bind(this)
+            }
+            const debounced = debounceFunc(
+                handleValueTrim.bind(this),
+                trimDebounce.value ?? 50
+            )
+            return debounced
+        })
+
+        const onChange = (e: KeyboardEvent | Event) => {
             isInternalChange.value = true
             isMenuOpen.value = true
             updateSyntax()
             const target = e.target as HTMLElement
             emit('input', target.innerText, e)
             emit('update:model-value', target.innerText)
+            if (autoTrim.value) {
+                debouncedHandleValueTrim.value()
+            }
         }
 
         const onAutoSuggestClick = (e: Event, item: string): void => {
@@ -792,7 +841,9 @@ export default defineComponent({
             updateSyntax,
             stringSuggestions,
             showPlaceholder,
-            spanText
+            spanText,
+            handleValueTrim,
+            debouncedHandleValueTrim
         }
     },
     data() {
@@ -938,7 +989,7 @@ export default defineComponent({
             if (stateManager.disableDebounce) {
                 return this.onBlur.bind(this)
             }
-            const debounced = debounce(
+            const debounced = debounceFunc(
                 this.onBlur.bind(this),
                 this.debounce ?? 50
             )
@@ -1035,6 +1086,7 @@ export default defineComponent({
             inputRef.focus()
         },
         onFocus(e: InputEvent): void {
+            this.handleValueTrim()
             const el = e.target as HTMLElement
             if (this.modelValue) {
                 el.scroll(el.scrollWidth, 0)
@@ -1051,6 +1103,7 @@ export default defineComponent({
             el.scroll(0, 0)
             this.focused = false
             this.$emit('blur', e)
+            this.handleValueTrim()
         },
         onEnterPress(e: any): void {
             this.$emit('enter', e.target.innerText, e)
