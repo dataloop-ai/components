@@ -2,7 +2,6 @@
     <div>
         <div>
             <input v-model="textVal">
-
             <div>This is to test v-model reactivity</div>
             <dl-input
                 v-model="textVal"
