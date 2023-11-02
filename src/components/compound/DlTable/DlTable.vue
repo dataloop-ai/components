@@ -349,7 +349,9 @@
                                 <td v-if="expandableRows">
                                     <dl-icon
                                         :icon="getRowExpandedIcon(props.item)"
-                                        @click="updateExpanded(props.item)"
+                                        @click.stop.prevent="
+                                            updateExpanded(props.item)
+                                        "
                                     />
                                 </td>
                                 <DlTd
@@ -409,7 +411,8 @@
                                 v-if="isRowExpanded(props.item)"
                                 :key="getRowExpandedKey(props.item)"
                             >
-                                <td :colspan="columns.length + 1">
+                                <!-- cols + icon col + expandable icon col-->
+                                <td :colspan="columns.length + 1 + 1">
                                     <slot
                                         v-bind="{ row: props.item }"
                                         name="body-cell-expandable-content"
@@ -804,7 +807,7 @@
                                     v-if="isRowExpanded(row)"
                                     :key="getRowExpandedKey(row)"
                                 >
-                                    <td :colspan="columns.length + 1">
+                                    <td :colspan="columns.length + 1 + 1">
                                         <slot
                                             v-bind="{ row }"
                                             name="body-cell-expandable-content"
