@@ -100,11 +100,7 @@
                                         'placeholder-string': showPlaceholder,
                                         'placeholder-string--disabled': disabled
                                     }"
-                                >{{
-                                    showPlaceholder
-                                        ? placeholder
-                                        : modelValue
-                                }}</span>
+                                >{{ spanText }}</span>
                             </div>
                             <div
                                 v-if="
@@ -336,14 +332,14 @@
 </template>
 
 <script lang="ts">
-import { debounce, cloneDeep } from 'lodash'
+import { debounce as debounceFunc, cloneDeep } from 'lodash'
 import {
     computed,
     defineComponent,
-    onMounted,
     PropType,
     ref,
     toRefs,
+    nextTick,
     watch
 } from 'vue-demi'
 import { DlInfoErrorMessage, DlTooltip } from '../../shared'
@@ -397,7 +393,7 @@ export default defineComponent({
          */
         modelValue: {
             type: [String, Number],
-            default: null
+            default: null as string
         },
         /**
          * An array of InputFile objects contained and modeled in the input
@@ -637,6 +633,20 @@ export default defineComponent({
         debounce: {
             type: Number,
             default: 100
+        },
+        /**
+         * Auto trim input value after debounce time
+         */
+        autoTrim: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Debounce time for input
+         */
+        trimDebounce: {
+            type: Number,
+            default: 500
         }
     },
     emits: [
@@ -658,15 +668,23 @@ export default defineComponent({
             autoSuggestItems,
             maxLength,
             files,
-            syntaxHighlightColor
+            syntaxHighlightColor,
+            placeholder,
+            readonly,
+            disabled,
+            autoTrim,
+            debounce,
+            trimDebounce
         } = toRefs(props)
+
+        const isInternalChange = ref(false)
 
         const suggestItems = computed<DlInputSuggestion[]>(() => {
             if (!modelValue.value) return []
             return getSuggestItems(
                 autoSuggestItems.value,
                 modelValue.value?.toString()
-            )
+            ) as DlInputSuggestion[]
         })
         const input = ref(null)
 
@@ -676,6 +694,48 @@ export default defineComponent({
         const handleSelectedItem = (value: any) => {
             onAutoSuggestClick(null, value)
         }
+
+        const handleValueTrim = () => {
+            nextTick(() => {
+                const trimmed = String(modelValue.value).trim()
+                if (trimmed !== String(modelValue.value)) {
+                    isInternalChange.value = true
+
+                    input.value.innerHTML = trimmed
+                        .toString()
+                        .replace(/ /g, '&nbsp;')
+                    updateSyntax()
+                    setCaretAtTheEnd(input.value)
+
+                    emit('input', trimmed)
+                    emit('update:model-value', trimmed)
+                }
+            })
+        }
+
+        const debouncedHandleValueTrim = computed<Function>(() => {
+            if (stateManager.disableDebounce) {
+                return handleValueTrim.bind(this)
+            }
+            const debounced = debounceFunc(
+                handleValueTrim.bind(this),
+                trimDebounce.value ?? 50
+            )
+            return debounced
+        })
+
+        const onChange = (e: KeyboardEvent | Event) => {
+            isInternalChange.value = true
+            isMenuOpen.value = true
+            updateSyntax()
+            const target = e.target as HTMLElement
+            emit('input', target.innerText, e)
+            emit('update:model-value', target.innerText)
+            if (autoTrim.value) {
+                debouncedHandleValueTrim.value()
+            }
+        }
+
         const onAutoSuggestClick = (e: Event, item: string): void => {
             const newValue = clearSuggestion(modelValue.value.toString(), item)
             if (!maxLength.value || newValue.length < maxLength.value) {
@@ -735,26 +795,42 @@ export default defineComponent({
             () => !modelValue.value || !String(modelValue.value)?.length
         )
 
-        watch(modelValue, () => {
-            if (String(modelValue.value ?? '').length) {
-                if (input.value.innerHTML !== modelValue.value) {
-                    input.value.innerHTML = modelValue.value
-                }
-            } else {
-                input.value.innerHTML = ''
+        const spanText = computed<string>(() => {
+            if (showPlaceholder.value) {
+                return placeholder.value
             }
+            return modelValue.value?.toString()
         })
 
-        onMounted(() => {
-            if (String(modelValue.value ?? '').length) {
-                input.value.innerHTML = modelValue.value
-            }
-        })
+        watch(
+            modelValue,
+            (val) => {
+                nextTick(() => {
+                    if (
+                        !isInternalChange.value &&
+                        val !== null &&
+                        val !== undefined
+                    ) {
+                        if (readonly.value || disabled.value) {
+                            return
+                        }
+
+                        input.value.innerHTML = val
+                            .toString()
+                            .replace(/ /g, '&nbsp;')
+                    } else {
+                        isInternalChange.value = false
+                    }
+                })
+            },
+            { immediate: true }
+        )
 
         return {
             suggestItems,
             highlightedIndex,
             onAutoSuggestClick,
+            onChange,
             isMenuOpen,
             setHighlightedIndex,
             handleSelectedItem,
@@ -764,7 +840,10 @@ export default defineComponent({
             emitRemoveFile,
             updateSyntax,
             stringSuggestions,
-            showPlaceholder
+            showPlaceholder,
+            spanText,
+            handleValueTrim,
+            debouncedHandleValueTrim
         }
     },
     data() {
@@ -910,7 +989,7 @@ export default defineComponent({
             if (stateManager.disableDebounce) {
                 return this.onBlur.bind(this)
             }
-            const debounced = debounce(
+            const debounced = debounceFunc(
                 this.onBlur.bind(this),
                 this.debounce ?? 50
             )
@@ -963,13 +1042,6 @@ export default defineComponent({
         onClick(e: Event, item: DlInputSuggestion) {
             this.onAutoSuggestClick(e, item.suggestion)
         },
-        onChange(e: Event): void {
-            this.isMenuOpen = true
-            this.updateSyntax()
-            const target = e.target as HTMLElement
-            this.$emit('input', target.innerText, e)
-            this.$emit('update:model-value', target.innerText)
-        },
         async handlePaste() {
             const content = await readClipboard()
 
@@ -1014,6 +1086,7 @@ export default defineComponent({
             inputRef.focus()
         },
         onFocus(e: InputEvent): void {
+            this.handleValueTrim()
             const el = e.target as HTMLElement
             if (this.modelValue) {
                 el.scroll(el.scrollWidth, 0)
@@ -1030,6 +1103,7 @@ export default defineComponent({
             el.scroll(0, 0)
             this.focused = false
             this.$emit('blur', e)
+            this.handleValueTrim()
         },
         onEnterPress(e: any): void {
             this.$emit('enter', e.target.innerText, e)
