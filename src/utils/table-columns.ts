@@ -3,8 +3,6 @@ import { DlTableColumn } from '../types'
 import { browseNestedNodes } from './browse-nested-nodes'
 import { swapNodes } from './swap-nodes'
 
-const DEFAULT_COL_WIDTH = 'fit-content'
-
 export function setColumnVerticalBorder(
     table: HTMLTableElement,
     index: string
@@ -118,6 +116,11 @@ export function justifyMouseInsideTargetCell(
     )
 }
 
+function getIconWidth(el: HTMLElement) {
+    const iconEl = el.querySelector('.th-icons')
+    return iconEl?.scrollWidth
+}
+
 export function setAllColumnWidths(
     table: HTMLElement,
     columns: DlTableColumn[]
@@ -132,9 +135,11 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                targetEl.style.width = col.width
-                    ? `${col.width}px`
-                    : DEFAULT_COL_WIDTH
+                const width =
+                    (col.width ?? targetEl.scrollWidth) +
+                    getIconWidth(targetEl) +
+                    15
+                targetEl.style.width = `${width}px`
                 // then
             }
         )

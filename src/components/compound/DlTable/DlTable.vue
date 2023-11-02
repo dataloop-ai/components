@@ -140,7 +140,14 @@
                                     :pagination="computedPagination"
                                     @click="onThClick($event, col.name)"
                                 >
-                                    <span class="inner-th">
+                                    <span
+                                        class="inner-th"
+                                        :style="
+                                            col.width && {
+                                                maxWidth: 'calc(100% - 15px)'
+                                            }
+                                        "
+                                    >
                                         {{ col.label }}
                                     </span>
                                 </DlTh>
@@ -516,7 +523,14 @@
                                     :pagination="computedPagination"
                                     @click="onThClick($event, col.name)"
                                 >
-                                    <span class="inner-th">
+                                    <span
+                                        class="inner-th"
+                                        :style="
+                                            col.width && {
+                                                maxWidth: 'calc(100% - 15px)'
+                                            }
+                                        "
+                                    >
                                         {{ col.label }}
                                     </span>
                                 </DlTh>
