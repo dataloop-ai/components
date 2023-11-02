@@ -507,6 +507,30 @@
             />
         </div>
         <div>
+            <p>With empty data virtual scroll</p>
+            <DlTable
+                :rows="[]"
+                :columns="tableColumns"
+                title="empty data"
+                no-data-label="NOoooooOOOOOoooooo"
+                virtual-scroll
+            />
+        </div>
+        <div>
+            <p>With empty data virtual scroll no data slot</p>
+            <DlTable
+                :rows="[]"
+                :columns="tableColumns"
+                title="empty data"
+                virtual-scroll
+                hide-bottom
+            >
+                <template #no-data>
+                    <div>&lt slot#no-data ></div>
+                </template>
+            </DlTable>
+        </div>
+        <div>
             <p>With alignments</p>
             <DlTable
                 :expanded="expanded"

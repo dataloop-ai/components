@@ -61,6 +61,9 @@ export default defineComponent({
     watch: {
         'props.row': {
             handler(row: DlTableRow) {
+                if (!this.$refs.dlTrTreeRef) {
+                    return
+                }
                 (this.$refs.dlTrTreeRef as any).setAttribute(
                     'data-is-visible',
                     row.isExpandedParent || row.level === 1
