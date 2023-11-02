@@ -17,7 +17,10 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
     let targetIndex: number = null
 
     watch(
-        () => vm.proxy.getIsDragging(),
+        [
+            () => vm.proxy.getIsDragging(),
+            () => vm.proxy.getVisibleColumnsState()
+        ],
         () => {
             const vnodeEl = isVue2 ? vm.vnode.elm : vm.vnode.el
             table = vnodeEl?.querySelector('table')

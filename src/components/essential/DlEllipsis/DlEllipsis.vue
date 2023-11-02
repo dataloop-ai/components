@@ -20,7 +20,10 @@
                 v-if="hasDefaultSlot"
                 name="default"
             />
-            <span v-else>{{ leftText }}</span>
+            <span
+                v-else
+                style="white-space: nowrap"
+            >{{ leftText }}</span>
         </span>
         <span
             v-if="!multiline && rightText"
