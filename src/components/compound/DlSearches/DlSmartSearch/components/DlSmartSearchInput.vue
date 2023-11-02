@@ -348,26 +348,17 @@ export default defineComponent({
                 } else if (value.startsWith('.')) {
                     // dot notation case
                     queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
-                    if (!queryRightSide.startsWith(' ')) {
-                        // remove text leftovers on the right
-                        queryRightSide = removeLeadingExpression(queryRightSide)
-                    }
-                    // remove leading space on the right side
-                    queryRightSide = queryRightSide.trimStart()
                 } else if (queryLeftSide.endsWith(' ')) {
-                    // caret after space: replace whatever is there on the right side with the value
+                    // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
-                    queryRightSide = removeLeadingExpression(
-                        queryRightSide.trimStart()
-                    ).trimStart()
                 } else if (/\.\S+$/.test(queryLeftSide)) {
                     // if there are dots in left side expression, suggestions have an operator
                     // looks like a bug in findSuggestions TODO find it - for now work around it here
                     const leftover = queryRightSide.match(/^\S+/)?.[0] || ''
                     queryLeftSide += leftover + ' '
-                    queryRightSide = removeLeadingExpression(
-                        queryRightSide.substring(leftover.length).trimStart()
-                    ).trimStart()
+                    queryRightSide = queryRightSide
+                        .substring(leftover.length)
+                        .trimStart()
                 } else if (queryRightSide.startsWith(' ')) {
                     // this| situation: replace whatever is there on the left side with the value
                     queryLeftSide = queryLeftSide.replace(/\S+$/, '')
