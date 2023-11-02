@@ -10,7 +10,7 @@
                 :size="counterFontSizeComputed"
                 :style="typographyStyles"
             >
-                {{ formatCounter(counter) }}
+                {{ formatCounter(counter) }} {{ hasValue ? prefix : '' }}
             </dl-typography>
         </div>
         <div class="kpi_box__title">
@@ -124,7 +124,11 @@ export default defineComponent({
             default: false,
             required: false
         },
-        dense: Boolean
+        dense: Boolean,
+        prefix: {
+            type: String,
+            default: null
+        }
     },
     setup(props) {
         const progressValue = (progress: DlKpiProgressType) => {

@@ -294,7 +294,7 @@ export default defineComponent({
 
         const mainTbodyUuid = `dl-tree-table-tbody-${v4()}`
 
-        const mainTableKey = ref()
+        const mainTableKey = ref(v4())
 
         const { rows: tableRows, columns: tableColumns } = toRefs(props)
 
@@ -317,7 +317,8 @@ export default defineComponent({
         const getRowKey = computed(() =>
             typeof props.rowKey === 'function'
                 ? props.rowKey
-                : (row: Record<string, any>) => row[props.rowKey as string]
+                : (row: Record<string, any>) =>
+                      row[props.rowKey as string] ?? ''
         )
 
         const hasDraggableRows = computed(() =>
@@ -347,45 +348,44 @@ export default defineComponent({
             name: string,
             rowsArr: DlTableRow[] = tableRows.value
         ) => {
-            rowsArr.some((o) => {
-                if (getRowKey.value(o) === name) {
+            for (const row of rowsArr) {
+                if (getRowKey.value(row) === name) {
                     if (isVue2) {
-                        set(o, 'isExpanded', isExpanded)
+                        set(row, 'isExpanded', isExpanded)
                     } else {
-                        o.isExpanded = isExpanded
+                        row.isExpanded = isExpanded
                     }
-                    updateNestedRows(o, isExpanded)
+                    updateNestedRows(row, isExpanded)
                 } else {
-                    if ((o.children || []).length > 0) {
-                        updateExpandedRow(isExpanded, name, o.children)
+                    if ((row.children || []).length > 0) {
+                        updateExpandedRow(isExpanded, name, row.children)
                     }
                 }
-            })
+            }
         }
         const updateNestedRows = (
             row: (typeof computedRows.value)[number],
             isExpanded: boolean
         ) => {
-            if ((row.children || []).length > 0) {
-                row.children.forEach(
-                    (r: (typeof computedRows.value)[number]) => {
-                        if (isVue2) {
-                            set(r, 'isExpanded', isExpanded)
-                        } else {
-                            r.isExpanded = isExpanded
-                        }
+            if (!row.children) {
+                return
+            }
 
-                        if (!isExpanded) {
-                            if (isVue2) {
-                                set(r, 'isExpanded', isExpanded)
-                            } else {
-                                r.isExpanded = isExpanded
-                            }
+            for (const r of row.children) {
+                if (isVue2) {
+                    set(r, 'isExpanded', isExpanded)
+                } else {
+                    r.isExpanded = isExpanded
+                }
 
-                            updateNestedRows(r, isExpanded)
-                        }
+                if (!isExpanded) {
+                    if (isVue2) {
+                        set(r, 'isExpanded', isExpanded)
+                    } else {
+                        r.isExpanded = isExpanded
                     }
-                )
+                    updateNestedRows(r, isExpanded)
+                }
             }
         }
         const updateSelectionHierarchy = (

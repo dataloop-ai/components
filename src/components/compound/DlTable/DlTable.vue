@@ -814,7 +814,7 @@
         </div>
 
         <div
-            v-if="!hideBottom"
+            v-if="!hideBottom || (nothingToDisplay && !hideNoData)"
             :class="bottomClasses"
         >
             <div
@@ -1290,6 +1290,7 @@ export default defineComponent({
         const setIsDragging = (val: boolean) => (isDragging.value = val)
         const getIsDragging = () => isDragging.value
         const getIsResizing = () => isResizing.value
+        const getVisibleColumnsState = () => visibleColumnsState.value
 
         // table slots
         const hasSlotByName = (name: string) => !!slots[name]
@@ -1911,6 +1912,7 @@ export default defineComponent({
             setIsDragging,
             getIsResizing,
             getIsDragging,
+            getVisibleColumnsState,
             getTableKey
         })
 
