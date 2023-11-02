@@ -58,19 +58,19 @@
         <!-- Virtual scroll  -->
         <DlVirtualScroll
             v-if="hasVirtScroll"
+            v-bind="virtProps"
             ref="virtScrollRef"
             type="__dltable"
-            :class="tableClass"
+            :class="tableClass + additionalClasses"
             :style="tableStyle"
             :table-colspan="colspanWithActionsRow"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
-            v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead>
+                <thead :colspan="columns.length">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -81,14 +81,15 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
-                                style="width: 25px; padding: 5px"
+                                style="width: 25px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-width"
+                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
+
                             <th
                                 v-else-if="multipleSelection"
                                 class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
@@ -102,9 +103,7 @@
                                     <DlCheckbox
                                         :color="color"
                                         :model-value="headerSelectedValue"
-                                        :indeterminate-value="
-                                            selectionCheckboxIndeterminateVal
-                                        "
+                                        :indeterminate-value="true"
                                         @update:model-value="
                                             onMultipleSelectionSet
                                         "
@@ -120,14 +119,14 @@
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col chevron-header"
+                                class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
-                                style="width: 25px"
+                                style="width: 25px; padding: 5px"
                             />
 
                             <slot
                                 v-for="(col, colIndex) in computedCols"
-                                v-bind="getHeaderScope({ col })"
+                                v-bind="getHeaderScope({ col, onThClick })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
                                         ? `header-cell-${col.name}`
@@ -139,13 +138,13 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
+                                    @click="onThClick($event, col.name)"
                                 >
                                     <span class="inner-th">
                                         {{ col.label }}
                                     </span>
                                 </DlTh>
                             </slot>
-
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
@@ -1367,15 +1366,14 @@ export default defineComponent({
         onMounted(() => {
             tableEl =
                 tableRef.value ||
+                virtScrollRef.value.rootRef.querySelector('table') ||
                 (document.querySelector('table.dl-table') as HTMLTableElement)
+
             nextTick(() => {
-                setAllColumnWidths(
-                    tableEl,
-                    columns.value as DlTableColumn[],
-                    fitAllColumns.value
-                )
+                setAllColumnWidths(tableEl, columns.value as DlTableColumn[])
             })
-            if (resizable.value === true) {
+            if (visibleColumns.value) return
+            if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
             }
             if (hasDraggableColumns.value === true) {
@@ -1390,22 +1388,24 @@ export default defineComponent({
         watch(
             hasVirtScroll,
             () => {
-                tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                    'table.dl-table'
-                ) as HTMLTableElement
+                tableEl =
+                    tableRef.value ||
+                    virtScrollRef.value.rootRef.querySelector('table') ||
+                    (document.querySelector(
+                        'table.dl-table'
+                    ) as HTMLTableElement)
+
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableEl,
+                        props.columns as DlTableColumn[]
+                    )
+                })
+                if (visibleColumns.value) return
 
                 if (resizable.value) {
                     applyResizableColumns(tableEl, vm)
                 }
-
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableRef.value,
-                        props.columns as DlTableColumn[],
-                        props.fitAllColumns
-                    )
-                })
-
                 if (hasDraggableColumns.value === true) {
                     applyDraggableColumns(
                         tableEl,
@@ -1420,17 +1420,23 @@ export default defineComponent({
         )
 
         watch(resizable, () => {
+            if (visibleColumns.value) return
             applyResizableColumns(tableEl, vm)
         })
 
         watch(
             columns,
             (newColumns) => {
+                tableEl =
+                    tableRef.value ||
+                    virtScrollRef.value.rootRef.querySelector('table') ||
+                    (document.querySelector(
+                        'table.dl-table'
+                    ) as HTMLTableElement)
                 nextTick(() => {
                     setAllColumnWidths(
                         tableRef.value,
-                        newColumns as DlTableColumn[],
-                        props.fitAllColumns
+                        newColumns as DlTableColumn[]
                     )
                 })
             },
@@ -1450,7 +1456,7 @@ export default defineComponent({
         watch(
             draggable,
             () => {
-                if (tableEl) {
+                if (tableEl && !visibleColumns.value) {
                     if (hasDraggableColumns.value === true) {
                         applyDraggableColumns(
                             tableEl,

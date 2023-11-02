@@ -45,38 +45,6 @@ export function getColIndex(el: Node) {
     return Array.from(el.parentElement.children).indexOf(el as HTMLElement)
 }
 
-export function getTableColumn(
-    table: HTMLTableElement,
-    columnIndex: number
-): HTMLTableElement {
-    const rowCount = table.rows.length
-
-    const originalColumnWidth = table.rows[0].cells[columnIndex].offsetWidth
-    const originalColumnHeight = table.rows[0].offsetHeight
-
-    const columnTable: HTMLTableElement = document.createElement('table')
-    const columnTbody: HTMLTableSectionElement = document.createElement('tbody')
-    columnTable.appendChild(columnTbody)
-
-    for (let i = 0; i < rowCount; i++) {
-        const row = table.rows[i]
-        if (row.cells.length > columnIndex) {
-            const columnRow: HTMLTableRowElement = document.createElement('tr')
-            const cell: HTMLTableCellElement = row.cells[columnIndex].cloneNode(
-                true
-            ) as HTMLTableCellElement
-
-            cell.style.width = originalColumnWidth + 'px'
-            columnRow.style.height = originalColumnHeight + 'px'
-
-            columnRow.appendChild(cell)
-            columnTbody.appendChild(columnRow)
-        }
-    }
-
-    return columnTable
-}
-
 export function getTreeTableColumn(
     table: HTMLTableElement,
     columnIndex: number
@@ -89,7 +57,9 @@ export function getTreeTableColumn(
     const width = th.getBoundingClientRect().width
     browseNestedNodes(
         newTable,
-        (el) => el.dataset.colIndex && el.dataset.colIndex !== thColIndex, // if
+        (el) =>
+            (el.dataset.colIndex && el.dataset.colIndex !== thColIndex) ||
+            el.classList.contains('dl-virtual-scroll__padding'), // if
         (el) => {
             el.parentNode?.removeChild(el) // then
         },
@@ -105,29 +75,6 @@ export function getTreeTableColumn(
 }
 
 export function swapTableColumns(
-    table: HTMLTableElement,
-    sourceIndex: number,
-    targetIndex: number
-): void {
-    const rows = table.rows
-
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i]
-        const cells = row.cells
-
-        const tempCell = cells[sourceIndex].cloneNode(true) as HTMLElement
-        cells[sourceIndex].parentNode!.replaceChild(
-            cells[targetIndex].cloneNode(true),
-            cells[sourceIndex]
-        )
-        cells[targetIndex].parentNode!.replaceChild(
-            tempCell,
-            cells[targetIndex]
-        )
-    }
-}
-
-export function swapTreeTableColumns(
     table: HTMLTableElement,
     sourceIndex: number,
     targeIndex: number
@@ -173,12 +120,11 @@ export function justifyMouseInsideTargetCell(
 
 export function setAllColumnWidths(
     table: HTMLElement,
-    columns: DlTableColumn[],
-    fitAllColumns: boolean
+    columns: DlTableColumn[]
 ) {
     const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
     if (!hasWidth) return
-    // table.style.tableLayout = fitAllColumns ? 'auto' : 'fixed'
+    table.style.tableLayout = 'fixed'
     columns.forEach((col, i) => {
         browseNestedNodes(
             table,
