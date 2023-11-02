@@ -100,11 +100,7 @@
                                         'placeholder-string': showPlaceholder,
                                         'placeholder-string--disabled': disabled
                                     }"
-                                >{{
-                                    showPlaceholder
-                                        ? placeholder
-                                        : modelValue
-                                }}</span>
+                                >{{ spanText }}</span>
                             </div>
                             <div
                                 v-if="
@@ -658,7 +654,10 @@ export default defineComponent({
             autoSuggestItems,
             maxLength,
             files,
-            syntaxHighlightColor
+            syntaxHighlightColor,
+            placeholder,
+            readonly,
+            disabled
         } = toRefs(props)
 
         const isInternalChange = ref(false)
@@ -747,11 +746,26 @@ export default defineComponent({
             () => !modelValue.value || !String(modelValue.value)?.length
         )
 
+        const spanText = computed<string>(() => {
+            if (showPlaceholder.value) {
+                return placeholder.value
+            }
+            return modelValue.value?.toString()
+        })
+
         watch(
-            () => props.modelValue,
+            modelValue,
             (val) => {
                 nextTick(() => {
-                    if (!isInternalChange.value && val) {
+                    if (
+                        !isInternalChange.value &&
+                        val !== null &&
+                        val !== undefined
+                    ) {
+                        if (readonly.value || disabled.value) {
+                            return
+                        }
+
                         input.value.innerHTML = val
                             .toString()
                             .replace(/ /g, '&nbsp;')
@@ -777,7 +791,8 @@ export default defineComponent({
             emitRemoveFile,
             updateSyntax,
             stringSuggestions,
-            showPlaceholder
+            showPlaceholder,
+            spanText
         }
     },
     data() {
