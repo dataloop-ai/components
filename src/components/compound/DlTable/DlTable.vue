@@ -515,6 +515,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
+                                    :padding="isTreeTable ? '0' : '0 10px'"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span class="inner-th">
@@ -527,6 +528,7 @@
                                 key="visibleColumnsSlot"
                                 :col-index="-1"
                                 no-tooltip
+                                :padding="isTreeTable ? '0' : '0 10px'"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
