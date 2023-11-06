@@ -774,7 +774,7 @@ export default defineComponent({
     align-items: flex-start;
     gap: 10px;
     padding: 10px;
-    background-color: #f4f4f4;
+    background-color: var(--dl-color-panel-background);
     border-radius: 4px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }

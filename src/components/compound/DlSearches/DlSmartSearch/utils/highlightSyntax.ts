@@ -119,28 +119,3 @@ export function setCaretAtTheEnd(target: HTMLElement) {
     sel.addRange(range)
     target.focus()
 }
-
-export function clearPartlyTypedSuggestion(oldValue: string, newValue: string) {
-    const oldSuggestions = oldValue.split(' ')
-    const newSuggestions = newValue.split(' ')
-
-    const oldSuggestion = oldSuggestions[oldSuggestions.length - 1]
-    const newSuggestion = newSuggestions[newSuggestions.length - 2]
-
-    if (oldSuggestion && newSuggestion?.includes(oldSuggestion)) {
-        newValue = removeOldSuggestion(newValue)
-    }
-    return newValue
-}
-
-function removeOldSuggestion(inputString: string) {
-    const words = inputString.trim().split(' ')
-
-    if (words.length >= 2) {
-        words.splice(-2, 1)
-        const resultString = words.join(' ')
-        return resultString + ' '
-    } else {
-        return inputString
-    }
-}
