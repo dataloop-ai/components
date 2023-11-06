@@ -20,7 +20,7 @@ describe('use-table-filter', () => {
         expect(
             filteredRows.value.filter(
                 (row) => row.name === ROWS[0].children[0].name
-            )[0]
-        ).toEqual(ROWS[0].children[0])
+            )
+        ).toEqual([ROWS[0].children[0]])
     })
 })
