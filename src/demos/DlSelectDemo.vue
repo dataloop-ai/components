@@ -99,6 +99,51 @@
                 </div>
             </template>
         </dl-select>
+        fit content
+        <dl-select
+            v-model="statusOption"
+            width="96px"
+            without-borders
+            fit-content
+            align-right
+            :options="[
+                {
+                    label: 'S1',
+                    value: 1,
+                    badgeColor: 'var(--dl-color-disabled)'
+                },
+                {
+                    label: 'S 2',
+                    value: 2,
+                    badgeColor: 'var(--dl-color-secondary)'
+                },
+                {
+                    label: 'S3',
+                    value: 3,
+                    badgeColor: 'var(--dl-color-positive)'
+                },
+                {
+                    label: 'S4',
+                    value: 4,
+                    badgeColor: 'var(--dl-color-warning)'
+                }
+            ]"
+            required
+        >
+            <template #selected="scope">
+                <div style="display: flex; align-items: center; gap: 5px">
+                    <dl-badge :color="scope.opt.badgeColor" />
+                    {{ scope.opt.label }}
+                </div>
+            </template>
+            <template #option="scope">
+                <div style="display: flex; align-items: center; gap: 5px">
+                    <dl-badge :color="scope.opt.badgeColor" />
+                    {{ scope.opt.label }}
+                </div>
+            </template>
+        </dl-select>
+
         with prepend
         <dl-select
             v-model="tasksFilter"
