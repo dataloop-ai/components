@@ -1,7 +1,7 @@
 import { TInputSizes } from '../../../utils/input-sizes'
 import { DlSelectOption } from './types'
 
-export type DlSelectOptionType = string | number | Record<string, any>
+export type DlSelectOptionType = string | number | DlSelectOption
 
 export const getLabel = (option: any) => {
     if (typeof option === 'object' && 'label' in option) {
@@ -21,24 +21,25 @@ const ICON_SIZES = {
 }
 
 const isValueSelected = (
-    option: DlSelectOption,
+    option: DlSelectOptionType,
     selected: string[] | string
 ) => {
     let isSelected = false
     if (!Array.isArray(selected)) {
-        return selected === option.value
+        isSelected =
+            selected === (typeof option === 'object' ? option.value : option)
     } else {
         selected.forEach((val) => {
-            isSelected = val === option.value
+            isSelected =
+                val === (typeof option === 'object' ? option.value : option)
         })
     }
-
     return isSelected
 }
 
 export const getLabelOfSelectedOption = (
     selected: string[] | string,
-    options: DlSelectOption[] | string[]
+    options: DlSelectOptionType[] | string[]
 ): string | undefined => {
     for (const option of options) {
         if (typeof option === 'string' && typeof selected === 'string') {
