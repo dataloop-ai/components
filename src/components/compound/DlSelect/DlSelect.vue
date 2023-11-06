@@ -568,7 +568,7 @@ export default defineComponent({
                 )
             }
         },
-        selectedOption(): string | Record<string, string | number> | number {
+        selectedOption(): DlSelectOptionType {
             return this.selectedIndex === -1
                 ? this.computedPlaceholder
                 : this.options[this.selectedIndex]
@@ -709,12 +709,7 @@ export default defineComponent({
 
             if (this.emitValue) {
                 this.selectedIndex = this.options.findIndex(
-                    (
-                        option:
-                            | string
-                            | Record<string, string | number>
-                            | number
-                    ) =>
+                    (option: DlSelectOptionType) =>
                         isEqual(
                             (option as any).value,
                             this.modelValue as string | number
@@ -725,19 +720,13 @@ export default defineComponent({
 
             if (this.isModelValuePrimitiveType) {
                 this.selectedIndex = this.options.findIndex(
-                    (
-                        option:
-                            | string
-                            | Record<string, string | number>
-                            | number
-                    ) => option === this.modelValue
+                    (option: DlSelectOptionType) => option === this.modelValue
                 )
                 return
             }
 
             this.selectedIndex = this.options.findIndex(
-                (option: string | Record<string, string | number> | number) =>
-                    isEqual(option, this.modelValue)
+                (option: DlSelectOptionType) => isEqual(option, this.modelValue)
             )
         },
         handleSelectedItem(value: DlSelectOptionType) {
