@@ -1,4 +1,4 @@
-import { ref, computed, watchEffect } from 'vue'
+import { ref, computed, watchEffect } from 'vue-demi'
 import { DlTableRow } from '../../types'
 
 export function useNestedTableFilter(
@@ -8,27 +8,30 @@ export function useNestedTableFilter(
     const nestedRows = ref<DlTableRow[]>(rows)
     const criteria = ref(filerCriteria)
 
-    const recursiveSearch = (
+    const nestedSearch = (
         array: DlTableRow[],
         criteria: (item: DlTableRow) => boolean
     ): DlTableRow[] => {
-        return array.reduce((result: DlTableRow[], item: DlTableRow) => {
+        const result = []
+        const stack = [...array]
+        while (stack.length) {
+            const item = stack.pop()
             if (criteria(item)) {
                 result.push(item)
             }
             if (item.children) {
-                result.push(...recursiveSearch(item.children, criteria))
+                stack.push(...item.children)
             }
-            return result
-        }, [])
+        }
+        return result
     }
 
     const filteredRows = computed(() => {
-        return recursiveSearch(nestedRows.value, criteria.value)
+        return nestedSearch(nestedRows.value, criteria.value)
     })
 
     watchEffect(() => {
-        recursiveSearch(nestedRows.value, criteria.value)
+        nestedSearch(nestedRows.value, criteria.value)
     })
 
     return {

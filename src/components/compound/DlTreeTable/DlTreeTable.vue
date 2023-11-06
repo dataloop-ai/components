@@ -347,13 +347,16 @@ export default defineComponent({
         const { filteredRows } = useNestedTableFilter(
             tableRows.value,
             (row) => {
-                return row.name
-                    .toLowerCase?.()
-                    .includes(props.filter?.toLowerCase())
+                let filter = props.filter ?? ''
+                if (typeof filter === 'string') {
+                    filter = filter.toLowerCase()
+                }
+
+                return row.name.toLowerCase?.().includes(filter)
             }
         )
 
-        const computedFilter = computed(() =>
+        const computedFilter = computed<DlTableRow[]>(() =>
             props.filter && filteredRows.value.length
                 ? filteredRows.value
                 : tableRows.value
