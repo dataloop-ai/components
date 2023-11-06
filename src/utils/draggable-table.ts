@@ -3,12 +3,10 @@ import { removeAllChildNodes } from './remove-child-nodes'
 import {
     calculateColIndexOffset,
     getColIndex,
-    getTableColumn,
     getTreeTableColumn,
     justifyMouseInsideTargetCell,
     removeTableVerticalBorders,
-    swapTableColumns,
-    swapTreeTableColumns
+    swapTableColumns
 } from './table-columns'
 import { isVue2, watch } from 'vue-demi'
 
@@ -17,7 +15,6 @@ export function applyDraggableColumns(
     vm?: any,
     draggableClone?: HTMLDivElement
 ) {
-    const isTreeTable = vm.props.isTreeTable
     let originalColIndex: number = null
     let sourceColIndex: number = null
     let targetColIndex: number = null
@@ -93,11 +90,7 @@ export function applyDraggableColumns(
             newTargetColIndex !== targetColIndex &&
             newTargetColIndex !== sourceColIndex
         ) {
-            if (isTreeTable) {
-                swapTreeTableColumns(table, sourceColIndex, newTargetColIndex)
-            } else {
-                swapTableColumns(table, sourceColIndex, newTargetColIndex)
-            }
+            swapTableColumns(table, sourceColIndex, newTargetColIndex)
             sourceColIndex = newTargetColIndex
             targetColIndex = newTargetColIndex
         }
@@ -108,8 +101,6 @@ export function applyDraggableColumns(
         const colIndex = getColIndex(targetTh)
         sourceColIndex = colIndex
         originalColIndex = colIndex
-        return isTreeTable
-            ? getTreeTableColumn(table, sourceColIndex)
-            : getTableColumn(table, sourceColIndex)
+        return getTreeTableColumn(table, sourceColIndex)
     }
 }
