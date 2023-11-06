@@ -743,6 +743,7 @@ export default defineComponent({
                 emit('update:model-value', newValue)
                 input.value.innerHTML = newValue
                 setCaretAtTheEnd(input.value)
+                isInternalChange.value = true
             }
         }
 
