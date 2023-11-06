@@ -160,6 +160,8 @@
                 no-focus
                 :offset="[0, 3]"
                 style="border-radius: 0"
+                :style="menuStyle"
+                :menu-class="menuClass"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
                 :max-height="dropdownMaxHeight"
@@ -412,6 +414,14 @@ export default defineComponent({
         triggerPercentage: {
             type: Number,
             default: 1
+        },
+        menuStyle: {
+            type: String,
+            default: null
+        },
+        menuClass: {
+            type: String,
+            default: null
         }
     },
     emits: [
@@ -1106,6 +1116,7 @@ export default defineComponent({
         padding: 5px 0;
         max-height: var(--dl-select-dropdown-max-height);
         overflow: auto;
+        width: fit-content;
     }
 
     .expand-icon {

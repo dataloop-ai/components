@@ -12,7 +12,7 @@
             size="s"
             :options="options"
             :disabled="disabled"
-            width="min-content"
+            menu-style="min-width: fit-content;"
             align-right
             disable-dropdown-icon-padding
             fit-content
