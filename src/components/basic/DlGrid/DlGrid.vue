@@ -14,12 +14,29 @@
         </dl-virtual-scroll>
     </div>
     <div
-        v-else
+        v-else-if="!items?.length"
         ref="grid"
         :style="gridStyles"
         :class="gridClass"
     >
         <slot />
+    </div>
+    <div
+        v-else
+        ref="grid"
+        :style="gridStyles"
+        :class="gridClass"
+    >
+        <div
+            v-for="item in items"
+            :key="item.id"
+            class="item-wrapper"
+        >
+            <slot
+                name="item-slot"
+                v-bind="{ item }"
+            />
+        </div>
     </div>
 </template>
 
@@ -78,6 +95,10 @@ export default defineComponent({
         scrollDebounce: {
             type: Number,
             default: 100
+        },
+        virtualScroll: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'layout-changed'],
@@ -97,7 +118,9 @@ export default defineComponent({
                 : 'dl-grid-wrapper__flex'
         )
 
-        const hasVirtualScroll = computed(() => !!props.items)
+        const hasVirtualScroll = computed(
+            () => props.items?.length > 100 && props.virtualScroll
+        )
 
         const gridStyles = computed(() => {
             const gridStyles: Dictionary<string | number> = {
