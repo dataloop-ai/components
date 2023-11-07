@@ -759,7 +759,7 @@ export default defineComponent({
             // @ts-ignore
             return defaultOptions.includes(this.selectedBySearch as any)
         },
-        alotOfOptions(): DlSelectOptionType {
+        alotOfOptions(): DlSelectOptionType[] {
             const arr = [] as any[]
 
             for (let i = 0; i < 1000; ++i) {
