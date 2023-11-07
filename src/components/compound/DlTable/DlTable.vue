@@ -1390,7 +1390,11 @@ export default defineComponent({
                 (document.querySelector('table.dl-table') as HTMLTableElement)
 
             nextTick(() => {
-                setAllColumnWidths(tableEl, columns.value as DlTableColumn[])
+                setAllColumnWidths(
+                    tableEl,
+                    columns.value as DlTableColumn[],
+                    fitAllColumns.value
+                )
             })
             if (visibleColumns.value) return
             if (resizable.value) {
@@ -1418,7 +1422,8 @@ export default defineComponent({
                 nextTick(() => {
                     setAllColumnWidths(
                         tableEl,
-                        props.columns as DlTableColumn[]
+                        props.columns as DlTableColumn[],
+                        fitAllColumns.value
                     )
                 })
                 if (visibleColumns.value) return
@@ -1456,7 +1461,8 @@ export default defineComponent({
                 nextTick(() => {
                     setAllColumnWidths(
                         tableRef.value,
-                        newColumns as DlTableColumn[]
+                        newColumns as DlTableColumn[],
+                        fitAllColumns.value
                     )
                 })
             },

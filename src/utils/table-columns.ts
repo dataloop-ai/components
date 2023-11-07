@@ -123,7 +123,8 @@ function getIconWidth(el: HTMLElement) {
 
 export function setAllColumnWidths(
     table: HTMLElement,
-    columns: DlTableColumn[]
+    columns: DlTableColumn[],
+    fitAllColumns: boolean
 ) {
     const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
     if (!hasWidth) return
