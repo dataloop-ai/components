@@ -272,7 +272,6 @@ export default defineComponent({
                         to: thisMonth
                     }
                 },
-                { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom },
                 {
                     title: 'custom by day',
                     key: MONTH_SIDEBAR_OPTION.custom_by_day,
@@ -284,7 +283,8 @@ export default defineComponent({
                             .startOf('day')
                             .toDate()
                     }
-                }
+                },
+                { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom }
             ]
         },
         sidebarDayOptions(): DayTypeOption[] {
