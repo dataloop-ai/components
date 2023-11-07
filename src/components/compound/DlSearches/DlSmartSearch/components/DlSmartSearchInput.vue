@@ -386,12 +386,6 @@ export default defineComponent({
         let lastSearchQuery: string
 
         const updateJSONQuery = () => {
-            if (lastSearchQuery === searchQuery.value) {
-                return null
-            } else {
-                lastSearchQuery = searchQuery.value
-            }
-
             try {
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
@@ -610,10 +604,13 @@ export default defineComponent({
                 return
             }
 
-            const toSearch = updateJSONQuery()
-            if (toSearch) {
-                emit('search', toSearch)
-                showSuggestions.value = false
+            if (lastSearchQuery !== searchQuery.value) {
+                lastSearchQuery = searchQuery.value
+                const toSearch = updateJSONQuery()
+                if (toSearch) {
+                    emit('search', toSearch)
+                    showSuggestions.value = false
+                }
             }
         }
 
