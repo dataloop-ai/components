@@ -148,7 +148,11 @@ export default defineComponent({
         depth: { type: Number, default: 0 },
         label: { type: String, default: null },
         capitalized: { type: Boolean, default: false },
-        readonly: { type: Boolean, default: false }
+        readonly: { type: Boolean, default: false },
+        isExpanded: {
+            type: Boolean,
+            default: false
+        }
     },
     emits: [
         'update:model-value',
@@ -159,7 +163,7 @@ export default defineComponent({
     ],
     data() {
         return {
-            showChildren: !!this.readonly,
+            showChildren: this.isExpanded,
             componentId: v4(),
             uuid: `dl-select-option-${v4()}`
         }
