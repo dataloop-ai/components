@@ -136,11 +136,21 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                const width =
-                    (col.width ?? targetEl.scrollWidth) +
-                    getIconWidth(targetEl) +
-                    15
-                targetEl.style.width = `${width}px`
+                if (!fitAllColumns) {
+                    const width =
+                        (col.width ?? targetEl.scrollWidth) +
+                        getIconWidth(targetEl) +
+                        15
+                    targetEl.style.width =
+                        typeof col.width === 'number' || !col.width
+                            ? `${width}px`
+                            : col.width
+                } else if (targetEl.tagName === 'TH') {
+                    const innerTh = targetEl.querySelector(
+                        '.inner-th'
+                    ) as HTMLElement
+                    innerTh.style.maxWidth = '80%'
+                }
                 // then
             }
         )

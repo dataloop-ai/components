@@ -1208,7 +1208,7 @@ export default defineComponent({
         },
         fitAllColumns: {
             type: Boolean,
-            default: true
+            default: false
         },
         expandableRows: {
             type: Boolean,
