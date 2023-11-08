@@ -124,12 +124,14 @@
             >
                 {{ label }}
             </span>
-            <dl-icon
-                :class="iconClass"
-                :icon="dropdownIcon"
-                :size="iconSize"
-                :color="getIconColor"
-            />
+            <div class="icon-container">
+                <dl-icon
+                    :class="iconClass"
+                    :icon="dropdownIcon"
+                    :size="iconSize"
+                    :color="getIconColor"
+                />
+            </div>
         </div>
 
         <dl-menu
@@ -504,6 +506,14 @@ export default defineComponent({
             z-index: 0;
             user-select: none !important;
             min-width: 1.5em;
+
+            .icon-container {
+                padding: 0 10px;
+            }
+            span {
+                display: block;
+                width: 100%;
+            }
         }
     }
     &__arrow {
