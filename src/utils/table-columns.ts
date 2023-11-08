@@ -137,7 +137,8 @@ function addStickyPosition(
 export function setAllColumnWidths(
     table: HTMLElement,
     columns: DlTableColumn[],
-    stickyColumns: TableStickyPosition
+    stickyColumns: TableStickyPosition,
+    fitAllColumns: boolean
 ) {
     const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
     if (!hasWidth) return
@@ -149,11 +150,21 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                const width =
-                    (col.width ?? targetEl.scrollWidth) +
-                    getIconWidth(targetEl) +
-                    15
-                targetEl.style.width = `${width}px`
+                if (!fitAllColumns) {
+                    const width =
+                        (col.width ?? targetEl.scrollWidth) +
+                        getIconWidth(targetEl) +
+                        15
+                    targetEl.style.width =
+                        typeof col.width === 'number' || !col.width
+                            ? `${width}px`
+                            : col.width
+                } else if (targetEl.tagName === 'TH') {
+                    const innerTh = targetEl.querySelector(
+                        '.inner-th'
+                    ) as HTMLElement
+                    innerTh.style.maxWidth = '80%'
+                }
                 if (stickyColumns && (i === 0 || i === columns.length - 1)) {
                     targetEl.classList.add('sticky-col')
                     targetEl.style.left = '0'

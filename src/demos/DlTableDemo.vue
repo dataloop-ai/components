@@ -117,6 +117,35 @@
                 @col-update="updateColumns"
                 @row-reorder="reorderRows"
             />
+            <div style="margin-top: 100px">
+                Fit table columns
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    fit-all-columns
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @col-update="updateColumns"
+                    @row-reorder="reorderRows"
+                />
+            </div>
 
             <div style="margin-top: 100px">
                 Custom Slot row-body

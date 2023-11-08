@@ -1213,7 +1213,7 @@ export default defineComponent({
         },
         fitAllColumns: {
             type: Boolean,
-            default: true
+            default: false
         },
         expandableRows: {
             type: Boolean,
@@ -1404,7 +1404,8 @@ export default defineComponent({
                 setAllColumnWidths(
                     tableEl,
                     columns.value as DlTableColumn[],
-                    props.stickyColumns
+                    props.stickyColumns,
+                    props.fitAllColumns
                 )
             })
             if (visibleColumns.value) return
@@ -1434,7 +1435,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableEl,
                         props.columns as DlTableColumn[],
-                        props.stickyColumns
+                        props.stickyColumns,
+                        props.fitAllColumns
                     )
                 })
                 if (visibleColumns.value) return
@@ -1473,7 +1475,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableRef.value,
                         newColumns as DlTableColumn[],
-                        props.stickyColumns
+                        props.stickyColumns,
+                        props.fitAllColumns
                     )
                 })
             },
