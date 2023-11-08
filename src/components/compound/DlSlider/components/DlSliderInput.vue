@@ -82,7 +82,6 @@ export default defineComponent({
         watch(
             modelRef,
             (newValue, oldValue) => {
-                console.log({ oldValue, newValue })
                 if (isNaN(newValue)) {
                     emit('update:model-value', oldValue)
                     emit('change', oldValue)
