@@ -212,6 +212,18 @@ export default defineComponent({
         },
         modelValue() {
             this.value = this.modelValue
+        },
+        maxDisplayRange() {
+            this.updateState()
+        },
+        boundaryNumbers() {
+            this.updateState()
+        },
+        boundaryLinks() {
+            this.updateState()
+        },
+        directionLinks() {
+            this.updateState()
         }
     },
     beforeMount() {
@@ -236,17 +248,16 @@ export default defineComponent({
             this.ellipsesEnd = false
 
             let maxDisplayRange = Math.max(
-                this.maxDisplayRange,
+                !this.maxDisplayRange || isNaN(Number(this.maxDisplayRange))
+                    ? 7
+                    : this.maxDisplayRange,
                 3 + (this.boundaryNumbers ? 2 : 0)
             )
 
             this.pgFrom = this.boundaryNumbers ? this.min + 1 : this.min
             this.pgTo = this.boundaryNumbers ? this.max - 1 : this.max
 
-            if (
-                this.maxDisplayRange &&
-                maxDisplayRange < this.max - this.min + 1
-            ) {
+            if (maxDisplayRange && maxDisplayRange < this.max - this.min + 1) {
                 maxDisplayRange = 1 + Math.floor(maxDisplayRange / 2) * 2
 
                 this.pgFrom = Math.max(
