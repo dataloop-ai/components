@@ -199,6 +199,33 @@
             </div>
 
             <div style="margin-top: 100px">
+                With sticky columns: both
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="both"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+                With sticky columns: first
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="first"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+                With sticky columns: last
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="last"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+            </div>
+
+            <div style="margin-top: 100px">
                 Loading WIth custom row
                 <DlTable
                     :selected="selected"

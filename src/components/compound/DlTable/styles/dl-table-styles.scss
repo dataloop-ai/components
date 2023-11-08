@@ -8,6 +8,12 @@
         border-right: 1px solid var(--dl-color-medium);
     }
 
+    .sticky-col {
+        position: sticky;
+        background-color: var(--dl-color-panel-background);
+        z-index: 50;
+    }
+
     .inner-th {
         display: inline-block;
         overflow: hidden;
@@ -92,7 +98,6 @@
             .dl-table__drag-icon > div {
                 opacity: 1;
             }
-
             td:not(.dl-td--no-hover) {
                 background-color: var(--dl-color-fill-hover);
             }

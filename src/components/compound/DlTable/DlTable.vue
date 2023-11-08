@@ -951,7 +951,12 @@ import {
 import { useTableActions, useTableActionsProps } from './hooks/tableActions'
 import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
-import { DlTableRow, DlTableProps, DlTableColumn } from './types'
+import {
+    DlTableRow,
+    DlTableProps,
+    DlTableColumn,
+    TableStickyPosition
+} from './types'
 import { DlPagination } from '../DlPagination'
 import { DlIcon, DlCheckbox, DlProgressBar, DlList } from '../../essential'
 import { DlButton, DlPopup } from '../../basic'
@@ -1218,6 +1223,12 @@ export default defineComponent({
             type: String,
             default: 'No data'
         },
+        stickyColumns: {
+            type: Object as PropType<TableStickyPosition>,
+            default: null,
+            validator: (value: string) =>
+                ['first', 'last', 'both'].includes(value)
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -1390,7 +1401,11 @@ export default defineComponent({
                 (document.querySelector('table.dl-table') as HTMLTableElement)
 
             nextTick(() => {
-                setAllColumnWidths(tableEl, columns.value as DlTableColumn[])
+                setAllColumnWidths(
+                    tableEl,
+                    columns.value as DlTableColumn[],
+                    props.stickyColumns
+                )
             })
             if (visibleColumns.value) return
             if (resizable.value) {
@@ -1418,7 +1433,8 @@ export default defineComponent({
                 nextTick(() => {
                     setAllColumnWidths(
                         tableEl,
-                        props.columns as DlTableColumn[]
+                        props.columns as DlTableColumn[],
+                        props.stickyColumns
                     )
                 })
                 if (visibleColumns.value) return
@@ -1456,7 +1472,8 @@ export default defineComponent({
                 nextTick(() => {
                     setAllColumnWidths(
                         tableRef.value,
-                        newColumns as DlTableColumn[]
+                        newColumns as DlTableColumn[],
+                        props.stickyColumns
                     )
                 })
             },

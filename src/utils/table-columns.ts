@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash'
-import { DlTableColumn } from '../types'
+import { DlTableColumn, TableStickyPosition } from '../types'
 import { browseNestedNodes } from './browse-nested-nodes'
 import { swapNodes } from './swap-nodes'
 
@@ -121,9 +121,23 @@ function getIconWidth(el: HTMLElement) {
     return iconEl?.scrollWidth
 }
 
+function addStickyPosition(
+    element: HTMLElement,
+    position: TableStickyPosition,
+    index: number,
+    totalElements: number
+) {
+    if (position === 'both')
+        position =
+            index === 0 ? 'first' : index === totalElements - 1 ? 'last' : ''
+    element.style.left = position === 'first' ? '0' : ''
+    element.style.right = position === 'last' ? '0' : ''
+}
+
 export function setAllColumnWidths(
     table: HTMLElement,
-    columns: DlTableColumn[]
+    columns: DlTableColumn[],
+    stickyColumns: TableStickyPosition
 ) {
     const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
     if (!hasWidth) return
@@ -140,7 +154,16 @@ export function setAllColumnWidths(
                     getIconWidth(targetEl) +
                     15
                 targetEl.style.width = `${width}px`
-                // then
+                if (stickyColumns && (i === 0 || i === columns.length - 1)) {
+                    targetEl.classList.add('sticky-col')
+                    targetEl.style.left = '0'
+                    addStickyPosition(
+                        targetEl,
+                        stickyColumns,
+                        i,
+                        columns.length
+                    )
+                }
             }
         )
     })
