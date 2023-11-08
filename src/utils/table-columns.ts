@@ -150,31 +150,14 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                if (!fitAllColumns) {
-                    const width =
-                        (col.width ?? targetEl.scrollWidth) +
-                        getIconWidth(targetEl) +
-                        15
-                    targetEl.style.width =
-                        typeof col.width === 'number' || !col.width
-                            ? `${width}px`
-                            : col.width
-                } else if (targetEl.tagName === 'TH') {
-                    const innerTh = targetEl.querySelector(
-                        '.inner-th'
-                    ) as HTMLElement
-                    innerTh.style.maxWidth = '80%'
-                }
-                if (stickyColumns && (i === 0 || i === columns.length - 1)) {
-                    targetEl.classList.add('sticky-col')
-                    targetEl.style.left = '0'
-                    addStickyPosition(
-                        targetEl,
-                        stickyColumns,
-                        i,
-                        columns.length
-                    )
-                }
+                setColumnWidth(targetEl, col, fitAllColumns)
+                adjustInnerThWidth(targetEl)
+                applyStickyColumnStyles(
+                    targetEl,
+                    stickyColumns,
+                    i,
+                    columns.length
+                )
             }
         )
     })
@@ -194,4 +177,45 @@ export function getColumnsWithUpdatedWidth(
         newColumns[i].width = th.getBoundingClientRect().width
     })
     return newColumns
+}
+
+function setColumnWidth(
+    targetEl: HTMLElement,
+    col: DlTableColumn,
+    fitAllColumns: boolean
+): void {
+    if (!fitAllColumns) {
+        const ICON_PADDING = 15
+        const width =
+            (col.width ?? targetEl.scrollWidth) +
+            getIconWidth(targetEl) +
+            ICON_PADDING
+        targetEl.style.width =
+            typeof col.width === 'number' || !col.width
+                ? `${width}px`
+                : col.width
+    }
+}
+
+function adjustInnerThWidth(targetEl: HTMLElement): void {
+    if (targetEl.tagName === 'TH') {
+        const INNER_MAX_WIDTH = '80%'
+        const innerTh = targetEl.querySelector('.inner-th') as HTMLElement
+        innerTh.style.maxWidth = INNER_MAX_WIDTH
+    }
+}
+
+function applyStickyColumnStyles(
+    targetEl: HTMLElement,
+    stickyColumns: TableStickyPosition,
+    columnIndex: number,
+    totalColumns: number
+): void {
+    if (
+        stickyColumns &&
+        (columnIndex === 0 || columnIndex === totalColumns - 1)
+    ) {
+        targetEl.classList.add('sticky-col')
+        addStickyPosition(targetEl, stickyColumns, columnIndex, totalColumns)
+    }
 }
