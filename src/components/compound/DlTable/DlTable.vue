@@ -141,7 +141,7 @@
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
-                                        class="inner-th"
+                                        :class="`inner-th ${`inner-th--${col.align}`}`"
                                         :style="
                                             col.width && {
                                                 maxWidth: 'calc(100% - 15px)'
@@ -157,6 +157,7 @@
                                 key="visibleColumnsSlot"
                                 :col-index="-1"
                                 no-tooltip
+                                padding="0"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -528,7 +529,7 @@
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
-                                        class="inner-th"
+                                        :class="`inner-th ${`inner-th--${col.align}`}`"
                                         :style="
                                             col.width && {
                                                 maxWidth: 'calc(100% - 15px)'

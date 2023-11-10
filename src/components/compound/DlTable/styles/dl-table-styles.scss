@@ -14,16 +14,34 @@
         z-index: 50;
     }
 
+    .inner-th-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        height: 34px;
+        position: relative;
+    }
     .inner-th {
         display: inline-block;
+        flex: 0 1 auto;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
         overflow: hidden;
-        margin-right: 5px;
         position: relative;
+        line-height: 34px;
+        &--left {
+            left: 0;
+            transform: none;
+        }
     }
     .th-icons {
         display: flex;
-        right: 0;
-        position: absolute;
+        flex: 0 1 auto;
+        margin-left: auto;
+        align-items: center;
+        justify-content: flex-end;
     }
 
     .expanded-row {
@@ -80,11 +98,6 @@
     th:first-child,
     td:first-child {
         padding-left: 8px;
-    }
-
-    th:last-child,
-    td:last-child {
-        padding-right: 8px;
     }
 
     thead tr {
@@ -430,8 +443,8 @@
 
     .dl-table {
         th {
-            font-size: 12px;
-            line-height: 12px;
+            font-size: 14px;
+            line-height: 14px;
         }
 
         thead tr {

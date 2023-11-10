@@ -150,14 +150,37 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                setColumnWidth(targetEl, col, fitAllColumns)
-                adjustInnerThWidth(targetEl)
-                applyStickyColumnStyles(
-                    targetEl,
-                    stickyColumns,
-                    i,
-                    columns.length
-                )
+                if (!fitAllColumns && targetEl.tagName === 'TH') {
+                    // Calculate the width for the column
+                    const width =
+                        (col.width ??
+                            targetEl.querySelector('.inner-th').scrollWidth) +
+                        getIconWidth(targetEl) +
+                        35
+
+                    // Set the width of the column
+                    targetEl.style.width =
+                        typeof col.width === 'number' || !col.width
+                            ? `${width}px`
+                            : col.width
+                } else if (targetEl.tagName === 'TH') {
+                    // Adjust the maximum width for TH elements
+                    const innerTh = targetEl.querySelector(
+                        '.inner-th'
+                    ) as HTMLElement
+                    innerTh.style.maxWidth = '80%'
+                }
+
+                if (stickyColumns && (i === 0 || i === columns.length - 1)) {
+                    // Add sticky column class and position for sticky columns
+                    targetEl.classList.add('sticky-col')
+                    addStickyPosition(
+                        targetEl,
+                        stickyColumns,
+                        i,
+                        columns.length
+                    )
+                }
             }
         )
     })
@@ -177,45 +200,4 @@ export function getColumnsWithUpdatedWidth(
         newColumns[i].width = th.getBoundingClientRect().width
     })
     return newColumns
-}
-
-function setColumnWidth(
-    targetEl: HTMLElement,
-    col: DlTableColumn,
-    fitAllColumns: boolean
-): void {
-    if (!fitAllColumns) {
-        const ICON_PADDING = 15
-        const width =
-            (col.width ?? targetEl.scrollWidth) +
-            getIconWidth(targetEl) +
-            ICON_PADDING
-        targetEl.style.width =
-            typeof col.width === 'number' || !col.width
-                ? `${width}px`
-                : col.width
-    }
-}
-
-function adjustInnerThWidth(targetEl: HTMLElement): void {
-    if (targetEl.tagName === 'TH') {
-        const INNER_MAX_WIDTH = '80%'
-        const innerTh = targetEl.querySelector('.inner-th') as HTMLElement
-        innerTh.style.maxWidth = INNER_MAX_WIDTH
-    }
-}
-
-function applyStickyColumnStyles(
-    targetEl: HTMLElement,
-    stickyColumns: TableStickyPosition,
-    columnIndex: number,
-    totalColumns: number
-): void {
-    if (
-        stickyColumns &&
-        (columnIndex === 0 || columnIndex === totalColumns - 1)
-    ) {
-        targetEl.classList.add('sticky-col')
-        addStickyPosition(targetEl, stickyColumns, columnIndex, totalColumns)
-    }
 }
