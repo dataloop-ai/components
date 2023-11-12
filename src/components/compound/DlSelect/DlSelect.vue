@@ -286,7 +286,12 @@
                                 :opt="option"
                                 name="option"
                             >
-                                <dl-ellipsis>
+                                <span
+                                    v-if="fitContent"
+                                    class="inner-option"
+                                    v-html="getOptionHtml(option)"
+                                />
+                                <dl-ellipsis v-else>
                                     <span
                                         class="inner-option"
                                         v-html="getOptionHtml(option)"
