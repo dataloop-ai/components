@@ -99,6 +99,10 @@ export default defineComponent({
         virtualScroll: {
             type: Boolean,
             default: false
+        },
+        virtualScrollThreshold: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['update:model-value', 'layout-changed'],
@@ -119,7 +123,9 @@ export default defineComponent({
         )
 
         const hasVirtualScroll = computed(
-            () => props.items?.length > 100 && props.virtualScroll
+            () =>
+                props.items?.length > props.virtualScrollThreshold &&
+                props.virtualScroll
         )
 
         const gridStyles = computed(() => {
