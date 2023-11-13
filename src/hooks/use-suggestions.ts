@@ -119,9 +119,9 @@ const mergeWords = (words: string[]) => {
 export const useSuggestions = (
     schema: Ref<Schema>,
     aliases: Ref<Alias[]>,
-    options: { strict?: Ref<boolean> } = {}
+    options: { strict?: Ref<boolean>; omitSuggestions?: Ref<string[]> } = {}
 ) => {
-    const { strict } = options
+    const { strict, omitSuggestions } = options
     const aliasesArray = aliases.value ?? []
     const schemaValue = schema.value ?? {}
 
@@ -286,7 +286,9 @@ export const useSuggestions = (
             ? getError(schemaValue, aliasesArray, expressions, { strict })
             : null
 
-        suggestions.value = localSuggestions
+        suggestions.value = localSuggestions.filter(
+            (value) => !omitSuggestions.value.includes(value)
+        )
     }
 
     return { suggestions, findSuggestions, error }
