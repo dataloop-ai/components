@@ -1110,7 +1110,7 @@ export default defineComponent({
          */
         selectedRowsLabel: {
             type: Function,
-            default: (val: number) => `${val} records selected`
+            default: (val: number) => null
         },
         /**
          * Label visible when loading is active
