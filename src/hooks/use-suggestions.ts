@@ -287,7 +287,8 @@ export const useSuggestions = (
             : null
 
         suggestions.value = localSuggestions.filter(
-            (value) => !omitSuggestions.value.includes(value)
+            (value) =>
+                !omitSuggestions || !omitSuggestions.value.includes(value)
         )
     }
 
