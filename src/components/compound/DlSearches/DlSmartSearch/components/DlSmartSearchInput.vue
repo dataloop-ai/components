@@ -196,8 +196,8 @@ export default defineComponent({
             default: '28px'
         },
         omitSuggestions: {
-            type: Array,
-            default: () => []
+            type: Array as PropType<string[]>,
+            default: () => [] as string[]
         },
         strict: {
             type: Boolean,
