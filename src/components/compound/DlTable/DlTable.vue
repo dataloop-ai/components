@@ -58,19 +58,19 @@
         <!-- Virtual scroll  -->
         <DlVirtualScroll
             v-if="hasVirtScroll"
+            v-bind="virtProps"
             ref="virtScrollRef"
             type="__dltable"
-            :class="tableClass"
+            :class="tableClass + additionalClasses"
             :style="tableStyle"
             :table-colspan="colspanWithActionsRow"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
-            v-bind="virtProps"
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead>
+                <thead :colspan="columns.length">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -81,14 +81,15 @@
                                 v-if="hasDraggableRows"
                                 class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
-                                style="width: 25px; padding: 5px"
+                                style="width: 25px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-width"
+                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
+
                             <th
                                 v-else-if="multipleSelection"
                                 class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
@@ -102,9 +103,7 @@
                                     <DlCheckbox
                                         :color="color"
                                         :model-value="headerSelectedValue"
-                                        :indeterminate-value="
-                                            selectionCheckboxIndeterminateVal
-                                        "
+                                        :indeterminate-value="true"
                                         @update:model-value="
                                             onMultipleSelectionSet
                                         "
@@ -120,14 +119,14 @@
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col chevron-header"
+                                class="dl-table--col-auto-with empty-col"
                                 :data-resizable="false"
-                                style="width: 25px"
+                                style="width: 25px; padding: 5px"
                             />
 
                             <slot
                                 v-for="(col, colIndex) in computedCols"
-                                v-bind="getHeaderScope({ col })"
+                                v-bind="getHeaderScope({ col, onThClick })"
                                 :name="
                                     hasSlotByName(`header-cell-${col.name}`)
                                         ? `header-cell-${col.name}`
@@ -139,13 +138,20 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
+                                    @click="onThClick($event, col.name)"
                                 >
-                                    <span class="inner-th">
+                                    <span
+                                        class="inner-th"
+                                        :style="
+                                            col.width && {
+                                                maxWidth: 'calc(100% - 15px)'
+                                            }
+                                        "
+                                    >
                                         {{ col.label }}
                                     </span>
                                 </DlTh>
                             </slot>
-
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
@@ -343,7 +349,9 @@
                                 <td v-if="expandableRows">
                                     <dl-icon
                                         :icon="getRowExpandedIcon(props.item)"
-                                        @click="updateExpanded(props.item)"
+                                        @click.stop.prevent="
+                                            updateExpanded(props.item)
+                                        "
                                     />
                                 </td>
                                 <DlTd
@@ -403,7 +411,8 @@
                                 v-if="isRowExpanded(props.item)"
                                 :key="getRowExpandedKey(props.item)"
                             >
-                                <td :colspan="columns.length + 1">
+                                <!-- cols + icon col + expandable icon col-->
+                                <td :colspan="columns.length + 1 + 1">
                                     <slot
                                         v-bind="{ row: props.item }"
                                         name="body-cell-expandable-content"
@@ -418,7 +427,9 @@
                     </template>
                     <DlTr v-if="isDataEmpty">
                         <DlTd colspan="100%">
-                            <div class="flex justify-center full-width">
+                            <div
+                                class="flex justify-center full-width empty-state-wrapper"
+                            >
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
@@ -515,9 +526,17 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
+                                    :padding="isTreeTable ? '0' : '0 10px'"
                                     @click="onThClick($event, col.name)"
                                 >
-                                    <span class="inner-th">
+                                    <span
+                                        class="inner-th"
+                                        :style="
+                                            col.width && {
+                                                maxWidth: 'calc(100% - 15px)'
+                                            }
+                                        "
+                                    >
                                         {{ col.label }}
                                     </span>
                                 </DlTh>
@@ -527,6 +546,7 @@
                                 key="visibleColumnsSlot"
                                 :col-index="-1"
                                 no-tooltip
+                                :padding="isTreeTable ? '0' : '0 10px'"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -791,7 +811,7 @@
                                     v-if="isRowExpanded(row)"
                                     :key="getRowExpandedKey(row)"
                                 >
-                                    <td :colspan="columns.length + 1">
+                                    <td :colspan="columns.length + 1 + 1">
                                         <slot
                                             v-bind="{ row }"
                                             name="body-cell-expandable-content"
@@ -825,7 +845,9 @@
                 <slot name="no-data">
                     <DlTr v-if="isDataEmpty && hasEmptyStateProps && !loading">
                         <DlTd colspan="100%">
-                            <div class="flex justify-center full-width">
+                            <div
+                                class="flex justify-center full-width empty-state-wrapper"
+                            >
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
@@ -1368,15 +1390,14 @@ export default defineComponent({
         onMounted(() => {
             tableEl =
                 tableRef.value ||
+                virtScrollRef.value.rootRef.querySelector('table') ||
                 (document.querySelector('table.dl-table') as HTMLTableElement)
+
             nextTick(() => {
-                setAllColumnWidths(
-                    tableEl,
-                    columns.value as DlTableColumn[],
-                    fitAllColumns.value
-                )
+                setAllColumnWidths(tableEl, columns.value as DlTableColumn[])
             })
-            if (resizable.value === true) {
+            if (visibleColumns.value) return
+            if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
             }
             if (hasDraggableColumns.value === true) {
@@ -1391,22 +1412,24 @@ export default defineComponent({
         watch(
             hasVirtScroll,
             () => {
-                tableEl = (rootRef.value as HTMLDivElement).querySelector(
-                    'table.dl-table'
-                ) as HTMLTableElement
+                tableEl =
+                    tableRef.value ||
+                    virtScrollRef.value.rootRef.querySelector('table') ||
+                    (document.querySelector(
+                        'table.dl-table'
+                    ) as HTMLTableElement)
+
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableEl,
+                        props.columns as DlTableColumn[]
+                    )
+                })
+                if (visibleColumns.value) return
 
                 if (resizable.value) {
                     applyResizableColumns(tableEl, vm)
                 }
-
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableRef.value,
-                        props.columns as DlTableColumn[],
-                        props.fitAllColumns
-                    )
-                })
-
                 if (hasDraggableColumns.value === true) {
                     applyDraggableColumns(
                         tableEl,
@@ -1421,17 +1444,23 @@ export default defineComponent({
         )
 
         watch(resizable, () => {
+            if (visibleColumns.value) return
             applyResizableColumns(tableEl, vm)
         })
 
         watch(
             columns,
             (newColumns) => {
+                tableEl =
+                    tableRef.value ||
+                    virtScrollRef.value.rootRef.querySelector('table') ||
+                    (document.querySelector(
+                        'table.dl-table'
+                    ) as HTMLTableElement)
                 nextTick(() => {
                     setAllColumnWidths(
                         tableRef.value,
-                        newColumns as DlTableColumn[],
-                        props.fitAllColumns
+                        newColumns as DlTableColumn[]
                     )
                 })
             },
@@ -1451,7 +1480,7 @@ export default defineComponent({
         watch(
             draggable,
             () => {
-                if (tableEl) {
+                if (tableEl && !visibleColumns.value) {
                     if (hasDraggableColumns.value === true) {
                         applyDraggableColumns(
                             tableEl,
@@ -2041,5 +2070,9 @@ tr {
 th,
 td {
     box-sizing: border-box;
+}
+
+.empty-state-wrapper {
+    margin-top: 16px;
 }
 </style>

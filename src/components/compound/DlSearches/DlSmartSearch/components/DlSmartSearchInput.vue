@@ -105,7 +105,11 @@ import { DlDatePicker } from '../../../DlDateTime'
 import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
-import { setCaretAtTheEnd } from '../../../../../utils'
+import {
+    getSelectionOffset,
+    setCaretAtTheEnd,
+    setSelectionOffset
+} from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
 import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
@@ -120,15 +124,15 @@ import {
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,
-    revertAliases,
-    clearPartlyTypedSuggestion
+    revertAliases
 } from '../utils'
 import { v4 } from 'uuid'
 import {
     Schema,
     Alias,
     useSuggestions,
-    removeBrackets
+    removeBrackets,
+    removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 
@@ -228,6 +232,7 @@ export default defineComponent({
         //#endregion
 
         //#region data
+        const caretAt = ref(0)
         const searchQuery = ref<string>('')
         const focused = ref(false)
         const isOverflowing = ref(false)
@@ -254,9 +259,9 @@ export default defineComponent({
         //#region methods
         const setInputValue = (
             value: string,
-            options: { noEmit?: boolean } = {}
+            options: { noEmit?: boolean; testCaret?: number } = {}
         ) => {
-            const { noEmit } = options
+            const { noEmit, testCaret } = options
 
             showSuggestions.value = false
 
@@ -265,8 +270,9 @@ export default defineComponent({
                 value = value.trimEnd()
             }
 
-            const specialSuggestions = suggestions.value.filter((suggestion) =>
-                suggestion.startsWith('.')
+            const specialSuggestions = suggestions.value.filter(
+                (suggestion) =>
+                    typeof suggestion === 'string' && suggestion.startsWith('.')
             )
 
             for (const suggestion of specialSuggestions) {
@@ -276,6 +282,18 @@ export default defineComponent({
             }
 
             searchQuery.value = value
+
+            // TODO
+            // here the value is finalized - this should be inner function entry point
+
+            // find value left side before current input value is altered by any code below
+            // to match previous behavior, move the caret to the end if setInputValue has been passed new value
+            caretAt.value =
+                testCaret !== undefined
+                    ? testCaret
+                    : value === input.value.innerText
+                    ? getSelectionOffset(input.value)[0]
+                    : value.length
 
             if (value !== input.value.innerText) {
                 input.value.innerHTML = value
@@ -303,7 +321,7 @@ export default defineComponent({
             scroll.value = input.value.offsetHeight > 40
 
             nextTick(() => {
-                findSuggestions(value)
+                findSuggestions(value.substring(0, caretAt.value))
             })
 
             if (!noEmit) {
@@ -313,57 +331,54 @@ export default defineComponent({
 
         const setInputFromSuggestion = (value: string) => {
             let stringValue = ''
+            let caretPosition = 0
             if (searchQuery.value.length) {
-                let query = searchQuery.value
-                    .replace(new RegExp(' ', 'g'), ' ')
-                    .split(' ')
-                    .map((string: string) => string.trim())
-                    .filter((string: string) => !!string.length)
+                let queryLeftSide = searchQuery.value.substring(
+                    0,
+                    caretAt.value
+                )
+                let queryRightSide = searchQuery.value.substring(caretAt.value)
 
-                if (query.length > 1) {
-                    if (query[query.length - 1] === '') {
-                        stringValue = [...query, value, '']
-                            .join(' ')
-                            .replace('  ', ' ')
-                    } else {
-                        if (query[query.length - 1].endsWith('.')) {
-                            query[query.length - 1] = query[
-                                query.length - 1
-                            ].replace('.', '')
-                        } else if (
-                            value
-                                .toLowerCase()
-                                .startsWith(
-                                    query[query.length - 1].toLowerCase()
-                                )
-                        ) {
-                            query = query.slice(0, query.length - 1)
-                        }
-                        stringValue = [...query, value, ''].join(' ')
-                    }
+                if (['AND', 'OR'].includes(value)) {
+                    // do not replace text if the value is AND or OR
+                    const leftover = queryLeftSide.match(/\S+$/)?.[0] || ''
+                    queryLeftSide =
+                        queryLeftSide.replace(/\S+$/, '').trimEnd() + ' '
+                    queryRightSide = leftover + queryRightSide
+                } else if (value.startsWith('.')) {
+                    // dot notation case
+                    queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
+                } else if (queryLeftSide.endsWith(' ')) {
+                    // caret after space: only replace multiple spaces on the left
+                    queryLeftSide = queryLeftSide.trimEnd() + ' '
+                } else if (/\.\S+$/.test(queryLeftSide)) {
+                    // if there are dots in left side expression, suggestions have an operator
+                    // looks like a bug in findSuggestions TODO find it - for now work around it here
+                    const leftover = queryRightSide.match(/^\S+/)?.[0] || ''
+                    queryLeftSide += leftover + ' '
+                    queryRightSide = queryRightSide
+                        .substring(leftover.length)
+                        .trimStart()
+                } else if (queryRightSide.startsWith(' ')) {
+                    // this| situation: replace whatever is there on the left side with the value
+                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
+                    queryRightSide = queryRightSide.trimStart()
                 } else {
-                    if (query[query.length - 1].endsWith('.')) {
-                        query[query.length - 1] = query[
-                            query.length - 1
-                        ].replace('.', '')
-                    } else if (
-                        value
-                            .toLowerCase()
-                            .startsWith(query[query.length - 1].toLowerCase())
-                    ) {
-                        query = query.slice(0, query.length - 1)
-                    }
-
-                    stringValue = [...query, value, ''].join(' ')
+                    // this|situation: replace whatever is there on both sides with the value
+                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
+                    queryRightSide =
+                        removeLeadingExpression(queryRightSide).trimStart()
                 }
+
+                stringValue = queryLeftSide + value + ' ' + queryRightSide
+                caretPosition = stringValue.length - queryRightSide.length
             } else {
                 stringValue = value + ' '
+                caretPosition = stringValue.length
             }
 
-            setInputValue(
-                clearPartlyTypedSuggestion(input.value.innerText, stringValue)
-            )
-            setCaretAtTheEnd(input.value)
+            setInputValue(stringValue)
+            setSelectionOffset(input.value, caretPosition, caretPosition)
         }
 
         const debouncedSetInputValue = debounce(setInputValue, 300)
@@ -371,12 +386,6 @@ export default defineComponent({
         let lastSearchQuery: string
 
         const updateJSONQuery = () => {
-            if (lastSearchQuery === searchQuery.value) {
-                return null
-            } else {
-                lastSearchQuery = searchQuery.value
-            }
-
             try {
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
@@ -595,10 +604,13 @@ export default defineComponent({
                 return
             }
 
-            const toSearch = updateJSONQuery()
-            if (toSearch) {
-                emit('search', toSearch)
-                showSuggestions.value = false
+            if (lastSearchQuery !== searchQuery.value) {
+                lastSearchQuery = searchQuery.value
+                const toSearch = updateJSONQuery()
+                if (toSearch) {
+                    emit('search', toSearch)
+                    showSuggestions.value = false
+                }
             }
         }
 
@@ -815,19 +827,31 @@ export default defineComponent({
         )
         //#endregion
 
+        const watchMouseMove = () => {
+            isTyping.value = false
+        }
+
+        const watchKeyUp = (e: KeyboardEvent) => {
+            if (
+                focused.value &&
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+            ) {
+                setInputValue(searchQuery.value, { noEmit: true })
+            }
+        }
+
         onMounted(() => {
             if (!expanded.value) {
                 isOverflowing.value =
                     isEllipsisActive(input.value) || hasEllipsis.value
             }
-            window.addEventListener('mousemove', () => (isTyping.value = false))
+            window.addEventListener('mousemove', watchMouseMove)
+            window.addEventListener('keyup', watchKeyUp)
             blur(null, { force: true })
         })
         onBeforeUnmount(() => {
-            window.removeEventListener(
-                'mousemove',
-                () => (isTyping.value = false)
-            )
+            window.removeEventListener('mousemove', watchMouseMove)
+            window.removeEventListener('keyup', watchKeyUp)
         })
 
         return {

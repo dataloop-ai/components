@@ -24,8 +24,18 @@
         <slot />
         <span
             class="th-icons"
-            :style="{ top: isDense ? '5px' : '10px' }"
+            :style="{ top: isDense ? '5px' : '12px' }"
         >
+            <dl-icon
+                v-if="isSortable && ['left', 'center'].includes(align)"
+                :class="iconClass"
+                :icon="computedSortIcon"
+                :style="
+                    !isCurrentlySorted && !iconHover
+                        ? 'display: none !important;'
+                        : ''
+                "
+            />
             <dl-icon
                 v-if="hasHint"
                 icon="icon-dl-info"
@@ -36,17 +46,6 @@
                     {{ props.col.hint }}
                 </dl-tooltip>
             </dl-icon>
-            <dl-icon
-                v-if="isSortable && ['left', 'center'].includes(align)"
-                style="margin-top: 2px"
-                :class="iconClass"
-                :icon="computedSortIcon"
-                :style="
-                    !isCurrentlySorted && !iconHover
-                        ? 'display: none !important;'
-                        : ''
-                "
-            />
         </span>
     </th>
 </template>
@@ -100,7 +99,7 @@ export default defineComponent({
 
         const computedSortIcon = computed<string>(() => {
             return props.pagination.descending
-                ? 'icon-dl-arrowdown'
+                ? 'icon-dl-arrow-down'
                 : 'icon-dl-arrow-up'
         })
 

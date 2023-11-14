@@ -348,6 +348,7 @@
                         row-key="index"
                         virtual-scroll
                         @virtual-scroll="onScroll"
+                        @col-update="updateColumns"
                     />
                 </div>
             </div>
@@ -600,7 +601,8 @@ import {
     DlOptionGroup,
     DlSwitch,
     DlInput,
-    DlButton
+    DlButton,
+    DlAvatar
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
@@ -903,7 +905,8 @@ export default defineComponent({
         DlSwitch,
         DlOptionGroup,
         DlInput,
-        DlButton
+        DlButton,
+        DlAvatar
     },
     setup() {
         const filter = ref('')
@@ -924,7 +927,7 @@ export default defineComponent({
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const tableColumnsAligned = ref(columnsAligned)
-        const rowsPerPageOptions = ref([10, 12, 14, 16])
+        const rowsPerPageOptions = ref([5, 10, 12, 14, 16, 100])
 
         const infiniteLoading = ref(false)
 
@@ -1148,7 +1151,7 @@ export default defineComponent({
     align-items: flex-start;
     gap: 10px;
     padding: 10px;
-    background-color: #f4f4f4;
+    background-color: var(--dl-color-panel-background);
     border-radius: 4px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }

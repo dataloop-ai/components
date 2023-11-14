@@ -1,6 +1,7 @@
 import { TInputSizes } from '../../../utils/input-sizes'
+import { DlSelectOption } from './types'
 
-export type DlSelectOptionType = string | number | Record<string, any>
+export type DlSelectOptionType = string | number | DlSelectOption
 
 export const getLabel = (option: any) => {
     if (typeof option === 'object' && 'label' in option) {
@@ -19,18 +20,38 @@ const ICON_SIZES = {
     large: '16px'
 }
 
-export const getLabelOfSelectedOption = (
-    valueToSearch: string,
-    options: DlSelectOptionType[]
+const isValueSelected = (
+    option: DlSelectOptionType,
+    selected: string[] | string
 ) => {
-    if (options.length === 0) return ''
-
-    if (typeof options[0] === 'string') {
-        return options.find((opt) => opt === valueToSearch)
+    let isSelected = false
+    if (!Array.isArray(selected)) {
+        isSelected =
+            selected === (typeof option === 'object' ? option.value : option)
+    } else {
+        selected.forEach((val) => {
+            isSelected =
+                val === (typeof option === 'object' ? option.value : option)
+        })
     }
+    return isSelected
+}
 
-    return (options.find((opt: any) => opt.value === valueToSearch) as any)
-        .label
+export const getLabelOfSelectedOption = (
+    selected: string[] | string,
+    options: DlSelectOptionType[] | string[]
+): string | undefined => {
+    for (const option of options) {
+        if (typeof option === 'string' && typeof selected === 'string') {
+            return option
+        } else if (
+            typeof option === 'object' &&
+            isValueSelected(option, selected)
+        ) {
+            return option.label
+        }
+    }
+    return '1 Option Selected'
 }
 
 export const getIconSize = (size: TInputSizes) => ICON_SIZES[size] ?? '14px'

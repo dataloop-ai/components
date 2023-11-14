@@ -13,7 +13,8 @@ import {
     PropType,
     ref,
     toRefs,
-    watch
+    watch,
+    nextTick
 } from 'vue-demi'
 import {
     Content,
@@ -26,7 +27,6 @@ import {
 } from 'vanilla-jsoneditor'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../StateManager'
-import { nextTick } from 'process'
 
 export default defineComponent({
     model: {

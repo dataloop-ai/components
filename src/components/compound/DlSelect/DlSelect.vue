@@ -160,6 +160,8 @@
                 no-focus
                 :offset="[0, 3]"
                 style="border-radius: 0"
+                :style="menuStyle"
+                :menu-class="menuClass"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
                 :max-height="dropdownMaxHeight"
@@ -284,7 +286,12 @@
                                 :opt="option"
                                 name="option"
                             >
-                                <dl-ellipsis>
+                                <span
+                                    v-if="fitContent"
+                                    class="inner-option"
+                                    v-html="getOptionHtml(option)"
+                                />
+                                <dl-ellipsis v-else>
                                     <span
                                         class="inner-option"
                                         v-html="getOptionHtml(option)"
@@ -412,6 +419,14 @@ export default defineComponent({
         triggerPercentage: {
             type: Number,
             default: 1
+        },
+        menuStyle: {
+            type: String,
+            default: null
+        },
+        menuClass: {
+            type: String,
+            default: null
         }
     },
     emits: [
@@ -568,7 +583,7 @@ export default defineComponent({
                 )
             }
         },
-        selectedOption(): string | Record<string, string | number> | number {
+        selectedOption(): DlSelectOptionType {
             return this.selectedIndex === -1
                 ? this.computedPlaceholder
                 : this.options[this.selectedIndex]
@@ -709,12 +724,7 @@ export default defineComponent({
 
             if (this.emitValue) {
                 this.selectedIndex = this.options.findIndex(
-                    (
-                        option:
-                            | string
-                            | Record<string, string | number>
-                            | number
-                    ) =>
+                    (option: DlSelectOptionType) =>
                         isEqual(
                             (option as any).value,
                             this.modelValue as string | number
@@ -725,19 +735,13 @@ export default defineComponent({
 
             if (this.isModelValuePrimitiveType) {
                 this.selectedIndex = this.options.findIndex(
-                    (
-                        option:
-                            | string
-                            | Record<string, string | number>
-                            | number
-                    ) => option === this.modelValue
+                    (option: DlSelectOptionType) => option === this.modelValue
                 )
                 return
             }
 
             this.selectedIndex = this.options.findIndex(
-                (option: string | Record<string, string | number> | number) =>
-                    isEqual(option, this.modelValue)
+                (option: DlSelectOptionType) => isEqual(option, this.modelValue)
             )
         },
         handleSelectedItem(value: DlSelectOptionType) {
@@ -1106,6 +1110,7 @@ export default defineComponent({
         padding: 5px 0;
         max-height: var(--dl-select-dropdown-max-height);
         overflow: auto;
+        width: fit-content;
     }
 
     .expand-icon {

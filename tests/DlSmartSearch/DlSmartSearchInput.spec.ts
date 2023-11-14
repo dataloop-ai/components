@@ -326,6 +326,64 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.showDatePicker).toBeFalsy()
                 expect(wrapper.vm.searchQuery.endsWith(' ')).toBeTruthy()
             })
+
+            describe('when moving the caret back in the entered text', async () => {
+                const testString = `level = low AND metadata.test = 'ok'`
+                const resultString1 = `completed = low AND metadata.test = 'ok'`
+                const resultString2 = `level != = low AND metadata.test = 'ok'`
+                const resultString3 = `level = low OR AND metadata.test = 'ok'`
+                const resultString4 = `level = high low AND metadata.test = 'ok'`
+                const resultString5 = `level = low AND metadata.nesting test = 'ok'`
+                beforeAll(async () => {
+                    wrapper.vm.focused = true
+                    wrapper.vm.debouncedSetInputValue(testString)
+                    // @ts-ignore
+                    await window.delay(500)
+                    await wrapper.vm.$nextTick()
+                })
+                const testReplacingWithSuggestion =
+                    (at, suggestion, result) => async () => {
+                        wrapper.vm.debouncedSetInputValue(testString, {
+                            testCaret: at
+                        })
+                        // @ts-ignore
+                        await window.delay(500)
+                        await wrapper.vm.$nextTick()
+                        expect(wrapper.vm.showSuggestions).toBeTruthy()
+                        //console.log('suggestions:', wrapper.vm.suggestions)
+                        wrapper.vm.setInputFromSuggestion(
+                            wrapper.vm.suggestions[suggestion]
+                        )
+                        // @ts-ignore
+                        await window.delay(500)
+                        await wrapper.vm.$nextTick()
+                        expect(wrapper.vm.searchQuery).toBe(result)
+                    }
+                it(
+                    'should be able to replace first key (0)',
+                    testReplacingWithSuggestion(0, 1, resultString1)
+                )
+                it(
+                    'should be able to replace first key (1)',
+                    testReplacingWithSuggestion(1, 0, resultString1)
+                )
+                it(
+                    'should not be able to replace comparison operator',
+                    testReplacingWithSuggestion(6, 1, resultString2)
+                )
+                it(
+                    'should not be able to replace logical operator',
+                    testReplacingWithSuggestion(12, 1, resultString3)
+                )
+                it(
+                    'should not be able to replace the value',
+                    testReplacingWithSuggestion(8, 0, resultString4)
+                )
+                it(
+                    'should not be able to replace nested key',
+                    testReplacingWithSuggestion(25, 0, resultString5)
+                )
+            })
         })
 
         describe('when querying with a set scheme', () => {

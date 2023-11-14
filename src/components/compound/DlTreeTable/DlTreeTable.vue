@@ -17,6 +17,7 @@ import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
+import { useNestedTableFilter } from './hooks/nestedTableFilter'
 import { getFromChildren } from './utils/getFromChildren'
 import { emits } from './emits'
 import Sortable from '../DlTable/components/SortableJS.vue'
@@ -341,6 +342,25 @@ export default defineComponent({
             emit,
             tableRows as ComputedRef<DlTableRow[]>,
             getRowKey as ComputedRef<(val: string | DlTableRow) => any>
+        )
+
+        const { filteredRows } = useNestedTableFilter(
+            tableRows.value,
+            (row) => {
+                let filter = props.filter ?? ''
+                if (typeof filter === 'string') {
+                    filter = filter.toLowerCase()
+                }
+
+                // todo: row is not always defined. which will cause the filter not to work.
+                return row.name?.toLowerCase?.().includes(filter)
+            }
+        )
+
+        const computedFilter = computed<DlTableRow[]>(() =>
+            props.filter && filteredRows.value.length
+                ? filteredRows.value
+                : tableRows.value
         )
 
         const updateExpandedRow = (
@@ -677,7 +697,7 @@ export default defineComponent({
 
         const renderTBody = () => {
             if (isEmpty(tableRootRef.value)) return null
-            const children = tableRows.value.map((row, i) => {
+            const children = computedFilter.value.map((row, i) => {
                 const rowBodySlot = slots['row-body']
                 const [renderRow] = rowBodySlot
                     ? rowBodySlot({ row })
@@ -776,7 +796,8 @@ export default defineComponent({
             uuid,
             mainTbodyUuid,
             vue2h,
-            containerClass
+            containerClass,
+            computedFilter
         }
     },
     // adding ignore here as overloading the render function like this is not a known type
@@ -802,7 +823,7 @@ export default defineComponent({
             isTreeTable: true,
             selection: this.selection,
             loading: this.loading,
-            rows: this.tableRows,
+            rows: this.computedFilter,
             resizable: this.resizable,
             rowKey: this.rowKey,
             color: this.color,

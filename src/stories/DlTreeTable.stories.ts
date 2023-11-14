@@ -3,9 +3,8 @@
 import { DlTreeTable, DlIcon } from '..'
 import { Meta, StoryObj } from '@storybook/vue3'
 import { cloneDeep, times } from 'lodash'
-import { nextTick } from 'process'
 import { v4 } from 'uuid'
-import { computed, ref } from 'vue-demi'
+import { computed, ref, nextTick } from 'vue-demi'
 
 const setupFunction = () => {
     const filter = ref('')

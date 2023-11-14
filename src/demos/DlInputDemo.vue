@@ -2,7 +2,6 @@
     <div>
         <div>
             <input v-model="textVal">
-
             <div>This is to test v-model reactivity</div>
             <dl-input
                 v-model="textVal"
@@ -21,7 +20,15 @@
                 v-model="textVal"
                 readonly
             />
-            <dl-input v-model="trimmedValue" />
+        </div>
+
+        <div>
+            <div>With auto trim</div>
+
+            <dl-input
+                v-model="trimmedValue"
+                auto-trim
+            />
         </div>
 
         <dl-input
@@ -293,15 +300,7 @@ export default defineComponent({
 
         const textVal = ref<string>('test me')
 
-        const val = ref('')
-        const trimmedValue = computed<string>({
-            get: () => {
-                return textVal.value.trim()
-            },
-            set: (value: string) => {
-                textVal.value = value
-            }
-        })
+        const trimmedValue = ref('')
 
         return {
             log: console.log,
