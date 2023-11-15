@@ -803,25 +803,38 @@ export default defineComponent({
             return modelValue.value?.toString()
         })
 
+        const onModelValueChange = (val: string) => {
+            if (!isInternalChange.value && val !== null && val !== undefined) {
+                if (readonly.value || disabled.value) {
+                    return
+                }
+
+                if (val === input.value.innerHTML) {
+                    return
+                }
+
+                input.value.innerHTML = val.toString().replace(/ /g, '&nbsp;')
+            } else {
+                isInternalChange.value = false
+            }
+        }
+
+        const debouncedOnModelValueChange = computed<Function>(() => {
+            if (stateManager.disableDebounce) {
+                return onModelValueChange
+            }
+            const debounced = debounceFunc(
+                onModelValueChange,
+                debounce.value ?? 50
+            )
+            return debounced
+        })
+
         watch(
             modelValue,
             (val) => {
                 nextTick(() => {
-                    if (
-                        !isInternalChange.value &&
-                        val !== null &&
-                        val !== undefined
-                    ) {
-                        if (readonly.value || disabled.value) {
-                            return
-                        }
-
-                        input.value.innerHTML = val
-                            .toString()
-                            .replace(/ /g, '&nbsp;')
-                    } else {
-                        isInternalChange.value = false
-                    }
+                    debouncedOnModelValueChange.value(val)
                 })
             },
             { immediate: true }
