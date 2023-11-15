@@ -124,7 +124,7 @@
             >
                 {{ label }}
             </span>
-            <div class="icon-container">
+            <div class="dl-button-dropdown--icon-container">
                 <dl-icon
                     :class="iconClass"
                     :icon="dropdownIcon"
@@ -507,7 +507,7 @@ export default defineComponent({
             user-select: none !important;
             min-width: 1.5em;
 
-            .icon-container {
+            .dl-button-dropdown--icon-container {
                 padding: 0 10px;
             }
             span {
