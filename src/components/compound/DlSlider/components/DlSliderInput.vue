@@ -52,17 +52,17 @@ export default defineComponent({
         const sliderInput = ref<HTMLInputElement>(null)
 
         const handleChange = (evt: any) => {
+            const validPartialExpressions = [
+                '',
+                '-',
+                '.',
+                '-.',
+                '-0.',
+                '0.',
+                '.0'
+            ]
             const val = evt.target.value.trim()
-            if (
-                val === '' ||
-                val === '-' ||
-                val === '.' ||
-                val === '-.' ||
-                val === '-0.' ||
-                val === '0.' ||
-                val === '.0'
-            )
-                return
+            if (validPartialExpressions.includes(val)) return
 
             const { value } = getInputValue(val, props.min, props.max)
 
@@ -70,14 +70,6 @@ export default defineComponent({
             emit('update:model-value', Number(value))
             if (sliderInput.value) sliderInput.value.value = value
         }
-
-        const debouncedHandleChange = computed(() => {
-            if (stateManager.disableDebounce) {
-                return handleChange
-            }
-            // return debounce(handleChange, 100)
-            return handleChange
-        })
 
         watch(
             modelRef,
@@ -96,7 +88,7 @@ export default defineComponent({
         return {
             sliderInput,
             modelRef,
-            handleChange: debouncedHandleChange
+            handleChange
         }
     },
     template: 'dl-slider-input'
@@ -104,7 +96,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-input[type='number'],
 input[type='text'] {
     width: 31px;
     height: 20px;
