@@ -115,7 +115,8 @@ export default defineComponent({
             rowGap,
             columnGap,
             maxElementsPerRow,
-            items
+            items,
+            virtualScroll
         } = toRefs(props)
 
         const isLayoutMode = computed(() => mode.value == DlGridMode.LAYOUT)
@@ -130,8 +131,8 @@ export default defineComponent({
 
         const hasVirtualScroll = computed(
             () =>
-                props.items?.length > props.virtualScrollThreshold &&
-                props.virtualScroll
+                items.value?.length > props.virtualScrollThreshold ||
+                virtualScroll.value
         )
 
         const gridStyles = computed(() => {
