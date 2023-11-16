@@ -276,6 +276,8 @@ describe('DlInput component', () => {
             })
 
             await wrapper.vm.$nextTick()
+            // @ts-ignore
+            await window.delay(100)
         })
 
         it('should set input value', () => {
