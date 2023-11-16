@@ -1,6 +1,7 @@
 export interface DlSelectOption {
     label: string
     value: any
-    isExpanded?: boolean
+    expanded?: boolean
     children?: DlSelectOption[]
+    readonly?: boolean
 }
