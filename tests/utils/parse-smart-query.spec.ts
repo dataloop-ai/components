@@ -7,6 +7,7 @@ import {
     replaceStringifiedDatesWithJSDates,
     replaceJSDatesWithStringifiedDates
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
+import moment from 'moment'
 
 describe('parseSmartQuery', () => {
     it('should return the correct query for a single key-value pair', () => {
@@ -66,11 +67,13 @@ describe('parseSmartQuery', () => {
     })
 
     it('should not replace with alias non fitting words', () => {
-        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const stringDate = '26/05/2023'
+        const createdAt = moment(stringDate, 'DD/MM/YYYY').valueOf()
+        const string = `createdAt = (${stringDate}) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
                 {
-                    createdAt: 1685059200000
+                    createdAt
                 },
                 {
                     dir: 'test AND test OR me Test',
