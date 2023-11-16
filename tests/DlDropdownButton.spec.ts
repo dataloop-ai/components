@@ -34,6 +34,7 @@ describe('DlDropdownButton', () => {
                 mainButtonStyle: '',
                 maxHeight: null,
                 maxWidth: null,
+                menuMaxWidth: null,
                 menuAnchor: 'bottom end',
                 menuOffset: [0, 0],
                 menuSelf: 'top end',

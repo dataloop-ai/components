@@ -267,12 +267,17 @@ describe('DlInput component', () => {
     })
     describe('input with preset value', () => {
         let wrapper: any
-        beforeAll(() => {
+        beforeAll(async () => {
             wrapper = mount(DlInput, {
                 props: {
-                    modelValue: 'text'
+                    modelValue: 'text',
+                    debounce: 0
                 }
             })
+
+            await wrapper.vm.$nextTick()
+            // @ts-ignore
+            await window.delay(100)
         })
 
         it('should set input value', () => {

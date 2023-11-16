@@ -14,20 +14,20 @@ describe('dl-select methods', () => {
             })
             wrapper.vm.setSelectedIndex()
         })
-        it('should the right selected index', async () => {
+        it('should be the right selected index', async () => {
             await wrapper.setProps({
                 modelValue: 'two'
             })
             expect(wrapper.vm.selectedIndex).toBe(1)
         })
-        it('should the right selected index', async () => {
+        it('should be the right selected index', async () => {
             await wrapper.setProps({
                 modelValue: 'three'
             })
             expect(wrapper.vm.selectedIndex).toBe(2)
         })
     })
-    describe('When select an option', function () {
+    describe('When selecting an option', function () {
         let wrapper: any
         const mockObjOptions = ['option1', 'option2', 'option3']
         const selectedOption = 'option2'
@@ -41,12 +41,12 @@ describe('dl-select methods', () => {
             wrapper.vm.selectOption(selectedOption)
             await wrapper.vm.$nextTick()
         })
-        it('should the right selected option', async () => {
+        it('should return the right selected option', async () => {
             expect(wrapper.emitted().change).toBeTruthy()
             expect(wrapper.emitted().change).toEqual([['option2']])
         })
     })
-    describe('When emit the search input', function () {
+    describe('When emitting the search input', function () {
         let wrapper: any
         const mockEvent = { target: { value: 'val1' } }
 
@@ -57,11 +57,11 @@ describe('dl-select methods', () => {
             await wrapper.vm.$nextTick()
         })
 
-        it('should the right search input value', function () {
+        it('should return the right search input value', function () {
             expect(wrapper.emitted()['search-input']).toEqual([['val1']])
         })
     })
-    describe('When close the menu and emit hide events', () => {
+    describe('When closing the menu and emitting hide events', () => {
         let wrapper: any
 
         beforeAll(async () => {
@@ -75,22 +75,22 @@ describe('dl-select methods', () => {
         it('should to be falsy isExpanded', function () {
             expect(wrapper.vm.isExpanded).toBeFalsy()
         })
-        it('should the right emitted hide event', function () {
+        it('should emit before-hide event', function () {
             expect(wrapper.emitted().hide).toBeTruthy()
             expect(wrapper.emitted()['before-hide']).toBeTruthy()
         })
     })
-    describe('When emit show events on menu open', () => {
+    describe('When emitting show events on menu open', () => {
         let wrapper: any
 
         beforeAll(() => {
             wrapper = mount(DlSelect)
             wrapper.vm.onMenuOpen()
         })
-        it('should the emit show event', function () {
+        it('should emit show event', function () {
             expect(wrapper.emitted().show).toBeTruthy()
         })
-        it('should the emit before-show event', async function () {
+        it('should emit before-show event', async function () {
             wrapper.vm.onMenuOpen()
             wrapper.vm.$nextTick()
             await wrapper.setProps({
@@ -99,14 +99,26 @@ describe('dl-select methods', () => {
             expect(wrapper.emitted()['before-show']).toBeTruthy()
         })
     })
-    describe('When emit the events', () => {
+    describe('When using dlSelect with multiselect', () => {
         let wrapper: any
 
         beforeAll(() => {
             wrapper = mount(DlSelect, {
                 props: {
-                    multiselect: true
+                    multiselect: true,
+                    options: ['option1', 'option2', 'option3']
                 }
+            })
+        })
+        describe('When selecting an option', () => {
+            beforeAll(async () => {
+                await wrapper.setProps({
+                    modelValue: ['option2']
+                })
+            })
+            it('should display the right selected option', async () => {
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.filterSelectLabel).toEqual('option2')
             })
         })
         it('should emit search event', () => {
@@ -237,7 +249,7 @@ describe('dl-select computed', () => {
         expect(wrapper.vm.isModelValuePrimitiveType).toBeTruthy()
     })
 
-    it('should compute the toal count', () => {
+    it('should compute the total count', () => {
         const wrapper = mount(DlSelect, {
             props: {
                 options: [

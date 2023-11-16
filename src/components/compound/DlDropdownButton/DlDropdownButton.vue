@@ -88,6 +88,7 @@
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
+            :max-width="menuMaxWidth"
             @before-show="onBeforeShow"
             @show="onShow"
             @before-hide="onBeforeHide"
@@ -148,6 +149,7 @@
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
+            :max-width="menuMaxWidth"
             :arrow-nav-items="arrowNavItems"
             @before-show="onBeforeShow"
             @show="onShow"
@@ -215,6 +217,7 @@ export default defineComponent({
             default: 'top end'
         },
         menuOffset: { type: Array, default: () => [0, 0] },
+        menuMaxWidth: { type: String, default: null },
         disableMainButton: Boolean,
         disableDropdown: Boolean,
         noIconAnimation: Boolean,
