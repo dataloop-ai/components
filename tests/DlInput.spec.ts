@@ -265,7 +265,7 @@ describe('DlInput component', () => {
             expect(wrapper.vm.showPass).toBe(true)
         })
     })
-    describe.only('input with preset value', () => {
+    describe('input with preset value', () => {
         let wrapper: any
         beforeAll(async () => {
             wrapper = mount(DlInput, {

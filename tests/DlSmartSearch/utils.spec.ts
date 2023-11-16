@@ -41,9 +41,14 @@ describe('isEndingWithDateIntervalPattern', () => {
 
 describe('formatToNumericDate', () => {
     it('should return the correct date', () => {
+        const expected = moment('02/12/2022', 'DD/MM/YYYY').toDate()
+        // expected value will have 0 hours in local timezone
+        expect(expected.getHours()).toEqual(0)
+
         const date = '(02/12/2022)'
-        const expected = moment.utc('02/12/2022', 'DD/MM/YYYY').toDate()
         const formattedDate = formatToNumericDate(date)
+        // formatted date will nonetheless be equal to the number of ms
+        // since the midnight at the beginning of January 1, 1970, UTC
         const msTime = expected.getTime()
         expect(formattedDate).toEqual(msTime)
     })
