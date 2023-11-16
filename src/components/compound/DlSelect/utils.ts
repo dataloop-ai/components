@@ -42,7 +42,11 @@ export const getLabelOfSelectedOption = (
     options: DlSelectOptionType[] | string[]
 ): string | undefined => {
     for (const option of options) {
-        if (typeof option === 'string' && typeof selected === 'string') {
+        if (
+            typeof option === 'string' &&
+            typeof selected === 'string' &&
+            option === selected
+        ) {
             return option
         } else if (
             typeof option === 'object' &&
