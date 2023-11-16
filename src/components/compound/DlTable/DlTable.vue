@@ -428,7 +428,9 @@
                     </template>
                     <DlTr v-if="isDataEmpty">
                         <DlTd colspan="100%">
-                            <div class="flex justify-center full-width">
+                            <div
+                                class="flex justify-center full-width empty-state-wrapper"
+                            >
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
@@ -844,7 +846,9 @@
                 <slot name="no-data">
                     <DlTr v-if="isDataEmpty && hasEmptyStateProps && !loading">
                         <DlTd colspan="100%">
-                            <div class="flex justify-center full-width">
+                            <div
+                                class="flex justify-center full-width empty-state-wrapper"
+                            >
                                 <dl-empty-state v-bind="emptyStateProps">
                                     <template
                                         v-for="(_, slot) in $slots"
@@ -1116,7 +1120,7 @@ export default defineComponent({
          */
         selectedRowsLabel: {
             type: Function,
-            default: (val: number) => `${val} records selected`
+            default: (val: number) => null
         },
         /**
          * Label visible when loading is active
@@ -2087,5 +2091,9 @@ tr {
 th,
 td {
     box-sizing: border-box;
+}
+
+.empty-state-wrapper {
+    margin-top: 16px;
 }
 </style>

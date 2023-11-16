@@ -46,5 +46,6 @@ export default defineComponent({
     height: 100%;
     min-width: min-content;
     overflow-y: scroll;
+    align-items: center;
 }
 </style>

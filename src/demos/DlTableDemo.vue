@@ -983,7 +983,7 @@ export default defineComponent({
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const tableColumnsAligned = ref(columnsAligned)
-        const rowsPerPageOptions = ref([10, 12, 14, 16])
+        const rowsPerPageOptions = ref([5, 10, 12, 14, 16, 100])
 
         const infiniteLoading = ref(false)
 
