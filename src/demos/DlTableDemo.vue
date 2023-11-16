@@ -597,6 +597,7 @@
                 :rows="tableRows"
                 row-key="id"
                 style="height: 500px"
+                sticky-columns="last"
                 :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @th-click="log"

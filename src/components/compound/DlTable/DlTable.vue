@@ -180,6 +180,7 @@
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
+                                            padding="0"
                                             :disabled="isDataEmpty"
                                         >
                                             <slot
