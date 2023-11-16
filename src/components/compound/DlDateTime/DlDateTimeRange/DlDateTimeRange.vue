@@ -187,7 +187,7 @@ export default defineComponent({
                         from: CustomDate.subtract(7, 'day')
                             .startOf('day')
                             .toDate(),
-                        to: today
+                        to: new CustomDate(today).endOf('day').toDate()
                     }
                 },
                 {
@@ -197,7 +197,7 @@ export default defineComponent({
                         from: CustomDate.subtract(14, 'day')
                             .startOf('day')
                             .toDate(),
-                        to: today
+                        to: new CustomDate(today).endOf('day').toDate()
                     }
                 },
                 {
@@ -207,7 +207,7 @@ export default defineComponent({
                         from: CustomDate.subtract(1, 'months')
                             .startOf('day')
                             .toDate(),
-                        to: today
+                        to: new CustomDate(today).endOf('day').toDate()
                     }
                 },
                 { title: 'custom by day', key: DAY_SIDEBAR_OPTION.custom },
@@ -235,7 +235,10 @@ export default defineComponent({
                 {
                     title: 'this month',
                     key: MONTH_SIDEBAR_OPTION.this_month,
-                    value: { from: thisMonth, to: today }
+                    value: {
+                        from: thisMonth,
+                        to: new CustomDate(today).endOf('day').toDate()
+                    }
                 },
                 {
                     title: 'last month',
