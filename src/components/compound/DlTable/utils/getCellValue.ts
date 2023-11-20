@@ -10,6 +10,7 @@ export function getCellValue(
     }
     const val =
         typeof col?.field === 'function' ? col.field(row) : getField(col.field)
+
     return col?.format !== void 0 ? col.format(val, row) : val
 }
 
@@ -22,7 +23,7 @@ function getNestedProperty(obj: Record<string, any>, propertyPath: string) {
     let value = obj
 
     for (const prop of pathArray) {
-        if (value && value.hasOwnProperty(prop)) {
+        if (value && value[prop]) {
             value = value[prop]
         } else {
             return undefined
