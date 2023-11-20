@@ -551,6 +551,7 @@ export default defineComponent({
 </style>
 <style lang="scss">
 .dl-button-dropdown {
+    height: fit-content;
     .dl-button-content {
         line-height: unset;
     }

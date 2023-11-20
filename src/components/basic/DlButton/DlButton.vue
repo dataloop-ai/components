@@ -529,6 +529,7 @@ export default defineComponent({
 .dl-button-container {
     display: inline-block;
     width: var(--dl-button-container-width);
+    height: fit-content;
 }
 
 .active-class {
