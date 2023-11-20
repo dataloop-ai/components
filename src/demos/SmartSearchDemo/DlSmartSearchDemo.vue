@@ -79,7 +79,7 @@
 
         <br>
         <br>
-        With placeholder
+        With placeholder and [OR, true] suggestions omitted
         <dl-smart-search-input
             v-model="queryObject"
             :aliases="aliases"
@@ -87,6 +87,7 @@
             :color-schema="colorSchema"
             :strict="strictState"
             :disabled="switchState"
+            :omit-suggestions="['OR', 'true']"
             placeholder="I am a placeholder"
         />
     </div>
