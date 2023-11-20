@@ -78,6 +78,18 @@ describe('use-suggestions', () => {
         )
     })
 
+    const limited = useSuggestions(schemaRef, aliasesRef, {
+        strict: toRef(false),
+        omitSuggestions: toRef(['Name', 'Age', 'Completed', 'StartTime', 'Arr'])
+    })
+
+    it('suggestions should not contain options from omitSuggestions list', () => {
+        limited.findSuggestions('')
+        expect(limited.suggestions.value).toEqual(
+            ['Level', 'No-Schema', 'metadata'].sort(sortString)
+        )
+    })
+
     it('suggestions should have the field that includes the value', () => {
         findSuggestions('ev')
         expect(suggestions.value).toEqual(['Level'])

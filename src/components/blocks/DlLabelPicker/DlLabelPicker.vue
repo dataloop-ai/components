@@ -26,7 +26,7 @@
             selection="none"
             :loading="false"
             :filter="inputValue"
-            :rows="items"
+            :rows="rows"
             row-key="identifier"
             color="dl-color-secondary"
             @row-click="handleRowClick"
@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import { ref, PropType, defineComponent, computed } from 'vue-demi'
+import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
-import { DlTableColumn } from '../../types'
+import { DlTableColumn, DlTableRow } from '../../types'
 import { DlLabelPickerItem } from './types'
 
 export default defineComponent({
@@ -63,8 +63,10 @@ export default defineComponent({
             default: () => [] as PropType<DlLabelPickerItem[]>
         }
     },
-    emits: ['selectedLabel'],
+    emits: ['selectedLabel', 'click'],
     setup(props, { emit, slots }) {
+        const { items } = toRefs(props)
+
         const columns: DlTableColumn[] = [
             {
                 name: 'displayLabel',
@@ -83,6 +85,7 @@ export default defineComponent({
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
             currentSelectedLabel.value = item
             emit('selectedLabel', item)
+            emit('click', item)
         }
 
         const placeHolderText = computed(() => {
@@ -107,12 +110,20 @@ export default defineComponent({
             return { 'border-left': `2px solid ${selectedColor.value}` }
         })
 
+        const rows = computed<DlTableRow[]>(() => {
+            return items.value?.map((i: DlLabelPickerItem) => ({
+                ...i,
+                name: i.displayLabel
+            }))
+        })
+
         return {
             handleRowClick,
             inputValue,
             columns,
             placeHolderText,
-            inputStyles
+            inputStyles,
+            rows
         }
     }
 })

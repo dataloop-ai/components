@@ -352,7 +352,8 @@ export default defineComponent({
                     filter = filter.toLowerCase()
                 }
 
-                return row.name.toLowerCase?.().includes(filter)
+                // todo: row is not always defined. which will cause the filter not to work.
+                return row.name?.toLowerCase?.().includes(filter)
             }
         )
 
