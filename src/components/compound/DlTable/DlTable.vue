@@ -180,6 +180,7 @@
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
                                             :disabled="isDataEmpty"
+                                            padding="0"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -570,6 +571,7 @@
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
                                             :disabled="isDataEmpty"
+                                            padding="0"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -1114,7 +1116,7 @@ export default defineComponent({
          */
         selectedRowsLabel: {
             type: Function,
-            default: (val: number) => `${val} records selected`
+            default: (val: number) => null
         },
         /**
          * Label visible when loading is active

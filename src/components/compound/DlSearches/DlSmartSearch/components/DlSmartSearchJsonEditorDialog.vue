@@ -305,11 +305,13 @@ export default defineComponent({
         }
 
         const saveQuery = (searchAfterSave = false) => {
-            let toSave: DlSmartSearchFilter = hasActiveFilter.value
+            const updateOldFilter =
+                hasActiveFilter.value && newQueryName.value === ''
+            let toSave: DlSmartSearchFilter = updateOldFilter
                 ? selectedOption.value
                 : ({} as DlSmartSearchFilter)
             toSave = Object.assign({}, toSave, {
-                label: hasActiveFilter.value
+                label: updateOldFilter
                     ? selectedOption.value.label
                     : newQueryName.value,
                 value: currentQuery.value
