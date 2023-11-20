@@ -16,6 +16,19 @@
             :options="options"
             style="width: 100%"
         />
+
+        <dl-scatter-chart
+            id="example-two"
+            :brush-props="brushProps"
+            :legend-props="legendProps"
+            :data="data"
+            :options="options"
+            style="width: 100%"
+            is-empty
+            :display-labels="false"
+            :display-legend="false"
+            :display-brush="false"
+        />
     </div>
 </template>
 

@@ -3,7 +3,22 @@
         :style="cssVars"
         :class="chartWrapperClasses"
     >
+        <dl-empty-state
+            v-if="isEmpty"
+            v-bind="emptyStateProps"
+        >
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
+            </template>
+        </dl-empty-state>
         <DLScatter
+            v-if="!isEmpty"
             :id="id"
             ref="scatterChart"
             :class="chartClasses"
@@ -77,6 +92,7 @@
 </template>
 
 <script lang="ts">
+import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import { Scatter as DLScatter } from '../../types/typedCharts'
 import {
     CommonProps,
@@ -89,8 +105,10 @@ import {
     watch,
     ref,
     computed,
-    toRefs
+    toRefs,
+    PropType
 } from 'vue-demi'
+import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import DlBrush from '../../components/DlBrush.vue'
 import DlChartLegend from '../../components/DlChartLegend.vue'
 import DlChartLabels from '../../components/DlChartLabels.vue'
@@ -121,6 +139,11 @@ import type {
 import { orderBy, merge, isEqual, unionBy, cloneDeep } from 'lodash'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
 
+const scatterChartEmptyStateProps = {
+    subtitle:
+        'There was a problem processing the request. Please refresh the page.'
+}
+
 ChartJS.register(
     Title,
     Tooltip,
@@ -139,12 +162,18 @@ export default defineComponent({
         DlBrush,
         DlChartLegend,
         DLScatter,
-        DlChartLabels
+        DlChartLabels,
+        DlEmptyState
     },
     props: {
         id: {
             type: String,
             default: null
+        },
+        isEmpty: Boolean,
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () => scatterChartEmptyStateProps
         },
         ...CommonProps,
         ...ColumnChartProps
@@ -611,11 +640,11 @@ export default defineComponent({
                     replaceColor
                 )
             )
-
-            chart.value.options.scales.x.min = brush.value.min
-            chart.value.options.scales.x.max = brush.value.max
-
-            chart.value.update()
+            if (chart?.value?.options?.scales) {
+                chart.value.options.scales.x.min = brush.value.min
+                chart.value.options.scales.x.max = brush.value.max
+                chart.value.update()
+            }
         })
 
         watch(
