@@ -8,7 +8,7 @@ import {
 } from '../types'
 
 export const useTableFilterProps = {
-    filter: [String, Object],
+    filter: String,
     filterMethod: Function
 }
 

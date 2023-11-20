@@ -47,7 +47,7 @@ export const replaceDateInterval = (str: string, date: DateInterval) => {
 }
 
 const formatDate = (date: Date | string | number): string => {
-    return moment.utc(date).format('DD/MM/YYYY')
+    return moment(date).format('DD/MM/YYYY')
 }
 
 const replaceFirstOrLastOccurrence = (
@@ -115,7 +115,7 @@ export function replaceStringifiedDatesWithJSDates(str: string) {
 
 export function formatToNumericDate(str: string) {
     const dateString = str.replace(/['"\(\)]+/g, '')
-    const newDate = moment.utc(dateString, 'DD/MM/YYYY')
+    const newDate = moment(dateString, 'DD/MM/YYYY')
     const ms = newDate.toDate().getTime()
     return ms
 }

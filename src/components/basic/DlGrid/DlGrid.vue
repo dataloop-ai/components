@@ -14,12 +14,29 @@
         </dl-virtual-scroll>
     </div>
     <div
-        v-else
+        v-else-if="!hasItems"
         ref="grid"
         :style="gridStyles"
         :class="gridClass"
     >
         <slot />
+    </div>
+    <div
+        v-else
+        ref="grid"
+        :style="gridStyles"
+        :class="gridClass"
+    >
+        <div
+            v-for="item in items"
+            :key="item.id"
+            class="item-wrapper"
+        >
+            <slot
+                name="item-slot"
+                v-bind="{ item }"
+            />
+        </div>
     </div>
 </template>
 
@@ -78,14 +95,29 @@ export default defineComponent({
         scrollDebounce: {
             type: Number,
             default: 100
+        },
+        virtualScroll: {
+            type: Boolean,
+            default: false
+        },
+        virtualScrollThreshold: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['update:model-value', 'layout-changed'],
     setup(props, { emit }) {
         const vm = getCurrentInstance()
         const grid = ref<HTMLElement | null>(null)
-        const { modelValue, mode, rowGap, columnGap, maxElementsPerRow } =
-            toRefs(props)
+        const {
+            modelValue,
+            mode,
+            rowGap,
+            columnGap,
+            maxElementsPerRow,
+            items,
+            virtualScroll
+        } = toRefs(props)
 
         const isLayoutMode = computed(() => mode.value == DlGridMode.LAYOUT)
         const isGridMode = computed(() => mode.value == DlGridMode.GRID)
@@ -97,7 +129,11 @@ export default defineComponent({
                 : 'dl-grid-wrapper__flex'
         )
 
-        const hasVirtualScroll = computed(() => !!props.items)
+        const hasVirtualScroll = computed(
+            () =>
+                items.value?.length > props.virtualScrollThreshold ||
+                virtualScroll.value
+        )
 
         const gridStyles = computed(() => {
             const gridStyles: Dictionary<string | number> = {
@@ -213,6 +249,8 @@ export default defineComponent({
             applyGridElementStyles()
         })
 
+        const hasItems = computed(() => !!items.value?.length)
+
         return {
             isLayoutMode,
             isGridMode,
@@ -220,7 +258,8 @@ export default defineComponent({
             gridClass,
             gridStyles,
             grid,
-            hasVirtualScroll
+            hasVirtualScroll,
+            hasItems
         }
     }
 })

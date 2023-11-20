@@ -99,7 +99,7 @@ export default defineComponent({
 
         const computedSortIcon = computed<string>(() => {
             return props.pagination.descending
-                ? 'icon-dl-arrowdown'
+                ? 'icon-dl-arrow-down'
                 : 'icon-dl-arrow-up'
         })
 
