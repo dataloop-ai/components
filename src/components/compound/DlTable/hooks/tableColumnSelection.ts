@@ -75,11 +75,7 @@ export function useTableColumnSelection(
                 align,
                 iconClass: `dl-table__sort-icon dl-table__sort-icon--${align}`,
                 thClass:
-                    alignClass +
-                    headerClass +
-                    sortableClass +
-                    sortOrderClass +
-                    textTransformClass,
+                    alignClass + headerClass + sortableClass + sortOrderClass,
                 tdStyle: assignTdStyles(col),
                 tdClass: assignTdClasses(col, alignClass, textTransformClass)
             }

@@ -81,7 +81,8 @@ export default defineComponent({
 .avatar {
     width: var(--dl-avatar-size);
     height: var(--dl-avatar-size);
-    border-radius: 50%;
+    // important needed for vue2 ordering with table conflict
+    border-radius: 50% !important;
     user-select: none;
     overflow: hidden;
     color: var(--dl-avatar-text-color);
