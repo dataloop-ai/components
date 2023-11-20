@@ -195,7 +195,10 @@ export default defineComponent({
             type: String,
             default: '28px'
         },
-
+        omitSuggestions: {
+            type: Array as PropType<string[]>,
+            default: () => [] as string[]
+        },
         strict: {
             type: Boolean,
             default: false
@@ -226,6 +229,7 @@ export default defineComponent({
             status,
             disabled,
             schema,
+            omitSuggestions,
             height,
             width
         } = toRefs(props)
@@ -252,7 +256,7 @@ export default defineComponent({
         const { suggestions, error, findSuggestions } = useSuggestions(
             schema,
             aliases,
-            { strict }
+            { strict, omitSuggestions }
         )
         //#endregion
 
