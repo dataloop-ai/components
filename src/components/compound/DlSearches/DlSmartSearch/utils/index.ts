@@ -187,6 +187,63 @@ export function setAliases(str: string, aliases: Alias[]) {
     return str.replace(regex, replacement)
 }
 
+type Data = { [key: string]: any }
+function valueAliases(schema: Data, field: string) {
+    let aliases: Data = {};
+        const type: any = schema[field]
+    if (Array.isArray(type)) {
+        for (const element of type) {
+            if (typeof element !== 'string')
+                aliases = Object.assign(aliases, element)
+        }
+    } else {
+        if (typeof type !== 'string') aliases = Object.assign(aliases, type)
+    }
+    return aliases
+}
+
+export function revertValueAliases(json: Data, schema: Data) {
+    const clone = cloneDeep(json);
+        const replaceAliases = (where: Data) => {
+            for (const key in where) {
+                if (typeof where[key] === 'object') {
+                    replaceAliases(where[key])
+                } else {
+                    const aliases = valueAliases(schema, key)
+                    const value = aliases[where[key] as string]
+                    if (value) {
+                        where[key] = value
+                    }
+                }
+            }
+        }
+
+    replaceAliases(clone)
+    return clone
+}
+
+export function setValueAliases(json: Data, schema: any[]) {
+    const clone = cloneDeep(json);
+        const replaceValues = (where: Data) => {
+            for (const key in where) {
+                if (typeof where[key] === 'object') {
+                    replaceValues(where[key])
+                } else {
+                    const aliases = valueAliases(schema, key)
+                    for (const alias in aliases) {
+                        if (where[key] === aliases[alias]) {
+                            where[key] = alias
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+    replaceValues(clone)
+    return clone
+}
+
 export function createColorSchema(
     colorSchema: ColorSchema,
     aliases: Alias[]

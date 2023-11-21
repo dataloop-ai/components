@@ -402,7 +402,7 @@ const getError = (
 
 const isValidByDataType = (
     str: string | string[],
-    dataType: string | string[],
+    dataType: string | any[],
     operator: string
 ): boolean => {
     if (dataType === 'any') {
@@ -425,7 +425,11 @@ const isValidByDataType = (
     if (Array.isArray(dataType)) {
         let isOneOf = !!getValueMatch(dataType, str)
         for (const type of dataType) {
-            isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            if (typeof type === 'string') {
+                isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            } else {
+                isOneOf = isOneOf || !!getValueMatch(Object.keys(type), str)
+            }
         }
         return isOneOf
     }
@@ -507,7 +511,7 @@ const getDataType = (
     schema: Schema,
     aliases: Alias[],
     key: string
-): string | string[] | null => {
+): string | any[] | null => {
     const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
 
     const nestedKey = aliasedKey.split('.').filter((el) => el)
@@ -529,7 +533,7 @@ const getDataType = (
         return 'object'
     }
 
-    return value as unknown as string | string[] | null
+    return value as unknown as string | any[] | null
 }
 
 const getAliasObjByAlias = (aliases: Alias[], alias: string): Alias | null => {
@@ -666,13 +670,16 @@ export const removeLeadingExpression = (str: string) => {
     return str.match(/\s+(.*)$/)?.[1] || ''
 }
 
-const getValueSuggestions = (dataType: string | string[], operator: string) => {
-    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+const getValueSuggestions = (dataType: string | any[], operator: string) => {
+    const types: any[] = Array.isArray(dataType) ? dataType : [dataType]
     const suggestion: string[] = []
 
     if (Array.isArray(dataType)) {
         suggestion.push(
-            ...dataType.filter((type) => !knownDataTypes.includes(type))
+            ...dataType.filter(
+                (type) =>
+                    !knownDataTypes.includes(type) && typeof type === 'string'
+            )
         )
     }
 
@@ -688,7 +695,10 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'datetime':
                 suggestion.push(dateSuggestionPattern)
             default:
-                // do nothing
+                if (typeof type !== 'string') {
+                    // value aliases: key is the alias, value is the actual value
+                    for (const key in type) suggestion.push(key)
+                }
                 break
         }
     }
