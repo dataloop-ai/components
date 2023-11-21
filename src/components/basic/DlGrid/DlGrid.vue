@@ -14,7 +14,7 @@
         </dl-virtual-scroll>
     </div>
     <div
-        v-else-if="!items?.length"
+        v-else-if="!hasItems"
         ref="grid"
         :style="gridStyles"
         :class="gridClass"
@@ -109,8 +109,15 @@ export default defineComponent({
     setup(props, { emit }) {
         const vm = getCurrentInstance()
         const grid = ref<HTMLElement | null>(null)
-        const { modelValue, mode, rowGap, columnGap, maxElementsPerRow } =
-            toRefs(props)
+        const {
+            modelValue,
+            mode,
+            rowGap,
+            columnGap,
+            maxElementsPerRow,
+            items,
+            virtualScroll
+        } = toRefs(props)
 
         const isLayoutMode = computed(() => mode.value == DlGridMode.LAYOUT)
         const isGridMode = computed(() => mode.value == DlGridMode.GRID)
@@ -124,8 +131,8 @@ export default defineComponent({
 
         const hasVirtualScroll = computed(
             () =>
-                props.items?.length > props.virtualScrollThreshold &&
-                props.virtualScroll
+                items.value?.length > props.virtualScrollThreshold ||
+                virtualScroll.value
         )
 
         const gridStyles = computed(() => {
@@ -242,6 +249,8 @@ export default defineComponent({
             applyGridElementStyles()
         })
 
+        const hasItems = computed(() => !!items.value?.length)
+
         return {
             isLayoutMode,
             isGridMode,
@@ -249,7 +258,8 @@ export default defineComponent({
             gridClass,
             gridStyles,
             grid,
-            hasVirtualScroll
+            hasVirtualScroll,
+            hasItems
         }
     }
 })

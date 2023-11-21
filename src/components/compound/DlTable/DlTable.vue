@@ -182,6 +182,7 @@
                                             tooltip="Manage columns"
                                             padding="0"
                                             :disabled="isDataEmpty"
+                                            padding="0"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -572,6 +573,7 @@
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
                                             :disabled="isDataEmpty"
+                                            padding="0"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
