@@ -118,12 +118,12 @@
                 @row-reorder="reorderRows"
             />
             <div style="margin-top: 100px">
-                Fit table columns
+                Fit all columns off (each column fits its content)
                 <DlTable
                     :selected="selected"
                     :separator="separator"
                     :columns="tableColumns"
-                    fit-all-columns
+                    :fit-all-columns="false"
                     :bordered="bordered"
                     :draggable="draggable"
                     :dense="dense"
