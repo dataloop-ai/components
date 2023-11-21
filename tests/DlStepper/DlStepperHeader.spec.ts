@@ -20,6 +20,8 @@ describe('DlStepperHeader', () => {
         it('should emitted click', async () => {
             const button = wrapper.find('button')
             await button.trigger('click')
+            //@ts-ignore
+            await window.delay(50)
             expect(wrapper.emitted()['close'][0]).toBeTruthy()
         })
     })
