@@ -1101,7 +1101,6 @@ export default defineComponent({
         }
 
         const updateColumns = (newColumns: any) => {
-            console.log(newColumns)
             tableColumns.value = newColumns
         }
 
