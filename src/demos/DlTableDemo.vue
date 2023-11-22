@@ -1120,7 +1120,7 @@ export default defineComponent({
             this.resizable = val.length !== 0
         },
         log(...args: any[]) {
-            // console.log(...args)
+            console.log(...args)
         },
         filterMethod(
             rows: Record<string, any>[],
