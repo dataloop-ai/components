@@ -75,7 +75,7 @@
         <dl-menu
             ref="menuRef"
             v-model="menuModel"
-            :class="contentClass"
+            :menu-class="contentClass"
             :style="contentStyle"
             :cover="cover"
             fit-container
@@ -136,7 +136,7 @@
         <dl-menu
             ref="menuRef"
             v-model="menuModel"
-            :class="contentClass"
+            :menu-class="contentClass"
             :style="contentStyle"
             :cover="cover"
             fit-container
