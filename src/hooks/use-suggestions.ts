@@ -425,10 +425,10 @@ const isValidByDataType = (
     if (Array.isArray(dataType)) {
         let isOneOf = !!getValueMatch(dataType, str)
         for (const type of dataType) {
-            if (typeof type === 'string') {
-                isOneOf = isOneOf || isValidByDataType(str, type, operator)
-            } else {
+            if (typeof type === 'object') {
                 isOneOf = isOneOf || !!getValueMatch(Object.keys(type), str)
+            } else {
+                isOneOf = isOneOf || isValidByDataType(str, type, operator)
             }
         }
         return isOneOf
@@ -678,7 +678,7 @@ const getValueSuggestions = (dataType: string | any[], operator: string) => {
         suggestion.push(
             ...dataType.filter(
                 (type) =>
-                    !knownDataTypes.includes(type) && typeof type === 'string'
+                    !knownDataTypes.includes(type) && typeof type !== 'object'
             )
         )
     }
@@ -695,7 +695,7 @@ const getValueSuggestions = (dataType: string | any[], operator: string) => {
             case 'datetime':
                 suggestion.push(dateSuggestionPattern)
             default:
-                if (typeof type !== 'string') {
+                if (typeof type === 'object') {
                     // value aliases: key is the alias, value is the actual value
                     for (const key in type) suggestion.push(key)
                 }

@@ -193,11 +193,11 @@ function valueAliases(schema: Data, field: string) {
     const type: any = schema[field]
     if (Array.isArray(type)) {
         for (const element of type) {
-            if (typeof element !== 'string')
+            if (typeof element === 'object')
                 aliases = Object.assign(aliases, element)
         }
     } else {
-        if (typeof type !== 'string') aliases = Object.assign(aliases, type)
+        if (typeof type === 'object') aliases = Object.assign(aliases, type)
     }
     return aliases
 }
