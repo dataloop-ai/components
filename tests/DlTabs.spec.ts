@@ -96,7 +96,8 @@ describe('Tabs and Tab Groups', () => {
 
             await rightArrow.trigger('click')
             await leftArrow.trigger('click')
-
+            //@ts-ignore
+            await window.delay(50)
             expect(wrapper.emitted()['right-arrow-click'][0]).toBeTruthy()
             expect(wrapper.emitted()['left-arrow-click'][0]).toBeTruthy()
         })

@@ -24,7 +24,7 @@
             <DlIcon
                 v-if="(row.children || []).length > 0"
                 :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
-                @click="emitUpdateExpandedRow"
+                @click.stop.prevent="emitUpdateExpandedRow"
             />
         </td>
         <td
@@ -168,7 +168,7 @@ export default defineComponent({
         'update:model-value',
         'updateExpandedRow'
     ],
-    setup(props, context) {
+    setup(props, { emit, slots }) {
         const visibleChildren = ref(0)
         const childrenCount = ref(0)
         const { row } = toRefs(props)
@@ -192,7 +192,7 @@ export default defineComponent({
             row: Record<string, any>,
             rowIndex: number
         ) => {
-            context.emit('rowClick', event, row, rowIndex)
+            emit('rowClick', event, row, rowIndex)
         }
 
         const onTrDoubleClick = (
@@ -200,7 +200,7 @@ export default defineComponent({
             row: DlTableRow,
             rowIndex: number
         ) => {
-            context.emit('rowDoubleClick', evt, row, rowIndex)
+            emit('rowDoubleClick', evt, row, rowIndex)
         }
 
         const onTrContextMenu = (
@@ -208,11 +208,11 @@ export default defineComponent({
             row: DlTableRow,
             rowIndex: number
         ) => {
-            context.emit('rowContextMenu', evt, row, rowIndex)
+            emit('rowContextMenu', evt, row, rowIndex)
         }
 
         const emitUpdateModelValue = (adding: boolean, evt: Event) => {
-            context.emit('update:model-value', adding, evt)
+            emit('update:model-value', adding, evt)
         }
 
         const getTdStyles = (row: any, colIndex: number) => {
@@ -224,10 +224,10 @@ export default defineComponent({
             return styles
         }
         const emitUpdateExpandedRow = () => {
-            context.emit('updateExpandedRow')
+            emit('updateExpandedRow')
         }
 
-        const hasSlotByName = (name: string) => !!context.slots[name]
+        const hasSlotByName = (name: string) => !!slots[name]
 
         const getSlotByName = (name: string) => {
             return hasSlotByName(`body-cell-${name}`)

@@ -73,7 +73,6 @@
                 </div>
                 <textarea
                     ref="textarea"
-                    title="textarea"
                     :readOnly="readOnly"
                     :style="textAreaStyle"
                     :autofocus="autofocus"

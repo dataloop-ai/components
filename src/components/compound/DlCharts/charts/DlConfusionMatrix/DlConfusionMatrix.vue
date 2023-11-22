@@ -546,6 +546,10 @@ export default defineComponent({
     transform: translateX(40%);
     display: block;
     text-align: start;
+    width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .label-tag {

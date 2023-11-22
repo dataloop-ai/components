@@ -63,7 +63,7 @@ export default defineComponent({
             default: () => [] as PropType<DlLabelPickerItem[]>
         }
     },
-    emits: ['selectedLabel', 'click'],
+    emits: ['selected-label', 'click'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
 
@@ -84,7 +84,7 @@ export default defineComponent({
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
             currentSelectedLabel.value = item
-            emit('selectedLabel', item)
+            emit('selected-label', item)
             emit('click', item)
         }
 

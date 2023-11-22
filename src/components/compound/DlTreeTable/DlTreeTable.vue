@@ -452,6 +452,9 @@ export default defineComponent({
         const emitRowClick = (...payload: any) => {
             emit('row-click', ...payload)
         }
+        const emitRowDblclick = (...payload: any) => {
+            emit('row-dblclic', ...payload)
+        }
         const emitThClick = (payload: any) => {
             emit('th-click', payload)
         }
@@ -530,13 +533,13 @@ export default defineComponent({
                 'onUpdate:modelValue': (adding: boolean, evt: Event) => {
                     updateSelectionHierarchy(adding, evt, row)
                 },
-                onRowClick: () => {
+                onRowClick: (event: Event, row: any, index: number) => {
                     tableRootRef.value.onTrClick(event, row, index)
                 },
-                onRowDoubleClick: () => {
+                onRowDoubleClick: (event: Event, row: any, index: number) => {
                     tableRootRef.value.onTrDblClick(event, row, index)
                 },
-                onRowContextMenu: () => {
+                onRowContextMenu: (event: Event, row: any, index: number) => {
                     tableRootRef.value.onTrContextMenu(event, row, index)
                 },
                 onUpdateExpandedRow: () =>
@@ -545,13 +548,13 @@ export default defineComponent({
                     'update:modelValue': (adding: boolean, evt: Event) => {
                         updateSelectionHierarchy(adding, evt, row)
                     },
-                    rowClick: () => {
+                    rowClick: (event: Event, row: any, index: number) => {
                         tableRootRef.value.onTrClick(event, row, index)
                     },
-                    rowDoubleClick: () => {
+                    rowDoubleClick: (event: Event, row: any, index: number) => {
                         tableRootRef.value.onTrDblClick(event, row, index)
                     },
-                    rowContextMenu: () => {
+                    rowContextMenu: (event: Event, row: any, index: number) => {
                         tableRootRef.value.onTrContextMenu(event, row, index)
                     },
                     updateExpandedRow: () =>
@@ -788,6 +791,7 @@ export default defineComponent({
             updateSelected,
             emitSelectedItems,
             emitRowClick,
+            emitRowDblclick,
             emitThClick,
             hasSlotByName,
             getSlotByName,
@@ -836,11 +840,13 @@ export default defineComponent({
             noDataLabel: this.noDataLabel,
             visibleColumns: this.visibleColumns,
             onRowClick: this.emitRowClick,
+            onRowDblclick: this.emitRowDblclick,
             'onUpdate:selected': this.updateSelected,
             onColUpdate: this.updateColumns,
             class: this.containerClass,
             on: {
-                rowClick: this.emitRowClick,
+                'row-click': this.emitRowClick,
+                'row-dblclick': this.emitRowDblclick,
                 'update:selected': this.updateSelected,
                 'col-update': this.updateColumns
             },
