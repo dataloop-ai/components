@@ -117,6 +117,63 @@
                 @col-update="updateColumns"
                 @row-reorder="reorderRows"
             />
+            <div style="margin-top: 100px">
+                Fit table columns
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    fit-all-columns
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @col-update="updateColumns"
+                    @row-reorder="reorderRows"
+                />
+
+                ALot of columns and fit
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="[...tableColumns, ...tableColumns]"
+                    fit-all-columns
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @col-update="updateColumns"
+                    @row-reorder="reorderRows"
+                />
+            </div>
 
             <div style="margin-top: 100px">
                 Custom Slot row-body
@@ -196,6 +253,33 @@
                         </div>
                     </template>
                 </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
+                With sticky columns: both
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="both"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+                With sticky columns: first
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="first"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+                With sticky columns: last
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="last"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
             </div>
 
             <div style="margin-top: 100px">
@@ -541,6 +625,7 @@
                 :rows="tableRows"
                 row-key="id"
                 style="height: 500px"
+                sticky-columns="last"
                 :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @th-click="log"
@@ -625,7 +710,7 @@ const columns = [
         label: 'Calories',
         field: 'calories',
         sortable: true,
-        width: 100
+        width: '50px'
     },
     {
         name: 'fat',
@@ -1044,7 +1129,6 @@ export default defineComponent({
         }
 
         const updateColumns = (newColumns: any) => {
-            console.log(newColumns)
             tableColumns.value = newColumns
         }
 
