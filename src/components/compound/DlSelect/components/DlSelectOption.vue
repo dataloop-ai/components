@@ -98,6 +98,7 @@
                     :with-wave="withWave"
                     :capitalized="capitalized"
                     :readonly="isReadonlyOption(child)"
+                    :is-expanded="isExpanded"
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect"
                     @deselected="handleSingleDeselect"
