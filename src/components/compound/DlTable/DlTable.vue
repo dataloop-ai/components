@@ -180,6 +180,7 @@
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
                                             :disabled="isDataEmpty"
+                                            padding="0"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -570,6 +571,7 @@
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
                                             :disabled="isDataEmpty"
+                                            padding="0"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -1797,12 +1799,17 @@ export default defineComponent({
             emit('th-click', evt, computedRows.value, name)
         }
 
+        const trClickTimeout = ref<any>(null)
+
         const onTrClick = (
             evt: MouseEvent,
             row: DlTableRow,
             pageIndex: number
         ) => {
-            emit('row-click', evt, row, pageIndex)
+            clearTimeout(trClickTimeout.value)
+            trClickTimeout.value = setTimeout(() => {
+                emit('row-click', evt, row, pageIndex)
+            }, 50)
         }
 
         const onTrDblClick = (
@@ -1810,6 +1817,7 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
+            clearTimeout(trClickTimeout.value)
             emit('row-dblclick', evt, row, pageIndex)
         }
 

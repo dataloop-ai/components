@@ -246,9 +246,16 @@
                                 :opt="item"
                             >
                                 <span
+                                    v-if="fitContent"
                                     class="inner-option"
                                     v-html="getOptionHtml(item)"
                                 />
+                                <dl-ellipsis v-else>
+                                    <span
+                                        class="inner-option"
+                                        v-html="getOptionHtml(item)"
+                                    />
+                                </dl-ellipsis>
                             </slot>
                         </dl-select-option>
                     </dl-virtual-scroll>
@@ -853,15 +860,20 @@ export default defineComponent({
         },
         getOptionHtml(option: DlSelectOptionType) {
             const label = `${this.getOptionLabel(option)}`
-            const toReplace = new RegExp(this.searchInputValue, 'gi')
+            let highlightedHtml = label
 
-            const highlightedHtml = label.replace(
-                toReplace,
-                `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
-                    label,
-                    this.searchInputValue
-                )}</span>`
-            )
+            if (this.searchInputValue?.length) {
+                const toReplace = new RegExp(this.searchInputValue, 'gi')
+
+                highlightedHtml = label.replace(
+                    toReplace,
+                    `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                        label,
+                        this.searchInputValue
+                    )}</span>`
+                )
+            }
+
             const html = `<span>${highlightedHtml}</span>`
 
             return html

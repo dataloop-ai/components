@@ -75,7 +75,7 @@
         <dl-menu
             ref="menuRef"
             v-model="menuModel"
-            :class="contentClass"
+            :menu-class="contentClass"
             :style="contentStyle"
             :cover="cover"
             fit-container
@@ -136,7 +136,7 @@
         <dl-menu
             ref="menuRef"
             v-model="menuModel"
-            :class="contentClass"
+            :menu-class="contentClass"
             :style="contentStyle"
             :cover="cover"
             fit-container
@@ -551,6 +551,7 @@ export default defineComponent({
 </style>
 <style lang="scss">
 .dl-button-dropdown {
+    height: fit-content;
     .dl-button-content {
         line-height: unset;
     }

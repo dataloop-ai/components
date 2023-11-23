@@ -38,6 +38,8 @@ describe('DlToggleButton', () => {
             beforeAll(async () => {
                 const buttonElem = await wrapper.find('.dl-button')
                 buttonElem.trigger('click')
+                //@ts-ignore
+                await window.delay(50)
                 await wrapper.vm.$nextTick()
             })
             it('should have click event', async function () {

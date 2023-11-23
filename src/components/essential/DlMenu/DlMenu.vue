@@ -382,14 +382,19 @@ export default defineComponent({
             }
         }
 
+        const autoCloseTimeout = ref(null)
+
         function onAutoClose(e: MouseEvent) {
             // if auto-close, then the ios double-tap fix which
             // issues a click should not close the menu
             avoidAutoClose = conditionalHandler(
                 !avoidAutoClose,
                 () => {
-                    closePortalMenus(proxy, e)
-                    emit('click', e)
+                    clearTimeout(autoCloseTimeout.value)
+                    autoCloseTimeout.value = setTimeout(() => {
+                        closePortalMenus(proxy, e)
+                        emit('click', e)
+                    }, 50)
                 },
                 avoidAutoClose
             ) as boolean

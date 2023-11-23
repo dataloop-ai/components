@@ -803,7 +803,7 @@ export default defineComponent({
             return modelValue.value?.toString()
         })
 
-        const onModelValueChange = (val: string) => {
+        const onModelValueChange = (val: string | number) => {
             if (!isInternalChange.value && val !== null && val !== undefined) {
                 if (readonly.value || disabled.value) {
                     return
@@ -830,10 +830,17 @@ export default defineComponent({
             return debounced
         })
 
+        const firstTime = ref(true)
+
         watch(
             modelValue,
-            (val) => {
+            (val: string | number) => {
                 nextTick(() => {
+                    if (firstTime.value) {
+                        firstTime.value = false
+                        onModelValueChange(val)
+                        return
+                    }
                     debouncedOnModelValueChange.value(val)
                 })
             },
