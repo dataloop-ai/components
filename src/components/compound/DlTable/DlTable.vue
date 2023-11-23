@@ -148,7 +148,10 @@
                                             }
                                         "
                                     >
-                                        {{ col.label }}
+                                        <dl-ellipsis v-if="fitAllColumns">
+                                            {{ col.label }}
+                                        </dl-ellipsis>
+                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
@@ -539,7 +542,10 @@
                                             }
                                         "
                                     >
-                                        {{ col.label }}
+                                        <dl-ellipsis v-if="fitAllColumns">
+                                            {{ col.label }}
+                                        </dl-ellipsis>
+                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
@@ -965,7 +971,13 @@ import {
     TableStickyPosition
 } from './types'
 import { DlPagination } from '../DlPagination'
-import { DlIcon, DlCheckbox, DlProgressBar, DlList } from '../../essential'
+import {
+    DlIcon,
+    DlCheckbox,
+    DlProgressBar,
+    DlList,
+    DlEllipsis
+} from '../../essential'
 import { DlButton, DlPopup } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
@@ -1000,7 +1012,8 @@ export default defineComponent({
         DlOptionGroup,
         DlPopup,
         DlList,
-        Sortable
+        Sortable,
+        DlEllipsis
     },
     props: {
         /**
