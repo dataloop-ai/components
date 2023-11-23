@@ -1220,7 +1220,7 @@ export default defineComponent({
         },
         fitAllColumns: {
             type: Boolean,
-            default: true
+            default: false
         },
         expandableRows: {
             type: Boolean,
@@ -1268,6 +1268,7 @@ export default defineComponent({
             noResultsLabel,
             noDataLabel,
             columns,
+            fitAllColumns,
             resizable,
             hidePagination,
             hideSelectedBanner,
