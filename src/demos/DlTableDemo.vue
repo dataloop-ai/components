@@ -710,7 +710,7 @@ const columns = [
         label: 'Calories',
         field: 'calories',
         sortable: true,
-        width: '10%'
+        width: '50px'
     },
     {
         name: 'fat',
