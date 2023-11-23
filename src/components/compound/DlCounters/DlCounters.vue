@@ -99,7 +99,7 @@ export default defineComponent({
         },
         kpiValue(item: DlCounterItem) {
             return {
-                value: item.value ?? 0,
+                value: item.value ?? null,
                 format: item.format ?? DlKpiCounterFormat.long
             } as DlKpiCounterType
         },
