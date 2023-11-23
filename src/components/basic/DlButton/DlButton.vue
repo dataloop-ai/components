@@ -199,12 +199,15 @@ export default defineComponent({
             return classes
         })
 
+        const buttonTimeout = ref<any>(null)
+
         return {
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
             isOverflowing: hasEllipsis,
             buttonClass,
-            mouseOver
+            mouseOver,
+            buttonTimeout
         }
     },
     computed: {
@@ -419,7 +422,10 @@ export default defineComponent({
                     }
                 }
 
-                this.$emit('click', e)
+                clearTimeout(this.buttonTimeout)
+                this.buttonTimeout = setTimeout(() => {
+                    this.$emit('click', e)
+                }, 50)
             }
         },
         onDblClick(e: Event) {
@@ -430,6 +436,7 @@ export default defineComponent({
                     }
                 }
 
+                clearTimeout(this.buttonTimeout)
                 this.$emit('dblclick', e)
             }
         },
@@ -529,6 +536,7 @@ export default defineComponent({
 .dl-button-container {
     display: inline-block;
     width: var(--dl-button-container-width);
+    height: fit-content;
 }
 
 .active-class {

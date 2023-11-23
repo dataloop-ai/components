@@ -61,16 +61,18 @@ describe('DlButton', () => {
         })
         it('should exist the click event', async () => {
             buttonElem.trigger('click')
-
+            //@ts-ignore
+            await window.delay(50)
             expect(wrapper.emitted()).toHaveProperty('click')
 
             expect(wrapper.vm.isActionable).toBe(true)
 
             expect(buttonElem.attributes().tabindex).toBe('0')
         })
-        it('should trigger right click event', function () {
+        it('should trigger right click event', async function () {
             const clickEvent = wrapper.emitted('click')
-
+            //@ts-ignore
+            await window.delay(50)
             expect(clickEvent).toHaveLength(1)
         })
         it('should exist the dblclick event', async () => {
