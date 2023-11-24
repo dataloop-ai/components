@@ -5,6 +5,7 @@ import { ColorSchema, SyntaxColorSchema, Filters } from '../types'
 import {
     operators,
     Alias,
+    Data,
     datePattern,
     datePatternNoBrackets,
     removeBrackets
@@ -187,7 +188,6 @@ export function setAliases(str: string, aliases: Alias[]) {
     return str.replace(regex, replacement)
 }
 
-type Data = { [key: string]: any }
 function valueAliases(schema: Data, field: string) {
     let aliases: Data = {}
     const type: any = schema[field]
