@@ -11,7 +11,7 @@ window.ResizeObserver =
     }))
 
 const schema = {
-    name: 'string',
+    name: ['string', { Voltaire: 'Arouet' }],
     level: ['high', 'medium', 'low', 30],
     completed: 'boolean',
     metadata: {
@@ -522,6 +522,30 @@ describe('DlSmartSearchInput', () => {
 
         it('will not emit search when the query did not change', () => {
             expect(wrapper.emitted().search.length).toBe(1)
+        })
+    })
+
+    describe('On JSON with aliased value', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+            await wrapper.setProps({
+                modelValue: { $and: [{ name: 'Arouet' }] }
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+
+            expect(wrapper.vm.searchQuery).toEqual("Name = 'Voltaire' ")
         })
     })
 
