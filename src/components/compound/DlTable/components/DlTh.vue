@@ -8,26 +8,9 @@
         @mouseenter="iconHover = true"
         @mouseleave="iconHover = false"
     >
-        <dl-icon
-            v-if="isSortable && align === 'right'"
-            :class="iconClass"
-            :icon="computedSortIcon"
-            :style="
-                !isCurrentlySorted && !iconHover
-                    ? 'display: none !important;'
-                    : ''
-            "
-        />
-        <dl-tooltip v-if="hasEllipsis">
-            <slot />
-        </dl-tooltip>
-        <slot />
-        <span
-            class="th-icons"
-            :style="{ top: isDense ? '5px' : '12px' }"
-        >
+        <div class="inner-th-wrapper">
             <dl-icon
-                v-if="isSortable && ['left', 'center'].includes(align)"
+                v-if="isSortable && align === 'right'"
                 :class="iconClass"
                 :icon="computedSortIcon"
                 :style="
@@ -36,17 +19,34 @@
                         : ''
                 "
             />
-            <dl-icon
-                v-if="hasHint"
-                icon="icon-dl-info"
-                size="10px"
-                style="max-width: 30%"
-            >
-                <dl-tooltip>
-                    {{ props.col.hint }}
-                </dl-tooltip>
-            </dl-icon>
-        </span>
+            <dl-tooltip v-if="hasEllipsis">
+                <slot />
+            </dl-tooltip>
+            <slot />
+            <span class="th-icons">
+                <dl-icon
+                    v-if="hasHint"
+                    icon="icon-dl-info"
+                    size="10px"
+                    style="max-width: 30%; margin-top: 1px"
+                >
+                    <dl-tooltip>
+                        {{ props.col.hint }}
+                    </dl-tooltip>
+                </dl-icon>
+                <dl-icon
+                    v-if="isSortable && ['left', 'center'].includes(align)"
+                    :class="iconClass"
+                    :icon="computedSortIcon"
+                    size="16px"
+                    :style="
+                        !isCurrentlySorted && !iconHover
+                            ? 'opacity: 0 !important;'
+                            : ''
+                    "
+                />
+            </span>
+        </div>
     </th>
 </template>
 

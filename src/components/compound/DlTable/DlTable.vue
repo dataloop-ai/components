@@ -141,14 +141,16 @@
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
-                                        class="inner-th"
+                                        :class="`inner-th ${`inner-th--${col.align}`}`"
                                         :style="
                                             col.width && {
                                                 maxWidth: 'calc(100% - 15px)'
                                             }
                                         "
                                     >
-                                        {{ col.label }}
+                                        <dl-ellipsis>
+                                            {{ col.label }}
+                                        </dl-ellipsis>
                                     </span>
                                 </DlTh>
                             </slot>
@@ -157,6 +159,7 @@
                                 key="visibleColumnsSlot"
                                 :col-index="-1"
                                 no-tooltip
+                                padding="0"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -179,8 +182,8 @@
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
-                                            :disabled="isDataEmpty"
                                             padding="0"
+                                            :disabled="isDataEmpty"
                                         >
                                             <slot
                                                 name="header-cell-visible-columns-menu"
@@ -531,14 +534,16 @@
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
-                                        class="inner-th"
+                                        :class="`inner-th ${`inner-th--${col.align}`}`"
                                         :style="
                                             col.width && {
                                                 maxWidth: 'calc(100% - 15px)'
                                             }
                                         "
                                     >
-                                        {{ col.label }}
+                                        <dl-ellipsis>
+                                            {{ col.label }}
+                                        </dl-ellipsis>
                                     </span>
                                 </DlTh>
                             </slot>
@@ -957,9 +962,20 @@ import {
 import { useTableActions, useTableActionsProps } from './hooks/tableActions'
 import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
-import { DlTableRow, DlTableProps, DlTableColumn } from './types'
+import {
+    DlTableRow,
+    DlTableProps,
+    DlTableColumn,
+    TableStickyPosition
+} from './types'
 import { DlPagination } from '../DlPagination'
-import { DlIcon, DlCheckbox, DlProgressBar, DlList } from '../../essential'
+import {
+    DlIcon,
+    DlCheckbox,
+    DlProgressBar,
+    DlList,
+    DlEllipsis
+} from '../../essential'
 import { DlButton, DlPopup } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
@@ -994,7 +1010,8 @@ export default defineComponent({
         DlOptionGroup,
         DlPopup,
         DlList,
-        Sortable
+        Sortable,
+        DlEllipsis
     },
     props: {
         /**
@@ -1214,7 +1231,7 @@ export default defineComponent({
         },
         fitAllColumns: {
             type: Boolean,
-            default: true
+            default: false
         },
         expandableRows: {
             type: Boolean,
@@ -1223,6 +1240,12 @@ export default defineComponent({
         emptyExpandableMessage: {
             type: String,
             default: 'No data'
+        },
+        stickyColumns: {
+            type: Object as PropType<TableStickyPosition>,
+            default: null,
+            validator: (value: string) =>
+                ['first', 'last', 'both'].includes(value)
         },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
@@ -1396,7 +1419,12 @@ export default defineComponent({
                 (document.querySelector('table.dl-table') as HTMLTableElement)
 
             nextTick(() => {
-                setAllColumnWidths(tableEl, columns.value as DlTableColumn[])
+                setAllColumnWidths(
+                    tableEl,
+                    columns.value as DlTableColumn[],
+                    props.stickyColumns,
+                    props.fitAllColumns
+                )
             })
             if (visibleColumns.value) return
             if (resizable.value) {
@@ -1424,7 +1452,9 @@ export default defineComponent({
                 nextTick(() => {
                     setAllColumnWidths(
                         tableEl,
-                        props.columns as DlTableColumn[]
+                        props.columns as DlTableColumn[],
+                        props.stickyColumns,
+                        props.fitAllColumns
                     )
                 })
                 if (visibleColumns.value) return
@@ -1462,7 +1492,9 @@ export default defineComponent({
                 nextTick(() => {
                     setAllColumnWidths(
                         tableRef.value,
-                        newColumns as DlTableColumn[]
+                        newColumns as DlTableColumn[],
+                        props.stickyColumns,
+                        props.fitAllColumns
                     )
                 })
             },

@@ -1,5 +1,7 @@
 import { DlTextTransformOptions } from '../../shared/types'
 
+export type TableStickyPosition = 'first' | 'last' | 'both' | ''
+
 export interface SortingMovement {
     lastId: string
     direction: 'up' | 'down'
@@ -41,6 +43,7 @@ export type DlTableColumn = {
     textTransform?: DlTextTransformOptions
     width?: number
     hint?: string
+    sticky?: boolean
 }
 
 export type DlTableFilterMethod = (
