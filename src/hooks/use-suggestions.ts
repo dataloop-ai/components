@@ -12,7 +12,7 @@ export type Schema = {
         | string
         | number
         | boolean
-        | (number | boolean | string)[]
+        | (number | boolean | string | Data)[]
         | Schema
 }
 
