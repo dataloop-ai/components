@@ -363,7 +363,9 @@ const getError = (
             for (const key of Object.keys(schema)) {
                 if (isObject(schema[key]) && !Array.isArray(schema[key])) {
                     const flattened = flatten({ [key]: schema[key] })
-                    keys.push(...Object.keys(flattened))
+                    for (const k of Object.keys(flattened)) {
+                        keys.push(k)
+                    }
                 } else {
                     keys.push(key)
                 }
@@ -689,13 +691,14 @@ const getValueSuggestions = (
     const suggestion: string[] = []
 
     if (Array.isArray(dataType)) {
-        suggestion.push(
-            ...(dataType.filter(
-                (type) =>
-                    !knownDataTypes.includes(type as string) &&
-                    typeof type !== 'object'
-            ) as string[])
-        )
+        for (const type of dataType) {
+            if (
+                !knownDataTypes.includes(type as string) &&
+                typeof type !== 'object'
+            ) {
+                suggestion.push(type)
+            }
+        }
     }
 
     for (const type of types) {
