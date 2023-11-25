@@ -124,7 +124,9 @@ import {
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,
-    revertAliases
+    revertAliases,
+    setValueAliases,
+    revertValueAliases
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -569,7 +571,9 @@ export default defineComponent({
             const replacedDate = replaceStringifiedDatesWithJSDates(value)
             const json = parseSmartQuery(replacedDate ?? searchQuery.value)
 
-            return isValidJSON(json) ? json : searchQuery.value
+            return isValidJSON(json)
+                ? revertValueAliases(json, schema.value)
+                : searchQuery.value
         }
 
         const fromJSON = (value: { [key: string]: any }) => {
@@ -579,7 +583,9 @@ export default defineComponent({
                     dateKeys.value
                 )
 
-                const stringQuery = stringifySmartQuery(replacedDate)
+                const stringQuery = stringifySmartQuery(
+                    setValueAliases(replacedDate, schema.value)
+                )
                 const aliased = setAliases(stringQuery, aliases.value)
                 return aliased
             } catch (e) {

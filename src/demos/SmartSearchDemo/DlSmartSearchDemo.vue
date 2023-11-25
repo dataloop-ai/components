@@ -140,6 +140,13 @@ export default defineComponent({
             test2: ['true', 'false']
         }
         const schema2: any = {
+            value: [
+                'string',
+                {
+                    John: 'AB34',
+                    Connor: '42'
+                }
+            ],
             type: [
                 'class',
                 'point',
