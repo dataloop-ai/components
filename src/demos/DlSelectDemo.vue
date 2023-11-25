@@ -555,6 +555,21 @@
                 </div>
             </template>
         </dl-select>
+
+        Select with multiselect auto expanded
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="treeOptionsExpanded"
+            multiselect
+            style="margin-bottom: 150px"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
     </div>
 </template>
 
@@ -719,6 +734,42 @@ const treeOptionsWithReadonly = [
     }
 ]
 
+const treeOptionsExpanded: DlSelectOptionType[] = [
+    {
+        label: 'Readonly option with children & readonly child',
+        value: 'r6',
+        expanded: true,
+        children: [
+            { label: 'child 1', value: 'c6' },
+            { label: 'child 2', value: 'c7' },
+            {
+                label: 'child 3',
+                value: 'c8',
+                expanded: true,
+                children: [
+                    { label: 'child 4', value: 'c9' },
+                    {
+                        label: 'child 5',
+                        value: 'c10441',
+                        expanded: true,
+                        children: [
+                            {
+                                label: 'child 6',
+                                value: 'c8312',
+                                expanded: true,
+                                children: [
+                                    { label: 'child 7', value: 'c923' },
+                                    { label: 'child 8', value: 'c101' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
 export default defineComponent({
     components: { DlSelect, DlIcon, DlChip, DlBadge },
     data() {
@@ -742,6 +793,7 @@ export default defineComponent({
             searchOptions: defaultOptions,
             treeOptions,
             treeOptionsWithReadonly,
+            treeOptionsExpanded,
             selectedBySearch: undefined,
             selectedByFilteringSearch: [],
             selectedWithEmitValue: 'c1',
