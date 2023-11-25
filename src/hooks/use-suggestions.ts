@@ -3,12 +3,16 @@ import { splitByQuotes } from '../utils/splitByQuotes'
 import { flatten } from 'flat'
 import { isObject } from 'lodash'
 
+export type Data = {
+    [key: string]: any
+}
+
 export type Schema = {
     [key: string]:
         | string
         | number
         | boolean
-        | (number | boolean | string)[]
+        | (number | boolean | string | Data)[]
         | Schema
 }
 
@@ -245,8 +249,10 @@ export const useSuggestions = (
 
             if (Array.isArray(dataType)) {
                 localSuggestions = dataType.filter(
-                    (type) => !knownDataTypes.includes(type)
-                )
+                    (type) =>
+                        typeof type === 'string' &&
+                        !knownDataTypes.includes(type)
+                ) as string[]
 
                 if (!value) continue
 
@@ -357,7 +363,9 @@ const getError = (
             for (const key of Object.keys(schema)) {
                 if (isObject(schema[key]) && !Array.isArray(schema[key])) {
                     const flattened = flatten({ [key]: schema[key] })
-                    keys.push(...Object.keys(flattened))
+                    for (const k of Object.keys(flattened)) {
+                        keys.push(k)
+                    }
                 } else {
                     keys.push(key)
                 }
@@ -402,7 +410,7 @@ const getError = (
 
 const isValidByDataType = (
     str: string | string[],
-    dataType: string | string[],
+    dataType: string | (string | Data)[],
     operator: string
 ): boolean => {
     if (dataType === 'any') {
@@ -423,9 +431,16 @@ const isValidByDataType = (
      */
 
     if (Array.isArray(dataType)) {
-        let isOneOf = !!getValueMatch(dataType, str)
+        let isOneOf = !!getValueMatch(
+            dataType.filter((type) => typeof type !== 'object') as string[],
+            str
+        )
         for (const type of dataType) {
-            isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            if (typeof type === 'object') {
+                isOneOf = isOneOf || !!getValueMatch(Object.keys(type), str)
+            } else {
+                isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            }
         }
         return isOneOf
     }
@@ -507,7 +522,7 @@ const getDataType = (
     schema: Schema,
     aliases: Alias[],
     key: string
-): string | string[] | null => {
+): string | (string | Data)[] | null => {
     const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
 
     const nestedKey = aliasedKey.split('.').filter((el) => el)
@@ -529,7 +544,7 @@ const getDataType = (
         return 'object'
     }
 
-    return value as unknown as string | string[] | null
+    return value as unknown as string | (string | Data)[] | null
 }
 
 const getAliasObjByAlias = (aliases: Alias[], alias: string): Alias | null => {
@@ -666,14 +681,24 @@ export const removeLeadingExpression = (str: string) => {
     return str.match(/\s+(.*)$/)?.[1] || ''
 }
 
-const getValueSuggestions = (dataType: string | string[], operator: string) => {
-    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+const getValueSuggestions = (
+    dataType: string | (string | Data)[],
+    operator: string
+) => {
+    const types: (string | Data)[] = Array.isArray(dataType)
+        ? dataType
+        : [dataType]
     const suggestion: string[] = []
 
     if (Array.isArray(dataType)) {
-        suggestion.push(
-            ...dataType.filter((type) => !knownDataTypes.includes(type))
-        )
+        for (const type of dataType) {
+            if (
+                !knownDataTypes.includes(type as string) &&
+                typeof type !== 'object'
+            ) {
+                suggestion.push(type)
+            }
+        }
     }
 
     for (const type of types) {
@@ -688,7 +713,10 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'datetime':
                 suggestion.push(dateSuggestionPattern)
             default:
-                // do nothing
+                if (typeof type === 'object') {
+                    // value aliases: key is the alias, value is the actual value
+                    for (const key in type) suggestion.push(key)
+                }
                 break
         }
     }

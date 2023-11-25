@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash'
-import { DlTableColumn } from '../types'
+import { DlTableColumn, TableStickyPosition } from '../types'
 import { browseNestedNodes } from './browse-nested-nodes'
 import { swapNodes } from './swap-nodes'
 
@@ -121,9 +121,24 @@ function getIconWidth(el: HTMLElement) {
     return iconEl?.scrollWidth
 }
 
+function addStickyPosition(
+    element: HTMLElement,
+    position: TableStickyPosition,
+    index: number,
+    totalElements: number
+) {
+    if (position === 'both')
+        position =
+            index === 0 ? 'first' : index === totalElements - 1 ? 'last' : ''
+    element.style.left = position === 'first' ? '0' : ''
+    element.style.right = position === 'last' ? '0' : ''
+}
+
 export function setAllColumnWidths(
     table: HTMLElement,
-    columns: DlTableColumn[]
+    columns: DlTableColumn[],
+    stickyColumns: TableStickyPosition,
+    fitAllColumns: boolean
 ) {
     const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
     if (!hasWidth) return
@@ -135,12 +150,37 @@ export function setAllColumnWidths(
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
                 parseInt(el.dataset.colIndex) === i,
             (targetEl) => {
-                const width =
-                    (col.width ?? targetEl.scrollWidth) +
-                    getIconWidth(targetEl) +
-                    15
-                targetEl.style.width = `${width}px`
-                // then
+                if (!fitAllColumns && targetEl.tagName === 'TH') {
+                    // Calculate the width for the column
+                    const width =
+                        (col.width ??
+                            targetEl.querySelector('.inner-th').scrollWidth) +
+                        getIconWidth(targetEl) +
+                        35
+
+                    // Set the width of the column
+                    targetEl.style.width =
+                        typeof col.width === 'number' || !col.width
+                            ? `${width}px`
+                            : col.width
+                } else if (targetEl.tagName === 'TH') {
+                    // Adjust the maximum width for TH elements
+                    const innerTh = targetEl.querySelector(
+                        '.inner-th'
+                    ) as HTMLElement
+                    innerTh.style.maxWidth = '80%'
+                }
+
+                if (stickyColumns && (i === 0 || i === columns.length - 1)) {
+                    // Add sticky column class and position for sticky columns
+                    targetEl.classList.add('sticky-col')
+                    addStickyPosition(
+                        targetEl,
+                        stickyColumns,
+                        i,
+                        columns.length
+                    )
+                }
             }
         )
     })

@@ -3,7 +3,7 @@ import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
 export const schema: Schema = {
-    name: 'string',
+    name: ['string', { Voltaire: 'Arouet' }],
     level: ['high', 'medium', 'low', 30],
     completed: 'boolean',
     metadata: {
@@ -132,7 +132,6 @@ describe('use-suggestions', () => {
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
             findSuggestions('Level = ')
-            console.log(suggestions.value)
             expect(suggestions.value).toEqual(['high', 'medium', 'low', 30])
         })
 
@@ -149,6 +148,13 @@ describe('use-suggestions', () => {
         it('suggestions should be empty when none of the field values were matched', () => {
             findSuggestions("Level = 'memo'")
             expect(suggestions.value).toEqual([])
+        })
+    })
+
+    describe('when the field has value aliases defined', () => {
+        it('suggestions should have value aliases', () => {
+            findSuggestions('name = ')
+            expect(suggestions.value).toEqual(['Voltaire'])
         })
     })
 
