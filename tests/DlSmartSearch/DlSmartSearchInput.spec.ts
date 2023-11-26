@@ -26,6 +26,22 @@ const schema = {
     }
 }
 
+const schema2 = {
+    name: ['string', { Voltaire: 'Arouet' }],
+    level: ['high', 'medium', 'low', 30],
+    completed: 'boolean',
+    metadata: {
+        nesting: {
+            age: ['number', { 21: 'twentyone' }],
+            valid: 'boolean'
+        },
+        date: 'date',
+        start: 'datetime',
+        classTime: 'time',
+        '*': 'any'
+    }
+}
+
 const aliases = [
     {
         alias: 'Name',
@@ -522,6 +538,35 @@ describe('DlSmartSearchInput', () => {
 
         it('will not emit search when the query did not change', () => {
             expect(wrapper.emitted().search.length).toBe(1)
+        })
+    })
+
+    describe('On JSON with nested aliased value', () => {
+        let wrapper: any
+        const modelValue = { $and: [{ 'metadata.nesting.age': 21 }] }
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema: schema2,
+                    aliases
+                }
+            })
+            console.log(wrapper.vm.schema)
+            await wrapper.setProps({
+                modelValue
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            wrapper.vm.blur()
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.vm.searchQuery).toEqual('Age = 21 ')
         })
     })
 

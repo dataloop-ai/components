@@ -147,6 +147,15 @@ export default defineComponent({
                     Connor: '42'
                 }
             ],
+            nested: {
+                value: [
+                    'string',
+                    {
+                        John: 'AB34',
+                        Connor: '42'
+                    }
+                ]
+            },
             type: [
                 'class',
                 'point',

@@ -11,7 +11,7 @@ import {
     removeBrackets
 } from '../../../../../hooks/use-suggestions'
 import moment from 'moment'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, get } from 'lodash'
 
 export const isEndOfString = (
     str: string,
@@ -190,7 +190,7 @@ export function setAliases(str: string, aliases: Alias[]) {
 
 function valueAliases(schema: Data, field: string) {
     let aliases: Data = {}
-    const type: any = schema[field]
+    const type: any = get(schema, field)
     if (Array.isArray(type)) {
         for (const element of type) {
             if (typeof element === 'object')
