@@ -96,24 +96,40 @@
                     :capitalized="capitalized"
                     :readonly="isReadonlyOption(child)"
                     :is-expanded="isExpanded"
+                    :filter-term="filterTerm"
+                    :fit-content="fitContent"
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect"
                     @deselected="handleSingleDeselect"
                     @depth-change="$emit('depth-change')"
-                />
+                >
+                    <span
+                        v-if="fitContent"
+                        class="inner-option"
+                        v-html="getOptionHtml(child)"
+                    />
+                    <dl-ellipsis v-else>
+                        <span
+                            class="inner-option"
+                            v-html="getOptionHtml(child)"
+                        />
+                    </dl-ellipsis>
+                </dl-select-option>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
 import { DlIcon, DlCheckbox } from '../../../essential'
 import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
+import { DlSelectOptionType, getCaseInsensitiveInput, getLabel } from '../utils'
+import { DlSelectedValueType } from '../../types'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -135,7 +151,10 @@ export default defineComponent({
         defaultStyles: { type: Boolean, default: true },
         multiselect: { type: Boolean, default: false },
         value: { type: ValueTypes, default: null },
-        children: { type: Array, default: null },
+        children: {
+            type: Array as PropType<DlSelectedValueType[]>,
+            default: null
+        },
         highlightSelected: { type: Boolean, default: false },
         count: { type: Number, default: null },
         totalItems: { type: Boolean, default: false },
@@ -148,6 +167,14 @@ export default defineComponent({
         capitalized: { type: Boolean, default: false },
         readonly: { type: Boolean, default: false },
         isExpanded: {
+            type: Boolean,
+            default: false
+        },
+        filterTerm: {
+            type: String,
+            default: null
+        },
+        fitContent: {
             type: Boolean,
             default: false
         }
@@ -199,6 +226,32 @@ export default defineComponent({
         }
     },
     methods: {
+        getOptionValue(option: any) {
+            return option?.value ?? option
+        },
+        getOptionLabel(option: any) {
+            return getLabel(option) ?? this.getOptionValue(option)
+        },
+        getOptionHtml(option: DlSelectOptionType) {
+            const label = `${this.getOptionLabel(option)}`
+            let highlightedHtml = label
+
+            if (this.filterTerm?.length) {
+                const toReplace = new RegExp(this.filterTerm, 'gi')
+
+                highlightedHtml = label.replace(
+                    toReplace,
+                    `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                        label,
+                        this.filterTerm
+                    )}</span>`
+                )
+            }
+
+            const html = `<span>${highlightedHtml}</span>`
+
+            return html
+        },
         handleSingleSelect(value?: any) {
             this.$emit('selected', value ?? this.value)
         },

@@ -576,44 +576,24 @@
             v-model="selectedWithChildrenAndReadonly"
             :options="treeOptionsExpanded"
             multiselect
+            searchable
             style="margin-bottom: 150px; width: 200px"
-        >
-            <template #option="scope">
-                <div style="padding: 5px 0px">
-                    <div>{{ scope.opt.label }}</div>
-                    <div>{{ scope.opt.subLabel }}</div>
-                </div>
-            </template>
-        </dl-select>
-
+        />
         Select with multiselect auto expanded and fixed width and virtual scroll
         <dl-select
             v-model="selectedWithChildrenAndReadonly"
             :options="alotOfOptionsExpanded"
             multiselect
+            searchable
             style="margin-bottom: 150px; width: 200px"
-        >
-            <template #option="scope">
-                <div style="padding: 5px 0px">
-                    <div>{{ scope.opt.label }}</div>
-                    <div>{{ scope.opt.subLabel }}</div>
-                </div>
-            </template>
-        </dl-select>
+        />
         Select with multiselect auto expanded and fixed width and virtual scroll
         <dl-select
             v-model="selectedWithChildrenAndReadonly"
             :options="alotOfOptionsExpanded"
             multiselect
             style="margin-bottom: 150px"
-        >
-            <template #option="scope">
-                <div style="padding: 5px 0px">
-                    <div>{{ scope.opt.label }}</div>
-                    <div>{{ scope.opt.subLabel }}</div>
-                </div>
-            </template>
-        </dl-select>
+        />
     </div>
 </template>
 
