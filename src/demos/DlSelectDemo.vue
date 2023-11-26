@@ -570,10 +570,41 @@
                 </div>
             </template>
         </dl-select>
+
+        Select with multiselect auto expanded and fixed width
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="treeOptionsExpanded"
+            multiselect
+            style="margin-bottom: 150px; width: 200px"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
+
+        Select with multiselect auto expanded and fixed width and virtual scroll
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="alotOfOptionsExpanded"
+            multiselect
+            style="margin-bottom: 150px; width: 200px"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
     </div>
 </template>
 
 <script lang="ts">
+import { cloneDeep } from 'lodash'
 import { defineComponent } from 'vue-demi'
 import { DlChip, DlSelect, DlIcon, DlBadge } from '../components'
 import { DlSelectOptionType } from '../components/compound/DlSelect/utils'
@@ -758,7 +789,27 @@ const treeOptionsExpanded: DlSelectOptionType[] = [
                                 value: 'c8312',
                                 expanded: true,
                                 children: [
-                                    { label: 'child 7', value: 'c923' },
+                                    {
+                                        label: 'child 7',
+                                        value: 'c923',
+                                        children: [
+                                            { label: 'child 4', value: 'c9' },
+                                            {
+                                                label: 'child 5',
+                                                value: 'c10',
+                                                children: [
+                                                    {
+                                                        label: 'child 4',
+                                                        value: 'c9'
+                                                    },
+                                                    {
+                                                        label: 'child 5',
+                                                        value: 'c10'
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
                                     { label: 'child 8', value: 'c101' }
                                 ]
                             }
@@ -824,6 +875,11 @@ export default defineComponent({
                 })
             }
 
+            return arr
+        },
+        alotOfOptionsExpanded(): DlSelectOptionType[] {
+            const arr = cloneDeep(this.alotOfOptions)
+            arr.push(treeOptionsExpanded[0])
             return arr
         }
     },
