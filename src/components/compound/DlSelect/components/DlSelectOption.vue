@@ -53,8 +53,8 @@
                         <slot>
                             {{
                                 capitalized
-                                    ? value.toString().toLowerCase()
-                                    : value
+                                    ? displayLabel.toString().toLowerCase()
+                                    : displayLabel
                             }}
                         </slot>
                     </dl-checkbox>
@@ -69,7 +69,9 @@
                 >
                     <slot>
                         {{
-                            capitalized ? value.toString().toLowerCase() : value
+                            capitalized
+                                ? displayLabel.toString().toLowerCase()
+                                : displayLabel
                         }}
                     </slot>
                 </div>
@@ -191,6 +193,9 @@ export default defineComponent({
         },
         indent(): { padding: string } {
             return { padding: `0 ${this.depth * 30}px 0 0` }
+        },
+        displayLabel(): string {
+            return String(this.label ? this.label : this.value)
         }
     },
     methods: {
