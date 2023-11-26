@@ -213,7 +213,7 @@
                         :virtual-scroll-sticky-size-start="28"
                         :virtual-scroll-sticky-size-end="20"
                         separator
-                        style="width: max-content"
+                        :style="multiselect ? `width: max-content` : ''"
                     >
                         <dl-select-option
                             :key="getKeyForOption(item)"

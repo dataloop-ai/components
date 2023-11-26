@@ -45,24 +45,19 @@
                         :class="{ capitalized }"
                         :model-value="modelValue"
                         :value="value"
-                        :label="
-                            label
-                                ? capitalized
-                                    ? label.toLowerCase()
-                                    : label
-                                : null
-                        "
                         :indeterminate-value="indeterminateValue"
                         @update:model-value="handleCheckboxUpdate"
                         @checked="handleSingleSelect"
                         @unchecked="handleSingleDeselect"
-                    />
-                    <span
-                        class="multiselect-label"
-                        :class="{ capitalized }"
                     >
-                        <slot />
-                    </span>
+                        <slot>
+                            {{
+                                capitalized
+                                    ? value.toString().toLowerCase()
+                                    : value
+                            }}
+                        </slot>
+                    </dl-checkbox>
                     <span
                         v-if="count"
                         class="counter"
