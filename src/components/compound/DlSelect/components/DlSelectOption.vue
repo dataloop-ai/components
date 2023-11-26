@@ -45,24 +45,19 @@
                         :class="{ capitalized }"
                         :model-value="modelValue"
                         :value="value"
-                        :label="
-                            label
-                                ? capitalized
-                                    ? label.toLowerCase()
-                                    : label
-                                : null
-                        "
                         :indeterminate-value="indeterminateValue"
                         @update:model-value="handleCheckboxUpdate"
                         @checked="handleSingleSelect"
                         @unchecked="handleSingleDeselect"
-                    />
-                    <span
-                        class="multiselect-label"
-                        :class="{ capitalized }"
                     >
-                        <slot />
-                    </span>
+                        <slot>
+                            {{
+                                capitalized
+                                    ? displayLabel.toString().toLowerCase()
+                                    : displayLabel
+                            }}
+                        </slot>
+                    </dl-checkbox>
                     <span
                         v-if="count"
                         class="counter"
@@ -74,7 +69,9 @@
                 >
                     <slot>
                         {{
-                            capitalized ? value.toString().toLowerCase() : value
+                            capitalized
+                                ? displayLabel.toString().toLowerCase()
+                                : displayLabel
                         }}
                     </slot>
                 </div>
@@ -196,6 +193,9 @@ export default defineComponent({
         },
         indent(): { padding: string } {
             return { padding: `0 ${this.depth * 30}px 0 0` }
+        },
+        displayLabel(): string {
+            return String(this.label ? this.label : this.value)
         }
     },
     methods: {
