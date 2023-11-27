@@ -768,6 +768,7 @@
                                         :class="col.tdClass(row)"
                                         :style="col.tdStyle(row)"
                                         :col-index="colIndex"
+                                        :no-tooltip="col.ignoreTooltip"
                                     >
                                         <slot
                                             v-bind="
