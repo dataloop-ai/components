@@ -1280,6 +1280,7 @@ export default defineComponent({
             noDataLabel,
             columns,
             fitAllColumns,
+            stickyColumns,
             resizable,
             hidePagination,
             hideSelectedBanner,
@@ -1422,8 +1423,8 @@ export default defineComponent({
                 setAllColumnWidths(
                     tableEl,
                     columns.value as DlTableColumn[],
-                    props.stickyColumns,
-                    props.fitAllColumns
+                    stickyColumns.value,
+                    fitAllColumns.value
                 )
             })
             if (visibleColumns.value) return
@@ -1453,8 +1454,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableEl,
                         props.columns as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
+                        stickyColumns.value,
+                        fitAllColumns.value
                     )
                 })
                 if (visibleColumns.value) return
@@ -1493,8 +1494,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableRef.value,
                         newColumns as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
+                        stickyColumns.value,
+                        fitAllColumns.value
                     )
                 })
             },
