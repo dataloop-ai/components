@@ -56,7 +56,6 @@ export default defineComponent({
 
     &__main-head {
         grid-area: h;
-        background-color: var(--dl-color-body-background);
     }
 
     &__content {
