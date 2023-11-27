@@ -301,7 +301,6 @@
                                 :opt="option"
                                 name="option"
                             >
-                                tetestestes
                                 <span
                                     v-if="fitContent"
                                     class="inner-option"
