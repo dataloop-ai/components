@@ -61,7 +61,7 @@ export default defineComponent({
 
     &__content {
         grid-area: p;
-        overflow-y: scroll;
+        overflow-y: auto;
         box-shadow: 1px 1px 1px var(--dl-color-separator);
         background-color: var(--dl-color-panel-background);
     }
