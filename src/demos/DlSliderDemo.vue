@@ -12,6 +12,19 @@
             :disabled="disabled"
             @change="handleChange"
         />
+
+        <dl-slider
+            v-model="value2"
+            width="500px"
+            text="slider"
+            :step="0.01"
+            :min="-10"
+            :max="10"
+            :slim="slim"
+            :readonly="readonly"
+            :disabled="disabled"
+            @change="handleChange"
+        />
         <div>
             <button @click="slim = !slim">
                 slim: {{ slim }}
@@ -42,6 +55,7 @@ export default defineComponent({
     data() {
         return {
             value: null,
+            value2: null,
             slim: false,
             disabled: false,
             readonly: false,
