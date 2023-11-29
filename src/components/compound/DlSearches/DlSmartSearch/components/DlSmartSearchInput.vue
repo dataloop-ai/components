@@ -335,7 +335,8 @@ export default defineComponent({
             }
         }
 
-        const setInputFromSuggestion = (value: string) => {
+        const setInputFromSuggestion = (suggestion: any) => {
+            const value = '' + suggestion
             let stringValue = ''
             let caretPosition = 0
             if (searchQuery.value.length) {
