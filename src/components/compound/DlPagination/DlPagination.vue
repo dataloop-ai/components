@@ -7,13 +7,24 @@
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
                 v-model="rowsPerPageState"
+                class="dl-pagination--sides dl-pagination--sides--left"
                 :options="rowsPerPageOptions"
                 :items-name="itemsName"
                 :disabled="disabled"
             />
             <div
+                v-else-if="withLegend"
+                class="dl-pagination--sides dl-pagination--sides--left"
+            />
+
+            <div
                 v-if="rowsPerPageState"
                 class="dl-pagination--navigation"
+                :class="
+                    withLegend || (withRowsPerPage && rowsPerPageState)
+                        ? ''
+                        : 'dl-pagination--navigation--maximized'
+                "
             >
                 <page-navigation
                     :model-value="value"
@@ -45,6 +56,11 @@
                 :to="rowTo"
                 :total="totalItems"
                 :items-name="itemsName"
+                class="dl-pagination--sides dl-pagination--sides--right"
+            />
+            <div
+                v-else-if="withRowsPerPage && rowsPerPageState"
+                class="dl-pagination--sides dl-pagination--sides--right"
             />
         </div>
     </div>
@@ -182,6 +198,7 @@ export default defineComponent({
 
     &--container {
         height: 100%;
+        width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -189,6 +206,16 @@ export default defineComponent({
 
     &--navigation {
         display: flex;
+        flex-grow: 1;
+        width: 60%;
+        justify-content: center;
+        &--maximized {
+            width: 100%;
+        }
+    }
+
+    &--sides {
+        width: 20%;
     }
 }
 </style>
