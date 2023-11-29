@@ -10,10 +10,17 @@
                 :options="rowsPerPageOptions"
                 :items-name="itemsName"
                 :disabled="disabled"
+                style="width: 20%"
             />
+            <div
+                v-else-if="withLegend"
+                style="width: 20%"
+            />
+
             <div
                 v-if="rowsPerPageState"
                 class="dl-pagination--navigation"
+                style="width: 60%"
             >
                 <page-navigation
                     :model-value="value"
@@ -45,6 +52,11 @@
                 :to="rowTo"
                 :total="totalItems"
                 :items-name="itemsName"
+                style="width: 20%"
+            />
+            <div
+                v-else-if="withRowsPerPage && rowsPerPageState"
+                style="width: 20%"
             />
         </div>
     </div>
@@ -182,6 +194,7 @@ export default defineComponent({
 
     &--container {
         height: 100%;
+        width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -189,6 +202,9 @@ export default defineComponent({
 
     &--navigation {
         display: flex;
+        flex-grow: 1;
+        width: 100%;
+        justify-content: center;
     }
 }
 </style>
