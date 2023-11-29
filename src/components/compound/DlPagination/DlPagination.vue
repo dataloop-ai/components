@@ -20,7 +20,11 @@
             <div
                 v-if="rowsPerPageState"
                 class="dl-pagination--navigation"
-                style="width: 60%"
+                :style="
+                    withLegend || (withRowsPerPage && rowsPerPageState)
+                        ? 'width: 60%'
+                        : 'width: 100%'
+                "
             >
                 <page-navigation
                     :model-value="value"
