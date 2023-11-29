@@ -55,7 +55,7 @@ export default defineComponent({
                 )}...${toDisplayString.slice(-2)}`
             }
 
-            let fromDisplayString = String(this.to)
+            let fromDisplayString = String(this.from)
             if (fromDisplayString.length > 3) {
                 fromDisplayString = `${fromDisplayString.slice(
                     0,
