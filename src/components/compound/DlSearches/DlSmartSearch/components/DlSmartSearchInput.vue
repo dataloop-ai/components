@@ -255,11 +255,8 @@ export default defineComponent({
         //#region hooks
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
-        const { suggestions, error, findSuggestions } = useSuggestions(
-            schema,
-            aliases,
-            { strict, omitSuggestions }
-        )
+        const { suggestions, error, findSuggestions, checkErrors } =
+            useSuggestions(schema, aliases, { strict, omitSuggestions })
         //#endregion
 
         //#region methods
@@ -328,6 +325,7 @@ export default defineComponent({
 
             nextTick(() => {
                 findSuggestions(value.substring(0, caretAt.value))
+                checkErrors(value)
             })
 
             if (!noEmit) {
@@ -492,6 +490,7 @@ export default defineComponent({
             }
             nextTick(() => {
                 findSuggestions('')
+                checkErrors('')
             })
         }
 
