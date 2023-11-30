@@ -101,7 +101,7 @@
                     :filter-term="filterTerm"
                     :fit-content="fitContent"
                     @update:model-value="handleCheckboxUpdate"
-                    @selected="handleSingleSelect"
+                    @selected="handleSingleSelect($event, true)"
                     @deselected="handleSingleDeselect"
                     @depth-change="$emit('depth-change')"
                 >
@@ -273,9 +273,11 @@ export default defineComponent({
             }
             return flattened
         },
-        handleSingleSelect(value?: any) {
+        handleSingleSelect(value?: any, skip?: boolean) {
             this.$emit('selected', value ?? this.value)
-
+            if (skip) {
+                return
+            }
             if (this.multiselect && this.selectChildren) {
                 const hasChildren = !!(
                     this.getOptionByValue(value ?? this.value) as DlSelectOption
@@ -300,9 +302,11 @@ export default defineComponent({
                 }
             }
         },
-        handleSingleDeselect(value?: any) {
+        handleSingleDeselect(value?: any, skip?: boolean) {
             this.$emit('deselected', value ?? this.value)
-
+            if (skip) {
+                return
+            }
             if (this.multiselect && this.selectChildren) {
                 const hasChildren = !!(
                     this.getOptionByValue(value ?? this.value) as DlSelectOption
