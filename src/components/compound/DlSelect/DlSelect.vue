@@ -446,6 +446,9 @@ export default defineComponent({
             type: String,
             default: null
         },
+        /**
+         * when multiselect is true, this will select all children of the selected option
+         */
         selectChildren: {
             type: Boolean,
             default: true
