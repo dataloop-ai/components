@@ -190,6 +190,7 @@
                     <dl-select-option
                         v-if="showAllItems"
                         :multiselect="multiselect"
+                        :select-children="selectChildren"
                         :with-wave="withWave"
                         clickable
                         :model-value="allFiltersModel"
@@ -270,6 +271,7 @@
                             :key="getKeyForOption(option)"
                             clickable
                             :multiselect="multiselect"
+                            :select-children="selectChildren"
                             :class="{
                                 selected:
                                     option === selectedOption &&
@@ -443,6 +445,10 @@ export default defineComponent({
         menuClass: {
             type: String,
             default: null
+        },
+        selectChildren: {
+            type: Boolean,
+            default: true
         }
     },
     emits: [
@@ -473,8 +479,8 @@ export default defineComponent({
         }
         const handleModelValueUpdate = (val: any) => {
             emit('update:model-value', val)
-            emit('change', val)
             emit('selected', val)
+            emit('change', val)
         }
 
         return {

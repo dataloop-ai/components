@@ -684,14 +684,14 @@ const treeOptions = [
         label: 'root1',
         value: 'root1',
         children: [
-            { label: 'child 1', value: 'c6' },
-            { label: 'child 2', value: 'c7' },
+            { label: 'child 1', value: 'c111' },
+            { label: 'child 2', value: 'c21' },
             {
                 label: 'child 3',
-                value: 'c8',
+                value: 'c31',
                 children: [
-                    { label: 'child 4', value: 'c9' },
-                    { label: 'child 5', value: 'c10' }
+                    { label: 'child 4', value: '41' },
+                    { label: 'child 5', value: '51' }
                 ]
             }
         ]
