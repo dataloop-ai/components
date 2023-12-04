@@ -134,7 +134,7 @@ export default defineComponent({
         },
         itemsName: {
             type: String,
-            default: null
+            default: 'rows'
         },
         withQuickNavigation: Boolean,
         withRowsPerPage: Boolean,
