@@ -151,6 +151,18 @@ export const useSuggestions = (
     const suggestions: Ref<Suggestion[]> = ref(sortedSuggestions)
     const error: Ref<string | null> = ref(null)
 
+    const checkErrors = (input: string) => {
+        input = input.replace(/\s+/g, ' ').trimStart()
+
+        const words = splitByQuotes(input, space)
+        const mergedWords = mergeWords(words)
+        const expressions = mapWordsToExpressions(mergedWords)
+
+        error.value = input.length
+            ? getError(schemaValue, aliasesArray, expressions, { strict })
+            : null
+    }
+
     const findSuggestions = (input: string) => {
         input = input.replace(/\s+/g, ' ').trimStart()
         localSuggestions = sortedSuggestions
@@ -288,17 +300,13 @@ export const useSuggestions = (
             localSuggestions = sortedSuggestions
         }
 
-        error.value = input.length
-            ? getError(schemaValue, aliasesArray, expressions, { strict })
-            : null
-
         suggestions.value = localSuggestions.filter(
             (value) =>
                 !omitSuggestions || !omitSuggestions.value.includes(value)
         )
     }
 
-    return { suggestions, findSuggestions, error }
+    return { suggestions, findSuggestions, error, checkErrors }
 }
 
 const errors = {
