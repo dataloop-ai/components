@@ -83,7 +83,9 @@
                 :key="`${componentId}-${getValue(child)}-${index}`"
             >
                 <dl-select-option
+                    :ref="`option-${getValue(child)}`"
                     :multiselect="multiselect"
+                    :select-children="selectChildren"
                     :count="count"
                     clickable
                     :model-value="modelValue"
@@ -99,7 +101,7 @@
                     :filter-term="filterTerm"
                     :fit-content="fitContent"
                     @update:model-value="handleCheckboxUpdate"
-                    @selected="handleSingleSelect"
+                    @selected="handleSingleSelect($event, true)"
                     @deselected="handleSingleDeselect"
                     @depth-change="$emit('depth-change')"
                 >
@@ -123,13 +125,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
-import { DlIcon, DlCheckbox } from '../../../essential'
+import { DlIcon, DlCheckbox, DlEllipsis } from '../../../essential'
 import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
 import { DlSelectOptionType, getCaseInsensitiveInput, getLabel } from '../utils'
-import { DlSelectedValueType } from '../../types'
+import { DlSelectedValueType, DlSelectOption } from '../../types'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -139,7 +141,8 @@ export default defineComponent({
         DlListItem,
         DlItemSection,
         DlCheckbox,
-        DlIcon
+        DlIcon,
+        DlEllipsis
     },
     model: {
         prop: 'modelValue',
@@ -177,6 +180,10 @@ export default defineComponent({
         fitContent: {
             type: Boolean,
             default: false
+        },
+        selectChildren: {
+            type: Boolean,
+            default: true
         }
     },
     emits: [
@@ -189,6 +196,7 @@ export default defineComponent({
     data() {
         return {
             showChildren: this.isExpanded,
+            updatingLeaf: false,
             componentId: v4(),
             uuid: `dl-select-option-${v4()}`
         }
@@ -252,14 +260,78 @@ export default defineComponent({
 
             return html
         },
-        handleSingleSelect(value?: any) {
-            this.$emit('selected', value ?? this.value)
+        getAllChildren(children: any[]) {
+            let flattened: any[] = []
+            if (!children) return flattened
+            for (const child of children) {
+                flattened.push(this.getOptionValue(child))
+                if (this.getChildren(child)) {
+                    flattened = flattened.concat(
+                        this.getAllChildren(this.getChildren(child))
+                    )
+                }
+            }
+            return flattened
         },
-        handleSingleDeselect(value?: any) {
+        handleSingleSelect(value?: any, skip?: boolean) {
+            this.$emit('selected', value ?? this.value)
+            if (skip) {
+                return
+            }
+            if (this.multiselect && this.selectChildren) {
+                const hasChildren = !!(
+                    this.getOptionByValue(value ?? this.value) as DlSelectOption
+                )?.children?.length
+                if (hasChildren) {
+                    this.updatingLeaf = true
+                    this.$nextTick(() => {
+                        // select all children rerecursively and update model value
+                        const children = this.getAllChildren(
+                            this.children ?? []
+                        )
+                        children.push(value ?? this.value)
+                        const newModelValue = Array.from(
+                            new Set([
+                                ...(this.modelValue as any[]),
+                                ...children
+                            ] as any)
+                        )
+                        this.$emit('update:model-value', newModelValue)
+                        this.updatingLeaf = false
+                    })
+                }
+            }
+        },
+        handleSingleDeselect(value?: any, skip?: boolean) {
             this.$emit('deselected', value ?? this.value)
+            if (skip) {
+                return
+            }
+            if (this.multiselect && this.selectChildren) {
+                const hasChildren = !!(
+                    this.getOptionByValue(value ?? this.value) as DlSelectOption
+                )?.children?.length
+                if (hasChildren) {
+                    this.updatingLeaf = true
+                    this.$nextTick(() => {
+                        // deselect all children recursively and update model value
+                        const children = this.getAllChildren(
+                            this.children ?? []
+                        )
+                        children.push(value ?? this.value)
+                        const newModelValue = (this.modelValue as any[]).filter(
+                            (v) => !children.includes(v)
+                        )
+                        this.$emit('update:model-value', newModelValue)
+                        this.updatingLeaf = false
+                    })
+                }
+            }
         },
         handleCheckboxUpdate(newVal: string[] | boolean, e: Event): void {
-            this.$emit('update:model-value', newVal, e)
+            if (!this.updatingLeaf) {
+                this.$emit('update:model-value', newVal, e)
+            }
         },
         handleClick(e: Event) {
             e.stopPropagation()
@@ -286,6 +358,19 @@ export default defineComponent({
         },
         getValue(option: any) {
             return typeof option === 'object' ? option.value : null
+        },
+        getOptionByValue(value: any): DlSelectOptionType {
+            if (this.value === value) {
+                return this as any as DlSelectOptionType
+            }
+            if (this.children) {
+                const child =
+                    this.children.find((child) => {
+                        return this.getValue(child) === value
+                    }) ?? null
+
+                return child as DlSelectOptionType
+            }
         },
         isReadonlyOption(option: any) {
             return !!option?.readonly

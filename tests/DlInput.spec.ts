@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, beforeAll, should } from 'vitest'
+import { describe, it, expect, beforeAll, should, afterAll } from 'vitest'
 import { DlInput } from '../src/components'
+import { before } from 'lodash'
 
 describe('DlInput component', () => {
     describe('small input', () => {
@@ -282,6 +283,67 @@ describe('DlInput component', () => {
 
         it('should set input value', () => {
             expect(wrapper.vm.$refs.input.innerHTML).toMatch('text')
+        })
+    })
+    describe('when input has spaces', () => {
+        let wrapper: any
+        beforeAll(async () => {
+            wrapper = mount(DlInput, {
+                props: {
+                    modelValue: 'text with spaces',
+                    debounce: 0
+                }
+            })
+
+            await wrapper.vm.$nextTick()
+            // @ts-ignore
+            await window.delay(100)
+        })
+
+        it('should change the spaces with &nbsp; in the ref', () => {
+            expect(wrapper.vm.$refs.input.innerHTML).toMatch(
+                'text&nbsp;with&nbsp;spaces'
+            )
+        })
+
+        describe('when writing new text', () => {
+            beforeAll(async () => {
+                //@ts-ignore
+                window.DlComponents.disableDebounce = true
+                wrapper.vm.isInternalChange = false
+                await wrapper.vm.onModelValueChange('text with spaces test')
+                await wrapper.vm.$nextTick()
+                // @ts-ignore
+                await window.delay(100)
+            })
+            afterAll(() => {
+                //@ts-ignore
+                window.DlComponents.disableDebounce = false
+            })
+
+            it('should change the spaces with &nbsp; in the ref', () => {
+                expect(wrapper.vm.$refs.input.innerHTML).toMatch(
+                    'text&nbsp;with&nbsp;spaces&nbsp;test'
+                )
+            })
+        })
+
+        describe('When emitting change', () => {
+            beforeAll(async () => {
+                await wrapper.vm.onChange({
+                    target: { innerText: 'text&nbsp;with&nbsp;spaces test' }
+                })
+                await wrapper.vm.$nextTick()
+                // @ts-ignore
+                await window.delay(100)
+            })
+
+            it('should not have &nbsp; in the modelValue', () => {
+                expect(wrapper.vm.modelValue).toMatch('text with spaces')
+                expect(wrapper.emitted()['update:model-value']).toEqual([
+                    ['text with spaces test']
+                ])
+            })
         })
     })
 })
