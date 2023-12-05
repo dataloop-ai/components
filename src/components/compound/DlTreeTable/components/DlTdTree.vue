@@ -4,6 +4,7 @@
         :class="classes"
         :style="styles"
         :data-col-index="colIndex"
+        style="width: 100%"
     >
         <slot name="icon" />
         <dl-tooltip v-if="hasEllipsis">

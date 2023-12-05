@@ -23,7 +23,7 @@
             :hide-header="true"
             :bordered="false"
             :columns="columns"
-            selection="none"
+            selection="multiple"
             :loading="false"
             :filter="inputValue"
             :rows="rows"

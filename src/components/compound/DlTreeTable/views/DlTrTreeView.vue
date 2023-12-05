@@ -20,26 +20,17 @@
                 size="12px"
             />
         </td>
-        <td class="chevron-icon">
-            <DlIcon
-                v-if="(row.children || []).length > 0"
-                :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
-                @click.stop.prevent="emitUpdateExpandedRow"
-            />
-        </td>
         <td
             v-if="hasSelectionMode"
-            class="dl-table--col-auto-with"
+            style="width: 30px"
         >
             <slot
                 name="body-selection"
                 v-bind="bindBodySelection"
             >
                 <DlCheckbox
-                    style="padding-left: 10px"
                     :color="color"
                     :model-value="modelValue"
-                    :indeterminate-value="true"
                     :false-value="false"
                     :true-value="true"
                     @update:model-value="
@@ -64,15 +55,26 @@
             "
             :col-index="colIndex"
         >
-            <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
-                {{ getCellValue(col, row) }}
-            </template>
-            <span v-else>
-                <slot
-                    v-bind="bindBodyCellScope(col)"
-                    :name="getSlotByName(col.name)"
-                />
-            </span>
+            <div style="display: flex; width: 100%; align-items: center">
+                <div class="chevron-icon">
+                    <DlIcon
+                        v-if="(row.children || []).length > 0"
+                        :icon="`icon-dl-${
+                            row.isExpanded ? 'down' : 'right'
+                        }-chevron`"
+                        @click.stop.prevent="emitUpdateExpandedRow"
+                    />
+                </div>
+                <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
+                    {{ getCellValue(col, row) }}
+                </template>
+                <span v-else>
+                    <slot
+                        v-bind="bindBodyCellScope(col)"
+                        :name="getSlotByName(col.name)"
+                    />
+                </span>
+            </div>
         </DlTdTree>
     </DlTrTree>
 </template>
