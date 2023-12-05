@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div>Label picker component</div>
         <DlLabelPicker
             :items="items"
             @selected-label="setSelectedEvent"
