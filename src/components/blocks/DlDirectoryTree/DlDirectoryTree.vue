@@ -15,6 +15,7 @@
             row-key="identifier"
             color="dl-color-secondary"
             @row-click="$emit('click', $event)"
+            @selected-items="$emit('selected', $event)"
         >
             <template #body-cell-displayLabel="props">
                 <DlLabel
@@ -73,7 +74,7 @@ export default defineComponent({
             default: '200px'
         }
     },
-    emits: ['click', 'add-dir', 'delete-dir'],
+    emits: ['click', 'selected', 'add-dir', 'delete-dir'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
 

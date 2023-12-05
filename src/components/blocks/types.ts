@@ -1,2 +1,2 @@
 export * from './DlLabelPicker/types'
-// export * from './DlDirectoryTree/types'
+export * from './DlDirectoryTree/types'
