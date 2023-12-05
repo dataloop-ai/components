@@ -11,9 +11,10 @@
             :loading="false"
             :filter="inputValue"
             :rows="rows"
+            shallow-select
             row-key="identifier"
             color="dl-color-secondary"
-            @row-click="handleRowClick"
+            @row-click="$emit('click', $event)"
         >
             <template #body-cell-displayLabel="props">
                 <DlLabel
@@ -21,18 +22,26 @@
                     style="width: 100%"
                 >
                     <template #actions>
-                        <div
-                            style="
-                                display: flex;
-                                gap: 5px;
-                                align-items: center;
-                                height: 100%;
-                                margin-right: 5px;
-                            "
-                        >
-                            <dl-icon icon="icon-dl-add" />
-                            <dl-icon icon="icon-dl-delete" />
-                        </div>
+                        <slot name="actions">
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 5px;
+                                    align-items: center;
+                                    height: 100%;
+                                    margin-right: 5px;
+                                "
+                            >
+                                <dl-icon
+                                    icon="icon-dl-add"
+                                    @click="$emit('add-dir', props.row)"
+                                />
+                                <dl-icon
+                                    icon="icon-dl-delete"
+                                    @click="$emit('delete-dir', props.row)"
+                                />
+                            </div>
+                        </slot>
                     </template>
                 </DlLabel>
             </template>
@@ -64,7 +73,7 @@ export default defineComponent({
             default: '200px'
         }
     },
-    emits: ['selected-label', 'click'],
+    emits: ['click', 'add-dir', 'delete-dir'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
 
@@ -80,33 +89,6 @@ export default defineComponent({
             }
         ]
 
-        const inputValue = ref('')
-        const currentSelectedLabel = ref<DlDirectoryTreeItem>(null)
-
-        const handleRowClick = (_: MouseEvent, item: DlDirectoryTreeItem) => {}
-
-        const placeHolderText = computed(() => {
-            if (!currentSelectedLabel.value) {
-                return `No items selected`
-            }
-
-            return currentSelectedLabel.value.displayLabel
-        })
-
-        const selectedColor = computed(() => {
-            if (!currentSelectedLabel.value) {
-                return null
-            }
-            return currentSelectedLabel.value.color
-        })
-
-        const inputStyles = computed(() => {
-            if (!selectedColor.value) {
-                return {}
-            }
-            return { 'border-left': `2px solid ${selectedColor.value}` }
-        })
-
         const rows = computed<DlTableRow[]>(() => {
             return items.value?.map((i: DlDirectoryTreeItem) => ({
                 ...i,
@@ -115,11 +97,7 @@ export default defineComponent({
         })
 
         return {
-            handleRowClick,
-            inputValue,
             columns,
-            placeHolderText,
-            inputStyles,
             rows
         }
     }
