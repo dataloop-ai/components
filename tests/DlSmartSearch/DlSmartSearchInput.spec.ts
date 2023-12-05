@@ -334,7 +334,7 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.showDatePicker).toBeTruthy()
 
                 wrapper.vm.onDateSelection({ from: new Date(), to: new Date() })
-                wrapper.vm.onEscapeKey()
+                wrapper.vm.onDateSelectionApply()
                 //@ts-ignore
                 await window.delay(500)
                 await wrapper.vm.$nextTick()
