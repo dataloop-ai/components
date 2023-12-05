@@ -39,6 +39,13 @@
                 />
             </slot>
         </td>
+        <td class="chevron-icon">
+            <DlIcon
+                v-if="(row.children || []).length > 0"
+                :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
+                @click.stop.prevent="emitUpdateExpandedRow"
+            />
+        </td>
         <DlTdTree
             v-for="(col, colIndex) in computedCols"
             :key="colIndex"
@@ -55,26 +62,15 @@
             "
             :col-index="colIndex"
         >
-            <div style="display: flex; width: 100%; align-items: center">
-                <div class="chevron-icon">
-                    <DlIcon
-                        v-if="(row.children || []).length > 0"
-                        :icon="`icon-dl-${
-                            row.isExpanded ? 'down' : 'right'
-                        }-chevron`"
-                        @click.stop.prevent="emitUpdateExpandedRow"
-                    />
-                </div>
-                <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
-                    {{ getCellValue(col, row) }}
-                </template>
-                <span v-else>
-                    <slot
-                        v-bind="bindBodyCellScope(col)"
-                        :name="getSlotByName(col.name)"
-                    />
-                </span>
-            </div>
+            <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
+                {{ getCellValue(col, row) }}
+            </template>
+            <span v-else>
+                <slot
+                    v-bind="bindBodyCellScope(col)"
+                    :name="getSlotByName(col.name)"
+                />
+            </span>
         </DlTdTree>
     </DlTrTree>
 </template>

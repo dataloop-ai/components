@@ -15,12 +15,26 @@
             color="dl-color-secondary"
             @row-click="handleRowClick"
         >
-            <template #body-cell-displayLabel="item">
+            <template #body-cell-displayLabel="props">
                 <DlLabel
-                    :text="item.row.displayLabel"
-                    :indicator-color="item.row.color"
-                    class="dl-label-picker-item"
-                />
+                    :text="props.row.displayLabel"
+                    style="width: 100%"
+                >
+                    <template #actions>
+                        <div
+                            style="
+                                display: flex;
+                                gap: 5px;
+                                align-items: center;
+                                height: 100%;
+                                margin-right: 5px;
+                            "
+                        >
+                            <dl-icon icon="icon-dl-add" />
+                            <dl-icon icon="icon-dl-delete" />
+                        </div>
+                    </template>
+                </DlLabel>
             </template>
         </dl-tree-table>
     </div>
@@ -28,18 +42,22 @@
 
 <script lang="ts">
 import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
+import { DlLabel, DlIcon } from '../../essential'
 import { DlTreeTable } from '../../compound'
 import { DlTableColumn, DlTableRow } from '../../types'
+import { DlDirectoryTreeItem } from './types'
 
 export default defineComponent({
     name: 'DlDirectoryTree',
     components: {
-        DlTreeTable
+        DlTreeTable,
+        DlLabel,
+        DlIcon
     },
     props: {
         items: {
-            type: Array as PropType<any[]>,
-            default: () => [] as PropType<any[]>
+            type: Array as PropType<DlDirectoryTreeItem[]>,
+            default: () => [] as PropType<DlDirectoryTreeItem[]>
         },
         width: {
             type: String,
@@ -63,13 +81,9 @@ export default defineComponent({
         ]
 
         const inputValue = ref('')
-        const currentSelectedLabel = ref<any>(null)
+        const currentSelectedLabel = ref<DlDirectoryTreeItem>(null)
 
-        const handleRowClick = (_: MouseEvent, item: any) => {
-            currentSelectedLabel.value = item
-            emit('selected-label', item)
-            emit('click', item)
-        }
+        const handleRowClick = (_: MouseEvent, item: DlDirectoryTreeItem) => {}
 
         const placeHolderText = computed(() => {
             if (!currentSelectedLabel.value) {
@@ -94,7 +108,7 @@ export default defineComponent({
         })
 
         const rows = computed<DlTableRow[]>(() => {
-            return items.value?.map((i: any) => ({
+            return items.value?.map((i: DlDirectoryTreeItem) => ({
                 ...i,
                 name: i.displayLabel
             }))
