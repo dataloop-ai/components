@@ -6,7 +6,14 @@
             @selected="setSelectedEvent"
         />
 
-        {{ lastSelected }}
+        <div>
+            <div>last selection event</div>
+            {{ lastSelected }}
+        </div>
+        <div>
+            <div>last selected items event</div>
+            {{ lastSelected }}
+        </div>
     </div>
 </template>
 
@@ -62,6 +69,7 @@ export default defineComponent({
     setup() {
         const items = ref(rows)
         const lastSelected = ref<DlDirectoryTreeItem>(null)
+        const lastItems = ref<DlDirectoryTreeItem>(null)
         const setSelectedEvent = (item: DlDirectoryTreeItem) => {
             lastSelected.value = item
         }

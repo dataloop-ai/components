@@ -15,7 +15,7 @@
             row-key="identifier"
             color="dl-color-secondary"
             @row-click="$emit('click', $event)"
-            @selected-items="$emit('selected', $event)"
+            @selection-change="$emit('selected', $event)"
         >
             <template #body-cell-displayLabel="props">
                 <DlLabel
