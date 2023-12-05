@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 200px">
+    <div :style="`width: ${width}`">
         <dl-input
             v-model="inputValue"
             :placeholder="placeHolderText"
@@ -61,6 +61,10 @@ export default defineComponent({
         items: {
             type: Array as PropType<DlLabelPickerItem[]>,
             default: () => [] as PropType<DlLabelPickerItem[]>
+        },
+        width: {
+            type: String,
+            default: '200px'
         }
     },
     emits: ['selected-label', 'click'],
