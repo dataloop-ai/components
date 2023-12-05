@@ -62,15 +62,12 @@
             "
             :col-index="colIndex"
         >
-            <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
+            <slot
+                v-bind="bindBodyCellScope(col)"
+                :name="getSlotByName(col.name)"
+            >
                 {{ getCellValue(col, row) }}
-            </template>
-            <span v-else>
-                <slot
-                    v-bind="bindBodyCellScope(col)"
-                    :name="getSlotByName(col.name)"
-                />
-            </span>
+            </slot>
         </DlTdTree>
     </DlTrTree>
 </template>
