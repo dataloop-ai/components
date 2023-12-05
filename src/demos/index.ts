@@ -67,6 +67,7 @@ import DlThumbnailGallery from './DlThumbnailGalleryDemo.vue'
 import DlLayoutDemo from './DlLayoutDemo.vue'
 import { DlCodeEditorDemo } from './DlCodeEditor'
 import DlLabelPickerDemo from './DlLabelPickerDemo.vue'
+import DlDirectoryTreeDemo from './DlDirectoryTreeDemo.vue'
 
 export default {
     AvatarDemo,
@@ -134,5 +135,6 @@ export default {
     DlThumbnailGallery,
     DlCodeEditorDemo,
     DlLayoutDemo,
-    DlLabelPickerDemo
+    DlLabelPickerDemo,
+    DlDirectoryTreeDemo
 }
