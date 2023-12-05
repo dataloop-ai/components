@@ -263,6 +263,10 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        indentedChevron: {
+            type: Boolean,
+            default: false
+        },
         /**
          * Scrolling delay
          */
@@ -288,7 +292,7 @@ export default defineComponent({
         const resizableState = ref([])
         const hasFlatTreeData = true
 
-        const { rowKey, shallowSelect } = toRefs(props)
+        const { rowKey, shallowSelect, indentedChevron } = toRefs(props)
 
         const vue2h = ref()
 
@@ -512,6 +516,7 @@ export default defineComponent({
                 ...computedCellSlots.value
             }
             return renderComponent(vue2h.value, DlTrTreeView, {
+                indentedChevron: indentedChevron.value,
                 row,
                 rowIndex: index,
                 rowKey: props.rowKey,

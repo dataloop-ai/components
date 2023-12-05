@@ -12,6 +12,7 @@
             :filter="inputValue"
             :rows="rows"
             shallow-select
+            indented-chevron
             row-key="identifier"
             color="dl-color-secondary"
             @row-click="$emit('click', $event)"
