@@ -1,21 +1,5 @@
 <template>
-    <div style="width: 200px">
-        <dl-input
-            v-model="inputValue"
-            :placeholder="placeHolderText"
-            size="l"
-            has-prepend
-            padding-prop="0px 0px 0px 0px"
-            :style="inputStyles"
-        >
-            <template #prepend>
-                <dl-icon
-                    style="margin-bottom: 5px"
-                    icon="icon-dl-search"
-                    size="12px"
-                />
-            </template>
-        </dl-input>
+    <div :style="`width: ${width}`">
         <dl-tree-table
             draggable="none"
             separator="none"
@@ -44,22 +28,22 @@
 
 <script lang="ts">
 import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
-import { DlLabel, DlIcon } from '../../essential'
-import { DlInput, DlTreeTable } from '../../compound'
+import { DlTreeTable } from '../../compound'
 import { DlTableColumn, DlTableRow } from '../../types'
 
 export default defineComponent({
     name: 'DlDirectoryTree',
     components: {
-        DlInput,
-        DlIcon,
-        DlLabel,
         DlTreeTable
     },
     props: {
         items: {
             type: Array as PropType<any[]>,
             default: () => [] as PropType<any[]>
+        },
+        width: {
+            type: String,
+            default: '200px'
         }
     },
     emits: ['selected-label', 'click'],

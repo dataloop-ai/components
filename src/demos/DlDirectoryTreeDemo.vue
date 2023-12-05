@@ -1,11 +1,9 @@
 <template>
     <div>
-        <div>Label picker component</div>
         <DlDirectoryTree
             :items="items"
-            @selected-label="setSelectedEvent"
+            style="width: 500px"
         />
-        <div>last selected: {{ lastSelected }}</div>
     </div>
 </template>
 
