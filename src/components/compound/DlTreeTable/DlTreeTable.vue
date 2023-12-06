@@ -259,6 +259,14 @@ export default defineComponent({
                     icon: 'icon-dl-dataset-filled'
                 } as unknown as PropType<DlEmptyStateProps>)
         },
+        shallowSelect: {
+            type: Boolean,
+            default: false
+        },
+        indentedChevron: {
+            type: Boolean,
+            default: false
+        },
         /**
          * Scrolling delay
          */
@@ -283,6 +291,8 @@ export default defineComponent({
         const denseState = ref([])
         const resizableState = ref([])
         const hasFlatTreeData = true
+
+        const { rowKey, shallowSelect, indentedChevron } = toRefs(props)
 
         const vue2h = ref()
 
@@ -413,12 +423,20 @@ export default defineComponent({
             event: any,
             row: any
         ) => {
-            const { childrenKeys, childrenCollection } = getFromChildren(
-                row,
-                props.rowKey
-            )
+            if (shallowSelect.value) {
+                const key =
+                    typeof rowKey.value === 'function'
+                        ? row[rowKey.value()]
+                        : row[rowKey.value]
+                updateSelection([key], [row], adding, event)
+            } else {
+                const { childrenKeys, childrenCollection } = getFromChildren(
+                    row,
+                    props.rowKey
+                )
 
-            updateSelection(childrenKeys, childrenCollection, adding, event)
+                updateSelection(childrenKeys, childrenCollection, adding, event)
+            }
         }
         const headerSelectedValue = computed(() => {
             if (selectedData.value.length === tableRows.value.length)
@@ -498,6 +516,7 @@ export default defineComponent({
                 ...computedCellSlots.value
             }
             return renderComponent(vue2h.value, DlTrTreeView, {
+                indentedChevron: indentedChevron.value,
                 row,
                 rowIndex: index,
                 rowKey: props.rowKey,
@@ -808,6 +827,7 @@ export default defineComponent({
     // @ts-ignore
     render(vue2h: any) {
         this.vue2h = vue2h
+
         const tableBodySlot = isVue2
             ? this.$slots['table-body'] &&
               (() => (this.$slots['table-body'] as any)?.pop())
@@ -852,20 +872,24 @@ export default defineComponent({
             },
             scopedSlots: {
                 'header-selection': () =>
-                    renderComponent(
-                        vue2h,
-                        DlCheckbox,
-                        {
-                            color: this.color,
-                            modelValue: this.headerSelectedValue,
-                            indeterminateValue: true,
-                            'onUpdate:modelValue': this.onMultipleSelectionSet,
-                            on: {
-                                'update:modelValue': this.onMultipleSelectionSet
-                            }
-                        },
-                        (): [] => []
-                    ),
+                    this.shallowSelect
+                        ? renderComponent(vue2h, 'div', {})
+                        : renderComponent(
+                              vue2h,
+                              DlCheckbox,
+                              {
+                                  color: this.color,
+                                  modelValue: this.headerSelectedValue,
+                                  indeterminateValue: true,
+                                  'onUpdate:modelValue':
+                                      this.onMultipleSelectionSet,
+                                  on: {
+                                      'update:modelValue':
+                                          this.onMultipleSelectionSet
+                                  }
+                              },
+                              (): [] => []
+                          ),
                 tbody
             }
         })

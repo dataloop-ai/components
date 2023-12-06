@@ -1,38 +1,39 @@
 <template>
     <div>
-        <DlLabelPicker
+        <DlDirectoryTree
             :items="items"
-            @selected-label="setSelectedEvent"
+            style="width: 500px"
+            @selected="setSelectedEvent"
         />
-        <div>last selected: {{ lastSelected }}</div>
+
+        <div>
+            <div>last selection event</div>
+            {{ lastSelected }}
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { DlLabelPicker } from '../components'
+import { DlDirectoryTree } from '../components'
 import { defineComponent, ref } from 'vue-demi'
-import { DlLabelPickerItem } from '../types'
+import { DlDirectoryTreeItem } from '../types'
 
-const rows: DlLabelPickerItem[] = [
+const rows: DlDirectoryTreeItem[] = [
     {
         identifier: 'a',
         displayLabel: 'Frozen Yogurt',
-        color: '#ff0000',
         children: [
             {
                 identifier: 'b',
                 displayLabel: 'hello',
-                color: '#ffff00',
                 children: [
                     {
                         identifier: 'c',
                         displayLabel: 'test 2',
-                        color: '#00ff00',
                         children: [
                             {
                                 identifier: 'd',
                                 displayLabel: 'test 3',
-                                color: '#ff00aa',
                                 children: []
                             }
                         ]
@@ -40,7 +41,6 @@ const rows: DlLabelPickerItem[] = [
                     {
                         identifier: 'e',
                         displayLabel: 'test 4',
-                        color: '#ff00ff',
                         children: []
                     }
                 ]
@@ -50,24 +50,22 @@ const rows: DlLabelPickerItem[] = [
     {
         identifier: 'f',
         displayLabel: 'test 5',
-        color: '#f0ffaf',
         children: []
     },
     {
         identifier: 'g',
         displayLabel: 'test 6',
-        color: '#2f3fff',
         children: []
     }
 ]
 export default defineComponent({
     components: {
-        DlLabelPicker
+        DlDirectoryTree
     },
     setup() {
         const items = ref(rows)
-        const lastSelected = ref<DlLabelPickerItem>(null)
-        const setSelectedEvent = (item: DlLabelPickerItem) => {
+        const lastSelected = ref<DlDirectoryTreeItem>(null)
+        const setSelectedEvent = (item: DlDirectoryTreeItem) => {
             lastSelected.value = item
         }
         return { items, lastSelected, setSelectedEvent }

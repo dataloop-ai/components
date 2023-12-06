@@ -39,6 +39,16 @@
                 />
             </slot>
         </td>
+        <td
+            v-if="!indentedChevron"
+            class="chevron-icon"
+        >
+            <DlIcon
+                v-if="(row.children || []).length > 0"
+                :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
+                @click.stop.prevent="emitUpdateExpandedRow"
+            />
+        </td>
         <DlTdTree
             v-for="(col, colIndex) in computedCols"
             :key="colIndex"
@@ -55,26 +65,36 @@
             "
             :col-index="colIndex"
         >
-            <div style="display: flex; width: 100%; align-items: center">
-                <div class="chevron-icon">
-                    <DlIcon
-                        v-if="(row.children || []).length > 0"
-                        :icon="`icon-dl-${
-                            row.isExpanded ? 'down' : 'right'
-                        }-chevron`"
-                        @click.stop.prevent="emitUpdateExpandedRow"
-                    />
-                </div>
-                <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
-                    {{ getCellValue(col, row) }}
-                </template>
-                <span v-else>
+            <template v-if="indentedChevron">
+                <div style="display: flex; width: 100%; align-items: center">
+                    <div class="chevron-icon">
+                        <DlIcon
+                            v-if="
+                                (row.children || []).length > 0 &&
+                                    colIndex === 0
+                            "
+                            :icon="`icon-dl-${
+                                row.isExpanded ? 'down' : 'right'
+                            }-chevron`"
+                            @click.stop.prevent="emitUpdateExpandedRow"
+                        />
+                    </div>
                     <slot
                         v-bind="bindBodyCellScope(col)"
                         :name="getSlotByName(col.name)"
-                    />
-                </span>
-            </div>
+                    >
+                        {{ getCellValue(col, row) }}
+                    </slot>
+                </div>
+            </template>
+            <template v-else>
+                <slot
+                    v-bind="bindBodyCellScope(col)"
+                    :name="getSlotByName(col.name)"
+                >
+                    {{ getCellValue(col, row) }}
+                </slot>
+            </template>
         </DlTdTree>
     </DlTrTree>
 </template>
@@ -161,6 +181,10 @@ export default defineComponent({
         modelValue: {
             type: [String, Boolean],
             default: null
+        },
+        indentedChevron: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [

@@ -85,18 +85,6 @@ export function useTreeTableRowSelection(
     ) {
         emit('selection', { rows, added, keys, evt })
 
-        /*
-        const payload =
-            singleSelection.value === true
-                ? added === true
-                    ? rows
-                    : []
-                : added === true
-                ? props.selected.concat(rows as string[])
-                : props.selected.filter(
-                      (row) => keys.includes(getRowKey.value(row)) === false
-                  )*/
-
         let payload: any
         if (singleSelection.value === true) {
             if (added === true) {
@@ -115,6 +103,8 @@ export function useTreeTableRowSelection(
         }
 
         selectedRows.value = payload
+
+        emit('selection-change', selectedRows.value)
 
         const { selectedItems } = convertToNestedObject(payload)
         selectedItemsNested.value = selectedItems
@@ -137,36 +127,37 @@ export function useTreeTableRowSelection(
         rowKey: string | Function,
         rowKeyValue: string
     ): booleanStringPartial {
-        let getOriginalRowByRowKey: any
-        let getSelectedRowByRowKey: Record<string, any>
+        //todo: WTF is this blob of code... it does nothing..
+        // let getOriginalRowByRowKey: any
+        // let getSelectedRowByRowKey: Record<string, any>
 
-        if (typeof rowKey === 'string') {
-            const originalRows = selectedRows.value.filter((item) =>
-                isIncludedInSelectedNestedItems(item, rowKey)
-            )
-            getOriginalRowByRowKey = originalRows.find(
-                (originalItem: any) => originalItem[rowKey] === rowKeyValue
-            )
-            getSelectedRowByRowKey = selectedItemsNested.value.find(
-                (selectedItem: any) => {
-                    if (getOriginalRowByRowKey) {
-                        return (
-                            selectedItem[rowKey] ===
-                            getOriginalRowByRowKey[rowKey]
-                        )
-                    }
-                    return false
-                }
-            )
-        }
-        if (getSelectedRowByRowKey && getOriginalRowByRowKey) {
-            if (
-                getOriginalRowByRowKey.children?.length !==
-                getSelectedRowByRowKey.children?.length
-            ) {
-                return 'partial'
-            }
-        }
+        // if (typeof rowKey === 'string') {
+        //     const originalRows = selectedRows.value.filter((item) =>
+        //         isIncludedInSelectedNestedItems(item, rowKey)
+        //     )
+        //     getOriginalRowByRowKey = originalRows.find(
+        //         (originalItem: any) => originalItem[rowKey] === rowKeyValue
+        //     )
+        //     getSelectedRowByRowKey = selectedItemsNested.value.find(
+        //         (selectedItem: any) => {
+        //             if (getOriginalRowByRowKey) {
+        //                 return (
+        //                     selectedItem[rowKey] ===
+        //                     getOriginalRowByRowKey[rowKey]
+        //                 )
+        //             }
+        //             return false
+        //         }
+        //     )
+        // }
+        // if (getSelectedRowByRowKey && getOriginalRowByRowKey) {
+        //     if (
+        //         getOriginalRowByRowKey.children?.length !==
+        //         getSelectedRowByRowKey.children?.length
+        //     ) {
+        //         return 'partial'
+        //     }
+        // }
 
         return selectedKeys.value[rowKeyValue] === true
     }
