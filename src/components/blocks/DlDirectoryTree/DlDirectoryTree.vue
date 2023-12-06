@@ -1,10 +1,26 @@
 <template>
     <div :style="`width: ${width}`">
+        <dl-input
+            v-model="inputValue"
+            placeholder="Search a folder"
+            size="m"
+            has-prepend
+            padding-prop="0px 0px 0px 0px"
+        >
+            <template #prepend>
+                <dl-icon
+                    style="margin-bottom: 5px"
+                    icon="icon-dl-search"
+                    size="12px"
+                />
+            </template>
+        </dl-input>
         <dl-tree-table
             draggable="none"
             separator="none"
             :hide-pagination="true"
-            :hide-header="true"
+            hide-header
+            hide-bottom
             :bordered="false"
             :columns="columns"
             selection="multiple"
@@ -19,6 +35,14 @@
             @selection-change="$emit('selected', $event)"
         >
             <template #body-cell-displayLabel="props">
+                <dl-icon
+                    :icon="
+                        props.row.isExpanded
+                            ? 'icon-dl-open-folder'
+                            : 'icon-dl-folder'
+                    "
+                    style="margin-right: 6px"
+                />
                 <DlLabel
                     :text="props.row.displayLabel"
                     style="width: 100%"
@@ -54,7 +78,7 @@
 <script lang="ts">
 import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
-import { DlTreeTable } from '../../compound'
+import { DlTreeTable, DlInput } from '../../compound'
 import { DlTableColumn, DlTableRow } from '../../types'
 import { DlDirectoryTreeItem } from './types'
 
@@ -63,7 +87,8 @@ export default defineComponent({
     components: {
         DlTreeTable,
         DlLabel,
-        DlIcon
+        DlIcon,
+        DlInput
     },
     props: {
         items: {
@@ -78,7 +103,6 @@ export default defineComponent({
     emits: ['click', 'selected', 'add-dir', 'delete-dir'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
-
         const columns: DlTableColumn[] = [
             {
                 name: 'displayLabel',
@@ -91,6 +115,8 @@ export default defineComponent({
             }
         ]
 
+        const inputValue = ref('')
+
         const rows = computed<DlTableRow[]>(() => {
             return items.value?.map((i: DlDirectoryTreeItem) => ({
                 ...i,
@@ -100,7 +126,8 @@ export default defineComponent({
 
         return {
             columns,
-            rows
+            rows,
+            inputValue
         }
     }
 })

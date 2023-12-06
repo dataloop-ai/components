@@ -468,6 +468,13 @@ export default defineComponent({
             emit('selected-items', payload)
         }
         const emitRowClick = (...payload: any) => {
+            // todo - fix
+            if (shallowSelect.value) {
+                updateSelectionHierarchy(
+                    !isRowSelected(props.rowKey, getRowKey.value(payload[1])),
+                    ...payload
+                )
+            }
             emit('row-click', ...payload)
         }
         const emitRowDblclick = (...payload: any) => {
@@ -524,7 +531,13 @@ export default defineComponent({
                     ? 'selected'
                     : '',
                 level,
-                class: 'nested-element dl-tr',
+                // todo - fix
+                class: `nested-element dl-tr ${
+                    shallowSelect.value &&
+                    isRowSelected(props.rowKey, getRowKey.value(row))
+                        ? 'selected'
+                        : ''
+                }`,
                 'data-level': level,
                 'data-id': row.id,
                 hasAnyAction: tableRootRef.value.hasAnyAction,
@@ -849,6 +862,8 @@ export default defineComponent({
             loading: this.loading,
             rows: this.computedFilter,
             resizable: this.resizable,
+            hideHeader: this.hideHeader,
+            hideBottom: this.hideBottom,
             rowKey: this.rowKey,
             color: this.color,
             title: this.title,
