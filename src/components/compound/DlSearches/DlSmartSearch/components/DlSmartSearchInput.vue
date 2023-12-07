@@ -84,6 +84,18 @@
                     :single-selection="true"
                     @change="onDateSelection"
                 />
+                <div class="dl-smart-search-input__date-picker-buttons">
+                    <dl-button
+                        label="Cancel"
+                        outlined
+                        @mousedown="onDateSelectionCancel"
+                    />
+                    <dl-button
+                        label="Apply"
+                        :disabled="!datePickerSelection"
+                        @mousedown="onDateSelectionApply"
+                    />
+                </div>
             </div>
         </dl-menu>
     </div>
@@ -118,6 +130,7 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
+    removeDateInterval,
     updateEditor,
     isEligibleToChange,
     createColorSchema,
@@ -255,11 +268,8 @@ export default defineComponent({
         //#region hooks
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
-        const { suggestions, error, findSuggestions } = useSuggestions(
-            schema,
-            aliases,
-            { strict, omitSuggestions }
-        )
+        const { suggestions, error, findSuggestions, checkErrors } =
+            useSuggestions(schema, aliases, { strict, omitSuggestions })
         //#endregion
 
         //#region methods
@@ -328,6 +338,7 @@ export default defineComponent({
 
             nextTick(() => {
                 findSuggestions(value.substring(0, caretAt.value))
+                checkErrors(value)
             })
 
             if (!noEmit) {
@@ -492,6 +503,7 @@ export default defineComponent({
             }
             nextTick(() => {
                 findSuggestions('')
+                checkErrors('')
             })
         }
 
@@ -539,8 +551,27 @@ export default defineComponent({
 
         const onDateSelection = (value: DateInterval) => {
             datePickerSelection.value = value
-            searchQuery.value = replaceDateInterval(searchQuery.value, value)
-            input.value.innerHTML = searchQuery.value
+        }
+
+        const onDateSelectionCancel = () => {
+            searchQuery.value = removeDateInterval(searchQuery.value)
+            showDatePicker.value = false
+            showSuggestions.value = true
+            datePickerSelection.value = null
+            setInputValue(searchQuery.value + ' ', { noEmit: true })
+            setCaretAtTheEnd(input.value)
+        }
+
+        const onDateSelectionApply = () => {
+            searchQuery.value = replaceDateInterval(
+                searchQuery.value,
+                datePickerSelection.value
+            )
+            showDatePicker.value = false
+            showSuggestions.value = true
+            datePickerSelection.value = null
+            setInputValue(searchQuery.value + ' ', { noEmit: true })
+            setCaretAtTheEnd(input.value)
         }
 
         const readModelValue = (val: { [key: string]: any }) => {
@@ -626,15 +657,6 @@ export default defineComponent({
 
         const onEscapeKey = () => {
             if (!focused.value) {
-                return
-            }
-
-            if (showDatePicker.value) {
-                showDatePicker.value = false
-                showSuggestions.value = true
-                datePickerSelection.value = null
-                setInputValue(searchQuery.value + ' ', { noEmit: true })
-                setCaretAtTheEnd(input.value)
                 return
             }
 
@@ -898,6 +920,8 @@ export default defineComponent({
             onKeyPress,
             onInput,
             onDateSelection,
+            onDateSelectionCancel,
+            onDateSelectionApply,
             computedStatus,
             setInputFromSuggestion,
             inputPlaceholder,
@@ -1129,6 +1153,14 @@ export default defineComponent({
 
     &__date-picker-wrapper {
         width: 562px;
+    }
+
+    &__date-picker-buttons {
+        padding: 0 16px 16px;
+        text-align: right;
+        > * {
+            margin-left: 16px;
+        }
     }
 }
 .focus {

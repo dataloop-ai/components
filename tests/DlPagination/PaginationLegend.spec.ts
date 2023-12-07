@@ -21,7 +21,7 @@ describe('PaginationLegend', () => {
             expect(wrapper.exists()).toBe(true)
         })
         it('should have the right text', function () {
-            expect(wrapper.text()).toBe('Showing 1-10 of 1000 items')
+            expect(wrapper.text()).toBe('Showing 1 - 10 of 1000 items')
         })
 
         describe('When set total prop', () => {
@@ -31,7 +31,7 @@ describe('PaginationLegend', () => {
                 })
             })
             it('should have the right text', function () {
-                expect(wrapper.text()).toBe('Showing 1-10')
+                expect(wrapper.text()).toBe('Showing 1 - 10')
             })
         })
     })

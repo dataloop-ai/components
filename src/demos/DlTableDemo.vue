@@ -706,7 +706,7 @@ const columns = [
     },
     {
         name: 'calories',
-        align: 'center',
+        align: 'right',
         label: 'Calories',
         field: 'calories',
         sortable: true,

@@ -99,7 +99,7 @@
                         :disabled="!newQueryName"
                         outlined
                         style="margin-right: 5px"
-                        @click="saveQuery"
+                        @click="() => saveQuery(false)"
                     >
                         Save
                     </dl-button>
