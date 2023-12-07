@@ -16,6 +16,7 @@
             </template>
         </dl-input>
         <dl-tree-table
+            ref="tree"
             draggable="none"
             separator="none"
             :hide-pagination="true"
@@ -33,10 +34,7 @@
             color="dl-color-secondary"
             @row-click="$emit('click', $event)"
             @selection-change="$emit('selected', $event)"
-            @row-expanded="
-                (isExpanded, name, rowsArr) =>
-                    $emit('expanded', isExpanded, name, rowsArr)
-            "
+            @row-expanded="onExpandedRow"
         >
             <template #body-cell-displayLabel="props">
                 <dl-icon
@@ -80,11 +78,19 @@
 </template>
 
 <script lang="ts">
-import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
+import {
+    ref,
+    PropType,
+    defineComponent,
+    computed,
+    toRefs,
+    watch
+} from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
 import { DlTreeTable, DlInput } from '../../compound'
 import { DlTableColumn, DlTableRow } from '../../types'
 import { DlDirectoryTreeItem } from './types'
+import { nextTick } from 'process'
 
 export default defineComponent({
     name: 'DlDirectoryTree',
@@ -99,14 +105,20 @@ export default defineComponent({
             type: Array as PropType<DlDirectoryTreeItem[]>,
             default: () => [] as PropType<DlDirectoryTreeItem[]>
         },
+        expandedDirs: {
+            type: Array as PropType<(string | DlDirectoryTreeItem)[]>,
+            default: () => [] as PropType<(string | DlDirectoryTreeItem)[]>
+        },
         width: {
             type: String,
             default: '200px'
         }
     },
     emits: ['click', 'selected', 'expanded', 'add-dir', 'delete-dir'],
-    setup(props, { emit, slots }) {
-        const { items } = toRefs(props)
+    setup(props, { emit }) {
+        const { items, expandedDirs } = toRefs(props)
+        const tree = ref<any>(null)
+
         const columns: DlTableColumn[] = [
             {
                 name: 'displayLabel',
@@ -128,10 +140,63 @@ export default defineComponent({
             }))
         })
 
+        watch(
+            [items, expandedDirs],
+            () => {
+                nextTick(() => {
+                    if (!tree.value) {
+                        return
+                    }
+
+                    for (const val of expandedDirs.value) {
+                        const textValue =
+                            typeof val === 'string'
+                                ? val
+                                : (val as DlDirectoryTreeItem).identifier
+                        tree.value?.updateExpandedRow(true, textValue)
+                    }
+
+                    expandedRows.value = expandedDirs.value.map((val) => {
+                        const textValue =
+                            typeof val === 'string'
+                                ? val
+                                : (val as DlDirectoryTreeItem).identifier
+                        return items.value.find(
+                            (r) => r.identifier === textValue
+                        )
+                    })
+                })
+            },
+            { immediate: true }
+        )
+
+        const expandedRows = ref<DlDirectoryTreeItem[]>([])
+
+        const onExpandedRow = (
+            isExpanded: boolean,
+            name: string,
+            rowsArr: DlDirectoryTreeItem[]
+        ) => {
+            if (isExpanded) {
+                expandedRows.value.push(
+                    items.value.find((r) => r.identifier === name)
+                )
+            } else {
+                expandedRows.value = expandedRows.value.filter(
+                    (r) => r.identifier !== name
+                )
+            }
+
+            emit('expanded', isExpanded, name, rowsArr)
+        }
+
         return {
+            tree,
             columns,
             rows,
-            inputValue
+            inputValue,
+            onExpandedRow,
+            expandedRows
         }
     }
 })

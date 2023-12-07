@@ -1,7 +1,9 @@
 <template>
     <div>
         <DlDirectoryTree
+            ref="tree"
             :items="items"
+            :expanded-dirs="expandedDirs"
             style="width: 500px"
             @selected="setSelectedEvent"
             @expanded="setExpandedEvent"
@@ -63,12 +65,16 @@ const rows: DlDirectoryTreeItem[] = [
         children: []
     }
 ]
+
+const expanded: string[] = ['a']
+
 export default defineComponent({
     components: {
         DlDirectoryTree
     },
     setup() {
         const items = ref(rows)
+        const expandedDirs = ref(expanded)
         const lastSelected = ref<DlDirectoryTreeItem>(null)
         const lastExpanded = ref<{
             isExpanded: boolean
@@ -93,6 +99,7 @@ export default defineComponent({
 
         return {
             items,
+            expandedDirs,
             lastSelected,
             setSelectedEvent,
             lastExpanded,
