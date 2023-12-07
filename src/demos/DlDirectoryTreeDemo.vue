@@ -4,11 +4,16 @@
             :items="items"
             style="width: 500px"
             @selected="setSelectedEvent"
+            @expanded="setExpandedEvent"
         />
 
         <div>
             <div>last selection event</div>
             {{ lastSelected }}
+        </div>
+        <div>
+            <div>last expanded event</div>
+            {{ lastExpanded }}
         </div>
     </div>
 </template>
@@ -65,10 +70,34 @@ export default defineComponent({
     setup() {
         const items = ref(rows)
         const lastSelected = ref<DlDirectoryTreeItem>(null)
+        const lastExpanded = ref<{
+            isExpanded: boolean
+            name: string
+            rowsArr: DlDirectoryTreeItem[]
+        }>(null)
+
         const setSelectedEvent = (item: DlDirectoryTreeItem) => {
             lastSelected.value = item
         }
-        return { items, lastSelected, setSelectedEvent }
+        const setExpandedEvent = (
+            isExpanded: boolean,
+            name: string,
+            rowsArr: DlDirectoryTreeItem[]
+        ) => {
+            lastExpanded.value = {
+                isExpanded,
+                name,
+                rowsArr
+            }
+        }
+
+        return {
+            items,
+            lastSelected,
+            setSelectedEvent,
+            lastExpanded,
+            setExpandedEvent
+        }
     }
 })
 </script>

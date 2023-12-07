@@ -33,6 +33,10 @@
             color="dl-color-secondary"
             @row-click="$emit('click', $event)"
             @selection-change="$emit('selected', $event)"
+            @row-expanded="
+                (isExpanded, name, rowsArr) =>
+                    $emit('expanded', isExpanded, name, rowsArr)
+            "
         >
             <template #body-cell-displayLabel="props">
                 <dl-icon
@@ -100,7 +104,7 @@ export default defineComponent({
             default: '200px'
         }
     },
-    emits: ['click', 'selected', 'add-dir', 'delete-dir'],
+    emits: ['click', 'selected', 'expanded', 'add-dir', 'delete-dir'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
         const columns: DlTableColumn[] = [

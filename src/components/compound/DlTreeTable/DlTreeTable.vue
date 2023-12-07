@@ -386,6 +386,7 @@ export default defineComponent({
                         row.isExpanded = isExpanded
                     }
                     updateNestedRows(row, isExpanded)
+                    emit('row-expanded', isExpanded, name, rowsArr)
                 } else {
                     if ((row.children || []).length > 0) {
                         updateExpandedRow(isExpanded, name, row.children)
