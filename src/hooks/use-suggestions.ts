@@ -260,11 +260,15 @@ export const useSuggestions = (
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType.filter(
-                    (type) =>
-                        typeof type === 'string' &&
-                        !knownDataTypes.includes(type)
-                ) as string[]
+                localSuggestions = dataType
+                    .filter(
+                        (type) =>
+                            !knownDataTypes.includes(type as string) &&
+                            typeof type !== 'object'
+                    )
+                    .map((type) =>
+                        typeof type === 'string' ? `'${type}'` : type
+                    ) as string[]
 
                 if (!value) continue
 
@@ -704,7 +708,7 @@ const getValueSuggestions = (
                 !knownDataTypes.includes(type as string) &&
                 typeof type !== 'object'
             ) {
-                suggestion.push(type)
+                suggestion.push(typeof type === 'string' ? `'${type}'` : type)
             }
         }
     }
