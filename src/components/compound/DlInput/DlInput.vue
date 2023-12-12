@@ -707,8 +707,12 @@ export default defineComponent({
                     updateSyntax()
                     setCaretAtTheEnd(input.value)
 
-                    emit('input', trimmed)
-                    emit('update:model-value', trimmed)
+                    const toEmit = trimmed.replace(
+                        new RegExp('&nbsp;', 'g'),
+                        ' '
+                    )
+                    emit('input', toEmit)
+                    emit('update:model-value', toEmit)
                 }
             })
         }
@@ -729,8 +733,12 @@ export default defineComponent({
             isMenuOpen.value = true
             updateSyntax()
             const target = e.target as HTMLElement
-            emit('input', target.innerText, e)
-            emit('update:model-value', target.innerText)
+            const toEmit = target.innerText.replace(
+                new RegExp('&nbsp;', 'g'),
+                ' '
+            )
+            emit('input', toEmit, e)
+            emit('update:model-value', toEmit)
             if (autoTrim.value) {
                 debouncedHandleValueTrim.value()
             }
@@ -739,9 +747,10 @@ export default defineComponent({
         const onAutoSuggestClick = (e: Event, item: string): void => {
             const newValue = clearSuggestion(modelValue.value.toString(), item)
             if (!maxLength.value || newValue.length < maxLength.value) {
-                emit('input', newValue, e)
-                emit('update:model-value', newValue)
-                input.value.innerHTML = newValue
+                const toEmit = newValue.replace(new RegExp('&nbsp;', 'g'), ' ')
+                emit('input', toEmit, e)
+                emit('update:model-value', toEmit)
+                input.value.innerHTML = toEmit.replace(/ /g, '&nbsp;')
                 setCaretAtTheEnd(input.value)
                 isInternalChange.value = true
             }
@@ -863,8 +872,9 @@ export default defineComponent({
             stringSuggestions,
             showPlaceholder,
             spanText,
-            handleValueTrim,
-            debouncedHandleValueTrim
+            handleValueTrim: debouncedHandleValueTrim,
+            onModelValueChange: debouncedOnModelValueChange,
+            isInternalChange
         }
     },
     data() {

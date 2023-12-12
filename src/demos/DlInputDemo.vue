@@ -1,5 +1,14 @@
 <template>
     <div>
+        <div style="padding-bottom: 10px">
+            <div>switch the disalbed prop: {{ disabledInput }}</div>
+            <dl-switch v-model="disabledInput" />
+            <dl-input
+                v-model="textVal"
+                placeholder="Test reactivity"
+                :disabled="disabledInput"
+            />
+        </div>
         <div>
             <input v-model="textVal">
             <div>This is to test v-model reactivity</div>
@@ -255,11 +264,12 @@
 <script lang="ts">
 import { v4 } from 'uuid'
 import { computed, defineComponent, ref } from 'vue-demi'
-import { DlInput, DlButton, DlIcon } from '../components'
+import { DlInput, DlButton, DlIcon, DlSwitch } from '../components'
 import { DlInputFile } from '../components/compound/DlInput/types'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
+        DlSwitch,
         DlInput,
         DlButton,
         DlIcon
@@ -298,6 +308,8 @@ export default defineComponent({
             files.value = val
         }
 
+        const disabledInput = ref<boolean>(false)
+
         const textVal = ref<string>('test me')
 
         const trimmedValue = ref('')
@@ -305,6 +317,7 @@ export default defineComponent({
         return {
             log: console.log,
             textVal,
+            disabledInput,
             trimmedValue,
             textInputValue,
             passFieldValue,

@@ -47,6 +47,10 @@ export const replaceDateInterval = (str: string, date: DateInterval) => {
     return replaced
 }
 
+export const removeDateInterval = (str: string) => {
+    return replaceFirstOrLastOccurrence(str, '', datePattern)
+}
+
 const formatDate = (date: Date | string | number): string => {
     return moment(date).format('DD/MM/YYYY')
 }
