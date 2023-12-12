@@ -677,6 +677,48 @@
                 </template>
             </DlTable>
         </div>
+        <div style="margin-top: 100px">
+            <p>Infinite scrolling With custom data and weird expandable</p>
+            <DlTable
+                :selected="selected"
+                :separator="separator"
+                :draggable="draggable"
+                :filter="filter"
+                :resizable="resizable"
+                :selection="selection"
+                :dense="dense"
+                title="Treats"
+                color="dl-color-secondary"
+                :loading="infiniteLoading"
+                :rows="generatedRows"
+                :columns="tableColumns"
+                style="height: 500px"
+                row-key="index"
+                virtual-scroll
+                expandable-rows
+                @virtual-scroll="onScrollGenerate"
+                @update:pagination="() => console.log('@@@@ hey')"
+                @col-update="updateColumns"
+            >
+                <template #body-cell-expandable-content="{ row }">
+                    <div>
+                        {{ row }}
+                    </div>
+                    <div>
+                        {{ row }}
+                    </div>
+                    <div>
+                        {{ row }}
+                    </div>
+                    <div>
+                        {{ row }}
+                    </div>
+                    <div>
+                        {{ row }}
+                    </div>
+                </template>
+            </DlTable>
+        </div>
     </div>
 </template>
 
@@ -691,7 +733,7 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
-import { DlTablePagination } from '../types'
+import { DlTablePagination, DlVirtualScrollEvent } from '../types'
 
 const columns = [
     {
@@ -1037,6 +1079,10 @@ export default defineComponent({
             allRows.slice(0, pageSize * (nextPageNumber.value - 1))
         )
 
+        const generatedRows = ref<any>(
+            allRows.slice(0, pageSize * nextPageNumber.value)
+        )
+
         const onScroll = ({ to, ref }: { to: number; ref: any }) => {
             const lastIndex = computedRows.value.length - 1
 
@@ -1054,6 +1100,29 @@ export default defineComponent({
                         infiniteLoading.value = false
                     })
                 }, 500)
+            }
+        }
+
+        const onScrollGenerate = ({ index, to, ref }: DlVirtualScrollEvent) => {
+            const lastIndex = generatedRows.value.length - 1
+
+            const getRandomInt = (min: number, max: number) => {
+                min = Math.ceil(min)
+                max = Math.floor(max)
+                return Math.floor(Math.random() * (max - min + 1)) + min
+            }
+            // todo: here we can see that even if we are loading the event keeps getting called with same payload. maybe we shouldnt send the same event payload over and over
+            if (index >= lastIndex) {
+                infiniteLoading.value = true
+
+                setTimeout(() => {
+                    generatedRows.value = generatedRows.value.concat(
+                        cloneDeep(generatedRows.value)
+                            .slice(-10)
+                            .map((r: any) => ({ ...r }))
+                    )
+                    infiniteLoading.value = false
+                }, getRandomInt(500, 2000))
             }
         }
 
@@ -1166,7 +1235,9 @@ export default defineComponent({
             isFirstPage,
             rows2,
             columns2,
-            tableColumnsAligned
+            tableColumnsAligned,
+            generatedRows,
+            onScrollGenerate
         }
     },
 
