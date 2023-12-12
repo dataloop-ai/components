@@ -136,6 +136,7 @@ export default defineComponent({
                 '*': 'any'
             },
             type: ['dir', 'file'],
+            test0: ['why wont', 'this work', 123],
             test1: ['5', '6', 'number'],
             test2: ['true', 'false']
         }
