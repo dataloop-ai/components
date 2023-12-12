@@ -137,11 +137,6 @@ export default defineComponent({
         })
 
         const setItemSize = () => {
-            console.log(
-                rootRef.value?.getElementsByClassName(
-                    'dl-virtual-scroll__content'
-                )[0]?.children[0]
-            )
             scrollSizeItem.value = virtualScrollItemSize.value
                 ? virtualScrollItemSize.value
                 : typeof rootRef.value?.getElementsByClassName === 'function'
