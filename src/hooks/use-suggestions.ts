@@ -178,7 +178,7 @@ export const useSuggestions = (
 
             if (!field) continue
 
-            const fieldSeparated: any = field.split('.')
+            const fieldSeparated: string[] = field.split('.')
 
             if (fieldSeparated.length > 1) {
                 localSuggestions = []
@@ -229,20 +229,34 @@ export const useSuggestions = (
             localSuggestions = getOperators(ops)
 
             if (!operator) {
-                const dotSeparated = matchedField.split('.').filter((el) => el)
+                const dotSeparated = matchedField.split('.')
+                const lastWord = dotSeparated.pop()
                 let fieldOf = schemaValue
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
 
-                if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
-                    const toConcat: string[] = []
-                    for (const key of Object.keys(fieldOf)) {
-                        if (key === '*') continue
-                        toConcat.push(`.${key}`)
+                const toAdd: string[] = []
+
+                if (fieldOf[lastWord]) {
+                    fieldOf = fieldOf[lastWord] as Schema
+
+                    if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
+                        for (const key of Object.keys(fieldOf)) {
+                            if (key === '*') continue
+                            toAdd.push(`.${key}`)
+                        }
                     }
-                    localSuggestions = localSuggestions.concat(toConcat)
+                } else {
+                    for (const key in fieldOf) {
+                        if (key === '*') continue
+                        if (key.startsWith(lastWord)) {
+                            toAdd.push(`.${key}`)
+                        }
+                    }
                 }
+
+                localSuggestions = toAdd.concat(localSuggestions)
 
                 continue
             }
