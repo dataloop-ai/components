@@ -42,7 +42,8 @@ describe('DlButton', () => {
                 dense: false,
                 active: false,
                 shaded: false,
-                uppercase: false
+                uppercase: false,
+                tooltipTriggerPercentage: 1
             })
         })
     })

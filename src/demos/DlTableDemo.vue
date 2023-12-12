@@ -139,6 +139,7 @@
                     :virtual-scroll="vScroll"
                     style="height: 500px"
                     :rows-per-page-options="rowsPerPageOptions"
+                    :selected-rows-label="(val) => 'Selected rows ' + val"
                     @row-click="log"
                     @th-click="log"
                     @update:selected="updateSeleted"

@@ -884,7 +884,10 @@
                     v-bind="marginalsScope"
                 >
                     <div
-                        v-if="hasBotomSelectionBanner"
+                        v-if="
+                            hasBotomSelectionBanner &&
+                                selectedRowsLabel(rowsSelectedNumber)
+                        "
                         class="dl-table__control"
                     >
                         <div>
