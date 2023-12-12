@@ -281,6 +281,11 @@ export default defineComponent({
 
             showSuggestions.value = false
 
+            // to handle typing . after accepting a suggestion
+            if (/\s+\.$/.test(value)) {
+                value = value.replace(/\s+\.$/, '.')
+            }
+
             // to handle date suggestion modal to open automatically.
             if (value.includes('(dd/mm/yyyy)')) {
                 value = value.trimEnd()
@@ -316,6 +321,7 @@ export default defineComponent({
             }
 
             updateEditor(input.value, editorStyle.value)
+            setSelectionOffset(input.value, caretAt.value, caretAt.value)
             setMenuOffset(isEligibleToChange(input.value, expanded.value))
 
             if (!expanded.value) {
@@ -364,7 +370,12 @@ export default defineComponent({
                     queryRightSide = leftover + queryRightSide
                 } else if (value.startsWith('.')) {
                     // dot notation case
-                    queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
+                    const words = queryLeftSide.trimEnd().split('.')
+                    const lastWord = words.pop()
+                    if (!value.startsWith('.' + lastWord)) {
+                        words.push(lastWord)
+                    }
+                    queryLeftSide = words.join('.')
                 } else if (queryLeftSide.endsWith(' ')) {
                     // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
@@ -546,7 +557,11 @@ export default defineComponent({
 
         const onInput = (e: Event) => {
             const text = (e.target as HTMLElement).textContent
-            debouncedSetInputValue(text)
+            if (text.endsWith('.')) {
+                setInputValue(text)
+            } else {
+                debouncedSetInputValue(text)
+            }
         }
 
         const onDateSelection = (value: DateInterval) => {
