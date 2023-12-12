@@ -158,7 +158,6 @@
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
-                                :col-index="-1"
                                 no-tooltip
                                 padding="0"
                             >
@@ -391,7 +390,6 @@
                                     v-if="showRowActions"
                                     key="visibleColumnsSlot"
                                     class="visible-columns-justify-end"
-                                    :col-index="-1"
                                     no-tooltip
                                 >
                                     <slot
@@ -552,8 +550,8 @@
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
-                                :col-index="-1"
                                 no-tooltip
+                                style="width: 25px"
                                 :padding="isTreeTable ? '0' : '0 10px'"
                             >
                                 <slot
@@ -795,7 +793,6 @@
                                         v-if="showRowActions"
                                         key="visibleColumnsSlot"
                                         class="visible-columns-justify-end"
-                                        :col-index="-1"
                                         no-tooltip
                                     >
                                         <slot
@@ -1244,7 +1241,7 @@ export default defineComponent({
             default: 'No data'
         },
         stickyColumns: {
-            type: Object as PropType<TableStickyPosition>,
+            type: String as PropType<TableStickyPosition>,
             default: null,
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
@@ -1420,14 +1417,21 @@ export default defineComponent({
                 virtScrollRef.value.rootRef.querySelector('table') ||
                 (document.querySelector('table.dl-table') as HTMLTableElement)
 
-            nextTick(() => {
-                setAllColumnWidths(
-                    tableEl,
-                    columns.value as DlTableColumn[],
-                    props.stickyColumns,
-                    props.fitAllColumns
-                )
-            })
+            const updateColumnWidths = () => {
+                nextTick(() => {
+                    setAllColumnWidths(
+                        tableEl,
+                        columns.value as DlTableColumn[],
+                        props.stickyColumns,
+                        props.fitAllColumns
+                    )
+                })
+            }
+            updateColumnWidths()
+            window.addEventListener(
+                'virtual-scroll-content-update',
+                updateColumnWidths
+            )
             if (visibleColumns.value) return
             if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
