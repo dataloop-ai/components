@@ -348,7 +348,7 @@ describe('DlSmartSearchInput', () => {
                 const resultString1 = `completed = low AND metadata.test = 'ok'`
                 const resultString2 = `level != = low AND metadata.test = 'ok'`
                 const resultString3 = `level = low OR AND metadata.test = 'ok'`
-                const resultString4 = `level = high low AND metadata.test = 'ok'`
+                const resultString4 = `level = 'high' low AND metadata.test = 'ok'`
                 const resultString5 = `level = low AND metadata.nesting test = 'ok'`
                 beforeAll(async () => {
                     wrapper.vm.focused = true
