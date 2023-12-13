@@ -8,6 +8,8 @@ export function useSizeObserver(elRef: Ref, ...refsToWatch: any[]) {
     const heightRef = ref(0)
     const hasEllipsis = ref(false)
     const borderBoxSize = ref(null)
+    const disposing = ref(false)
+
     const calcEllipsis = (el: HTMLElement) => {
         hasEllipsis.value = isEllipsisActive(el)
     }
@@ -22,16 +24,36 @@ export function useSizeObserver(elRef: Ref, ...refsToWatch: any[]) {
         }
     )
 
-    onMounted(() => elRef.value && resizeObserver.observe(elRef.value))
     watch(elRef, () => {
-        elRef.value && calcEllipsis(elRef.value)
+        if (disposing.value) {
+            return
+        }
+        if (elRef.value) {
+            calcEllipsis(elRef.value)
+        }
     })
     for (const ref of refsToWatch) {
         watch(ref, () => {
-            elRef.value && calcEllipsis(elRef.value)
+            if (disposing.value) {
+                return
+            }
+            if (elRef.value) {
+                calcEllipsis(elRef.value)
+            }
         })
     }
-    onBeforeUnmount(() => elRef.value && resizeObserver.unobserve(elRef.value))
+
+    onMounted(() => {
+        if (elRef.value) {
+            resizeObserver.observe(elRef.value)
+        }
+    })
+    onBeforeUnmount(() => {
+        disposing.value = true
+        if (elRef.value) {
+            resizeObserver.unobserve(elRef.value)
+        }
+    })
 
     return {
         widthRef,
