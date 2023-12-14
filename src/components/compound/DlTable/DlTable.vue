@@ -67,6 +67,7 @@
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
+            :prevent-scroll-to="hasExpandableSlot"
             @virtual-scroll="onVScroll"
         >
             <template #before>
@@ -991,7 +992,7 @@ import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
 import { getCellValue } from './utils/getCellValue'
 import { getContainerClass } from './utils/tableClasses'
-import { isEqual } from 'lodash'
+import { has, isEqual } from 'lodash'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -1347,6 +1348,10 @@ export default defineComponent({
 
         // table slots
         const hasSlotByName = (name: string) => !!slots[name]
+
+        const hasExpandableSlot = computed(() =>
+            hasSlotByName('body-cell-expandable-content')
+        )
 
         const hasPaginationSlot = computed(() => hasSlotByName('pagination'))
 
@@ -2085,7 +2090,8 @@ export default defineComponent({
             tableRef,
             getRowExpandedIcon,
             computedPagination,
-            getRowExpandedKey
+            getRowExpandedKey,
+            hasExpandableSlot
         }
     }
 })

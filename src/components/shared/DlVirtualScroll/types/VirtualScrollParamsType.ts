@@ -6,4 +6,5 @@ export type DlVirtualScrollParamsType = {
     getVirtualScrollEl: () => HTMLElement
     virtualScrollItemSizeComputed?: ComputedRef<number>
     debounceValue?: number
+    preventScrollTo?: boolean
 }

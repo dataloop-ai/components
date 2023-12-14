@@ -286,7 +286,8 @@ export function useVirtualScroll({
     getVirtualScrollTarget,
     getVirtualScrollEl,
     virtualScrollItemSizeComputed, // optional
-    debounceValue
+    debounceValue,
+    preventScrollTo
 }: DlVirtualScrollParamsType) {
     const vm = getCurrentInstance()
 
@@ -771,6 +772,7 @@ export function useVirtualScroll({
         if (toIndex >= 0) {
             updateVirtualScrollSizes(virtualScrollSliceRange.value.from)
             nextTick(() => {
+                if (preventScrollTo) return
                 scrollTo(toIndex)
             })
         } else {
