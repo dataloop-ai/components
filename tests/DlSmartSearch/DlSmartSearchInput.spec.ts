@@ -11,12 +11,28 @@ window.ResizeObserver =
     }))
 
 const schema = {
-    name: 'string',
+    name: ['string', { Voltaire: 'Arouet' }],
     level: ['high', 'medium', 'low', 30],
     completed: 'boolean',
     metadata: {
         nesting: {
             age: 'number',
+            valid: 'boolean'
+        },
+        date: 'date',
+        start: 'datetime',
+        classTime: 'time',
+        '*': 'any'
+    }
+}
+
+const schema2 = {
+    name: ['string', { Voltaire: 'Arouet' }],
+    level: ['high', 'medium', 'low', 30],
+    completed: 'boolean',
+    metadata: {
+        nesting: {
+            age: ['number', { 21: 'twentyone' }],
             valid: 'boolean'
         },
         date: 'date',
@@ -318,7 +334,7 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.showDatePicker).toBeTruthy()
 
                 wrapper.vm.onDateSelection({ from: new Date(), to: new Date() })
-                wrapper.vm.onEscapeKey()
+                wrapper.vm.onDateSelectionApply()
                 //@ts-ignore
                 await window.delay(500)
                 await wrapper.vm.$nextTick()
@@ -332,7 +348,7 @@ describe('DlSmartSearchInput', () => {
                 const resultString1 = `completed = low AND metadata.test = 'ok'`
                 const resultString2 = `level != = low AND metadata.test = 'ok'`
                 const resultString3 = `level = low OR AND metadata.test = 'ok'`
-                const resultString4 = `level = high low AND metadata.test = 'ok'`
+                const resultString4 = `level = 'high' low AND metadata.test = 'ok'`
                 const resultString5 = `level = low AND metadata.nesting test = 'ok'`
                 beforeAll(async () => {
                     wrapper.vm.focused = true
@@ -522,6 +538,59 @@ describe('DlSmartSearchInput', () => {
 
         it('will not emit search when the query did not change', () => {
             expect(wrapper.emitted().search.length).toBe(1)
+        })
+    })
+
+    describe('On JSON with nested aliased value', () => {
+        let wrapper: any
+        const modelValue = { $and: [{ 'metadata.nesting.age': 21 }] }
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema: schema2,
+                    aliases
+                }
+            })
+            console.log(wrapper.vm.schema)
+            await wrapper.setProps({
+                modelValue
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            wrapper.vm.blur()
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.vm.searchQuery).toEqual('Age = 21 ')
+        })
+    })
+
+    describe('On JSON with aliased value', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+            await wrapper.setProps({
+                modelValue: { $and: [{ name: 'Arouet' }] }
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+
+            expect(wrapper.vm.searchQuery).toEqual("Name = 'Voltaire' ")
         })
     })
 

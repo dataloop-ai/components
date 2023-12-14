@@ -84,6 +84,18 @@
                     :single-selection="true"
                     @change="onDateSelection"
                 />
+                <div class="dl-smart-search-input__date-picker-buttons">
+                    <dl-button
+                        label="Cancel"
+                        outlined
+                        @mousedown="onDateSelectionCancel"
+                    />
+                    <dl-button
+                        label="Apply"
+                        :disabled="!datePickerSelection"
+                        @mousedown="onDateSelectionApply"
+                    />
+                </div>
             </div>
         </dl-menu>
     </div>
@@ -118,13 +130,16 @@ import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
+    removeDateInterval,
     updateEditor,
     isEligibleToChange,
     createColorSchema,
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,
-    revertAliases
+    revertAliases,
+    setValueAliases,
+    revertValueAliases
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -253,11 +268,8 @@ export default defineComponent({
         //#region hooks
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
-        const { suggestions, error, findSuggestions } = useSuggestions(
-            schema,
-            aliases,
-            { strict, omitSuggestions }
-        )
+        const { suggestions, error, findSuggestions, checkErrors } =
+            useSuggestions(schema, aliases, { strict, omitSuggestions })
         //#endregion
 
         //#region methods
@@ -268,6 +280,11 @@ export default defineComponent({
             const { noEmit, testCaret } = options
 
             showSuggestions.value = false
+
+            // to handle typing . after accepting a suggestion
+            if (/\s+\.$/.test(value)) {
+                value = value.replace(/\s+\.$/, '.')
+            }
 
             // to handle date suggestion modal to open automatically.
             if (value.includes('(dd/mm/yyyy)')) {
@@ -304,6 +321,7 @@ export default defineComponent({
             }
 
             updateEditor(input.value, editorStyle.value)
+            setSelectionOffset(input.value, caretAt.value, caretAt.value)
             setMenuOffset(isEligibleToChange(input.value, expanded.value))
 
             if (!expanded.value) {
@@ -326,6 +344,7 @@ export default defineComponent({
 
             nextTick(() => {
                 findSuggestions(value.substring(0, caretAt.value))
+                checkErrors(value)
             })
 
             if (!noEmit) {
@@ -333,7 +352,8 @@ export default defineComponent({
             }
         }
 
-        const setInputFromSuggestion = (value: string) => {
+        const setInputFromSuggestion = (suggestion: any) => {
+            const value = '' + suggestion
             let stringValue = ''
             let caretPosition = 0
             if (searchQuery.value.length) {
@@ -351,7 +371,12 @@ export default defineComponent({
                     queryRightSide = leftover + queryRightSide
                 } else if (value.startsWith('.')) {
                     // dot notation case
-                    queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
+                    const words = queryLeftSide.trimEnd().split('.')
+                    const lastWord = words.pop()
+                    if (!value.startsWith('.' + lastWord)) {
+                        words.push(lastWord)
+                    }
+                    queryLeftSide = words.join('.')
                 } else if (queryLeftSide.endsWith(' ')) {
                     // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
@@ -490,6 +515,7 @@ export default defineComponent({
             }
             nextTick(() => {
                 findSuggestions('')
+                checkErrors('')
             })
         }
 
@@ -532,13 +558,36 @@ export default defineComponent({
 
         const onInput = (e: Event) => {
             const text = (e.target as HTMLElement).textContent
-            debouncedSetInputValue(text)
+            if (text.endsWith('.')) {
+                setInputValue(text)
+            } else {
+                debouncedSetInputValue(text)
+            }
         }
 
         const onDateSelection = (value: DateInterval) => {
             datePickerSelection.value = value
-            searchQuery.value = replaceDateInterval(searchQuery.value, value)
-            input.value.innerHTML = searchQuery.value
+        }
+
+        const onDateSelectionCancel = () => {
+            searchQuery.value = removeDateInterval(searchQuery.value)
+            showDatePicker.value = false
+            showSuggestions.value = true
+            datePickerSelection.value = null
+            setInputValue(searchQuery.value + ' ', { noEmit: true })
+            setCaretAtTheEnd(input.value)
+        }
+
+        const onDateSelectionApply = () => {
+            searchQuery.value = replaceDateInterval(
+                searchQuery.value,
+                datePickerSelection.value
+            )
+            showDatePicker.value = false
+            showSuggestions.value = true
+            datePickerSelection.value = null
+            setInputValue(searchQuery.value + ' ', { noEmit: true })
+            setCaretAtTheEnd(input.value)
         }
 
         const readModelValue = (val: { [key: string]: any }) => {
@@ -569,7 +618,9 @@ export default defineComponent({
             const replacedDate = replaceStringifiedDatesWithJSDates(value)
             const json = parseSmartQuery(replacedDate ?? searchQuery.value)
 
-            return isValidJSON(json) ? json : searchQuery.value
+            return isValidJSON(json)
+                ? revertValueAliases(json, schema.value)
+                : searchQuery.value
         }
 
         const fromJSON = (value: { [key: string]: any }) => {
@@ -579,7 +630,9 @@ export default defineComponent({
                     dateKeys.value
                 )
 
-                const stringQuery = stringifySmartQuery(replacedDate)
+                const stringQuery = stringifySmartQuery(
+                    setValueAliases(replacedDate, schema.value)
+                )
                 const aliased = setAliases(stringQuery, aliases.value)
                 return aliased
             } catch (e) {
@@ -620,15 +673,6 @@ export default defineComponent({
 
         const onEscapeKey = () => {
             if (!focused.value) {
-                return
-            }
-
-            if (showDatePicker.value) {
-                showDatePicker.value = false
-                showSuggestions.value = true
-                datePickerSelection.value = null
-                setInputValue(searchQuery.value + ' ', { noEmit: true })
-                setCaretAtTheEnd(input.value)
                 return
             }
 
@@ -892,6 +936,8 @@ export default defineComponent({
             onKeyPress,
             onInput,
             onDateSelection,
+            onDateSelectionCancel,
+            onDateSelectionApply,
             computedStatus,
             setInputFromSuggestion,
             inputPlaceholder,
@@ -1123,6 +1169,14 @@ export default defineComponent({
 
     &__date-picker-wrapper {
         width: 562px;
+    }
+
+    &__date-picker-buttons {
+        padding: 0 16px 16px;
+        text-align: right;
+        > * {
+            margin-left: 16px;
+        }
     }
 }
 .focus {

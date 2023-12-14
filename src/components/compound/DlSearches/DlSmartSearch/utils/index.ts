@@ -5,12 +5,13 @@ import { ColorSchema, SyntaxColorSchema, Filters } from '../types'
 import {
     operators,
     Alias,
+    Data,
     datePattern,
     datePatternNoBrackets,
     removeBrackets
 } from '../../../../../hooks/use-suggestions'
 import moment from 'moment'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, get } from 'lodash'
 
 export const isEndOfString = (
     str: string,
@@ -44,6 +45,10 @@ export const replaceDateInterval = (str: string, date: DateInterval) => {
         datePatternNoBrackets
     )
     return replaced
+}
+
+export const removeDateInterval = (str: string) => {
+    return replaceFirstOrLastOccurrence(str, '', datePattern)
 }
 
 const formatDate = (date: Date | string | number): string => {
@@ -185,6 +190,62 @@ export function setAliases(str: string, aliases: Alias[]) {
 
     const regex = new RegExp(`\\b(?<!\\S)(${words.join('|')})\\b(?!\\S)`, 'gi')
     return str.replace(regex, replacement)
+}
+
+function valueAliases(schema: Data, field: string) {
+    let aliases: Data = {}
+    const type: any = get(schema, field)
+    if (Array.isArray(type)) {
+        for (const element of type) {
+            if (typeof element === 'object')
+                aliases = Object.assign(aliases, element)
+        }
+    } else {
+        if (typeof type === 'object') aliases = Object.assign(aliases, type)
+    }
+    return aliases
+}
+
+export function revertValueAliases(json: Data, schema: Data) {
+    const clone = cloneDeep(json)
+    const replaceAliases = (where: Data) => {
+        for (const key in where) {
+            if (typeof where[key] === 'object') {
+                replaceAliases(where[key])
+            } else {
+                const aliases = valueAliases(schema, key)
+                const value = aliases[where[key] as string]
+                if (value) {
+                    where[key] = value
+                }
+            }
+        }
+    }
+
+    replaceAliases(clone)
+    return clone
+}
+
+export function setValueAliases(json: Data, schema: Data) {
+    const clone = cloneDeep(json)
+    const replaceValues = (where: Data) => {
+        for (const key in where) {
+            if (typeof where[key] === 'object') {
+                replaceValues(where[key])
+            } else {
+                const aliases = valueAliases(schema, key)
+                for (const alias in aliases) {
+                    if (where[key] === aliases[alias]) {
+                        where[key] = alias
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+    replaceValues(clone)
+    return clone
 }
 
 export function createColorSchema(

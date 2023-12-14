@@ -8,6 +8,10 @@
             v-model="readonly"
             left-label="readonly"
         />
+        <dl-switch
+            v-model="bordered"
+            left-label="bordered"
+        />
         <dl-code-editor
             v-model="codeEditorValue"
             width="45vw"
@@ -15,6 +19,7 @@
             :language="language"
             :theme="theme"
             :readonly="readonly"
+            :bordered="bordered"
             :options="options"
         />
     </div>
@@ -35,6 +40,7 @@ export default defineComponent({
     setup() {
         const readonly = ref(false)
         const lines = ref(false)
+        const bordered = ref(true)
 
         const codeEditorValue = ref(
             `import getopt, sys, urllib, time
@@ -198,6 +204,7 @@ if __name__ == "__main__":
             language,
             theme,
             readonly,
+            bordered,
             options
         }
     }

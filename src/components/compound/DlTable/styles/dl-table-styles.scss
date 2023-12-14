@@ -29,6 +29,11 @@
         gap: 6px;
         height: 34px;
         position: relative;
+        line-height: 34px;
+        &--left {
+            left: 0;
+            transform: none;
+        }
     }
 
     .inner-th {
@@ -122,7 +127,6 @@
             .dl-table__drag-icon>div {
                 opacity: 1;
             }
-
             td:not(.dl-td--no-hover) {
                 background-color: var(--dl-color-fill-hover);
             }

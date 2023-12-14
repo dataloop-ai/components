@@ -1,6 +1,7 @@
 <template>
     <div
         class="dl-code-editor-wrapper"
+        :class="bordered ? `dl-code-editor-wrapper__bordered` : ''"
         :style="cssVars"
     >
         <code-editor
@@ -61,6 +62,10 @@ export default defineComponent({
         readonly: {
             type: Boolean as PropType<boolean>,
             default: false
+        },
+        bordered: {
+            type: Boolean as PropType<boolean>,
+            default: true
         },
         title: {
             type: String,
@@ -154,10 +159,12 @@ export default defineComponent({
 </script>
 <style scoped lang="scss">
 .dl-code-editor-wrapper {
-    border: 1px solid var(--dl-color-separator);
-    border-radius: 2px;
     width: var(--dl-colde-editor-width, fit-content);
     height: var(--dl-colde-editor-height, fit-content);
+    &__bordered {
+        border: 1px solid var(--dl-color-separator);
+        border-radius: 2px;
+    }
 }
 </style>
 

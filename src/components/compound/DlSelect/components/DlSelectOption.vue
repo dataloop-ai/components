@@ -45,24 +45,19 @@
                         :class="{ capitalized }"
                         :model-value="modelValue"
                         :value="value"
-                        :label="
-                            label
-                                ? capitalized
-                                    ? label.toLowerCase()
-                                    : label
-                                : null
-                        "
                         :indeterminate-value="indeterminateValue"
                         @update:model-value="handleCheckboxUpdate"
                         @checked="handleSingleSelect"
                         @unchecked="handleSingleDeselect"
-                    />
-                    <span
-                        class="multiselect-label"
-                        :class="{ capitalized }"
                     >
-                        <slot />
-                    </span>
+                        <slot>
+                            {{
+                                capitalized
+                                    ? displayLabel.toString().toLowerCase()
+                                    : displayLabel
+                            }}
+                        </slot>
+                    </dl-checkbox>
                     <span
                         v-if="count"
                         class="counter"
@@ -74,7 +69,9 @@
                 >
                     <slot>
                         {{
-                            capitalized ? value.toString().toLowerCase() : value
+                            capitalized
+                                ? displayLabel.toString().toLowerCase()
+                                : displayLabel
                         }}
                     </slot>
                 </div>
@@ -86,7 +83,9 @@
                 :key="`${componentId}-${getValue(child)}-${index}`"
             >
                 <dl-select-option
+                    :ref="`option-${getValue(child)}`"
                     :multiselect="multiselect"
+                    :select-children="selectChildren"
                     :count="count"
                     clickable
                     :model-value="modelValue"
@@ -98,24 +97,41 @@
                     :with-wave="withWave"
                     :capitalized="capitalized"
                     :readonly="isReadonlyOption(child)"
+                    :is-expanded="isExpanded"
+                    :filter-term="filterTerm"
+                    :fit-content="fitContent"
                     @update:model-value="handleCheckboxUpdate"
-                    @selected="handleSingleSelect"
+                    @selected="handleSingleSelect($event, true)"
                     @deselected="handleSingleDeselect"
                     @depth-change="$emit('depth-change')"
-                />
+                >
+                    <span
+                        v-if="fitContent"
+                        class="inner-option"
+                        v-html="getOptionHtml(child)"
+                    />
+                    <dl-ellipsis v-else>
+                        <span
+                            class="inner-option"
+                            v-html="getOptionHtml(child)"
+                        />
+                    </dl-ellipsis>
+                </dl-select-option>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
-import { DlIcon, DlCheckbox } from '../../../essential'
+import { DlIcon, DlCheckbox, DlEllipsis } from '../../../essential'
 import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
+import { DlSelectOptionType, getCaseInsensitiveInput, getLabel } from '../utils'
+import { DlSelectedValueType, DlSelectOption } from '../../types'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -125,7 +141,8 @@ export default defineComponent({
         DlListItem,
         DlItemSection,
         DlCheckbox,
-        DlIcon
+        DlIcon,
+        DlEllipsis
     },
     model: {
         prop: 'modelValue',
@@ -137,7 +154,10 @@ export default defineComponent({
         defaultStyles: { type: Boolean, default: true },
         multiselect: { type: Boolean, default: false },
         value: { type: ValueTypes, default: null },
-        children: { type: Array, default: null },
+        children: {
+            type: Array as PropType<DlSelectedValueType[]>,
+            default: null
+        },
         highlightSelected: { type: Boolean, default: false },
         count: { type: Number, default: null },
         totalItems: { type: Boolean, default: false },
@@ -148,7 +168,23 @@ export default defineComponent({
         depth: { type: Number, default: 0 },
         label: { type: String, default: null },
         capitalized: { type: Boolean, default: false },
-        readonly: { type: Boolean, default: false }
+        readonly: { type: Boolean, default: false },
+        isExpanded: {
+            type: Boolean,
+            default: false
+        },
+        filterTerm: {
+            type: String,
+            default: null
+        },
+        fitContent: {
+            type: Boolean,
+            default: false
+        },
+        selectChildren: {
+            type: Boolean,
+            default: true
+        }
     },
     emits: [
         'update:model-value',
@@ -159,7 +195,8 @@ export default defineComponent({
     ],
     data() {
         return {
-            showChildren: !!this.readonly,
+            showChildren: this.isExpanded,
+            updatingLeaf: false,
             componentId: v4(),
             uuid: `dl-select-option-${v4()}`
         }
@@ -191,17 +228,110 @@ export default defineComponent({
         },
         indent(): { padding: string } {
             return { padding: `0 ${this.depth * 30}px 0 0` }
+        },
+        displayLabel(): string {
+            return String(this.label ? this.label : this.value)
         }
     },
     methods: {
-        handleSingleSelect(value?: any) {
-            this.$emit('selected', value ?? this.value)
+        getOptionValue(option: any) {
+            return option?.value ?? option
         },
-        handleSingleDeselect(value?: any) {
+        getOptionLabel(option: any) {
+            return getLabel(option) ?? this.getOptionValue(option)
+        },
+        getOptionHtml(option: DlSelectOptionType) {
+            const label = `${this.getOptionLabel(option)}`
+            let highlightedHtml = label
+
+            if (this.filterTerm?.length) {
+                const toReplace = new RegExp(this.filterTerm, 'gi')
+
+                highlightedHtml = label.replace(
+                    toReplace,
+                    `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                        label,
+                        this.filterTerm
+                    )}</span>`
+                )
+            }
+
+            const html = `<span>${highlightedHtml}</span>`
+
+            return html
+        },
+        getAllChildren(children: any[]) {
+            let flattened: any[] = []
+            if (!children) return flattened
+            for (const child of children) {
+                flattened.push(this.getOptionValue(child))
+                if (this.getChildren(child)) {
+                    flattened = flattened.concat(
+                        this.getAllChildren(this.getChildren(child))
+                    )
+                }
+            }
+            return flattened
+        },
+        handleSingleSelect(value?: any, skip?: boolean) {
+            this.$emit('selected', value ?? this.value)
+            if (skip) {
+                return
+            }
+            if (this.multiselect && this.selectChildren) {
+                const hasChildren = !!(
+                    this.getOptionByValue(value ?? this.value) as DlSelectOption
+                )?.children?.length
+                if (hasChildren) {
+                    this.updatingLeaf = true
+                    this.$nextTick(() => {
+                        // select all children rerecursively and update model value
+                        const children = this.getAllChildren(
+                            this.children ?? []
+                        )
+                        children.push(value ?? this.value)
+                        const newModelValue = Array.from(
+                            new Set([
+                                ...(this.modelValue as any[]),
+                                ...children
+                            ] as any)
+                        )
+                        this.$emit('update:model-value', newModelValue)
+                        this.updatingLeaf = false
+                    })
+                }
+            }
+        },
+        handleSingleDeselect(value?: any, skip?: boolean) {
             this.$emit('deselected', value ?? this.value)
+            if (skip) {
+                return
+            }
+            if (this.multiselect && this.selectChildren) {
+                const hasChildren = !!(
+                    this.getOptionByValue(value ?? this.value) as DlSelectOption
+                )?.children?.length
+                if (hasChildren) {
+                    this.updatingLeaf = true
+                    this.$nextTick(() => {
+                        // deselect all children recursively and update model value
+                        const children = this.getAllChildren(
+                            this.children ?? []
+                        )
+                        children.push(value ?? this.value)
+                        const newModelValue = (this.modelValue as any[]).filter(
+                            (v) => !children.includes(v)
+                        )
+                        this.$emit('update:model-value', newModelValue)
+                        this.updatingLeaf = false
+                    })
+                }
+            }
         },
         handleCheckboxUpdate(newVal: string[] | boolean, e: Event): void {
-            this.$emit('update:model-value', newVal, e)
+            if (!this.updatingLeaf) {
+                this.$emit('update:model-value', newVal, e)
+            }
         },
         handleClick(e: Event) {
             e.stopPropagation()
@@ -228,6 +358,19 @@ export default defineComponent({
         },
         getValue(option: any) {
             return typeof option === 'object' ? option.value : null
+        },
+        getOptionByValue(value: any): DlSelectOptionType {
+            if (this.value === value) {
+                return this as any as DlSelectOptionType
+            }
+            if (this.children) {
+                const child =
+                    this.children.find((child) => {
+                        return this.getValue(child) === value
+                    }) ?? null
+
+                return child as DlSelectOptionType
+            }
         },
         isReadonlyOption(option: any) {
             return !!option?.readonly

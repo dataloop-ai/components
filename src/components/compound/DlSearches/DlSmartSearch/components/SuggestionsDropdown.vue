@@ -28,7 +28,7 @@
                     :highlighted="suggestionIndex === highlightedIndex"
                     @click="handleOption(item)"
                 >
-                    {{ item }}
+                    {{ removeQuotes(item) }}
                 </dl-list-item>
             </dl-list>
         </dl-menu>
@@ -115,11 +115,18 @@ export default defineComponent({
             emit('update:model-value', false)
         }
 
+        const removeQuotes = (item: any) => {
+            const str = '' + item
+            const match = str.match(/^'(.*)'$/)
+            return match ? match[1] : str
+        }
+
         return {
             defaultTarget,
             setHighlightedIndex,
             handleSelectedItem,
             highlightedIndex,
+            removeQuotes,
             onShow,
             onHide,
             emitModelValue,

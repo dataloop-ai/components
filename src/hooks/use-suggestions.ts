@@ -3,12 +3,16 @@ import { splitByQuotes } from '../utils/splitByQuotes'
 import { flatten } from 'flat'
 import { isObject } from 'lodash'
 
+export type Data = {
+    [key: string]: any
+}
+
 export type Schema = {
     [key: string]:
         | string
         | number
         | boolean
-        | (number | boolean | string)[]
+        | (number | boolean | string | Data)[]
         | Schema
 }
 
@@ -147,6 +151,18 @@ export const useSuggestions = (
     const suggestions: Ref<Suggestion[]> = ref(sortedSuggestions)
     const error: Ref<string | null> = ref(null)
 
+    const checkErrors = (input: string) => {
+        input = input.replace(/\s+/g, ' ').trimStart()
+
+        const words = splitByQuotes(input, space)
+        const mergedWords = mergeWords(words)
+        const expressions = mapWordsToExpressions(mergedWords)
+
+        error.value = input.length
+            ? getError(schemaValue, aliasesArray, expressions, { strict })
+            : null
+    }
+
     const findSuggestions = (input: string) => {
         input = input.replace(/\s+/g, ' ').trimStart()
         localSuggestions = sortedSuggestions
@@ -162,7 +178,7 @@ export const useSuggestions = (
 
             if (!field) continue
 
-            const fieldSeparated: any = field.split('.')
+            const fieldSeparated: string[] = field.split('.')
 
             if (fieldSeparated.length > 1) {
                 localSuggestions = []
@@ -213,20 +229,34 @@ export const useSuggestions = (
             localSuggestions = getOperators(ops)
 
             if (!operator) {
-                const dotSeparated = matchedField.split('.').filter((el) => el)
+                const dotSeparated = matchedField.split('.')
+                const lastWord = dotSeparated.pop()
                 let fieldOf = schemaValue
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
 
-                if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
-                    const toConcat: string[] = []
-                    for (const key of Object.keys(fieldOf)) {
-                        if (key === '*') continue
-                        toConcat.push(`.${key}`)
+                const toAdd: string[] = []
+
+                if (fieldOf[lastWord]) {
+                    fieldOf = fieldOf[lastWord] as Schema
+
+                    if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
+                        for (const key of Object.keys(fieldOf)) {
+                            if (key === '*') continue
+                            toAdd.push(`.${key}`)
+                        }
                     }
-                    localSuggestions = localSuggestions.concat(toConcat)
+                } else {
+                    for (const key in fieldOf) {
+                        if (key === '*') continue
+                        if (key.startsWith(lastWord)) {
+                            toAdd.push(`.${key}`)
+                        }
+                    }
                 }
+
+                localSuggestions = toAdd.concat(localSuggestions)
 
                 continue
             }
@@ -244,9 +274,15 @@ export const useSuggestions = (
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType.filter(
-                    (type) => !knownDataTypes.includes(type)
-                )
+                localSuggestions = dataType
+                    .filter(
+                        (type) =>
+                            !knownDataTypes.includes(type as string) &&
+                            typeof type !== 'object'
+                    )
+                    .map((type) =>
+                        typeof type === 'string' ? `'${type}'` : type
+                    ) as string[]
 
                 if (!value) continue
 
@@ -282,17 +318,13 @@ export const useSuggestions = (
             localSuggestions = sortedSuggestions
         }
 
-        error.value = input.length
-            ? getError(schemaValue, aliasesArray, expressions, { strict })
-            : null
-
         suggestions.value = localSuggestions.filter(
             (value) =>
                 !omitSuggestions || !omitSuggestions.value.includes(value)
         )
     }
 
-    return { suggestions, findSuggestions, error }
+    return { suggestions, findSuggestions, error, checkErrors }
 }
 
 const errors = {
@@ -357,7 +389,9 @@ const getError = (
             for (const key of Object.keys(schema)) {
                 if (isObject(schema[key]) && !Array.isArray(schema[key])) {
                     const flattened = flatten({ [key]: schema[key] })
-                    keys.push(...Object.keys(flattened))
+                    for (const k of Object.keys(flattened)) {
+                        keys.push(k)
+                    }
                 } else {
                     keys.push(key)
                 }
@@ -402,7 +436,7 @@ const getError = (
 
 const isValidByDataType = (
     str: string | string[],
-    dataType: string | string[],
+    dataType: string | (string | Data)[],
     operator: string
 ): boolean => {
     if (dataType === 'any') {
@@ -423,9 +457,16 @@ const isValidByDataType = (
      */
 
     if (Array.isArray(dataType)) {
-        let isOneOf = !!getValueMatch(dataType, str)
+        let isOneOf = !!getValueMatch(
+            dataType.filter((type) => typeof type !== 'object') as string[],
+            str
+        )
         for (const type of dataType) {
-            isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            if (typeof type === 'object') {
+                isOneOf = isOneOf || !!getValueMatch(Object.keys(type), str)
+            } else {
+                isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            }
         }
         return isOneOf
     }
@@ -507,7 +548,7 @@ const getDataType = (
     schema: Schema,
     aliases: Alias[],
     key: string
-): string | string[] | null => {
+): string | (string | Data)[] | null => {
     const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
 
     const nestedKey = aliasedKey.split('.').filter((el) => el)
@@ -529,7 +570,7 @@ const getDataType = (
         return 'object'
     }
 
-    return value as unknown as string | string[] | null
+    return value as unknown as string | (string | Data)[] | null
 }
 
 const getAliasObjByAlias = (aliases: Alias[], alias: string): Alias | null => {
@@ -666,14 +707,24 @@ export const removeLeadingExpression = (str: string) => {
     return str.match(/\s+(.*)$/)?.[1] || ''
 }
 
-const getValueSuggestions = (dataType: string | string[], operator: string) => {
-    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+const getValueSuggestions = (
+    dataType: string | (string | Data)[],
+    operator: string
+) => {
+    const types: (string | Data)[] = Array.isArray(dataType)
+        ? dataType
+        : [dataType]
     const suggestion: string[] = []
 
     if (Array.isArray(dataType)) {
-        suggestion.push(
-            ...dataType.filter((type) => !knownDataTypes.includes(type))
-        )
+        for (const type of dataType) {
+            if (
+                !knownDataTypes.includes(type as string) &&
+                typeof type !== 'object'
+            ) {
+                suggestion.push(typeof type === 'string' ? `'${type}'` : type)
+            }
+        }
     }
 
     for (const type of types) {
@@ -688,7 +739,10 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'datetime':
                 suggestion.push(dateSuggestionPattern)
             default:
-                // do nothing
+                if (typeof type === 'object') {
+                    // value aliases: key is the alias, value is the actual value
+                    for (const key in type) suggestion.push(key)
+                }
                 break
         }
     }

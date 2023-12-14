@@ -85,7 +85,6 @@ export default defineComponent({
     width: 100%;
     top: 0;
     left: 0;
-    background-color: var(--dl-color-panel-background);
     z-index: 1000;
 
     &__close {

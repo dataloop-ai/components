@@ -160,7 +160,7 @@
                 no-focus
                 :offset="[0, 3]"
                 style="border-radius: 0"
-                :style="menuStyle"
+                :style="computedMenuStyle"
                 :menu-class="menuClass"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
@@ -190,11 +190,14 @@
                     <dl-select-option
                         v-if="showAllItems"
                         :multiselect="multiselect"
+                        :select-children="selectChildren"
                         :with-wave="withWave"
                         clickable
                         :model-value="allFiltersModel"
                         :count="totalCount"
                         :highlight-selected="highlightSelected"
+                        :filter-term="searchTerm"
+                        :fit-content="fitContent"
                         total-items
                         @update:model-value="selectAll"
                         @depth-change="handleDepthChange"
@@ -212,7 +215,7 @@
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
                         :virtual-scroll-sticky-size-end="20"
-                        separator
+                        :style="`width: 100%; max-height: calc(${dropdownMaxHeight} - 20px);`"
                     >
                         <dl-select-option
                             :key="getKeyForOption(item)"
@@ -227,6 +230,8 @@
                                     ? 'background-color: var(--dl-color-fill)'
                                     : ''
                             "
+                            :fit-content="fitContent"
+                            :filter-term="searchTerm"
                             :with-wave="withWave"
                             :model-value="modelValue"
                             :value="getOptionValue(item)"
@@ -235,6 +240,7 @@
                             :children="getOptionChildren(item)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(item)"
+                            :is-expanded="item.expanded"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(item)"
                             @selected="handleSelected"
@@ -265,6 +271,7 @@
                             :key="getKeyForOption(option)"
                             clickable
                             :multiselect="multiselect"
+                            :select-children="selectChildren"
                             :class="{
                                 selected:
                                     option === selectedOption &&
@@ -275,6 +282,8 @@
                                     ? 'background-color: var(--dl-color-fill)'
                                     : ''
                             "
+                            :fit-content="fitContent"
+                            :filter-term="searchTerm"
                             :with-wave="withWave"
                             :model-value="modelValue"
                             :value="getOptionValue(option)"
@@ -283,6 +292,7 @@
                             :children="getOptionChildren(option)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(option)"
+                            :is-expanded="option.expanded"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
                             @selected="handleSelected"
@@ -354,8 +364,9 @@ import {
     getLabelOfSelectedOption,
     getCaseInsensitiveInput
 } from './utils'
+import { DlSelectOption as DlSelectOptionEntry } from '../types'
 import DlSelectOption from './components/DlSelectOption.vue'
-import { isEqual } from 'lodash'
+import { cloneDeep, isEqual } from 'lodash'
 import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
 
@@ -434,6 +445,13 @@ export default defineComponent({
         menuClass: {
             type: String,
             default: null
+        },
+        /**
+         * when multiselect is true, this will select all children of the selected option
+         */
+        selectChildren: {
+            type: Boolean,
+            default: true
         }
     },
     emits: [
@@ -464,8 +482,8 @@ export default defineComponent({
         }
         const handleModelValueUpdate = (val: any) => {
             emit('update:model-value', val)
-            emit('change', val)
             emit('selected', val)
+            emit('change', val)
         }
 
         return {
@@ -490,15 +508,98 @@ export default defineComponent({
                 return this.options
             }
 
-            return this.options.filter((option) => {
-                const label = getLabel(option)
-                return (
-                    label &&
-                    label
-                        .toLowerCase()
-                        .includes(this.searchTerm.toLowerCase().trim())
-                )
-            })
+            // alternate version here it shows from child down
+            // const labelIncluded = (
+            //     options: DlSelectOptionType[],
+            //     term: string
+            // ): DlSelectOptionType[] => {
+            //     const filteredNodes: DlSelectOptionType[] = []
+
+            //     for (const op of options) {
+            //         const queue: DlSelectOptionType[] = [op]
+            //         while (queue.length) {
+            //             const node = queue.shift()
+            //             let shouldPush = false
+
+            //             const label = getLabel(node)
+
+            //             if (
+            //                 label &&
+            //                 label
+            //                     .toLowerCase()
+            //                     .includes(term.toLowerCase().trim())
+            //             ) {
+            //                 filteredNodes.push(node)
+            //                 shouldPush = true
+            //             }
+
+            //             if (
+            //                 !shouldPush &&
+            //                 (node as DlSelectOptionEntry)?.children?.length
+            //             ) {
+            //                 queue.push(
+            //                     ...(node as DlSelectOptionEntry).children
+            //                 )
+            //             }
+            //         }
+            //     }
+
+            //     return filteredNodes
+            // }
+
+            const labelIncluded = (
+                options: DlSelectOptionType[],
+                term: string
+            ): DlSelectOptionType[] => {
+                const filteredNodes: DlSelectOptionType[] = []
+
+                for (const op of options) {
+                    const queue: DlSelectOptionType[] = [op]
+                    const filteredRoots: DlSelectOptionType[] = []
+                    while (queue.length) {
+                        const node = queue.shift()
+                        let shouldPush = false
+                        if ((node as DlSelectOptionEntry)?.children?.length) {
+                            const filteredChildren: DlSelectOptionType[] =
+                                labelIncluded(
+                                    (node as DlSelectOptionEntry).children,
+                                    term
+                                )
+                            if (filteredChildren.length) {
+                                // @ts-ignore
+                                node.children = filteredChildren
+                                shouldPush = true
+                            }
+                        }
+
+                        const label = getLabel(node)
+
+                        if (
+                            shouldPush ||
+                            (label &&
+                                label
+                                    .toLowerCase()
+                                    .includes(term.toLowerCase().trim()))
+                        ) {
+                            filteredRoots.push(node)
+                        }
+                    }
+                    for (const root of filteredRoots) {
+                        filteredNodes.push(root)
+                    }
+                }
+
+                return filteredNodes
+            }
+
+            return labelIncluded(cloneDeep(this.options), this.searchTerm)
+        },
+        computedMenuStyle(): string {
+            let style = this.menuStyle ?? ''
+            if (this.optionsCount > this.MAX_ITEMS_PER_LIST) {
+                style += '; overflow-y: hidden'
+            }
+            return style
         },
         optionsCount(): number {
             return this.options?.length ?? 0
@@ -775,7 +876,11 @@ export default defineComponent({
             return option?.count ?? null
         },
         getKeyForOption(
-            option: string | number | Record<string, string | number>
+            option:
+                | string
+                | number
+                | Record<string, string | number>
+                | DlSelectOptionType
         ) {
             if (typeof option === 'string' || typeof option === 'number') {
                 return option

@@ -136,10 +136,27 @@ export default defineComponent({
                 '*': 'any'
             },
             type: ['dir', 'file'],
+            test0: ['why wont', 'this work', 123],
             test1: ['5', '6', 'number'],
             test2: ['true', 'false']
         }
         const schema2: any = {
+            value: [
+                'string',
+                {
+                    John: 'AB34',
+                    Connor: '42'
+                }
+            ],
+            nested: {
+                value: [
+                    'string',
+                    {
+                        John: 'AB34',
+                        Connor: '42'
+                    }
+                ]
+            },
             type: [
                 'class',
                 'point',

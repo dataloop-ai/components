@@ -49,6 +49,7 @@
         <dl-tooltip
             v-if="tooltip || hasTooltipSlot"
             style="pointer-events: auto"
+            :trigger-percentage="tooltipTriggerPercentage"
         >
             <slot name="tooltip">
                 {{ tooltip }}
@@ -173,6 +174,13 @@ export default defineComponent({
          * The tooltip displayed when hovering over the button
          */
         tooltip: { type: String, default: null, required: false },
+        /**
+         * The percentage of the button's width that will trigger the tooltip
+         */
+        tooltipTriggerPercentage: {
+            type: Number,
+            default: 1
+        },
         /**
          * The button will maintain the styles it has when it's pressed if this prop is active
          */

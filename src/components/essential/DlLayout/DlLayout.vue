@@ -56,13 +56,13 @@ export default defineComponent({
 
     &__main-head {
         grid-area: h;
-        box-shadow: 1px 1px 1px var(--dl-color-separator);
     }
 
     &__content {
         grid-area: p;
-        overflow-y: scroll;
+        overflow-y: auto;
         box-shadow: 1px 1px 1px var(--dl-color-separator);
+        background-color: var(--dl-color-panel-background);
     }
 
     &__left-drawer {
