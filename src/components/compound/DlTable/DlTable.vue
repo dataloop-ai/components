@@ -768,6 +768,7 @@
                                         :class="col.tdClass(row)"
                                         :style="col.tdStyle(row)"
                                         :col-index="colIndex"
+                                        :no-tooltip="col.ignoreTooltip"
                                     >
                                         <slot
                                             v-bind="
@@ -926,6 +927,7 @@ import {
     getCurrentInstance,
     ComputedRef,
     onMounted,
+    onBeforeUnmount,
     toRefs,
     nextTick,
     PropType
@@ -1411,26 +1413,28 @@ export default defineComponent({
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
-        onMounted(() => {
+        const updateTableSizing = () => {
             tableEl =
                 tableRef.value ||
                 virtScrollRef.value.rootRef.querySelector('table') ||
                 (document.querySelector('table.dl-table') as HTMLTableElement)
 
-            const updateColumnWidths = () => {
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableEl,
-                        columns.value as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
-                    )
-                })
-            }
-            updateColumnWidths()
+            nextTick(() => {
+                setAllColumnWidths(
+                    tableEl,
+                    columns.value as DlTableColumn[],
+                    props.stickyColumns,
+                    props.fitAllColumns
+                )
+            })
+            return tableEl
+        }
+
+        onMounted(() => {
+            const tableEl = updateTableSizing()
             window.addEventListener(
                 'virtual-scroll-content-update',
-                updateColumnWidths
+                updateTableSizing
             )
             if (visibleColumns.value) return
             if (resizable.value) {
@@ -1443,6 +1447,12 @@ export default defineComponent({
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
+        })
+        onBeforeUnmount(() => {
+            window.removeEventListener(
+                'virtual-scroll-content-update',
+                updateTableSizing
+            )
         })
 
         watch(
