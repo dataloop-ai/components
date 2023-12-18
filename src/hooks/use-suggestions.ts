@@ -36,9 +36,11 @@ export const operators: Operators = {
     $gt: '>', // number, date, datetime, time
     $gte: '>=', // number, date, datetime, time
     $lt: '<', // number, date, datetime, time
-    $lte: '<=', // number, date, datetime, time
+    $lte: '<=' // number, date, datetime, time
+    /*
     $in: 'IN', // all types
     $nin: 'NOT-IN' // all types
+*/
 }
 
 type OperatorToDataTypeMap = {
@@ -51,9 +53,11 @@ const operatorToDataTypeMap: OperatorToDataTypeMap = {
     $gt: ['number', 'date', 'datetime', 'time'],
     $gte: ['number', 'date', 'datetime', 'time'],
     $lt: ['number', 'date', 'datetime', 'time'],
-    $lte: ['number', 'date', 'datetime', 'time'],
+    $lte: ['number', 'date', 'datetime', 'time']
+    /*
     $in: [],
     $nin: []
+*/
 }
 
 const knownDataTypes = [
