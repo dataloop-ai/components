@@ -1301,8 +1301,12 @@ export default defineComponent({
         const rootRef = ref<HTMLDivElement>(null)
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
+
+        const hasExpandableSlot = computed(() =>
+            hasSlotByName('body-cell-expandable-content')
+        )
         const hasVirtScroll = computed<boolean>(
-            () => virtualScroll.value === true
+            () => virtualScroll.value && !hasExpandableSlot.value
         )
 
         const hasEmptyStateProps = computed(() =>
@@ -1348,10 +1352,6 @@ export default defineComponent({
 
         // table slots
         const hasSlotByName = (name: string) => !!slots[name]
-
-        const hasExpandableSlot = computed(() =>
-            hasSlotByName('body-cell-expandable-content')
-        )
 
         const hasPaginationSlot = computed(() => hasSlotByName('pagination'))
 

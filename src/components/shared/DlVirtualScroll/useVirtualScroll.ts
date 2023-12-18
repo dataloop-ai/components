@@ -772,7 +772,6 @@ export function useVirtualScroll({
         if (toIndex >= 0) {
             updateVirtualScrollSizes(virtualScrollSliceRange.value.from)
             nextTick(() => {
-                if (preventScrollTo) return
                 scrollTo(toIndex)
             })
         } else {
