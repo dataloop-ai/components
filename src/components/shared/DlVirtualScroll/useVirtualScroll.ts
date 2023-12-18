@@ -286,8 +286,7 @@ export function useVirtualScroll({
     getVirtualScrollTarget,
     getVirtualScrollEl,
     virtualScrollItemSizeComputed, // optional
-    debounceValue,
-    preventScrollTo
+    debounceValue
 }: DlVirtualScrollParamsType) {
     const vm = getCurrentInstance()
 

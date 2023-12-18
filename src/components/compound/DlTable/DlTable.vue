@@ -67,7 +67,6 @@
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
-            :prevent-scroll-to="hasExpandableSlot"
             @virtual-scroll="onVScroll"
         >
             <template #before>
@@ -992,7 +991,7 @@ import { SortableEvent } from 'sortablejs'
 import { insertAtIndex } from './utils/insertAtIndex'
 import { getCellValue } from './utils/getCellValue'
 import { getContainerClass } from './utils/tableClasses'
-import { has, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {

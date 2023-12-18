@@ -107,10 +107,6 @@ export default defineComponent({
         scrollDebounce: {
             type: Number,
             default: 100
-        },
-        preventScrollTo: {
-            type: Boolean,
-            default: false
         }
     },
     emits: ['virtual-scroll'],
@@ -172,7 +168,6 @@ export default defineComponent({
             getVirtualScrollTarget,
             getVirtualScrollEl,
             virtualScrollItemSizeComputed,
-            preventScrollTo: props.preventScrollTo,
             debounceValue: scrollDebounce.value
         })
 
