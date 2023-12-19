@@ -4,13 +4,11 @@
         :style="cssVars"
         class="dl-smart-search-input"
     >
-        <div
-            class="dl-smart-search-input__search-bar-wrapper"
-            @click="focus()"
-        >
+        <div class="dl-smart-search-input__search-bar-wrapper">
             <div
                 ref="searchBar"
                 :class="searchBarClasses"
+                @click="focus()"
             >
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
@@ -32,7 +30,6 @@
                         @keypress="onKeyPress"
                         @keyup.esc="onKeyPress"
                         @input="onInput"
-                        @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
@@ -62,6 +59,7 @@
             />
         </div>
         <suggestions-dropdown
+            ref="suggestionsDropdown"
             v-model="showSuggestions"
             :parent-id="`${uuid}`"
             :trigger-percentage="0.5"
@@ -263,6 +261,7 @@ export default defineComponent({
         const expanded = ref(true)
         const datePickerSelection = ref(null)
         const showDatePicker = ref(false)
+        const suggestionsDropdown = ref(null)
         //#endregion
 
         //#region hooks
@@ -464,6 +463,7 @@ export default defineComponent({
             input.value.focus()
 
             focused.value = true
+            showSuggestions.value = true
             emit('focus')
         }
 
@@ -904,6 +904,7 @@ export default defineComponent({
 
         return {
             uuid: v4(),
+            suggestionsDropdown,
             input,
             label,
             searchBar,
