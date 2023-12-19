@@ -414,6 +414,7 @@
                             <tr
                                 v-if="isRowExpanded(props.item)"
                                 :key="getRowExpandedKey(props.item)"
+                                class="dl-virtual-scroll--with-prev"
                             >
                                 <!-- cols + icon col + expandable icon col-->
                                 <td :colspan="columns.length + 1 + 1">
