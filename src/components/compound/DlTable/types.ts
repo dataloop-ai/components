@@ -44,7 +44,6 @@ export type DlTableColumn = {
     width?: number
     hint?: string
     sticky?: boolean
-    ignoreTooltip?: boolean
 }
 
 export type DlTableFilterMethod = (
