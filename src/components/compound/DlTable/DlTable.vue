@@ -455,6 +455,7 @@
 
         <div
             v-else
+            ref="tableScroll"
             class="dl-table__middle scroll"
         >
             <table
@@ -677,6 +678,11 @@
                             name="table-body"
                             :computed-rows="computedRows"
                         >
+                            <div
+                                ref="topRow"
+                                key="top"
+                                class="infinite-scroll-top"
+                            />
                             <slot
                                 v-for="(row, pageIndex) in computedRows"
                                 v-bind="
@@ -831,6 +837,11 @@
                                     </td>
                                 </tr>
                             </slot>
+                            <div
+                                ref="bottomRow"
+                                key="top"
+                                class="infinite-scroll-bottom"
+                            />
                         </slot>
 
                         <slot
@@ -1119,6 +1130,13 @@ export default defineComponent({
             default: false
         },
         /**
+         * Enable infinite scroll
+         */
+        infiniteScroll: {
+            type: Boolean,
+            default: false
+        },
+        /**
          * Hide table pagination
          */
         hidePagination: {
@@ -1246,7 +1264,7 @@ export default defineComponent({
             default: 'No data'
         },
         stickyColumns: {
-            type: Object as PropType<TableStickyPosition>,
+            type: String as PropType<TableStickyPosition>,
             default: null,
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
@@ -1300,6 +1318,7 @@ export default defineComponent({
         const rootRef = ref<HTMLDivElement>(null)
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
+        const tableScroll = ref(null)
 
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
@@ -1421,6 +1440,50 @@ export default defineComponent({
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
+        const topRow = ref(null)
+        const bottomRow = ref(null)
+
+        const setupInfiniteScroll = () => {
+            let wasBottomIntersecting = true
+
+            const bottomObserver = new IntersectionObserver(
+                ([entry]) => {
+                    const isCurrentlyIntersecting = entry.isIntersecting
+                    if (!wasBottomIntersecting && isCurrentlyIntersecting) {
+                        emit(
+                            'scroll-to-bottom',
+                            computedPagination.value.rowsPerPage,
+                            tableScroll.value
+                        )
+                    }
+                    wasBottomIntersecting = isCurrentlyIntersecting
+                },
+                {
+                    rootMargin: '100px'
+                }
+            )
+            let wasTopIntersecting = true
+            const topObserver = new IntersectionObserver(
+                ([entry]) => {
+                    const isCurrentlyIntersecting = entry.isIntersecting
+                    if (!wasTopIntersecting && isCurrentlyIntersecting) {
+                        emit(
+                            'scroll-to-top',
+                            computedPagination.value.rowsPerPage,
+                            tableScroll.value
+                        )
+                    }
+                    wasTopIntersecting = isCurrentlyIntersecting
+                },
+                {
+                    rootMargin: '100px'
+                }
+            )
+            if (!topRow.value || !bottomRow.value) return
+            bottomObserver.observe(bottomRow.value)
+            topObserver.observe(topRow.value)
+        }
+
         onMounted(() => {
             tableEl =
                 tableRef.value ||
@@ -1446,6 +1509,7 @@ export default defineComponent({
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
+            setupInfiniteScroll()
         })
 
         watch(
@@ -1608,6 +1672,7 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
+            if (props.infiniteScroll) return filteredSortedRows.value
             let filtered = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
@@ -1647,7 +1712,9 @@ export default defineComponent({
         })
 
         const displayPagination = computed(
-            () => !(hidePagination.value || nothingToDisplay.value)
+            () =>
+                !props.infiniteScroll &&
+                !(hidePagination.value || nothingToDisplay.value)
         )
 
         const {
@@ -2090,7 +2157,10 @@ export default defineComponent({
             getRowExpandedIcon,
             computedPagination,
             getRowExpandedKey,
-            hasExpandableSlot
+            hasExpandableSlot,
+            topRow,
+            bottomRow,
+            tableScroll
         }
     }
 })

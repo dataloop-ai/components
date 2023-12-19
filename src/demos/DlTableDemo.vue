@@ -105,12 +105,12 @@
                 :loading="loading"
                 :rows="tableRows"
                 :resizable="resizable"
+                :rows-per-page-options="[30]"
                 row-key="name"
                 color="dl-color-secondary"
                 title="Table Title"
                 :virtual-scroll="vScroll"
                 style="height: 500px"
-                :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
@@ -681,25 +681,16 @@
         <div style="margin-top: 100px">
             <p>Infinite scrolling With custom data and weird expandable</p>
             <DlTable
-                :selected="selected"
-                :separator="separator"
-                :draggable="draggable"
-                :filter="filter"
-                :resizable="resizable"
-                :selection="selection"
-                :dense="dense"
-                title="Treats"
-                color="dl-color-secondary"
                 :loading="infiniteLoading"
-                :rows="generatedRows"
+                :rows="infiniteScrollRows"
                 :columns="tableColumns"
                 style="height: 500px"
                 row-key="index"
-                virtual-scroll
+                infinite-scroll
                 expandable-rows
-                @virtual-scroll="onScrollGenerate"
-                @update:pagination="() => console.log('@@@@ hey')"
-                @col-update="updateColumns"
+                :rows-per-page-options="[30]"
+                @scroll-to-bottom="handleScrollToBottom"
+                @scroll-to-top="handleScrollToTop"
             >
                 <template #body-cell-expandable-content="{ row }">
                     <div>
@@ -735,6 +726,7 @@ import {
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
 import { DlTablePagination, DlVirtualScrollEvent } from '../types'
+import { off } from 'process'
 
 const columns = [
     {
@@ -836,108 +828,108 @@ const columns2 = [
     }
 ]
 
-const rows = [
-    {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-    },
-    {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%'
-    },
-    {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%'
-    },
-    {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%'
-    },
-    {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%'
-    },
-    {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%'
-    },
-    {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%'
-    },
-    {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%'
-    },
-    {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%'
-    },
-    {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    },
-    ...times(1000, (index) => ({
+const getRows = (count: number) => [
+    // {
+    //     name: 'Frozen Yogurt',
+    //     calories: 159,
+    //     fat: 6.0,
+    //     carbs: 24,
+    //     protein: 4.0,
+    //     sodium: 87,
+    //     calcium: '14%',
+    //     iron: '1%'
+    // },
+    // {
+    //     name: 'Ice cream sandwich',
+    //     calories: 237,
+    //     fat: 9.0,
+    //     carbs: 37,
+    //     protein: 4.3,
+    //     sodium: 129,
+    //     calcium: '8%',
+    //     iron: '1%'
+    // },
+    // {
+    //     name: 'Eclair',
+    //     calories: 262,
+    //     fat: 16.0,
+    //     carbs: 23,
+    //     protein: 6.0,
+    //     sodium: 337,
+    //     calcium: '6%',
+    //     iron: '7%'
+    // },
+    // {
+    //     name: 'Cupcake',
+    //     calories: 305,
+    //     fat: 3.7,
+    //     carbs: 67,
+    //     protein: 4.3,
+    //     sodium: 413,
+    //     calcium: '3%',
+    //     iron: '8%'
+    // },
+    // {
+    //     name: 'Gingerbread',
+    //     calories: 356,
+    //     fat: 16.0,
+    //     carbs: 49,
+    //     protein: 3.9,
+    //     sodium: 327,
+    //     calcium: '7%',
+    //     iron: '16%'
+    // },
+    // {
+    //     name: 'Jelly bean',
+    //     calories: 375,
+    //     fat: 0.0,
+    //     carbs: 94,
+    //     protein: 0.0,
+    //     sodium: 50,
+    //     calcium: '0%',
+    //     iron: '0%'
+    // },
+    // {
+    //     name: 'Lollipop',
+    //     calories: 392,
+    //     fat: 0.2,
+    //     carbs: 98,
+    //     protein: 0,
+    //     sodium: 38,
+    //     calcium: '0%',
+    //     iron: '2%'
+    // },
+    // {
+    //     name: 'Honeycomb',
+    //     calories: 408,
+    //     fat: 3.2,
+    //     carbs: 87,
+    //     protein: 6.5,
+    //     sodium: 562,
+    //     calcium: '0%',
+    //     iron: '45%'
+    // },
+    // {
+    //     name: 'Donut',
+    //     calories: 452,
+    //     fat: 25.0,
+    //     carbs: 51,
+    //     protein: 4.9,
+    //     sodium: 326,
+    //     calcium: '2%',
+    //     iron: '22%'
+    // },
+    // {
+    //     name: 'KitKat',
+    //     calories: 518,
+    //     fat: 26.0,
+    //     carbs: 65,
+    //     protein: 7,
+    //     sodium: 54,
+    //     calcium: '12%',
+    //     iron: '6%'
+    // },
+    ...times(count, (index) => ({
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,
@@ -948,6 +940,9 @@ const rows = [
         iron: '6%'
     }))
 ]
+
+const rows = getRows(1000)
+const manyRows = getRows(10000)
 
 const columnsAligned = [
     {
@@ -1052,10 +1047,11 @@ export default defineComponent({
         const virtualScroll = ref([])
         const resizableState = ref([])
         const tableRows = ref(cloneDeep(rows))
+        const infiniteScrollRows = ref(cloneDeep(manyRows.slice(0, 30)))
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const tableColumnsAligned = ref(columnsAligned)
-        const rowsPerPageOptions = ref([5, 10, 12, 14, 16, 100])
+        const rowsPerPageOptions = ref([10, 12, 14, 16, 100])
 
         const infiniteLoading = ref(false)
 
@@ -1202,6 +1198,47 @@ export default defineComponent({
             tableColumns.value = newColumns
         }
 
+        const scrollOffset = 500
+
+        const sliceIndex = { from: 0, to: 0 }
+        const handleInfiniteScroll = (
+            rowsPerPage: number,
+            direction: 'top' | 'bottom',
+            maxLength: number,
+            ref: HTMLElement
+        ) => {
+            if (!sliceIndex.to) sliceIndex.to = rowsPerPage
+            if (direction === 'bottom') {
+                sliceIndex.to += rowsPerPage
+                if (infiniteScrollRows.value.length > maxLength) {
+                    sliceIndex.from += rowsPerPage
+                    ref.scrollTop -= scrollOffset
+                }
+            } else {
+                sliceIndex.from -= rowsPerPage
+                if (infiniteScrollRows.value.length > maxLength) {
+                    sliceIndex.to -= rowsPerPage
+                    ref.scrollTop += scrollOffset
+                }
+                if (sliceIndex.from < 0) {
+                    sliceIndex.from = 0
+                }
+            }
+            infiniteScrollRows.value = cloneDeep(
+                manyRows.slice(sliceIndex.from, sliceIndex.to)
+            )
+        }
+
+        const handleScrollToBottom = (
+            rowsPerPage: number,
+            ref: HTMLElement
+        ) => {
+            handleInfiniteScroll(rowsPerPage, 'bottom', 200, ref)
+        }
+        const handleScrollToTop = (rowsPerPage: number, ref: HTMLElement) => {
+            handleInfiniteScroll(rowsPerPage, 'top', 200, ref)
+        }
+
         return {
             reorderRows,
             updateColumns,
@@ -1238,7 +1275,10 @@ export default defineComponent({
             columns2,
             tableColumnsAligned,
             generatedRows,
-            onScrollGenerate
+            onScrollGenerate,
+            handleScrollToBottom,
+            handleScrollToTop,
+            infiniteScrollRows
         }
     },
 
