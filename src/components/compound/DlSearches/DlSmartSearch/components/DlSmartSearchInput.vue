@@ -75,6 +75,7 @@
             v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
+            :toggle-key="'Escape'"
             @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
