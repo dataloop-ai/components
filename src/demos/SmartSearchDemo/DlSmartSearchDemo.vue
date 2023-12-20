@@ -157,6 +157,12 @@ export default defineComponent({
                     }
                 ]
             },
+            only_va: [
+                {
+                    'String Value': '12345',
+                    'Numeric Value': 12345
+                }
+            ],
             type: [
                 'class',
                 'point',
