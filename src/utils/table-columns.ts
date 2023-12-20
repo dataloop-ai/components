@@ -140,6 +140,9 @@ export function setAllColumnWidths(
     stickyColumns: TableStickyPosition,
     fitAllColumns: boolean
 ) {
+    const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
+    if (!hasWidth) return
+    table.style.tableLayout = 'fixed'
     columns.forEach((col, i) => {
         browseNestedNodes(
             table,
@@ -154,6 +157,7 @@ export function setAllColumnWidths(
                             targetEl.querySelector('.inner-th').scrollWidth) +
                         getIconWidth(targetEl) +
                         35
+
                     // Set the width of the column
                     targetEl.style.width =
                         typeof col.width === 'number' || !col.width

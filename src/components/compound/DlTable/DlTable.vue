@@ -148,16 +148,16 @@
                                             }
                                         "
                                     >
-                                        <dl-ellipsis v-if="fitAllColumns">
+                                        <dl-ellipsis>
                                             {{ col.label }}
                                         </dl-ellipsis>
-                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                :col-index="-1"
                                 no-tooltip
                                 padding="0"
                             >
@@ -390,6 +390,7 @@
                                     v-if="showRowActions"
                                     key="visibleColumnsSlot"
                                     class="visible-columns-justify-end"
+                                    :col-index="-1"
                                     no-tooltip
                                 >
                                     <slot
@@ -540,18 +541,17 @@
                                             }
                                         "
                                     >
-                                        <dl-ellipsis v-if="fitAllColumns">
+                                        <dl-ellipsis>
                                             {{ col.label }}
                                         </dl-ellipsis>
-                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                :col-index="-1"
                                 no-tooltip
-                                style="width: 25px"
                                 :padding="isTreeTable ? '0' : '0 10px'"
                             >
                                 <slot
@@ -794,6 +794,7 @@
                                         v-if="showRowActions"
                                         key="visibleColumnsSlot"
                                         class="visible-columns-justify-end"
+                                        :col-index="-1"
                                         no-tooltip
                                     >
                                         <slot
@@ -883,7 +884,10 @@
                     v-bind="marginalsScope"
                 >
                     <div
-                        v-if="hasBotomSelectionBanner"
+                        v-if="
+                            hasBotomSelectionBanner &&
+                                selectedRowsLabel(rowsSelectedNumber)
+                        "
                         class="dl-table__control"
                     >
                         <div>
@@ -927,7 +931,6 @@ import {
     getCurrentInstance,
     ComputedRef,
     onMounted,
-    onBeforeUnmount,
     toRefs,
     nextTick,
     PropType
@@ -1243,7 +1246,7 @@ export default defineComponent({
             default: 'No data'
         },
         stickyColumns: {
-            type: String as PropType<TableStickyPosition>,
+            type: Object as PropType<TableStickyPosition>,
             default: null,
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
@@ -1281,6 +1284,7 @@ export default defineComponent({
             noDataLabel,
             columns,
             fitAllColumns,
+            stickyColumns,
             resizable,
             hidePagination,
             hideSelectedBanner,
@@ -1413,7 +1417,7 @@ export default defineComponent({
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
-        const updateTableSizing = () => {
+        onMounted(() => {
             tableEl =
                 tableRef.value ||
                 virtScrollRef.value.rootRef.querySelector('table') ||
@@ -1423,19 +1427,10 @@ export default defineComponent({
                 setAllColumnWidths(
                     tableEl,
                     columns.value as DlTableColumn[],
-                    props.stickyColumns,
-                    props.fitAllColumns
+                    stickyColumns.value,
+                    fitAllColumns.value
                 )
             })
-            return tableEl
-        }
-
-        onMounted(() => {
-            const tableEl = updateTableSizing()
-            window.addEventListener(
-                'virtual-scroll-content-update',
-                updateTableSizing
-            )
             if (visibleColumns.value) return
             if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
@@ -1447,12 +1442,6 @@ export default defineComponent({
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
-        })
-        onBeforeUnmount(() => {
-            window.removeEventListener(
-                'virtual-scroll-content-update',
-                updateTableSizing
-            )
         })
 
         watch(
@@ -1469,8 +1458,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableEl,
                         props.columns as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
+                        stickyColumns.value,
+                        fitAllColumns.value
                     )
                 })
                 if (visibleColumns.value) return
@@ -1509,8 +1498,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableRef.value,
                         newColumns as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
+                        stickyColumns.value,
+                        fitAllColumns.value
                     )
                 })
             },
