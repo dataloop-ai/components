@@ -674,7 +674,8 @@ export default defineComponent({
             disabled,
             autoTrim,
             debounce,
-            trimDebounce
+            trimDebounce,
+            type
         } = toRefs(props)
 
         const isInternalChange = ref(false)
@@ -728,15 +729,51 @@ export default defineComponent({
             return debounced
         })
 
+        const isValidNumber = (input: string | number) => {
+            const parsedNumber = Number(String(input))
+            return (
+                !isNaN(parsedNumber) &&
+                isFinite(parsedNumber) &&
+                !/[eE]/.test(String(input)) &&
+                parsedNumber >= Number.MIN_SAFE_INTEGER &&
+                parsedNumber <= Number.MAX_SAFE_INTEGER
+            )
+        }
+
         const onChange = (e: KeyboardEvent | Event) => {
             isInternalChange.value = true
             isMenuOpen.value = true
             updateSyntax()
             const target = e.target as HTMLElement
-            const toEmit = target.innerText.replace(
+            let toEmit = target.innerText.replace(
                 new RegExp('&nbsp;', 'g'),
                 ' '
             )
+
+            if (type.value === 'number') {
+                if (toEmit === '') {
+                    toEmit = '0'
+                }
+
+                const isValid = isValidNumber(toEmit)
+                if (!isValid) {
+                    const trimmed = String(modelValue.value).trim()
+                    input.value.innerHTML = trimmed
+                        .toString()
+                        .replace(/ /g, '&nbsp;')
+                    updateSyntax()
+                    setCaretAtTheEnd(input.value)
+                    return
+                }
+                if (!toEmit.endsWith('.')) {
+                    input.value.innerHTML = String(Number(toEmit))
+                        .toString()
+                        .replace(/ /g, '&nbsp;')
+                    updateSyntax()
+                    setCaretAtTheEnd(input.value)
+                }
+            }
+
             emit('input', toEmit, e)
             emit('update:model-value', toEmit)
             if (autoTrim.value) {
@@ -1065,9 +1102,15 @@ export default defineComponent({
     },
     methods: {
         onKeydown(e: KeyboardEvent) {
-            if (!this.isWithinMaxLength && e.key !== 'Backspace') {
-                e.preventDefault()
-                return
+            if (e.key !== 'Backspace') {
+                if (!/^[\d.]$/.test(e.key)) {
+                    e.preventDefault()
+                    return
+                }
+                if (!this.isWithinMaxLength) {
+                    e.preventDefault()
+                    return
+                }
             }
         },
         onClick(e: Event, item: DlInputSuggestion) {
