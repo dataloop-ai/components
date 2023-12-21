@@ -320,13 +320,15 @@ export default defineComponent({
         const disabledInput = ref<boolean>(false)
 
         const textVal = ref<string>('test me')
-        const numberVal = ref<number>(0)
+        const numberVal = ref<number>()
+        const emittedNumberValues = ref<number[]>([])
 
         const trimmedValue = ref('')
 
         return {
             log: console.log,
             textVal,
+            emittedNumberValues,
             numberVal,
             disabledInput,
             trimmedValue,

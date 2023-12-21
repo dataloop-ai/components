@@ -745,7 +745,7 @@ export default defineComponent({
             isMenuOpen.value = true
             updateSyntax()
             const target = e.target as HTMLElement
-            let toEmit = target.innerText.replace(
+            let toEmit: string | number = target.innerText.replace(
                 new RegExp('&nbsp;', 'g'),
                 ' '
             )
@@ -772,6 +772,8 @@ export default defineComponent({
                     updateSyntax()
                     setCaretAtTheEnd(input.value)
                 }
+
+                toEmit = Number(toEmit)
             }
 
             emit('input', toEmit, e)
@@ -1174,6 +1176,9 @@ export default defineComponent({
         },
         onBlur(e: InputEvent): void {
             const el = e.target as HTMLElement
+            el.innerText = el.innerText.endsWith('.')
+                ? el.innerText.slice(0, -1)
+                : el.innerText
             el.scroll(0, 0)
             this.focused = false
             this.$emit('blur', e)
@@ -1184,8 +1189,9 @@ export default defineComponent({
         },
         onClear(e: any): void {
             this.$emit('clear', this.modelValue)
-            this.$emit('input', '', e)
-            this.$emit('update:model-value', '')
+            const clearValue = this.type === 'number' ? null : ''
+            this.$emit('input', clearValue, e)
+            this.$emit('update:model-value', clearValue)
 
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.innerHTML = ''
