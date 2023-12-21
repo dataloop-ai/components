@@ -741,7 +741,7 @@ const getValueSuggestions = (
             default:
                 if (typeof type === 'object') {
                     // value aliases: key is the alias, value is the actual value
-                    for (const key in type) suggestion.push(key)
+                    for (const key in type) suggestion.push(`'${key}'`)
                 }
                 break
         }
