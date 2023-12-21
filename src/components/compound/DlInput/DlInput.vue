@@ -1105,7 +1105,7 @@ export default defineComponent({
     methods: {
         onKeydown(e: KeyboardEvent) {
             if (e.key !== 'Backspace') {
-                if (!/^[\d.]$/.test(e.key)) {
+                if (this.type === 'number' && !/^[\d.]$/.test(e.key)) {
                     e.preventDefault()
                     return
                 }
