@@ -1176,7 +1176,7 @@ export default defineComponent({
         },
         onBlur(e: InputEvent): void {
             const el = e.target as HTMLElement
-            el.innerText = el.innerText.endsWith('.')
+            el.innerText = (el.innerText ?? '').endsWith('.')
                 ? el.innerText.slice(0, -1)
                 : el.innerText
             el.scroll(0, 0)
