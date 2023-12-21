@@ -235,22 +235,21 @@
                                 </slot>
                             </DlTh>
                         </DlTr>
-
-                        <tr
-                            v-if="loading && !hasLoadingSlot"
-                            class="dl-table__progress"
-                        >
-                            <th
-                                :colspan="colspanWithActionsRow"
-                                class="relative-position"
-                            >
-                                <dl-progress-bar
-                                    indeterminate
-                                    :color="color"
-                                />
-                            </th>
-                        </tr>
                     </slot>
+                    <tr
+                        v-if="loading && !hasLoadingSlot"
+                        class="dl-table__progress"
+                    >
+                        <th
+                            :colspan="colspanWithActionsRow"
+                            class="relative-position"
+                        >
+                            <dl-progress-bar
+                                indeterminate
+                                :color="color"
+                            />
+                        </th>
+                    </tr>
                 </thead>
             </template>
             <template #default="props">
@@ -629,22 +628,21 @@
                                 </slot>
                             </DlTh>
                         </DlTr>
-
-                        <tr
-                            v-if="loading && !hasLoadingSlot"
-                            class="dl-table__progress"
-                        >
-                            <th
-                                :colspan="colspanWithActionsRow"
-                                class="relative-position"
-                            >
-                                <dl-progress-bar
-                                    indeterminate
-                                    :color="color"
-                                />
-                            </th>
-                        </tr>
                     </slot>
+                    <tr
+                        v-if="loading && !hasLoadingSlot"
+                        class="dl-table__progress"
+                    >
+                        <th
+                            :colspan="colspanWithActionsRow"
+                            class="relative-position"
+                        >
+                            <dl-progress-bar
+                                indeterminate
+                                :color="color"
+                            />
+                        </th>
+                    </tr>
                 </thead>
                 <slot
                     name="tbody"
@@ -678,10 +676,16 @@
                             name="table-body"
                             :computed-rows="computedRows"
                         >
-                            <div
-                                ref="topRow"
-                                key="top"
-                                class="infinite-scroll-top"
+                            <dl-top-scroll
+                                v-if="infiniteScroll"
+                                :container-ref="tableScroll"
+                                @scroll-to-top="
+                                    $emit(
+                                        'scroll-to-top',
+                                        computedPagination.rowsPerPage,
+                                        tableScroll
+                                    )
+                                "
                             />
                             <slot
                                 v-for="(row, pageIndex) in computedRows"
@@ -837,10 +841,16 @@
                                     </td>
                                 </tr>
                             </slot>
-                            <div
-                                ref="bottomRow"
-                                key="top"
-                                class="infinite-scroll-bottom"
+                            <dl-bottom-scroll
+                                v-if="infiniteScroll"
+                                :container-ref="tableScroll"
+                                @scroll-to-bottom="
+                                    $emit(
+                                        'scroll-to-bottom',
+                                        computedPagination.rowsPerPage,
+                                        tableScroll
+                                    )
+                                "
                             />
                         </slot>
 
@@ -1003,6 +1013,8 @@ import { insertAtIndex } from './utils/insertAtIndex'
 import { getCellValue } from './utils/getCellValue'
 import { getContainerClass } from './utils/tableClasses'
 import { isEqual } from 'lodash'
+import DlTopScroll from '../../shared/DlInfiniteScroll/DlTopScroll.vue'
+import DlBottomScroll from '../../shared/DlInfiniteScroll/DlBottomScroll.vue'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -1026,7 +1038,9 @@ export default defineComponent({
         DlPopup,
         DlList,
         Sortable,
-        DlEllipsis
+        DlEllipsis,
+        DlTopScroll,
+        DlBottomScroll
     },
     props: {
         /**
@@ -1440,50 +1454,6 @@ export default defineComponent({
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
-        const topRow = ref(null)
-        const bottomRow = ref(null)
-
-        const setupInfiniteScroll = () => {
-            let wasBottomIntersecting = true
-
-            const bottomObserver = new IntersectionObserver(
-                ([entry]) => {
-                    const isCurrentlyIntersecting = entry.isIntersecting
-                    if (!wasBottomIntersecting && isCurrentlyIntersecting) {
-                        emit(
-                            'scroll-to-bottom',
-                            computedPagination.value.rowsPerPage,
-                            tableScroll.value
-                        )
-                    }
-                    wasBottomIntersecting = isCurrentlyIntersecting
-                },
-                {
-                    rootMargin: '100px'
-                }
-            )
-            let wasTopIntersecting = true
-            const topObserver = new IntersectionObserver(
-                ([entry]) => {
-                    const isCurrentlyIntersecting = entry.isIntersecting
-                    if (!wasTopIntersecting && isCurrentlyIntersecting) {
-                        emit(
-                            'scroll-to-top',
-                            computedPagination.value.rowsPerPage,
-                            tableScroll.value
-                        )
-                    }
-                    wasTopIntersecting = isCurrentlyIntersecting
-                },
-                {
-                    rootMargin: '100px'
-                }
-            )
-            if (!topRow.value || !bottomRow.value) return
-            bottomObserver.observe(bottomRow.value)
-            topObserver.observe(topRow.value)
-        }
-
         onMounted(() => {
             tableEl =
                 tableRef.value ||
@@ -1509,7 +1479,6 @@ export default defineComponent({
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
-            setupInfiniteScroll()
         })
 
         watch(
@@ -2158,8 +2127,6 @@ export default defineComponent({
             computedPagination,
             getRowExpandedKey,
             hasExpandableSlot,
-            topRow,
-            bottomRow,
             tableScroll
         }
     }

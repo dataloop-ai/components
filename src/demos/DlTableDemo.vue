@@ -678,39 +678,6 @@
                 </template>
             </DlTable>
         </div>
-        <div style="margin-top: 100px">
-            <p>Infinite scrolling With custom data and weird expandable</p>
-            <DlTable
-                :loading="infiniteLoading"
-                :rows="infiniteScrollRows"
-                :columns="tableColumns"
-                style="height: 500px"
-                row-key="index"
-                infinite-scroll
-                expandable-rows
-                :rows-per-page-options="[30]"
-                @scroll-to-bottom="handleScrollToBottom"
-                @scroll-to-top="handleScrollToTop"
-            >
-                <template #body-cell-expandable-content="{ row }">
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                </template>
-            </DlTable>
-        </div>
     </div>
 </template>
 
@@ -726,9 +693,8 @@ import {
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
 import { DlTablePagination, DlVirtualScrollEvent } from '../types'
-import { off } from 'process'
 
-const columns = [
+export const columns = [
     {
         name: 'name',
         required: true,
@@ -942,7 +908,6 @@ const getRows = (count: number) => [
 ]
 
 const rows = getRows(1000)
-const manyRows = getRows(10000)
 
 const columnsAligned = [
     {
@@ -1047,7 +1012,6 @@ export default defineComponent({
         const virtualScroll = ref([])
         const resizableState = ref([])
         const tableRows = ref(cloneDeep(rows))
-        const infiniteScrollRows = ref(cloneDeep(manyRows.slice(0, 30)))
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const tableColumnsAligned = ref(columnsAligned)
@@ -1198,47 +1162,6 @@ export default defineComponent({
             tableColumns.value = newColumns
         }
 
-        const scrollOffset = 500
-
-        const sliceIndex = { from: 0, to: 0 }
-        const handleInfiniteScroll = (
-            rowsPerPage: number,
-            direction: 'top' | 'bottom',
-            maxLength: number,
-            ref: HTMLElement
-        ) => {
-            if (!sliceIndex.to) sliceIndex.to = rowsPerPage
-            if (direction === 'bottom') {
-                sliceIndex.to += rowsPerPage
-                if (infiniteScrollRows.value.length > maxLength) {
-                    sliceIndex.from += rowsPerPage
-                    ref.scrollTop -= scrollOffset
-                }
-            } else {
-                sliceIndex.from -= rowsPerPage
-                if (infiniteScrollRows.value.length > maxLength) {
-                    sliceIndex.to -= rowsPerPage
-                    ref.scrollTop += scrollOffset
-                }
-                if (sliceIndex.from < 0) {
-                    sliceIndex.from = 0
-                }
-            }
-            infiniteScrollRows.value = cloneDeep(
-                manyRows.slice(sliceIndex.from, sliceIndex.to)
-            )
-        }
-
-        const handleScrollToBottom = (
-            rowsPerPage: number,
-            ref: HTMLElement
-        ) => {
-            handleInfiniteScroll(rowsPerPage, 'bottom', 200, ref)
-        }
-        const handleScrollToTop = (rowsPerPage: number, ref: HTMLElement) => {
-            handleInfiniteScroll(rowsPerPage, 'top', 200, ref)
-        }
-
         return {
             reorderRows,
             updateColumns,
@@ -1275,10 +1198,7 @@ export default defineComponent({
             columns2,
             tableColumnsAligned,
             generatedRows,
-            onScrollGenerate,
-            handleScrollToBottom,
-            handleScrollToTop,
-            infiniteScrollRows
+            onScrollGenerate
         }
     },
 
