@@ -135,7 +135,7 @@ export default defineComponent({
             rowsPerPage: number,
             ref: HTMLElement
         ) => {
-            handleInfiniteScroll(rowsPerPage, 'bottom', 100, ref)
+            handleInfiniteScroll(rowsPerPage, 'top', 100, ref)
         }
 
         return {
