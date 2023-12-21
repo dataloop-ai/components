@@ -1,4 +1,4 @@
-import { isNumber } from 'lodash'
+import { debounce, isNumber } from 'lodash'
 import {
     ref,
     computed,
@@ -129,8 +129,12 @@ export function useTablePaginationState(
             innerPagination.value = newPagination
         }
 
-        emit('update:pagination', newPagination)
+        emitChanges(newPagination)
     }
+
+    const emitChanges = debounce((value: TablePagination) => {
+        emit('update:pagination', value)
+    }, 100)
 
     return {
         innerPagination,
