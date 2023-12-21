@@ -125,7 +125,7 @@ export function useTablePaginationState(
             return
         }
 
-        if (!props.pagination) {
+        if (!props.pagination || !props['update:pagination']) {
             innerPagination.value = newPagination
         }
 

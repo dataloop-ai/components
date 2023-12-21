@@ -99,6 +99,9 @@
                 :bordered="bordered"
                 :draggable="draggable"
                 :dense="dense"
+                :pagination="{
+                    rowsPerPage: 10
+                }"
                 class="sticky-header"
                 :filter="filter"
                 :selection="selection"
@@ -698,7 +701,7 @@
                 virtual-scroll
                 expandable-rows
                 @virtual-scroll="onScrollGenerate"
-                @update:pagination="() => console.log('@@@@ hey')"
+                @update:pagination="log('hi')"
                 @col-update="updateColumns"
             >
                 <template #body-cell-expandable-content="{ row }">
