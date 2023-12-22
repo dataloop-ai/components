@@ -6,14 +6,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import { createObserver } from './create-observer'
 export default defineComponent({
+    props: {
+        containerRef: {
+            type: Object as PropType<HTMLElement>,
+            default: null
+        }
+    },
     emits: ['scroll-to-bottom'],
     mounted() {
-        createObserver(() => {
-            this.$emit('scroll-to-bottom')
-        }).observe(this.$refs.bottomRow as HTMLElement)
+        this.$nextTick(() => {
+            createObserver(this.containerRef, () => {
+                this.$emit('scroll-to-bottom')
+            }).observe(this.$refs.bottomRow as HTMLElement)
+        })
     }
 })
 </script>

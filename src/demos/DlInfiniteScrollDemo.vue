@@ -5,14 +5,20 @@
             ref="listRef"
             class="item-list"
         >
-            <dl-top-scroll @scroll-to-top="handleListScrollToTop" />
+            <dl-top-scroll
+                :container-ref="listRef"
+                @scroll-to-top="handleListScrollToTop"
+            />
             <dl-list-item
                 v-for="row in rows"
                 :key="row.id"
             >
                 {{ row.name }}
             </dl-list-item>
-            <dl-bottom-scroll @scroll-to-bottom="handleListScrollToBottom" />
+            <dl-bottom-scroll
+                :container-ref="listRef"
+                @scroll-to-bottom="handleListScrollToBottom"
+            />
         </dl-list>
         <div style="margin-top: 100px">
             <p>Infinite scrolling With custom data and weird expandable</p>
