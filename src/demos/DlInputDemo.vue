@@ -1,6 +1,15 @@
 <template>
     <div>
         <div style="padding-bottom: 10px">
+            <div>Number input</div>
+            <dl-input
+                v-model="numberVal"
+                type="number"
+                placeholder="Test reactivity"
+                :disabled="disabledInput"
+            />
+        </div>
+        <div style="padding-bottom: 10px">
             <div>switch the disalbed prop: {{ disabledInput }}</div>
             <dl-switch v-model="disabledInput" />
             <dl-input
@@ -311,12 +320,16 @@ export default defineComponent({
         const disabledInput = ref<boolean>(false)
 
         const textVal = ref<string>('test me')
+        const numberVal = ref<number>()
+        const emittedNumberValues = ref<number[]>([])
 
         const trimmedValue = ref('')
 
         return {
             log: console.log,
             textVal,
+            emittedNumberValues,
+            numberVal,
             disabledInput,
             trimmedValue,
             textInputValue,

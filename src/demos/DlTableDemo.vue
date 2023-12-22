@@ -99,6 +99,9 @@
                 :bordered="bordered"
                 :draggable="draggable"
                 :dense="dense"
+                :pagination="{
+                    rowsPerPage: 10
+                }"
                 class="sticky-header"
                 :filter="filter"
                 :selection="selection"
