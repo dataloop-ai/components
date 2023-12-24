@@ -1006,8 +1006,7 @@ import { insertAtIndex } from './utils/insertAtIndex'
 import { getCellValue } from './utils/getCellValue'
 import { getContainerClass } from './utils/tableClasses'
 import { isEqual } from 'lodash'
-import DlTopScroll from '../../shared/DlInfiniteScroll/DlTopScroll.vue'
-import DlBottomScroll from '../../shared/DlInfiniteScroll/DlBottomScroll.vue'
+import { DlTopScroll, DlBottomScroll } from '../../shared/DlInfiniteScroll'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {

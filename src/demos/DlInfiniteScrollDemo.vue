@@ -58,8 +58,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlTopScroll from '../components/shared/DlInfiniteScroll/DlTopScroll.vue'
-import DlBottomScroll from '../components/shared/DlInfiniteScroll/DlBottomScroll.vue'
+import DlTopScroll from '../components/shared/DlInfiniteScroll/components/DlTopScroll.vue'
+import DlBottomScroll from '../components/shared/DlInfiniteScroll/components/DlBottomScroll.vue'
 import { DlList } from '../components/essential'
 import { DlListItem } from '../components/basic'
 import { DlTable } from '../components/compound'

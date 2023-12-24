@@ -1,4 +1,4 @@
-export const createObserver = (ref: any, emit: Function) => {
+export const createIntersectionObserver = (ref: any, emit: Function) => {
     const root = ref?.$el || ref
     let wasIntersecting = true
     return new IntersectionObserver(
