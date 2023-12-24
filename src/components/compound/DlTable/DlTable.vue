@@ -2035,14 +2035,16 @@ export default defineComponent({
         }
 
         const virtualScrollClasses = computed(() => {
-            let classes = []
+            let classes: string[] = []
 
             if (Array.isArray(tableClass.value)) {
-                classes = tableClass.value
+                classes = (tableClass.value as string[]) ?? []
             } else if (typeof tableClass.value === 'string') {
-                classes = tableClass.value.split(' ')
+                classes = (tableClass.value as string)?.split(' ')
             } else if (typeof tableClass.value === 'object') {
-                classes = Object.keys(tableClass.value).filter(
+                classes = Object.keys(
+                    tableClass.value as Record<string, any>
+                ).filter(
                     (key: string) =>
                         !!(tableClass.value as Record<string, any>)[key]
                 )
