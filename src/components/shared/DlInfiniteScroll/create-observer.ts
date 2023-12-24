@@ -9,6 +9,6 @@ export const createObserver = (ref: any, emit: Function) => {
             }
             wasIntersecting = isCurrentlyIntersecting
         },
-        { root }
+        { root, threshold: 0.5 }
     )
 }
