@@ -1,4 +1,4 @@
-import DlTopScroll from './components/DlTopScroll.vue'
-import DlBottomScroll from './components/DlBottomScroll.vue'
+export * from './components'
 
-export { DlTopScroll, DlBottomScroll }
+import DlInfiniteScroll from './DlInfiniteScroll.vue'
+export { DlInfiniteScroll }
