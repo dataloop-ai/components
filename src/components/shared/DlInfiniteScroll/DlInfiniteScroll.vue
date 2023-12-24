@@ -2,6 +2,8 @@
     <div
         ref="containerRef"
         class="dl-infinite-scroll"
+        :style="computedStyles"
+        :class="computedClasses"
     >
         <DlTopScroll
             :container-ref="containerRef"
@@ -11,7 +13,10 @@
             v-for="item in displayItems"
             :key="itemKey(item)"
         >
-            <slot :item="item" />
+            <slot
+                name="item"
+                :item="item"
+            />
         </div>
         <DlBottomScroll
             :container-ref="containerRef"
@@ -20,9 +25,11 @@
     </div>
 </template>
 <script lang="ts">
+import { cloneDeep, last } from 'lodash'
 import {
     computed,
     defineComponent,
+    nextTick,
     PropType,
     ref,
     toRefs,
@@ -49,21 +56,73 @@ export default defineComponent({
         }
     },
     emits: [],
-    setup(props, { emit }) {
+    setup(props, { emit, attrs }) {
         const { items, pageSize } = toRefs(props)
         const containerRef = ref(null)
         const currentPage = ref(0)
         const pagesCount = ref(0)
         const itemPages = ref(new Map<number, Record<string, any>[]>())
+        const lastOp = ref<string>('')
+
+        const computedStyles = computed<any>(() => {
+            return attrs.style
+        })
+        const computedClasses = computed<any>(() => {
+            return attrs.class
+        })
 
         const displayItems = computed(() => {
             const page = currentPage.value
-            const items = itemPages.value.get(page)
-            return items ?? []
+            const items = cloneDeep(itemPages.value.get(page))
+
+            const prevPage = cloneDeep(itemPages.value.get(page - 1))
+            const nextPage = cloneDeep(itemPages.value.get(page + 1))
+
+            const toDisplay = items ?? []
+
+            if (prevPage?.length && nextPage?.length) {
+                toDisplay.unshift(...prevPage.slice(-pageSize.value))
+                toDisplay.push(...nextPage.slice(0, pageSize.value))
+            } else if (prevPage?.length) {
+                toDisplay.unshift(...prevPage.slice(-pageSize.value))
+            } else if (nextPage?.length) {
+                toDisplay.push(...nextPage.slice(0, pageSize.value))
+            }
+
+            if (lastOp.value === 'top' && page !== 0) {
+                nextTick(() => {
+                    containerRef.value.scrollTop +=
+                        containerRef.value.scrollHeight * 0.333
+                })
+            } else if (lastOp.value === 'bottom' && page !== pagesCount.value) {
+                nextTick(() => {
+                    containerRef.value.scrollTop -=
+                        containerRef.value.scrollHeight * 0.001
+                })
+            }
+
+            return toDisplay
         })
 
         const itemKey = (item: any) => {
             return item.id ?? item.key ?? JSON.stringify(item)
+        }
+
+        const onScrollToTop = () => {
+            lastOp.value = 'top'
+            if (currentPage.value <= 0) {
+                emit('scroll-to-top')
+            } else {
+                currentPage.value--
+            }
+        }
+        const onScrollToBottom = () => {
+            lastOp.value = 'bottom'
+            if (currentPage.value >= pagesCount.value - 1) {
+                emit('scroll-to-bottom')
+            } else {
+                currentPage.value++
+            }
         }
 
         const splitArrayIntoPages = (
@@ -76,35 +135,15 @@ export default defineComponent({
             for (let i = 0; i < pagesCount.value; i++) {
                 const start = i * pageSize
                 const end = start + pageSize
-                pages.set(i + 1, arr.slice(start, end))
+                pages.set(i, arr.slice(start, end))
             }
 
             return pages
         }
 
-        const onScrollToTop = () => {
-            if (currentPage.value <= 0) {
-                emit('scroll-to-top')
-            } else {
-                currentPage.value--
-            }
-
-            containerRef.value.scrollTop -= pageSize.value
-        }
-        const onScrollToBottom = () => {
-            if (currentPage.value >= pagesCount.value - 1) {
-                emit('scroll-to-top')
-            } else {
-                currentPage.value--
-            }
-
-            containerRef.value.scrollTop += pageSize.value
-        }
-
         watch(
             [items, pageSize],
             () => {
-                currentPage.value = 0
                 itemPages.value = splitArrayIntoPages(
                     items.value,
                     pageSize.value
@@ -118,9 +157,18 @@ export default defineComponent({
             onScrollToTop,
             onScrollToBottom,
             displayItems,
-            itemKey
+            itemKey,
+            computedStyles,
+            computedClasses
         }
     }
 })
 </script>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.dl-infinite-scroll {
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+</style>

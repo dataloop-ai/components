@@ -1,57 +1,75 @@
 <template>
     <div>
-        <span>List</span>
-        <dl-list
-            ref="listRef"
-            class="item-list"
-        >
-            <dl-top-scroll
-                :container-ref="listRef"
-                @scroll-to-top="handleListScrollToTop"
-            />
-            <dl-list-item
-                v-for="row in rows"
-                :key="row.id"
-            >
-                {{ row.name }}
-            </dl-list-item>
-            <dl-bottom-scroll
-                :container-ref="listRef"
-                @scroll-to-bottom="handleListScrollToBottom"
-            />
-        </dl-list>
-        <div style="margin-top: 100px">
-            <p>Infinite scrolling With custom data and weird expandable</p>
-            <dl-table
-                :loading="loading"
-                :rows="rows"
-                :columns="columns"
+        <div>
+            <span> full implementation using the component </span>
+            <DlInfiniteScroll
+                :items="rows"
+                :page-size="50"
                 style="height: 500px; width: 600px"
-                row-key="index"
-                infinite-scroll
-                expandable-rows
-                :rows-per-page-options="[rowsPerPage]"
-                @scroll-to-bottom="handleTableScrollToBottom"
-                @scroll-to-top="handleTableScrollToTop"
+                @scroll-to-bottom="pushRows"
             >
-                <template #body-cell-expandable-content="{ row }">
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
-                    <div>
-                        {{ row }}
-                    </div>
+                <template #item="{ item }">
+                    {{ item.name }}
                 </template>
-            </dl-table>
+            </DlInfiniteScroll>
+        </div>
+        <div style="margin-top: 10px">
+            <span>
+                Custom implementation with the top and bottom components
+            </span>
+            <span>List</span>
+            <dl-list
+                ref="listRef"
+                class="item-list"
+            >
+                <dl-top-scroll
+                    :container-ref="listRef"
+                    @scroll-to-top="handleListScrollToTop"
+                />
+                <dl-list-item
+                    v-for="row in rows"
+                    :key="row.id"
+                >
+                    {{ row.name }}
+                </dl-list-item>
+                <dl-bottom-scroll
+                    :container-ref="listRef"
+                    @scroll-to-bottom="handleListScrollToBottom"
+                />
+            </dl-list>
+            <div style="margin-top: 100px">
+                <p>Infinite scrolling With custom data and weird expandable</p>
+                <dl-table
+                    :loading="loading"
+                    :rows="rows"
+                    :columns="columns"
+                    style="height: 500px; width: 600px"
+                    row-key="index"
+                    infinite-scroll
+                    expandable-rows
+                    :rows-per-page-options="[rowsPerPage]"
+                    @scroll-to-bottom="handleTableScrollToBottom"
+                    @scroll-to-top="handleTableScrollToTop"
+                >
+                    <template #body-cell-expandable-content="{ row }">
+                        <div>
+                            {{ row }}
+                        </div>
+                        <div>
+                            {{ row }}
+                        </div>
+                        <div>
+                            {{ row }}
+                        </div>
+                        <div>
+                            {{ row }}
+                        </div>
+                        <div>
+                            {{ row }}
+                        </div>
+                    </template>
+                </dl-table>
+            </div>
         </div>
     </div>
 </template>
@@ -63,7 +81,8 @@ import {
     DlBottomScroll,
     DlList,
     DlListItem,
-    DlTable
+    DlTable,
+    DlInfiniteScroll
 } from '../components'
 import { columns } from './DlTableDemo.vue'
 import { cloneDeep, times } from 'lodash'
@@ -80,7 +99,7 @@ const getRows = (count: number) =>
         iron: '6%'
     }))
 
-const items = getRows(10000)
+const items = getRows(500)
 
 export default defineComponent({
     components: {
@@ -88,7 +107,8 @@ export default defineComponent({
         DlBottomScroll,
         DlList,
         DlListItem,
-        DlTable
+        DlTable,
+        DlInfiniteScroll
     },
     setup() {
         const loading = ref(false)
@@ -98,29 +118,43 @@ export default defineComponent({
         const rows = ref<any[]>(cloneDeep(items.slice(0, 30)))
         const listRef = ref(null)
 
+        const page = ref(0)
+
+        const pushRows = () => {
+            page.value++
+            const start = page.value * 30
+            rows.value = rows.value.concat(items.slice(start, start + 30))
+        }
+
         const handleInfiniteScroll = (
             rowsPerPage: number,
             direction: 'top' | 'bottom',
-            maxLength: number,
-            ref: HTMLElement
+            maxLength?: number,
+            ref?: HTMLElement
         ) => {
             loading.value = true
             setTimeout(() => {
                 if (!sliceIndex.to) sliceIndex.to = rowsPerPage
-                if (direction === 'bottom') {
-                    sliceIndex.to += rowsPerPage
-                    if (rows.value.length > maxLength) {
-                        sliceIndex.from += rowsPerPage
-                        ref.scrollTop -= scrollOffset
-                    }
-                } else {
-                    sliceIndex.from -= rowsPerPage
-                    if (rows.value.length > maxLength) {
-                        sliceIndex.to -= rowsPerPage
-                        ref.scrollTop += scrollOffset
-                    }
-                    if (sliceIndex.from < 0) {
-                        sliceIndex.from = 0
+                if (maxLength) {
+                    if (direction === 'bottom') {
+                        sliceIndex.to += rowsPerPage
+                        if (rows.value.length > maxLength) {
+                            sliceIndex.from += rowsPerPage
+                            if (ref) {
+                                ref.scrollTop -= scrollOffset
+                            }
+                        }
+                    } else {
+                        sliceIndex.from -= rowsPerPage
+                        if (rows.value.length > maxLength) {
+                            sliceIndex.to -= rowsPerPage
+                            if (ref) {
+                                ref.scrollTop += scrollOffset
+                            }
+                        }
+                        if (sliceIndex.from < 0) {
+                            sliceIndex.from = 0
+                        }
                     }
                 }
                 rows.value = items.slice(sliceIndex.from, sliceIndex.to)
@@ -153,10 +187,12 @@ export default defineComponent({
             loading,
             listRef,
             rowsPerPage,
+            handleInfiniteScroll,
             handleListScrollToBottom,
             handleListScrollToTop,
             handleTableScrollToBottom,
-            handleTableScrollToTop
+            handleTableScrollToTop,
+            pushRows
         }
     }
 })
