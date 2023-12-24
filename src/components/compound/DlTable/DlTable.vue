@@ -2037,17 +2037,19 @@ export default defineComponent({
         const virtualScrollClasses = computed(() => {
             let classes: string[] = []
 
-            if (Array.isArray(tableClass.value)) {
-                classes = (tableClass.value as string[]) ?? []
-            } else if (typeof tableClass.value === 'string') {
-                classes = (tableClass.value as string)?.split(' ')
-            } else if (typeof tableClass.value === 'object') {
-                classes = Object.keys(
-                    tableClass.value as Record<string, any>
-                ).filter(
-                    (key: string) =>
-                        !!(tableClass.value as Record<string, any>)[key]
-                )
+            if (tableClass.value) {
+                if (Array.isArray(tableClass.value)) {
+                    classes = (tableClass.value as string[]) ?? []
+                } else if (typeof tableClass.value === 'string') {
+                    classes = (tableClass.value as string)?.split(' ')
+                } else if (typeof tableClass.value === 'object') {
+                    classes = Object.keys(
+                        tableClass.value as Record<string, any>
+                    ).filter(
+                        (key: string) =>
+                            !!(tableClass.value as Record<string, any>)[key]
+                    )
+                }
             }
 
             return classes.concat(additionalClasses.value)
