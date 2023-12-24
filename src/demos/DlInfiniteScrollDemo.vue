@@ -58,11 +58,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue-demi'
-import DlTopScroll from '../components/shared/DlInfiniteScroll/components/DlTopScroll.vue'
-import DlBottomScroll from '../components/shared/DlInfiniteScroll/components/DlBottomScroll.vue'
-import { DlList } from '../components/essential'
-import { DlListItem } from '../components/basic'
-import { DlTable } from '../components/compound'
+import {
+    DlTopScroll,
+    DlBottomScroll,
+    DlList,
+    DlListItem,
+    DlTable
+} from '../components'
 import { columns } from './DlTableDemo.vue'
 import { cloneDeep, times } from 'lodash'
 
@@ -93,7 +95,7 @@ export default defineComponent({
         const scrollOffset = 500
         const rowsPerPage = 30
         const sliceIndex = { from: 0, to: 0 }
-        const rows = ref(cloneDeep(items.slice(0, 30)))
+        const rows = ref<any[]>(cloneDeep(items.slice(0, 30)))
         const listRef = ref(null)
 
         const handleInfiniteScroll = (
