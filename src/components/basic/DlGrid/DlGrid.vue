@@ -1,17 +1,28 @@
 <template>
-    <div v-if="hasVirtualScroll">
-        <dl-virtual-scroll
-            v-slot="{ item }"
-            :scroll-debounce="scrollDebounce"
-            style="height: var(--dl-virtual-scroll-height, 500px)"
+    <div v-if="infiniteScroll">
+        <dl-infinite-scroll
             :items="items"
-            :styles="{ gridStyles, gridClass }"
+            style="height: var(--dl-virtual-scroll-height, 500px)"
         >
-            <slot
-                name="item-slot"
-                v-bind="{ item }"
-            />
-        </dl-virtual-scroll>
+            <template #content="{ items }">
+                <div
+                    ref="grid"
+                    :style="gridStyles"
+                    :class="gridClass"
+                >
+                    <div
+                        v-for="item in items"
+                        :key="item.id"
+                        class="item-wrapper"
+                    >
+                        <slot
+                            name="item-slot"
+                            v-bind="{ item }"
+                        />
+                    </div>
+                </div>
+            </template>
+        </dl-infinite-scroll>
     </div>
     <div
         v-else-if="!hasItems"
@@ -57,11 +68,11 @@ import { getGridTemplate, swapElementsInMatrix } from './utils'
 import { isCustomEvent } from '../utils'
 import { getElementAbove } from '../../../utils'
 import { DlGridMode, GridItem } from './types'
-import { DlVirtualScroll } from '../../shared/DlVirtualScroll'
+import { DlInfiniteScroll } from '../../shared'
 
 export default defineComponent({
     components: {
-        DlVirtualScroll
+        DlInfiniteScroll
     },
     model: {
         prop: 'modelValue',
@@ -92,17 +103,9 @@ export default defineComponent({
             type: String as PropType<DlGridMode>,
             default: DlGridMode.LAYOUT
         },
-        scrollDebounce: {
-            type: Number,
-            default: 100
-        },
-        virtualScroll: {
+        infiniteScroll: {
             type: Boolean,
             default: false
-        },
-        virtualScrollThreshold: {
-            type: Number,
-            default: 100
         }
     },
     emits: ['update:model-value', 'layout-changed'],
@@ -115,8 +118,7 @@ export default defineComponent({
             rowGap,
             columnGap,
             maxElementsPerRow,
-            items,
-            virtualScroll
+            items
         } = toRefs(props)
 
         const isLayoutMode = computed(() => mode.value == DlGridMode.LAYOUT)
@@ -127,12 +129,6 @@ export default defineComponent({
             modelValue.value || !isFlexMode.value
                 ? 'dl-grid-wrapper__grid'
                 : 'dl-grid-wrapper__flex'
-        )
-
-        const hasVirtualScroll = computed(
-            () =>
-                items.value?.length > props.virtualScrollThreshold ||
-                virtualScroll.value
         )
 
         const gridStyles = computed(() => {
@@ -258,7 +254,6 @@ export default defineComponent({
             gridClass,
             gridStyles,
             grid,
-            hasVirtualScroll,
             hasItems
         }
     }

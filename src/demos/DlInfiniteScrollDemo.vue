@@ -8,7 +8,7 @@
                 style="height: 500px; width: 600px"
                 @scroll-to-bottom="pushRows"
             >
-                <template #item="{ item }">
+                <template #default="{ item }">
                     {{ item.name }}
                 </template>
             </DlInfiniteScroll>

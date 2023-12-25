@@ -9,15 +9,17 @@
             :container-ref="containerRef"
             @scroll-to-top="onScrollToTop"
         />
-        <div
-            v-for="item in displayItems"
-            :key="itemKey(item)"
+        <slot
+            name="content"
+            :items="displayItems"
         >
-            <slot
-                name="item"
-                :item="item"
-            />
-        </div>
+            <div
+                v-for="item in displayItems"
+                :key="itemKey(item)"
+            >
+                <slot :item="item" />
+            </div>
+        </slot>
         <DlBottomScroll
             :container-ref="containerRef"
             @scroll-to-bottom="onScrollToBottom"
