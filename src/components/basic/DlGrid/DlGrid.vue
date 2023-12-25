@@ -1,8 +1,11 @@
 <template>
     <div v-if="infiniteScroll">
         <dl-infinite-scroll
+            :page-size="15"
             :items="items"
             style="height: var(--dl-virtual-scroll-height, 500px)"
+            @scroll-to-top="$emit('scroll-to-top')"
+            @scroll-to-bottom="$emit('scroll-to-bottom')"
         >
             <template #content="{ items }">
                 <div
@@ -108,7 +111,12 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['update:model-value', 'layout-changed'],
+    emits: [
+        'update:model-value',
+        'layout-changed',
+        'scroll-to-top',
+        'scroll-to-bottom'
+    ],
     setup(props, { emit }) {
         const vm = getCurrentInstance()
         const grid = ref<HTMLElement | null>(null)

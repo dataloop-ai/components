@@ -39,8 +39,8 @@ import {
 } from 'vue-demi'
 import { DlTopScroll, DlBottomScroll } from './components'
 
-const MAX_SLICE_SIZE = 1000
-const MIN_SLICE_SIZE = 50
+const MAX_SLICE_SIZE = 50
+const MIN_SLICE_SIZE = 0
 
 export default defineComponent({
     name: 'DlInfiniteScroll',
@@ -57,7 +57,7 @@ export default defineComponent({
                 val <= MAX_SLICE_SIZE && val >= MIN_SLICE_SIZE
         }
     },
-    emits: [],
+    emits: ['scroll-to-top', 'scroll-to-bottom'],
     setup(props, { emit, attrs }) {
         const { items, pageSize } = toRefs(props)
         const containerRef = ref(null)
