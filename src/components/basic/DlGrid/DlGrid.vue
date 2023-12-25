@@ -1,8 +1,10 @@
 <template>
     <div v-if="infiniteScroll">
         <dl-infinite-scroll
-            :page-size="15"
             :items="items"
+            :page-size="infiniteScrollPageSize"
+            :style="$attrs.style"
+            :class="$attrs.class"
             style="height: var(--dl-virtual-scroll-height, 500px)"
             @scroll-to-top="$emit('scroll-to-top')"
             @scroll-to-bottom="$emit('scroll-to-bottom')"
@@ -109,6 +111,10 @@ export default defineComponent({
         infiniteScroll: {
             type: Boolean,
             default: false
+        },
+        infiniteScrollPageSize: {
+            type: Number,
+            default: 15
         }
     },
     emits: [

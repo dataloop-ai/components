@@ -27,7 +27,7 @@
     </div>
 </template>
 <script lang="ts">
-import { cloneDeep, last } from 'lodash'
+import { cloneDeep } from 'lodash'
 import {
     computed,
     defineComponent,
@@ -39,7 +39,8 @@ import {
 } from 'vue-demi'
 import { DlTopScroll, DlBottomScroll } from './components'
 
-const MAX_SLICE_SIZE = 50
+const MAX_SLICE_SIZE = 100
+const DEFAULT_SLICE_SIZE = 15
 const MIN_SLICE_SIZE = 0
 
 export default defineComponent({
@@ -52,14 +53,18 @@ export default defineComponent({
         },
         pageSize: {
             type: Number,
-            default: MIN_SLICE_SIZE,
+            default: DEFAULT_SLICE_SIZE,
             validator: (val: number) =>
                 val <= MAX_SLICE_SIZE && val >= MIN_SLICE_SIZE
+        },
+        scrollDebounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['scroll-to-top', 'scroll-to-bottom'],
     setup(props, { emit, attrs }) {
-        const { items, pageSize } = toRefs(props)
+        const { items, pageSize, scrollDebounce } = toRefs(props)
         const containerRef = ref(null)
         const currentPage = ref(0)
         const pagesCount = ref(0)
@@ -91,17 +96,22 @@ export default defineComponent({
                 toDisplay.push(...nextPage.slice(0, pageSize.value))
             }
 
-            if (lastOp.value === 'top' && page !== 0) {
-                nextTick(() => {
+            nextTick(() => {
+                if (lastOp.value === 'top' && page !== 0) {
                     containerRef.value.scrollTop +=
                         containerRef.value.scrollHeight * 0.333
-                })
-            } else if (lastOp.value === 'bottom' && page !== pagesCount.value) {
-                nextTick(() => {
+                } else if (
+                    lastOp.value === 'bottom' &&
+                    page !== pagesCount.value
+                ) {
+                    if (currentPage.value - 1 === 0) {
+                        return
+                    }
+
                     containerRef.value.scrollTop -=
-                        containerRef.value.scrollHeight * 0.001
-                })
-            }
+                        containerRef.value.scrollHeight * 0.333
+                }
+            })
 
             return toDisplay
         })
@@ -172,5 +182,7 @@ export default defineComponent({
     height: 100%;
     width: 100%;
     position: relative;
+    // To not allow any weird scroll jumping behavior
+    scroll-behavior: auto !important;
 }
 </style>

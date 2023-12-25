@@ -71,6 +71,31 @@
                 </dl-table>
             </div>
         </div>
+        <div style="margin-top: 10px">
+            <span> IN A GRID </span>
+            <dl-grid
+                :items="allRows"
+                style="--dl-virtual-scroll-height: 40vh"
+                :max-elements-per-row="4"
+                column-gap="20px"
+                row-gap="20px"
+                :infinite-scroll-page-size="32"
+                infinite-scroll
+            >
+                <template #item-slot="{ item }">
+                    <div
+                        style="
+                            height: 50px;
+                            width: 180px;
+                            display: grid;
+                            place-items: center;
+                        "
+                    >
+                        <div>{{ item.name }}</div>
+                    </div>
+                </template>
+            </dl-grid>
+        </div>
     </div>
 </template>
 
@@ -82,7 +107,8 @@ import {
     DlList,
     DlListItem,
     DlTable,
-    DlInfiniteScroll
+    DlInfiniteScroll,
+    DlGrid
 } from '../components'
 import { columns } from './DlTableDemo.vue'
 import { cloneDeep, times } from 'lodash'
@@ -108,13 +134,15 @@ export default defineComponent({
         DlList,
         DlListItem,
         DlTable,
-        DlInfiniteScroll
+        DlInfiniteScroll,
+        DlGrid
     },
     setup() {
         const loading = ref(false)
         const scrollOffset = 500
         const rowsPerPage = 30
         const sliceIndex = { from: 0, to: 0 }
+        const allRows = ref<any[]>(cloneDeep(items))
         const rows = ref<any[]>(cloneDeep(items.slice(0, 30)))
         const listRef = ref(null)
 
@@ -192,7 +220,8 @@ export default defineComponent({
             handleListScrollToTop,
             handleTableScrollToBottom,
             handleTableScrollToTop,
-            pushRows
+            pushRows,
+            allRows
         }
     }
 })
