@@ -413,6 +413,7 @@
                             <tr
                                 v-if="isRowExpanded(props.item)"
                                 :key="getRowExpandedKey(props.item)"
+                                class="dl-virtual-scroll--with-prev"
                             >
                                 <td :colspan="colspanWithExpandableRow">
                                     <slot
