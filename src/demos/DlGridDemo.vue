@@ -204,7 +204,10 @@
             </dl-grid>
         </div>
         <div v-if="activeContentType.value === 'prop'">
-            <dl-grid :items="images">
+            <dl-grid
+                :items="images"
+                infinite-scroll
+            >
                 <template #item-slot="{ item }">
                     <img :src="item.src">
                 </template>

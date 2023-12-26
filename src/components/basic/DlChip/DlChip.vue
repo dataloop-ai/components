@@ -6,6 +6,7 @@
         class="dl-chip"
         :class="chipClass"
         :style="cssChipVars"
+        @click="$emit('click')"
     >
         <slot name="prefix" />
         <span
@@ -29,7 +30,8 @@
                 ref="dlChipRef"
                 :class="{
                     'dl-chip--ellipsis': overflow,
-                    'dl-chip--no-overflow': !overflow
+                    'dl-chip--no-overflow': !overflow,
+                    'dl-chip--clickable': clickable
                 }"
             >
                 <slot>
@@ -94,9 +96,10 @@ export default defineComponent({
                 Object.values(DlTextTransformOptions).includes(value)
         },
         overflow: { type: Boolean, default: false },
-        fit: { type: Boolean, default: false }
+        fit: { type: Boolean, default: false },
+        clickable: { type: Boolean, default: false }
     },
-    emits: ['remove', 'ellipsis'],
+    emits: ['remove', 'ellipsis', 'click'],
     setup(props, ctx) {
         const isVisible = ref(true)
         const dlChipRef = ref(null)
@@ -136,7 +139,11 @@ export default defineComponent({
             return this.iconColor
         },
         chipClass(): string {
-            return `dl-text-transform--${this.transform}`
+            let classes = `dl-text-transform--${this.transform}`
+            if (this.clickable) {
+                classes += ' dl-chip--clickable'
+            }
+            return classes
         },
         cssChipVars(): Record<string, string | number> {
             return {
@@ -224,6 +231,10 @@ export default defineComponent({
 
     &--no-overflow {
         overflow-wrap: break-word;
+    }
+
+    &--clickable {
+        cursor: pointer;
     }
 }
 

@@ -8,6 +8,13 @@
         border-right: 1px solid var(--dl-color-separator);
     }
 
+    thead {
+        position: sticky;
+        top: 0;
+        background-color: var(--dl-color-panel-background);
+        z-index: 50;
+    }
+
     .sticky-col {
         position: sticky;
         background-color: var(--dl-color-panel-background);

@@ -149,6 +149,8 @@ describe('DlTable', () => {
             await wrapper.setProps({ filter: 'yo' })
             await wrapper.vm.$nextTick()
             const emitted = wrapper.emitted()
+            // @ts-ignore
+            await window.delay(100)
             const newPagination = emitted['update:pagination'][1][0]
             await wrapper.setProps({ pagination: newPagination })
             await wrapper.vm.$nextTick()

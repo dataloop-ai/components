@@ -164,7 +164,7 @@ describe('use-suggestions', () => {
     describe('when the field has value aliases defined', () => {
         it('suggestions should have value aliases', () => {
             findSuggestions('name = ')
-            expect(suggestions.value).toEqual(['Voltaire'])
+            expect(suggestions.value).toEqual(["'Voltaire'"])
         })
     })
 

@@ -62,7 +62,7 @@ describe('useTablePaginationState', () => {
         })
 
         describe('otherwise', () => {
-            it('should fix the wrong pagination params and emit the "update:pagination" event', () => {
+            it('should fix the wrong pagination params and emit the "update:pagination" event', async () => {
                 const newPagination: TablePagination = {
                     ...pagination,
                     page: -1,
@@ -70,6 +70,9 @@ describe('useTablePaginationState', () => {
                     rowsPerPage: -20
                 }
                 setPagination(newPagination)
+                //@ts-ignore
+                await window.delay(100)
+
                 expect(emitFn).toHaveBeenCalledWith('update:pagination', {
                     boundaryLinks: true,
                     boundaryNumbers: true,
