@@ -230,7 +230,7 @@ export default defineComponent({
                 value: { query2: 'query2' }
             },
             {
-                label: 'Query 3',
+                label: 'Query 3 with an incredibly long query name to test the text overflow in the menu',
                 value: { query3: 'query3' }
             },
             {
