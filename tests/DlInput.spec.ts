@@ -346,4 +346,8 @@ describe('DlInput component', () => {
             })
         })
     })
+
+    /**
+     * TODO: add tests for input type number
+     */
 })
