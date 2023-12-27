@@ -8,6 +8,7 @@
                 placeholder="Test reactivity"
                 :disabled="disabledInput"
             />
+            {{ numberVal }}
         </div>
         <div style="padding-bottom: 10px">
             <div>switch the disalbed prop: {{ disabledInput }}</div>
