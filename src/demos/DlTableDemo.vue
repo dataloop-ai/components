@@ -100,7 +100,8 @@
                 :draggable="draggable"
                 :dense="dense"
                 :pagination="{
-                    rowsPerPage: 10
+                    rowsPerPage: 10,
+                    page: 2
                 }"
                 class="sticky-header"
                 :filter="filter"

@@ -97,8 +97,8 @@ export function useTablePaginationState(
     const computedPagination = computed(() => {
         const pag = pagination.value
             ? {
-                  ...innerPagination.value,
-                  ...pagination.value
+                  ...pagination.value,
+                  ...innerPagination.value
               }
             : innerPagination.value
 

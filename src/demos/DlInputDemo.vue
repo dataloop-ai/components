@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div style="padding-bottom: 10px">
+        <div style="padding-bottom: 10px; max-width: 100px">
             <div>Number input</div>
             <dl-input
                 v-model="numberVal"
