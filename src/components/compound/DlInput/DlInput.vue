@@ -765,7 +765,14 @@ export default defineComponent({
                     setCaretAtTheEnd(input.value)
                     return
                 }
-                if (!toEmit.endsWith('.')) {
+                /**
+                 * if the number ends with a dot followed by multiple zeros
+                 * then we should not replace the inputs value with the parsed number
+                 */
+                if (
+                    !toEmit.endsWith('.') &&
+                    !new RegExp(/\.\d*0+$/, 'g').test(toEmit)
+                ) {
                     input.value.innerHTML = String(Number(toEmit))
                         .toString()
                         .replace(/ /g, '&nbsp;')
@@ -1105,7 +1112,28 @@ export default defineComponent({
     methods: {
         onKeydown(e: KeyboardEvent) {
             if (e.key !== 'Backspace') {
-                if (this.type === 'number' && !/^[\d.]$/.test(e.key)) {
+                /**
+                 * Allow only numbers
+                 * Allow decimal point
+                 * Allow arrow keys
+                 * Allow delete
+                 * Allow control/meta keys
+                 * Allow select all
+                 */
+                if (
+                    this.type === 'number' &&
+                    !/^[\d.]$/.test(e.key) &&
+                    ![
+                        'ArrowLeft',
+                        'ArrowRight',
+                        'Backspace',
+                        'Delete',
+                        'Control',
+                        'Meta',
+                        'a'
+                    ].includes(e.key) &&
+                    !(e.ctrlKey || e.metaKey)
+                ) {
                     e.preventDefault()
                     return
                 }
