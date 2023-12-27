@@ -364,14 +364,6 @@
                 bottom: 0;
                 pointer-events: none;
             }
-
-            &:before {
-                // background-color: var(--dl-color-fill-hover);
-            }
-
-            &:after {
-                // background-color: var(--dl-color-fill);
-            }
         }
 
         tr.selected td:after {
