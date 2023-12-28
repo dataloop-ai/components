@@ -187,7 +187,19 @@ export default defineComponent({
         active: { type: Boolean, default: false, required: false },
         styles: { type: [Object, String], default: null },
         shaded: { type: Boolean, default: false },
-        outlined: Boolean
+        outlined: Boolean,
+        /**
+         * Overwrite default background color on hover
+         */
+        hoverBgColor: { type: String, default: '' },
+        /**
+         * Overwrite default border color on hover
+         */
+        hoverBorderColor: { type: String, default: '' },
+        /**
+         * Overwrite default text color on hover
+         */
+        hoverTextColor: { type: String, default: '' }
     },
     emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
@@ -238,13 +250,16 @@ export default defineComponent({
                 })
             }
             if (this.mouseOver) {
-                return setColorOnHover({
-                    disabled: this.disabled,
-                    outlined: this.outlined,
-                    shaded: this.shaded,
-                    flat: this.flat,
-                    color: this.iconColor ?? this.textColor
-                })
+                return (
+                    this.hoverTextColor ||
+                    setColorOnHover({
+                        disabled: this.disabled,
+                        outlined: this.outlined,
+                        shaded: this.shaded,
+                        flat: this.flat,
+                        color: this.iconColor ?? this.textColor
+                    })
+                )
             }
 
             if (this.iconColor) {
@@ -318,10 +333,12 @@ export default defineComponent({
                         '--dl-button-bg': this.colorsObject.ACTIVE.BACKGROUND,
                         '--dl-button-border': this.colorsObject.ACTIVE.BORDER,
                         '--dl-button-text-color-hover':
-                            this.colorsObject.HOVER.TEXT,
+                            this.hoverTextColor || this.colorsObject.HOVER.TEXT,
                         '--dl-button-bg-hover':
+                            this.hoverBgColor ||
                             this.colorsObject.HOVER.BACKGROUND,
                         '--dl-button-border-hover':
+                            this.hoverBorderColor ||
                             this.colorsObject.HOVER.BORDER,
                         '--dl-button-text-color-pressed':
                             this.colorsObject.PRESSED.TEXT,
@@ -356,27 +373,33 @@ export default defineComponent({
                         color: this.color,
                         outlined: this.outlined
                     }),
-                    '--dl-button-text-color-hover': setColorOnHover({
-                        disabled: this.disabled,
-                        outlined: this.outlined,
-                        shaded: this.shaded,
-                        flat: this.flat,
-                        color: this.textColor
-                    }),
-                    '--dl-button-border-hover': setBorderOnHover({
-                        disabled: this.disabled,
-                        flat: this.flat,
-                        shaded: this.shaded,
-                        color: this.color
-                    }),
-                    '--dl-button-bg-hover': setBgOnHover({
-                        disabled: this.disabled,
-                        shaded: this.shaded,
-                        outlined: this.outlined,
-                        flat: this.flat,
-                        filled: this.filled,
-                        color: this.color
-                    }),
+                    '--dl-button-text-color-hover':
+                        this.hoverTextColor ||
+                        setColorOnHover({
+                            disabled: this.disabled,
+                            outlined: this.outlined,
+                            shaded: this.shaded,
+                            flat: this.flat,
+                            color: this.textColor
+                        }),
+                    '--dl-button-border-hover':
+                        this.hoverBorderColor ||
+                        setBorderOnHover({
+                            disabled: this.disabled,
+                            flat: this.flat,
+                            shaded: this.shaded,
+                            color: this.color
+                        }),
+                    '--dl-button-bg-hover':
+                        this.hoverBgColor ||
+                        setBgOnHover({
+                            disabled: this.disabled,
+                            shaded: this.shaded,
+                            outlined: this.outlined,
+                            flat: this.flat,
+                            filled: this.filled,
+                            color: this.color
+                        }),
                     '--dl-button-text-color-pressed': setTextOnPressed({
                         shaded: this.shaded,
                         outlined: this.shaded

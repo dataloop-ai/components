@@ -8,7 +8,8 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:vue/recommended',
         '@vue/typescript',
-        'plugin:storybook/recommended'
+        'plugin:storybook/recommended',
+        'prettier'
     ],
     plugins: ['eslint-plugin-member-order'],
     rules: {

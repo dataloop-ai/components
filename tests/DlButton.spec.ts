@@ -43,7 +43,10 @@ describe('DlButton', () => {
                 active: false,
                 shaded: false,
                 uppercase: false,
-                tooltipTriggerPercentage: 1
+                tooltipTriggerPercentage: 1,
+                hoverBgColor: '',
+                hoverBorderColor: '',
+                hoverTextColor: ''
             })
         })
     })
@@ -143,6 +146,18 @@ describe('DlButton', () => {
                     '--dl-button-border-radius'
                 )
             ).toBe('2px')
+        })
+        it('should change background color on hover', async () => {
+            const hoverBgColor = '#ff0000'
+            const wrapper = mount(DlButton, {
+                props: { hoverBgColor }
+            })
+            wrapper.vm.mouseOver = true
+            await wrapper.vm.$nextTick()
+            const button = wrapper.find('.dl-button-container')
+            expect(
+                button.element.style.getPropertyValue('--dl-button-bg-hover')
+            ).toBe(hoverBgColor)
         })
     })
 })
