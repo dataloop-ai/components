@@ -136,7 +136,7 @@ describe('DlSmartSearchInput', () => {
         expect(wrapper.vm.focused).toBe(true)
     })
 
-    it('should focus', () => {
+    describe('focus and blur behavior', () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {
                 disabled: false
@@ -145,19 +145,18 @@ describe('DlSmartSearchInput', () => {
                 this.$refs.input.scrollTo = vi.fn()
             }
         })
-        wrapper.vm.focus()
-        expect(wrapper.emitted().focus).toBeTruthy()
-    })
 
-    it('should handle blur', async () => {
-        const wrapper = mount(DlSmartSearchInput, {
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
+        it('should focus', () => {
+            wrapper.vm.focus()
+            expect(wrapper.emitted().focus).toBeTruthy()
         })
-        wrapper.vm.blur()
-        expect(wrapper.emitted().blur).toBeDefined()
-        expect(wrapper.vm.focused).toBe(false)
+
+        it('should handle blur', async () => {
+            wrapper.vm.onEscapeKey()
+            wrapper.vm.blur()
+            expect(wrapper.emitted().blur).toBeDefined()
+            expect(wrapper.vm.focused).toBe(false)
+        })
     })
 
     it('should clear the value', () => {

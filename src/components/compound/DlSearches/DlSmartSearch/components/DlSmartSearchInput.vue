@@ -468,13 +468,15 @@ export default defineComponent({
             emit('focus')
         }
 
-        const processBlur = () => {
+        const processBlur = (force: boolean = false) => {
             input.value.scrollLeft = 0
             input.value.scrollTop = 0
             focused.value = false
             expanded.value = true
-            updateJSONQuery()
-            emit('blur')
+            if (!force) {
+                updateJSONQuery()
+                emit('blur')
+            }
         }
 
         const blur = (
@@ -497,7 +499,7 @@ export default defineComponent({
                     return
                 }
 
-                processBlur()
+                processBlur(force)
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
