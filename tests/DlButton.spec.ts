@@ -44,9 +44,9 @@ describe('DlButton', () => {
                 shaded: false,
                 uppercase: false,
                 tooltipTriggerPercentage: 1,
-                hoverBgColor: '',
-                hoverBorderColor: '',
-                hoverTextColor: ''
+                hoverBgColor: null,
+                hoverBorderColor: null,
+                hoverTextColor: null
             })
         })
     })
