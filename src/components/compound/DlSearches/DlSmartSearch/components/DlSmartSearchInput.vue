@@ -490,7 +490,7 @@ export default defineComponent({
             }
 
             if (cancelBlur.value === 0) {
-                if (showSuggestions.value) {
+                if (showSuggestions.value && computedStatus.value.type !== 'error') {
                     focused.value = true
                     return
                 }
