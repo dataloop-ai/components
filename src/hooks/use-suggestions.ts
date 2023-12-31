@@ -379,7 +379,7 @@ const getError = (
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
-            if (acc === 'warning') return acc
+            if (acc && acc !== 'warning') return acc
             const fieldKey: string =
                 getAliasObjByAlias(aliases, field)?.key ?? field
 
@@ -438,7 +438,7 @@ const getError = (
                 return (acc = errors.INVALID_VALUE(field))
             }
 
-            return (acc = null)
+            return (acc === 'warning' ? acc : acc = null)
         }, null)
 }
 
