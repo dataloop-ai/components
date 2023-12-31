@@ -410,7 +410,7 @@ const getError = (
                 return false
             }
 
-            const pattern = new RegExp(`${fieldKey}\\.\\d`)
+            const pattern = new RegExp(`^${fieldKey}\\.\\d`)
             const isValid = isInputAllowed(fieldKey, keys)
             const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
             if (
