@@ -93,6 +93,7 @@
                                 @keydown="onKeydown"
                                 @keyup.enter="onEnterPress"
                                 @paste="handlePaste"
+                                @mouseover="onHover"
                             >
                                 <span
                                     v-if="readonly || disabled"
@@ -102,6 +103,9 @@
                                     }"
                                 >{{ spanText }}</span>
                             </div>
+                            <dl-tooltip v-if="showTooltip">
+                                {{ modelValue }}
+                            </dl-tooltip>
                             <div
                                 v-if="
                                     hasAppend ||
@@ -932,7 +936,8 @@ export default defineComponent({
             currentZoomImage: null,
             currentFile: null,
             newFileName: null,
-            focused: false
+            focused: false,
+            showTooltip: false
         }
     },
     computed: {
@@ -1110,6 +1115,14 @@ export default defineComponent({
         }
     },
     methods: {
+        onHover() {
+            const inputRef = this.$refs.input as HTMLInputElement
+            if (inputRef.scrollWidth > inputRef.clientWidth) {
+                this.showTooltip = true
+            } else {
+                this.showTooltip = false
+            }
+        },
         onKeydown(e: KeyboardEvent) {
             if (e.key !== 'Backspace') {
                 /**
