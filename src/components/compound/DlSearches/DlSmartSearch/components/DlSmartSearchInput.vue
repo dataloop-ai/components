@@ -5,11 +5,7 @@
         class="dl-smart-search-input"
     >
         <div class="dl-smart-search-input__search-bar-wrapper">
-            <div
-                ref="searchBar"
-                :class="searchBarClasses"
-                @click="focus()"
-            >
+            <div ref="searchBar" :class="searchBarClasses" @click="focus()">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
                         v-if="!focused && computedStatus"
@@ -274,7 +270,11 @@ export default defineComponent({
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
         const { suggestions, error, findSuggestions, checkErrors } =
-            useSuggestions(schema, aliases, { strict, forbiddenKeys, omitSuggestions })
+            useSuggestions(schema, aliases, {
+                strict,
+                forbiddenKeys,
+                omitSuggestions
+            })
         //#endregion
 
         //#region methods
@@ -469,7 +469,9 @@ export default defineComponent({
             input.value.focus()
 
             focused.value = true
-            showSuggestions.value = true
+            if (suggestions.value.length) {
+                showSuggestions.value = true
+            }
             emit('focus')
         }
 
@@ -495,7 +497,7 @@ export default defineComponent({
             }
 
             if (cancelBlur.value === 0) {
-                if (showSuggestions.value && computedStatus.value.type !== 'error') {
+                if (showSuggestions.value) {
                     focused.value = true
                     return
                 }
