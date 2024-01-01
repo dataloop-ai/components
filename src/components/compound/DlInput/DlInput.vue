@@ -88,7 +88,7 @@
                                 @mouseover="onHover"
                             />
                             <dl-tooltip v-if="showTooltip">
-                                {{ modelValue }}
+                                {{ spanText }}
                             </dl-tooltip>
                             <div
                                 v-if="
