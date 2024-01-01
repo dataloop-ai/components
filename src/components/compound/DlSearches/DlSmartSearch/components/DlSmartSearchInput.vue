@@ -213,6 +213,10 @@ export default defineComponent({
             type: Array as PropType<string[]>,
             default: () => [] as string[]
         },
+        forbiddenKeys: {
+            type: Array as PropType<string[]>,
+            default: () => [] as string[]
+        },
         strict: {
             type: Boolean,
             default: false
@@ -245,7 +249,8 @@ export default defineComponent({
             schema,
             omitSuggestions,
             height,
-            width
+            width,
+            forbiddenKeys
         } = toRefs(props)
         //#endregion
 
@@ -269,7 +274,7 @@ export default defineComponent({
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
         const { suggestions, error, findSuggestions, checkErrors } =
-            useSuggestions(schema, aliases, { strict, omitSuggestions })
+            useSuggestions(schema, aliases, { strict, forbiddenKeys, omitSuggestions })
         //#endregion
 
         //#region methods
@@ -490,7 +495,7 @@ export default defineComponent({
             }
 
             if (cancelBlur.value === 0) {
-                if (showSuggestions.value) {
+                if (showSuggestions.value && computedStatus.value.type !== 'error') {
                     focused.value = true
                     return
                 }
