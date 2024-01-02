@@ -9,23 +9,13 @@
         @click="$emit('click')"
     >
         <slot name="prefix" />
-        <span
-            v-if="hasIcon"
-            class="dl-chip-left-icon-container"
-        >
-            <dl-icon
-                class="dl-chip-left-icon"
-                size="12px"
-                :icon="icon"
-            />
+        <span v-if="hasIcon" class="dl-chip-left-icon-container">
+            <dl-icon class="dl-chip-left-icon" size="12px" :icon="icon" />
         </span>
         <dl-tooltip v-if="overflow && isOverflowing">
             {{ label }}
         </dl-tooltip>
-        <div
-            v-if="hasLabelSlot || hasLabel"
-            class="dl-chip--content"
-        >
+        <div v-if="hasLabelSlot || hasLabel" class="dl-chip--content">
             <div
                 ref="dlChipRef"
                 :class="{
@@ -221,6 +211,8 @@ export default defineComponent({
         width: auto;
         min-width: 0;
         max-width: 100%;
+        display: flex;
+        align-items: center;
     }
 
     &--ellipsis {
