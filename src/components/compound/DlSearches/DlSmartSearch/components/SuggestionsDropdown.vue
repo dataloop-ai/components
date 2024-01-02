@@ -1,8 +1,5 @@
 <template>
-    <div
-        v-if="suggestions.length > 0"
-        class="dl-suggestions-dropdown"
-    >
+    <div v-if="suggestions.length > 0" class="dl-suggestions-dropdown">
         <dl-menu
             :target="defaultTarget"
             :offset="offset"
@@ -16,8 +13,8 @@
             @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
-            @highlightedIndex="setHighlightedIndex"
-            @handleSelectedItem="handleSelectedItem"
+            @highlighted-item="setHighlightedIndex"
+            @selected-item="handleSelectedItem"
             @escapekey="onEscapeKey"
         >
             <dl-list>
@@ -82,7 +79,7 @@ export default defineComponent({
             default: 1
         }
     },
-    emits: ['set-input-value', 'update:model-value', 'escapekey'],
+    emits: ['set-input-value', 'update:model-value', 'escapekey', 'enterkey'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
@@ -97,6 +94,11 @@ export default defineComponent({
             highlightedIndex.value = value
         }
         const handleSelectedItem = (value: any) => {
+            if (!value) {
+                // enter occurred on non selected values
+                emit('enterkey')
+                return
+            }
             handleOption(value)
         }
         const emitModelValue = (event: any) => {

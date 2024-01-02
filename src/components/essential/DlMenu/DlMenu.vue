@@ -1,12 +1,6 @@
 <template>
-    <dl-teleport
-        v-if="portalIsActive"
-        :to="portalEl"
-    >
-        <transition
-            name="fade"
-            appear
-        >
+    <dl-teleport v-if="portalIsActive" :to="portalEl">
+        <transition name="fade" appear>
             <div
                 v-if="showing"
                 :id="uuid"
@@ -83,7 +77,10 @@ import {
 } from './utils'
 import { isMobileOrTablet } from '../../../utils'
 import { v4 } from 'uuid'
-import { useArrowNavigation } from '../../../hooks/use-arrow-navigation'
+import {
+    arrowNavigationEvents,
+    useArrowNavigation
+} from '../../../hooks/use-arrow-navigation'
 
 export default defineComponent({
     name: 'DlMenu',
@@ -154,7 +151,7 @@ export default defineComponent({
             default: ''
         },
         arrowNavItems: {
-            type: [String, Array, Object],
+            type: Array as PropType<any[]>,
             default: () => [] as any[]
         },
         zIndex: {
@@ -176,10 +173,9 @@ export default defineComponent({
 
     emits: [
         ...useModelToggleEmits,
+        ...arrowNavigationEvents,
         'click',
-        'escapekey',
-        'highlightedIndex',
-        'handleSelectedItem'
+        'escapekey'
     ],
 
     setup(props, { attrs }) {
@@ -195,7 +191,7 @@ export default defineComponent({
 
         const innerRef: Ref<HTMLElement | null> = ref(null)
         const showing = ref(false)
-        const { toggleKey } = toRefs(props)
+        const { toggleKey, arrowNavItems } = toRefs(props)
 
         const { registerTick, removeTick } = useTick()
         const { registerTimeout, removeTimeout } = useTimeout()
@@ -371,7 +367,7 @@ export default defineComponent({
 
         function configureScrollTarget() {
             if (anchorEl.value !== null || props.scrollTarget) {
-                (localScrollTarget as Ref<any>).value = getScrollTarget(
+                ;(localScrollTarget as Ref<any>).value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget
                 )
@@ -466,16 +462,16 @@ export default defineComponent({
         Object.assign(proxy, { focus, updatePosition })
 
         const isMenuOpen = ref(false)
-        const navItems = computed(() => props.arrowNavItems)
         const { selectedItem, highlightedIndex } = useArrowNavigation(
-            navItems,
-            isMenuOpen
+            arrowNavItems,
+            isMenuOpen,
+            emit
         )
         watch(selectedItem, (value: any) => {
-            emit('handleSelectedItem', value)
+            emit('selected-item', value)
         })
         watch(highlightedIndex, (value: any) => {
-            emit('highlightedIndex', value)
+            emit('highlighted-item', value, arrowNavItems.value[value] ?? null)
         })
 
         return {

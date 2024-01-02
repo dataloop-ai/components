@@ -6,37 +6,19 @@
         :style="containerStyle"
         :class="containerClass"
     >
-        <div
-            ref="dragRef"
-            class="dl-table__drag"
-        />
+        <div ref="dragRef" class="dl-table__drag" />
         <!-- Top Slots -->
-        <div
-            v-if="hasTopSlots"
-            class="dl-table__top row items-center"
-        >
-            <slot
-                v-bind="marginalsScope"
-                name="top"
-            >
+        <div v-if="hasTopSlots" class="dl-table__top row items-center">
+            <slot v-bind="marginalsScope" name="top">
                 <slot
                     v-if="hasTopSelectionMode"
                     v-bind="marginalsScope"
                     name="top-selection"
                 />
 
-                <div
-                    v-else
-                    class="dl-table__control"
-                >
-                    <slot
-                        name="top-left"
-                        v-bind="marginalsScope"
-                    >
-                        <div
-                            v-if="title"
-                            class="dl-table__control"
-                        >
+                <div v-else class="dl-table__control">
+                    <slot name="top-left" v-bind="marginalsScope">
+                        <div v-if="title" class="dl-table__control">
                             <div :class="titleClasses">
                                 {{ title }}
                             </div>
@@ -46,10 +28,7 @@
 
                 <div class="dl-table__separator col" />
                 <div class="dl-table__control">
-                    <slot
-                        name="top-right"
-                        v-bind="marginalsScope"
-                    />
+                    <slot name="top-right" v-bind="marginalsScope" />
                 </div>
             </slot>
         </div>
@@ -244,19 +223,13 @@
                             :colspan="colspanWithExpandableRow"
                             class="relative-position"
                         >
-                            <dl-progress-bar
-                                indeterminate
-                                :color="color"
-                            />
+                            <dl-progress-bar indeterminate :color="color" />
                         </th>
                     </tr>
                 </thead>
             </template>
             <template #default="props">
-                <slot
-                    name="table-body"
-                    v-bind="props"
-                >
+                <slot name="table-body" v-bind="props">
                     <template v-if="!isDataEmpty && !hasSlotBody">
                         <slot
                             v-bind="
@@ -452,16 +425,8 @@
         </DlVirtualScroll>
         <!--  -->
 
-        <div
-            v-else
-            ref="tableScroll"
-            class="dl-table__middle scroll"
-        >
-            <table
-                ref="tableRef"
-                class="dl-table"
-                :class="additionalClasses"
-            >
+        <div v-else ref="tableScroll" class="dl-table__middle scroll">
+            <table ref="tableRef" class="dl-table" :class="additionalClasses">
                 <thead :colspan="colspanWithExpandableRow">
                     <slot
                         v-if="!hideHeader"
@@ -637,10 +602,7 @@
                             :colspan="colspanWithExpandableRow"
                             class="relative-position"
                         >
-                            <dl-progress-bar
-                                indeterminate
-                                :color="color"
-                            />
+                            <dl-progress-bar indeterminate :color="color" />
                         </th>
                     </tr>
                 </thead>
@@ -662,16 +624,14 @@
                         :is-sortable="hasDraggableRows"
                         :options="sortableOptions"
                     >
-                        <slot
-                            name="top-row"
-                            :cols="computedCols"
-                        />
-                        <slot
-                            name="table-body"
-                            :computed-rows="computedRows"
-                        >
+                        <slot name="top-row" :cols="computedCols" />
+                        <slot name="table-body" :computed-rows="computedRows">
                             <dl-top-scroll
-                                v-if="tableScroll && infiniteScroll"
+                                v-if="
+                                    tableScroll &&
+                                        infiniteScroll &&
+                                        !isDataEmpty
+                                "
                                 :container-ref="tableScroll"
                                 @scroll-to-top="
                                     $emit(
@@ -836,7 +796,11 @@
                                 </tr>
                             </slot>
                             <dl-bottom-scroll
-                                v-if="tableScroll && infiniteScroll"
+                                v-if="
+                                    tableScroll &&
+                                        infiniteScroll &&
+                                        !isDataEmpty
+                                "
                                 :container-ref="tableScroll"
                                 @scroll-to-bottom="
                                     $emit(
@@ -848,10 +812,7 @@
                             />
                         </slot>
 
-                        <slot
-                            name="bottom-row"
-                            :cols="computedCols"
-                        />
+                        <slot name="bottom-row" :cols="computedCols" />
                     </Sortable>
                 </slot>
             </table>
@@ -890,14 +851,8 @@
                     </div>
                 </slot>
             </div>
-            <div
-                v-else
-                class="dl-table__control"
-            >
-                <slot
-                    name="bottom"
-                    v-bind="marginalsScope"
-                >
+            <div v-else class="dl-table__control">
+                <slot name="bottom" v-bind="marginalsScope">
                     <div
                         v-if="
                             hasBotomSelectionBanner &&
@@ -910,10 +865,7 @@
                         </div>
                     </div>
 
-                    <slot
-                        name="pagination"
-                        v-bind="marginalsScope"
-                    >
+                    <slot name="pagination" v-bind="marginalsScope">
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
@@ -930,10 +882,7 @@
             </div>
         </div>
 
-        <slot
-            v-if="loading"
-            name="loading"
-        />
+        <slot v-if="loading" name="loading" />
     </div>
 </template>
 
@@ -1297,6 +1246,7 @@ export default defineComponent({
             draggable,
             virtualScroll,
             rows,
+            pagination,
             visibleColumns,
             rowKey,
             titleClass,
@@ -1593,6 +1543,14 @@ export default defineComponent({
                 }
             },
             { deep: true, flush: 'post' }
+        )
+
+        watch(
+            pagination,
+            (newPagination) => {
+                setPagination(newPagination)
+            },
+            { deep: true }
         )
 
         const { computedFilterMethod } = useTableFilter(props, setPagination)

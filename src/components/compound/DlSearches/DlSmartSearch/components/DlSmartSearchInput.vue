@@ -65,6 +65,7 @@
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
             @escapekey="onEscapeKey"
+            @enterkey="onEnterKey({ fromSuggestion: true })"
         />
         <dl-menu
             v-if="showDatePicker && focused"
@@ -145,6 +146,7 @@ import {
     removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
+import { stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -216,6 +218,10 @@ export default defineComponent({
         strict: {
             type: Boolean,
             default: false
+        },
+        inputDebounce: {
+            type: Number,
+            default: 300
         }
     },
     emits: [
@@ -246,7 +252,8 @@ export default defineComponent({
             omitSuggestions,
             height,
             width,
-            forbiddenKeys
+            forbiddenKeys,
+            inputDebounce
         } = toRefs(props)
         //#endregion
 
@@ -415,7 +422,13 @@ export default defineComponent({
             setSelectionOffset(input.value, caretPosition, caretPosition)
         }
 
-        const debouncedSetInputValue = debounce(setInputValue, 300)
+        const debouncedSetInputValue = computed<any>(() => {
+            if (stateManager?.disableDebounce) {
+                return setInputValue
+            }
+
+            return debounce(setInputValue, inputDebounce.value)
+        })
 
         let lastSearchQuery: string
 
@@ -448,7 +461,13 @@ export default defineComponent({
             setInputValue(inputValue, { noEmit: true })
         }
 
-        const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
+        const debouncedSetInputFromModel = computed<any>(() => {
+            if (stateManager?.disableDebounce) {
+                return setInputFromModel
+            }
+
+            return debounce(setInputFromModel, inputDebounce.value)
+        })
 
         const setMenuOffset = (value: number[]) => {
             menuOffset.value = value
@@ -571,7 +590,7 @@ export default defineComponent({
             if (text.endsWith('.')) {
                 setInputValue(text)
             } else {
-                debouncedSetInputValue(text)
+                debouncedSetInputValue.value(text)
             }
         }
 
@@ -608,7 +627,9 @@ export default defineComponent({
                     aliased !== searchQuery.value.trim() ||
                     !input.value?.innerHTML.length
                 ) {
-                    debouncedSetInputFromModel(aliased)
+                    nextTick(() => {
+                        debouncedSetInputFromModel.value(aliased)
+                    })
                 }
             }
         }
@@ -654,8 +675,13 @@ export default defineComponent({
             }
         }
 
-        const onEnterKey = () => {
-            if (showSuggestions.value || showDatePicker.value) {
+        const onEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
+            const { fromSuggestion } = options
+
+            if (
+                (!fromSuggestion && showSuggestions.value) ||
+                showDatePicker.value
+            ) {
                 return
             }
 
@@ -952,7 +978,8 @@ export default defineComponent({
             computedStatus,
             setInputFromSuggestion,
             inputPlaceholder,
-            onEscapeKey
+            onEscapeKey,
+            onEnterKey
         }
     }
 })
