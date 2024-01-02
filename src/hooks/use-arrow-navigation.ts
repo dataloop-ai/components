@@ -2,7 +2,13 @@ import { ref, isRef, onMounted, onBeforeUnmount, computed } from 'vue-demi'
 
 type ItemType = Record<string, any> | string
 
-export function useArrowNavigation(items: any, isOpen: any) {
+export const arrowNavigationEvents = ['selected-item', 'highlighted-index']
+
+export function useArrowNavigation(
+    items: any,
+    isOpen: any,
+    emit?: (event: string, ...args: any[]) => void
+) {
     const selectItem = ref<ItemType | null>(null)
     const highlightIndex = ref<number>(-1)
 
@@ -66,6 +72,8 @@ export function useArrowNavigation(items: any, isOpen: any) {
         if (isEligibleToHandleEnter.value) {
             selectedItem.value = itemsData.value[highlightedIndex.value]
             resetHighlightedIndex()
+        } else if (emit) {
+            emit('selected-item', null)
         }
     }
 
