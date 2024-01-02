@@ -16,15 +16,9 @@
                 'dl-select__title-container--s': isSmall
             }"
         >
-            <label
-                v-show="!!title.length"
-                class="dl-select__title"
-            >
+            <label v-show="!!title.length" class="dl-select__title">
                 {{ title
-                }}<span
-                    v-show="required"
-                    :class="asteriskClasses"
-                > *</span>
+                }}<span v-show="required" :class="asteriskClasses"> *</span>
                 {{ !required && optional ? ' (Optional)' : null }}
             </label>
             <span v-show="!!tooltip.length">
@@ -49,15 +43,8 @@
                 :value="topMessage"
             />
         </div>
-        <div
-            class="select-wrapper"
-            tabindex="0"
-            :style="placeholderStyles"
-        >
-            <div
-                ref="select"
-                :class="selectClasses"
-            >
+        <div class="select-wrapper" tabindex="0" :style="placeholderStyles">
+            <div ref="select" :class="selectClasses">
                 <div
                     v-show="hasPrepend || searchable"
                     :class="[
@@ -84,14 +71,11 @@
                     @input="handleSearchInput"
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
-                >
+                />
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
                 </dl-tooltip>
-                <div
-                    v-if="hasSelectedSlot"
-                    style="width: 100%"
-                >
+                <div v-if="hasSelectedSlot" style="width: 100%">
                     <slot
                         v-if="searchable ? !isExpanded : true"
                         :opt="selectedOption"
@@ -168,18 +152,13 @@
                 :trigger-percentage="triggerPercentage"
                 @show="onMenuOpen"
                 @hide="closeMenu"
-                @highlightedIndex="setHighlightedIndex"
-                @handleSelectedItem="handleSelectedItem"
+                @highlighted-item="setHighlightedIndex"
+                @selected-item="handleSelectedItem"
             >
-                <dl-list
-                    class="select-list"
-                    :padding="false"
-                >
+                <dl-list class="select-list" :padding="false">
                     <dl-list-item v-if="noOptions">
                         <dl-item-section color="dl-color-medium">
-                            <slot name="no-options">
-                                No options
-                            </slot>
+                            <slot name="no-options"> No options </slot>
                         </dl-item-section>
                     </dl-list-item>
                     <dl-list-item v-if="hasBeforeOptions && !noOptions">
@@ -246,10 +225,7 @@
                             @selected="handleSelected"
                             @deselected="handleDeselected"
                         >
-                            <slot
-                                name="option"
-                                :opt="item"
-                            >
+                            <slot name="option" :opt="item">
                                 <span
                                     v-if="fitContent"
                                     class="inner-option"
@@ -292,17 +268,14 @@
                             :children="getOptionChildren(option)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(option)"
-                            :is-expanded="option.expanded"
+                            :is-expanded="isExpandedOption(option)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
                             @selected="handleSelected"
                             @deselected="handleDeselected"
                             @depth-change="handleDepthChange"
                         >
-                            <slot
-                                :opt="option"
-                                name="option"
-                            >
+                            <slot :opt="option" name="option">
                                 <span
                                     v-if="fitContent"
                                     class="inner-option"
@@ -808,6 +781,15 @@ export default defineComponent({
         this.setSelectedIndex()
     },
     methods: {
+        isExpandedOption(option: DlSelectOptionType): boolean {
+            if (typeof option === 'string') {
+                return false
+            }
+            if (typeof option === 'number') {
+                return false
+            }
+            return !!option?.expanded
+        },
         handleDepthChange() {
             // todo: remove this hack
             setTimeout(() => {

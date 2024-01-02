@@ -32,7 +32,7 @@
                 outlined
                 split
                 :label="outlinedLabel"
-                @handleSelectedItem="handleOutlinedSelect"
+                @selected-item="handleOutlinedSelect"
             >
                 <dl-list>
                     <dl-list-item
@@ -68,11 +68,7 @@
                 </dl-list>
             </dl-dropdown-button>
 
-            <dl-dropdown-button
-                split
-                :label="containedLabel"
-                auto-close
-            >
+            <dl-dropdown-button split :label="containedLabel" auto-close>
                 <dl-list>
                     <dl-list-item
                         v-for="val in ['Photos', 'Videos', 'Articles']"
@@ -94,10 +90,7 @@
                 @click="onClick"
             >
                 <dl-list>
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Photos')"
-                    >
+                    <dl-list-item clickable @click="() => onClose('Photos')">
                         <dl-item-section> Photos </dl-item-section>
                     </dl-list-item>
 
@@ -111,10 +104,7 @@
                         </dl-item-section>
                     </dl-list-item>
 
-                    <dl-list-item
-                        clickable
-                        @click="() => onClose('Articles')"
-                    >
+                    <dl-list-item clickable @click="() => onClose('Articles')">
                         <dl-item-section> Articles </dl-item-section>
                     </dl-list-item>
                 </dl-list>
@@ -123,15 +113,8 @@
 
         <div style="display: flex; gap: 20px; flex-direction: column">
             <h2>One Button</h2>
-            <div
-                class="grid grid-cols-3"
-                style="column-gap: 10px"
-            >
-                <dl-dropdown-button
-                    auto-close
-                    outlined
-                    :label="outlinedLabel"
-                >
+            <div class="grid grid-cols-3" style="column-gap: 10px">
+                <dl-dropdown-button auto-close outlined :label="outlinedLabel">
                     <dl-list>
                         <dl-list-item clickable>
                             <dl-item-section> Photos </dl-item-section>
@@ -211,10 +194,7 @@
                 </dl-dropdown-button>
             </div>
 
-            <div
-                class="grid grid-cols-3"
-                style="column-gap: 10px"
-            >
+            <div class="grid grid-cols-3" style="column-gap: 10px">
                 <dl-dropdown-button
                     auto-close
                     :model-value="showing"
@@ -315,8 +295,8 @@
                     tooltip="Tooltip message"
                     :arrow-nav-items="listItems"
                     @show="onOpen"
-                    @highlightedIndex="setHighlightedIndex"
-                    @handleSelectedItem="handleSelectedItem"
+                    @highlighted-item="setHighlightedIndex"
+                    @selected-item="handleSelectedItem"
                 >
                     <dl-list>
                         <dl-list-item
@@ -342,7 +322,7 @@
                 outlined
                 text-color="red"
                 :label="outlinedLabel"
-                @handleSelectedItem="handleOutlinedSelect"
+                @selected-item="handleOutlinedSelect"
             >
                 <dl-list>
                     <dl-list-item

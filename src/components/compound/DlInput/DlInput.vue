@@ -145,8 +145,8 @@
                             :fit-content="fitContent"
                             :arrow-nav-items="stringSuggestions"
                             @click="onMenuShow"
-                            @highlightedIndex="setHighlightedIndex"
-                            @handleSelectedItem="handleSelectedItem"
+                            @highlighted-item="setHighlightedIndex"
+                            @selected-item="handleSelectedItem"
                         >
                             <dl-list
                                 bordered
