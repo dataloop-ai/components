@@ -1,6 +1,15 @@
 import { mount } from '@vue/test-utils'
 import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
-import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
+import {
+    describe,
+    it,
+    expect,
+    vi,
+    beforeAll,
+    beforeEach,
+    afterAll
+} from 'vitest'
+import { stateManager } from '../../src/StateManager'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -81,23 +90,7 @@ describe('DlSmartSearchInput', () => {
         await wrapper.setProps({ disabled: true })
         expect(wrapper.vm.searchBarClasses.includes('--disabled')).toBeTruthy()
 
-        await wrapper.setProps({
-            styleModel: { fields: { values: '', color: 'red' } }
-        })
-
         await wrapper.setProps({ placeholder: 'text' })
-
-        await wrapper.setProps({ expandedInputHeight: '200px' })
-
-        await wrapper.setProps({ withSearchIcon: true })
-
-        await wrapper.setProps({ withScreenButton: true })
-
-        await wrapper.setProps({ withSaveButton: true })
-
-        await wrapper.setProps({ withDQLButton: false })
-
-        await wrapper.setProps({ isDatePickerVisible: false })
     })
 
     it('Will update the v-model', async () => {
@@ -650,6 +643,43 @@ describe('DlSmartSearchInput', () => {
             expect(message).toEqual(
                 'Could not translate given JSON to a valid Scheme'
             )
+        })
+    })
+
+    describe('When using arrow navigation', () => {
+        let wrapper: any
+        beforeAll(() => {
+            stateManager.disableDebounce = true
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+        })
+
+        afterAll(() => {
+            stateManager.disableDebounce = false
+        })
+
+        describe('when clicking enter while suggestion is visible', () => {
+            beforeAll(async () => {
+                await wrapper.vm.focus()
+                wrapper.vm.debouncedSetInputValue(`level = 'low'`)
+            })
+
+            it('should show suggestions', async () => {
+                expect(wrapper.vm.showSuggestions).toBeTruthy()
+            })
+
+            it('should handle keyboard input', async () => {
+                wrapper.vm.suggestionsDropdown.handleSelectedItem(null)
+                await wrapper.vm.$nextTick()
+
+                const emittedModelValue =
+                    wrapper.emitted()['update:model-value']
+                expect(emittedModelValue).toEqual([[{ level: 'low' }]])
+            })
         })
     })
 })

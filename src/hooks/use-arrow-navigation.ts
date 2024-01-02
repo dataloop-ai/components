@@ -4,6 +4,8 @@ type ItemType = Record<string, any> | string
 
 export const arrowNavigationEvents = ['selected-item', 'highlighted-index']
 
+// todo: add tests for util
+
 export function useArrowNavigation(
     items: any,
     isOpen: any,
