@@ -9,14 +9,8 @@
             :container-ref="containerRef"
             @scroll-to-top="onScrollToTop"
         />
-        <slot
-            name="content"
-            :items="displayItems"
-        >
-            <div
-                v-for="item in displayItems"
-                :key="itemKey(item)"
-            >
+        <slot name="content" :items="displayItems">
+            <div v-for="item in displayItems" :key="itemKey(item)">
                 <slot :item="item" />
             </div>
         </slot>
@@ -160,6 +154,7 @@ export default defineComponent({
                     items.value,
                     pageSize.value
                 )
+                onScrollToTop()
             },
             { immediate: true }
         )

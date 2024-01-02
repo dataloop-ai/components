@@ -1,4 +1,6 @@
 .dl-virtual-scroll {
+    scroll-behavior: auto !important;
+
     &:focus {
         outline: 0;
     }
