@@ -1,12 +1,6 @@
 <template>
-    <div
-        :id="uuid"
-        style="display: block"
-    >
-        <div
-            :style="cssVars"
-            :class="rootContainerClasses"
-        >
+    <div :id="uuid" style="display: block">
+        <div :style="cssVars" :class="rootContainerClasses">
             <div class="row full-width full-height">
                 <div
                     :class="`${isSmall ? 'col' : 'row  full-width'} top`"
@@ -30,7 +24,8 @@
                                     v-if="required"
                                     :class="asteriskClasses"
                                 >
-                                    *</span>
+                                    *</span
+                                >
                                 {{
                                     !required && optional ? ' (Optional)' : null
                                 }}
@@ -47,10 +42,7 @@
                             </dl-tooltip>
                         </span>
                     </div>
-                    <div
-                        v-if="!!topMessage.length && !isSmall"
-                        class="break"
-                    />
+                    <div v-if="!!topMessage.length && !isSmall" class="break" />
                     <div
                         v-if="!!topMessage.length"
                         :class="{
@@ -84,7 +76,7 @@
                             </div>
                             <div
                                 ref="input"
-                                :contenteditable="!readonly && !disabled"
+                                :contenteditable="contenteditable"
                                 :class="inputClasses"
                                 :placeholder="placeholder"
                                 @input="onChange"
@@ -93,15 +85,11 @@
                                 @keydown="onKeydown"
                                 @keyup.enter="onEnterPress"
                                 @paste="handlePaste"
-                            >
-                                <span
-                                    v-if="readonly || disabled"
-                                    :class="{
-                                        'placeholder-string': showPlaceholder,
-                                        'placeholder-string--disabled': disabled
-                                    }"
-                                >{{ spanText }}</span>
-                            </div>
+                                @mouseover="onHover"
+                            />
+                            <dl-tooltip v-if="showTooltip">
+                                {{ spanText }}
+                            </dl-tooltip>
                             <div
                                 v-if="
                                     hasAppend ||
@@ -113,10 +101,7 @@
                                     'dl-input__adornment-container--pos-right'
                                 ]"
                             >
-                                <slot
-                                    v-if="hasAppend"
-                                    name="append"
-                                />
+                                <slot v-if="hasAppend" name="append" />
                                 <span
                                     v-if="showClearButton"
                                     class="dl-input__adornment-container--clear"
@@ -160,8 +145,8 @@
                             :fit-content="fitContent"
                             :arrow-nav-items="stringSuggestions"
                             @click="onMenuShow"
-                            @highlightedIndex="setHighlightedIndex"
-                            @handleSelectedItem="handleSelectedItem"
+                            @highlighted-item="setHighlightedIndex"
+                            @selected-item="handleSelectedItem"
                         >
                             <dl-list
                                 bordered
@@ -181,7 +166,7 @@
                                         v-if="item.image"
                                         :src="item.image"
                                         class="dl-input__suggestion--image"
-                                    >
+                                    />
                                     <span
                                         v-for="(word, index) in getSuggestWords(
                                             item.suggestion,
@@ -193,7 +178,9 @@
                                                 word.highlighted
                                         }"
                                     >
-                                        <span v-if="word.value[0] === ' '">&nbsp;</span>
+                                        <span v-if="word.value[0] === ' '"
+                                        >&nbsp;</span
+                                        >
                                         {{ word.value }}
                                         <span
                                             v-if="
@@ -201,7 +188,8 @@
                                                     word.value.length - 1
                                                 ] === ' '
                                             "
-                                        >&nbsp;</span>
+                                        >&nbsp;</span
+                                        >
                                     </span>
                                 </dl-list-item>
                             </dl-list>
@@ -260,10 +248,7 @@
                         </div>
                     </div>
                 </div>
-                <div
-                    v-if="files.length"
-                    class="dl-input__files"
-                >
+                <div v-if="files.length" class="dl-input__files">
                     <input-file-element
                         v-for="file in files"
                         :key="file.id"
@@ -282,10 +267,7 @@
                 style="--dl-dialog-box-content-padding: 0"
             >
                 <template #body>
-                    <img
-                        class="dl-input__zoom-image"
-                        :src="currentZoomImage"
-                    >
+                    <img class="dl-input__zoom-image" :src="currentZoomImage" />
                 </template>
             </dl-dialog-box>
             <dl-dialog-box
@@ -321,10 +303,7 @@
                     </dl-dialog-box-footer>
                 </template>
             </dl-dialog-box>
-            <div
-                v-if="hasAction"
-                class="dl-input__action"
-            >
+            <div v-if="hasAction" class="dl-input__action">
                 <slot name="action" />
             </div>
         </div>
@@ -674,7 +653,8 @@ export default defineComponent({
             disabled,
             autoTrim,
             debounce,
-            trimDebounce
+            trimDebounce,
+            type
         } = toRefs(props)
 
         const isInternalChange = ref(false)
@@ -728,15 +708,60 @@ export default defineComponent({
             return debounced
         })
 
+        const isValidNumber = (input: string | number) => {
+            const parsedNumber = Number(String(input))
+            return (
+                !isNaN(parsedNumber) &&
+                isFinite(parsedNumber) &&
+                !/[eE]/.test(String(input)) &&
+                parsedNumber >= Number.MIN_SAFE_INTEGER &&
+                parsedNumber <= Number.MAX_SAFE_INTEGER
+            )
+        }
+
         const onChange = (e: KeyboardEvent | Event) => {
             isInternalChange.value = true
             isMenuOpen.value = true
             updateSyntax()
             const target = e.target as HTMLElement
-            const toEmit = target.innerText.replace(
+            let toEmit: string | number = target.innerText.replace(
                 new RegExp('&nbsp;', 'g'),
                 ' '
             )
+
+            if (type.value === 'number') {
+                if (toEmit === '') {
+                    toEmit = '0'
+                }
+
+                const isValid = isValidNumber(toEmit)
+                if (!isValid) {
+                    const trimmed = String(modelValue.value).trim()
+                    input.value.innerHTML = trimmed
+                        .toString()
+                        .replace(/ /g, '&nbsp;')
+                    updateSyntax()
+                    setCaretAtTheEnd(input.value)
+                    return
+                }
+                /**
+                 * if the number ends with a dot followed by multiple zeros
+                 * then we should not replace the inputs value with the parsed number
+                 */
+                if (
+                    !toEmit.endsWith('.') &&
+                    !new RegExp(/\.\d*0+$/, 'g').test(toEmit)
+                ) {
+                    input.value.innerHTML = String(Number(toEmit))
+                        .toString()
+                        .replace(/ /g, '&nbsp;')
+                    updateSyntax()
+                    setCaretAtTheEnd(input.value)
+                }
+
+                toEmit = Number(toEmit)
+            }
+
             emit('input', toEmit, e)
             emit('update:model-value', toEmit)
             if (autoTrim.value) {
@@ -846,8 +871,14 @@ export default defineComponent({
             (val: string | number) => {
                 nextTick(() => {
                     if (firstTime.value) {
+                        if (readonly.value || disabled.value) {
+                            prevInputValue.value = String(val)
+                            input.value.innerHTML = placeHolderHTML.value
+                        } else {
+                            onModelValueChange(val)
+                        }
+
                         firstTime.value = false
-                        onModelValueChange(val)
                         return
                     }
                     debouncedOnModelValueChange.value(val)
@@ -855,6 +886,36 @@ export default defineComponent({
             },
             { immediate: true }
         )
+
+        const placeHolderHTML = computed<string>(() => {
+            let classes = ''
+            if (showPlaceholder.value) {
+                classes += 'placeholder-string'
+            }
+            if (disabled.value) {
+                classes += ' placeholder-string--disabled'
+            }
+
+            return `<span class="${classes}">${spanText.value}</span>`
+        })
+
+        const contenteditable = computed<boolean>(() => {
+            return !disabled.value && !readonly.value
+        })
+
+        const prevInputValue = ref('')
+        watch([disabled, readonly], (value) => {
+            if (!input.value) {
+                return
+            }
+
+            if (value[0] || value[1]) {
+                prevInputValue.value = input.value.innerHTML
+                input.value.innerHTML = placeHolderHTML.value
+            } else {
+                input.value.innerHTML = prevInputValue.value
+            }
+        })
 
         return {
             suggestItems,
@@ -874,7 +935,8 @@ export default defineComponent({
             spanText,
             handleValueTrim: debouncedHandleValueTrim,
             onModelValueChange: debouncedOnModelValueChange,
-            isInternalChange
+            isInternalChange,
+            contenteditable
         }
     },
     data() {
@@ -886,7 +948,8 @@ export default defineComponent({
             currentZoomImage: null,
             currentFile: null,
             newFileName: null,
-            focused: false
+            focused: false,
+            showTooltip: false
         }
     },
     computed: {
@@ -1064,10 +1127,49 @@ export default defineComponent({
         }
     },
     methods: {
-        onKeydown(e: KeyboardEvent) {
-            if (!this.isWithinMaxLength && e.key !== 'Backspace') {
-                e.preventDefault()
+        onHover() {
+            const inputRef = this.$refs.input as HTMLInputElement
+            if (!inputRef) {
                 return
+            }
+
+            if (inputRef?.scrollWidth > inputRef?.clientWidth) {
+                this.showTooltip = true
+            } else {
+                this.showTooltip = false
+            }
+        },
+        onKeydown(e: KeyboardEvent) {
+            if (e.key !== 'Backspace') {
+                /**
+                 * Allow only numbers
+                 * Allow decimal point
+                 * Allow arrow keys
+                 * Allow delete
+                 * Allow control/meta keys
+                 * Allow select all
+                 */
+                if (
+                    this.type === 'number' &&
+                    !/^[\d.]$/.test(e.key) &&
+                    ![
+                        'ArrowLeft',
+                        'ArrowRight',
+                        'Backspace',
+                        'Delete',
+                        'Control',
+                        'Meta',
+                        'a'
+                    ].includes(e.key) &&
+                    !(e.ctrlKey || e.metaKey)
+                ) {
+                    e.preventDefault()
+                    return
+                }
+                if (!this.isWithinMaxLength) {
+                    e.preventDefault()
+                    return
+                }
             }
         },
         onClick(e: Event, item: DlInputSuggestion) {
@@ -1131,6 +1233,9 @@ export default defineComponent({
         },
         onBlur(e: InputEvent): void {
             const el = e.target as HTMLElement
+            el.innerText = (el.innerText ?? '').endsWith('.')
+                ? el.innerText.slice(0, -1)
+                : el.innerText
             el.scroll(0, 0)
             this.focused = false
             this.$emit('blur', e)
@@ -1141,8 +1246,9 @@ export default defineComponent({
         },
         onClear(e: any): void {
             this.$emit('clear', this.modelValue)
-            this.$emit('input', '', e)
-            this.$emit('update:model-value', '')
+            const clearValue = this.type === 'number' ? null : ''
+            this.$emit('input', clearValue, e)
+            this.$emit('update:model-value', clearValue)
 
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.innerHTML = ''
@@ -1237,7 +1343,6 @@ export default defineComponent({
 <style scoped lang="scss">
 [contenteditable='true']:empty:before {
     content: attr(placeholder);
-    pointer-events: none;
     display: inline;
     opacity: 0.5;
     -webkit-text-security: none;
@@ -1339,7 +1444,6 @@ export default defineComponent({
         &--disabled {
             border-color: var(--dl-color-separator);
             color: var(--dl-color-disabled);
-            pointer-events: none;
             cursor: not-allowed;
         }
         &--s {
@@ -1444,7 +1548,7 @@ export default defineComponent({
         .placeholder-string--disabled,
         &--disabled {
             color: var(--dl-color-disabled);
-            pointer-events: none;
+            cursor: not-allowed;
         }
     }
 

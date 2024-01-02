@@ -1,5 +1,15 @@
 <template>
     <div>
+        <div style="padding-bottom: 10px; max-width: 100px">
+            <div>Number input</div>
+            <dl-input
+                v-model="numberVal"
+                type="number"
+                placeholder="Test reactivity"
+                :disabled="disabledInput"
+            />
+            {{ numberVal }}
+        </div>
         <div style="padding-bottom: 10px">
             <div>switch the disalbed prop: {{ disabledInput }}</div>
             <dl-switch v-model="disabledInput" />
@@ -9,46 +19,32 @@
                 :disabled="disabledInput"
             />
         </div>
-        <div>
-            <input v-model="textVal">
+        <div style="max-width: 150px">
+            <input v-model="textVal" />
             <div>This is to test v-model reactivity</div>
             <dl-input
                 v-model="textVal"
                 placeholder="Test reactivity"
+                :disabled="disabledInput"
             />
             <dl-input
                 v-model="textVal"
                 placeholder="Test reactivity disabled"
                 disabled
             />
-            <dl-input
-                v-model="textVal"
-                disabled
-            />
-            <dl-input
-                v-model="textVal"
-                readonly
-            />
+            <dl-input v-model="textVal" disabled />
+            <dl-input v-model="textVal" readonly />
         </div>
 
         <div>
             <div>With auto trim</div>
 
-            <dl-input
-                v-model="trimmedValue"
-                auto-trim
-            />
+            <dl-input v-model="trimmedValue" auto-trim />
         </div>
 
-        <dl-input
-            placeholder="placeholder input readonly"
-            readonly
-        />
+        <dl-input placeholder="placeholder input readonly" readonly />
 
-        <dl-input
-            placeholder="placeholder input disabled"
-            disabled
-        />
+        <dl-input placeholder="placeholder input disabled" disabled />
 
         <dl-input
             style="width: 500px"
@@ -125,7 +121,7 @@
                     style="display: none"
                     type="file"
                     @change="addFile"
-                >
+                />
             </template>
         </dl-input>
         <dl-input
@@ -162,10 +158,7 @@
             optional
         />
         <p>input in a row with button</p>
-        <div
-            class="row"
-            style="align-items: center"
-        >
+        <div class="row" style="align-items: center">
             <dl-input
                 max-width="220px"
                 class="input-parts"
@@ -174,17 +167,9 @@
                 dense
                 size="s"
             />
-            <dl-button
-                dense
-                flat
-                icon="icon-dl-add"
-                size="m"
-            />
+            <dl-button dense flat icon="icon-dl-add" size="m" />
         </div>
-        <div
-            class="row"
-            style="align-items: center"
-        >
+        <div class="row" style="align-items: center">
             <dl-input
                 max-width="220px"
                 class="input-parts"
@@ -194,12 +179,7 @@
                 expandable
                 size="s"
             />
-            <dl-button
-                dense
-                flat
-                icon="icon-dl-add"
-                size="m"
-            />
+            <dl-button dense flat icon="icon-dl-add" size="m" />
         </div>
         <dl-input
             :model-value="'Readonly text'"
@@ -213,12 +193,7 @@
         <div style="align-items: center; width: 250px; overflow: scroll">
             <dl-input class="input-parts">
                 <template #action>
-                    <dl-button
-                        dense
-                        flat
-                        icon="icon-dl-add"
-                        size="m"
-                    />
+                    <dl-button dense flat icon="icon-dl-add" size="m" />
                 </template>
             </dl-input>
         </div>
@@ -231,12 +206,7 @@
                 tooltip="test me tooltip"
             >
                 <template #action>
-                    <dl-button
-                        dense
-                        flat
-                        icon="icon-dl-add"
-                        size="m"
-                    />
+                    <dl-button dense flat icon="icon-dl-add" size="m" />
                 </template>
             </dl-input>
         </div>
@@ -250,12 +220,7 @@
                 size="small"
             >
                 <template #action>
-                    <dl-button
-                        dense
-                        flat
-                        icon="icon-dl-add"
-                        size="m"
-                    />
+                    <dl-button dense flat icon="icon-dl-add" size="m" />
                 </template>
             </dl-input>
         </div>
@@ -311,12 +276,16 @@ export default defineComponent({
         const disabledInput = ref<boolean>(false)
 
         const textVal = ref<string>('test me')
+        const numberVal = ref<number>()
+        const emittedNumberValues = ref<number[]>([])
 
         const trimmedValue = ref('')
 
         return {
             log: console.log,
             textVal,
+            emittedNumberValues,
+            numberVal,
             disabledInput,
             trimmedValue,
             textInputValue,

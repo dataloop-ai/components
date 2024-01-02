@@ -26,7 +26,7 @@
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainButton === true) ||
+                    (!split && disableMainButton === true) ||
                     disableDropdown === true
             "
             :overflow="overflow"
@@ -46,7 +46,7 @@
             :aria-haspopup="true"
             :aria-disabled="
                 disabled === true ||
-                    (split === false && disableMainButton === true) ||
+                    (!split && disableMainButton === true) ||
                     disableDropdown === true
             "
             :no-wrap="noWrap"
@@ -155,8 +155,8 @@
             @show="onShow"
             @before-hide="onBeforeHide"
             @hide="onHide"
-            @highlightedIndex="setHighlightedIndex"
-            @handleSelectedItem="handleSelectedItem"
+            @highlighted-item="setHighlightedIndex"
+            @selected-item="handleSelectedItem"
         >
             <slot />
         </dl-menu>
@@ -182,6 +182,7 @@ import {
 import { v4 } from 'uuid'
 import { DlTextTransformOptions } from '../../shared/types'
 import { getColor } from '../../../utils'
+import { arrowNavigationEvents } from '../../../hooks/use-arrow-navigation'
 
 export default defineComponent({
     name: 'DlDropdownButton',
@@ -197,9 +198,9 @@ export default defineComponent({
     },
     props: {
         modelValue: Boolean,
-        split: Boolean,
+        split: { type: Boolean, default: false },
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },
-        contentClass: { type: [Array, String, Object], default: '' },
+        contentClass: { type: String, default: '' },
         contentStyle: { type: [Array, String, Object], default: '' },
         mainButtonStyle: { type: [Array, String, Object], default: '' },
         cover: Boolean,
@@ -244,7 +245,7 @@ export default defineComponent({
         overflow: { type: Boolean, default: false, required: false },
         tooltip: { type: String, default: null, required: false },
         arrowNavItems: {
-            type: [String, Array, Object],
+            type: Array as PropType<any[]>,
             default: () => [] as any[]
         }
     },
@@ -256,8 +257,7 @@ export default defineComponent({
         'show',
         'before-hide',
         'hide',
-        'highlightedIndex',
-        'handleSelectedItem'
+        ...arrowNavigationEvents
     ],
 
     setup(props, { emit }) {
@@ -322,7 +322,7 @@ export default defineComponent({
             () => props.modelValue,
             (val) => {
                 if (menuRef.value) {
-                    (menuRef!.value as Record<string, Function>)[
+                    ;(menuRef!.value as Record<string, Function>)[
                         val ? 'show' : 'hide'
                     ]()
                 }
@@ -363,26 +363,26 @@ export default defineComponent({
 
         function toggle(evt: Event) {
             if (menuRef.value) {
-                (menuRef.value as Record<string, Function>).toggle(evt)
+                ;(menuRef.value as Record<string, Function>).toggle(evt)
             }
         }
 
         function show(evt?: Event) {
             if (menuRef.value) {
-                (menuRef.value as Record<string, Function>).show(evt)
+                ;(menuRef.value as Record<string, Function>).show(evt)
             }
         }
 
         function hide(evt?: any) {
             if (menuRef.value) {
-                (menuRef.value as Record<string, Function>).hide(evt)
+                ;(menuRef.value as Record<string, Function>).hide(evt)
             }
         }
         const setHighlightedIndex = (value: any) => {
             emit('highlightedIndex', value)
         }
         const handleSelectedItem = (value: any) => {
-            emit('handleSelectedItem', value)
+            emit('selected-item', value)
         }
 
         onMounted(() => {

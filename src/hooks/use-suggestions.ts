@@ -123,9 +123,13 @@ const mergeWords = (words: string[]) => {
 export const useSuggestions = (
     schema: Ref<Schema>,
     aliases: Ref<Alias[]>,
-    options: { strict?: Ref<boolean>; omitSuggestions?: Ref<string[]> } = {}
+    options: {
+        strict?: Ref<boolean>
+        forbiddenKeys?: Ref<string[]>
+        omitSuggestions?: Ref<string[]>
+    } = {}
 ) => {
-    const { strict, omitSuggestions } = options
+    const { strict, forbiddenKeys, omitSuggestions } = options
     const aliasesArray = aliases.value ?? []
     const schemaValue = schema.value ?? {}
 
@@ -159,7 +163,10 @@ export const useSuggestions = (
         const expressions = mapWordsToExpressions(mergedWords)
 
         error.value = input.length
-            ? getError(schemaValue, aliasesArray, expressions, { strict })
+            ? getError(schemaValue, aliasesArray, expressions, {
+                  strict,
+                  forbiddenKeys
+              })
             : null
     }
 
@@ -191,7 +198,9 @@ export const useSuggestions = (
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions =
                     value && input.endsWith(space)
-                        ? [Logical.AND, Logical.OR]
+                        ? keyword
+                            ? sortedSuggestions
+                            : [Logical.AND, Logical.OR]
                         : []
                 continue
             }
@@ -329,7 +338,8 @@ export const useSuggestions = (
 
 const errors = {
     INVALID_EXPRESSION: 'Invalid Expression',
-    INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`
+    INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`,
+    FORBIDDEN_KEY: (field: string) => `Forbidden field "${field}"`
 }
 
 const isInputAllowed = (input: string, allowedKeys: string[]): boolean => {
@@ -361,9 +371,9 @@ const getError = (
     schema: Schema,
     aliases: Alias[],
     expressions: Expression[],
-    options: { strict?: Ref<boolean> } = {}
+    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]> } = {}
 ): string | null => {
-    const { strict } = options
+    const { strict, forbiddenKeys } = options
     const hasErrorInStructure = expressions
         .flatMap((exp) => Object.values(exp))
         .some((el, index, arr) => {
@@ -378,7 +388,7 @@ const getError = (
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
-            if (acc === 'warning') return acc
+            if (acc && acc !== 'warning') return acc
             const fieldKey: string =
                 getAliasObjByAlias(aliases, field)?.key ?? field
 
@@ -409,14 +419,21 @@ const getError = (
                 return false
             }
 
-            const pattern = new RegExp(`${fieldKey}\\.\\d`)
+            const pattern = new RegExp(`^${fieldKey}\\.\\d`)
             const isValid = isInputAllowed(fieldKey, keys)
+            const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
             if (
                 !keys.includes(fieldKey) &&
                 !hasValidExpression(keys, pattern) &&
-                !isValid
+                !isValid &&
+                !isForbidden
             ) {
-                return strict.value ? errors.INVALID_EXPRESSION : 'warning'
+                return strict?.value ? errors.INVALID_EXPRESSION : 'warning'
+            }
+
+            if (isForbidden) {
+                arr.splice(1)
+                return (acc = errors.FORBIDDEN_KEY(field))
             }
 
             const valid = isValidByDataType(
@@ -430,7 +447,7 @@ const getError = (
                 return (acc = errors.INVALID_VALUE(field))
             }
 
-            return (acc = null)
+            return acc === 'warning' ? acc : (acc = null)
         }, null)
 }
 

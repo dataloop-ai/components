@@ -67,20 +67,20 @@ describe('use-suggestions', () => {
         checkErrors(input)
     }
 
+    const allTheFields = [
+        'Name',
+        'Completed',
+        'Age',
+        'StartTime',
+        'Level',
+        'No-Schema',
+        'metadata',
+        'Arr'
+    ].sort(sortString)
+
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
-        expect(suggestions.value).toEqual(
-            [
-                'Name',
-                'Completed',
-                'Age',
-                'StartTime',
-                'Level',
-                'No-Schema',
-                'metadata',
-                'Arr'
-            ].sort(sortString)
-        )
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     const limited = useSuggestions(schemaRef, aliasesRef, {
@@ -108,6 +108,11 @@ describe('use-suggestions', () => {
     it('suggestions should have AND and OR when non-matched field is followed by the value and space', () => {
         findSuggestions('evel = value ')
         expect(suggestions.value).toEqual(['AND', 'OR'])
+    })
+
+    it('suggestions should have all the fields when non-matched field is followed by the value and the logical operator and space', () => {
+        findSuggestions('evel = value AND ')
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     it('suggestions should be empty when the alias does not exist in the schema', () => {

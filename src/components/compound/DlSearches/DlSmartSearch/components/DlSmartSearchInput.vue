@@ -5,11 +5,7 @@
         class="dl-smart-search-input"
     >
         <div class="dl-smart-search-input__search-bar-wrapper">
-            <div
-                ref="searchBar"
-                :class="searchBarClasses"
-                @click="focus()"
-            >
+            <div ref="searchBar" :class="searchBarClasses" @click="focus()">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
                         v-if="!focused && computedStatus"
@@ -69,6 +65,7 @@
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
             @escapekey="onEscapeKey"
+            @enterkey="onEnterKey({ fromSuggestion: true })"
         />
         <dl-menu
             v-if="showDatePicker && focused"
@@ -149,6 +146,7 @@ import {
     removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
+import { stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -213,9 +211,17 @@ export default defineComponent({
             type: Array as PropType<string[]>,
             default: () => [] as string[]
         },
+        forbiddenKeys: {
+            type: Array as PropType<string[]>,
+            default: () => [] as string[]
+        },
         strict: {
             type: Boolean,
             default: false
+        },
+        inputDebounce: {
+            type: Number,
+            default: 300
         }
     },
     emits: [
@@ -245,7 +251,9 @@ export default defineComponent({
             schema,
             omitSuggestions,
             height,
-            width
+            width,
+            forbiddenKeys,
+            inputDebounce
         } = toRefs(props)
         //#endregion
 
@@ -269,7 +277,11 @@ export default defineComponent({
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
         const { suggestions, error, findSuggestions, checkErrors } =
-            useSuggestions(schema, aliases, { strict, omitSuggestions })
+            useSuggestions(schema, aliases, {
+                strict,
+                forbiddenKeys,
+                omitSuggestions
+            })
         //#endregion
 
         //#region methods
@@ -410,7 +422,13 @@ export default defineComponent({
             setSelectionOffset(input.value, caretPosition, caretPosition)
         }
 
-        const debouncedSetInputValue = debounce(setInputValue, 300)
+        const debouncedSetInputValue = computed<any>(() => {
+            if (stateManager?.disableDebounce) {
+                return setInputValue
+            }
+
+            return debounce(setInputValue, inputDebounce.value)
+        })
 
         let lastSearchQuery: string
 
@@ -443,7 +461,13 @@ export default defineComponent({
             setInputValue(inputValue, { noEmit: true })
         }
 
-        const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
+        const debouncedSetInputFromModel = computed<any>(() => {
+            if (stateManager?.disableDebounce) {
+                return setInputFromModel
+            }
+
+            return debounce(setInputFromModel, inputDebounce.value)
+        })
 
         const setMenuOffset = (value: number[]) => {
             menuOffset.value = value
@@ -464,17 +488,21 @@ export default defineComponent({
             input.value.focus()
 
             focused.value = true
-            showSuggestions.value = true
+            if (suggestions.value.length) {
+                showSuggestions.value = true
+            }
             emit('focus')
         }
 
-        const processBlur = () => {
+        const processBlur = (force: boolean = false) => {
             input.value.scrollLeft = 0
             input.value.scrollTop = 0
             focused.value = false
             expanded.value = true
-            updateJSONQuery()
-            emit('blur')
+            if (!force) {
+                updateJSONQuery()
+                emit('blur')
+            }
         }
 
         const blur = (
@@ -497,7 +525,7 @@ export default defineComponent({
                     return
                 }
 
-                processBlur()
+                processBlur(force)
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
@@ -562,7 +590,7 @@ export default defineComponent({
             if (text.endsWith('.')) {
                 setInputValue(text)
             } else {
-                debouncedSetInputValue(text)
+                debouncedSetInputValue.value(text)
             }
         }
 
@@ -599,7 +627,9 @@ export default defineComponent({
                     aliased !== searchQuery.value.trim() ||
                     !input.value?.innerHTML.length
                 ) {
-                    debouncedSetInputFromModel(aliased)
+                    nextTick(() => {
+                        debouncedSetInputFromModel.value(aliased)
+                    })
                 }
             }
         }
@@ -645,8 +675,13 @@ export default defineComponent({
             }
         }
 
-        const onEnterKey = () => {
-            if (showSuggestions.value || showDatePicker.value) {
+        const onEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
+            const { fromSuggestion } = options
+
+            if (
+                (!fromSuggestion && showSuggestions.value) ||
+                showDatePicker.value
+            ) {
                 return
             }
 
@@ -943,7 +978,8 @@ export default defineComponent({
             computedStatus,
             setInputFromSuggestion,
             inputPlaceholder,
-            onEscapeKey
+            onEscapeKey,
+            onEnterKey
         }
     }
 })

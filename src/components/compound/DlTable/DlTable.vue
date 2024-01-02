@@ -6,37 +6,19 @@
         :style="containerStyle"
         :class="containerClass"
     >
-        <div
-            ref="dragRef"
-            class="dl-table__drag"
-        />
+        <div ref="dragRef" class="dl-table__drag" />
         <!-- Top Slots -->
-        <div
-            v-if="hasTopSlots"
-            class="dl-table__top row items-center"
-        >
-            <slot
-                v-bind="marginalsScope"
-                name="top"
-            >
+        <div v-if="hasTopSlots" class="dl-table__top row items-center">
+            <slot v-bind="marginalsScope" name="top">
                 <slot
                     v-if="hasTopSelectionMode"
                     v-bind="marginalsScope"
                     name="top-selection"
                 />
 
-                <div
-                    v-else
-                    class="dl-table__control"
-                >
-                    <slot
-                        name="top-left"
-                        v-bind="marginalsScope"
-                    >
-                        <div
-                            v-if="title"
-                            class="dl-table__control"
-                        >
+                <div v-else class="dl-table__control">
+                    <slot name="top-left" v-bind="marginalsScope">
+                        <div v-if="title" class="dl-table__control">
                             <div :class="titleClasses">
                                 {{ title }}
                             </div>
@@ -46,10 +28,7 @@
 
                 <div class="dl-table__separator col" />
                 <div class="dl-table__control">
-                    <slot
-                        name="top-right"
-                        v-bind="marginalsScope"
-                    />
+                    <slot name="top-right" v-bind="marginalsScope" />
                 </div>
             </slot>
         </div>
@@ -61,16 +40,16 @@
             v-bind="virtProps"
             ref="virtScrollRef"
             type="__dltable"
-            :class="tableClass + additionalClasses"
+            :class="virtualScrollClasses"
             :style="tableStyle"
-            :table-colspan="colspanWithActionsRow"
+            :table-colspan="colspanWithExpandableRow"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead :colspan="columns.length">
+                <thead :colspan="colspanWithExpandableRow">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -235,29 +214,22 @@
                                 </slot>
                             </DlTh>
                         </DlTr>
-
-                        <tr
-                            v-if="loading && !hasLoadingSlot"
-                            class="dl-table__progress"
-                        >
-                            <th
-                                :colspan="colspanWithActionsRow"
-                                class="relative-position"
-                            >
-                                <dl-progress-bar
-                                    indeterminate
-                                    :color="color"
-                                />
-                            </th>
-                        </tr>
                     </slot>
+                    <tr
+                        v-if="loading && !hasLoadingSlot"
+                        class="dl-table__progress"
+                    >
+                        <th
+                            :colspan="colspanWithExpandableRow"
+                            class="relative-position"
+                        >
+                            <dl-progress-bar indeterminate :color="color" />
+                        </th>
+                    </tr>
                 </thead>
             </template>
             <template #default="props">
-                <slot
-                    name="table-body"
-                    v-bind="props"
-                >
+                <slot name="table-body" v-bind="props">
                     <template v-if="!isDataEmpty && !hasSlotBody">
                         <slot
                             v-bind="
@@ -413,9 +385,9 @@
                             <tr
                                 v-if="isRowExpanded(props.item)"
                                 :key="getRowExpandedKey(props.item)"
+                                class="dl-virtual-scroll--with-prev"
                             >
-                                <!-- cols + icon col + expandable icon col-->
-                                <td :colspan="columns.length + 1 + 1">
+                                <td :colspan="colspanWithExpandableRow">
                                     <slot
                                         v-bind="{ row: props.item }"
                                         name="body-cell-expandable-content"
@@ -452,16 +424,9 @@
         </DlVirtualScroll>
         <!--  -->
 
-        <div
-            v-else
-            class="dl-table__middle scroll"
-        >
-            <table
-                ref="tableRef"
-                class="dl-table"
-                :class="additionalClasses"
-            >
-                <thead :colspan="columns.length">
+        <div v-else ref="tableScroll" class="dl-table__middle scroll">
+            <table ref="tableRef" class="dl-table" :class="additionalClasses">
+                <thead :colspan="colspanWithExpandableRow">
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -628,22 +593,18 @@
                                 </slot>
                             </DlTh>
                         </DlTr>
-
-                        <tr
-                            v-if="loading && !hasLoadingSlot"
-                            class="dl-table__progress"
-                        >
-                            <th
-                                :colspan="colspanWithActionsRow"
-                                class="relative-position"
-                            >
-                                <dl-progress-bar
-                                    indeterminate
-                                    :color="color"
-                                />
-                            </th>
-                        </tr>
                     </slot>
+                    <tr
+                        v-if="loading && !hasLoadingSlot"
+                        class="dl-table__progress"
+                    >
+                        <th
+                            :colspan="colspanWithExpandableRow"
+                            class="relative-position"
+                        >
+                            <dl-progress-bar indeterminate :color="color" />
+                        </th>
+                    </tr>
                 </thead>
                 <slot
                     name="tbody"
@@ -661,22 +622,25 @@
                             onEnd: handleSortableEvent
                         }"
                         :is-sortable="hasDraggableRows"
-                        :options="{
-                            group: 'nested',
-                            animation: 150,
-                            fallbackOnBody: true,
-                            invertSwap: true,
-                            swapThreshold: 0.5
-                        }"
+                        :options="sortableOptions"
                     >
-                        <slot
-                            name="top-row"
-                            :cols="computedCols"
-                        />
-                        <slot
-                            name="table-body"
-                            :computed-rows="computedRows"
-                        >
+                        <slot name="top-row" :cols="computedCols" />
+                        <slot name="table-body" :computed-rows="computedRows">
+                            <dl-top-scroll
+                                v-if="
+                                    tableScroll &&
+                                        infiniteScroll &&
+                                        !isDataEmpty
+                                "
+                                :container-ref="tableScroll"
+                                @scroll-to-top="
+                                    $emit(
+                                        'scroll-to-top',
+                                        computedPagination.rowsPerPage,
+                                        tableScroll
+                                    )
+                                "
+                            />
                             <slot
                                 v-for="(row, pageIndex) in computedRows"
                                 v-bind="
@@ -818,7 +782,7 @@
                                     v-if="isRowExpanded(row)"
                                     :key="getRowExpandedKey(row)"
                                 >
-                                    <td :colspan="columns.length + 1 + 1">
+                                    <td :colspan="colspanWithExpandableRow">
                                         <slot
                                             v-bind="{ row }"
                                             name="body-cell-expandable-content"
@@ -830,12 +794,24 @@
                                     </td>
                                 </tr>
                             </slot>
+                            <dl-bottom-scroll
+                                v-if="
+                                    tableScroll &&
+                                        infiniteScroll &&
+                                        !isDataEmpty
+                                "
+                                :container-ref="tableScroll"
+                                @scroll-to-bottom="
+                                    $emit(
+                                        'scroll-to-bottom',
+                                        computedPagination.rowsPerPage,
+                                        tableScroll
+                                    )
+                                "
+                            />
                         </slot>
 
-                        <slot
-                            name="bottom-row"
-                            :cols="computedCols"
-                        />
+                        <slot name="bottom-row" :cols="computedCols" />
                     </Sortable>
                 </slot>
             </table>
@@ -874,14 +850,8 @@
                     </div>
                 </slot>
             </div>
-            <div
-                v-else
-                class="dl-table__control"
-            >
-                <slot
-                    name="bottom"
-                    v-bind="marginalsScope"
-                >
+            <div v-else class="dl-table__control">
+                <slot name="bottom" v-bind="marginalsScope">
                     <div
                         v-if="hasBotomSelectionBanner"
                         class="dl-table__control"
@@ -891,10 +861,7 @@
                         </div>
                     </div>
 
-                    <slot
-                        name="pagination"
-                        v-bind="marginalsScope"
-                    >
+                    <slot name="pagination" v-bind="marginalsScope">
                         <dl-pagination
                             v-if="displayPagination"
                             v-bind="marginalsScope.pagination"
@@ -911,10 +878,7 @@
             </div>
         </div>
 
-        <slot
-            v-if="loading"
-            name="loading"
-        />
+        <slot v-if="loading" name="loading" />
     </div>
 </template>
 
@@ -989,6 +953,7 @@ import { insertAtIndex } from './utils/insertAtIndex'
 import { getCellValue } from './utils/getCellValue'
 import { getContainerClass } from './utils/tableClasses'
 import { isEqual } from 'lodash'
+import { DlTopScroll, DlBottomScroll } from '../../shared/DlInfiniteScroll'
 
 const commonVirtPropsObj = {} as Record<string, any>
 commonVirtPropsList.forEach((p) => {
@@ -1012,7 +977,9 @@ export default defineComponent({
         DlPopup,
         DlList,
         Sortable,
-        DlEllipsis
+        DlEllipsis,
+        DlTopScroll,
+        DlBottomScroll
     },
     props: {
         /**
@@ -1112,6 +1079,13 @@ export default defineComponent({
          * Enable virtual scroll
          */
         virtualScroll: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Enable infinite scroll
+         */
+        infiniteScroll: {
             type: Boolean,
             default: false
         },
@@ -1269,6 +1243,7 @@ export default defineComponent({
             draggable,
             virtualScroll,
             rows,
+            pagination,
             visibleColumns,
             rowKey,
             titleClass,
@@ -1296,8 +1271,13 @@ export default defineComponent({
         const rootRef = ref<HTMLDivElement>(null)
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
+        const tableScroll = ref(null)
+
+        const hasExpandableSlot = computed(() =>
+            hasSlotByName('body-cell-expandable-content')
+        )
         const hasVirtScroll = computed<boolean>(
-            () => virtualScroll.value === true
+            () => virtualScroll.value && !hasExpandableSlot.value
         )
 
         const hasEmptyStateProps = computed(() =>
@@ -1576,6 +1556,14 @@ export default defineComponent({
             { deep: true, flush: 'post' }
         )
 
+        watch(
+            pagination,
+            (newPagination) => {
+                setPagination(newPagination)
+            },
+            { deep: true }
+        )
+
         const { computedFilterMethod } = useTableFilter(props, setPagination)
 
         const { isRowExpanded, setExpanded, updateExpanded } =
@@ -1615,6 +1603,7 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
+            if (props.infiniteScroll) return filteredSortedRows.value
             let filtered = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
@@ -1639,7 +1628,7 @@ export default defineComponent({
             return filtered
         })
 
-        const additionalClasses = computed(() => {
+        const additionalClasses = computed<string[]>(() => {
             const classes: string[] = []
 
             if (hasDraggableRows.value === true) {
@@ -1654,7 +1643,9 @@ export default defineComponent({
         })
 
         const displayPagination = computed(
-            () => !(hidePagination.value || nothingToDisplay.value)
+            () =>
+                !props.infiniteScroll &&
+                !(hidePagination.value || nothingToDisplay.value)
         )
 
         const {
@@ -1684,6 +1675,12 @@ export default defineComponent({
 
         const colspanWithActionsRow = computed(() => {
             return computedColspan.value + (showRowActions.value ? 1 : 0)
+        })
+
+        const colspanWithExpandableRow = computed(() => {
+            return (
+                colspanWithActionsRow.value + (hasExpandableSlot.value ? 1 : 0)
+            )
         })
 
         const { columnToSort, computedSortMethod, sort } = useTableSort(
@@ -1999,6 +1996,35 @@ export default defineComponent({
             return slots.length ? slots.map((slot: any) => slot.name) : null
         })
 
+        const sortableOptions: any = {
+            group: 'nested',
+            animation: 150,
+            fallbackOnBody: true,
+            invertSwap: true,
+            swapThreshold: 0.5
+        }
+
+        const virtualScrollClasses = computed(() => {
+            let classes: string[] = []
+
+            if (tableClass.value) {
+                if (Array.isArray(tableClass.value)) {
+                    classes = (tableClass.value as string[]) ?? []
+                } else if (typeof tableClass.value === 'string') {
+                    classes = (tableClass.value as string)?.split(' ')
+                } else if (typeof tableClass.value === 'object') {
+                    classes = Object.keys(
+                        tableClass.value as Record<string, any>
+                    ).filter(
+                        (key: string) =>
+                            !!(tableClass.value as Record<string, any>)[key]
+                    )
+                }
+            }
+
+            return classes.concat(additionalClasses.value)
+        })
+
         const updatePagination = (value: any, key: string) => {
             return setPagination({ [`${key}`]: value })
         }
@@ -2038,6 +2064,9 @@ export default defineComponent({
             computedCols,
             computedColspan,
             colspanWithActionsRow,
+            colspanWithExpandableRow,
+            virtualScrollClasses,
+            sortableOptions,
             getRowKey,
             additionalClasses,
             getHeaderScope,
@@ -2096,7 +2125,9 @@ export default defineComponent({
             tableRef,
             getRowExpandedIcon,
             computedPagination,
-            getRowExpandedKey
+            getRowExpandedKey,
+            hasExpandableSlot,
+            tableScroll
         }
     }
 })
