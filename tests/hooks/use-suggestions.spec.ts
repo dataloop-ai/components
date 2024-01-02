@@ -164,6 +164,11 @@ describe('use-suggestions', () => {
             findSuggestions("Level = 'memo'")
             expect(suggestions.value).toEqual([])
         })
+
+        it('suggestions should match aliased value that is also filtered', () => {
+            findSuggestions('name = vol')
+            expect(suggestions.value).toEqual([`'Voltaire'`])
+        })
     })
 
     describe('when the field has value aliases defined', () => {

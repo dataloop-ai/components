@@ -283,19 +283,25 @@ export const useSuggestions = (
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType
-                    .filter(
-                        (type) =>
-                            !knownDataTypes.includes(type as string) &&
-                            typeof type !== 'object'
-                    )
-                    .map((type) =>
-                        typeof type === 'string' ? `'${type}'` : type
-                    ) as string[]
+                const filteredTypes = dataType.filter(
+                    (type) => !knownDataTypes.includes(type as string)
+                )
+                const mappedTypes: string[] = []
+                for (const type of filteredTypes) {
+                    if (typeof type === 'string') {
+                        mappedTypes.push(`'${type}'`)
+                    } else if (typeof type === 'object') {
+                        mappedTypes.push(
+                            ...Object.keys(type).map((key) => `'${key}'`)
+                        )
+                    } else {
+                        mappedTypes.push(type)
+                    }
+                }
 
                 if (!value) continue
 
-                localSuggestions = getMatches(localSuggestions, value)
+                localSuggestions = getMatches(mappedTypes, value)
             } else if (
                 dataType === 'datetime' ||
                 dataType === 'date' ||
@@ -637,10 +643,12 @@ const getValueMatch = (
     }
     return null
 }
-const getMatches = (strArr: string[], str: string | number | boolean) =>
-    strArr.filter((val) =>
+const getMatches = (strArr: string[], str: string | number | boolean) => {
+    const filtered = strArr.filter((val) =>
         insensitive(val.toString()).includes(insensitive(str.toString()))
     )
+    return filtered
+}
 
 const isNextCharSpace = (input: string, str: string) => {
     const insensitiveInput = insensitive(input)
