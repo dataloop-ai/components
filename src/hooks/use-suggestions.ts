@@ -123,7 +123,11 @@ const mergeWords = (words: string[]) => {
 export const useSuggestions = (
     schema: Ref<Schema>,
     aliases: Ref<Alias[]>,
-    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]>; omitSuggestions?: Ref<string[]> } = {}
+    options: {
+        strict?: Ref<boolean>
+        forbiddenKeys?: Ref<string[]>
+        omitSuggestions?: Ref<string[]>
+    } = {}
 ) => {
     const { strict, forbiddenKeys, omitSuggestions } = options
     const aliasesArray = aliases.value ?? []
@@ -159,7 +163,10 @@ export const useSuggestions = (
         const expressions = mapWordsToExpressions(mergedWords)
 
         error.value = input.length
-            ? getError(schemaValue, aliasesArray, expressions, { strict, forbiddenKeys })
+            ? getError(schemaValue, aliasesArray, expressions, {
+                  strict,
+                  forbiddenKeys
+              })
             : null
     }
 
@@ -191,7 +198,9 @@ export const useSuggestions = (
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions =
                     value && input.endsWith(space)
-                        ? [Logical.AND, Logical.OR]
+                        ? keyword
+                            ? sortedSuggestions
+                            : [Logical.AND, Logical.OR]
                         : []
                 continue
             }
@@ -362,7 +371,7 @@ const getError = (
     schema: Schema,
     aliases: Alias[],
     expressions: Expression[],
-    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]>; } = {}
+    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]> } = {}
 ): string | null => {
     const { strict, forbiddenKeys } = options
     const hasErrorInStructure = expressions
@@ -438,7 +447,7 @@ const getError = (
                 return (acc = errors.INVALID_VALUE(field))
             }
 
-            return (acc === 'warning' ? acc : acc = null)
+            return acc === 'warning' ? acc : (acc = null)
         }, null)
 }
 
