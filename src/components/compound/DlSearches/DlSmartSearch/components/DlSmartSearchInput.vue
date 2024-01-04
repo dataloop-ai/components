@@ -1,6 +1,7 @@
 <template>
     <div
         :id="`DlSmartSearchInput${uuid}`"
+        ref="container"
         :style="cssVars"
         class="dl-smart-search-input"
     >
@@ -235,6 +236,7 @@ export default defineComponent({
     ],
     setup(props, { emit }) {
         //#region refs
+        const container = ref<HTMLDivElement>(null)
         const input = ref<HTMLInputElement>(null)
         const label = ref<HTMLLabelElement>(null)
         const searchBar = ref<HTMLDivElement>(null)
@@ -253,7 +255,8 @@ export default defineComponent({
             height,
             width,
             forbiddenKeys,
-            inputDebounce
+            inputDebounce,
+            placeholder
         } = toRefs(props)
         //#endregion
 
@@ -494,23 +497,16 @@ export default defineComponent({
             emit('focus')
         }
 
-        const processBlur = (force: boolean = false) => {
+        const processBlur = () => {
             input.value.scrollLeft = 0
             input.value.scrollTop = 0
             focused.value = false
             expanded.value = true
-            if (!force) {
-                updateJSONQuery()
-                emit('blur')
-            }
+            updateJSONQuery()
+            emit('blur')
         }
 
-        const blur = (
-            e: Event | null = null,
-            options: { force?: boolean } = {}
-        ) => {
-            const { force } = options
-
+        const blur = (e: Event) => {
             if (showDatePicker.value) {
                 return
             }
@@ -521,11 +517,11 @@ export default defineComponent({
                     return
                 }
 
-                if (!focused.value && !force) {
+                if (!focused.value) {
                     return
                 }
 
-                processBlur(force)
+                processBlur()
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
@@ -848,10 +844,10 @@ export default defineComponent({
             }
         })
 
-        const inputPlaceholder = computed(() => {
+        const inputPlaceholder = computed<string>(() => {
             return focused.value || searchQuery.value.length
                 ? ''
-                : props.placeholder
+                : placeholder.value
         })
 
         const isValid = computed(() => {
@@ -878,7 +874,11 @@ export default defineComponent({
             })
         })
 
-        watch(focused, (value) => {
+        watch(focused, (value, old) => {
+            if (old === value) {
+                return
+            }
+
             if (!value) {
                 input.value.parentElement.style.width = '1px'
             } else {
@@ -887,7 +887,11 @@ export default defineComponent({
             }
         })
 
-        watch(showDatePicker, (value) => {
+        watch(showDatePicker, (value, old) => {
+            if (old === value) {
+                return
+            }
+
             if (!value) {
                 datePickerSelection.value = null
 
@@ -931,7 +935,6 @@ export default defineComponent({
             }
             window.addEventListener('mousemove', watchMouseMove)
             window.addEventListener('keyup', watchKeyUp)
-            blur(null, { force: true })
         })
         onBeforeUnmount(() => {
             window.removeEventListener('mousemove', watchMouseMove)
@@ -941,6 +944,7 @@ export default defineComponent({
         return {
             uuid: v4(),
             suggestionsDropdown,
+            container,
             input,
             label,
             searchBar,

@@ -4,12 +4,12 @@
             :target="defaultTarget"
             :offset="offset"
             :disabled="disabled"
-            fit-container
             :model-value="modelValue"
             :arrow-nav-items="suggestions"
             :trigger-percentage="triggerPercentage"
             :auto-close="false"
             :toggle-key="null"
+            max-width="250px"
             @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
@@ -25,22 +25,30 @@
                     :highlighted="suggestionIndex === highlightedIndex"
                     @click="handleOption(item)"
                 >
-                    {{ removeQuotes(item) }}
+                    <dl-ellipsis :text="removeQuotes(item)" />
                 </dl-list-item>
             </dl-list>
         </dl-menu>
     </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue-demi'
-import { DlMenu, DlList } from '../../../../essential'
+import {
+    computed,
+    defineComponent,
+    PropType,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
+import { DlMenu, DlList, DlEllipsis } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
 
 export default defineComponent({
     components: {
         DlMenu,
         DlList,
-        DlListItem
+        DlListItem,
+        DlEllipsis
     },
     model: {
         prop: 'modelValue',
@@ -71,6 +79,10 @@ export default defineComponent({
             type: Array as PropType<number[]>,
             default: () => [0, 0]
         },
+        maxWidth: {
+            type: String,
+            default: null
+        },
         /**
          * the % of the parent element that triggers the tooltips visibility
          */
@@ -81,6 +93,8 @@ export default defineComponent({
     },
     emits: ['set-input-value', 'update:model-value', 'escapekey', 'enterkey'],
     setup(props, { emit }) {
+        const { suggestions } = toRefs(props)
+
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
         const onShow = (value: any) => {
@@ -122,6 +136,10 @@ export default defineComponent({
             const match = str.match(/^'(.*)'$/)
             return match ? match[1] : str
         }
+
+        watch(suggestions, () => {
+            highlightedIndex.value = -1
+        })
 
         return {
             defaultTarget,
