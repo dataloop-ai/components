@@ -1,6 +1,7 @@
 <template>
     <div v-if="suggestions.length > 0" class="dl-suggestions-dropdown">
         <dl-menu
+            ref="menu"
             :target="defaultTarget"
             :offset="offset"
             :disabled="disabled"
@@ -10,6 +11,7 @@
             :auto-close="false"
             :toggle-key="null"
             max-width="250px"
+            :ignore-events="['click']"
             @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
@@ -93,15 +95,16 @@ export default defineComponent({
     },
     emits: ['set-input-value', 'update:model-value', 'escapekey', 'enterkey'],
     setup(props, { emit }) {
+        const menu = ref(null)
         const { suggestions } = toRefs(props)
 
         const isMenuOpen = ref(false)
         const highlightedIndex = ref(-1)
-        const onShow = (value: any) => {
-            isMenuOpen.value = !!value
+        const onShow = () => {
+            isMenuOpen.value = true
         }
-        const onHide = (value: any) => {
-            isMenuOpen.value = !value
+        const onHide = () => {
+            isMenuOpen.value = false
         }
 
         const setHighlightedIndex = (value: any) => {
@@ -137,11 +140,16 @@ export default defineComponent({
             return match ? match[1] : str
         }
 
+        const updatePosition = () => {
+            menu.value?.updatePosition()
+        }
+
         watch(suggestions, () => {
             highlightedIndex.value = -1
         })
 
         return {
+            menu,
             defaultTarget,
             setHighlightedIndex,
             handleSelectedItem,
@@ -151,7 +159,8 @@ export default defineComponent({
             onHide,
             emitModelValue,
             handleOption,
-            onEscapeKey
+            onEscapeKey,
+            updatePosition
         }
     }
 })

@@ -47,6 +47,7 @@
             :color-schema="colorSchema"
             :strict="strictState"
             :disabled="switchState"
+            placeholder="THIS IS A PLACEHOOOOOOOOLDER"
             @search="onSearchEmitted"
         />
 
