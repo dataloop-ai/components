@@ -676,25 +676,20 @@ export default defineComponent({
         }
 
         const handleValueTrim = () => {
-            nextTick(() => {
-                const trimmed = String(modelValue.value).trim()
-                if (trimmed !== String(modelValue.value)) {
-                    isInternalChange.value = true
+            const trimmed = String(modelValue.value).trim()
+            if (trimmed !== String(modelValue.value)) {
+                isInternalChange.value = true
 
-                    input.value.innerHTML = trimmed
-                        .toString()
-                        .replace(/ /g, '&nbsp;')
-                    updateSyntax()
-                    setCaretAtTheEnd(input.value)
+                input.value.innerHTML = trimmed
+                    .toString()
+                    .replace(/ /g, '&nbsp;')
+                updateSyntax()
+                setCaretAtTheEnd(input.value)
 
-                    const toEmit = trimmed.replace(
-                        new RegExp('&nbsp;', 'g'),
-                        ' '
-                    )
-                    emit('input', toEmit)
-                    emit('update:model-value', toEmit)
-                }
-            })
+                const toEmit = trimmed.replace(new RegExp('&nbsp;', 'g'), ' ')
+                emit('input', toEmit)
+                emit('update:model-value', toEmit)
+            }
         }
 
         const debouncedHandleValueTrim = computed<Function>(() => {
@@ -838,7 +833,7 @@ export default defineComponent({
         })
 
         const onModelValueChange = (val: string | number) => {
-            if (!isInternalChange.value && val !== null && val !== undefined) {
+            if (val !== null && val !== undefined) {
                 if (readonly.value || disabled.value) {
                     return
                 }
@@ -848,9 +843,8 @@ export default defineComponent({
                 }
 
                 input.value.innerHTML = val.toString().replace(/ /g, '&nbsp;')
-            } else {
-                isInternalChange.value = false
             }
+            isInternalChange.value = false
         }
 
         const debouncedOnModelValueChange = computed<Function>(() => {
@@ -869,6 +863,11 @@ export default defineComponent({
         watch(
             modelValue,
             (val: string | number) => {
+                if (isInternalChange.value) {
+                    isInternalChange.value = false
+                    return
+                }
+
                 nextTick(() => {
                     if (firstTime.value) {
                         if (readonly.value || disabled.value) {
@@ -1167,6 +1166,10 @@ export default defineComponent({
                     return
                 }
                 if (!this.isWithinMaxLength) {
+                    e.preventDefault()
+                    return
+                }
+                if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault()
                     return
                 }
