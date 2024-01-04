@@ -51,11 +51,12 @@ export default function useAnchor(
     options: {
         configureAnchorEl?: Function
         toggleKey?: string | number
+        ignoreEvents?: string | string[]
     } = {}
 ) {
     const { props, proxy, emit } = getCurrentInstance()!
     const { toggleKey } = options
-    let { configureAnchorEl } = options
+    let { configureAnchorEl, ignoreEvents } = options
 
     const anchorEl: Ref<HTMLElement | Element | null> = ref(null)
 
@@ -111,22 +112,45 @@ export default function useAnchor(
                 return
             }
 
-            let evts
+            let evts: any[]
+
+            const filteredEvents = (events: string[]) => {
+                if (!ignoreEvents) {
+                    return events
+                }
+
+                ignoreEvents = Array.isArray(ignoreEvents)
+                    ? ignoreEvents
+                    : [ignoreEvents]
+
+                return events.filter((evt) => ignoreEvents.includes(evt))
+            }
 
             if (context === true) {
                 evts = [
-                    [anchorEl.value, 'mousedown', 'hide', 'passive'],
                     [
                         anchorEl.value,
-                        'contextmenu',
-                        'contextClick',
-                        'notPassive'
+                        ...filteredEvents(['mousedown', 'hide', 'passive'])
+                    ],
+                    [
+                        anchorEl.value,
+                        ...filteredEvents([
+                            'contextmenu',
+                            'contextClick',
+                            'notPassive'
+                        ])
                     ]
                 ]
             } else {
                 evts = [
-                    [anchorEl.value, 'click', 'toggle', 'passive'],
-                    [anchorEl.value, 'keyup', 'toggleKey', 'passive']
+                    [
+                        anchorEl.value,
+                        ...filteredEvents(['click', 'toggle', 'passive'])
+                    ],
+                    [
+                        anchorEl.value,
+                        ...filteredEvents(['keyup', 'toggleKey', 'passive'])
+                    ]
                 ]
             }
 
