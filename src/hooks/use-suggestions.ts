@@ -564,13 +564,17 @@ const getOperatorByDataType = (dataType: string) => {
 const getOperators = (op: string[]) => op.map((o) => operators[o])
 
 const mapWordsToExpression = (words: string[]): Expression => {
-    const operator = words[1] ?? null
+    let operator = words[1] ?? null
     let value = words[2] ?? null
 
     if (operator === operators.$in || operator === operators.$nin) {
         if (value && /\,\s?$/.test(value)) {
             value = ''
         }
+    }
+
+    if (value === null) {
+        operator = null
     }
 
     return {

@@ -121,8 +121,13 @@ describe('use-suggestions', () => {
     })
 
     it('suggestions should have the generic operators', () => {
+        const genericOperators = ['=', '!=', 'IN', 'NOT-IN']
+
         findSuggestions('Level ')
-        expect(suggestions.value).toEqual(['=', '!=', 'IN', 'NOT-IN'])
+        expect(suggestions.value).toEqual(genericOperators)
+
+        findSuggestions('Level =')
+        expect(suggestions.value).toEqual(genericOperators)
     })
 
     it('suggestions should have the correct operators', () => {
@@ -215,18 +220,7 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual(
-            [
-                'Name',
-                'Level',
-                'Completed',
-                'metadata',
-                'Age',
-                'Arr',
-                'StartTime',
-                'No-Schema'
-            ].sort(sortString)
-        )
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     // sort array of strings ignore case
