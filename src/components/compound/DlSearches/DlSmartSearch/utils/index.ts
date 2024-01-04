@@ -150,7 +150,11 @@ export function replaceJSDatesWithStringifiedDates(
         if (dateKeys.includes(keyToCheck)) {
             if (typeof value === 'object') {
                 const testKey = Object.keys(toReturn[key])[0]
-                if (['$gt', '$gte', '$lt', '$lte'].includes(testKey)) {
+                if (
+                    ['$gt', '$gte', '$lt', '$lte', '$eq', '$neq'].includes(
+                        testKey
+                    )
+                ) {
                     toReturn[key][testKey] = formatToStringDate(
                         toReturn[key][testKey]
                     )
