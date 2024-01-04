@@ -59,7 +59,7 @@
             ref="suggestionsDropdown"
             v-model="showSuggestions"
             :parent-id="`${uuid}`"
-            :trigger-percentage="0.5"
+            :trigger-percentage="0.1"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
@@ -120,7 +120,7 @@ import {
     setSelectionOffset
 } from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
-import { debounce, isEqual } from 'lodash'
+import { cloneDeep, debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
 import SuggestionsDropdown from './SuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
@@ -493,6 +493,12 @@ export default defineComponent({
             focused.value = true
             if (suggestions.value.length) {
                 showSuggestions.value = true
+
+                nextTick(() => {
+                    setMenuOffset(
+                        isEligibleToChange(input.value, expanded.value)
+                    )
+                })
             }
             emit('focus')
         }
@@ -506,7 +512,7 @@ export default defineComponent({
             emit('blur')
         }
 
-        const blur = (e: Event) => {
+        const blur = () => {
             if (showDatePicker.value) {
                 return
             }
