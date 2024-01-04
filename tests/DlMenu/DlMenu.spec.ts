@@ -60,7 +60,8 @@ describe('DlMenu', () => {
             triggerPercentage: 1,
             toggleKey: 'Enter',
             width: 'auto',
-            height: 'auto'
+            height: 'auto',
+            ignoreEvents: null
         })
         expect(wrapper.vm.showing).toBe(false)
     })

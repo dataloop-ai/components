@@ -669,6 +669,7 @@ describe('DlSmartSearchInput', () => {
             })
 
             it('should show suggestions', async () => {
+                console.log(wrapper.vm.showSuggestions)
                 expect(wrapper.vm.showSuggestions).toBeTruthy()
             })
 
