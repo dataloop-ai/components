@@ -108,9 +108,10 @@ const mergeWords = (words: string[]) => {
 
         if (merging) {
             if (!result[mergeIndex]) {
-                result[mergeIndex] = ''
+                result[mergeIndex] = currentItem
+            } else {
+                result[mergeIndex] += ' ' + currentItem
             }
-            result[mergeIndex] += ' ' + currentItem
             continue
         }
 

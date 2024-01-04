@@ -141,13 +141,12 @@ describe('use-suggestions', () => {
 
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
+            const levelValues = [`'high'`, `'medium'`, `'low'`, 30]
             findSuggestions('Level = ')
-            expect(suggestions.value).toEqual([
-                `'high'`,
-                `'medium'`,
-                `'low'`,
-                30
-            ])
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions('Level IN ')
+            expect(suggestions.value).toEqual(levelValues)
         })
 
         it('suggestions should match the correct field value without the quotes', () => {
