@@ -121,8 +121,13 @@ describe('use-suggestions', () => {
     })
 
     it('suggestions should have the generic operators', () => {
+        const genericOperators = ['=', '!=', 'IN', 'NOT-IN']
+
         findSuggestions('Level ')
-        expect(suggestions.value).toEqual(['=', '!=', 'IN', 'NOT-IN'])
+        expect(suggestions.value).toEqual(genericOperators)
+
+        findSuggestions('Level =')
+        expect(suggestions.value).toEqual(genericOperators)
     })
 
     it('suggestions should have the correct operators', () => {
@@ -141,13 +146,15 @@ describe('use-suggestions', () => {
 
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
+            const levelValues = [`'high'`, `'medium'`, `'low'`, 30]
             findSuggestions('Level = ')
-            expect(suggestions.value).toEqual([
-                `'high'`,
-                `'medium'`,
-                `'low'`,
-                30
-            ])
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions('Level IN ')
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN 'high',")
+            expect(suggestions.value).toEqual(levelValues)
         })
 
         it('suggestions should match the correct field value without the quotes', () => {
@@ -216,18 +223,7 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual(
-            [
-                'Name',
-                'Level',
-                'Completed',
-                'metadata',
-                'Age',
-                'Arr',
-                'StartTime',
-                'No-Schema'
-            ].sort(sortString)
-        )
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     // sort array of strings ignore case
