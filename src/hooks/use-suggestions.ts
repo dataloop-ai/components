@@ -109,7 +109,7 @@ const mergeWords = (words: string[]) => {
         if (merging) {
             if (!result[mergeIndex]) {
                 result[mergeIndex] = currentItem
-            } else {
+            } else if (currentItem) {
                 result[mergeIndex] += ' ' + currentItem
             }
             continue
@@ -322,6 +322,10 @@ export const useSuggestions = (
             }
 
             localSuggestions = [Logical.AND, Logical.OR]
+
+            if (operator === operators.$in || operator === operators.$nin) {
+                localSuggestions.unshift(',')
+            }
 
             if (!keyword) continue
 
@@ -560,10 +564,19 @@ const getOperatorByDataType = (dataType: string) => {
 const getOperators = (op: string[]) => op.map((o) => operators[o])
 
 const mapWordsToExpression = (words: string[]): Expression => {
+    const operator = words[1] ?? null
+    let value = words[2] ?? null
+
+    if (operator === operators.$in || operator === operators.$nin) {
+        if (value && /\,\s?$/.test(value)) {
+            value = ''
+        }
+    }
+
     return {
         field: words[0] ?? null,
-        operator: words[1] ?? null,
-        value: words[2] ?? null,
+        operator,
+        value,
         keyword: words[3] ?? null
     }
 }

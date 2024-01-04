@@ -293,9 +293,11 @@ export default defineComponent({
 
             showSuggestions.value = false
 
-            // to handle typing . after accepting a suggestion
-            if (/\s+\.$/.test(value)) {
-                value = value.replace(/\s+\.$/, '.')
+            // to handle typing . or , after accepting a suggestion
+            const dotOrCommaRegEx = /\s+([\.|\,]\s?)$/
+            const dotOrCommaMatch = value.match(dotOrCommaRegEx)
+            if (dotOrCommaMatch) {
+                value = value.replace(dotOrCommaRegEx, dotOrCommaMatch[1])
             }
 
             // to handle date suggestion modal to open automatically.
@@ -587,7 +589,7 @@ export default defineComponent({
 
         const onInput = (e: Event) => {
             const text = (e.target as HTMLElement).textContent
-            if (text.endsWith('.')) {
+            if (text.endsWith('.') || text.endsWith(',')) {
                 setInputValue(text)
             } else {
                 debouncedSetInputValue.value(text)
