@@ -155,6 +155,9 @@ describe('use-suggestions', () => {
 
             findSuggestions("Level IN 'high',")
             expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN 'high', 'low' OR Level IN ")
+            expect(suggestions.value).toEqual(levelValues)
         })
 
         it('suggestions should match the correct field value without the quotes', () => {

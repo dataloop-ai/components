@@ -96,8 +96,8 @@ const mergeWords = (words: string[]) => {
 
         if (currentItem === 'IN' || currentItem === 'NOT-IN') {
             merging = true
-            mergeIndex = i + 1
             result.push(currentItem)
+            mergeIndex = result.length
             continue
         } else if (
             Object.values(Logical).includes(currentItem as any) ||
