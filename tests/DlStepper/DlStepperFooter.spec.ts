@@ -30,6 +30,8 @@ describe('DlStepperFooter', () => {
             })
             it('should emitted click on prevBtn', async () => {
                 await prevBtn.trigger('click')
+                //@ts-ignore
+                await window.delay(50)
                 expect(wrapper.emitted()['prev'][0]).toBeTruthy()
             })
             it('should have the right nextBtn text', async () => {
@@ -41,15 +43,21 @@ describe('DlStepperFooter', () => {
             })
             it('should emitted click on nextBtn', async () => {
                 await nextBtn.trigger('click')
+                //@ts-ignore
+                await window.delay(50)
                 expect(wrapper.emitted()['next'][0]).toBeTruthy()
             })
             it('should emitted click on createButton', async () => {
                 await createButton.trigger('click')
+                //@ts-ignore
+                await window.delay(50)
                 expect(wrapper.emitted()['done'][0]).toBeTruthy()
             })
             it('should emitted click on createButton when finished false', async () => {
                 await wrapper.setProps({ finished: false })
                 await createButton.trigger('click')
+                //@ts-ignore
+                await window.delay(50)
                 expect(wrapper.emitted()['done'][1]).toBeFalsy()
             })
         })

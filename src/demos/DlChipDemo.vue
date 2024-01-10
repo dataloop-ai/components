@@ -183,6 +183,8 @@
             <DlChip
                 label="Long Chip Label With Alot Of Text"
                 fit
+                clickable
+                @click="log"
             />
         </div>
     </div>

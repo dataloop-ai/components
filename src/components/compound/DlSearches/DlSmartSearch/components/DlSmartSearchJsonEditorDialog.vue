@@ -21,11 +21,22 @@
                     >
                         <dl-select
                             :model-value="selectedOption"
-                            width="200px"
+                            width="300px"
                             :options="selectOptions"
                             placeholder="New Query"
                             @update:model-value="onQuerySelect"
-                        />
+                        >
+                            <template #selected="scope">
+                                <span class="json-query-menu-option">
+                                    {{ scope.opt.label }}
+                                </span>
+                            </template>
+                            <template #option="scope">
+                                <span class="json-query-menu-option">
+                                    {{ scope.opt.label }}
+                                </span>
+                            </template>
+                        </dl-select>
                         <dl-button
                             icon="icon-dl-align-left"
                             label="Align Left"
@@ -99,7 +110,7 @@
                         :disabled="!newQueryName"
                         outlined
                         style="margin-right: 5px"
-                        @click="saveQuery"
+                        @click="() => saveQuery(false)"
                     >
                         Save
                     </dl-button>
@@ -402,5 +413,13 @@ export default defineComponent({
 }
 .json-editor {
     height: 100%;
+}
+
+.json-query-menu-option {
+    white-space: nowrap;
+    display: inline-block;
+    width: 265px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

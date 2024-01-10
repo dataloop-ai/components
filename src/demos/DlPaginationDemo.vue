@@ -1,6 +1,13 @@
 <template>
-    <div style="align-items: stretch">
-        <div>
+    <div
+        style="
+            align-items: stretch;
+            justify-content: center;
+            width: 100%;
+            display: flex;
+        "
+    >
+        <div style="display: flex; width: 100%; justify-content: center">
             <dl-input
                 v-model="rowsPerPage"
                 width="100px"
@@ -27,7 +34,10 @@
                 title="itemsName"
             />
         </div>
-        <div class="row">
+        <div
+            class="row"
+            style="display: flex; width: 100%; justify-content: center"
+        >
             <dl-checkbox
                 v-model="boundaryNumbers"
                 label="boundaryNumbers"
@@ -57,7 +67,7 @@
                 label="withRowsPerPage"
             />
         </div>
-        <div style="width: 700px">
+        <div style="display: flex; width: 100%; justify-content: center">
             <dl-pagination
                 v-model="page"
                 :max="max"
@@ -74,7 +84,14 @@
                 :with-rows-per-page="withRowsPerPage"
             />
         </div>
-        <div>
+        <div
+            style="
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                justify-content: center;
+            "
+        >
             <h4>case 1</h4>
             <p>with exactly 30 items, 15 per row. should be exactly 2 pages</p>
             <dl-pagination
@@ -111,7 +128,7 @@ export default defineComponent({
             boundaryNumbers: true,
             boundaryLinks: true,
             directionLinks: true,
-            total: 999,
+            total: 99,
             withQuickNavigation: true,
             disabled: false,
             itemsName: 'Rows',

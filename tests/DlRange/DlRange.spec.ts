@@ -133,6 +133,8 @@ describe('DlRange', () => {
                     .find(_resetButton)
                     .find('.dl-button')
                     .trigger('click')
+                //@ts-ignore
+                await window.delay(50)
                 expect(wrapper.emitted()['update:model-value'][0]).toEqual([
                     { min: 0, max: 100 }
                 ])

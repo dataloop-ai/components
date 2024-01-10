@@ -1,6 +1,15 @@
 import { mount } from '@vue/test-utils'
 import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
-import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
+import {
+    describe,
+    it,
+    expect,
+    vi,
+    beforeAll,
+    beforeEach,
+    afterAll
+} from 'vitest'
+import { stateManager } from '../../src/StateManager'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -11,12 +20,28 @@ window.ResizeObserver =
     }))
 
 const schema = {
-    name: 'string',
+    name: ['string', { Voltaire: 'Arouet' }],
     level: ['high', 'medium', 'low', 30],
     completed: 'boolean',
     metadata: {
         nesting: {
             age: 'number',
+            valid: 'boolean'
+        },
+        date: 'date',
+        start: 'datetime',
+        classTime: 'time',
+        '*': 'any'
+    }
+}
+
+const schema2 = {
+    name: ['string', { Voltaire: 'Arouet' }],
+    level: ['high', 'medium', 'low', 30],
+    completed: 'boolean',
+    metadata: {
+        nesting: {
+            age: ['number', { 21: 'twentyone' }],
             valid: 'boolean'
         },
         date: 'date',
@@ -65,23 +90,7 @@ describe('DlSmartSearchInput', () => {
         await wrapper.setProps({ disabled: true })
         expect(wrapper.vm.searchBarClasses.includes('--disabled')).toBeTruthy()
 
-        await wrapper.setProps({
-            styleModel: { fields: { values: '', color: 'red' } }
-        })
-
         await wrapper.setProps({ placeholder: 'text' })
-
-        await wrapper.setProps({ expandedInputHeight: '200px' })
-
-        await wrapper.setProps({ withSearchIcon: true })
-
-        await wrapper.setProps({ withScreenButton: true })
-
-        await wrapper.setProps({ withSaveButton: true })
-
-        await wrapper.setProps({ withDQLButton: false })
-
-        await wrapper.setProps({ isDatePickerVisible: false })
     })
 
     it('Will update the v-model', async () => {
@@ -120,7 +129,7 @@ describe('DlSmartSearchInput', () => {
         expect(wrapper.vm.focused).toBe(true)
     })
 
-    it('should focus', () => {
+    describe('focus and blur behavior', () => {
         const wrapper = mount(DlSmartSearchInput, {
             props: {
                 disabled: false
@@ -129,19 +138,18 @@ describe('DlSmartSearchInput', () => {
                 this.$refs.input.scrollTo = vi.fn()
             }
         })
-        wrapper.vm.focus()
-        expect(wrapper.emitted().focus).toBeTruthy()
-    })
 
-    it('should handle blur', async () => {
-        const wrapper = mount(DlSmartSearchInput, {
-            mounted() {
-                this.$refs.input.scrollTo = vi.fn()
-            }
+        it('should focus', () => {
+            wrapper.vm.focus()
+            expect(wrapper.emitted().focus).toBeTruthy()
         })
-        wrapper.vm.blur()
-        expect(wrapper.emitted().blur).toBeDefined()
-        expect(wrapper.vm.focused).toBe(false)
+
+        it('should handle blur', async () => {
+            wrapper.vm.onEscapeKey()
+            wrapper.vm.blur()
+            expect(wrapper.emitted().blur).toBeDefined()
+            expect(wrapper.vm.focused).toBe(false)
+        })
     })
 
     it('should clear the value', () => {
@@ -318,7 +326,7 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.showDatePicker).toBeTruthy()
 
                 wrapper.vm.onDateSelection({ from: new Date(), to: new Date() })
-                wrapper.vm.onEscapeKey()
+                wrapper.vm.onDateSelectionApply()
                 //@ts-ignore
                 await window.delay(500)
                 await wrapper.vm.$nextTick()
@@ -332,7 +340,7 @@ describe('DlSmartSearchInput', () => {
                 const resultString1 = `completed = low AND metadata.test = 'ok'`
                 const resultString2 = `level != = low AND metadata.test = 'ok'`
                 const resultString3 = `level = low OR AND metadata.test = 'ok'`
-                const resultString4 = `level = high low AND metadata.test = 'ok'`
+                const resultString4 = `level = 'high' low AND metadata.test = 'ok'`
                 const resultString5 = `level = low AND metadata.nesting test = 'ok'`
                 beforeAll(async () => {
                     wrapper.vm.focused = true
@@ -525,6 +533,59 @@ describe('DlSmartSearchInput', () => {
         })
     })
 
+    describe('On JSON with nested aliased value', () => {
+        let wrapper: any
+        const modelValue = { $and: [{ 'metadata.nesting.age': 21 }] }
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema: schema2,
+                    aliases
+                }
+            })
+            console.log(wrapper.vm.schema)
+            await wrapper.setProps({
+                modelValue
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            wrapper.vm.blur()
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.vm.searchQuery).toEqual('Age = 21 ')
+        })
+    })
+
+    describe('On JSON with aliased value', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+            await wrapper.setProps({
+                modelValue: { $and: [{ name: 'Arouet' }] }
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            // @ts-ignore // handled in jest setup
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+
+            expect(wrapper.vm.searchQuery).toEqual("Name = 'Voltaire' ")
+        })
+    })
+
     describe('On complex JSON', () => {
         const complex = {
             filter: {
@@ -582,6 +643,44 @@ describe('DlSmartSearchInput', () => {
             expect(message).toEqual(
                 'Could not translate given JSON to a valid Scheme'
             )
+        })
+    })
+
+    describe('When using arrow navigation', () => {
+        let wrapper: any
+        beforeAll(() => {
+            stateManager.disableDebounce = true
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+        })
+
+        afterAll(() => {
+            stateManager.disableDebounce = false
+        })
+
+        describe('when clicking enter while suggestion is visible', () => {
+            beforeAll(async () => {
+                await wrapper.vm.focus()
+                wrapper.vm.debouncedSetInputValue(`level = 'low'`)
+            })
+
+            it('should show suggestions', async () => {
+                console.log(wrapper.vm.showSuggestions)
+                expect(wrapper.vm.showSuggestions).toBeTruthy()
+            })
+
+            it('should handle keyboard input', async () => {
+                wrapper.vm.suggestionsDropdown.handleSelectedItem(null)
+                await wrapper.vm.$nextTick()
+
+                const emittedModelValue =
+                    wrapper.emitted()['update:model-value']
+                expect(emittedModelValue).toEqual([[{ level: 'low' }]])
+            })
         })
     })
 })

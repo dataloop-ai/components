@@ -555,10 +555,50 @@
                 </div>
             </template>
         </dl-select>
+
+        Select with multiselect auto expanded
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="treeOptionsExpanded"
+            multiselect
+            style="margin-bottom: 150px"
+        >
+            <template #option="scope">
+                <div style="padding: 5px 0px">
+                    <div>{{ scope.opt.label }}</div>
+                    <div>{{ scope.opt.subLabel }}</div>
+                </div>
+            </template>
+        </dl-select>
+
+        Select with multiselect auto expanded and fixed width
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="treeOptionsExpanded"
+            multiselect
+            searchable
+            style="margin-bottom: 150px; width: 200px"
+        />
+        Select with multiselect auto expanded and fixed width and virtual scroll
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="alotOfOptionsExpanded"
+            multiselect
+            searchable
+            style="margin-bottom: 150px; width: 200px"
+        />
+        Select with multiselect auto expanded and fixed width and virtual scroll
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="alotOfOptionsExpanded"
+            multiselect
+            style="margin-bottom: 150px"
+        />
     </div>
 </template>
 
 <script lang="ts">
+import { cloneDeep } from 'lodash'
 import { defineComponent } from 'vue-demi'
 import { DlChip, DlSelect, DlIcon, DlBadge } from '../components'
 import { DlSelectOptionType } from '../components/compound/DlSelect/utils'
@@ -644,14 +684,14 @@ const treeOptions = [
         label: 'root1',
         value: 'root1',
         children: [
-            { label: 'child 1', value: 'c6' },
-            { label: 'child 2', value: 'c7' },
+            { label: 'child 1', value: 'c111' },
+            { label: 'child 2', value: 'c21' },
             {
                 label: 'child 3',
-                value: 'c8',
+                value: 'c31',
                 children: [
-                    { label: 'child 4', value: 'c9' },
-                    { label: 'child 5', value: 'c10' }
+                    { label: 'child 4', value: '41' },
+                    { label: 'child 5', value: '51' }
                 ]
             }
         ]
@@ -719,6 +759,74 @@ const treeOptionsWithReadonly = [
     }
 ]
 
+const treeOptionsExpanded: DlSelectOptionType[] = [
+    {
+        label: 'Readonly option with children & readonly child',
+        value: 'r6',
+        expanded: true,
+        children: [
+            { label: 'child 1', value: 'c6' },
+            { label: 'child 2', value: 'c7' },
+            {
+                label: 'child 3',
+                value: 'c8',
+                expanded: true,
+                children: [
+                    { label: 'child 4', value: 'c9' },
+                    {
+                        label: 'child 5',
+                        value: 'c10441',
+                        expanded: true,
+                        children: [
+                            {
+                                label: 'child 6',
+                                value: 'c8312',
+                                expanded: true,
+                                children: [
+                                    {
+                                        label: 'child 7',
+                                        value: 'c923',
+                                        children: [
+                                            { label: 'child 4', value: 'c9' },
+                                            {
+                                                label: 'child 5',
+                                                value: 'c10',
+                                                children: [
+                                                    {
+                                                        label: 'child 4',
+                                                        value: 'c9'
+                                                    },
+                                                    {
+                                                        label: 'child 5',
+                                                        value: 'c10'
+                                                    },
+                                                    {
+                                                        label: 'child 5',
+                                                        value: 'c10'
+                                                    },
+                                                    {
+                                                        label: 'child 5',
+                                                        value: 'c10'
+                                                    },
+                                                    {
+                                                        label: 'child 5',
+                                                        value: 'c10'
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    { label: 'child 8', value: 'c101' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
 export default defineComponent({
     components: { DlSelect, DlIcon, DlChip, DlBadge },
     data() {
@@ -742,6 +850,7 @@ export default defineComponent({
             searchOptions: defaultOptions,
             treeOptions,
             treeOptionsWithReadonly,
+            treeOptionsExpanded,
             selectedBySearch: undefined,
             selectedByFilteringSearch: [],
             selectedWithEmitValue: 'c1',
@@ -772,6 +881,11 @@ export default defineComponent({
                 })
             }
 
+            return arr
+        },
+        alotOfOptionsExpanded(): DlSelectOptionType[] {
+            const arr = cloneDeep(this.alotOfOptions)
+            arr.push(treeOptionsExpanded[0])
             return arr
         }
     },

@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.19.93",
+  "version": "0.19.171",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -25,6 +25,7 @@
     "@dataloop-ai/icons": "^3.0.18",
     "@types/flat": "^5.0.2",
     "@types/lodash": "^4.14.184",
+    "@types/sortablejs": "^1.15.7",
     "chart.js": "^3.9.1",
     "flat": "^5.0.2",
     "highlight.js": "^11.8.0",
@@ -53,7 +54,6 @@
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.7.18",
     "@types/resize-observer-browser": "^0.1.7",
-    "@types/sortablejs": "^1.15.2",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",

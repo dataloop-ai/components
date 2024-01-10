@@ -11,6 +11,8 @@ export const emits = [
     'row-dblclick',
     'row-contextmenu',
     'update:pagination',
+    'scroll-to-bottom',
+    'scroll-to-top',
     ...useTableRowExpandEmits,
     ...useTableRowSelectionEmits
 ]

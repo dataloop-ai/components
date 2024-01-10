@@ -49,6 +49,7 @@
         <dl-tooltip
             v-if="tooltip || hasTooltipSlot"
             style="pointer-events: auto"
+            :trigger-percentage="tooltipTriggerPercentage"
         >
             <slot name="tooltip">
                 {{ tooltip }}
@@ -174,12 +175,31 @@ export default defineComponent({
          */
         tooltip: { type: String, default: null, required: false },
         /**
+         * The percentage of the button's width that will trigger the tooltip
+         */
+        tooltipTriggerPercentage: {
+            type: Number,
+            default: 1
+        },
+        /**
          * The button will maintain the styles it has when it's pressed if this prop is active
          */
         active: { type: Boolean, default: false, required: false },
         styles: { type: [Object, String], default: null },
         shaded: { type: Boolean, default: false },
-        outlined: Boolean
+        outlined: Boolean,
+        /**
+         * Overwrite default background color on hover
+         */
+        hoverBgColor: { type: String, default: null },
+        /**
+         * Overwrite default border color on hover
+         */
+        hoverBorderColor: { type: String, default: null },
+        /**
+         * Overwrite default text color on hover
+         */
+        hoverTextColor: { type: String, default: null }
     },
     emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
@@ -199,12 +219,15 @@ export default defineComponent({
             return classes
         })
 
+        const buttonTimeout = ref<any>(null)
+
         return {
             uuid: `dl-button-${v4()}`,
             buttonLabelRef,
             isOverflowing: hasEllipsis,
             buttonClass,
-            mouseOver
+            mouseOver,
+            buttonTimeout
         }
     },
     computed: {
@@ -227,13 +250,16 @@ export default defineComponent({
                 })
             }
             if (this.mouseOver) {
-                return setColorOnHover({
-                    disabled: this.disabled,
-                    outlined: this.outlined,
-                    shaded: this.shaded,
-                    flat: this.flat,
-                    color: this.iconColor ?? this.textColor
-                })
+                return (
+                    this.hoverTextColor ??
+                    setColorOnHover({
+                        disabled: this.disabled,
+                        outlined: this.outlined,
+                        shaded: this.shaded,
+                        flat: this.flat,
+                        color: this.iconColor ?? this.textColor
+                    })
+                )
             }
 
             if (this.iconColor) {
@@ -307,10 +333,12 @@ export default defineComponent({
                         '--dl-button-bg': this.colorsObject.ACTIVE.BACKGROUND,
                         '--dl-button-border': this.colorsObject.ACTIVE.BORDER,
                         '--dl-button-text-color-hover':
-                            this.colorsObject.HOVER.TEXT,
+                            this.hoverTextColor ?? this.colorsObject.HOVER.TEXT,
                         '--dl-button-bg-hover':
+                            this.hoverBgColor ??
                             this.colorsObject.HOVER.BACKGROUND,
                         '--dl-button-border-hover':
+                            this.hoverBorderColor ??
                             this.colorsObject.HOVER.BORDER,
                         '--dl-button-text-color-pressed':
                             this.colorsObject.PRESSED.TEXT,
@@ -345,27 +373,33 @@ export default defineComponent({
                         color: this.color,
                         outlined: this.outlined
                     }),
-                    '--dl-button-text-color-hover': setColorOnHover({
-                        disabled: this.disabled,
-                        outlined: this.outlined,
-                        shaded: this.shaded,
-                        flat: this.flat,
-                        color: this.textColor
-                    }),
-                    '--dl-button-border-hover': setBorderOnHover({
-                        disabled: this.disabled,
-                        flat: this.flat,
-                        shaded: this.shaded,
-                        color: this.color
-                    }),
-                    '--dl-button-bg-hover': setBgOnHover({
-                        disabled: this.disabled,
-                        shaded: this.shaded,
-                        outlined: this.outlined,
-                        flat: this.flat,
-                        filled: this.filled,
-                        color: this.color
-                    }),
+                    '--dl-button-text-color-hover':
+                        this.hoverTextColor ??
+                        setColorOnHover({
+                            disabled: this.disabled,
+                            outlined: this.outlined,
+                            shaded: this.shaded,
+                            flat: this.flat,
+                            color: this.textColor
+                        }),
+                    '--dl-button-border-hover':
+                        this.hoverBorderColor ??
+                        setBorderOnHover({
+                            disabled: this.disabled,
+                            flat: this.flat,
+                            shaded: this.shaded,
+                            color: this.color
+                        }),
+                    '--dl-button-bg-hover':
+                        this.hoverBgColor ??
+                        setBgOnHover({
+                            disabled: this.disabled,
+                            shaded: this.shaded,
+                            outlined: this.outlined,
+                            flat: this.flat,
+                            filled: this.filled,
+                            color: this.color
+                        }),
                     '--dl-button-text-color-pressed': setTextOnPressed({
                         shaded: this.shaded,
                         outlined: this.shaded
@@ -419,7 +453,10 @@ export default defineComponent({
                     }
                 }
 
-                this.$emit('click', e)
+                clearTimeout(this.buttonTimeout)
+                this.buttonTimeout = setTimeout(() => {
+                    this.$emit('click', e)
+                }, 50)
             }
         },
         onDblClick(e: Event) {
@@ -430,6 +467,7 @@ export default defineComponent({
                     }
                 }
 
+                clearTimeout(this.buttonTimeout)
                 this.$emit('dblclick', e)
             }
         },
@@ -529,6 +567,7 @@ export default defineComponent({
 .dl-button-container {
     display: inline-block;
     width: var(--dl-button-container-width);
+    height: fit-content;
 }
 
 .active-class {

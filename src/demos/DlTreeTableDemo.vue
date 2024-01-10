@@ -690,7 +690,7 @@ export default defineComponent({
         }
 
         const onRowClick = (item: any) => {
-            // console.log('onRowClick TreeTableDemo: ', item)
+            console.log('onRowClick TreeTableDemo: ', item)
         }
 
         const reorderRows = (newRows: any[]) => {
@@ -738,6 +738,11 @@ export default defineComponent({
     },
 
     methods: {
+        addRowPerPage() {
+            this.rowsPerPageOptions.push(
+                this.rowsPerPageOptions[this.rowsPerPageOptions.length - 1] + 2
+            )
+        },
         selectedItems(payload: any) {
             console.log('Demo updateSelected: ', payload)
         },

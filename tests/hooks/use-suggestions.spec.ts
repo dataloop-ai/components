@@ -3,7 +3,7 @@ import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
 export const schema: Schema = {
-    name: 'string',
+    name: ['string', { Voltaire: 'Arouet' }],
     level: ['high', 'medium', 'low', 30],
     completed: 'boolean',
     metadata: {
@@ -56,26 +56,31 @@ describe('use-suggestions', () => {
     const schemaRef = toRef(schema)
     const aliasesRef = toRef(aliases)
 
-    const { suggestions, error, findSuggestions } = useSuggestions(
+    const { suggestions, error, findSuggestions, checkErrors } = useSuggestions(
         schemaRef,
         aliasesRef,
         { strict: toRef(false) }
     )
 
+    const findSuggestionsAndCheckErrors = (input: string) => {
+        findSuggestions(input)
+        checkErrors(input)
+    }
+
+    const allTheFields = [
+        'Name',
+        'Completed',
+        'Age',
+        'StartTime',
+        'Level',
+        'No-Schema',
+        'metadata',
+        'Arr'
+    ].sort(sortString)
+
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
-        expect(suggestions.value).toEqual(
-            [
-                'Name',
-                'Completed',
-                'Age',
-                'StartTime',
-                'Level',
-                'No-Schema',
-                'metadata',
-                'Arr'
-            ].sort(sortString)
-        )
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     const limited = useSuggestions(schemaRef, aliasesRef, {
@@ -105,14 +110,24 @@ describe('use-suggestions', () => {
         expect(suggestions.value).toEqual(['AND', 'OR'])
     })
 
+    it('suggestions should have all the fields when non-matched field is followed by the value and the logical operator and space', () => {
+        findSuggestions('evel = value AND ')
+        expect(suggestions.value).toEqual(allTheFields)
+    })
+
     it('suggestions should be empty when the alias does not exist in the schema', () => {
         findSuggestions('No-Schema ')
         expect(suggestions.value).toEqual([])
     })
 
     it('suggestions should have the generic operators', () => {
+        const genericOperators = ['=', '!=', 'IN', 'NOT-IN']
+
         findSuggestions('Level ')
-        expect(suggestions.value).toEqual(['=', '!=', 'IN', 'NOT-IN'])
+        expect(suggestions.value).toEqual(genericOperators)
+
+        findSuggestions('Level =')
+        expect(suggestions.value).toEqual(genericOperators)
     })
 
     it('suggestions should have the correct operators', () => {
@@ -131,14 +146,23 @@ describe('use-suggestions', () => {
 
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
+            const levelValues = [`'high'`, `'medium'`, `'low'`, 30]
             findSuggestions('Level = ')
-            console.log(suggestions.value)
-            expect(suggestions.value).toEqual(['high', 'medium', 'low', 30])
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions('Level IN ')
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN 'high',")
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN 'high', 'low' OR Level IN ")
+            expect(suggestions.value).toEqual(levelValues)
         })
 
         it('suggestions should match the correct field value without the quotes', () => {
             findSuggestions('Level = me')
-            expect(suggestions.value).toEqual(['medium'])
+            expect(suggestions.value).toEqual([`'medium'`])
         })
 
         it('suggestions should be empty when none of the field values were matched', () => {
@@ -149,6 +173,18 @@ describe('use-suggestions', () => {
         it('suggestions should be empty when none of the field values were matched', () => {
             findSuggestions("Level = 'memo'")
             expect(suggestions.value).toEqual([])
+        })
+
+        it('suggestions should match aliased value that is also filtered', () => {
+            findSuggestions('name = vol')
+            expect(suggestions.value).toEqual([`'Voltaire'`])
+        })
+    })
+
+    describe('when the field has value aliases defined', () => {
+        it('suggestions should have value aliases', () => {
+            findSuggestions('name = ')
+            expect(suggestions.value).toEqual(["'Voltaire'"])
         })
     })
 
@@ -190,18 +226,7 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual(
-            [
-                'Name',
-                'Level',
-                'Completed',
-                'metadata',
-                'Age',
-                'Arr',
-                'StartTime',
-                'No-Schema'
-            ].sort(sortString)
-        )
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     // sort array of strings ignore case
@@ -215,54 +240,54 @@ describe('use-suggestions', () => {
 
     describe('error', () => {
         it('should be null when the input is empty', () => {
-            findSuggestions('')
+            findSuggestionsAndCheckErrors('')
             expect(error.value).toBe(null)
         })
 
         it('should be "Invalid Expression" when the expression is not complete', () => {
-            findSuggestions('Age = ')
+            findSuggestionsAndCheckErrors('Age = ')
             expect(error.value).toBe('Invalid Expression')
         })
 
         it('should be "Invalid value for "Age" field" when the Age is not a number', () => {
-            findSuggestions('Age = "value"')
+            findSuggestionsAndCheckErrors('Age = "value"')
             expect(error.value).toBe('Invalid value for "Age" field')
         })
 
         it('should be "Invalid value for "Level" field" when the "Level" is not a value from the schema', () => {
-            findSuggestions('Level = "value"')
+            findSuggestionsAndCheckErrors('Level = "value"')
             expect(error.value).toBe('Invalid value for "Level" field')
         })
 
         it('should be "Invalid value for "Name" field" when the Name value does not have quotes', () => {
-            findSuggestions('Name = value')
+            findSuggestionsAndCheckErrors('Name = value')
             expect(error.value).toBe('Invalid value for "Name" field')
         })
 
         it('should be "Invalid value for "Completed" field" when the is not of the correct type', () => {
-            findSuggestions('Completed = "true"')
+            findSuggestionsAndCheckErrors('Completed = "true"')
             expect(error.value).toBe('Invalid value for "Completed" field')
         })
 
         describe('When using a IN operator', () => {
             it('should be "Invalid value for "Name" field" when the values are not strings', () => {
-                findSuggestions(`Name IN 'a', 5`)
+                findSuggestionsAndCheckErrors(`Name IN 'a', 5`)
                 expect(error.value).toBe('Invalid value for "Name" field')
             })
             it('should be valid field" when the values are not strings', () => {
-                findSuggestions(`Name IN "a", '5'`)
+                findSuggestionsAndCheckErrors(`Name IN "a", '5'`)
                 expect(error.value).toBe(null)
             })
         })
 
         it('should be valid for correct level value', () => {
-            findSuggestions('Level = "high"')
+            findSuggestionsAndCheckErrors('Level = "high"')
             expect(error.value).toBe(null)
         })
 
         describe('When using nested field with array', () => {
             it('should be valid for correct value', () => {
-                findSuggestions('Arr = "c"')
+                findSuggestionsAndCheckErrors('Arr = "c"')
                 expect(error.value).toBe(null)
             })
         })

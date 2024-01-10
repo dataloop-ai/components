@@ -42,7 +42,11 @@ describe('DlButton', () => {
                 dense: false,
                 active: false,
                 shaded: false,
-                uppercase: false
+                uppercase: false,
+                tooltipTriggerPercentage: 1,
+                hoverBgColor: null,
+                hoverBorderColor: null,
+                hoverTextColor: null
             })
         })
     })
@@ -61,16 +65,18 @@ describe('DlButton', () => {
         })
         it('should exist the click event', async () => {
             buttonElem.trigger('click')
-
+            //@ts-ignore
+            await window.delay(50)
             expect(wrapper.emitted()).toHaveProperty('click')
 
             expect(wrapper.vm.isActionable).toBe(true)
 
             expect(buttonElem.attributes().tabindex).toBe('0')
         })
-        it('should trigger right click event', function () {
+        it('should trigger right click event', async function () {
             const clickEvent = wrapper.emitted('click')
-
+            //@ts-ignore
+            await window.delay(50)
             expect(clickEvent).toHaveLength(1)
         })
         it('should exist the dblclick event', async () => {
@@ -140,6 +146,18 @@ describe('DlButton', () => {
                     '--dl-button-border-radius'
                 )
             ).toBe('2px')
+        })
+        it('should change background color on hover', async () => {
+            const hoverBgColor = '#ff0000'
+            const wrapper = mount(DlButton, {
+                props: { hoverBgColor }
+            })
+            wrapper.vm.mouseOver = true
+            await wrapper.vm.$nextTick()
+            const button = wrapper.find('.dl-button-container')
+            expect(
+                button.element.style.getPropertyValue('--dl-button-bg-hover')
+            ).toBe(hoverBgColor)
         })
     })
 })

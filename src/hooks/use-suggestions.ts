@@ -3,12 +3,16 @@ import { splitByQuotes } from '../utils/splitByQuotes'
 import { flatten } from 'flat'
 import { isObject } from 'lodash'
 
+export type Data = {
+    [key: string]: any
+}
+
 export type Schema = {
     [key: string]:
         | string
         | number
         | boolean
-        | (number | boolean | string)[]
+        | (number | boolean | string | Data)[]
         | Schema
 }
 
@@ -92,8 +96,8 @@ const mergeWords = (words: string[]) => {
 
         if (currentItem === 'IN' || currentItem === 'NOT-IN') {
             merging = true
-            mergeIndex = i + 1
             result.push(currentItem)
+            mergeIndex = result.length
             continue
         } else if (
             Object.values(Logical).includes(currentItem as any) ||
@@ -104,9 +108,10 @@ const mergeWords = (words: string[]) => {
 
         if (merging) {
             if (!result[mergeIndex]) {
-                result[mergeIndex] = ''
+                result[mergeIndex] = currentItem
+            } else if (currentItem) {
+                result[mergeIndex] += ' ' + currentItem
             }
-            result[mergeIndex] += ' ' + currentItem
             continue
         }
 
@@ -119,9 +124,13 @@ const mergeWords = (words: string[]) => {
 export const useSuggestions = (
     schema: Ref<Schema>,
     aliases: Ref<Alias[]>,
-    options: { strict?: Ref<boolean>; omitSuggestions?: Ref<string[]> } = {}
+    options: {
+        strict?: Ref<boolean>
+        forbiddenKeys?: Ref<string[]>
+        omitSuggestions?: Ref<string[]>
+    } = {}
 ) => {
-    const { strict, omitSuggestions } = options
+    const { strict, forbiddenKeys, omitSuggestions } = options
     const aliasesArray = aliases.value ?? []
     const schemaValue = schema.value ?? {}
 
@@ -147,6 +156,21 @@ export const useSuggestions = (
     const suggestions: Ref<Suggestion[]> = ref(sortedSuggestions)
     const error: Ref<string | null> = ref(null)
 
+    const checkErrors = (input: string) => {
+        input = input.replace(/\s+/g, ' ').trimStart()
+
+        const words = splitByQuotes(input, space)
+        const mergedWords = mergeWords(words)
+        const expressions = mapWordsToExpressions(mergedWords)
+
+        error.value = input.length
+            ? getError(schemaValue, aliasesArray, expressions, {
+                  strict,
+                  forbiddenKeys
+              })
+            : null
+    }
+
     const findSuggestions = (input: string) => {
         input = input.replace(/\s+/g, ' ').trimStart()
         localSuggestions = sortedSuggestions
@@ -162,7 +186,7 @@ export const useSuggestions = (
 
             if (!field) continue
 
-            const fieldSeparated: any = field.split('.')
+            const fieldSeparated: string[] = field.split('.')
 
             if (fieldSeparated.length > 1) {
                 localSuggestions = []
@@ -175,7 +199,9 @@ export const useSuggestions = (
             if (!matchedField && isNextCharSpace(input, field)) {
                 localSuggestions =
                     value && input.endsWith(space)
-                        ? [Logical.AND, Logical.OR]
+                        ? keyword
+                            ? sortedSuggestions
+                            : [Logical.AND, Logical.OR]
                         : []
                 continue
             }
@@ -213,20 +239,34 @@ export const useSuggestions = (
             localSuggestions = getOperators(ops)
 
             if (!operator) {
-                const dotSeparated = matchedField.split('.').filter((el) => el)
+                const dotSeparated = matchedField.split('.')
+                const lastWord = dotSeparated.pop()
                 let fieldOf = schemaValue
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
 
-                if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
-                    const toConcat: string[] = []
-                    for (const key of Object.keys(fieldOf)) {
-                        if (key === '*') continue
-                        toConcat.push(`.${key}`)
+                const toAdd: string[] = []
+
+                if (fieldOf[lastWord]) {
+                    fieldOf = fieldOf[lastWord] as Schema
+
+                    if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
+                        for (const key of Object.keys(fieldOf)) {
+                            if (key === '*') continue
+                            toAdd.push(`.${key}`)
+                        }
                     }
-                    localSuggestions = localSuggestions.concat(toConcat)
+                } else {
+                    for (const key in fieldOf) {
+                        if (key === '*') continue
+                        if (key.startsWith(lastWord)) {
+                            toAdd.push(`.${key}`)
+                        }
+                    }
                 }
+
+                localSuggestions = toAdd.concat(localSuggestions)
 
                 continue
             }
@@ -244,13 +284,25 @@ export const useSuggestions = (
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType.filter(
-                    (type) => !knownDataTypes.includes(type)
+                const filteredTypes = dataType.filter(
+                    (type) => !knownDataTypes.includes(type as string)
                 )
+                const mappedTypes: string[] = []
+                for (const type of filteredTypes) {
+                    if (typeof type === 'string') {
+                        mappedTypes.push(`'${type}'`)
+                    } else if (typeof type === 'object') {
+                        mappedTypes.push(
+                            ...Object.keys(type).map((key) => `'${key}'`)
+                        )
+                    } else {
+                        mappedTypes.push(type)
+                    }
+                }
 
                 if (!value) continue
 
-                localSuggestions = getMatches(localSuggestions, value)
+                localSuggestions = getMatches(mappedTypes, value)
             } else if (
                 dataType === 'datetime' ||
                 dataType === 'date' ||
@@ -271,6 +323,10 @@ export const useSuggestions = (
 
             localSuggestions = [Logical.AND, Logical.OR]
 
+            if (operator === operators.$in || operator === operators.$nin) {
+                localSuggestions.unshift(',')
+            }
+
             if (!keyword) continue
 
             localSuggestions = getMatches(localSuggestions, keyword)
@@ -282,22 +338,19 @@ export const useSuggestions = (
             localSuggestions = sortedSuggestions
         }
 
-        error.value = input.length
-            ? getError(schemaValue, aliasesArray, expressions, { strict })
-            : null
-
         suggestions.value = localSuggestions.filter(
             (value) =>
                 !omitSuggestions || !omitSuggestions.value.includes(value)
         )
     }
 
-    return { suggestions, findSuggestions, error }
+    return { suggestions, findSuggestions, error, checkErrors }
 }
 
 const errors = {
     INVALID_EXPRESSION: 'Invalid Expression',
-    INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`
+    INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`,
+    FORBIDDEN_KEY: (field: string) => `Forbidden field "${field}"`
 }
 
 const isInputAllowed = (input: string, allowedKeys: string[]): boolean => {
@@ -329,9 +382,9 @@ const getError = (
     schema: Schema,
     aliases: Alias[],
     expressions: Expression[],
-    options: { strict?: Ref<boolean> } = {}
+    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]> } = {}
 ): string | null => {
-    const { strict } = options
+    const { strict, forbiddenKeys } = options
     const hasErrorInStructure = expressions
         .flatMap((exp) => Object.values(exp))
         .some((el, index, arr) => {
@@ -346,7 +399,7 @@ const getError = (
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
         .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
-            if (acc === 'warning') return acc
+            if (acc && acc !== 'warning') return acc
             const fieldKey: string =
                 getAliasObjByAlias(aliases, field)?.key ?? field
 
@@ -357,7 +410,9 @@ const getError = (
             for (const key of Object.keys(schema)) {
                 if (isObject(schema[key]) && !Array.isArray(schema[key])) {
                     const flattened = flatten({ [key]: schema[key] })
-                    keys.push(...Object.keys(flattened))
+                    for (const k of Object.keys(flattened)) {
+                        keys.push(k)
+                    }
                 } else {
                     keys.push(key)
                 }
@@ -375,14 +430,21 @@ const getError = (
                 return false
             }
 
-            const pattern = new RegExp(`${fieldKey}\\.\\d`)
+            const pattern = new RegExp(`^${fieldKey}\\.\\d`)
             const isValid = isInputAllowed(fieldKey, keys)
+            const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
             if (
                 !keys.includes(fieldKey) &&
                 !hasValidExpression(keys, pattern) &&
-                !isValid
+                !isValid &&
+                !isForbidden
             ) {
-                return strict.value ? errors.INVALID_EXPRESSION : 'warning'
+                return strict?.value ? errors.INVALID_EXPRESSION : 'warning'
+            }
+
+            if (isForbidden) {
+                arr.splice(1)
+                return (acc = errors.FORBIDDEN_KEY(field))
             }
 
             const valid = isValidByDataType(
@@ -396,13 +458,13 @@ const getError = (
                 return (acc = errors.INVALID_VALUE(field))
             }
 
-            return (acc = null)
+            return acc === 'warning' ? acc : (acc = null)
         }, null)
 }
 
 const isValidByDataType = (
     str: string | string[],
-    dataType: string | string[],
+    dataType: string | (string | Data)[],
     operator: string
 ): boolean => {
     if (dataType === 'any') {
@@ -423,9 +485,16 @@ const isValidByDataType = (
      */
 
     if (Array.isArray(dataType)) {
-        let isOneOf = !!getValueMatch(dataType, str)
+        let isOneOf = !!getValueMatch(
+            dataType.filter((type) => typeof type !== 'object') as string[],
+            str
+        )
         for (const type of dataType) {
-            isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            if (typeof type === 'object') {
+                isOneOf = isOneOf || !!getValueMatch(Object.keys(type), str)
+            } else {
+                isOneOf = isOneOf || isValidByDataType(str, type, operator)
+            }
         }
         return isOneOf
     }
@@ -495,10 +564,23 @@ const getOperatorByDataType = (dataType: string) => {
 const getOperators = (op: string[]) => op.map((o) => operators[o])
 
 const mapWordsToExpression = (words: string[]): Expression => {
+    let operator = words[1] ?? null
+    let value = words[2] ?? null
+
+    if (operator === operators.$in || operator === operators.$nin) {
+        if (value && /\,\s?$/.test(value)) {
+            value = ''
+        }
+    }
+
+    if (value === null) {
+        operator = null
+    }
+
     return {
         field: words[0] ?? null,
-        operator: words[1] ?? null,
-        value: words[2] ?? null,
+        operator,
+        value,
         keyword: words[3] ?? null
     }
 }
@@ -507,7 +589,7 @@ const getDataType = (
     schema: Schema,
     aliases: Alias[],
     key: string
-): string | string[] | null => {
+): string | (string | Data)[] | null => {
     const aliasedKey = getAliasObjByAlias(aliases, key)?.key ?? key
 
     const nestedKey = aliasedKey.split('.').filter((el) => el)
@@ -529,7 +611,7 @@ const getDataType = (
         return 'object'
     }
 
-    return value as unknown as string | string[] | null
+    return value as unknown as string | (string | Data)[] | null
 }
 
 const getAliasObjByAlias = (aliases: Alias[], alias: string): Alias | null => {
@@ -579,10 +661,12 @@ const getValueMatch = (
     }
     return null
 }
-const getMatches = (strArr: string[], str: string | number | boolean) =>
-    strArr.filter((val) =>
+const getMatches = (strArr: string[], str: string | number | boolean) => {
+    const filtered = strArr.filter((val) =>
         insensitive(val.toString()).includes(insensitive(str.toString()))
     )
+    return filtered
+}
 
 const isNextCharSpace = (input: string, str: string) => {
     const insensitiveInput = insensitive(input)
@@ -666,14 +750,24 @@ export const removeLeadingExpression = (str: string) => {
     return str.match(/\s+(.*)$/)?.[1] || ''
 }
 
-const getValueSuggestions = (dataType: string | string[], operator: string) => {
-    const types: string[] = Array.isArray(dataType) ? dataType : [dataType]
+const getValueSuggestions = (
+    dataType: string | (string | Data)[],
+    operator: string
+) => {
+    const types: (string | Data)[] = Array.isArray(dataType)
+        ? dataType
+        : [dataType]
     const suggestion: string[] = []
 
     if (Array.isArray(dataType)) {
-        suggestion.push(
-            ...dataType.filter((type) => !knownDataTypes.includes(type))
-        )
+        for (const type of dataType) {
+            if (
+                !knownDataTypes.includes(type as string) &&
+                typeof type !== 'object'
+            ) {
+                suggestion.push(typeof type === 'string' ? `'${type}'` : type)
+            }
+        }
     }
 
     for (const type of types) {
@@ -688,7 +782,10 @@ const getValueSuggestions = (dataType: string | string[], operator: string) => {
             case 'datetime':
                 suggestion.push(dateSuggestionPattern)
             default:
-                // do nothing
+                if (typeof type === 'object') {
+                    // value aliases: key is the alias, value is the actual value
+                    for (const key in type) suggestion.push(`'${key}'`)
+                }
                 break
         }
     }

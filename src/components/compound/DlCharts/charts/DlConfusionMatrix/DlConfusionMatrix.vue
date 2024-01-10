@@ -4,18 +4,9 @@
         :style="`max-width: ${maxWidth}`"
         class="confusion-matrix-container"
     >
-        <dl-empty-state
-            v-if="isEmpty"
-            v-bind="emptyStateProps"
-        >
-            <template
-                v-for="(_, slot) in $slots"
-                #[slot]="props"
-            >
-                <slot
-                    :name="slot"
-                    v-bind="props"
-                />
+        <dl-empty-state v-if="isEmpty" v-bind="emptyStateProps">
+            <template v-for="(_, slot) in $slots" #[slot]="props">
+                <slot :name="slot" v-bind="props" />
             </template>
         </dl-empty-state>
         <div
@@ -24,21 +15,11 @@
             :style="matrixStyles"
             class="wrapper"
         >
-            <span
-                ref="labelY"
-                class="label-tag y"
-            >
+            <span ref="labelY" class="label-tag y">
                 {{ leftLabel }}
             </span>
-            <div
-                ref="yAxisOuter"
-                class="y-axis-outer"
-            >
-                <div
-                    ref="yAxis"
-                    class="y-axis"
-                    style="min-height: 100%"
-                >
+            <div ref="yAxisOuter" class="y-axis-outer">
+                <div ref="yAxis" class="y-axis" style="min-height: 100%">
                     <div
                         v-for="(label, index) in labels"
                         :key="index"
@@ -54,11 +35,8 @@
                             v-if="labelImages[0]"
                             class="legend-avatar"
                             :src="labelImages[index]"
-                        >
-                        <span
-                            v-else
-                            class="label"
-                        >
+                        />
+                        <span v-else class="label label-y">
                             {{ label }}
                         </span>
                         <dl-tooltip :offset="[0, 0]">
@@ -67,19 +45,13 @@
                     </div>
                 </div>
             </div>
-            <div
-                ref="verticalWrapper"
-                class="vertical_wrapper"
-            >
+            <div ref="verticalWrapper" class="vertical_wrapper">
                 <div
                     ref="matrixWrapper"
                     class="matrix-wrapper"
                     @scroll="handleMatrixScroll"
                 >
-                    <div
-                        ref="matrix"
-                        class="matrix"
-                    >
+                    <div ref="matrix" class="matrix">
                         <div
                             v-for="cell in flattenedMatrix"
                             :key="`${cell.x}-${cell.y}`"
@@ -157,11 +129,8 @@
                                     v-if="labelImages[0]"
                                     class="legend-avatar"
                                     :src="labelImages[index]"
-                                >
-                                <span
-                                    v-else
-                                    class="label"
-                                >
+                                />
+                                <span v-else class="label label-x">
                                     {{ label }}
                                 </span>
                             </span>
@@ -189,10 +158,7 @@
                 />
                 <span class="label-tag x"> {{ bottomLabel }} </span>
             </div>
-            <div
-                ref="colorSpectrum"
-                class="color-spectrum"
-            >
+            <div ref="colorSpectrum" class="color-spectrum">
                 <div class="color-spectrum__gradient" />
                 <div class="color-spectrum__gradation">
                     <div
@@ -200,16 +166,15 @@
                         :key="value"
                         class="color-spectrum__gradation--element"
                     >
-                        <span class="color-spectrum__gradation--element-line">-</span>
+                        <span class="color-spectrum__gradation--element-line"
+                        >-</span
+                        >
                         {{ value !== gradationValues[0] ? value : null }}
                     </div>
                 </div>
             </div>
         </div>
-        <div
-            v-else
-            class="invalid"
-        >
+        <div v-else class="invalid">
             The given props cannot create a valid matrix.
         </div>
     </div>
@@ -543,9 +508,18 @@ export default defineComponent({
 }
 
 .label {
-    transform: translateX(40%);
     display: block;
+    width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.label-x {
+    transform: translateX(40%);
     text-align: start;
+}
+.label-y {
+    text-align: right;
 }
 
 .label-tag {

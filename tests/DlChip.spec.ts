@@ -35,7 +35,8 @@ describe('DlChip', () => {
                 noBorder: false,
                 transform: 'default',
                 overflow: false,
-                fit: false
+                fit: false,
+                clickable: false
             })
         })
         it('should compute right hasIcon flag', () => {

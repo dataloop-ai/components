@@ -85,7 +85,7 @@ export const parseSmartQuery = (
             }
         }
 
-        const andQuery: { [key: string]: any } = {}
+        const andQuery: { [key: string]: any }[] = []
         let queryValue: any
 
         let key: string
@@ -106,42 +106,42 @@ export const parseSmartQuery = (
                     [key, value] = term.split('>=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
-                        andQuery[key] = { $gte: pureValue }
+                        andQuery.push({ [key]: { $gte: pureValue } })
                     }
                     break
                 case term.includes('<='):
                     [key, value] = term.split('<=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
-                        andQuery[key] = { $lte: pureValue }
+                        andQuery.push({ [key]: { $lte: pureValue } })
                     }
                     break
                 case term.includes('>'):
                     [key, value] = term.split('>').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
-                        andQuery[key] = { $gt: pureValue }
+                        andQuery.push({ [key]: { $gt: pureValue } })
                     }
                     break
                 case term.includes('<'):
                     [key, value] = term.split('<').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
-                        andQuery[key] = { $lt: pureValue }
+                        andQuery.push({ [key]: { $lt: pureValue } })
                     }
                     break
                 case term.includes('!='):
                     [key, value] = term.split('!=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
-                        andQuery[key] = { $ne: pureValue }
+                        andQuery.push({ [key]: { $ne: pureValue } })
                     }
                     break
                 case term.includes('='):
                     [key, value] = term.split('=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
-                        andQuery[key] = pureValue
+                        andQuery.push({ [key]: pureValue })
                     }
                     break
                 case term.includes('IN'):
@@ -159,7 +159,7 @@ export const parseSmartQuery = (
 
                         pureValue = GeneratePureValue(queryValue)
                         if (pureValue !== null && Array.isArray(pureValue)) {
-                            andQuery[key] = { $nin: pureValue }
+                            andQuery.push({ [key]: { $nin: pureValue } })
                         }
                     } else {
                         queryValue = term
@@ -171,14 +171,24 @@ export const parseSmartQuery = (
 
                         pureValue = GeneratePureValue(queryValue)
                         if (pureValue !== null && Array.isArray(pureValue)) {
-                            andQuery[key] = { $in: pureValue }
+                            andQuery.push({ [key]: { $in: pureValue } })
                         }
                     }
                     break
             }
         }
 
-        orTerms.push(andQuery)
+        const simlifiedAndQuery: { [key: string]: any } = {}
+        for (const term of andQuery) {
+            const key = Object.keys(term)[0]
+            simlifiedAndQuery[key] = term[key]
+        }
+
+        orTerms.push(
+            andQuery.length > Object.keys(simlifiedAndQuery).length
+                ? { $and: andQuery }
+                : simlifiedAndQuery
+        )
     }
 
     const builtQuery = orTerms.length > 1 ? { $or: orTerms } : orTerms[0]
@@ -211,14 +221,13 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
 
         if (key === '$and') {
             if (Array.isArray(value)) {
-                const andObject: { [key: string]: any } = {}
-                for (const subQuery of value) {
-                    for (const subKey in subQuery) {
-                        andObject[subKey] = subQuery[subKey]
-                    }
-                }
-                return stringifySmartQuery(andObject)
+                const subQueries = value.map(
+                    (subQuery: { [key: string]: any }) =>
+                        stringifySmartQuery(subQuery)
+                )
+                result += subQueries.join(' AND ')
             }
+            continue
         }
 
         if (result.length) {

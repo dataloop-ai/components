@@ -1,16 +1,8 @@
 <template>
     <div style="width: 900px">
         <div style="margin: 40px 0">
-            <dl-checkbox
-                v-model="switchState"
-                dense
-                label="Disabled"
-            />
-            <dl-checkbox
-                v-model="strictState"
-                dense
-                label="Strict"
-            />
+            <dl-checkbox v-model="switchState" dense label="Disabled" />
+            <dl-checkbox v-model="strictState" dense label="Strict" />
         </div>
         <dl-input
             v-model="textQuery"
@@ -18,16 +10,13 @@
             placeholder="Select option"
             size="m"
         />
-        <div
-            style="width: 100px"
-            class="props"
-        />
+        <div style="width: 100px" class="props" />
         <div>
-            Template searches<br>
+            Template searches<br />
 
-            dir IN 'test', 'test2'<br>
-            type = 'dir'<br>
-            { "metadata.system.width": 5 }<br>
+            dir IN 'test', 'test2'<br />
+            type = 'dir'<br />
+            { "metadata.system.width": 5 }<br />
         </div>
         <dl-smart-search
             v-model="queryObject"
@@ -45,10 +34,10 @@
         />
         {{ queryObject }}
 
-        <br>
-        <br>
-        <br>
-        <br>
+        <br />
+        <br />
+        <br />
+        <br />
         Only the search
 
         <dl-smart-search-input
@@ -58,6 +47,7 @@
             :color-schema="colorSchema"
             :strict="strictState"
             :disabled="switchState"
+            placeholder="THIS IS A PLACEHOOOOOOOOLDER"
             @search="onSearchEmitted"
         />
 
@@ -77,8 +67,8 @@
         {{ queryObject }}
         {{ queryObject2 }}
 
-        <br>
-        <br>
+        <br />
+        <br />
         With placeholder and [OR, true] suggestions omitted
         <dl-smart-search-input
             v-model="queryObject"
@@ -114,6 +104,11 @@ export default defineComponent({
     },
     data() {
         const schema: any = {
+            'very very very very very very long key': 'string',
+            'very very very very very very long key  very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key':
+                'string',
+            'very very very very very very long key  very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long keyvery very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long keyvery very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long keyvery very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long keyvery very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long keyvery very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key':
+                'string',
             id: ['string', 'number'],
             filename: 'string',
             name: 'string',
@@ -136,10 +131,33 @@ export default defineComponent({
                 '*': 'any'
             },
             type: ['dir', 'file'],
+            test0: ['why wont', 'this work', 123],
             test1: ['5', '6', 'number'],
             test2: ['true', 'false']
         }
         const schema2: any = {
+            value: [
+                'string',
+                {
+                    John: 'AB34',
+                    Connor: '42'
+                }
+            ],
+            nested: {
+                value: [
+                    'string',
+                    {
+                        John: 'AB34',
+                        Connor: '42'
+                    }
+                ]
+            },
+            only_va: [
+                {
+                    'String Value': '12345',
+                    'Numeric Value': 12345
+                }
+            ],
             type: [
                 'class',
                 'point',
@@ -207,7 +225,7 @@ export default defineComponent({
                 value: { query2: 'query2' }
             },
             {
-                label: 'Query 3',
+                label: 'Query 3 with an incredibly long query name to test the text overflow in the menu',
                 value: { query3: 'query3' }
             },
             {

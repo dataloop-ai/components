@@ -1,17 +1,12 @@
 <template>
     <div
         :id="`DlSmartSearchInput${uuid}`"
+        ref="container"
         :style="cssVars"
         class="dl-smart-search-input"
     >
-        <div
-            class="dl-smart-search-input__search-bar-wrapper"
-            @click="focus()"
-        >
-            <div
-                ref="searchBar"
-                :class="searchBarClasses"
-            >
+        <div class="dl-smart-search-input__search-bar-wrapper">
+            <div ref="searchBar" :class="searchBarClasses" @click="focus()">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
                         v-if="!focused && computedStatus"
@@ -32,7 +27,6 @@
                         @keypress="onKeyPress"
                         @keyup.esc="onKeyPress"
                         @input="onInput"
-                        @click.stop.prevent="focus"
                         @blur="blur"
                     />
                 </div>
@@ -62,21 +56,24 @@
             />
         </div>
         <suggestions-dropdown
+            ref="suggestionsDropdown"
             v-model="showSuggestions"
             :parent-id="`${uuid}`"
-            :trigger-percentage="0.5"
+            :trigger-percentage="0.1"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
             :expanded="expanded"
             @set-input-value="setInputFromSuggestion"
             @escapekey="onEscapeKey"
+            @enterkey="onEnterKey({ fromSuggestion: true })"
         />
         <dl-menu
             v-if="showDatePicker && focused"
             v-model="showDatePicker"
             :disabled="disabled"
             :offset="[0, 3]"
+            :toggle-key="'Escape'"
             @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
@@ -84,6 +81,18 @@
                     :single-selection="true"
                     @change="onDateSelection"
                 />
+                <div class="dl-smart-search-input__date-picker-buttons">
+                    <dl-button
+                        label="Cancel"
+                        outlined
+                        @mousedown="onDateSelectionCancel"
+                    />
+                    <dl-button
+                        label="Apply"
+                        :disabled="!datePickerSelection"
+                        @mousedown="onDateSelectionApply"
+                    />
+                </div>
             </div>
         </dl-menu>
     </div>
@@ -111,20 +120,23 @@ import {
     setSelectionOffset
 } from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
-import { debounce, isEqual } from 'lodash'
+import { cloneDeep, debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
 import SuggestionsDropdown from './SuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
+    removeDateInterval,
     updateEditor,
     isEligibleToChange,
     createColorSchema,
     replaceJSDatesWithStringifiedDates,
     replaceStringifiedDatesWithJSDates,
     setAliases,
-    revertAliases
+    revertAliases,
+    setValueAliases,
+    revertValueAliases
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -135,6 +147,7 @@ import {
     removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
+import { stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -199,9 +212,17 @@ export default defineComponent({
             type: Array as PropType<string[]>,
             default: () => [] as string[]
         },
+        forbiddenKeys: {
+            type: Array as PropType<string[]>,
+            default: () => [] as string[]
+        },
         strict: {
             type: Boolean,
             default: false
+        },
+        inputDebounce: {
+            type: Number,
+            default: 300
         }
     },
     emits: [
@@ -215,6 +236,7 @@ export default defineComponent({
     ],
     setup(props, { emit }) {
         //#region refs
+        const container = ref<HTMLDivElement>(null)
         const input = ref<HTMLInputElement>(null)
         const label = ref<HTMLLabelElement>(null)
         const searchBar = ref<HTMLDivElement>(null)
@@ -231,7 +253,10 @@ export default defineComponent({
             schema,
             omitSuggestions,
             height,
-            width
+            width,
+            forbiddenKeys,
+            inputDebounce,
+            placeholder
         } = toRefs(props)
         //#endregion
 
@@ -248,16 +273,18 @@ export default defineComponent({
         const expanded = ref(true)
         const datePickerSelection = ref(null)
         const showDatePicker = ref(false)
+        const suggestionsDropdown = ref(null)
         //#endregion
 
         //#region hooks
         // todo: these can be stale data. we need to update them on schema change.
         const { hasEllipsis } = useSizeObserver(input)
-        const { suggestions, error, findSuggestions } = useSuggestions(
-            schema,
-            aliases,
-            { strict, omitSuggestions }
-        )
+        const { suggestions, error, findSuggestions, checkErrors } =
+            useSuggestions(schema, aliases, {
+                strict,
+                forbiddenKeys,
+                omitSuggestions
+            })
         //#endregion
 
         //#region methods
@@ -268,6 +295,13 @@ export default defineComponent({
             const { noEmit, testCaret } = options
 
             showSuggestions.value = false
+
+            // to handle typing . or , after accepting a suggestion
+            const dotOrCommaRegEx = /\s+([\.|\,]\s?)$/
+            const dotOrCommaMatch = value.match(dotOrCommaRegEx)
+            if (dotOrCommaMatch) {
+                value = value.replace(dotOrCommaRegEx, dotOrCommaMatch[1])
+            }
 
             // to handle date suggestion modal to open automatically.
             if (value.includes('(dd/mm/yyyy)')) {
@@ -304,6 +338,7 @@ export default defineComponent({
             }
 
             updateEditor(input.value, editorStyle.value)
+            setSelectionOffset(input.value, caretAt.value, caretAt.value)
             setMenuOffset(isEligibleToChange(input.value, expanded.value))
 
             if (!expanded.value) {
@@ -326,6 +361,7 @@ export default defineComponent({
 
             nextTick(() => {
                 findSuggestions(value.substring(0, caretAt.value))
+                checkErrors(value)
             })
 
             if (!noEmit) {
@@ -333,7 +369,8 @@ export default defineComponent({
             }
         }
 
-        const setInputFromSuggestion = (value: string) => {
+        const setInputFromSuggestion = (suggestion: any) => {
+            const value = '' + suggestion
             let stringValue = ''
             let caretPosition = 0
             if (searchQuery.value.length) {
@@ -351,7 +388,12 @@ export default defineComponent({
                     queryRightSide = leftover + queryRightSide
                 } else if (value.startsWith('.')) {
                     // dot notation case
-                    queryLeftSide = queryLeftSide.trimEnd().replace(/\.$/, '')
+                    const words = queryLeftSide.trimEnd().split('.')
+                    const lastWord = words.pop()
+                    if (!value.startsWith('.' + lastWord)) {
+                        words.push(lastWord)
+                    }
+                    queryLeftSide = words.join('.')
                 } else if (queryLeftSide.endsWith(' ')) {
                     // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
@@ -385,7 +427,13 @@ export default defineComponent({
             setSelectionOffset(input.value, caretPosition, caretPosition)
         }
 
-        const debouncedSetInputValue = debounce(setInputValue, 300)
+        const debouncedSetInputValue = computed<any>(() => {
+            if (stateManager?.disableDebounce) {
+                return setInputValue
+            }
+
+            return debounce(setInputValue, inputDebounce.value)
+        })
 
         let lastSearchQuery: string
 
@@ -418,7 +466,13 @@ export default defineComponent({
             setInputValue(inputValue, { noEmit: true })
         }
 
-        const debouncedSetInputFromModel = debounce(setInputFromModel, 300)
+        const debouncedSetInputFromModel = computed<any>(() => {
+            if (stateManager?.disableDebounce) {
+                return setInputFromModel
+            }
+
+            return debounce(setInputFromModel, inputDebounce.value)
+        })
 
         const setMenuOffset = (value: number[]) => {
             menuOffset.value = value
@@ -439,6 +493,15 @@ export default defineComponent({
             input.value.focus()
 
             focused.value = true
+            if (suggestions.value.length) {
+                showSuggestions.value = true
+
+                nextTick(() => {
+                    setMenuOffset(
+                        isEligibleToChange(input.value, expanded.value)
+                    )
+                })
+            }
             emit('focus')
         }
 
@@ -451,12 +514,7 @@ export default defineComponent({
             emit('blur')
         }
 
-        const blur = (
-            e: Event | null = null,
-            options: { force?: boolean } = {}
-        ) => {
-            const { force } = options
-
+        const blur = () => {
             if (showDatePicker.value) {
                 return
             }
@@ -467,7 +525,7 @@ export default defineComponent({
                     return
                 }
 
-                if (!focused.value && !force) {
+                if (!focused.value) {
                     return
                 }
 
@@ -490,6 +548,7 @@ export default defineComponent({
             }
             nextTick(() => {
                 findSuggestions('')
+                checkErrors('')
             })
         }
 
@@ -532,13 +591,36 @@ export default defineComponent({
 
         const onInput = (e: Event) => {
             const text = (e.target as HTMLElement).textContent
-            debouncedSetInputValue(text)
+            if (text.endsWith('.') || text.endsWith(',')) {
+                setInputValue(text)
+            } else {
+                debouncedSetInputValue.value(text)
+            }
         }
 
         const onDateSelection = (value: DateInterval) => {
             datePickerSelection.value = value
-            searchQuery.value = replaceDateInterval(searchQuery.value, value)
-            input.value.innerHTML = searchQuery.value
+        }
+
+        const onDateSelectionCancel = () => {
+            searchQuery.value = removeDateInterval(searchQuery.value)
+            showDatePicker.value = false
+            showSuggestions.value = true
+            datePickerSelection.value = null
+            setInputValue(searchQuery.value + ' ', { noEmit: true })
+            setCaretAtTheEnd(input.value)
+        }
+
+        const onDateSelectionApply = () => {
+            searchQuery.value = replaceDateInterval(
+                searchQuery.value,
+                datePickerSelection.value
+            )
+            showDatePicker.value = false
+            showSuggestions.value = true
+            datePickerSelection.value = null
+            setInputValue(searchQuery.value + ' ', { noEmit: true })
+            setCaretAtTheEnd(input.value)
         }
 
         const readModelValue = (val: { [key: string]: any }) => {
@@ -549,7 +631,9 @@ export default defineComponent({
                     aliased !== searchQuery.value.trim() ||
                     !input.value?.innerHTML.length
                 ) {
-                    debouncedSetInputFromModel(aliased)
+                    nextTick(() => {
+                        debouncedSetInputFromModel.value(aliased)
+                    })
                 }
             }
         }
@@ -569,7 +653,9 @@ export default defineComponent({
             const replacedDate = replaceStringifiedDatesWithJSDates(value)
             const json = parseSmartQuery(replacedDate ?? searchQuery.value)
 
-            return isValidJSON(json) ? json : searchQuery.value
+            return isValidJSON(json)
+                ? revertValueAliases(json, schema.value)
+                : searchQuery.value
         }
 
         const fromJSON = (value: { [key: string]: any }) => {
@@ -579,7 +665,9 @@ export default defineComponent({
                     dateKeys.value
                 )
 
-                const stringQuery = stringifySmartQuery(replacedDate)
+                const stringQuery = stringifySmartQuery(
+                    setValueAliases(replacedDate, schema.value)
+                )
                 const aliased = setAliases(stringQuery, aliases.value)
                 return aliased
             } catch (e) {
@@ -591,8 +679,13 @@ export default defineComponent({
             }
         }
 
-        const onEnterKey = () => {
-            if (showSuggestions.value || showDatePicker.value) {
+        const onEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
+            const { fromSuggestion } = options
+
+            if (
+                (!fromSuggestion && showSuggestions.value) ||
+                showDatePicker.value
+            ) {
                 return
             }
 
@@ -620,15 +713,6 @@ export default defineComponent({
 
         const onEscapeKey = () => {
             if (!focused.value) {
-                return
-            }
-
-            if (showDatePicker.value) {
-                showDatePicker.value = false
-                showSuggestions.value = true
-                datePickerSelection.value = null
-                setInputValue(searchQuery.value + ' ', { noEmit: true })
-                setCaretAtTheEnd(input.value)
                 return
             }
 
@@ -768,10 +852,10 @@ export default defineComponent({
             }
         })
 
-        const inputPlaceholder = computed(() => {
+        const inputPlaceholder = computed<string>(() => {
             return focused.value || searchQuery.value.length
                 ? ''
-                : props.placeholder
+                : placeholder.value
         })
 
         const isValid = computed(() => {
@@ -798,7 +882,11 @@ export default defineComponent({
             })
         })
 
-        watch(focused, (value) => {
+        watch(focused, (value, old) => {
+            if (old === value) {
+                return
+            }
+
             if (!value) {
                 input.value.parentElement.style.width = '1px'
             } else {
@@ -807,7 +895,11 @@ export default defineComponent({
             }
         })
 
-        watch(showDatePicker, (value) => {
+        watch(showDatePicker, (value, old) => {
+            if (old === value) {
+                return
+            }
+
             if (!value) {
                 datePickerSelection.value = null
 
@@ -851,7 +943,6 @@ export default defineComponent({
             }
             window.addEventListener('mousemove', watchMouseMove)
             window.addEventListener('keyup', watchKeyUp)
-            blur(null, { force: true })
         })
         onBeforeUnmount(() => {
             window.removeEventListener('mousemove', watchMouseMove)
@@ -860,6 +951,8 @@ export default defineComponent({
 
         return {
             uuid: v4(),
+            suggestionsDropdown,
+            container,
             input,
             label,
             searchBar,
@@ -892,10 +985,13 @@ export default defineComponent({
             onKeyPress,
             onInput,
             onDateSelection,
+            onDateSelectionCancel,
+            onDateSelectionApply,
             computedStatus,
             setInputFromSuggestion,
             inputPlaceholder,
-            onEscapeKey
+            onEscapeKey,
+            onEnterKey
         }
     }
 })
@@ -1123,6 +1219,14 @@ export default defineComponent({
 
     &__date-picker-wrapper {
         width: 562px;
+    }
+
+    &__date-picker-buttons {
+        padding: 0 16px 16px;
+        text-align: right;
+        > * {
+            margin-left: 16px;
+        }
     }
 }
 .focus {

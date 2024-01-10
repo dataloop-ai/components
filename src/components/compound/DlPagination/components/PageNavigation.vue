@@ -33,7 +33,10 @@
                 :disabled="disabled"
                 @click="setPage(min)"
             >
-                {{ min }}
+                <DlEllipsis
+                    :text="`${min}`"
+                    style="justify-content: center; padding: 0 5px"
+                />
             </button>
             <button
                 v-if="ellipsesStart"
@@ -55,7 +58,10 @@
                     :disabled="disabled"
                     @click="setPage(page)"
                 >
-                    {{ page }}
+                    <DlEllipsis
+                        :text="`${page}`"
+                        style="justify-content: center; padding: 0 5px"
+                    />
                 </button>
             </template>
             <button
@@ -71,9 +77,13 @@
                 class="dl-pagination--page_button"
                 :class="{ 'dl-pagination--active': isActivePage(max) }"
                 :disabled="disabled"
+                :data-tooltip="max"
                 @click="setPage(max)"
             >
-                {{ max }}
+                <DlEllipsis
+                    :text="`${max}`"
+                    style="justify-content: center; padding: 0 5px"
+                />
             </button>
         </div>
         <button
@@ -104,12 +114,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { getColor } from '../../../../utils'
-import { DlIcon } from '../../../essential'
+import { DlIcon, DlEllipsis } from '../../../essential'
 
 export default defineComponent({
     name: 'PageNavigation',
     components: {
-        DlIcon
+        DlIcon,
+        DlEllipsis
     },
     model: {
         prop: 'modelValue',
@@ -173,7 +184,7 @@ export default defineComponent({
             return this.value === this.max
         },
         buttonMinWidth(): string {
-            return `${Math.max(2, String(this.max).length)}em`
+            return `3em`
         },
         cssVars(): Record<string, any> {
             return {
@@ -305,8 +316,6 @@ export default defineComponent({
         line-height: 14px;
         font-weight: 400;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 
     &--active {

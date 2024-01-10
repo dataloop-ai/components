@@ -99,24 +99,86 @@
                 :bordered="bordered"
                 :draggable="draggable"
                 :dense="dense"
+                :pagination="{
+                    rowsPerPage: 10,
+                    page: 2
+                }"
                 class="sticky-header"
                 :filter="filter"
                 :selection="selection"
                 :loading="loading"
                 :rows="tableRows"
                 :resizable="resizable"
+                :rows-per-page-options="[30]"
                 row-key="name"
                 color="dl-color-secondary"
                 title="Table Title"
                 :virtual-scroll="vScroll"
                 style="height: 500px"
-                :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @th-click="log"
                 @update:selected="updateSeleted"
                 @col-update="updateColumns"
                 @row-reorder="reorderRows"
             />
+            <div style="margin-top: 100px">
+                Fit table columns
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="tableColumns"
+                    fit-all-columns
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    :selected-rows-label="(val) => 'Selected rows ' + val"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @col-update="updateColumns"
+                    @row-reorder="reorderRows"
+                />
+
+                ALot of columns and fit
+                <DlTable
+                    :selected="selected"
+                    :separator="separator"
+                    :columns="[...tableColumns, ...tableColumns]"
+                    fit-all-columns
+                    :bordered="bordered"
+                    :draggable="draggable"
+                    :dense="dense"
+                    class="sticky-header"
+                    :filter="filter"
+                    :selection="selection"
+                    :loading="loading"
+                    :rows="tableRows"
+                    :resizable="resizable"
+                    row-key="name"
+                    color="dl-color-secondary"
+                    title="Table Title"
+                    :virtual-scroll="vScroll"
+                    style="height: 500px"
+                    :rows-per-page-options="rowsPerPageOptions"
+                    @row-click="log"
+                    @th-click="log"
+                    @update:selected="updateSeleted"
+                    @col-update="updateColumns"
+                    @row-reorder="reorderRows"
+                />
+            </div>
 
             <div style="margin-top: 100px">
                 Custom Slot row-body
@@ -196,6 +258,33 @@
                         </div>
                     </template>
                 </DlTable>
+            </div>
+
+            <div style="margin-top: 100px">
+                With sticky columns: both
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="both"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+                With sticky columns: first
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="first"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
+                With sticky columns: last
+                <DlTable
+                    :columns="[...tableColumns, ...tableColumns]"
+                    sticky-columns="last"
+                    :rows="tableRows"
+                    row-key="id"
+                    style="height: 300px"
+                />
             </div>
 
             <div style="margin-top: 100px">
@@ -541,6 +630,7 @@
                 :rows="tableRows"
                 row-key="id"
                 style="height: 500px"
+                sticky-columns="last"
                 :rows-per-page-options="rowsPerPageOptions"
                 @row-click="log"
                 @th-click="log"
@@ -606,9 +696,9 @@ import {
 } from '../components'
 import { defineComponent, ref, computed, nextTick } from 'vue-demi'
 import { times, cloneDeep, isNumber } from 'lodash'
-import { DlTablePagination } from '../types'
+import { DlTablePagination, DlVirtualScrollEvent } from '../types'
 
-const columns = [
+export const columns = [
     {
         name: 'name',
         required: true,
@@ -621,11 +711,11 @@ const columns = [
     },
     {
         name: 'calories',
-        align: 'center',
+        align: 'right',
         label: 'Calories',
         field: 'calories',
         sortable: true,
-        width: 100
+        width: '50px'
     },
     {
         name: 'fat',
@@ -708,108 +798,8 @@ const columns2 = [
     }
 ]
 
-const rows = [
-    {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-    },
-    {
-        name: 'Ice cream sandwich',
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-        sodium: 129,
-        calcium: '8%',
-        iron: '1%'
-    },
-    {
-        name: 'Eclair',
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-        sodium: 337,
-        calcium: '6%',
-        iron: '7%'
-    },
-    {
-        name: 'Cupcake',
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-        sodium: 413,
-        calcium: '3%',
-        iron: '8%'
-    },
-    {
-        name: 'Gingerbread',
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-        sodium: 327,
-        calcium: '7%',
-        iron: '16%'
-    },
-    {
-        name: 'Jelly bean',
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-        sodium: 50,
-        calcium: '0%',
-        iron: '0%'
-    },
-    {
-        name: 'Lollipop',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-        sodium: 38,
-        calcium: '0%',
-        iron: '2%'
-    },
-    {
-        name: 'Honeycomb',
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-        sodium: 562,
-        calcium: '0%',
-        iron: '45%'
-    },
-    {
-        name: 'Donut',
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-        sodium: 326,
-        calcium: '2%',
-        iron: '22%'
-    },
-    {
-        name: 'KitKat',
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-        sodium: 54,
-        calcium: '12%',
-        iron: '6%'
-    },
-    ...times(1000, (index) => ({
+const getRows = (count: number) => [
+    ...times(count, (index) => ({
         name: 'KitKat' + index,
         calories: 518,
         fat: 26.0,
@@ -820,6 +810,8 @@ const rows = [
         iron: '6%'
     }))
 ]
+
+const rows = getRows(1000)
 
 const columnsAligned = [
     {
@@ -927,7 +919,7 @@ export default defineComponent({
         const draggable = ref('both')
         const tableColumns = ref(columns)
         const tableColumnsAligned = ref(columnsAligned)
-        const rowsPerPageOptions = ref([5, 10, 12, 14, 16, 100])
+        const rowsPerPageOptions = ref([10, 12, 14, 16, 100])
 
         const infiniteLoading = ref(false)
 
@@ -952,6 +944,10 @@ export default defineComponent({
             allRows.slice(0, pageSize * (nextPageNumber.value - 1))
         )
 
+        const generatedRows = ref<any>(
+            allRows.slice(0, pageSize * nextPageNumber.value)
+        )
+
         const onScroll = ({ to, ref }: { to: number; ref: any }) => {
             const lastIndex = computedRows.value.length - 1
 
@@ -969,6 +965,29 @@ export default defineComponent({
                         infiniteLoading.value = false
                     })
                 }, 500)
+            }
+        }
+
+        const onScrollGenerate = ({ index, to, ref }: DlVirtualScrollEvent) => {
+            const lastIndex = generatedRows.value.length - 1
+
+            const getRandomInt = (min: number, max: number) => {
+                min = Math.ceil(min)
+                max = Math.floor(max)
+                return Math.floor(Math.random() * (max - min + 1)) + min
+            }
+            // todo: here we can see that even if we are loading the event keeps getting called with same payload. maybe we shouldnt send the same event payload over and over
+            if (index >= lastIndex) {
+                infiniteLoading.value = true
+
+                setTimeout(() => {
+                    generatedRows.value = generatedRows.value.concat(
+                        cloneDeep(generatedRows.value)
+                            .slice(-10)
+                            .map((r: any) => ({ ...r }))
+                    )
+                    infiniteLoading.value = false
+                }, getRandomInt(500, 2000))
             }
         }
 
@@ -1044,7 +1063,6 @@ export default defineComponent({
         }
 
         const updateColumns = (newColumns: any) => {
-            console.log(newColumns)
             tableColumns.value = newColumns
         }
 
@@ -1082,7 +1100,9 @@ export default defineComponent({
             isFirstPage,
             rows2,
             columns2,
-            tableColumnsAligned
+            tableColumnsAligned,
+            generatedRows,
+            onScrollGenerate
         }
     },
 
@@ -1120,7 +1140,7 @@ export default defineComponent({
             this.resizable = val.length !== 0
         },
         log(...args: any[]) {
-            // console.log(...args)
+            console.log(...args)
         },
         filterMethod(
             rows: Record<string, any>[],
