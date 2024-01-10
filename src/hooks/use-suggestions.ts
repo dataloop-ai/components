@@ -505,7 +505,10 @@ const isValidByDataType = (
         case 'boolean':
             return isValidBoolean(str)
         case 'string':
-            return isValidString(str)
+            return (
+                isValidString(str) ||
+                (str && isValidString(`'${str.trim?.()}'`))
+            )
         case 'date':
         case 'datetime':
         case 'time':

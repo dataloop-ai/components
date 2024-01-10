@@ -272,7 +272,7 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.computedStatus.type).toMatch('warning')
             })
             it('should change status to error when error state is error', async () => {
-                await wrapper.vm.debouncedSetInputValue(`name = 50`)
+                await wrapper.vm.debouncedSetInputValue(`name = '5'0`)
                 // @ts-ignore
                 await window.delay(500)
                 await wrapper.vm.$nextTick()
