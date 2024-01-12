@@ -91,6 +91,17 @@ export default {
                 type: { summary: 'array' },
                 defaultValue: { summary: defaultTabItems }
             }
+        },
+        hideInactiveBorderBottom: {
+            name: 'hideInactiveBorderBottom',
+            defaultValue: false,
+            description:
+                "Boolean value used to hide the bottom side border of the inactive tab's border",
+            control: 'boolean',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
+            }
         }
     }
 }
