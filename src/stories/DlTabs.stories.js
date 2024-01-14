@@ -92,11 +92,11 @@ export default {
                 defaultValue: { summary: defaultTabItems }
             }
         },
-        hideInactiveBorderBottom: {
-            name: 'hideInactiveBorderBottom',
-            defaultValue: false,
+        bordered: {
+            name: 'bordered',
+            defaultValue: true,
             description:
-                "Boolean value used to hide the bottom side border of the inactive tab's border",
+                "Boolean value used to show the bottom side border of the inactive tab's border",
             control: 'boolean',
             table: {
                 type: { summary: 'boolean' },

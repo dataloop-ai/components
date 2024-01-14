@@ -32,15 +32,12 @@
                     :no-caps="item.noCaps"
                     :is-active="modelValue === item.name"
                     :font-size="fontSize"
-                    :hide-inactive-border-bottom="hideInactiveBorderBottom"
+                    :bordered="bordered"
                     @click="handleTabClick"
                 />
             </div>
         </tabs-wrapper>
-        <div
-            :class="{ 'no-border-bottom': hideInactiveBorderBottom }"
-            class="empty-space"
-        />
+        <div :class="{ 'no-border-bottom': !bordered }" class="empty-space" />
         <slot name="top-right" :styles="topRightSlotStyles" />
     </div>
 </template>
@@ -72,7 +69,7 @@ export default defineComponent({
         modelValue: { type: String, required: true },
         fontSize: { type: String, default: '18px' },
         gap: { type: String, default: '40px' },
-        hideInactiveBorderBottom: { type: Boolean, default: false }
+        bordered: { type: Boolean, default: true }
     },
     emits: ['update:model-value'],
     data() {
@@ -92,7 +89,7 @@ export default defineComponent({
             let borderBottom = this.vertical
                 ? 'inherit'
                 : '1px solid var(--dl-color-separator)'
-            if (this.hideInactiveBorderBottom) {
+            if (!this.bordered) {
                 borderBottom = 'unset'
             }
             return `border-bottom: ${borderBottom};

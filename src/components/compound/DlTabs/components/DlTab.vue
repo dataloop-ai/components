@@ -50,7 +50,7 @@ export default defineComponent({
         tooltip: { type: String, default: null },
         tabindex: { type: String, default: '0' },
         fontSize: { type: String, default: '18px' },
-        hideInactiveBorderBottom: { type: Boolean, default: false }
+        bordered: { type: Boolean, default: true }
     },
     emits: ['click'],
     data() {
@@ -79,7 +79,7 @@ export default defineComponent({
 
             if (this.isActive) {
                 classes = classes + ' dl-tab--active'
-            } else if (this.hideInactiveBorderBottom) {
+            } else if (!this.bordered) {
                 classes = classes + ' dl-tab--no-border-bottom'
             }
 

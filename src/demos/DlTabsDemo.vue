@@ -21,7 +21,7 @@
         <dl-tabs
             v-model="selectedTab"
             :items="tabItems"
-            hide-inactive-border-bottom
+            :bordered="false"
             @update:model-value="handleModelValueUpdate"
         />
         <div style="height: 4px" />
