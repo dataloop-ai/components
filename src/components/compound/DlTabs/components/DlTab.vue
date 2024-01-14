@@ -49,7 +49,8 @@ export default defineComponent({
         showTooltip: { type: Boolean, default: false },
         tooltip: { type: String, default: null },
         tabindex: { type: String, default: '0' },
-        fontSize: { type: String, default: '18px' }
+        fontSize: { type: String, default: '18px' },
+        hideInactiveBorderBottom: { type: Boolean, default: false }
     },
     emits: ['click'],
     data() {
@@ -78,6 +79,8 @@ export default defineComponent({
 
             if (this.isActive) {
                 classes = classes + ' dl-tab--active'
+            } else if (this.hideInactiveBorderBottom) {
+                classes = classes + ' dl-tab--no-border-bottom'
             }
 
             if (this.disabled) {
@@ -145,6 +148,9 @@ export default defineComponent({
     &:hover {
         color: var(--dl-color-hover);
         border-color: var(--dl-color-hover);
+    }
+    &--no-border-bottom {
+        border-bottom: unset;
     }
     cursor: pointer;
     flex-grow: 1;

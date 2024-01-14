@@ -17,6 +17,25 @@
             </dl-tab-panel>
         </dl-tab-panels>
 
+        With no border
+        <dl-tabs
+            v-model="selectedTab"
+            :items="tabItems"
+            hide-inactive-border-bottom
+            @update:model-value="handleModelValueUpdate"
+        />
+        <div style="height: 4px" />
+        <dl-tab-panels v-model="selectedTab">
+            <dl-tab-panel
+                v-for="item in tabItems"
+                :key="item.name"
+                class="tabpanel"
+                :name="item.name"
+            >
+                <h1>{{ item.label }}</h1>
+            </dl-tab-panel>
+        </dl-tab-panels>
+
         <dl-tabs
             v-model="selectedTab"
             :items="tabItems"
@@ -41,11 +60,7 @@
                         icon="icon-dl-refresh"
                         label="Refresh"
                     />
-                    <dl-button
-                        size="s"
-                        icon="icon-dl-pause"
-                        label="Pause"
-                    />
+                    <dl-button size="s" icon="icon-dl-pause" label="Pause" />
                 </div>
             </template>
         </dl-tabs>
@@ -86,11 +101,7 @@
                         icon="icon-dl-refresh"
                         label="Refresh"
                     />
-                    <dl-button
-                        size="s"
-                        icon="icon-dl-pause"
-                        label="Pause"
-                    />
+                    <dl-button size="s" icon="icon-dl-pause" label="Pause" />
                 </div>
             </template>
         </dl-tabs>

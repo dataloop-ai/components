@@ -32,15 +32,16 @@
                     :no-caps="item.noCaps"
                     :is-active="modelValue === item.name"
                     :font-size="fontSize"
+                    :hide-inactive-border-bottom="hideInactiveBorderBottom"
                     @click="handleTabClick"
                 />
             </div>
         </tabs-wrapper>
-        <div class="empty-space" />
-        <slot
-            name="top-right"
-            :styles="topRightSlotStyles"
+        <div
+            :class="{ 'no-border-bottom': hideInactiveBorderBottom }"
+            class="empty-space"
         />
+        <slot name="top-right" :styles="topRightSlotStyles" />
     </div>
 </template>
 
@@ -70,7 +71,8 @@ export default defineComponent({
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
         fontSize: { type: String, default: '18px' },
-        gap: { type: String, default: '40px' }
+        gap: { type: String, default: '40px' },
+        hideInactiveBorderBottom: { type: Boolean, default: false }
     },
     emits: ['update:model-value'],
     data() {
@@ -87,11 +89,13 @@ export default defineComponent({
     },
     computed: {
         topRightSlotStyles(): string {
-            return `border-bottom: ${
-                this.vertical
-                    ? 'inherit'
-                    : '1px solid var(--dl-color-separator)'
-            };
+            let borderBottom = this.vertical
+                ? 'inherit'
+                : '1px solid var(--dl-color-separator)'
+            if (this.hideInactiveBorderBottom) {
+                borderBottom = 'unset'
+            }
+            return `border-bottom: ${borderBottom};
             padding-left: ${this.topRightSlotWidth ? this.gap : '0px'};
             `
         },
@@ -143,7 +147,7 @@ export default defineComponent({
             this.updatePosition()
         },
         unsubscribeListeners() {
-            (this.$refs.dlTabsRef as HTMLElement)?.removeEventListener(
+            ;(this.$refs.dlTabsRef as HTMLElement)?.removeEventListener(
                 'scroll',
                 this.handleScroll
             )
@@ -246,5 +250,8 @@ export default defineComponent({
 }
 .full-width {
     width: 100%;
+}
+.no-border-bottom {
+    border-bottom: unset;
 }
 </style>
