@@ -259,9 +259,9 @@ describe('use-suggestions', () => {
             expect(error.value).toBe('Invalid value for "Level" field')
         })
 
-        it('should be "Invalid value for "Name" field" when the Name value does not have quotes', () => {
+        it('should be possible to type the Name value that does not have quotes', () => {
             findSuggestionsAndCheckErrors('Name = value')
-            expect(error.value).toBe('Invalid value for "Name" field')
+            expect(error.value).toBe(null)
         })
 
         it('should be "Invalid value for "Completed" field" when the is not of the correct type', () => {
@@ -270,11 +270,11 @@ describe('use-suggestions', () => {
         })
 
         describe('When using a IN operator', () => {
-            it('should be "Invalid value for "Name" field" when the values are not strings', () => {
+            it('should be possible to type the "Name" values that do not have quotes', () => {
                 findSuggestionsAndCheckErrors(`Name IN 'a', 5`)
-                expect(error.value).toBe('Invalid value for "Name" field')
+                expect(error.value).toBe(null)
             })
-            it('should be valid field" when the values are not strings', () => {
+            it('should be possible to type the "Name" values that have either single or double quotes', () => {
                 findSuggestionsAndCheckErrors(`Name IN "a", '5'`)
                 expect(error.value).toBe(null)
             })
