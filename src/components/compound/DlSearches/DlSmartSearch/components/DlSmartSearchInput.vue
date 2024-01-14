@@ -142,6 +142,7 @@ import { v4 } from 'uuid'
 import {
     Schema,
     Alias,
+    Data,
     useSuggestions,
     removeBrackets,
     removeLeadingExpression
@@ -437,11 +438,47 @@ export default defineComponent({
 
         let lastSearchQuery: string
 
+        const forceStringsType = (data: string | Data): string | Data => {
+            const convertNode = (node: Data) => {
+                for (const key in node) {
+                    const value = node[key]
+                    if (Array.isArray(value)) {
+                        for (let i = 0; i < value.length; i++) {
+                            value[i] = '' + value[i]
+                        }
+                    } else {
+                        node[key] = '' + value
+                    }
+                }
+            }
+            if (typeof data !== 'string' && schema.value) {
+                for (const key in data) {
+                    const type = schema.value[key]
+                    if (Array.isArray(type)) {
+                        if (type.includes('string')) {
+                            if (typeof data[key] === 'object') {
+                                convertNode(data[key])
+                            } else {
+                                data[key] = '' + data[key]
+                            }
+                        }
+                    } else if (type === 'string') {
+                        if (typeof data[key] === 'object') {
+                            convertNode(data[key])
+                        } else {
+                            data[key] = '' + data[key]
+                        }
+                    }
+                }
+            }
+            return data
+        }
+
         const updateJSONQuery = () => {
             try {
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
-                const json = toJSON(cleanedAliases)
+                const json = forceStringsType(toJSON(cleanedAliases))
                 if (isValid.value && !isEqual(json, modelValue.value)) {
                     emit('update:model-value', json)
                 }
