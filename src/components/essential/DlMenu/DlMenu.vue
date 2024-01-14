@@ -168,6 +168,10 @@ export default defineComponent({
         toggleKey: {
             type: String,
             default: 'Enter'
+        },
+        ignoreEvents: {
+            type: [String, Array] as PropType<string | string[]>,
+            default: null
         }
     },
 
@@ -191,7 +195,7 @@ export default defineComponent({
 
         const innerRef: Ref<HTMLElement | null> = ref(null)
         const showing = ref(false)
-        const { toggleKey, arrowNavItems } = toRefs(props)
+        const { toggleKey, arrowNavItems, ignoreEvents } = toRefs(props)
 
         const { registerTick, removeTick } = useTick()
         const { registerTimeout, removeTimeout } = useTimeout()
@@ -202,7 +206,10 @@ export default defineComponent({
             unconfigureScrollTarget
         } = useScrollTarget(props, configureScrollTarget)
 
-        const { anchorEl, canShow } = useAnchor({ toggleKey: toggleKey.value })
+        const { anchorEl, canShow } = useAnchor({
+            toggleKey: toggleKey.value,
+            ignoreEvents: ignoreEvents.value
+        })
 
         const screen = useWindowSize()
 

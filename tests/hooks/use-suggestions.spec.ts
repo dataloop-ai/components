@@ -121,8 +121,13 @@ describe('use-suggestions', () => {
     })
 
     it('suggestions should have the generic operators', () => {
+        const genericOperators = ['=', '!=', 'IN', 'NOT-IN']
+
         findSuggestions('Level ')
-        expect(suggestions.value).toEqual(['=', '!=', 'IN', 'NOT-IN'])
+        expect(suggestions.value).toEqual(genericOperators)
+
+        findSuggestions('Level =')
+        expect(suggestions.value).toEqual(genericOperators)
     })
 
     it('suggestions should have the correct operators', () => {
@@ -141,13 +146,18 @@ describe('use-suggestions', () => {
 
     describe('when the field has values defined', () => {
         it('suggestions should match the field values', () => {
+            const levelValues = [`'high'`, `'medium'`, `'low'`, 30]
             findSuggestions('Level = ')
-            expect(suggestions.value).toEqual([
-                `'high'`,
-                `'medium'`,
-                `'low'`,
-                30
-            ])
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions('Level IN ')
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN 'high',")
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN 'high', 'low' OR Level IN ")
+            expect(suggestions.value).toEqual(levelValues)
         })
 
         it('suggestions should match the correct field value without the quotes', () => {
@@ -163,6 +173,11 @@ describe('use-suggestions', () => {
         it('suggestions should be empty when none of the field values were matched', () => {
             findSuggestions("Level = 'memo'")
             expect(suggestions.value).toEqual([])
+        })
+
+        it('suggestions should match aliased value that is also filtered', () => {
+            findSuggestions('name = vol')
+            expect(suggestions.value).toEqual([`'Voltaire'`])
         })
     })
 
@@ -211,18 +226,7 @@ describe('use-suggestions', () => {
 
     it('suggestions should have the the aliases when the expression is complete', () => {
         findSuggestions('Age = 10 AND ')
-        expect(suggestions.value).toEqual(
-            [
-                'Name',
-                'Level',
-                'Completed',
-                'metadata',
-                'Age',
-                'Arr',
-                'StartTime',
-                'No-Schema'
-            ].sort(sortString)
-        )
+        expect(suggestions.value).toEqual(allTheFields)
     })
 
     // sort array of strings ignore case
@@ -255,9 +259,9 @@ describe('use-suggestions', () => {
             expect(error.value).toBe('Invalid value for "Level" field')
         })
 
-        it('should be "Invalid value for "Name" field" when the Name value does not have quotes', () => {
+        it('should be possible to type the Name value that does not have quotes', () => {
             findSuggestionsAndCheckErrors('Name = value')
-            expect(error.value).toBe('Invalid value for "Name" field')
+            expect(error.value).toBe(null)
         })
 
         it('should be "Invalid value for "Completed" field" when the is not of the correct type', () => {
@@ -266,11 +270,11 @@ describe('use-suggestions', () => {
         })
 
         describe('When using a IN operator', () => {
-            it('should be "Invalid value for "Name" field" when the values are not strings', () => {
+            it('should be possible to type the "Name" values that do not have quotes', () => {
                 findSuggestionsAndCheckErrors(`Name IN 'a', 5`)
-                expect(error.value).toBe('Invalid value for "Name" field')
+                expect(error.value).toBe(null)
             })
-            it('should be valid field" when the values are not strings', () => {
+            it('should be possible to type the "Name" values that have either single or double quotes', () => {
                 findSuggestionsAndCheckErrors(`Name IN "a", '5'`)
                 expect(error.value).toBe(null)
             })

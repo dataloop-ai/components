@@ -96,8 +96,8 @@ const mergeWords = (words: string[]) => {
 
         if (currentItem === 'IN' || currentItem === 'NOT-IN') {
             merging = true
-            mergeIndex = i + 1
             result.push(currentItem)
+            mergeIndex = result.length
             continue
         } else if (
             Object.values(Logical).includes(currentItem as any) ||
@@ -108,9 +108,10 @@ const mergeWords = (words: string[]) => {
 
         if (merging) {
             if (!result[mergeIndex]) {
-                result[mergeIndex] = ''
+                result[mergeIndex] = currentItem
+            } else if (currentItem) {
+                result[mergeIndex] += ' ' + currentItem
             }
-            result[mergeIndex] += ' ' + currentItem
             continue
         }
 
@@ -283,19 +284,25 @@ export const useSuggestions = (
             }
 
             if (Array.isArray(dataType)) {
-                localSuggestions = dataType
-                    .filter(
-                        (type) =>
-                            !knownDataTypes.includes(type as string) &&
-                            typeof type !== 'object'
-                    )
-                    .map((type) =>
-                        typeof type === 'string' ? `'${type}'` : type
-                    ) as string[]
+                const filteredTypes = dataType.filter(
+                    (type) => !knownDataTypes.includes(type as string)
+                )
+                const mappedTypes: string[] = []
+                for (const type of filteredTypes) {
+                    if (typeof type === 'string') {
+                        mappedTypes.push(`'${type}'`)
+                    } else if (typeof type === 'object') {
+                        mappedTypes.push(
+                            ...Object.keys(type).map((key) => `'${key}'`)
+                        )
+                    } else {
+                        mappedTypes.push(type)
+                    }
+                }
 
                 if (!value) continue
 
-                localSuggestions = getMatches(localSuggestions, value)
+                localSuggestions = getMatches(mappedTypes, value)
             } else if (
                 dataType === 'datetime' ||
                 dataType === 'date' ||
@@ -315,6 +322,10 @@ export const useSuggestions = (
             }
 
             localSuggestions = [Logical.AND, Logical.OR]
+
+            if (operator === operators.$in || operator === operators.$nin) {
+                localSuggestions.unshift(',')
+            }
 
             if (!keyword) continue
 
@@ -494,7 +505,10 @@ const isValidByDataType = (
         case 'boolean':
             return isValidBoolean(str)
         case 'string':
-            return isValidString(str)
+            return (
+                isValidString(str) ||
+                (str && isValidString(`'${str.trim?.()}'`))
+            )
         case 'date':
         case 'datetime':
         case 'time':
@@ -553,10 +567,23 @@ const getOperatorByDataType = (dataType: string) => {
 const getOperators = (op: string[]) => op.map((o) => operators[o])
 
 const mapWordsToExpression = (words: string[]): Expression => {
+    let operator = words[1] ?? null
+    let value = words[2] ?? null
+
+    if (operator === operators.$in || operator === operators.$nin) {
+        if (value && /\,\s?$/.test(value)) {
+            value = ''
+        }
+    }
+
+    if (value === null) {
+        operator = null
+    }
+
     return {
         field: words[0] ?? null,
-        operator: words[1] ?? null,
-        value: words[2] ?? null,
+        operator,
+        value,
         keyword: words[3] ?? null
     }
 }
@@ -637,10 +664,12 @@ const getValueMatch = (
     }
     return null
 }
-const getMatches = (strArr: string[], str: string | number | boolean) =>
-    strArr.filter((val) =>
+const getMatches = (strArr: string[], str: string | number | boolean) => {
+    const filtered = strArr.filter((val) =>
         insensitive(val.toString()).includes(insensitive(str.toString()))
     )
+    return filtered
+}
 
 const isNextCharSpace = (input: string, str: string) => {
     const insensitiveInput = insensitive(input)

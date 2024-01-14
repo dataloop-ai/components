@@ -41,7 +41,7 @@ const horizontalPos = {
 const positions = ['left', 'middle', 'right']
 
 positions.forEach((pos) => {
-    (horizontalPos as { [key: string]: string })[`${pos}#ltr`] = pos
+    ;(horizontalPos as { [key: string]: string })[`${pos}#ltr`] = pos
 })
 
 interface AnchorProps {
@@ -81,7 +81,7 @@ export function parsePosition(pos: string): ParsedPosition {
     }
 }
 
-export function getAnchorProps(el: HTMLElement, offset: number[]) {
+export function getAnchorProps(el: HTMLElement, offset?: number[]) {
     let { top, left, right, bottom, width, height } = el.getBoundingClientRect()
 
     if (offset) {
@@ -101,8 +101,8 @@ export function getAnchorProps(el: HTMLElement, offset: number[]) {
         bottom,
         width,
         height,
-        middle: left + (right - left) / 2 + offset[0] ?? 0,
-        center: top + (bottom - top) / 2 + offset[1] ?? 0
+        middle: left + (right - left) / 2 + offset?.[0] ?? 0,
+        center: top + (bottom - top) / 2 + offset?.[1] ?? 0
     }
 }
 

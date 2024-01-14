@@ -1,6 +1,7 @@
 <template>
     <div
         :id="`DlSmartSearchInput${uuid}`"
+        ref="container"
         :style="cssVars"
         class="dl-smart-search-input"
     >
@@ -58,7 +59,7 @@
             ref="suggestionsDropdown"
             v-model="showSuggestions"
             :parent-id="`${uuid}`"
-            :trigger-percentage="0.5"
+            :trigger-percentage="0.1"
             :disabled="disabled"
             :suggestions="suggestions"
             :offset="menuOffset"
@@ -119,7 +120,7 @@ import {
     setSelectionOffset
 } from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
-import { debounce, isEqual } from 'lodash'
+import { cloneDeep, debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
 import SuggestionsDropdown from './SuggestionsDropdown.vue'
 import { DateInterval } from '../../../DlDateTime/types'
@@ -141,6 +142,7 @@ import { v4 } from 'uuid'
 import {
     Schema,
     Alias,
+    Data,
     useSuggestions,
     removeBrackets,
     removeLeadingExpression
@@ -235,6 +237,7 @@ export default defineComponent({
     ],
     setup(props, { emit }) {
         //#region refs
+        const container = ref<HTMLDivElement>(null)
         const input = ref<HTMLInputElement>(null)
         const label = ref<HTMLLabelElement>(null)
         const searchBar = ref<HTMLDivElement>(null)
@@ -253,7 +256,8 @@ export default defineComponent({
             height,
             width,
             forbiddenKeys,
-            inputDebounce
+            inputDebounce,
+            placeholder
         } = toRefs(props)
         //#endregion
 
@@ -293,9 +297,11 @@ export default defineComponent({
 
             showSuggestions.value = false
 
-            // to handle typing . after accepting a suggestion
-            if (/\s+\.$/.test(value)) {
-                value = value.replace(/\s+\.$/, '.')
+            // to handle typing . or , after accepting a suggestion
+            const dotOrCommaRegEx = /\s+([\.|\,]\s?)$/
+            const dotOrCommaMatch = value.match(dotOrCommaRegEx)
+            if (dotOrCommaMatch) {
+                value = value.replace(dotOrCommaRegEx, dotOrCommaMatch[1])
             }
 
             // to handle date suggestion modal to open automatically.
@@ -432,11 +438,47 @@ export default defineComponent({
 
         let lastSearchQuery: string
 
+        const forceStringsType = (data: string | Data): string | Data => {
+            const convertNode = (node: Data) => {
+                for (const key in node) {
+                    const value = node[key]
+                    if (Array.isArray(value)) {
+                        for (let i = 0; i < value.length; i++) {
+                            value[i] = '' + value[i]
+                        }
+                    } else {
+                        node[key] = '' + value
+                    }
+                }
+            }
+            if (typeof data !== 'string' && schema.value) {
+                for (const key in data) {
+                    const type = schema.value[key]
+                    if (Array.isArray(type)) {
+                        if (type.includes('string')) {
+                            if (typeof data[key] === 'object') {
+                                convertNode(data[key])
+                            } else {
+                                data[key] = '' + data[key]
+                            }
+                        }
+                    } else if (type === 'string') {
+                        if (typeof data[key] === 'object') {
+                            convertNode(data[key])
+                        } else {
+                            data[key] = '' + data[key]
+                        }
+                    }
+                }
+            }
+            return data
+        }
+
         const updateJSONQuery = () => {
             try {
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
-                const json = toJSON(cleanedAliases)
+                const json = forceStringsType(toJSON(cleanedAliases))
                 if (isValid.value && !isEqual(json, modelValue.value)) {
                     emit('update:model-value', json)
                 }
@@ -490,27 +532,26 @@ export default defineComponent({
             focused.value = true
             if (suggestions.value.length) {
                 showSuggestions.value = true
+
+                nextTick(() => {
+                    setMenuOffset(
+                        isEligibleToChange(input.value, expanded.value)
+                    )
+                })
             }
             emit('focus')
         }
 
-        const processBlur = (force: boolean = false) => {
+        const processBlur = () => {
             input.value.scrollLeft = 0
             input.value.scrollTop = 0
             focused.value = false
             expanded.value = true
-            if (!force) {
-                updateJSONQuery()
-                emit('blur')
-            }
+            updateJSONQuery()
+            emit('blur')
         }
 
-        const blur = (
-            e: Event | null = null,
-            options: { force?: boolean } = {}
-        ) => {
-            const { force } = options
-
+        const blur = () => {
             if (showDatePicker.value) {
                 return
             }
@@ -521,11 +562,11 @@ export default defineComponent({
                     return
                 }
 
-                if (!focused.value && !force) {
+                if (!focused.value) {
                     return
                 }
 
-                processBlur(force)
+                processBlur()
             } else {
                 focus()
                 cancelBlur.value = cancelBlur.value - 1
@@ -587,7 +628,7 @@ export default defineComponent({
 
         const onInput = (e: Event) => {
             const text = (e.target as HTMLElement).textContent
-            if (text.endsWith('.')) {
+            if (text.endsWith('.') || text.endsWith(',')) {
                 setInputValue(text)
             } else {
                 debouncedSetInputValue.value(text)
@@ -848,10 +889,10 @@ export default defineComponent({
             }
         })
 
-        const inputPlaceholder = computed(() => {
+        const inputPlaceholder = computed<string>(() => {
             return focused.value || searchQuery.value.length
                 ? ''
-                : props.placeholder
+                : placeholder.value
         })
 
         const isValid = computed(() => {
@@ -878,7 +919,11 @@ export default defineComponent({
             })
         })
 
-        watch(focused, (value) => {
+        watch(focused, (value, old) => {
+            if (old === value) {
+                return
+            }
+
             if (!value) {
                 input.value.parentElement.style.width = '1px'
             } else {
@@ -887,7 +932,11 @@ export default defineComponent({
             }
         })
 
-        watch(showDatePicker, (value) => {
+        watch(showDatePicker, (value, old) => {
+            if (old === value) {
+                return
+            }
+
             if (!value) {
                 datePickerSelection.value = null
 
@@ -931,7 +980,6 @@ export default defineComponent({
             }
             window.addEventListener('mousemove', watchMouseMove)
             window.addEventListener('keyup', watchKeyUp)
-            blur(null, { force: true })
         })
         onBeforeUnmount(() => {
             window.removeEventListener('mousemove', watchMouseMove)
@@ -941,6 +989,7 @@ export default defineComponent({
         return {
             uuid: v4(),
             suggestionsDropdown,
+            container,
             input,
             label,
             searchBar,
