@@ -717,7 +717,7 @@ export default defineComponent({
         const onChange = (e: KeyboardEvent | Event) => {
             isInternalChange.value = true
             isMenuOpen.value = true
-            updateSyntax()
+
             const target = e.target as HTMLElement
             let toEmit: string | number = target.innerText.replace(
                 new RegExp('&nbsp;', 'g'),
@@ -735,27 +735,25 @@ export default defineComponent({
                     input.value.innerHTML = trimmed
                         .toString()
                         .replace(/ /g, '&nbsp;')
-                    updateSyntax()
                     setCaretAtTheEnd(input.value)
-                    return
-                }
-                /**
-                 * if the number ends with a dot followed by multiple zeros
-                 * then we should not replace the inputs value with the parsed number
-                 */
-                if (
+                } else if (
+                    /**
+                     * if the number ends with a dot followed by multiple zeros
+                     * then we should not replace the inputs value with the parsed number
+                     */
                     !toEmit.endsWith('.') &&
                     !new RegExp(/\.\d*0+$/, 'g').test(toEmit)
                 ) {
                     input.value.innerHTML = String(Number(toEmit))
                         .toString()
                         .replace(/ /g, '&nbsp;')
-                    updateSyntax()
                     setCaretAtTheEnd(input.value)
                 }
 
                 toEmit = Number(toEmit)
             }
+
+            updateSyntax()
 
             emit('input', toEmit, e)
             emit('update:model-value', toEmit)
@@ -802,6 +800,9 @@ export default defineComponent({
                 const words = text.split(' ').map((word) => {
                     if (isSpecialWord(word)) {
                         return `<span class="clickable" style="color: ${syntaxHighlightColor.value}">${word}</span>`
+                    }
+                    if (word.startsWith('<')) {
+                        return `<span>${word.replace('<', '&lt;')}</span>`
                     }
                     return word
                 })
