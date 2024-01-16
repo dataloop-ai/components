@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="!svg"
+        v-if="!isSVG"
         :id="uuid"
         :style="[inlineStyles, computedStyles]"
         @click="$emit('click', $event)"
@@ -39,6 +39,7 @@ import { isString } from 'lodash'
 import { v4 } from 'uuid'
 import { defineComponent } from 'vue-demi'
 import { getColor, loggerFactory, stringStyleToRecord } from '../../../utils'
+import { COLORED_ICONS } from '@dataloop-ai/icons/types'
 
 export default defineComponent({
     name: 'DlIcon',
@@ -110,10 +111,27 @@ export default defineComponent({
                 !this.icon.startsWith('fas') &&
                 !this.icon.startsWith('fa-')
             )
+        },
+        cleanedIconName(): string {
+            return this.icon.startsWith('icon-dl-')
+                ? this.icon.replace('icon-dl-', '')
+                : this.icon
+        },
+        isSVG(): boolean {
+            if (!this.icon) {
+                return false
+            }
+
+            if (this.svg) {
+                return true
+            }
+
+            const coloredIcons = Object.values(COLORED_ICONS)
+            return coloredIcons.includes(this.cleanedIconName as any)
         }
     },
     mounted() {
-        const possibleToLoadSvg = this.svg && this.icon && this.icon !== ''
+        const possibleToLoadSvg = this.isSVG && this.icon && this.icon !== ''
         if (possibleToLoadSvg) {
             this.loadSvg()
         }
@@ -143,8 +161,8 @@ export default defineComponent({
 
                 try {
                     svgElement.src = this.svgSource
-                        ? `${this.svgSource}/${this.icon}.svg`
-                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${this.icon}.svg`
+                        ? `${this.svgSource}/${this.cleanedIconName}.svg`
+                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${this.cleanedIconName}.svg`
                 } catch (e) {
                     reject(e)
                 }
