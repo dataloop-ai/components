@@ -823,7 +823,10 @@ export default defineComponent({
         })
 
         const showPlaceholder = computed<boolean>(
-            () => !modelValue.value || !String(modelValue.value)?.length
+            () =>
+                modelValue.value === null ||
+                modelValue.value === undefined ||
+                !String(modelValue.value)?.length
         )
 
         const spanText = computed<string>(() => {
