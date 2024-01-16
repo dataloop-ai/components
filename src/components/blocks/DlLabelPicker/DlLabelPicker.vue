@@ -29,6 +29,7 @@
             :rows="rows"
             row-key="identifier"
             color="dl-color-secondary"
+            :empty-state-props="emptyStateProps"
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -46,7 +47,7 @@
 import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
-import { DlTableColumn, DlTableRow } from '../../types'
+import { DlEmptyStateProps, DlTableColumn, DlTableRow } from '../../types'
 import { DlLabelPickerItem } from './types'
 
 export default defineComponent({
@@ -61,6 +62,15 @@ export default defineComponent({
         items: {
             type: Array as PropType<DlLabelPickerItem[]>,
             default: () => [] as PropType<DlLabelPickerItem[]>
+        },
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () =>
+                ({
+                    title: '',
+                    subtitle: 'No data to show yet.',
+                    icon: 'icon-dl-dataset-filled'
+                } as unknown as PropType<DlEmptyStateProps>)
         }
     },
     emits: ['selected-label', 'click'],
