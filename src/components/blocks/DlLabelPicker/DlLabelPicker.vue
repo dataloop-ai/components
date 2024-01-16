@@ -120,11 +120,24 @@ export default defineComponent({
             return { 'border-left': `2px solid ${selectedColor.value}` }
         })
 
+        const mapObjects = (item: DlLabelPickerItem, callback: any) => {
+            const mappedItem = callback(item)
+            if (item.children && item.children.length > 0) {
+                mappedItem.children = item.children.map(
+                    (child: DlLabelPickerItem) => mapObjects(child, callback)
+                )
+            }
+            return mappedItem
+        }
         const rows = computed<DlTableRow[]>(() => {
-            return items.value?.map((i: DlLabelPickerItem) => ({
-                ...i,
-                name: i.displayLabel
-            }))
+            return items.value?.map((item) =>
+                mapObjects(item, (obj: DlLabelPickerItem) => {
+                    return {
+                        ...obj,
+                        name: obj.displayLabel
+                    }
+                })
+            )
         })
 
         return {
