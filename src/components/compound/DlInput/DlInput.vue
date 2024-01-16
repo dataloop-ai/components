@@ -801,8 +801,8 @@ export default defineComponent({
                     if (isSpecialWord(word)) {
                         return `<span class="clickable" style="color: ${syntaxHighlightColor.value}">${word}</span>`
                     }
-                    if (word.startsWith('<')) {
-                        return `<span>${word.replace('<', '&lt;')}</span>`
+                    if (word.includes('<')) {
+                        return `<span>${word.replace(/</g, '&lt;')}</span>`
                     }
                     return word
                 })
