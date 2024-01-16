@@ -13,7 +13,7 @@
             max-width="250px"
             max-height="40vh"
             :ignore-events="['click']"
-            style="overflow: hidden"
+            menu-class="DlSmartSearchSuggestionsMenu"
             @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
@@ -188,4 +188,8 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss">
+.DlSmartSearchSuggestionsMenu {
+    overflow: hidden !important;
+}
+</style>
