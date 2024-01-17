@@ -1,2 +1,2 @@
-import DlMarkdown from './DlMarkDown.vue'
+import DlMarkdown from './DlMarkdown.vue'
 export { DlMarkdown }
