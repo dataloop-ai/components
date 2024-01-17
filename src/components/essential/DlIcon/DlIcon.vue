@@ -1,6 +1,6 @@
 <template>
     <div
-        v-if="!svg"
+        v-if="!isSVG"
         :id="uuid"
         :style="[inlineStyles, computedStyles]"
         @click="$emit('click', $event)"
@@ -37,8 +37,16 @@
 <script lang="ts">
 import { isString } from 'lodash'
 import { v4 } from 'uuid'
-import { defineComponent } from 'vue-demi'
+import {
+    computed,
+    defineComponent,
+    onUnmounted,
+    ref,
+    toRefs,
+    watch
+} from 'vue-demi'
 import { getColor, loggerFactory, stringStyleToRecord } from '../../../utils'
+import { COLORED_ICONS } from '@dataloop-ai/icons/types'
 
 export default defineComponent({
     name: 'DlIcon',
@@ -73,82 +81,129 @@ export default defineComponent({
         }
     },
     emits: ['click', 'mousemove', 'mouseup', 'mousedown'],
-    data() {
-        return {
-            uuid: `dl-icon-${v4()}`,
-            externalIconSource: 'material-icons',
-            logger_: loggerFactory('dl-icon')
-        }
-    },
-    computed: {
-        computedStyles(): Record<string, string> {
-            return isString(this.styles)
-                ? stringStyleToRecord(this.styles)
-                : this.styles
-        },
-        cssIconVars(): Record<string, string> {
+    setup(props) {
+        const { styles, color, size, icon, svg, inline, svgSource } =
+            toRefs(props)
+
+        const svgIcon = ref(null)
+        const isDestroyed = ref(false)
+        const uuid = `dl-icon-${v4()}`
+        const externalIconSource = 'material-icons'
+        const logger = loggerFactory('dl-icon')
+
+        const computedStyles = computed<Record<string, string>>(() => {
+            const generatedStyles = isString(styles.value)
+                ? stringStyleToRecord(styles.value)
+                : styles.value
+
+            return Object.assign({}, generatedStyles, {
+                width: size.value,
+                height: size.value
+            })
+        })
+
+        const cssIconVars = computed<Record<string, string>>(() => {
             return {
-                '--dl-icon-font-size': `${this.size}`,
-                '--dl-icon-color': this.color
+                '--dl-icon-font-size': `${size.value}`,
+                '--dl-icon-color': color.value
                     ? // todo: remove this. this is needed for now until the swap of DLBTN in OA
                       getColor(
-                          this.color === 'secondary'
+                          color.value === 'secondary'
                               ? 'q-color-secondary'
-                              : this.color,
+                              : color.value,
                           'dl-color-icon-default'
                       )
                     : 'inherit'
             }
-        },
-        inlineStyles(): Record<string, string> {
-            return { display: this.inline ? 'inline-flex' : 'flex' }
-        },
-        // needed to allow external source of icons that do not use class based
-        externalIcon(): boolean {
+        })
+
+        const cleanedIconName = computed<string>(() => {
+            return icon.value.startsWith('icon-dl-')
+                ? icon.value.replace('icon-dl-', '')
+                : icon.value
+        })
+
+        const isSVG = computed<boolean>(() => {
+            if (!icon.value) {
+                return false
+            }
+
+            if (svg.value) {
+                return true
+            }
+
+            const coloredIcons = Object.values(COLORED_ICONS)
+            return coloredIcons.includes(cleanedIconName.value as any)
+        })
+
+        const externalIcon = computed<boolean>(() => {
             return (
-                !this.icon.startsWith('icon-dl-') &&
-                !this.icon.startsWith('fas') &&
-                !this.icon.startsWith('fa-')
+                !icon.value.startsWith('icon-dl-') &&
+                !icon.value.startsWith('fas') &&
+                !icon.value.startsWith('fa-')
             )
-        }
-    },
-    mounted() {
-        const possibleToLoadSvg = this.svg && this.icon && this.icon !== ''
-        if (possibleToLoadSvg) {
-            this.loadSvg()
-        }
-    },
-    methods: {
-        loadSvg() {
+        })
+
+        const inlineStyles = computed<Record<string, string>>(() => {
+            return { display: inline.value ? 'inline-flex' : 'flex' }
+        })
+
+        watch(icon, () => {
+            const possibleToLoadSvg =
+                isSVG.value && icon.value && icon.value !== ''
+            if (possibleToLoadSvg) {
+                loadSvg()
+            }
+        })
+
+        const loadSvg = () => {
             return new Promise<void>((resolve, reject) => {
                 const svgElement = new Image()
-                svgElement.setAttribute('height', this.size)
-                svgElement.setAttribute('width', this.size)
+                svgElement.setAttribute('height', size.value)
+                svgElement.setAttribute('width', size.value)
 
                 svgElement.onload = () => {
-                    // @ts-ignore // In order to handle events and loading that occur mid unmounting.
-                    if (this._isDestroyed || this._isBeingDestroyed) {
+                    // In order to handle events and loading that occur mid unmounting.
+                    if (isDestroyed.value) {
                         return
                     }
-                    const container = this.$refs.svgIcon as HTMLDivElement
+                    const container = svgIcon.value as HTMLDivElement
                     if (!container) {
                         reject(new Error('No Ref'))
                         return
                     }
-                    container.setAttribute('height', this.size)
-                    container.setAttribute('width', this.size)
+                    container.setAttribute('height', size.value)
+                    container.setAttribute('width', size.value)
                     container?.firstChild?.replaceWith(svgElement)
                     resolve()
                 }
 
                 try {
-                    svgElement.src = this.svgSource
-                        ? `${this.svgSource}/${this.icon}.svg`
-                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${this.icon}.svg`
+                    svgElement.src = svgSource.value
+                        ? `${svgSource.value}/${cleanedIconName.value}.svg`
+                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${cleanedIconName.value}.svg`
                 } catch (e) {
                     reject(e)
                 }
             })
+        }
+
+        onUnmounted(() => {
+            isDestroyed.value = true
+        })
+
+        return {
+            uuid,
+            svgIcon,
+            externalIconSource,
+            computedStyles,
+            cssIconVars,
+            isSVG,
+            cleanedIconName,
+            loadSvg,
+            isDestroyed,
+            externalIcon,
+            inlineStyles
         }
     }
 })

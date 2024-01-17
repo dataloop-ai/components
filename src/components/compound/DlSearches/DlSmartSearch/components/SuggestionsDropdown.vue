@@ -11,7 +11,9 @@
             :auto-close="false"
             :toggle-key="null"
             max-width="250px"
+            max-height="40vh"
             :ignore-events="['click']"
+            menu-class="DlSmartSearchSuggestionsMenu"
             @update:model-value="emitModelValue($event)"
             @show="onShow"
             @hide="onHide"
@@ -19,16 +21,24 @@
             @selected-item="handleSelectedItem"
             @escapekey="onEscapeKey"
         >
-            <dl-list>
-                <dl-list-item
-                    v-for="(item, suggestionIndex) in suggestions"
-                    :key="item"
-                    :clickable="true"
-                    :highlighted="suggestionIndex === highlightedIndex"
-                    @click="handleOption(item)"
+            <dl-list
+                style="height: 100%; max-height: inherit; overflow-y: hidden"
+            >
+                <DlInfiniteScroll
+                    :items="computedSuggestions"
+                    :page-size="30"
+                    style="height: 100%; max-height: inherit"
                 >
-                    <dl-ellipsis :text="removeQuotes(item)" />
-                </dl-list-item>
+                    <template #default="{ item, index }">
+                        <dl-list-item
+                            :clickable="true"
+                            :highlighted="index === highlightedIndex"
+                            @click="handleOption(item.value)"
+                        >
+                            <dl-ellipsis :text="removeQuotes(item.value)" />
+                        </dl-list-item>
+                    </template>
+                </DlInfiniteScroll>
             </dl-list>
         </dl-menu>
     </div>
@@ -44,13 +54,15 @@ import {
 } from 'vue-demi'
 import { DlMenu, DlList, DlEllipsis } from '../../../../essential'
 import { DlListItem } from '../../../../basic'
+import { DlInfiniteScroll } from '../../../../shared'
 
 export default defineComponent({
     components: {
         DlMenu,
         DlList,
         DlListItem,
-        DlEllipsis
+        DlEllipsis,
+        DlInfiniteScroll
     },
     model: {
         prop: 'modelValue',
@@ -148,8 +160,19 @@ export default defineComponent({
             highlightedIndex.value = -1
         })
 
+        const computedSuggestions = computed(() => {
+            return (
+                suggestions.value?.map((val: string) => ({
+                    id: val,
+                    value: val,
+                    key: val
+                })) ?? []
+            )
+        })
+
         return {
             menu,
+            computedSuggestions,
             defaultTarget,
             setHighlightedIndex,
             handleSelectedItem,
@@ -165,4 +188,8 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss">
+.DlSmartSearchSuggestionsMenu {
+    overflow: hidden !important;
+}
+</style>

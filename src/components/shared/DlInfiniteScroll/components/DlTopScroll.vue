@@ -1,8 +1,5 @@
 <template>
-    <div
-        ref="topRow"
-        class="infinite-scroll-top"
-    />
+    <div ref="topRow" class="infinite-scroll-top" />
 </template>
 
 <script lang="ts">
@@ -55,4 +52,3 @@ export default defineComponent({
     height: 3px;
 }
 </style>
-createIntersectionObservercreateIntersectionObserver./utils/create-observer./utils/createIntersectionObserver
