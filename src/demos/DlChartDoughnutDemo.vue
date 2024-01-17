@@ -5,16 +5,19 @@
                 <DlDoughnutChart
                     :data="doughnutLessData"
                     :animation="doughnutAnimation"
-                />
+                >
+                    <template #default="{ item }">
+                        <span style="color: tomato; font-size: large">
+                            {{ item }} 🍅
+                        </span>
+                    </template>
+                </DlDoughnutChart>
             </div>
             <div>
                 <DlDoughnutChart :data="doughnutData" />
             </div>
             <div>
-                <DlDoughnutChart
-                    :data="doughnutData"
-                    :has-summary="true"
-                />
+                <DlDoughnutChart :data="doughnutData" :has-summary="true" />
             </div>
             <div class="grid grid-cols-3">
                 <div>
@@ -40,10 +43,7 @@
             </div>
             <div class="grid grid-cols-2">
                 <div>
-                    <DlDoughnutChart
-                        :data="doughnutData"
-                        :is-small="true"
-                    />
+                    <DlDoughnutChart :data="doughnutData" :is-small="true" />
                 </div>
                 <div>
                     <DlDoughnutChart
