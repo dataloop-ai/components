@@ -9,7 +9,7 @@ const getColor = (color: string, fallback?: string) => {
         return color
     }
 
-    if (!color) return `var(--${fallback || 'dl-color-darker'})`
+    if (!color) return `var(--${fallback || 'dl-color-white'})`
     if (color.includes('var(--')) return color
 
     return `var(--${color}, var(--${fallback || 'dl-color-darker'}))`
