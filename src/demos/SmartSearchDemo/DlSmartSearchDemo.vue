@@ -115,7 +115,7 @@ export default defineComponent({
                 'string',
             id: ['string', 'number'],
             filename: 'string',
-            name: 'string',
+            name: ['string', { Voltaire: 'Arouet' }],
             url: 'string',
             dataset: 'string',
             datasetId: 'string',
