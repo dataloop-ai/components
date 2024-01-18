@@ -302,9 +302,12 @@ export function setValueAliases(json: Data, schema: Data) {
 
                     if (isArrayOperator) {
                         for (let i = 0; i < opVal.length; ++i) {
-                            const value = aliases[opVal[i] as string]
-                            if (value) {
-                                val[Object.keys(val)[0]][i] = value
+                            const value = opVal[i]
+                            for (const alias in aliases) {
+                                if (value === aliases[alias]) {
+                                    val[Object.keys(val)[0]][i] = alias
+                                    break
+                                }
                             }
                         }
                     } else {

@@ -126,6 +126,7 @@ export default defineComponent({
             annotated: 'boolean',
             hidden: 'boolean',
             metadata: {
+                name: ['string', { Voltaire: 'Arouet' }],
                 system: {
                     width: 'number',
                     height: 'number',
