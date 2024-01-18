@@ -199,10 +199,12 @@ export function setAliases(str: string, aliases: Alias[]) {
 function valueAliases(schema: Data, field: string) {
     let aliases: Data = {}
     const type: any = get(schema, field)
+
     if (Array.isArray(type)) {
         for (const element of type) {
-            if (typeof element === 'object')
+            if (typeof element === 'object') {
                 aliases = Object.assign(aliases, element)
+            }
         }
     } else {
         if (typeof type === 'object') aliases = Object.assign(aliases, type)
@@ -212,10 +214,46 @@ function valueAliases(schema: Data, field: string) {
 
 export function revertValueAliases(json: Data, schema: Data) {
     const clone = cloneDeep(json)
+    const operatorKeys = [
+        '$in',
+        '$nin',
+        '$eq',
+        '$neq',
+        '$gt',
+        '$gte',
+        '$lt',
+        '$lte'
+    ]
+
     const replaceAliases = (where: Data) => {
         for (const key in where) {
             if (typeof where[key] === 'object') {
-                replaceAliases(where[key])
+                const val = where[key]
+                const isOperator = operatorKeys.includes(Object.keys(val)[0])
+                const isArrayOperator = ['$in', '$nin'].includes(
+                    Object.keys(val)[0]
+                )
+
+                if (isOperator) {
+                    const opVal = val[Object.keys(val)[0]]
+                    const aliases = valueAliases(schema, key)
+
+                    if (isArrayOperator) {
+                        for (let i = 0; i < opVal.length; ++i) {
+                            const value = aliases[opVal[i] as string]
+                            if (value) {
+                                val[Object.keys(val)[0]][i] = value
+                            }
+                        }
+                    } else {
+                        const value = aliases[opVal]
+                        if (value) {
+                            val[Object.keys(val)[0]] = value
+                        }
+                    }
+                } else {
+                    replaceAliases(where[key])
+                }
             } else {
                 const aliases = valueAliases(schema, key)
                 const value = aliases[where[key] as string]
@@ -232,14 +270,52 @@ export function revertValueAliases(json: Data, schema: Data) {
 
 export function setValueAliases(json: Data, schema: Data) {
     const clone = cloneDeep(json)
+    const operatorKeys = [
+        '$in',
+        '$nin',
+        '$eq',
+        '$neq',
+        '$gt',
+        '$gte',
+        '$lt',
+        '$lte'
+    ]
+
     const replaceValues = (where: Data) => {
         for (const key in where) {
-            if (typeof where[key] === 'object') {
-                replaceValues(where[key])
+            const val = where[key]
+
+            if (typeof val === 'object') {
+                const val = where[key]
+                const isOperator = operatorKeys.includes(Object.keys(val)[0])
+                const isArrayOperator = ['$in', '$nin'].includes(
+                    Object.keys(val)[0]
+                )
+
+                if (isOperator) {
+                    const opVal = val[Object.keys(val)[0]]
+                    const aliases = valueAliases(schema, key)
+
+                    if (isArrayOperator) {
+                        for (let i = 0; i < opVal.length; ++i) {
+                            const value = aliases[opVal[i] as string]
+                            if (value) {
+                                val[Object.keys(val)[0]][i] = value
+                            }
+                        }
+                    } else {
+                        const value = aliases[opVal]
+                        if (value) {
+                            val[Object.keys(val)[0]] = value
+                        }
+                    }
+                } else {
+                    replaceValues(where[key])
+                }
             } else {
                 const aliases = valueAliases(schema, key)
                 for (const alias in aliases) {
-                    if (where[key] === aliases[alias]) {
+                    if (val === aliases[alias]) {
                         where[key] = alias
                         break
                     }
