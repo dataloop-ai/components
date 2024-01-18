@@ -96,10 +96,14 @@ export default defineComponent({
                 ? stringStyleToRecord(styles.value)
                 : styles.value
 
-            return Object.assign({}, generatedStyles, {
-                width: size.value,
-                height: size.value
-            })
+            if (isSVG.value) {
+                return Object.assign({}, generatedStyles, {
+                    width: size.value,
+                    height: size.value
+                })
+            }
+
+            return generatedStyles
         })
 
         const cssIconVars = computed<Record<string, string>>(() => {
