@@ -31,7 +31,8 @@ const schema = {
         date: 'date',
         start: 'datetime',
         classTime: 'time',
-        '*': 'any'
+        '*': 'any',
+        name: ['string', { Voltaire: 'Arouet' }]
     }
 }
 
@@ -621,6 +622,46 @@ describe('DlSmartSearchInput', () => {
                 [{ name: { $in: ['Arouet'] } }]
             ])
             expect(wrapper.vm.searchQuery).toEqual("name IN 'Voltaire'")
+        })
+    })
+
+    describe('Search Query With aliased values and IN operator and nested key', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            const testString = `metadata.name IN 'Voltaire'`
+            wrapper.vm.focused = true
+            wrapper.vm.debouncedSetInputValue(testString)
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.emitted().input).toBeDefined()
+            expect(
+                wrapper.emitted().input.filter((o) => o[0] === testString)
+            ).toBeDefined()
+            wrapper.vm.showSuggestions = false
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            wrapper.vm.blur()
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.emitted()['update:model-value']).toEqual([
+                [{ 'metadata.name': { $in: ['Arouet'] } }]
+            ])
+            expect(wrapper.vm.searchQuery).toEqual(
+                "metadata.name IN 'Voltaire'"
+            )
         })
     })
 
