@@ -30,6 +30,8 @@
             row-key="identifier"
             color="dl-color-secondary"
             :empty-state-props="emptyStateProps"
+            hide-bottom
+            hide-no-data
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -90,7 +92,7 @@ export default defineComponent({
         ]
 
         const inputValue = ref('')
-        const currentSelectedLabel = ref<DlLabelPickerItem>(null)
+        const currentSelectedLabel = ref<DlLabelPickerItem>(props.items[0])
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
             currentSelectedLabel.value = item
