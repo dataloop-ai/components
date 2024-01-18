@@ -251,6 +251,10 @@ export function revertValueAliases(json: Data, schema: Data) {
                             val[Object.keys(val)[0]] = value
                         }
                     }
+                } else if (Array.isArray(val)) {
+                    for (const element of val) {
+                        replaceAliases(element)
+                    }
                 } else {
                     replaceAliases(where[key])
                 }
@@ -308,6 +312,11 @@ export function setValueAliases(json: Data, schema: Data) {
                         if (value) {
                             val[Object.keys(val)[0]] = value
                         }
+                    }
+                }
+                if (Array.isArray(val)) {
+                    for (const element of val) {
+                        replaceValues(element)
                     }
                 } else {
                     replaceValues(where[key])
