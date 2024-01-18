@@ -1,20 +1,8 @@
 <template>
-    <div
-        ref="dlDoughnutChartWidgetRef"
-        class="dl_doughnut"
-    >
-        <dl-empty-state
-            v-if="isEmpty"
-            v-bind="emptyStateProps"
-        >
-            <template
-                v-for="(_, slot) in $slots"
-                #[slot]="props"
-            >
-                <slot
-                    :name="slot"
-                    v-bind="props"
-                />
+    <div ref="dlDoughnutChartWidgetRef" class="dl_doughnut">
+        <dl-empty-state v-if="isEmpty" v-bind="emptyStateProps">
+            <template v-for="(_, slot) in $slots" #[slot]="props">
+                <slot :name="slot" v-bind="props" />
             </template>
         </dl-empty-state>
         <div
@@ -44,9 +32,7 @@
                         ref="dlDoughnutChartSummaryRef"
                         class="dl_doughnut__wrapper__container__chart__summary text-center"
                     >
-                        <div :class="classSummaryLabel">
-                            Total items
-                        </div>
+                        <div :class="classSummaryLabel">Total items</div>
                         <div :class="classSummaryCount">
                             {{ itemsCount }}
                         </div>
@@ -61,14 +47,16 @@
                             @hide="hideData"
                             @mouseOverLegend="darkHighlight"
                             @mouseLeaveLegend="resetColors"
-                        />
+                        >
+                            <template #default="{ item }">
+                                <slot :item="item" />
+                            </template>
+                        </dl-doughnut-chart-legend>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-else-if="!itemsCount && !isEmpty">
-            No data
-        </div>
+        <div v-else-if="!itemsCount && !isEmpty">No data</div>
     </div>
 </template>
 

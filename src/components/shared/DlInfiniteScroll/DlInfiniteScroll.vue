@@ -10,8 +10,8 @@
             @scroll-to-top="onScrollToTop"
         />
         <slot name="content" :items="displayItems">
-            <div v-for="item in displayItems" :key="itemKey(item)">
-                <slot :item="item" />
+            <div v-for="(item, index) in displayItems" :key="itemKey(item)">
+                <slot :item="item" :index="index" />
             </div>
         </slot>
         <DlBottomScroll
@@ -66,10 +66,10 @@ export default defineComponent({
         const lastOp = ref<string>('')
 
         const computedStyles = computed<any>(() => {
-            return attrs.style
+            return attrs.style as any
         })
         const computedClasses = computed<any>(() => {
-            return attrs.class
+            return attrs.class as any
         })
 
         const displayItems = computed(() => {

@@ -56,13 +56,7 @@
             <div
                 class="dl-button-dropdown--separator"
                 :style="`
-                    background-color: ${
-                    disabled
-                        ? 'var(--dl-color-disabled)'
-                        : outlined && !textColor
-                            ? 'var(--dl-color-secondary)'
-                            : computedTextColor || 'var(--dl-color-white)'
-                }`"
+                    background-color: ${separatorColor}`"
             />
             <dl-icon
                 class="expand-icon"
@@ -422,6 +416,22 @@ export default defineComponent({
             return 'dl-color-white'
         })
 
+        const separatorColor = computed<string>(() => {
+            if (props.disabled) {
+                return 'var(--dl-color-disabled)'
+            }
+
+            if (props.textColor) {
+                return computedTextColor.value ?? 'var(--dl-color-white)'
+            }
+
+            if (props.outlined) {
+                return 'var(--dl-color-secondary)'
+            }
+
+            return 'var(--dl-color-white)'
+        })
+
         const computedTextColor = computed(() => getColor(textColor.value))
 
         return {
@@ -447,7 +457,8 @@ export default defineComponent({
             handleSelectedItem,
             cssVars,
             getIconColor,
-            computedTextColor
+            computedTextColor,
+            separatorColor
         }
     }
 })
