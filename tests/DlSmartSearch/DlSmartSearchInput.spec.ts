@@ -586,6 +586,44 @@ describe('DlSmartSearchInput', () => {
         })
     })
 
+    describe('Search Query With aliased values and IN operator', () => {
+        let wrapper: any
+
+        beforeAll(async () => {
+            wrapper = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases
+                }
+            })
+        })
+
+        it('will have value alias in a query', async () => {
+            const testString = `name IN 'Voltaire'`
+            wrapper.vm.focused = true
+            wrapper.vm.debouncedSetInputValue(testString)
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.emitted().input).toBeDefined()
+            expect(
+                wrapper.emitted().input.filter((o) => o[0] === testString)
+            ).toBeDefined()
+            wrapper.vm.showSuggestions = false
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            wrapper.vm.blur()
+            // @ts-ignore
+            await window.delay(500)
+            await wrapper.vm.$nextTick()
+            expect(wrapper.emitted()['update:model-value']).toEqual([
+                [{ name: { $in: ['Arouet'] } }]
+            ])
+            expect(wrapper.vm.searchQuery).toEqual("name IN 'Voltaire'")
+        })
+    })
+
     describe('On complex JSON', () => {
         const complex = {
             filter: {
