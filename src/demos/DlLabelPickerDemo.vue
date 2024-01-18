@@ -7,6 +7,8 @@
                 title: '',
                 icon: ''
             }"
+            hide-bottom
+            hide-no-data
             @selected-label="setSelectedEvent"
         />
         <div>last selected: {{ lastSelected }}</div>

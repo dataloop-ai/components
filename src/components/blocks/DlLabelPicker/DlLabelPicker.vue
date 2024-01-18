@@ -30,8 +30,8 @@
             row-key="identifier"
             color="dl-color-secondary"
             :empty-state-props="emptyStateProps"
-            hide-bottom
-            hide-no-data
+            :hide-bottom="hideBottom"
+            :hide-no-data="hideNoData"
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -65,6 +65,9 @@ export default defineComponent({
             type: Array as PropType<DlLabelPickerItem[]>,
             default: () => [] as PropType<DlLabelPickerItem[]>
         },
+        /**
+         * Props for the empty state component
+         */
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
             default: () =>
@@ -73,6 +76,20 @@ export default defineComponent({
                     subtitle: 'No data to show yet.',
                     icon: 'icon-dl-dataset-filled'
                 } as unknown as PropType<DlEmptyStateProps>)
+        },
+        /**
+         * Don't show the footer
+         */
+        hideBottom: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Don't show the "No data" message
+         */
+        hideNoData: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['selected-label', 'click'],
