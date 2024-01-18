@@ -109,7 +109,9 @@ export default defineComponent({
         ]
 
         const inputValue = ref('')
-        const currentSelectedLabel = ref<DlLabelPickerItem>(props.items[0])
+        const currentSelectedLabel = ref<DlLabelPickerItem>(
+            props?.items?.[0] || null
+        )
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
             currentSelectedLabel.value = item
@@ -139,21 +141,28 @@ export default defineComponent({
             return { 'border-left': `2px solid ${selectedColor.value}` }
         })
 
-        const mapObjects = (item: DlLabelPickerItem, callback: any) => {
-            const mappedItem = callback(item)
+        const mapObjects = (
+            item: DlLabelPickerItem,
+            callback: (obj: DlLabelPickerItem) => DlLabelPickerItem
+        ) => {
+            const mappedItem: DlLabelPickerItem = callback(item)
+
             if (item.children && item.children.length > 0) {
-                mappedItem.children = item.children.map(
-                    (child: DlLabelPickerItem) => mapObjects(child, callback)
+                mappedItem.children = item.children.map((child) =>
+                    mapObjects(child, callback)
                 )
             }
             return mappedItem
         }
+
         const mapItems = ref<DlTableRow[]>(
             items.value?.map((item) =>
-                mapObjects(item, (obj: DlLabelPickerItem) => ({
-                    ...obj,
-                    name: obj.displayLabel
-                }))
+                mapObjects(item, (obj: DlLabelPickerItem) => {
+                    return {
+                        ...obj,
+                        name: obj.displayLabel
+                    }
+                })
             )
         )
         const rows = computed(() => mapItems.value)
