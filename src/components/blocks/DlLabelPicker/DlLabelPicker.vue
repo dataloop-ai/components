@@ -131,17 +131,15 @@ export default defineComponent({
             }
             return mappedItem
         }
-        const rows = computed<DlTableRow[]>(() => {
-            return items.value?.map((item) =>
-                mapObjects(item, (obj: DlLabelPickerItem) => {
-                    return {
-                        ...obj,
-                        name: obj.displayLabel
-                    }
-                })
+        const mapItems = ref<DlTableRow[]>(
+            items.value?.map((item) =>
+                mapObjects(item, (obj: DlLabelPickerItem) => ({
+                    ...obj,
+                    name: obj.displayLabel
+                }))
             )
-        })
-
+        )
+        const rows = computed(() => mapItems.value)
         return {
             handleRowClick,
             inputValue,
