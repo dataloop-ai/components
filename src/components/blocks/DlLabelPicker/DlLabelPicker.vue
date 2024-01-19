@@ -73,19 +73,19 @@ export default defineComponent({
             default: () =>
                 ({
                     title: '',
-                    subtitle: 'No data to show yet.',
-                    icon: 'icon-dl-dataset-filled'
+                    subtitle: 'No labels to show yet.',
+                    icon: ''
                 } as unknown as PropType<DlEmptyStateProps>)
         },
         /**
-         * Don't show the footer
+         * Hides the bottom footer of the DlLabelPicker
          */
         hideBottom: {
             type: Boolean,
             default: false
         },
         /**
-         * Don't show the "No data" message
+         * Hides the "No data" of the DlLabelPicker
          */
         hideNoData: {
             type: Boolean,
@@ -110,7 +110,7 @@ export default defineComponent({
 
         const inputValue = ref('')
         const currentSelectedLabel = ref<DlLabelPickerItem>(
-            props?.items?.[0] || null
+            items.value ? items.value[0] : null
         )
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
