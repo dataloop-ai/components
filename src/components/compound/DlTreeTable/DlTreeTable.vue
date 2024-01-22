@@ -844,6 +844,8 @@ export default defineComponent({
             'onUpdate:selected': this.updateSelected,
             onColUpdate: this.updateColumns,
             class: this.containerClass,
+            hideBottom: this.hideBottom,
+            hideNoData: this.hideNoData,
             on: {
                 'row-click': this.emitRowClick,
                 'row-dblclick': this.emitRowDblclick,
