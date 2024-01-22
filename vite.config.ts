@@ -23,7 +23,7 @@ export default defineConfig({
         ]
     },
     optimizeDeps: {
-        include: ['highlight.js'],
+        include: ['lodash', 'flat', 'highlight.js', 'sortablejs', 'marked'],
         exclude: ['vue-demi']
     },
     define: {

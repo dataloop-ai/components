@@ -16,7 +16,7 @@
         >
             <div
                 :for="individualProps[index].id"
-                style="display: inline-flex; margin-right: 5px"
+                style="display: inline-flex; gap: 6px"
             >
                 <span>{{ option.label }}</span>
                 <span

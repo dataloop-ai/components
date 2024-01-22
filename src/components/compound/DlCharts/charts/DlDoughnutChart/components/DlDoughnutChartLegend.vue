@@ -1,12 +1,6 @@
 <template>
-    <div
-        ref="dlDoughnutChartLegendMainRef"
-        :class="legendMainClass"
-    >
-        <div
-            v-if="itemsCount"
-            class="wrapper__legend"
-        >
+    <div ref="dlDoughnutChartLegendMainRef" :class="legendMainClass">
+        <div v-if="itemsCount" class="wrapper__legend">
             <div
                 v-for="(item, index) in data.datasets[0].data"
                 :key="index"
@@ -33,7 +27,9 @@
                     class="wrapper__legend__item__counter truncate"
                     :style="{ color: getColor(index, text) }"
                 >
-                    {{ data.datasets[0].data[index] }}
+                    <slot :item="item">
+                        {{ item }}
+                    </slot>
                 </div>
             </div>
         </div>
