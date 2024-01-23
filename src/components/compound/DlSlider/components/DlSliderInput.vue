@@ -9,7 +9,9 @@
         :disabled="disabled"
         @input="handleChange"
         @change="handleChange"
-    >
+        @focus="handleFocus"
+        @blur="handleBlur"
+    />
 </template>
 
 <script lang="ts">
@@ -46,7 +48,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['update:model-value', 'change'],
+    emits: ['update:model-value', 'change', 'focus', 'blur'],
     setup(props, { emit }) {
         const modelRef = toRef(props, 'modelValue')
         const sliderInput = ref<HTMLInputElement>(null)
@@ -73,6 +75,14 @@ export default defineComponent({
             sliderInput,
             modelRef,
             handleChange: debouncedHandleChange
+        }
+    },
+    methods: {
+        handleFocus(evt: Event) {
+            this.$emit('focus', evt)
+        },
+        handleBlur(evt: Event) {
+            this.$emit('blur', evt)
         }
     },
     template: 'dl-slider-input'
