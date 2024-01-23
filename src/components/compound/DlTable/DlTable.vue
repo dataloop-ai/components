@@ -516,7 +516,6 @@
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
                                 no-tooltip
-                                style="width: 25px"
                                 :padding="isTreeTable ? '0' : '0 10px'"
                             >
                                 <slot
