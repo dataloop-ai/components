@@ -40,6 +40,7 @@ import { v4 } from 'uuid'
 import {
     computed,
     defineComponent,
+    onMounted,
     onUnmounted,
     ref,
     toRefs,
@@ -152,14 +153,6 @@ export default defineComponent({
             return { display: inline.value ? 'inline-flex' : 'flex' }
         })
 
-        watch(icon, () => {
-            const possibleToLoadSvg =
-                isSVG.value && icon.value && icon.value !== ''
-            if (possibleToLoadSvg) {
-                loadSvg()
-            }
-        })
-
         const loadSvg = () => {
             return new Promise<void>((resolve, reject) => {
                 const svgElement = new Image()
@@ -191,6 +184,18 @@ export default defineComponent({
                 }
             })
         }
+
+        watch(
+            icon,
+            () => {
+                const possibleToLoadSvg =
+                    isSVG.value && icon.value && icon.value !== ''
+                if (possibleToLoadSvg) {
+                    loadSvg()
+                }
+            },
+            { immediate: true }
+        )
 
         onUnmounted(() => {
             isDestroyed.value = true

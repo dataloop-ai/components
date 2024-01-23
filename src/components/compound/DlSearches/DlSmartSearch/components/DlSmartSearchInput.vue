@@ -148,7 +148,7 @@ import {
     removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
-import { stateManager } from '../../../../../StateManager'
+import { StateManager, stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -617,7 +617,7 @@ export default defineComponent({
                 e.preventDefault()
                 e.stopPropagation()
 
-                onEnterKey()
+                onEnterKey.value()
                 return
             }
 
@@ -716,7 +716,7 @@ export default defineComponent({
             }
         }
 
-        const onEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
+        const handleEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
             const { fromSuggestion } = options
 
             if (
@@ -747,6 +747,13 @@ export default defineComponent({
                 }
             }
         }
+
+        const onEnterKey = computed(() => {
+            if (StateManager.instance.disableDebounce) {
+                return handleEnterKey
+            }
+            return debounce(handleEnterKey, inputDebounce.value ?? 100)
+        })
 
         const onEscapeKey = () => {
             if (!focused.value) {
