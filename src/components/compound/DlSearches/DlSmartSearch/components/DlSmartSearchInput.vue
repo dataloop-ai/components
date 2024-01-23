@@ -142,12 +142,13 @@ import { v4 } from 'uuid'
 import {
     Schema,
     Alias,
+    Data,
     useSuggestions,
     removeBrackets,
     removeLeadingExpression
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
-import { stateManager } from '../../../../../StateManager'
+import { StateManager, stateManager } from '../../../../../StateManager'
 
 export default defineComponent({
     components: {
@@ -437,11 +438,47 @@ export default defineComponent({
 
         let lastSearchQuery: string
 
+        const forceStringsType = (data: string | Data): string | Data => {
+            const convertNode = (node: Data) => {
+                for (const key in node) {
+                    const value = node[key]
+                    if (Array.isArray(value)) {
+                        for (let i = 0; i < value.length; i++) {
+                            value[i] = '' + value[i]
+                        }
+                    } else {
+                        node[key] = '' + value
+                    }
+                }
+            }
+            if (typeof data !== 'string' && schema.value) {
+                for (const key in data) {
+                    const type = schema.value[key]
+                    if (Array.isArray(type)) {
+                        if (type.includes('string')) {
+                            if (typeof data[key] === 'object') {
+                                convertNode(data[key])
+                            } else {
+                                data[key] = '' + data[key]
+                            }
+                        }
+                    } else if (type === 'string') {
+                        if (typeof data[key] === 'object') {
+                            convertNode(data[key])
+                        } else {
+                            data[key] = '' + data[key]
+                        }
+                    }
+                }
+            }
+            return data
+        }
+
         const updateJSONQuery = () => {
             try {
                 const bracketless = removeBrackets(searchQuery.value)
                 const cleanedAliases = revertAliases(bracketless, aliases.value)
-                const json = toJSON(cleanedAliases)
+                const json = forceStringsType(toJSON(cleanedAliases))
                 if (isValid.value && !isEqual(json, modelValue.value)) {
                     emit('update:model-value', json)
                 }
@@ -580,7 +617,7 @@ export default defineComponent({
                 e.preventDefault()
                 e.stopPropagation()
 
-                onEnterKey()
+                onEnterKey.value()
                 return
             }
 
@@ -679,7 +716,7 @@ export default defineComponent({
             }
         }
 
-        const onEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
+        const handleEnterKey = (options: { fromSuggestion?: boolean } = {}) => {
             const { fromSuggestion } = options
 
             if (
@@ -710,6 +747,13 @@ export default defineComponent({
                 }
             }
         }
+
+        const onEnterKey = computed(() => {
+            if (StateManager.instance.disableDebounce) {
+                return handleEnterKey
+            }
+            return debounce(handleEnterKey, inputDebounce.value ?? 100)
+        })
 
         const onEscapeKey = () => {
             if (!focused.value) {

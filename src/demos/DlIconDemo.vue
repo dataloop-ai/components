@@ -1,23 +1,15 @@
 <template>
     <div>
         <DlIcon icon="icon-dl-usage" />
-        <DlIcon
-            color="dl-color-secondary"
-            icon="icon-dl-arrow-up"
-        />
-        <DlIcon
-            size="50px"
-            color="red"
-            icon="icon-dl-search"
-        />
+        <DlIcon color="dl-color-secondary" icon="icon-dl-arrow-up" />
+        <DlIcon size="50px" color="red" icon="icon-dl-search" />
         SVG ICON:
 
-        <DlIcon
-            size="50px"
-            color="red"
-            icon="mastercard"
-            svg
-        />
+        <DlIcon size="50px" color="red" icon="mastercard" svg />
+
+        COLORED WITHOUT SVG:
+
+        <DlIcon size="50px" color="red" icon="mastercard" />
 
         Clickable:
 
@@ -33,10 +25,7 @@
             style="margin-top: 10px"
             title="Custom Label"
         />
-        <DlIcon
-            size="50px"
-            :icon="inputValue"
-        />
+        <DlIcon size="50px" :icon="inputValue" />
     </div>
 </template>
 

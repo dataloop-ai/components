@@ -29,6 +29,9 @@
             :rows="rows"
             row-key="identifier"
             color="dl-color-secondary"
+            :empty-state-props="emptyStateProps"
+            :hide-bottom="hideBottom"
+            :hide-no-data="hideNoData"
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -46,7 +49,7 @@
 import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
-import { DlTableColumn, DlTableRow } from '../../types'
+import { DlEmptyStateProps, DlTableColumn, DlTableRow } from '../../types'
 import { DlLabelPickerItem } from './types'
 
 export default defineComponent({
@@ -61,6 +64,32 @@ export default defineComponent({
         items: {
             type: Array as PropType<DlLabelPickerItem[]>,
             default: () => [] as PropType<DlLabelPickerItem[]>
+        },
+        /**
+         * Props for the empty state component
+         */
+        emptyStateProps: {
+            type: Object as PropType<DlEmptyStateProps>,
+            default: () =>
+                ({
+                    title: '',
+                    subtitle: 'No labels to show yet.',
+                    icon: ''
+                } as unknown as PropType<DlEmptyStateProps>)
+        },
+        /**
+         * Hides the bottom footer of the DlLabelPicker
+         */
+        hideBottom: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Hides the "No data" of the DlLabelPicker
+         */
+        hideNoData: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['selected-label', 'click'],
@@ -80,7 +109,9 @@ export default defineComponent({
         ]
 
         const inputValue = ref('')
-        const currentSelectedLabel = ref<DlLabelPickerItem>(null)
+        const currentSelectedLabel = ref<DlLabelPickerItem>(
+            items.value ? items.value[0] : null
+        )
 
         const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
             currentSelectedLabel.value = item
@@ -110,13 +141,31 @@ export default defineComponent({
             return { 'border-left': `2px solid ${selectedColor.value}` }
         })
 
-        const rows = computed<DlTableRow[]>(() => {
-            return items.value?.map((i: DlLabelPickerItem) => ({
-                ...i,
-                name: i.displayLabel
-            }))
-        })
+        const mapObjects = (
+            item: DlLabelPickerItem,
+            callback: (obj: DlLabelPickerItem) => DlLabelPickerItem
+        ) => {
+            const mappedItem: DlLabelPickerItem = callback(item)
 
+            if (item.children && item.children.length > 0) {
+                mappedItem.children = item.children.map((child) =>
+                    mapObjects(child, callback)
+                )
+            }
+            return mappedItem
+        }
+
+        const mapItems = ref<DlTableRow[]>(
+            items.value?.map((item) =>
+                mapObjects(item, (obj: DlLabelPickerItem) => {
+                    return {
+                        ...obj,
+                        name: obj.displayLabel
+                    }
+                })
+            )
+        )
+        const rows = computed(() => mapItems.value)
         return {
             handleRowClick,
             inputValue,

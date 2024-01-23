@@ -68,6 +68,7 @@ import DlLayoutDemo from './DlLayoutDemo.vue'
 import { DlCodeEditorDemo } from './DlCodeEditor'
 import DlLabelPickerDemo from './DlLabelPickerDemo.vue'
 import DlInfiniteScrollDemo from './DlInfiniteScrollDemo.vue'
+import DlMarkdownDemo from './DlMarkdownDemo.vue'
 
 export default {
     AvatarDemo,
@@ -136,5 +137,6 @@ export default {
     DlCodeEditorDemo,
     DlLayoutDemo,
     DlLabelPickerDemo,
-    DlInfiniteScrollDemo
+    DlInfiniteScrollDemo,
+    DlMarkdownDemo
 }

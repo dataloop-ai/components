@@ -103,6 +103,10 @@ export default defineComponent({
         DlInput
     },
     data() {
+        const numbersArr: string[] = []
+        for (let i = 0; i < 1000; i++) {
+            numbersArr.push('' + i)
+        }
         const schema: any = {
             'very very very very very very long key': 'string',
             'very very very very very very long key  very very very very very very long key very very very very very very long key very very very very very very long key very very very very very very long key':
@@ -111,7 +115,7 @@ export default defineComponent({
                 'string',
             id: ['string', 'number'],
             filename: 'string',
-            name: 'string',
+            name: ['string', { Voltaire: 'Arouet' }],
             url: 'string',
             dataset: 'string',
             datasetId: 'string',
@@ -122,6 +126,7 @@ export default defineComponent({
             annotated: 'boolean',
             hidden: 'boolean',
             metadata: {
+                name: ['string', { Voltaire: 'Arouet' }],
                 system: {
                     width: 'number',
                     height: 'number',
@@ -132,7 +137,7 @@ export default defineComponent({
             },
             type: ['dir', 'file'],
             test0: ['why wont', 'this work', 123],
-            test1: ['5', '6', 'number'],
+            test1: [...numbersArr, 'number'],
             test2: ['true', 'false']
         }
         const schema2: any = {
