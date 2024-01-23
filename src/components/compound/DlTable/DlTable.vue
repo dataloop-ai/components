@@ -58,20 +58,20 @@
                         <DlTr>
                             <th
                                 v-if="hasDraggableRows"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
 
                             <th
                                 v-else-if="multipleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
                                 @mousedown="stopAndPrevent"
                             >
@@ -93,12 +93,12 @@
                             <th
                                 v-if="expandableRows"
                                 style="width: 26px"
-                                class="dl-table--col-auto-with dl-table--col-icon-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-icon-wrapper"
                             />
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px; padding: 5px"
                             />
@@ -291,7 +291,7 @@
                                 </td>
                                 <td
                                     v-if="hasSelectionMode"
-                                    class="dl-table--col-auto-with"
+                                    class="dl-table--col-auto-width"
                                 >
                                     <slot
                                         name="body-selection"
@@ -435,20 +435,20 @@
                         <DlTr>
                             <th
                                 v-if="hasDraggableRows"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
 
                             <th
                                 v-else-if="multipleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
                                 @mousedown="stopAndPrevent"
                             >
@@ -470,12 +470,12 @@
                             <th
                                 v-if="expandableRows"
                                 style="width: 26px"
-                                class="dl-table--col-auto-with dl-table--col-icon-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-icon-wrapper"
                             />
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px; padding: 5px"
                             />
@@ -689,7 +689,7 @@
                                     </td>
                                     <td
                                         v-if="hasSelectionMode"
-                                        class="dl-table--col-auto-with"
+                                        class="dl-table--col-auto-width"
                                     >
                                         <slot
                                             name="body-selection"
