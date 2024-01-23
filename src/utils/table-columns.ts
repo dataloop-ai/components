@@ -140,6 +140,8 @@ export function setAllColumnWidths(
     stickyColumns: TableStickyPosition,
     fitAllColumns: boolean
 ) {
+    const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
+    if (!hasWidth) return
     columns.forEach((col, i) => {
         browseNestedNodes(
             table,

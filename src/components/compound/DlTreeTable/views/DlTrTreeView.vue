@@ -14,11 +14,7 @@
             v-if="hasDraggableRows"
             :style="`width: 25px; opacity: ${isDragIconVisible ? '1' : '0'}`"
         >
-            <dl-icon
-                class="draggable-icon"
-                icon="icon-dl-drag"
-                size="12px"
-            />
+            <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
         </td>
         <td class="chevron-icon">
             <DlIcon
@@ -27,14 +23,8 @@
                 @click.stop.prevent="emitUpdateExpandedRow"
             />
         </td>
-        <td
-            v-if="hasSelectionMode"
-            class="dl-table--col-auto-with"
-        >
-            <slot
-                name="body-selection"
-                v-bind="bindBodySelection"
-            >
+        <td v-if="hasSelectionMode" class="dl-table--col-auto-width">
+            <slot name="body-selection" v-bind="bindBodySelection">
                 <DlCheckbox
                     style="padding-left: 10px"
                     :color="color"
