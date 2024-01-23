@@ -118,7 +118,8 @@ export function justifyMouseInsideTargetCell(
 
 function getIconWidth(el: HTMLElement) {
     const iconEl = el.querySelector('.th-icons')
-    return iconEl?.scrollWidth
+    const sortEl = el.querySelector('.th-sort-icon')
+    return (iconEl?.scrollWidth ?? 0) + (sortEl?.scrollWidth ?? 0)
 }
 
 function addStickyPosition(
