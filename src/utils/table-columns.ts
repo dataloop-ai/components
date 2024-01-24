@@ -118,7 +118,8 @@ export function justifyMouseInsideTargetCell(
 
 function getIconWidth(el: HTMLElement) {
     const iconEl = el.querySelector('.th-icons')
-    return iconEl?.scrollWidth
+    const sortEl = el.querySelector('.th-sort-icon')
+    return (iconEl?.scrollWidth ?? 0) + (sortEl?.scrollWidth ?? 0)
 }
 
 function addStickyPosition(
@@ -142,7 +143,6 @@ export function setAllColumnWidths(
 ) {
     const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
     if (!hasWidth) return
-    table.style.tableLayout = 'fixed'
     columns.forEach((col, i) => {
         browseNestedNodes(
             table,
@@ -157,7 +157,6 @@ export function setAllColumnWidths(
                             targetEl.querySelector('.inner-th').scrollWidth) +
                         getIconWidth(targetEl) +
                         35
-
                     // Set the width of the column
                     targetEl.style.width =
                         typeof col.width === 'number' || !col.width
