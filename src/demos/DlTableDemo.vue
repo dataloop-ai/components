@@ -143,7 +143,6 @@
                     :virtual-scroll="vScroll"
                     style="height: 500px"
                     :rows-per-page-options="rowsPerPageOptions"
-                    :selected-rows-label="(val) => 'Selected rows ' + val"
                     @row-click="log"
                     @th-click="log"
                     @update:selected="updateSeleted"
@@ -261,10 +260,11 @@
             </div>
 
             <div style="margin-top: 100px">
-                With sticky columns: both
+                With sticky columns: both AND virtual scroll
                 <DlTable
                     :columns="[...tableColumns, ...tableColumns]"
                     sticky-columns="both"
+                    :virtual-scroll="true"
                     :rows="tableRows"
                     row-key="id"
                     style="height: 300px"
@@ -556,13 +556,8 @@
                     :visible-columns="
                         tableColumns.slice(0, -1).map((c) => c.name)
                     "
-                    loading
                     :resizable="true"
-                >
-                    <template #body-cell-row-actions>
-                        <dl-button label="ActionButton" />
-                    </template>
-                </DlTable>
+                />
             </div>
             <div>
                 <p>Virtual With editable columns</p>
@@ -715,7 +710,7 @@ export const columns = [
         label: 'Calories',
         field: 'calories',
         sortable: true,
-        width: '50px'
+        width: '10%'
     },
     {
         name: 'fat',
@@ -950,21 +945,19 @@ export default defineComponent({
 
         const onScroll = ({ to, ref }: { to: number; ref: any }) => {
             const lastIndex = computedRows.value.length - 1
-
             if (
                 infiniteLoading.value !== true &&
                 nextPageNumber.value < lastPageNumber &&
                 to === lastIndex
             ) {
                 infiniteLoading.value = true
-
                 setTimeout(() => {
                     nextPageNumber.value++
                     nextTick(() => {
                         ref.refresh()
                         infiniteLoading.value = false
                     })
-                }, 500)
+                }, 1500)
             }
         }
 
