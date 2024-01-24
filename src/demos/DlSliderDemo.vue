@@ -11,11 +11,11 @@
             :readonly="readonly"
             :disabled="disabled"
             @change="handleChange"
+            @input-focus="handleFocus"
+            @input-blur="handleBlur"
         />
         <div>
-            <button @click="slim = !slim">
-                slim: {{ slim }}
-            </button>
+            <button @click="slim = !slim">slim: {{ slim }}</button>
             <button @click="readonly = !readonly">
                 Readonly: {{ readonly }}
             </button>
@@ -24,7 +24,7 @@
             </button>
         </div>
         <div>
-            Events: <br>
+            Events: <br />
             {{ events }}
         </div>
     </div>
@@ -58,6 +58,12 @@ export default defineComponent({
         handleChange(value: number) {
             console.log(`@@@ handling change ${value}`)
             this.events[1] = `@@@ handling change ${value}`
+        },
+        handleFocus(event: Event) {
+            this.events[1] = `@@@ Input Focus `
+        },
+        handleBlur(event: Event) {
+            this.events[1] = `@@@ Input Blur `
         }
     },
     template: 'dl-slider-demo'
