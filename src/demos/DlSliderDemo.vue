@@ -60,11 +60,9 @@ export default defineComponent({
             this.events[1] = `@@@ handling change ${value}`
         },
         handleFocus(event: Event) {
-            console.log(`@@@ handling focus ${event}`)
             this.events[1] = `@@@ Input Focus `
         },
         handleBlur(event: Event) {
-            console.log(`@@@ handling blur ${event}`)
             this.events[1] = `@@@ Input Blur `
         }
     },

@@ -78,11 +78,11 @@ export default defineComponent({
         }
     },
     methods: {
-        handleFocus(evt: Event) {
-            this.$emit('focus', evt)
+        handleFocus(e: Event) {
+            this.$emit('focus', e)
         },
-        handleBlur(evt: Event) {
-            this.$emit('blur', evt)
+        handleBlur(e: Event) {
+            this.$emit('blur', e)
         }
     },
     template: 'dl-slider-input'

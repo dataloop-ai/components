@@ -250,11 +250,11 @@ export default defineComponent({
         }
     },
     methods: {
-        handleFocus(evt: Event) {
-            this.$emit('input-focus', evt)
+        handleFocus(e: Event) {
+            this.$emit('input-focus', e)
         },
-        handleBlur(evt: Event) {
-            this.$emit('input-blur', evt)
+        handleBlur(e: Event) {
+            this.$emit('input-blur', e)
         }
     }
 })
