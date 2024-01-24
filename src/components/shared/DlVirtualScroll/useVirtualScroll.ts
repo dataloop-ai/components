@@ -846,6 +846,7 @@ export function useVirtualScroll({
             ['--dl-virtual-scroll-item-' + paddingSize]:
                 virtualScrollItemSizeComputed.value + 'px'
         }
+        const onUpdate = new Event('virtual-scroll-content-update')
 
         return [
             tag === 'tbody'
@@ -890,7 +891,10 @@ export function useVirtualScroll({
                     ref: styles ? 'grid' : contentRef,
                     tabindex: -1
                 },
-                content.flat()
+                (() => {
+                    window.dispatchEvent(onUpdate)
+                    return content.flat()
+                })()
             ),
 
             tag === 'tbody'

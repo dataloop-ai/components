@@ -58,20 +58,20 @@
                         <DlTr>
                             <th
                                 v-if="hasDraggableRows"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
 
                             <th
                                 v-else-if="multipleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
                                 @mousedown="stopAndPrevent"
                             >
@@ -93,12 +93,12 @@
                             <th
                                 v-if="expandableRows"
                                 style="width: 26px"
-                                class="dl-table--col-auto-with dl-table--col-icon-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-icon-wrapper"
                             />
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px; padding: 5px"
                             />
@@ -127,16 +127,16 @@
                                             }
                                         "
                                     >
-                                        <dl-ellipsis>
+                                        <dl-ellipsis v-if="fitAllColumns">
                                             {{ col.label }}
                                         </dl-ellipsis>
+                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
-                                :col-index="-1"
                                 no-tooltip
                                 padding="0"
                             >
@@ -291,7 +291,7 @@
                                 </td>
                                 <td
                                     v-if="hasSelectionMode"
-                                    class="dl-table--col-auto-with"
+                                    class="dl-table--col-auto-width"
                                 >
                                     <slot
                                         name="body-selection"
@@ -362,7 +362,6 @@
                                     v-if="showRowActions"
                                     key="visibleColumnsSlot"
                                     class="visible-columns-justify-end"
-                                    :col-index="-1"
                                     no-tooltip
                                 >
                                     <slot
@@ -436,20 +435,20 @@
                         <DlTr>
                             <th
                                 v-if="hasDraggableRows"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
                                 @mousedown="stopAndPrevent"
                             />
                             <th
                                 v-if="singleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
                             />
 
                             <th
                                 v-else-if="multipleSelection"
-                                class="dl-table--col-auto-with dl-table--col-checkbox-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 :data-resizable="false"
                                 @mousedown="stopAndPrevent"
                             >
@@ -471,12 +470,12 @@
                             <th
                                 v-if="expandableRows"
                                 style="width: 26px"
-                                class="dl-table--col-auto-with dl-table--col-icon-wrapper"
+                                class="dl-table--col-auto-width dl-table--col-icon-wrapper"
                             />
 
                             <th
                                 v-if="isTreeTable"
-                                class="dl-table--col-auto-with empty-col"
+                                class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px; padding: 5px"
                             />
@@ -506,16 +505,16 @@
                                             }
                                         "
                                     >
-                                        <dl-ellipsis>
+                                        <dl-ellipsis v-if="fitAllColumns">
                                             {{ col.label }}
                                         </dl-ellipsis>
+                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
-                                :col-index="-1"
                                 no-tooltip
                                 :padding="isTreeTable ? '0' : '0 10px'"
                             >
@@ -689,7 +688,7 @@
                                     </td>
                                     <td
                                         v-if="hasSelectionMode"
-                                        class="dl-table--col-auto-with"
+                                        class="dl-table--col-auto-width"
                                     >
                                         <slot
                                             name="body-selection"
@@ -758,7 +757,6 @@
                                         v-if="showRowActions"
                                         key="visibleColumnsSlot"
                                         class="visible-columns-justify-end"
-                                        :col-index="-1"
                                         no-tooltip
                                     >
                                         <slot
@@ -854,10 +852,7 @@
             <div v-else class="dl-table__control">
                 <slot name="bottom" v-bind="marginalsScope">
                     <div
-                        v-if="
-                            hasBotomSelectionBanner &&
-                                selectedRowsLabel(rowsSelectedNumber)
-                        "
+                        v-if="hasBotomSelectionBanner"
                         class="dl-table__control"
                     >
                         <div>
@@ -895,6 +890,7 @@ import {
     getCurrentInstance,
     ComputedRef,
     onMounted,
+    onBeforeUnmount,
     toRefs,
     nextTick,
     PropType
@@ -1259,7 +1255,6 @@ export default defineComponent({
             noDataLabel,
             columns,
             fitAllColumns,
-            stickyColumns,
             resizable,
             hidePagination,
             hideSelectedBanner,
@@ -1397,7 +1392,7 @@ export default defineComponent({
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
-        onMounted(() => {
+        const updateTableSizing = () => {
             tableEl =
                 tableRef.value ||
                 virtScrollRef.value.rootRef.querySelector('table') ||
@@ -1407,10 +1402,19 @@ export default defineComponent({
                 setAllColumnWidths(
                     tableEl,
                     columns.value as DlTableColumn[],
-                    stickyColumns.value,
-                    fitAllColumns.value
+                    props.stickyColumns,
+                    props.fitAllColumns
                 )
             })
+            return tableEl
+        }
+
+        onMounted(() => {
+            const tableEl = updateTableSizing()
+            window.addEventListener(
+                'virtual-scroll-content-update',
+                updateTableSizing
+            )
             if (visibleColumns.value) return
             if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
@@ -1422,6 +1426,12 @@ export default defineComponent({
                     vm.refs.dragRef as HTMLDivElement
                 )
             }
+        })
+        onBeforeUnmount(() => {
+            window.removeEventListener(
+                'virtual-scroll-content-update',
+                updateTableSizing
+            )
         })
 
         watch(
@@ -1438,8 +1448,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableEl,
                         props.columns as DlTableColumn[],
-                        stickyColumns.value,
-                        fitAllColumns.value
+                        props.stickyColumns,
+                        props.fitAllColumns
                     )
                 })
                 if (visibleColumns.value) return
@@ -1478,8 +1488,8 @@ export default defineComponent({
                     setAllColumnWidths(
                         tableRef.value,
                         newColumns as DlTableColumn[],
-                        stickyColumns.value,
-                        fitAllColumns.value
+                        props.stickyColumns,
+                        props.fitAllColumns
                     )
                 })
             },

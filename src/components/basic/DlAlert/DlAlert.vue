@@ -15,10 +15,9 @@
                 :color="iconColor"
                 :size="iconSize"
             />
-            <span
-                class="text"
-                :style="textStyle"
-            ><slot v-if="!text" /> <span v-else> {{ text }}</span></span>
+            <span class="text" :style="textStyle"
+            ><slot v-if="!text" /> <span v-else> {{ text }}</span></span
+            >
         </div>
         <div
             v-if="closable"
@@ -118,10 +117,10 @@ export default defineComponent({
     emits: ['update:model-value'],
     setup(props, { emit }) {
         const show = ref(props.modelValue)
-        const type = props.type as DlAlertType
-        const typeIcon = typeToIconMap[type]
-        const icon = computed(() => typeToIconMap[type])
-        const iconColor = computed(() => typeToIconColorMap[type])
+        const type = ref(props.type as DlAlertType)
+        const typeIcon = computed(() => typeToIconMap[type.value])
+        const icon = computed(() => typeToIconMap[type.value])
+        const iconColor = computed(() => typeToIconColorMap[type.value])
         const textStyle = computed(() => ({
             color: getColor(props.textColor, 'dl-color-darker')
         }))
@@ -143,7 +142,19 @@ export default defineComponent({
         )
 
         watch(
-            [() => props.fluid, () => props.text, () => props.closable],
+            () => props.type,
+            (val) => {
+                type.value = val as DlAlertType
+            }
+        )
+
+        watch(
+            [
+                () => props.fluid,
+                () => props.text,
+                () => props.closable,
+                () => props.type
+            ],
             ([fluid]) => {
                 normalizeStyles(fluid)
             }
@@ -158,7 +169,7 @@ export default defineComponent({
                     display: 'flex'
                 }
                 const rootS: Record<string, any> = {
-                    backgroundColor: getColor(typeToBackgroundMap[type])
+                    backgroundColor: getColor(typeToBackgroundMap[type.value])
                 }
                 if (height > 46) {
                     iconS.alignSelf = 'flex-start'
