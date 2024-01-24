@@ -1,9 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        :class="identifierClass"
-        class="accordion"
-    >
+    <div :id="uuid" :class="identifierClass" class="accordion">
         <dl-accordion-header
             :additional-info="additionalInfo"
             :default-opened="defaultOpened"
@@ -20,29 +16,30 @@
             </template>
         </dl-accordion-header>
         <div
-            ref="dlAccordionContent"
-            class="accordion-content"
-            :class="{
-                closed: !isOpen,
-                'right-side': rightSide,
-                'accordion-content__border': separator
+            class="accordion-content-wrapper"
+            :style="{
+                '--dl-accordion-content-height': contentHeight
             }"
         >
-            <slot v-if="isOpen && !isEmpty" />
-            <dl-empty-state
-                v-if="isOpen && isEmpty"
-                v-bind="emptyStateProps"
+            <div
+                ref="dlAccordionContent"
+                class="accordion-content"
+                :class="{
+                    closed: !isOpen,
+                    'right-side': rightSide,
+                    'accordion-content__border': separator
+                }"
             >
-                <template
-                    v-for="(_, slot) in $slots"
-                    #[slot]="props"
+                <slot v-if="isOpen && !isEmpty" />
+                <dl-empty-state
+                    v-if="isOpen && isEmpty"
+                    v-bind="emptyStateProps"
                 >
-                    <slot
-                        :name="slot"
-                        v-bind="props"
-                    />
-                </template>
-            </dl-empty-state>
+                    <template v-for="(_, slot) in $slots" #[slot]="props">
+                        <slot :name="slot" v-bind="props" />
+                    </template>
+                </dl-empty-state>
+            </div>
         </div>
     </div>
 </template>
@@ -92,7 +89,8 @@ export default defineComponent({
         return {
             uuid: `dl-accordion-${v4()}`,
             isOpen:
-                this.modelValue === null ? this.defaultOpened : this.modelValue
+                this.modelValue === null ? this.defaultOpened : this.modelValue,
+            contentHeight: '0'
         }
     },
     computed: {
@@ -103,6 +101,9 @@ export default defineComponent({
             return this.$slots.header !== undefined
         }
     },
+    mounted() {
+        this.getContentHeight()
+    },
     methods: {
         handleClick() {
             if (this.modelValue !== null) {
@@ -110,6 +111,20 @@ export default defineComponent({
             }
             this.$emit(this.isOpen === true ? 'hide' : 'show')
             this.isOpen = !this.isOpen
+            this.getContentHeight()
+        },
+        getContentHeight() {
+            this.contentHeight =
+                (this.$refs['dlAccordionContent'] as HTMLDivElement)
+                    ?.offsetHeight + 'px'
+            this.$nextTick(() => {
+                this.contentHeight =
+                    (this.$refs['dlAccordionContent'] as HTMLDivElement)
+                        ?.offsetHeight + 'px'
+                setTimeout(() => {
+                    this.contentHeight = 'auto'
+                }, 300) //todo: Fix animation for the child elements
+            })
         }
     }
 })
@@ -117,12 +132,17 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .accordion {
+    --dl-accordion-content-height: auto;
     max-width: 100%;
+}
+.accordion-content-wrapper {
+    overflow: hidden;
+    height: var(--dl-accordion-content-height);
+    transition: height 300ms ease-in-out;
 }
 .accordion-content {
     text-align: left;
     font-size: var(--dl-font-size-body);
-    transition: all 300ms;
     line-height: 16px;
     padding: 0 16px 15px 38px;
     color: var(--dl-color-darker);
