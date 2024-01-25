@@ -317,6 +317,10 @@
         }
     }
 
+    &__progress > .relative-position {
+        z-index: 102;
+    }
+
     &__bottom {
         border-top: 1px solid var(--dl-color-separator);
         min-height: 50px;
