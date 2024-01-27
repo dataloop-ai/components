@@ -9,16 +9,18 @@
         @mouseleave="iconHover = false"
     >
         <div class="inner-th-wrapper">
-            <dl-icon
-                v-if="isSortable && align === 'right'"
-                :class="iconClass"
-                :icon="computedSortIcon"
-                :style="
-                    !isCurrentlySorted && !iconHover
-                        ? 'display: none !important;'
-                        : ''
-                "
-            />
+            <span v-if="isSortable && align === 'right'" class="th-sort-icon">
+                <dl-icon
+                    :class="iconClass"
+                    :icon="computedSortIcon"
+                    size="16px"
+                    :style="
+                        !isCurrentlySorted && !iconHover
+                            ? 'opacity: 0 !important;'
+                            : ''
+                    "
+                />
+            </span>
             <dl-tooltip v-if="hasEllipsis">
                 <slot />
             </dl-tooltip>
