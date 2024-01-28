@@ -752,7 +752,17 @@ export default defineComponent({
             if (StateManager.instance.disableDebounce) {
                 return handleEnterKey
             }
-            return debounce(handleEnterKey, inputDebounce.value ?? 100)
+            const debounced = debounce(
+                handleEnterKey,
+                inputDebounce.value ?? 100
+            )
+            return function (parameters: { fromSuggestion?: boolean }) {
+                if (parameters?.fromSuggestion) {
+                    handleEnterKey(parameters)
+                } else {
+                    debounced(parameters)
+                }
+            }
         })
 
         const onEscapeKey = () => {
