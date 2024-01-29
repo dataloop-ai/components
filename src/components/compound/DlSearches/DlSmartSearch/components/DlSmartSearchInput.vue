@@ -9,9 +9,14 @@
             <div ref="searchBar" :class="searchBarClasses" @click="focus()">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="!focused && computedStatus"
-                        :icon="statusIcon"
-                        :color="statusIconColor"
+                        :icon="
+                            focused ? defaultIcon : statusIcon || defaultIcon
+                        "
+                        :color="
+                            focused
+                                ? defaultIconColor
+                                : statusIconColor || defaultIconColor
+                        "
                         size="16px"
                         :inline="false"
                     />
@@ -45,6 +50,29 @@
                         <dl-tooltip> Clear Query </dl-tooltip>
                     </div>
                 </div>
+                <dl-tooltip
+                    v-if="!focused"
+                    :style="`
+                        background-color: var(--dl-color-panel-background);
+                        border: 1px solid var(--dl-color-separator);
+                        color: var(--dl-color-darker);
+                        padding: 16px;
+                    `"
+                    max-width="340px"
+                    anchor="bottom left"
+                    self="top left"
+                >
+                    <div class="tooltip-title">
+                        <dl-icon icon="icon-dl-stars" />
+                        Smart Search Query
+                    </div>
+                    <div class="tooltip-subtitle">
+                        A powerful and flexible search language used in
+                        Dataloop. The smart search allows users to construct
+                        queries to search based on various criteria such as
+                        status, metadata, labels and other.
+                    </div>
+                </dl-tooltip>
             </div>
             <dl-label
                 v-if="!focused && computedStatus"
@@ -785,6 +813,9 @@ export default defineComponent({
             return createColorSchema(colorSchema.value, aliases.value)
         })
 
+        const defaultIcon = 'icon-dl-stars'
+        const defaultIconColor = 'orange'
+
         const statusIcon = computed(() => {
             switch (computedStatus.value.type) {
                 case 'success':
@@ -1025,6 +1056,8 @@ export default defineComponent({
             error,
             editorStyle,
             debouncedSetInputValue,
+            defaultIcon,
+            defaultIconColor,
             statusIcon,
             statusIconColor,
             textareaStyles,
@@ -1101,6 +1134,10 @@ export default defineComponent({
 
         &--focused {
             border-color: var(--dl-color-secondary);
+        }
+
+        &:hover {
+            border-color: var(--dl-color-hover);
         }
 
         &--expanded {
@@ -1287,5 +1324,19 @@ export default defineComponent({
     word-break: break-all;
     flex-wrap: wrap;
     white-space: pre-wrap;
+}
+.tooltip-title {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.tooltip-subtitle {
+    color: var(--dl-color-medium);
+    width: 310px;
+    font-size: 12px;
+    white-space-collapse: collapse;
 }
 </style>
