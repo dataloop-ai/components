@@ -128,7 +128,7 @@ export default defineComponent({
     position: sticky;
     z-index: 1;
     align-items: center;
-    padding: 16px 50px;
+    padding: 16px 20px;
     border-top: 1px solid var(--dl-color-separator);
     gap: 15px;
     right: 0;
