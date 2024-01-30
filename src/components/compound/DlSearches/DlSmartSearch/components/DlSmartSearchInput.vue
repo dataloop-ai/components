@@ -63,7 +63,7 @@
                     self="top left"
                 >
                     <div class="tooltip-title">
-                        <dl-icon icon="icon-dl-stars" />
+                        <dl-icon :icon="defaultIcon" />
                         Smart Search Query
                     </div>
                     <div class="tooltip-subtitle">
