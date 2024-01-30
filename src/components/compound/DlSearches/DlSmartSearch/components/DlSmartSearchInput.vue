@@ -17,7 +17,7 @@
                                 ? defaultIconColor
                                 : statusIconColor || defaultIconColor
                         "
-                        size="16px"
+                        size="12px"
                         :inline="false"
                     />
                 </div>
@@ -56,7 +56,7 @@
                         background-color: var(--dl-color-panel-background);
                         border: 1px solid var(--dl-color-separator);
                         color: var(--dl-color-darker);
-                        padding: 16px;
+                        padding: 10px;
                     `"
                     max-width="340px"
                     anchor="bottom left"
@@ -1161,8 +1161,8 @@ export default defineComponent({
     &__status-icon-wrapper {
         display: flex;
         line-height: 15px;
-        margin: 6px 8px 0px 0px;
-        align-items: flex-start;
+        margin: 3px 8px 0px 0px;
+        align-items: center;
         div:first-child {
             display: flex;
             align-items: center;
