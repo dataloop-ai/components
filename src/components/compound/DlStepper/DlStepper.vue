@@ -37,23 +37,13 @@
                             :state="state"
                         />
                     </template>
-                    <slot
-                        v-if="!isEmpty"
-                        :name="state.value"
-                        :state="state"
-                    />
+                    <slot v-if="!isEmpty" :name="state.value" :state="state" />
                     <dl-empty-state
                         v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
-                        <template
-                            v-for="(_, slot) in $slots"
-                            #[slot]="props"
-                        >
-                            <slot
-                                :name="slot"
-                                v-bind="props"
-                            />
+                        <template v-for="(_, slot) in $slots" #[slot]="props">
+                            <slot :name="slot" v-bind="props" />
                         </template>
                     </dl-empty-state>
                 </dl-stepper-content>
@@ -159,6 +149,7 @@ export default defineComponent({
         },
         disabledNextStep: Boolean,
         disabledPrevStep: Boolean,
+        removeFooterLabels: Boolean,
         isDone: Boolean,
         hideCloseButton: Boolean,
         disabled: { type: Boolean, default: false },
@@ -180,9 +171,11 @@ export default defineComponent({
             return this.isEmpty
         },
         nextButtonLabel(): string {
+            if (this.removeFooterLabels) return null
             return this.nextStep?.title ?? null
         },
         prevButtonLabel(): string {
+            if (this.removeFooterLabels) return null
             return this.prevStep?.title ?? null
         },
         nextStepDisabledTooltip(): string {
