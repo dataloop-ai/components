@@ -1,12 +1,6 @@
 <template>
-    <dl-teleport
-        v-if="portalIsActive"
-        :to="portalEl"
-    >
-        <transition
-            name="fade"
-            appear
-        >
+    <dl-teleport v-if="portalIsActive" :to="portalEl">
+        <transition name="fade" appear>
             <div
                 v-if="showing"
                 :id="uuid"
@@ -141,6 +135,10 @@ export default defineComponent({
         triggerPercentage: {
             type: Number,
             default: 1
+        },
+        border: {
+            type: String,
+            default: null
         }
     },
     setup(props, { emit, attrs }) {
@@ -360,7 +358,7 @@ export default defineComponent({
 
         function configureScrollTarget() {
             if (anchorEl.value !== null || props.scrollTarget) {
-                (localScrollTarget as Ref<any>).value = getScrollTarget(
+                ;(localScrollTarget as Ref<any>).value = getScrollTarget(
                     anchorEl.value as HTMLElement,
                     props.scrollTarget as Element
                 )
@@ -414,7 +412,8 @@ export default defineComponent({
                     '--dl-tooltip-text-align': props.textAlignment,
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
-                        : 'none'
+                        : 'none',
+                    '--dl-tooltip-border': props.border
                 }
             ] as any
         }
@@ -435,6 +434,7 @@ export default defineComponent({
     line-height: 16px;
     color: var(--dl-tooltip-color);
     background: var(--dl-tooltip-background);
+    border: var(--dl-tooltip-border);
     border-radius: 2px;
     text-transform: none;
     font-family: 'Roboto', sans-serif;

@@ -52,25 +52,24 @@
                 </div>
                 <dl-tooltip
                     v-if="!focused"
-                    :style="`
-                        background-color: var(--dl-color-panel-background);
-                        border: 1px solid var(--dl-color-separator);
-                        color: var(--dl-color-darker);
-                        padding: 10px;
-                    `"
+                    border="1px solid var(--dl-color-separator)"
+                    background-color="dl-color-panel-background"
+                    color="dl-color-darker"
                     max-width="340px"
                     anchor="bottom left"
                     self="top left"
                 >
-                    <div class="tooltip-title">
-                        <dl-icon :icon="defaultIcon" />
-                        Smart Search Query
-                    </div>
-                    <div class="tooltip-subtitle">
-                        A powerful and flexible search language used in
-                        Dataloop. The smart search allows users to construct
-                        queries to search based on various criteria such as
-                        status, metadata, labels and other.
+                    <div style="padding: 10px">
+                        <div class="tooltip-title">
+                            <dl-icon :icon="defaultIcon" />
+                            Smart Search Query
+                        </div>
+                        <div class="tooltip-subtitle">
+                            A powerful and flexible search language used in
+                            Dataloop. The smart search allows users to construct
+                            queries to search based on various criteria such as
+                            status, metadata, labels and other.
+                        </div>
                     </div>
                 </dl-tooltip>
             </div>
