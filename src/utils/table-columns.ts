@@ -159,12 +159,11 @@ export function setAllColumnWidths(
                 if (!fitAllColumns && targetEl.tagName === 'TH') {
                     // Calculate the width for the column
                     const width =
-                        (col.width ??
-                            targetEl.querySelector('.inner-th').scrollWidth) +
+                        targetEl.querySelector('.inner-th').scrollWidth +
                         getIconWidth(targetEl) +
                         35
                     // Set the width of the column
-                    targetEl.style.width =
+                    targetEl.style.minWidth =
                         typeof col.width === 'number' || !col.width
                             ? `${width}px`
                             : col.width

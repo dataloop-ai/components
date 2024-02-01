@@ -81,13 +81,11 @@ body {
 }
 
 .scroll:hover {
-    background-color: var(--dl-color-lighter);
-    opacity: 0.7;
+    scrollbar-color: var(--dl-color-lighter);
 }
 
 .scroll:hover::-webkit-scrollbar-thumb {
     background-color: var(--dl-color-lighter);
-    opacity: 0.7;
 }
 
 .scroll,

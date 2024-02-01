@@ -120,6 +120,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
+                                    :padding="`0 ${columnSpacing}`"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -340,6 +341,7 @@
                                     :style="col.tdStyle(props.item)"
                                     :no-hover="noHover"
                                     :col-index="colIndex"
+                                    :padding="`0 ${columnSpacing}`"
                                 >
                                     <slot
                                         v-bind="
@@ -431,7 +433,10 @@
 
         <div v-else ref="tableScroll" class="dl-table__middle scroll">
             <table ref="tableRef" class="dl-table" :class="additionalClasses">
-                <thead :colspan="colspanWithExpandableRow">
+                <thead
+                    :colspan="colspanWithExpandableRow"
+                    style="position: relative; z-index: 100"
+                >
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -499,7 +504,9 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="isTreeTable ? '0' : '0 10px'"
+                                    :padding="
+                                        isTreeTable ? '0' : `0 ${columnSpacing}`
+                                    "
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -521,7 +528,9 @@
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
                                 no-tooltip
-                                :padding="isTreeTable ? '0' : '0 10px'"
+                                :padding="
+                                    isTreeTable ? '0' : `0 ${columnSpacing}`
+                                "
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -622,6 +631,7 @@
                         ref="tbody"
                         tag="tbody"
                         class="nested-table dl-virtual-scroll__content"
+                        style="position: relative; z-index: 90"
                         v-bind="{
                             onEnd: handleSortableEvent
                         }"
@@ -737,6 +747,7 @@
                                         :style="col.tdStyle(row)"
                                         :col-index="colIndex"
                                         :no-tooltip="col.ignoreTooltip"
+                                        :padding="`0 ${columnSpacing}`"
                                     >
                                         <slot
                                             v-bind="
@@ -763,6 +774,7 @@
                                         key="visibleColumnsSlot"
                                         class="visible-columns-justify-end"
                                         no-tooltip
+                                        :padding="`0 ${columnSpacing}`"
                                     >
                                         <slot
                                             v-bind="
@@ -1186,6 +1198,14 @@ export default defineComponent({
         visibleColumns: {
             type: Array as PropType<DlTableColumn[]>,
             default: (): [] => []
+        },
+        /**
+         * Padding of TD and TH elements
+         */
+        columnSpacing: {
+            type: String,
+            default: '10px',
+            required: false
         },
         /**
          * Props for the empty state component
