@@ -65,10 +65,10 @@
                             Smart Search Query
                         </div>
                         <div class="tooltip-subtitle">
-                            A powerful and flexible search language used in
-                            Dataloop. The smart search allows users to construct
-                            queries to search based on various criteria such as
-                            status, metadata, labels and other.
+                            A powerful and flexible search. Allows users to
+                            construct queries based on specific field selection
+                            following schema rules. Does not enable free text
+                            search.
                         </div>
                     </div>
                 </dl-tooltip>
