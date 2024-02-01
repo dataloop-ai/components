@@ -1,9 +1,6 @@
 <template>
     <div class="stepper-content">
-        <slot
-            v-if="!hide"
-            name="header"
-        >
+        <slot v-if="!hide" name="header">
             <div class="stepper-content--header">
                 <dl-typography
                     size="h3"
@@ -64,7 +61,7 @@ export default defineComponent({
 </script>
 <style scoped lang="scss">
 .stepper-content {
-    padding: 20px 50px;
+    padding: 20px 30px;
     // max-height: calc(100vh - 175px);
 
     display: flex;
