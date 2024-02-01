@@ -6,9 +6,9 @@
                     :data="doughnutLessData"
                     :animation="doughnutAnimation"
                 >
-                    <template #default="{ item }">
-                        <span style="color: tomato; font-size: large">
-                            {{ item }} 🍅
+                    <template #default="{ item, index }">
+                        <span style="color: tomato">
+                            [{{ index }}] :{{ item }} 🍅
                         </span>
                     </template>
                 </DlDoughnutChart>
