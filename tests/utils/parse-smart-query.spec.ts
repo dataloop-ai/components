@@ -86,6 +86,55 @@ describe('parseSmartQuery', () => {
 
         expect(result).to.deep.equal(expected)
     })
+
+    it('should correctly parse the queries with EXISTS and DOESNT-EXIST operators', () => {
+        const parsed1 = parseSmartQuery('a = 1 AND b EXISTS OR c = 2')
+        expect(parsed1).to.deep.equal({
+            $or: [
+                {
+                    a: 1,
+                    b: {
+                        $exists: true
+                    }
+                },
+                {
+                    c: 2
+                }
+            ]
+        })
+
+        const parsed2 = parseSmartQuery('a = 1 AND b DOESNT-EXIST OR c = 2')
+        expect(parsed2).to.deep.equal({
+            $or: [
+                {
+                    a: 1,
+                    b: {
+                        $exists: false
+                    }
+                },
+                {
+                    c: 2
+                }
+            ]
+        })
+
+        const parsed3 = parseSmartQuery('a EXISTS OR b DOESNT-EXIST AND c = 1')
+        expect(parsed3).to.deep.equal({
+            $or: [
+                {
+                    a: {
+                        $exists: true
+                    }
+                },
+                {
+                    b: {
+                        $exists: false
+                    },
+                    c: 1
+                }
+            ]
+        })
+    })
 })
 
 describe('stringifySmartQuery', () => {
@@ -114,7 +163,7 @@ describe('stringifySmartQuery', () => {
         expect(parsed).toEqual(query)
     })
 
-    it('should return the correct query for a "NOT-IN" query', () => {
+    it('should return the correct query for a "NOT-IN" operator', () => {
         const query = {
             name: { $nin: ['Apple', 'Google', 'Microsoft'] }
         }
@@ -123,8 +172,22 @@ describe('stringifySmartQuery', () => {
         expect(parsed).toEqual(query)
     })
 
-    it('should return the correct query for an "IN" query', () => {
+    it('should return the correct query for an "IN" operator', () => {
         const query = { name: { $in: ['Apple', 'Google', 'Microsoft'] } }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for an "EXISTS" operator', () => {
+        const query = { god: { $exists: true } }
+        const result = stringifySmartQuery(query)
+        const parsed = parseSmartQuery(result)
+        expect(parsed).toEqual(query)
+    })
+
+    it('should return the correct query for an "DOESNT-EXIST" operator', () => {
+        const query = { fate: { $exists: false } }
         const result = stringifySmartQuery(query)
         const parsed = parseSmartQuery(result)
         expect(parsed).toEqual(query)
