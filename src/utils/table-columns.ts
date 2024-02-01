@@ -118,30 +118,37 @@ export function justifyMouseInsideTargetCell(
 
 function getIconWidth(el: HTMLElement) {
     const iconEl = el.querySelector('.th-icons')
-    return iconEl?.scrollWidth
+    const sortEl = el.querySelector('.th-sort-icon')
+    return (iconEl?.scrollWidth ?? 0) + (sortEl?.scrollWidth ?? 0)
 }
 
 function addStickyPosition(
     element: HTMLElement,
     position: TableStickyPosition,
     index: number,
-    totalElements: number
+    totalElements: number,
+    hasEditableColumns?: boolean
 ) {
     if (position === 'both')
         position =
             index === 0 ? 'first' : index === totalElements - 1 ? 'last' : ''
     element.style.left = position === 'first' ? '0' : ''
-    element.style.right = position === 'last' ? '0' : ''
+    if (position === 'last') {
+        if (hasEditableColumns) {
+            element.style.right = '20px'
+        } else {
+            element.style.right = '0'
+        }
+    }
 }
 
 export function setAllColumnWidths(
     table: HTMLElement,
     columns: DlTableColumn[],
     stickyColumns: TableStickyPosition,
-    fitAllColumns: boolean
+    fitAllColumns: boolean,
+    hasEditableColumns?: boolean
 ) {
-    const hasWidth = columns.some((col) => col.hasOwnProperty('width'))
-    if (!hasWidth) return
     columns.forEach((col, i) => {
         browseNestedNodes(
             table,
@@ -152,12 +159,11 @@ export function setAllColumnWidths(
                 if (!fitAllColumns && targetEl.tagName === 'TH') {
                     // Calculate the width for the column
                     const width =
-                        (col.width ??
-                            targetEl.querySelector('.inner-th').scrollWidth) +
+                        targetEl.querySelector('.inner-th').scrollWidth +
                         getIconWidth(targetEl) +
                         35
                     // Set the width of the column
-                    targetEl.style.width =
+                    targetEl.style.minWidth =
                         typeof col.width === 'number' || !col.width
                             ? `${width}px`
                             : col.width
@@ -176,7 +182,8 @@ export function setAllColumnWidths(
                         targetEl,
                         stickyColumns,
                         i,
-                        columns.length
+                        columns.length,
+                        hasEditableColumns
                     )
                 }
             }

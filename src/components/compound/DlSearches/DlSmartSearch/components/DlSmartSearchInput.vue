@@ -9,10 +9,15 @@
             <div ref="searchBar" :class="searchBarClasses" @click="focus()">
                 <div class="dl-smart-search-input__status-icon-wrapper">
                     <dl-icon
-                        v-if="!focused && computedStatus"
-                        :icon="statusIcon"
-                        :color="statusIconColor"
-                        size="16px"
+                        :icon="
+                            focused ? defaultIcon : statusIcon || defaultIcon
+                        "
+                        :color="
+                            focused
+                                ? defaultIconColor
+                                : statusIconColor || defaultIconColor
+                        "
+                        size="12px"
                         :inline="false"
                     />
                 </div>
@@ -45,6 +50,28 @@
                         <dl-tooltip> Clear Query </dl-tooltip>
                     </div>
                 </div>
+                <dl-tooltip
+                    v-if="!focused"
+                    border="1px solid var(--dl-color-separator)"
+                    background-color="dl-color-panel-background"
+                    color="dl-color-darker"
+                    max-width="340px"
+                    anchor="bottom left"
+                    self="top left"
+                >
+                    <div style="padding: 10px">
+                        <div class="tooltip-title">
+                            <dl-icon :icon="defaultIcon" />
+                            Smart Search Query
+                        </div>
+                        <div class="tooltip-subtitle">
+                            A powerful and flexible search. Allows users to
+                            construct queries based on specific field selection
+                            following schema rules. Does not enable free text
+                            search.
+                        </div>
+                    </div>
+                </dl-tooltip>
             </div>
             <dl-label
                 v-if="!focused && computedStatus"
@@ -752,7 +779,17 @@ export default defineComponent({
             if (StateManager.instance.disableDebounce) {
                 return handleEnterKey
             }
-            return debounce(handleEnterKey, inputDebounce.value ?? 100)
+            const debounced = debounce(
+                handleEnterKey,
+                inputDebounce.value ?? 100
+            )
+            return function (parameters: { fromSuggestion?: boolean }) {
+                if (parameters?.fromSuggestion) {
+                    handleEnterKey(parameters)
+                } else {
+                    debounced(parameters)
+                }
+            }
         })
 
         const onEscapeKey = () => {
@@ -774,6 +811,9 @@ export default defineComponent({
         const editorStyle = computed((): SyntaxColorSchema => {
             return createColorSchema(colorSchema.value, aliases.value)
         })
+
+        const defaultIcon = 'icon-dl-stars'
+        const defaultIconColor = 'orange'
 
         const statusIcon = computed(() => {
             switch (computedStatus.value.type) {
@@ -1015,6 +1055,8 @@ export default defineComponent({
             error,
             editorStyle,
             debouncedSetInputValue,
+            defaultIcon,
+            defaultIconColor,
             statusIcon,
             statusIconColor,
             textareaStyles,
@@ -1093,6 +1135,10 @@ export default defineComponent({
             border-color: var(--dl-color-secondary);
         }
 
+        &:hover {
+            border-color: var(--dl-color-hover);
+        }
+
         &--expanded {
             z-index: var(--dl-z-index-overlay);
             transition: height 0.3s ease-out;
@@ -1114,8 +1160,8 @@ export default defineComponent({
     &__status-icon-wrapper {
         display: flex;
         line-height: 15px;
-        margin: 6px 8px 0px 0px;
-        align-items: flex-start;
+        margin: 3px 8px 0px 0px;
+        align-items: center;
         div:first-child {
             display: flex;
             align-items: center;
@@ -1277,5 +1323,19 @@ export default defineComponent({
     word-break: break-all;
     flex-wrap: wrap;
     white-space: pre-wrap;
+}
+.tooltip-title {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.tooltip-subtitle {
+    color: var(--dl-color-medium);
+    width: 310px;
+    font-size: 12px;
+    white-space-collapse: collapse;
 }
 </style>

@@ -52,7 +52,7 @@ describe('DlTd', () => {
 
             it('should have the right styles', () => {
                 expect(wrapper.vm.styles).toBe(
-                    'padding: 0 10px;background: red'
+                    'padding: 0 10px;background: red;'
                 )
             })
         })

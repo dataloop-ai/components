@@ -1,14 +1,6 @@
 <template>
-    <div
-        :id="uuid"
-        class="slider-content"
-        :style="sliderStyles"
-    >
-        <div
-            v-if="slim"
-            class="slider slim"
-            data-test="slim-slider"
-        >
+    <div :id="uuid" class="slider-content" :style="sliderStyles">
+        <div v-if="slim" class="slider slim" data-test="slim-slider">
             <span class="text capitalize">{{ text }}</span>
             <dl-slider-input
                 v-model="value"
@@ -18,6 +10,8 @@
                 :disabled="disabled"
                 :style="{ marginRight: '10px' }"
                 data-test="slim-slider-input"
+                @focus="handleFocus"
+                @blur="handleBlur"
             />
             <div class="slider-bar-container">
                 <dl-slider-base
@@ -35,11 +29,7 @@
                 />
             </div>
         </div>
-        <div
-            v-else
-            class="slider non-slim"
-            data-test="non-slim-slider"
-        >
+        <div v-else class="slider non-slim" data-test="non-slim-slider">
             <div class="header">
                 <div class="row text capitalize">
                     {{ text }}
@@ -72,6 +62,8 @@
                         :disabled="disabled"
                         data-test="non-slim-slider-input"
                         @change="onChange"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
                     />
                 </div>
             </div>
@@ -184,7 +176,7 @@ export default defineComponent({
             required: false
         }
     },
-    emits: ['update:model-value', 'change'],
+    emits: ['update:model-value', 'change', 'input-focus', 'input-blur'],
     setup(props, { emit }) {
         const { modelValue, min, max, textColor, width, thumbSize, color } =
             toRefs(props)
@@ -255,6 +247,14 @@ export default defineComponent({
             displaySliderInput,
             onChange,
             handleResetButtonClick
+        }
+    },
+    methods: {
+        handleFocus(e: Event) {
+            this.$emit('input-focus', e)
+        },
+        handleBlur(e: Event) {
+            this.$emit('input-blur', e)
         }
     }
 })

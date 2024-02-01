@@ -1,10 +1,6 @@
 <template>
     <div>
-        <dl-option-group
-            v-model="optionValue"
-            :options="options"
-            inline
-        />
+        <dl-option-group v-model="optionValue" :options="options" inline />
         <h1>The chosen option is {{ optionValue }}</h1>
         <dl-option-group
             v-model="switchValue"
@@ -30,10 +26,7 @@
 
         <h1>in menu : The chosen options are {{ switchValue }}</h1>
         <dl-button label="Menu">
-            <dl-menu
-                ref="menu"
-                fit-content
-            >
+            <dl-menu ref="menu" fit-content>
                 <dl-option-group
                     v-model="switchValue"
                     left-label
@@ -42,6 +35,14 @@
                 />
             </dl-menu>
         </dl-button>
+
+        <h1>With Slot</h1>
+        <dl-option-group v-model="optionValue" :options="options" inline>
+            <template #option-3="{ option }"
+            >{{ option.label }} - I am a custom slot</template
+            >
+        </dl-option-group>
+        <h1>The chosen option is {{ optionValue }}</h1>
     </div>
 </template>
 
