@@ -48,8 +48,8 @@
                             @mouseOverLegend="darkHighlight"
                             @mouseLeaveLegend="resetColors"
                         >
-                            <template #default="{ item }">
-                                <slot :item="item" />
+                            <template #default="{ item, index }">
+                                <slot :item="item" :index="index" />
                             </template>
                         </dl-doughnut-chart-legend>
                     </div>
