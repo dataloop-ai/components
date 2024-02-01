@@ -18,20 +18,22 @@
                 :for="individualProps[index].id"
                 style="display: inline-flex; gap: 6px"
             >
-                <span>{{ option.label }}</span>
-                <span
-                    v-if="!!option.tooltip && !!option.tooltip.length"
-                    style="display: flex; align-items: center"
-                >
-                    <dl-icon
-                        icon="icon-dl-info"
-                        class="tooltip-icon"
-                        size="12px"
-                    />
-                    <dl-tooltip>
-                        {{ option.tooltip }}
-                    </dl-tooltip>
-                </span>
+                <slot :name="getSlotName(index)" :option="option">
+                    <span>{{ option.label }}</span>
+                    <span
+                        v-if="!!option.tooltip && !!option.tooltip.length"
+                        style="display: flex; align-items: center"
+                    >
+                        <dl-icon
+                            icon="icon-dl-info"
+                            class="tooltip-icon"
+                            size="12px"
+                        />
+                        <dl-tooltip>
+                            {{ option.tooltip }}
+                        </dl-tooltip>
+                    </span>
+                </slot>
             </div>
             <component
                 :is="components[type]"
@@ -151,6 +153,9 @@ export default defineComponent({
         },
         handleUpdate(newValue: DlSelectedValueType, e: Event) {
             this.$emit('update:model-value', newValue, e)
+        },
+        getSlotName(index: number) {
+            return `option-${index + 1}`
         }
     },
     template: 'dl-option-group'
