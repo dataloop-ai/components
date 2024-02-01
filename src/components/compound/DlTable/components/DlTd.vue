@@ -71,7 +71,12 @@ export default defineComponent({
 
             if (props.bgColor) {
                 styles = styles.concat(
-                    `background: ${getColor(props.bgColor, '')}`
+                    `background: ${getColor(props.bgColor, '')};`
+                )
+            }
+            if (vm.vnode.key === 'visibleColumnsSlot') {
+                styles = styles.concat(
+                    'position: sticky; right: 0; z-index: 101;'
                 )
             }
             return styles

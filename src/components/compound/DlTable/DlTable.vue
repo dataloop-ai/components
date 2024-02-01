@@ -49,7 +49,10 @@
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead :colspan="colspanWithExpandableRow">
+                <thead
+                    :colspan="colspanWithExpandableRow"
+                    style="position: relative; z-index: 100"
+                >
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -379,7 +382,9 @@
                                                 ? `body-cell-row-actions`
                                                 : 'body-cell'
                                         "
-                                    />
+                                    >
+                                        <div style="width: 15px"></div>
+                                    </slot>
                                 </DlTd>
                             </DlTr>
                             <tr
@@ -774,7 +779,9 @@
                                                     ? `body-cell-row-actions`
                                                     : 'body-cell'
                                             "
-                                        />
+                                        >
+                                            <div style="width: 15px"></div>
+                                        </slot>
                                     </DlTd>
                                 </DlTr>
                                 <tr
@@ -1397,13 +1404,18 @@ export default defineComponent({
                 tableRef.value ||
                 virtScrollRef.value.rootRef.querySelector('table') ||
                 (document.querySelector('table.dl-table') as HTMLTableElement)
-
+            const cols = getVisibleColumnsState()
+                ? props.columns.filter((col: any) =>
+                      getVisibleColumnsState().includes(col.name)
+                  )
+                : props.columns
             nextTick(() => {
                 setAllColumnWidths(
                     tableEl,
-                    columns.value as DlTableColumn[],
+                    cols as DlTableColumn[],
                     props.stickyColumns,
-                    props.fitAllColumns
+                    props.fitAllColumns,
+                    !!props.visibleColumns
                 )
             })
             return tableEl
@@ -1415,7 +1427,6 @@ export default defineComponent({
                 'virtual-scroll-content-update',
                 updateTableSizing
             )
-            if (visibleColumns.value) return
             if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
             }
@@ -1443,16 +1454,20 @@ export default defineComponent({
                     (document.querySelector(
                         'table.dl-table'
                     ) as HTMLTableElement)
-
+                const cols = getVisibleColumnsState()
+                    ? props.columns.filter((col: any) =>
+                          getVisibleColumnsState().includes(col.name)
+                      )
+                    : props.columns
                 nextTick(() => {
                     setAllColumnWidths(
                         tableEl,
-                        props.columns as DlTableColumn[],
+                        cols as DlTableColumn[],
                         props.stickyColumns,
-                        props.fitAllColumns
+                        props.fitAllColumns,
+                        !!props.visibleColumns
                     )
                 })
-                if (visibleColumns.value) return
 
                 if (resizable.value) {
                     applyResizableColumns(tableEl, vm)
@@ -1471,7 +1486,6 @@ export default defineComponent({
         )
 
         watch(resizable, () => {
-            if (visibleColumns.value) return
             applyResizableColumns(tableEl, vm)
         })
 

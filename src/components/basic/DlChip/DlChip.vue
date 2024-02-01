@@ -196,7 +196,7 @@ export default defineComponent({
     vertical-align: middle;
     font-size: var(--dl-font-size-body);
     line-height: 12px;
-    border-radius: 2px;
+    border-radius: 2px !important;
     padding: var(--dl-chip-padding);
     outline: 0;
     min-width: 18px;
