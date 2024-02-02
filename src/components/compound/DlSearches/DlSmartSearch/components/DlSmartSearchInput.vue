@@ -29,6 +29,7 @@
                         :style="textareaStyles"
                         :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
+                        :spellcheck="false"
                         @keypress="onKeyPress"
                         @keyup.esc="onKeyPress"
                         @input="onInput"
@@ -469,28 +470,25 @@ export default defineComponent({
         const forceStringsType = (data: string | Data): string | Data => {
             const convertNode = (node: Data) => {
                 for (const key in node) {
-                    const value = node[key]
-                    if (Array.isArray(value)) {
-                        for (let i = 0; i < value.length; i++) {
-                            value[i] = '' + value[i]
+                    if (key !== '$exists') {
+                        const value = node[key]
+                        if (Array.isArray(value)) {
+                            for (let i = 0; i < value.length; i++) {
+                                value[i] = '' + value[i]
+                            }
+                        } else {
+                            node[key] = '' + value
                         }
-                    } else {
-                        node[key] = '' + value
                     }
                 }
             }
             if (typeof data !== 'string' && schema.value) {
                 for (const key in data) {
                     const type = schema.value[key]
-                    if (Array.isArray(type)) {
-                        if (type.includes('string')) {
-                            if (typeof data[key] === 'object') {
-                                convertNode(data[key])
-                            } else {
-                                data[key] = '' + data[key]
-                            }
-                        }
-                    } else if (type === 'string') {
+                    if (
+                        (Array.isArray(type) && type.includes('string')) ||
+                        type === 'string'
+                    ) {
                         if (typeof data[key] === 'object') {
                             convertNode(data[key])
                         } else {

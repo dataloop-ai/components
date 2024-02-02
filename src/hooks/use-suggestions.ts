@@ -30,6 +30,7 @@ export enum Logical {
     OR = 'OR'
 }
 
+// exported only for createColorSchema
 export const operators: Operators = {
     $eq: '=', // all types
     $neq: '!=', // all types
@@ -38,7 +39,9 @@ export const operators: Operators = {
     $lt: '<', // number, date, datetime, time
     $lte: '<=', // number, date, datetime, time
     $in: 'IN', // all types
-    $nin: 'NOT-IN' // all types
+    $nin: 'NOT-IN', // all types
+    $exists: 'EXISTS', // all types
+    $doesnt_exist_dummy: 'DOESNT-EXIST' // all types
 }
 
 type OperatorToDataTypeMap = {
@@ -53,7 +56,9 @@ const operatorToDataTypeMap: OperatorToDataTypeMap = {
     $lt: ['number', 'date', 'datetime', 'time'],
     $lte: ['number', 'date', 'datetime', 'time'],
     $in: [],
-    $nin: []
+    $nin: [],
+    $exists: [],
+    $doesnt_exist_dummy: []
 }
 
 const knownDataTypes = [
@@ -93,8 +98,18 @@ const mergeWords = (words: string[]) => {
 
     for (let i = 0; i < words.length; ++i) {
         const currentItem = words[i]
-
-        if (currentItem === 'IN' || currentItem === 'NOT-IN') {
+        if (
+            currentItem === operators.$exists ||
+            currentItem === operators.$doesnt_exist_dummy
+        ) {
+            merging = false
+            result.push(currentItem)
+            result.push('dummy')
+            continue
+        } else if (
+            currentItem === operators.$in ||
+            currentItem === operators.$nin
+        ) {
             merging = true
             result.push(currentItem)
             mergeIndex = result.length
@@ -317,7 +332,12 @@ export const useSuggestions = (
                 localSuggestions = []
             }
 
-            if (!value || !isNextCharSpace(input, value)) {
+            const lastTerm =
+                operator === operators.$exists ||
+                operator === operators.$doesnt_exist_dummy
+                    ? operator
+                    : value
+            if (!lastTerm || !isNextCharSpace(input, lastTerm)) {
                 continue
             }
 

@@ -121,7 +121,14 @@ describe('use-suggestions', () => {
     })
 
     it('suggestions should have the generic operators', () => {
-        const genericOperators = ['=', '!=', 'IN', 'NOT-IN']
+        const genericOperators = [
+            '=',
+            '!=',
+            'IN',
+            'NOT-IN',
+            'EXISTS',
+            'DOESNT-EXIST'
+        ]
 
         findSuggestions('Level ')
         expect(suggestions.value).toEqual(genericOperators)
@@ -140,7 +147,9 @@ describe('use-suggestions', () => {
             '<',
             '<=',
             'IN',
-            'NOT-IN'
+            'NOT-IN',
+            'EXISTS',
+            'DOESNT-EXIST'
         ])
     })
 
