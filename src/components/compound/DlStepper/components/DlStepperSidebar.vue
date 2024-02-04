@@ -83,9 +83,13 @@ export default defineComponent({
             return str.charAt(0).toUpperCase() + str.slice(1)
         },
         sidebarItemClasses(step: Step): string {
-            return `sidebar--item${
+            const classes = `sidebar--item${
                 step.subtitle ? ' sidebar--item-with_subtitle' : ''
             }`
+            if (step.active) {
+                return `${classes} sidebar--item-active`
+            }
+            return classes
         },
         stepClass(step: Step) {
             const active = step.active
@@ -144,6 +148,9 @@ export default defineComponent({
             ::v-deep .dl-list-item {
                 height: 43px;
             }
+        }
+        &-active {
+            background-color: var(--dl-color-back-tint-light);
         }
     }
 
