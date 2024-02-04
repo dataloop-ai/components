@@ -8,6 +8,7 @@
         :duration="transitionDuration"
     >
         <dl-stepper-header
+            v-if="!hideHeader"
             :header-title="headerTitle"
             :hide-close-button="hideCloseButton"
             @close="closeStepper"
@@ -142,6 +143,7 @@ export default defineComponent({
             default: 'dl-color-fill-third'
         },
         withTransition: Boolean,
+        hideHeader: Boolean,
         transitionDuration: {
             type: Number,
             required: false,
