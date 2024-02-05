@@ -6,6 +6,11 @@
                 :key="index"
                 :data-test-index="index"
                 :end-icon="endIcon(step)"
+                :start-icon="
+                    step.icon
+                        ? { icon: step.icon, color: 'secondary' }
+                        : undefined
+                "
                 :clickable="!disabled"
                 :disabled="isStepDisabled(step)"
                 :class="sidebarItemClasses(step)"
@@ -13,7 +18,7 @@
             >
                 <dl-item-section no-wrap>
                     <span :class="stepClass(step)">
-                        {{ index + 1 }}.
+                        <span v-if="!step.icon">{{ index + 1 }}.</span>
                         <div>
                             <span>
                                 {{ getStepTitle(step) }}
