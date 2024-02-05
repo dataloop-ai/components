@@ -18,7 +18,7 @@
             >
                 <dl-item-section no-wrap>
                     <span :class="stepClass(step)">
-                        <span v-if="!step.icon">{{ index + 1 }}.</span>
+                        <span v-if="!step.icon">{{ index + 1 }}. </span>
                         <div>
                             <span>
                                 {{ getStepTitle(step) }}
