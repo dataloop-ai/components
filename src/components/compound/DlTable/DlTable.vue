@@ -161,7 +161,11 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            text-color="dl-color-medium"
+                                            :text-color="
+                                                isVisibleColumnsOpen
+                                                    ? 'dl-color-secondary'
+                                                    : 'dl-color-medium'
+                                            "
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
@@ -178,7 +182,12 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-popup dense>
+                                                <dl-popup
+                                                    v-model="
+                                                        isVisibleColumnsOpen
+                                                    "
+                                                    dense
+                                                >
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -549,7 +558,11 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            text-color="dl-color-medium"
+                                            :text-color="
+                                                isVisibleColumnsOpen
+                                                    ? 'dl-color-secondary'
+                                                    : 'dl-color-medium'
+                                            "
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
@@ -566,7 +579,12 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-popup dense>
+                                                <dl-popup
+                                                    v-model="
+                                                        isVisibleColumnsOpen
+                                                    "
+                                                    dense
+                                                >
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -1298,6 +1316,7 @@ export default defineComponent({
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
         const tableScroll = ref(null)
+        const isVisibleColumnsOpen = ref(false)
 
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
@@ -2160,7 +2179,8 @@ export default defineComponent({
             computedPagination,
             getRowExpandedKey,
             hasExpandableSlot,
-            tableScroll
+            tableScroll,
+            isVisibleColumnsOpen
         }
     }
 })
