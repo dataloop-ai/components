@@ -1014,7 +1014,8 @@ export default defineComponent({
         const watchKeyUp = (e: KeyboardEvent) => {
             if (
                 focused.value &&
-                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight') &&
+                !e.altKey
             ) {
                 setInputValue(searchQuery.value, { noEmit: true })
             }
