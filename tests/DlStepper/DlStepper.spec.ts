@@ -71,6 +71,27 @@ describe('DlStepper', () => {
 
                 wrapper.vm.closeStepper()
             })
+            describe('When hideHeader is true', () => {
+                beforeAll(async () => {
+                    await wrapper.setProps({
+                        headerTitle: 'title',
+                        hideHeader: true,
+                        modelValue: false
+                    })
+
+                    // to trigger the watch
+                    await wrapper.setProps({
+                        modelValue: true
+                    })
+                })
+
+                it('should not render the dl-stepper-header component', () => {
+                    const header = wrapper.findComponent({
+                        name: 'DlStepperHeader'
+                    })
+                    expect(header.exists()).toBe(false)
+                })
+            })
         })
     })
 })
