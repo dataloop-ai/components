@@ -62,7 +62,7 @@
                     <div style="padding: 10px">
                         <div class="tooltip-title">
                             <dl-icon :icon="defaultIcon" />
-                            Smart Search Query
+                            Schema Based Search
                         </div>
                         <div class="tooltip-subtitle">
                             A powerful and flexible search. Allows users to
@@ -1014,7 +1014,8 @@ export default defineComponent({
         const watchKeyUp = (e: KeyboardEvent) => {
             if (
                 focused.value &&
-                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight') &&
+                !e.altKey
             ) {
                 setInputValue(searchQuery.value, { noEmit: true })
             }
