@@ -136,8 +136,11 @@ export default defineComponent({
 
         if (!column.value || colIndex.value === -1) {
             return {
-                headerStyle: '',
-                thClasses: '',
+                headerStyle:
+                    vm.vnode.key === 'visibleColumnsSlot'
+                        ? [{ position: 'sticky', right: 0, zIndex: 101 }]
+                        : null,
+                thClasses: null,
                 isSortable: false,
                 hasEllipsis: false,
                 onClick: onClickFn,

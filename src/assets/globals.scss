@@ -58,7 +58,7 @@ body {
     }
 }
 
-/* Inserting a collapsed row between two flex items will make 
+/* Inserting a collapsed row between two flex items will make
  * the flex item that comes after it break to a new row */
 .break {
     flex-basis: 100%;
@@ -73,6 +73,19 @@ body {
 
 .scroll {
     overflow: auto;
+    scrollbar-color: transparent transparent; /* For Firefox */
+}
+
+.scroll::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.scroll:hover {
+    scrollbar-color: var(--dl-color-lighter);
+}
+
+.scroll:hover::-webkit-scrollbar-thumb {
+    background-color: var(--dl-color-lighter);
 }
 
 .scroll,

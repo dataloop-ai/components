@@ -6,6 +6,11 @@
                 :key="index"
                 :data-test-index="index"
                 :end-icon="endIcon(step)"
+                :start-icon="
+                    step.icon
+                        ? { icon: step.icon, color: 'secondary' }
+                        : undefined
+                "
                 :clickable="!disabled"
                 :disabled="isStepDisabled(step)"
                 :class="sidebarItemClasses(step)"
@@ -13,7 +18,7 @@
             >
                 <dl-item-section no-wrap>
                     <span :class="stepClass(step)">
-                        {{ index + 1 }}.
+                        <span v-if="!step.icon">{{ index + 1 }}. </span>
                         <div>
                             <span>
                                 {{ getStepTitle(step) }}
@@ -83,9 +88,13 @@ export default defineComponent({
             return str.charAt(0).toUpperCase() + str.slice(1)
         },
         sidebarItemClasses(step: Step): string {
-            return `sidebar--item${
+            const classes = `sidebar--item${
                 step.subtitle ? ' sidebar--item-with_subtitle' : ''
             }`
+            if (step.active) {
+                return `${classes} sidebar--item-active`
+            }
+            return classes
         },
         stepClass(step: Step) {
             const active = step.active
@@ -144,6 +153,9 @@ export default defineComponent({
             ::v-deep .dl-list-item {
                 height: 43px;
             }
+        }
+        &-active {
+            background-color: var(--dl-color-back-tint-light);
         }
     }
 

@@ -15,6 +15,7 @@ export class Step {
             disabledTooltip: '',
             error: '',
             warning: '',
+            icon: state.icon || undefined,
             ...state
         }
 
@@ -39,6 +40,14 @@ export class Step {
 
     public set subtitle(value: string) {
         set(this._state, 'subtitle', value)
+    }
+
+    public get icon(): string {
+        return this._state.icon
+    }
+
+    public set icon(value: string) {
+        set(this._state, 'icon', value)
     }
 
     public get optional(): boolean {

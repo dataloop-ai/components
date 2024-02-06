@@ -31,11 +31,13 @@ const defaultSteps = [
     {
         value: 'instructions',
         title: 'instructions',
-        subtitle: 'some text'
+        subtitle: 'some text',
+        icon: 'icon-dl-info'
     },
     {
         value: 'assignments',
-        title: 'assignments'
+        title: 'assignments',
+        icon: 'icon-dl-assignment'
     },
     {
         value: 'quality',
