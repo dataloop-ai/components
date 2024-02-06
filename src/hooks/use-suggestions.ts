@@ -30,7 +30,6 @@ export enum Logical {
     OR = 'OR'
 }
 
-// exported only for createColorSchema
 export const operators: Operators = {
     $eq: '=', // all types
     $neq: '!=', // all types
