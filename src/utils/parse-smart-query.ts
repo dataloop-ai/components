@@ -35,7 +35,18 @@ const GeneratePureValue = (value: any) => {
     return value
 }
 
-const Operators: string[] = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+const Operators: string[] = [
+    '>=',
+    '<=',
+    '!=',
+    '=',
+    '>',
+    '<',
+    'IN',
+    'NOT-IN',
+    'EXISTS',
+    'DOESNT-EXIST'
+]
 
 /**
  * Method to convert a DlSmartSearch query string to Mongo based JSON query
@@ -103,51 +114,59 @@ export const parseSmartQuery = (
 
             switch (true) {
                 case term.includes('>='):
-                    [key, value] = term.split('>=').map((x) => x.trim())
+                    ;[key, value] = term.split('>=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $gte: pureValue } })
                     }
                     break
                 case term.includes('<='):
-                    [key, value] = term.split('<=').map((x) => x.trim())
+                    ;[key, value] = term.split('<=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $lte: pureValue } })
                     }
                     break
                 case term.includes('>'):
-                    [key, value] = term.split('>').map((x) => x.trim())
+                    ;[key, value] = term.split('>').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $gt: pureValue } })
                     }
                     break
                 case term.includes('<'):
-                    [key, value] = term.split('<').map((x) => x.trim())
+                    ;[key, value] = term.split('<').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $lt: pureValue } })
                     }
                     break
                 case term.includes('!='):
-                    [key, value] = term.split('!=').map((x) => x.trim())
+                    ;[key, value] = term.split('!=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $ne: pureValue } })
                     }
                     break
                 case term.includes('='):
-                    [key, value] = term.split('=').map((x) => x.trim())
+                    ;[key, value] = term.split('=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: pureValue })
                     }
                     break
+                case term.includes('EXISTS'):
+                    key = term.split('EXISTS')[0].trim()
+                    andQuery.push({ [key]: { $exists: true } })
+                    break
+                case term.includes('DOESNT-EXIST'):
+                    key = term.split('DOESNT-EXIST')[0].trim()
+                    andQuery.push({ [key]: { $exists: false } })
+                    break
                 case term.includes('IN'):
-                    [key, value] = term.split('IN').map((x) => x.trim())
+                    ;[key, value] = term.split('IN').map((x) => x.trim())
                     if (key.includes('NOT-')) {
-                        [key, value] = term
+                        ;[key, value] = term
                             .split('NOT-IN')
                             .map((x) => x.trim())
                         queryValue = term
@@ -268,6 +287,11 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
                             break
                         case '$lte':
                             result += `${key} <= ${operatorValue}`
+                            break
+                        case '$exists':
+                            result += `${key} ${
+                                operatorValue ? 'EXISTS' : 'DOESNT-EXIST'
+                            }`
                             break
                         case '$in':
                             if (!Array.isArray(operatorValue)) {
