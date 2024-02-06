@@ -90,6 +90,8 @@ export const datePattern = new RegExp(
 export const datePatternNoBrackets =
     /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/
 
+const existsValuePlaceholder = 'existsValuePlaceholder'
+
 const mergeWords = (words: string[]) => {
     const result: string[] = []
     let merging = false
@@ -103,7 +105,7 @@ const mergeWords = (words: string[]) => {
         ) {
             merging = false
             result.push(currentItem)
-            result.push('dummy')
+            result.push(existsValuePlaceholder)
             continue
         } else if (
             currentItem === operators.$in ||
