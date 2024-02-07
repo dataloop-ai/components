@@ -308,7 +308,7 @@ export default defineComponent({
                         }
                     },
                     onClick: (e: Event & { chart: ChartJS }) => {
-                        if (attrs.onItemClick as ItemClickHandler) {
+                        if (attrs.onItemClick) {
                             const intersects =
                                 e.chart.getElementsAtEventForMode(
                                     e,
@@ -330,7 +330,7 @@ export default defineComponent({
 
         /** Methods */
         const hideData = (item: { index: number; hidden: boolean }) => {
-            if (attrs.onItemClick as ItemClickHandler) {
+            if (attrs.onItemClick) {
                 return (attrs.onItemClick as ItemClickHandler)(item.index)
             }
             chartRefValue.value._metasets[0].data[item.index].hidden =
