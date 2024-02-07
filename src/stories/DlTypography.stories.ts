@@ -31,6 +31,19 @@ export default {
                 type: 'boolean'
             }
         },
+        markdown: {
+            name: 'markdown',
+            type: { name: 'markdown', required: false },
+            description: 'Render markdown content',
+            defaultValue: false,
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: false }
+            },
+            control: {
+                type: 'boolean'
+            }
+        },
         color: {
             name: 'color',
             type: { name: 'string', required: false },
@@ -139,4 +152,76 @@ const BoldTemplate = (args) => ({
 export const Bold = BoldTemplate.bind({})
 Bold.args = {
     bold: true
+}
+
+const PreTemplate = (args) => ({
+    components: { DlTypography },
+    setup() {
+        return {
+            args
+        }
+    },
+    template: `
+    <div style="padding: 20px">
+        <dl-typography 
+            v-bind="args"
+        >
+          {{ args.text }}
+        </dl-typography>
+    </div>
+   `
+})
+
+export const Pre = PreTemplate.bind({})
+Pre.args = {
+    text: 'Typography content'
+}
+
+const MarkdownTemplate = (args) => ({
+    components: { DlTypography },
+    setup() {
+        const rawMD = `# h1 Hi
+## h2 This is a markdown demo
+### h3 It's a simple demo
+#### h4 It's a simple demo
+##### h5 It's a simple demo
+###### h6 It's a simple demo
+
+*It's a simple demo*
+
+**It's a simple demo**
+
+***It's a simple demo***
+
+> It's a simple demo
+- [ ] It's a simple demo
+- [x] It's a simple demo
+
+[It's a simple demo]('https://www.google.com')
+
+\`It's a simple demo\`
+\`\`\`javascript
+      const highlight = "code";
+\`\`\`
+`
+        return {
+            rawMD,
+            args
+        }
+    },
+    template: `
+    <div style="padding: 20px">
+        <dl-typography 
+            v-bind="args"
+        >
+        {{ rawMD }}
+        </dl-typography>
+    </div>
+   `
+})
+export const Markdown = MarkdownTemplate.bind({})
+
+Markdown.args = {
+    markdown: true,
+    variant: 'div'
 }

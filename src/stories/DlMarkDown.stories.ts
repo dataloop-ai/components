@@ -1,19 +1,14 @@
-<template>
-    <div>
-        <DlMarkdown> {{ mdText }} </DlMarkdown>
-    </div>
-</template>
+import { DlMarkdown } from '../'
 
-<script lang="ts">
-import { DlMarkdown } from '../components'
-import { defineComponent } from 'vue-demi'
+export default {
+    title: 'Library/Components/DlMarkDown',
+    component: DlMarkdown
+}
 
-export default defineComponent({
-    components: {
-        DlMarkdown
-    },
+const Template = () => ({
+    components: { DlMarkdown },
     setup() {
-        const mdText = `# h1 Hi
+        const rawMD = `# h1 Hi
 ## h2 This is a markdown demo
 ### h3 It's a simple demo
 #### h4 It's a simple demo
@@ -34,12 +29,19 @@ export default defineComponent({
 
 \`It's a simple demo\`
 \`\`\`javascript
-    const highlight = "code";
+      const highlight = "code";
 \`\`\`
 `
         return {
-            mdText
+            rawMD
         }
-    }
+    },
+    template: `
+    <div>
+        <dl-markdown>{{rawMD}}</dl-markdown>
+    </div>
+   `
 })
-</script>
+
+export const Preview = Template.bind({})
+Preview.args = {}

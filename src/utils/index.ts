@@ -19,6 +19,7 @@ export * from './resizable-table'
 export * from './draggable-table'
 export * from './table-columns'
 export * from './formatNumber'
+export * from './vue'
 
 export const isMobileOrTablet = () => {
     let check = false
