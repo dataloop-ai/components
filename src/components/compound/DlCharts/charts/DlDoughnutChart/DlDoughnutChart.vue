@@ -330,9 +330,6 @@ export default defineComponent({
 
         /** Methods */
         const hideData = (item: { index: number; hidden: boolean }) => {
-            if (attrs.onItemClick) {
-                return (attrs.onItemClick as ItemClickHandler)(item.index)
-            }
             chartRefValue.value._metasets[0].data[item.index].hidden =
                 item.hidden
             chartRefValue.value.update()
