@@ -132,7 +132,7 @@ export default defineComponent({
             default: () => doughnutChartEmptyStateProps
         }
     },
-    setup(props) {
+    setup(props, { attrs }) {
         /** Data */
         const doughnutChartRef = ref(null)
         const dlDoughnutChartWidgetRef = ref(null)
@@ -280,6 +280,8 @@ export default defineComponent({
         )
         defaultOptions.animation = mergedAnimation.value
 
+        type ItemClickHandler = (index: number) => void
+
         const doughnutOptions = computed(() =>
             merge(
                 {
@@ -302,6 +304,22 @@ export default defineComponent({
                                             ]
                                     }
                                 }
+                            }
+                        }
+                    },
+                    onClick: (e: Event & { chart: ChartJS }) => {
+                        if (attrs.onItemClick) {
+                            const intersects =
+                                e.chart.getElementsAtEventForMode(
+                                    e,
+                                    'nearest',
+                                    { intersect: true },
+                                    false
+                                )
+                            if (intersects.length > 0) {
+                                ;(attrs.onItemClick as ItemClickHandler)(
+                                    intersects[0].index
+                                )
                             }
                         }
                     }

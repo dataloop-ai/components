@@ -5,6 +5,7 @@
                 <DlDoughnutChart
                     :data="doughnutLessData"
                     :animation="doughnutAnimation"
+                    @itemClick="handleItemClick"
                 >
                     <template #default="{ item, index }">
                         <span style="color: tomato">
@@ -230,7 +231,12 @@ export default defineComponent({
         return {
             doughnutData,
             doughnutLessData,
-            doughnutAnimation
+            doughnutAnimation,
+            handleItemClick: (index: number) => {
+                alert(
+                    `You clicked ${doughnutLessData.datasets[0].data[index]} 🍅`
+                )
+            }
         }
     }
 })
