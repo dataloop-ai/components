@@ -425,6 +425,13 @@ export default defineComponent({
         selectChildren: {
             type: Boolean,
             default: true
+        },
+        /**
+         * the label to show when items are selected
+         */
+        selectedResourceLabel: {
+            type: String,
+            default: 'Selected Items'
         }
     },
     emits: [
@@ -616,7 +623,7 @@ export default defineComponent({
                 return getLabelOfSelectedOption(valueToSearch, this.options)
             }
             return this.modelValueLength > 0
-                ? `${this.modelValueLength} Selected Items`
+                ? `${this.modelValueLength} ${this.selectedResourceLabel}`
                 : this.computedPlaceholder
         },
         computedAllItemsLabel(): string {

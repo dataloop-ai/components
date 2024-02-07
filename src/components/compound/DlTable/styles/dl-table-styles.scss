@@ -199,6 +199,7 @@
     }
 
     .dl-td {
+        background-color: var(--dl-color-panel-background);
         &--no-hover {
             &:hover {
                 background-color: none !important;
@@ -211,7 +212,7 @@
     }
 
     tbody {
-        tr.selected {
+        tr.selected td {
             background-color: var(--dl-color-fill);
         }
 
@@ -336,6 +337,7 @@
 
     &__bottom--nodata {
         color: var(--dl-color-lighter);
+        padding: 25px;
 
         .dl-table__control {
             justify-content: center;

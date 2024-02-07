@@ -1,9 +1,5 @@
 <template>
-    <dl-list-item
-        type="label"
-        clickable
-        @click="emitClick"
-    >
+    <dl-list-item type="label" clickable @click="emitClick">
         <dl-item-section
             class="menu-item-wrapper-section"
             :class="{ 'left-label': leftLabel }"
@@ -44,5 +40,6 @@ export default defineComponent({
 .left-label {
     justify-content: space-between;
     flex-direction: row;
+    gap: 20px;
 }
 </style>

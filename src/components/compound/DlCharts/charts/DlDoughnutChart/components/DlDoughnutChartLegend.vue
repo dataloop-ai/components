@@ -27,7 +27,7 @@
                     class="wrapper__legend__item__counter truncate"
                     :style="{ color: getColor(index, text) }"
                 >
-                    <slot :item="item">
+                    <slot :item="item" :index="index">
                         {{ item }}
                     </slot>
                 </div>

@@ -49,7 +49,10 @@
             @virtual-scroll="onVScroll"
         >
             <template #before>
-                <thead :colspan="colspanWithExpandableRow">
+                <thead
+                    :colspan="colspanWithExpandableRow"
+                    style="position: relative; z-index: 100"
+                >
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -117,6 +120,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
+                                    :padding="`0 ${columnSpacing}`"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -157,7 +161,11 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            text-color="dl-color-medium"
+                                            :text-color="
+                                                isVisibleColumnsOpen
+                                                    ? 'dl-color-secondary'
+                                                    : 'dl-color-medium'
+                                            "
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
@@ -174,7 +182,12 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-popup dense>
+                                                <dl-popup
+                                                    v-model="
+                                                        isVisibleColumnsOpen
+                                                    "
+                                                    dense
+                                                >
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -337,6 +350,7 @@
                                     :style="col.tdStyle(props.item)"
                                     :no-hover="noHover"
                                     :col-index="colIndex"
+                                    :padding="`0 ${columnSpacing}`"
                                 >
                                     <slot
                                         v-bind="
@@ -379,7 +393,9 @@
                                                 ? `body-cell-row-actions`
                                                 : 'body-cell'
                                         "
-                                    />
+                                    >
+                                        <div style="width: 15px"></div>
+                                    </slot>
                                 </DlTd>
                             </DlTr>
                             <tr
@@ -426,7 +442,10 @@
 
         <div v-else ref="tableScroll" class="dl-table__middle scroll">
             <table ref="tableRef" class="dl-table" :class="additionalClasses">
-                <thead :colspan="colspanWithExpandableRow">
+                <thead
+                    :colspan="colspanWithExpandableRow"
+                    style="position: relative; z-index: 100"
+                >
                     <slot
                         v-if="!hideHeader"
                         name="header"
@@ -494,7 +513,9 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="isTreeTable ? '0' : '0 10px'"
+                                    :padding="
+                                        isTreeTable ? '0' : `0 ${columnSpacing}`
+                                    "
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -516,7 +537,9 @@
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
                                 no-tooltip
-                                :padding="isTreeTable ? '0' : '0 10px'"
+                                :padding="
+                                    isTreeTable ? '0' : `0 ${columnSpacing}`
+                                "
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -535,7 +558,11 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            text-color="dl-color-medium"
+                                            :text-color="
+                                                isVisibleColumnsOpen
+                                                    ? 'dl-color-secondary'
+                                                    : 'dl-color-medium'
+                                            "
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
@@ -552,7 +579,12 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-popup dense>
+                                                <dl-popup
+                                                    v-model="
+                                                        isVisibleColumnsOpen
+                                                    "
+                                                    dense
+                                                >
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -617,6 +649,7 @@
                         ref="tbody"
                         tag="tbody"
                         class="nested-table dl-virtual-scroll__content"
+                        style="position: relative; z-index: 90"
                         v-bind="{
                             onEnd: handleSortableEvent
                         }"
@@ -732,6 +765,7 @@
                                         :style="col.tdStyle(row)"
                                         :col-index="colIndex"
                                         :no-tooltip="col.ignoreTooltip"
+                                        :padding="`0 ${columnSpacing}`"
                                     >
                                         <slot
                                             v-bind="
@@ -758,6 +792,7 @@
                                         key="visibleColumnsSlot"
                                         class="visible-columns-justify-end"
                                         no-tooltip
+                                        :padding="`0 ${columnSpacing}`"
                                     >
                                         <slot
                                             v-bind="
@@ -774,7 +809,9 @@
                                                     ? `body-cell-row-actions`
                                                     : 'body-cell'
                                             "
-                                        />
+                                        >
+                                            <div style="width: 15px"></div>
+                                        </slot>
                                     </DlTd>
                                 </DlTr>
                                 <tr
@@ -1181,6 +1218,14 @@ export default defineComponent({
             default: (): [] => []
         },
         /**
+         * Padding of TD and TH elements
+         */
+        columnSpacing: {
+            type: String,
+            default: '10px',
+            required: false
+        },
+        /**
          * Props for the empty state component
          */
         emptyStateProps: {
@@ -1271,6 +1316,7 @@ export default defineComponent({
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
         const tableScroll = ref(null)
+        const isVisibleColumnsOpen = ref(false)
 
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
@@ -1397,13 +1443,18 @@ export default defineComponent({
                 tableRef.value ||
                 virtScrollRef.value.rootRef.querySelector('table') ||
                 (document.querySelector('table.dl-table') as HTMLTableElement)
-
+            const cols = getVisibleColumnsState()
+                ? props.columns.filter((col: any) =>
+                      getVisibleColumnsState().includes(col.name)
+                  )
+                : props.columns
             nextTick(() => {
                 setAllColumnWidths(
                     tableEl,
-                    columns.value as DlTableColumn[],
+                    cols as DlTableColumn[],
                     props.stickyColumns,
-                    props.fitAllColumns
+                    props.fitAllColumns,
+                    !!props.visibleColumns
                 )
             })
             return tableEl
@@ -1415,7 +1466,6 @@ export default defineComponent({
                 'virtual-scroll-content-update',
                 updateTableSizing
             )
-            if (visibleColumns.value) return
             if (resizable.value) {
                 applyResizableColumns(tableEl, vm)
             }
@@ -1443,16 +1493,20 @@ export default defineComponent({
                     (document.querySelector(
                         'table.dl-table'
                     ) as HTMLTableElement)
-
+                const cols = getVisibleColumnsState()
+                    ? props.columns.filter((col: any) =>
+                          getVisibleColumnsState().includes(col.name)
+                      )
+                    : props.columns
                 nextTick(() => {
                     setAllColumnWidths(
                         tableEl,
-                        props.columns as DlTableColumn[],
+                        cols as DlTableColumn[],
                         props.stickyColumns,
-                        props.fitAllColumns
+                        props.fitAllColumns,
+                        !!props.visibleColumns
                     )
                 })
-                if (visibleColumns.value) return
 
                 if (resizable.value) {
                     applyResizableColumns(tableEl, vm)
@@ -1471,7 +1525,6 @@ export default defineComponent({
         )
 
         watch(resizable, () => {
-            if (visibleColumns.value) return
             applyResizableColumns(tableEl, vm)
         })
 
@@ -2126,7 +2179,8 @@ export default defineComponent({
             computedPagination,
             getRowExpandedKey,
             hasExpandableSlot,
-            tableScroll
+            tableScroll,
+            isVisibleColumnsOpen
         }
     }
 })

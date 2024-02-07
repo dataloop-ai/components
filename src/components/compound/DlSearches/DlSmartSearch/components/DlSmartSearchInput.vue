@@ -17,7 +17,7 @@
                                 ? defaultIconColor
                                 : statusIconColor || defaultIconColor
                         "
-                        size="16px"
+                        size="12px"
                         :inline="false"
                     />
                 </div>
@@ -29,6 +29,7 @@
                         :style="textareaStyles"
                         :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
+                        :spellcheck="false"
                         @keypress="onKeyPress"
                         @keyup.esc="onKeyPress"
                         @input="onInput"
@@ -52,25 +53,24 @@
                 </div>
                 <dl-tooltip
                     v-if="!focused"
-                    :style="`
-                        background-color: var(--dl-color-panel-background);
-                        border: 1px solid var(--dl-color-separator);
-                        color: var(--dl-color-darker);
-                        padding: 16px;
-                    `"
+                    border="1px solid var(--dl-color-separator)"
+                    background-color="dl-color-panel-background"
+                    color="dl-color-darker"
                     max-width="340px"
                     anchor="bottom left"
                     self="top left"
                 >
-                    <div class="tooltip-title">
-                        <dl-icon :icon="defaultIcon" />
-                        Smart Search Query
-                    </div>
-                    <div class="tooltip-subtitle">
-                        A powerful and flexible search language used in
-                        Dataloop. The smart search allows users to construct
-                        queries to search based on various criteria such as
-                        status, metadata, labels and other.
+                    <div style="padding: 10px">
+                        <div class="tooltip-title">
+                            <dl-icon :icon="defaultIcon" />
+                            Schema Based Search
+                        </div>
+                        <div class="tooltip-subtitle">
+                            A powerful and flexible search. Allows users to
+                            construct queries based on specific field selection
+                            following schema rules. Does not enable free text
+                            search.
+                        </div>
                     </div>
                 </dl-tooltip>
             </div>
@@ -469,28 +469,25 @@ export default defineComponent({
         const forceStringsType = (data: string | Data): string | Data => {
             const convertNode = (node: Data) => {
                 for (const key in node) {
-                    const value = node[key]
-                    if (Array.isArray(value)) {
-                        for (let i = 0; i < value.length; i++) {
-                            value[i] = '' + value[i]
+                    if (key !== '$exists') {
+                        const value = node[key]
+                        if (Array.isArray(value)) {
+                            for (let i = 0; i < value.length; i++) {
+                                value[i] = '' + value[i]
+                            }
+                        } else {
+                            node[key] = '' + value
                         }
-                    } else {
-                        node[key] = '' + value
                     }
                 }
             }
             if (typeof data !== 'string' && schema.value) {
                 for (const key in data) {
                     const type = schema.value[key]
-                    if (Array.isArray(type)) {
-                        if (type.includes('string')) {
-                            if (typeof data[key] === 'object') {
-                                convertNode(data[key])
-                            } else {
-                                data[key] = '' + data[key]
-                            }
-                        }
-                    } else if (type === 'string') {
+                    if (
+                        (Array.isArray(type) && type.includes('string')) ||
+                        type === 'string'
+                    ) {
                         if (typeof data[key] === 'object') {
                             convertNode(data[key])
                         } else {
@@ -1015,7 +1012,8 @@ export default defineComponent({
         const watchKeyUp = (e: KeyboardEvent) => {
             if (
                 focused.value &&
-                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight') &&
+                !e.altKey
             ) {
                 setInputValue(searchQuery.value, { noEmit: true })
             }
@@ -1161,8 +1159,8 @@ export default defineComponent({
     &__status-icon-wrapper {
         display: flex;
         line-height: 15px;
-        margin: 6px 8px 0px 0px;
-        align-items: flex-start;
+        margin: 3px 8px 0px 0px;
+        align-items: center;
         div:first-child {
             display: flex;
             align-items: center;

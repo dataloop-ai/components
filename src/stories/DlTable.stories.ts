@@ -455,7 +455,6 @@ export const CustomRowBody: Story = {
                 </div>
                 </template>
             </DlTable>
-            </div>
             `
         }
     }
