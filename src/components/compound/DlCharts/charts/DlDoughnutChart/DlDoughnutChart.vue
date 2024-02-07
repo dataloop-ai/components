@@ -132,7 +132,7 @@ export default defineComponent({
             default: () => doughnutChartEmptyStateProps
         }
     },
-    setup(props) {
+    setup(props, { attrs }) {
         /** Data */
         const doughnutChartRef = ref(null)
         const dlDoughnutChartWidgetRef = ref(null)
@@ -280,6 +280,8 @@ export default defineComponent({
         )
         defaultOptions.animation = mergedAnimation.value
 
+        type ItemClickHandler = (index: number) => void
+
         const doughnutOptions = computed(() =>
             merge(
                 {
@@ -304,6 +306,22 @@ export default defineComponent({
                                 }
                             }
                         }
+                    },
+                    onClick: (e: Event & { chart: ChartJS }) => {
+                        if (attrs.onItemClick as ItemClickHandler) {
+                            const intersects =
+                                e.chart.getElementsAtEventForMode(
+                                    e,
+                                    'nearest',
+                                    { intersect: true },
+                                    false
+                                )
+                            if (intersects.length > 0) {
+                                ;(attrs.onItemClick as ItemClickHandler)(
+                                    intersects[0].index
+                                )
+                            }
+                        }
                     }
                 },
                 defaultOptions
@@ -312,6 +330,9 @@ export default defineComponent({
 
         /** Methods */
         const hideData = (item: { index: number; hidden: boolean }) => {
+            if (attrs.onItemClick as ItemClickHandler) {
+                return (attrs.onItemClick as ItemClickHandler)(item.index)
+            }
             chartRefValue.value._metasets[0].data[item.index].hidden =
                 item.hidden
             chartRefValue.value.update()
