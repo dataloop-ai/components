@@ -98,6 +98,11 @@ import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 
+type SetupParams = {
+    attrs: { onItemClick?: (index: number) => void }
+    listeners?: { itemClick?: (index: number) => void }
+}
+
 export default defineComponent({
     name: 'DlDoughnutChart',
     components: {
@@ -132,9 +137,7 @@ export default defineComponent({
             default: () => doughnutChartEmptyStateProps
         }
     },
-    setup(props, params) {
-        const attrs = params.attrs
-        const listeners = (params as any).listeners
+    setup(props, params: SetupParams) {
         /** Data */
         const doughnutChartRef = ref(null)
         const dlDoughnutChartWidgetRef = ref(null)
@@ -282,8 +285,6 @@ export default defineComponent({
         )
         defaultOptions.animation = mergedAnimation.value
 
-        type ItemClickHandler = (index: number) => void
-
         const doughnutOptions = computed(() =>
             merge(
                 {
@@ -310,8 +311,9 @@ export default defineComponent({
                         }
                     },
                     onClick: (e: Event & { chart: ChartJS }) => {
-                        const itemClick = (attrs.onItemClick ??
-                            listeners?.itemClick) as ItemClickHandler
+                        const itemClick =
+                            params.attrs.onItemClick ??
+                            params.listeners?.itemClick
                         if (itemClick) {
                             const intersects =
                                 e.chart.getElementsAtEventForMode(
