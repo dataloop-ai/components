@@ -132,7 +132,9 @@ export default defineComponent({
             default: () => doughnutChartEmptyStateProps
         }
     },
-    setup(props, { attrs }) {
+    setup(props, params) {
+        const attrs = params.attrs
+        const listeners = (params as any).listeners
         /** Data */
         const doughnutChartRef = ref(null)
         const dlDoughnutChartWidgetRef = ref(null)
@@ -308,7 +310,9 @@ export default defineComponent({
                         }
                     },
                     onClick: (e: Event & { chart: ChartJS }) => {
-                        if (attrs.onItemClick) {
+                        const itemClick = (attrs.onItemClick ??
+                            listeners?.itemClick) as ItemClickHandler
+                        if (itemClick) {
                             const intersects =
                                 e.chart.getElementsAtEventForMode(
                                     e,
@@ -317,9 +321,7 @@ export default defineComponent({
                                     false
                                 )
                             if (intersects.length > 0) {
-                                ;(attrs.onItemClick as ItemClickHandler)(
-                                    intersects[0].index
-                                )
+                                itemClick(intersects[0].index)
                             }
                         }
                     }
