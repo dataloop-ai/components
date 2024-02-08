@@ -98,6 +98,11 @@ import { TDoughnutWithOriginalColor } from './types/TDoughnutWithOriginalColor'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 
+type SetupParams = {
+    attrs: { onItemClick?: (index: number) => void }
+    listeners?: { itemClick?: (index: number) => void }
+}
+
 export default defineComponent({
     name: 'DlDoughnutChart',
     components: {
@@ -132,7 +137,7 @@ export default defineComponent({
             default: () => doughnutChartEmptyStateProps
         }
     },
-    setup(props, { attrs }) {
+    setup(props, params: SetupParams) {
         /** Data */
         const doughnutChartRef = ref(null)
         const dlDoughnutChartWidgetRef = ref(null)
@@ -280,8 +285,6 @@ export default defineComponent({
         )
         defaultOptions.animation = mergedAnimation.value
 
-        type ItemClickHandler = (index: number) => void
-
         const doughnutOptions = computed(() =>
             merge(
                 {
@@ -308,7 +311,10 @@ export default defineComponent({
                         }
                     },
                     onClick: (e: Event & { chart: ChartJS }) => {
-                        if (attrs.onItemClick) {
+                        const itemClick =
+                            params.attrs.onItemClick ??
+                            params.listeners?.itemClick
+                        if (itemClick) {
                             const intersects =
                                 e.chart.getElementsAtEventForMode(
                                     e,
@@ -317,9 +323,7 @@ export default defineComponent({
                                     false
                                 )
                             if (intersects.length > 0) {
-                                ;(attrs.onItemClick as ItemClickHandler)(
-                                    intersects[0].index
-                                )
+                                itemClick(intersects[0].index)
                             }
                         }
                     }
