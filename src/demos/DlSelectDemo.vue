@@ -156,10 +156,7 @@
             all-items-option
         >
             <template #prepend>
-                <dl-icon
-                    size="12px"
-                    icon="icon-dl-filter"
-                />
+                <dl-icon size="12px" icon="icon-dl-filter" />
             </template>
         </dl-select>
         custom search
@@ -765,58 +762,58 @@ const treeOptionsExpanded: DlSelectOptionType[] = [
         value: 'r6',
         expanded: true,
         children: [
-            { label: 'child 1', value: 'c6' },
-            { label: 'child 2', value: 'c7' },
+            { label: 'child 1', value: 'c1' },
+            { label: 'child 2', value: 'c2' },
             {
                 label: 'child 3',
-                value: 'c8',
+                value: 'c3',
                 expanded: true,
                 children: [
-                    { label: 'child 4', value: 'c9' },
+                    { label: 'child 4', value: 'c4' },
                     {
                         label: 'child 5',
-                        value: 'c10441',
+                        value: 'c5',
                         expanded: true,
                         children: [
                             {
                                 label: 'child 6',
-                                value: 'c8312',
+                                value: 'c6',
                                 expanded: true,
                                 children: [
                                     {
                                         label: 'child 7',
-                                        value: 'c923',
+                                        value: 'c7',
                                         children: [
-                                            { label: 'child 4', value: 'c9' },
+                                            { label: 'child 8', value: 'c8' },
                                             {
-                                                label: 'child 5',
-                                                value: 'c10',
+                                                label: 'child 9',
+                                                value: 'c9',
                                                 children: [
                                                     {
-                                                        label: 'child 4',
-                                                        value: 'c9'
-                                                    },
-                                                    {
-                                                        label: 'child 5',
+                                                        label: 'child 10-1',
                                                         value: 'c10'
                                                     },
                                                     {
-                                                        label: 'child 5',
+                                                        label: 'child 10-2',
                                                         value: 'c10'
                                                     },
                                                     {
-                                                        label: 'child 5',
+                                                        label: 'child 10-3',
                                                         value: 'c10'
                                                     },
                                                     {
-                                                        label: 'child 5',
+                                                        label: 'child 10-4',
+                                                        value: 'c10'
+                                                    },
+                                                    {
+                                                        label: 'child 10-5',
                                                         value: 'c10'
                                                     }
                                                 ]
                                             }
                                         ]
                                     },
-                                    { label: 'child 8', value: 'c101' }
+                                    { label: 'child 11', value: 'c11' }
                                 ]
                             }
                         ]
