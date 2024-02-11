@@ -41,6 +41,11 @@ export default defineComponent({
         color: {
             type: String,
             default: 'dl-color-darker'
+        },
+        numberOfLines: {
+            type: Number,
+            required: false,
+            default: null
         }
     },
     data() {
@@ -87,6 +92,13 @@ export default defineComponent({
                 classes.push(this.letterClass)
             }
 
+            if (this.numberOfLines) {
+                console.log('numberOfLines', this.numberOfLines)
+                classes.push(
+                    `dl-typography--number-of-lines-${this.numberOfLines}`
+                )
+            }
+
             return classes
         }
     }
@@ -124,5 +136,20 @@ export default defineComponent({
     // important needed above for sizing of h tags.. quasar conflict
     // to deal with quasar conflicts.
     line-height: initial !important;
+
+    // These are the classes that are used to limit the number of lines a kpi-title spans
+    &--number-of-lines-1 {
+        overflow: visible;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        -webkit-box-orient: vertical;
+    }
+
+    &--number-of-lines-2 {
+        overflow: visible;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* number of lines to show */
+        -webkit-box-orient: vertical;
+    }
 }
 </style>
