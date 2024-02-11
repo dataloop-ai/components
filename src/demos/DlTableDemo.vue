@@ -57,10 +57,7 @@
                 </div>
 
                 <div class="right-panel">
-                    <button
-                        class="btn"
-                        @click="addRowPerPage"
-                    >
+                    <button class="btn" @click="addRowPerPage">
                         Add Rows/Page
                     </button>
 
@@ -253,7 +250,7 @@
                             <img
                                 src="https://popcat.click/twitter-card.jpg"
                                 style="width: 150px; height: 150px"
-                            >
+                            />
                         </div>
                     </template>
                 </DlTable>
@@ -429,6 +426,7 @@
                         :selection="selection"
                         :dense="dense"
                         title="Treats"
+                        class="reactive-scroll"
                         color="dl-color-secondary"
                         :loading="infiniteLoading"
                         :rows="computedRows"
@@ -513,10 +511,7 @@
             <div>
                 <p>Test reactive cells</p>
                 first row:
-                <div
-                    class="row"
-                    style="width: 100%; margin-bottom: 60px"
-                >
+                <div class="row" style="width: 100%; margin-bottom: 60px">
                     <dl-input
                         v-for="(value, key) in tableRows[0]"
                         :key="key"
@@ -635,14 +630,11 @@
                 <template #body-cell-carbs="{ row }">
                     <div class="row">
                         {{ row.carbs }}
-                        <dl-avatar
-                            tooltip="popcat@gmail.com"
-                            size="15px"
-                        >
+                        <dl-avatar tooltip="popcat@gmail.com" size="15px">
                             <img
                                 src="https://popcat.click/twitter-card.jpg"
                                 style="width: 15px; height: 15px"
-                            >
+                            />
                         </dl-avatar>
                     </div>
                 </template>
@@ -672,7 +664,7 @@
                         <img
                             src="https://popcat.click/twitter-card.jpg"
                             style="width: 150px; height: 150px"
-                        >
+                        />
                     </div>
                 </template>
             </DlTable>
