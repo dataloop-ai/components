@@ -86,19 +86,9 @@ body {
 }
 
 .reactive-scroll {
-    .scroll {
-        overflow: auto;
-        scrollbar-color: transparent transparent; /* For Firefox */
-    }
-    
     .scroll::-webkit-scrollbar-thumb {
         background-color: transparent;
     }
-    
-    .scroll:hover {
-        scrollbar-color: var(--dl-color-lighter);
-    }
-    
     .scroll:hover::-webkit-scrollbar-thumb {
         background-color: var(--dl-color-lighter);
     }
