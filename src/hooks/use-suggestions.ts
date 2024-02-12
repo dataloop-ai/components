@@ -182,7 +182,8 @@ export const useSuggestions = (
         error.value = input.length
             ? getError(schemaValue, aliasesArray, expressions, {
                   strict,
-                  forbiddenKeys
+                  forbiddenKeys,
+                  omitSuggestions
               })
             : null
     }
@@ -370,6 +371,7 @@ export const useSuggestions = (
 
 const errors = {
     INVALID_EXPRESSION: 'Invalid Expression',
+    INVALID_OPERATOR: 'Invalid operator',
     INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`,
     FORBIDDEN_KEY: (field: string) => `Forbidden field "${field}"`
 }
@@ -403,9 +405,13 @@ const getError = (
     schema: Schema,
     aliases: Alias[],
     expressions: Expression[],
-    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]> } = {}
+    options: {
+        strict?: Ref<boolean>
+        forbiddenKeys?: Ref<string[]>
+        omitSuggestions?: Ref<string[]>
+    } = {}
 ): string | null => {
-    const { strict, forbiddenKeys } = options
+    const { strict, forbiddenKeys, omitSuggestions } = options
     const hasErrorInStructure = expressions
         .flatMap((exp) => Object.values(exp))
         .some((el, index, arr) => {
@@ -419,68 +425,85 @@ const getError = (
 
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
-        .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
-            if (acc && acc !== 'warning') return acc
-            const fieldKey: string =
-                getAliasObjByAlias(aliases, field)?.key ?? field
+        .reduce<string | null>(
+            (acc, { field, value, keyword, operator }, _, arr) => {
+                if (acc && acc !== 'warning') return acc
+                const fieldKey: string =
+                    getAliasObjByAlias(aliases, field)?.key ?? field
 
-            /**
-             * Handle nested keys to validate if the key exists in the schema or not.
-             */
-            const keys: string[] = []
-            for (const key of Object.keys(schema)) {
-                if (isObject(schema[key]) && !Array.isArray(schema[key])) {
-                    const flattened = flatten({ [key]: schema[key] })
-                    for (const k of Object.keys(flattened)) {
-                        keys.push(k)
-                    }
-                } else {
-                    keys.push(key)
-                }
-            }
-
-            function hasValidExpression(
-                arr: string[],
-                pattern: RegExp
-            ): boolean {
-                for (const item of arr) {
-                    if (pattern.test(item)) {
-                        return true
+                /**
+                 * Handle nested keys to validate if the key exists in the schema or not.
+                 */
+                const keys: string[] = []
+                for (const key of Object.keys(schema)) {
+                    if (isObject(schema[key]) && !Array.isArray(schema[key])) {
+                        const flattened = flatten({ [key]: schema[key] })
+                        for (const k of Object.keys(flattened)) {
+                            keys.push(k)
+                        }
+                    } else {
+                        keys.push(key)
                     }
                 }
-                return false
-            }
 
-            const pattern = new RegExp(`^${fieldKey}\\.\\d`)
-            const isValid = isInputAllowed(fieldKey, keys)
-            const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
-            if (
-                !keys.includes(fieldKey) &&
-                !hasValidExpression(keys, pattern) &&
-                !isValid &&
-                !isForbidden
-            ) {
-                return strict?.value ? errors.INVALID_EXPRESSION : 'warning'
-            }
+                function hasValidExpression(
+                    arr: string[],
+                    pattern: RegExp
+                ): boolean {
+                    for (const item of arr) {
+                        if (pattern.test(item)) {
+                            return true
+                        }
+                    }
+                    return false
+                }
 
-            if (isForbidden) {
-                arr.splice(1)
-                return (acc = errors.FORBIDDEN_KEY(field))
-            }
+                const pattern = new RegExp(`^${fieldKey}\\.\\d`)
+                const isValid = isInputAllowed(fieldKey, keys)
+                const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
+                if (
+                    !keys.includes(fieldKey) &&
+                    !hasValidExpression(keys, pattern) &&
+                    !isValid &&
+                    !isForbidden
+                ) {
+                    return strict?.value ? errors.INVALID_EXPRESSION : 'warning'
+                }
 
-            const valid = isValidByDataType(
-                validateBracketValues(value),
-                getDataType(schema, aliases, fieldKey),
-                operator
-            )
+                if (isForbidden) {
+                    arr.splice(1)
+                    return (acc = errors.FORBIDDEN_KEY(field))
+                }
 
-            if (!valid) {
-                arr.splice(1)
-                return (acc = errors.INVALID_VALUE(field))
-            }
+                const valid = isValidByDataType(
+                    validateBracketValues(value),
+                    getDataType(schema, aliases, fieldKey),
+                    operator
+                )
 
-            return acc === 'warning' ? acc : (acc = null)
-        }, null)
+                if (!valid) {
+                    arr.splice(1)
+                    return (acc = errors.INVALID_VALUE(field))
+                }
+
+                if (omitSuggestions) {
+                    if (omitSuggestions.value.includes(value)) {
+                        arr.splice(1)
+                        return (acc = errors.INVALID_VALUE(field))
+                    }
+                    if (
+                        omitSuggestions.value.includes(keyword) ||
+                        omitSuggestions.value.includes(operator)
+                    ) {
+                        arr.splice(1)
+                        return (acc = errors.INVALID_OPERATOR)
+                    }
+                }
+
+                return acc === 'warning' ? acc : (acc = null)
+            },
+            null
+        )
 }
 
 const isValidByDataType = (
