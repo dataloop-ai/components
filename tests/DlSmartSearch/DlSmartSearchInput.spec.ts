@@ -210,11 +210,20 @@ describe('DlSmartSearchInput', () => {
 
     describe('DlSmartSearchInput Search behavior', () => {
         let wrapper: any
+        let wrapper2: any
         beforeAll(() => {
             wrapper = mount(DlSmartSearchInput, {
                 props: {
                     schema,
                     aliases
+                }
+            })
+
+            wrapper2 = mount(DlSmartSearchInput, {
+                props: {
+                    schema,
+                    aliases,
+                    omitSuggestions: ['!=', 'OR']
                 }
             })
         })
@@ -278,6 +287,24 @@ describe('DlSmartSearchInput', () => {
                 await window.delay(500)
                 await wrapper.vm.$nextTick()
                 expect(wrapper.vm.computedStatus.type).toMatch('error')
+            })
+        })
+
+        describe('when specifying omit-suggestions', () => {
+            it('should change status to error if typed a query with an operator on the list', async () => {
+                await wrapper2.vm.debouncedSetInputValue(`name != 'test'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper2.vm.$nextTick()
+                expect(wrapper2.vm.computedStatus.type).toMatch('error')
+
+                await wrapper2.vm.debouncedSetInputValue(
+                    `name = 'test' OR level = 'low'`
+                )
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper2.vm.$nextTick()
+                expect(wrapper2.vm.computedStatus.type).toMatch('error')
             })
         })
 
