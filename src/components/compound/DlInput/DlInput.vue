@@ -802,7 +802,9 @@ export default defineComponent({
                         return `<span class="clickable" style="color: ${syntaxHighlightColor.value}">${word}</span>`
                     }
                     if (word.startsWith('<')) {
-                        return `<span>${word.replace('<', '&lt;')}</span>`
+                        return `<span>${word
+                            .replace('<', '&lt;')
+                            .replace('>', '&gt;')}</span>`
                     }
                     return word
                 })
