@@ -1,25 +1,25 @@
 <template>
-    <component
-        :is="variant"
-        :id="uuid"
-        :class="classes"
-        :style="styles"
-    >
-        <slot />
+    <component :is="variant" :id="uuid" :class="classes" :style="styles">
+        <dl-markdown v-if="markdown"><slot /></dl-markdown>
+        <slot v-else />
     </component>
 </template>
 <script lang="ts">
 import { v4 } from 'uuid'
-import { defineComponent, PropType } from 'vue-demi'
+
+import { defineComponent, PropType, computed } from 'vue-demi'
 import { getColor } from '../../../utils'
 import { DlTextTransformOptions } from '../../shared/types'
 
-type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div'
+import { DlMarkdown } from '../DlMarkDown'
 
-const sizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'small']
+type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div' | 'pre'
+
+const sizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'small', 'pre']
 
 export default defineComponent({
     name: 'DlTypography',
+    components: { DlMarkdown },
     props: {
         variant: {
             type: String as PropType<Variant>,
@@ -31,6 +31,7 @@ export default defineComponent({
             required: false,
             default: null
         },
+        markdown: Boolean,
         transform: {
             type: String as PropType<DlTextTransformOptions>,
             default: 'default',
@@ -43,56 +44,62 @@ export default defineComponent({
             default: 'dl-color-darker'
         }
     },
-    data() {
-        return {
-            uuid: `dl-typography-${v4()}`
-        }
-    },
-    computed: {
-        styles(): Record<string, string | number> {
-            const styles: Record<string, string | number> = {
-                color: getColor(this.color as string, 'dl-color-darker'),
-                textTransform: this.letterClass ? null : this.transform,
-                fontWeight: this.bold ? 'bold' : 400
-            }
+    setup(props) {
+        const uuid = `dl-typography-${v4()}`
 
-            if (this.size && !sizes.includes(this.size)) {
-                styles.fontSize = this.size as string
-            }
-
-            return styles
-        },
-        letterClass(): string {
-            if (this.transform === 'default') {
+        const letterClass = computed(() => {
+            if (props.transform === 'default') {
                 return 'first-letter-capitalized'
             }
             return null
-        },
-        classes(): string[] {
+        })
+
+        const styles = computed(() => {
+            const styles: Record<string, string | number> = {
+                color: getColor(props.color as string, 'dl-color-darker'),
+                textTransform: letterClass.value ? null : props.transform,
+                fontWeight: props.bold ? 'bold' : 400
+            }
+
+            if (props.size && !sizes.includes(props.size)) {
+                styles.fontSize = props.size as string
+            }
+
+            return styles
+        })
+
+        const classes = computed(() => {
             const classes = [`dl-typography`]
 
-            if (this.size) {
-                if (sizes.includes(this.size)) {
-                    classes.push(`dl-typography--${this.size}`)
+            if (props.size) {
+                if (sizes.includes(props.size)) {
+                    classes.push(`dl-typography--${props.size}`)
                 }
             } else {
-                if (sizes.includes(this.variant)) {
-                    classes.push(`dl-typography--${this.variant}`)
+                if (sizes.includes(props.variant)) {
+                    classes.push(`dl-typography--${props.variant}`)
                 } else {
                     classes.push(`dl-typography--body`)
                 }
             }
 
-            if (this.letterClass) {
-                classes.push(this.letterClass)
+            if (letterClass.value) {
+                classes.push(letterClass.value)
             }
 
             return classes
+        })
+
+        return {
+            letterClass,
+            styles,
+            classes,
+            uuid
         }
     }
 })
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .dl-typography {
     margin: 0;
     padding: 0;
@@ -119,6 +126,12 @@ export default defineComponent({
     }
     &--small {
         font-size: var(--dl-font-size-small);
+    }
+    &--pre {
+        display: flex;
+        justify-content: center;
+        padding: 1rem;
+        white-space: pre-wrap;
     }
 
     // important needed above for sizing of h tags.. quasar conflict

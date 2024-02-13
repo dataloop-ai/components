@@ -1,9 +1,6 @@
 <template>
     <div>
-        <div
-            v-for="(item, index) in typographyTypes"
-            :key="index"
-        >
+        <div v-for="(item, index) in typographyTypes" :key="index">
             <DlTypography
                 :color="item.color"
                 :size="item.size || item.variant"
@@ -12,6 +9,10 @@
                 Typography {{ item ? item.variant : item }}
             </DlTypography>
         </div>
+
+        <dl-typography variant="div" markdown>
+            {{ rawMD }}
+        </dl-typography>
 
         <DlButton>
             <dl-typography
@@ -23,8 +24,8 @@
                 Typography Bold
             </dl-typography>
         </DlButton>
-        <br>
-        <br>
+        <br />
+        <br />
         <DlButton>
             <dl-typography
                 color="dl-color-tooltip-text"
@@ -73,6 +74,9 @@ export default defineComponent({
                     variant: 'p'
                 },
                 {
+                    variant: 'pre'
+                },
+                {
                     variant: 'h1',
                     color: 'dl-color-secondary'
                 },
@@ -85,7 +89,31 @@ export default defineComponent({
                     variant: 'p',
                     color: 'dl-color-warning'
                 }
-            ]
+            ],
+            rawMD: `# h1 Hi
+## h2 This is a markdown demo
+### h3 It's a simple demo
+#### h4 It's a simple demo
+##### h5 It's a simple demo
+###### h6 It's a simple demo
+
+*It's a simple demo*
+
+**It's a simple demo**
+
+***It's a simple demo***
+
+> It's a simple demo
+- [ ] It's a simple demo
+- [x] It's a simple demo
+
+[It's a simple demo]('https://www.google.com')
+
+\`It's a simple demo\`
+\`\`\`javascript
+    const highlight = "code";
+\`\`\`
+`
         }
     }
 })

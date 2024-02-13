@@ -33,5 +33,42 @@ describe('DlTypography', () => {
                 )
             })
         })
+
+        describe('When rendering typography content', () => {
+            describe('When rendering markdown content', () => {
+                it('should render typography markdown content correctly', () => {
+                    const wrapper = mount(DlTypography, {
+                        props: { markdown: true, variant: 'div' },
+                        slots: {
+                            default: () => '# Typography content'
+                        }
+                    })
+
+                    expect(wrapper.find('div.dl-mark-down').exists()).toBe(true)
+
+                    const h1Element = wrapper
+                        .find('div.dl-mark-down')
+                        .find('h1')
+
+                    expect(h1Element.exists()).toBe(true)
+                    expect(h1Element.text()).toBe('Typography content')
+                })
+            })
+            describe('When rendering plaintext content', () => {
+                it('should render pre tag with centered plain text content correctly', () => {
+                    const wrapper = mount(DlTypography, {
+                        props: { variant: 'pre' },
+                        slots: {
+                            default: () => 'Typography content'
+                        }
+                    })
+
+                    const preElement = wrapper.find('pre')
+                    expect(preElement.exists()).toBe(true)
+
+                    expect(preElement.classes()).toContain('dl-typography--pre')
+                })
+            })
+        })
     })
 })
