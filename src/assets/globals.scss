@@ -144,6 +144,18 @@ body {
 
 .non-selectable {
     user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.non-draggable {
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 .no-outline {
@@ -330,13 +342,6 @@ html {
 ::-webkit-scrollbar-thumb {
     background-color: var(--dl-color-scrollbar);
     border-radius: 3px;
-}
-
-.no-user-select {
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
 }
 
 .flex-column {
