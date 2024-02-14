@@ -168,12 +168,8 @@ export default defineComponent({
         )
         const rows = computed(() => mapItems.value)
         const isFilterString = (input: string) => {
-            console.log('value', input)
             const stack = [...items.value]
-            let filter = input ?? ''
-            if (typeof filter === 'string') {
-                filter = filter.toLowerCase()
-            }
+            const filter = (input ?? '').toLowerCase()
             while (stack.length) {
                 const item = stack.pop()
                 if (item.displayLabel?.toLowerCase?.().includes(filter)) {
