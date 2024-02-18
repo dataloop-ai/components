@@ -141,6 +141,7 @@
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                class="dl-table-visible-column"
                                 no-tooltip
                                 padding="0"
                             >
@@ -375,7 +376,7 @@
                                 <DlTd
                                     v-if="showRowActions"
                                     key="visibleColumnsSlot"
-                                    class="visible-columns-justify-end"
+                                    class="visible-columns-justify-end dl-table-visible-column"
                                     no-tooltip
                                 >
                                     <slot
@@ -536,10 +537,9 @@
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                class="dl-table-visible-column"
                                 no-tooltip
-                                :padding="
-                                    isTreeTable ? '0' : `0 ${columnSpacing}`
-                                "
+                                padding="0"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -790,9 +790,8 @@
                                     <DlTd
                                         v-if="showRowActions"
                                         key="visibleColumnsSlot"
-                                        class="visible-columns-justify-end"
+                                        class="visible-columns-justify-end dl-table-visible-column"
                                         no-tooltip
-                                        :padding="`0 ${columnSpacing}`"
                                     >
                                         <slot
                                             v-bind="
@@ -889,7 +888,7 @@
             <div v-else class="dl-table__control">
                 <slot name="bottom" v-bind="marginalsScope">
                     <div
-                        v-if="hasBotomSelectionBanner"
+                        v-if="hasBottomSelectionBanner"
                         class="dl-table__control"
                     >
                         <div>
@@ -1771,7 +1770,7 @@ export default defineComponent({
             )
         })
 
-        const hasBotomSelectionBanner = computed(() => {
+        const hasBottomSelectionBanner = computed(() => {
             return (
                 hideSelectedBanner.value !== true &&
                 hasSelectionMode.value === true &&
@@ -2137,7 +2136,7 @@ export default defineComponent({
             noDataMessage,
             paginationState,
             hasTopSelectionMode,
-            hasBotomSelectionBanner,
+            hasBottomSelectionBanner,
             rowsSelectedNumber,
             singleSelection,
             multipleSelection,
