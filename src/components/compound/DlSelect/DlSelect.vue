@@ -1028,7 +1028,7 @@ export default defineComponent({
         align-items: center;
     }
     &--placeholder {
-        color: var(--dl-select-palceholder-color, --placeholder-color);
+        color: var(--dl-select-placeholder-color, var(--placeholder-color));
     }
 
     .dl-select__title-container {
@@ -1045,7 +1045,7 @@ export default defineComponent({
     }
 
     .selected-label {
-        color: var(--dl-select-palceholder-color, --placeholder-color);
+        color: var(--dl-select-placeholder-color, var(--placeholder-color));
     }
 
     .dl-select__title {

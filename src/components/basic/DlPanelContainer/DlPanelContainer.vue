@@ -2,21 +2,14 @@
     <div
         :id="uuid"
         class="dl-panel-container"
-        :class="{ 'no-user-select': avoidUserSelect }"
+        :class="{ 'non-selectable': avoidUserSelect }"
         :style="cssVariables"
         :data-resizable="resizable"
         :data-collapsable="collapsable"
         :data-direction="direction"
     >
-        <div
-            ref="panel"
-            class="inner-container"
-            style="height: 100%"
-        >
-            <div
-                v-if="collapsed"
-                class="inner-container-overlay"
-            />
+        <div ref="panel" class="inner-container" style="height: 100%">
+            <div v-if="collapsed" class="inner-container-overlay" />
             <div v-if="collapsable === true">
                 <div
                     v-if="direction === 'right' && isFullWidth === true"
@@ -88,23 +81,14 @@
                     <slot name="header" />
                 </div>
             </div>
-            <div
-                class="content"
-                :style="contentStyle"
-            >
+            <div class="content" :style="contentStyle">
                 <div class="column" />
                 <dl-empty-state
                     v-if="isEmpty && emptyStateProps"
                     v-bind="emptyStateProps"
                 >
-                    <template
-                        v-for="(_, slot) in $slots"
-                        #[slot]="props"
-                    >
-                        <slot
-                            :name="slot"
-                            v-bind="props"
-                        />
+                    <template v-for="(_, slot) in $slots" #[slot]="props">
+                        <slot :name="slot" v-bind="props" />
                     </template>
                 </dl-empty-state>
                 <slot v-if="!isEmpty" />
