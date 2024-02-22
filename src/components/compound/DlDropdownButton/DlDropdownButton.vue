@@ -218,6 +218,7 @@ export default defineComponent({
         noIconAnimation: Boolean,
         disabled: Boolean,
         color: { type: String!, default: '' },
+        inheritIconColor: Boolean,
         label: { type: String, default: '' },
         textColor: { type: String!, default: '' },
         size: { type: String, default: 'm' },
@@ -393,6 +394,10 @@ export default defineComponent({
         })
 
         const getIconColor = computed(() => {
+            if (props.inheritIconColor) {
+                return null
+            }
+
             if (props.disabled) {
                 return 'dl-color-disabled'
             }
