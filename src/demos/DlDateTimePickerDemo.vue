@@ -35,8 +35,4 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
-.width-300 {
-    width: 300px;
-}
-</style>
+<style lang="scss" scoped />
