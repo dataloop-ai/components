@@ -162,13 +162,11 @@ export function setAllColumnWidths(
                         targetEl.querySelector('.inner-th').scrollWidth +
                         getIconWidth(targetEl) +
                         35
-                    const calculatedWidth = (targetEl.style.width =
+                    // Set the width of the column
+                    targetEl.style.minWidth =
                         typeof col.width === 'number' || !col.width
                             ? `${width}px`
-                            : col.width)
-                    // Set the width of the column
-                    targetEl.style.minWidth = calculatedWidth
-                    targetEl.style.maxWidth = calculatedWidth
+                            : col.width
                 } else if (targetEl.tagName === 'TH') {
                     // Adjust the maximum width for TH elements
                     const innerTh = targetEl.querySelector(

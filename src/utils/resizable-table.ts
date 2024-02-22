@@ -110,6 +110,7 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
                 getColIndex(el) === targetIndex &&
                 fromStartToMouse >= MIN_CELL_WIDTH, // if
             (el) => {
+                el.style.width = `${fromStartToMouse}px`
                 el.style.maxWidth = `${fromStartToMouse}px`
                 el.style.minWidth = `${fromStartToMouse}px` // then
             }
