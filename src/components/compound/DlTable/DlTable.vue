@@ -351,6 +351,7 @@
                                     :style="col.tdStyle(props.item)"
                                     :no-hover="noHover"
                                     :col-index="colIndex"
+                                    :no-tooltip="col.ignoreTooltip"
                                     :padding="`0 ${columnSpacing}`"
                                 >
                                     <slot
