@@ -1,21 +1,9 @@
 <template>
     <div :class="chartWrapperClasses">
-        <div
-            class="canvas-container"
-            :style="`height: ${wrapperHeight}`"
-        >
-            <dl-empty-state
-                v-if="isEmpty"
-                v-bind="emptyStateProps"
-            >
-                <template
-                    v-for="(_, slot) in $slots"
-                    #[slot]="props"
-                >
-                    <slot
-                        :name="slot"
-                        v-bind="props"
-                    />
+        <div class="canvas-container" :style="`height: ${wrapperHeight}`">
+            <dl-empty-state v-if="isEmpty" v-bind="emptyStateProps">
+                <template v-for="(_, slot) in $slots" #[slot]="props">
+                    <slot :name="slot" v-bind="props" />
                 </template>
             </dl-empty-state>
             <Bar
@@ -26,11 +14,12 @@
                 :style="chartStyles"
                 :data="chartData"
                 :options="chartOptions"
+                :plugins="chartPlugins"
                 @mouseout="onChartLeave"
                 @wheel.native="handleChartScroll"
             />
             <dl-chart-scroll-bar
-                v-if="!isEmpty || (maxItems > thisItemsInView && !isEmpty)"
+                v-if="maxItems > thisItemsInView && !isEmpty"
                 :wrapper-styles="{
                     marginTop: '10px'
                 }"
@@ -391,6 +380,8 @@ export default defineComponent({
             )
         )
 
+        const chartPlugins = props.plugins
+
         watch(
             () => chart.value?.scales?.x?.width,
             (val: string) => {
@@ -541,13 +532,14 @@ export default defineComponent({
                 )
             )
 
-            chart.value.update()
+            chart.value.update?.()
         })
 
         return {
             variables,
             chartData,
             chartOptions,
+            chartPlugins,
             xLabels,
             barChart,
             maxItems,

@@ -27,6 +27,7 @@
     "@types/lodash": "^4.14.184",
     "@types/sortablejs": "^1.15.7",
     "chart.js": "^3.9.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "flat": "^5.0.2",
     "highlight.js": "^11.8.0",
     "lodash": "^4.17.21",
