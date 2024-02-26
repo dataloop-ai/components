@@ -351,6 +351,7 @@
                                     :style="col.tdStyle(props.item)"
                                     :no-hover="noHover"
                                     :col-index="colIndex"
+                                    :no-tooltip="col.ignoreTooltip"
                                     :padding="`0 ${columnSpacing}`"
                                 >
                                     <slot
@@ -1358,11 +1359,15 @@ export default defineComponent({
         )
 
         const isResizing = ref(false)
+        const isResizingInProgress = ref(false)
         const isDragging = ref(false)
         const setIsResizing = (val: boolean) => (isResizing.value = val)
+        const setResizingInProgress = (val: boolean) =>
+            (isResizingInProgress.value = val)
         const setIsDragging = (val: boolean) => (isDragging.value = val)
         const getIsDragging = () => isDragging.value
         const getIsResizing = () => isResizing.value
+        const getResizingInProgress = () => isResizingInProgress.value
         const getVisibleColumnsState = () => visibleColumnsState.value
 
         // table slots
@@ -1814,6 +1819,10 @@ export default defineComponent({
                 )
             }
 
+            if (resizable.value) {
+                injectProp(data, 'isResizingInProgress', getResizingInProgress)
+            }
+
             return data
         }
 
@@ -2036,8 +2045,10 @@ export default defineComponent({
             updateColumns,
             reorderColumns,
             setIsResizing,
+            setResizingInProgress,
             setIsDragging,
             getIsResizing,
+            getResizingInProgress,
             getIsDragging,
             getVisibleColumnsState,
             getTableKey
