@@ -9,8 +9,8 @@ import {
     setColumnVerticalBorder
 } from './table-columns'
 
-const MIN_CELL_WIDTH = 40
-const RESIZE_SENSITIVITY_OFFSET = 20
+const MIN_CELL_WIDTH = 64
+const RESIZE_SENSITIVITY_OFFSET = 5
 
 export function applyResizableColumns(table: HTMLTableElement, vm: any) {
     let mousePosition: 'start' | 'end' | 'default' = 'default'
@@ -91,10 +91,14 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
         removeTableVerticalBorders(table)
         const newColumns = getColumnsWithUpdatedWidth(table, vm.props.columns)
         vm.proxy.updateColumns(newColumns)
+        setTimeout(() => {
+            vm.proxy.setResizingInProgress(false)
+        }, 200)
     }
 
     function resizeColumn(event: MouseEvent) {
         if (targetIndex < 0) return
+        vm.proxy.setResizingInProgress(true)
         const firstRow = table.rows[0]
         const { x } = firstRow.children[targetIndex].getBoundingClientRect()
         const fromStartToMouse = event.clientX - x
@@ -102,11 +106,13 @@ export function applyResizableColumns(table: HTMLTableElement, vm: any) {
             table,
             (el) =>
                 (el.tagName === 'TH' || el.tagName === 'TD') &&
-                targetIndex &&
+                targetIndex >= 0 &&
                 getColIndex(el) === targetIndex &&
                 fromStartToMouse >= MIN_CELL_WIDTH, // if
             (el) => {
-                el.style.width = `${fromStartToMouse}px` // then
+                el.style.width = `${fromStartToMouse}px`
+                el.style.maxWidth = `${fromStartToMouse}px`
+                el.style.minWidth = `${fromStartToMouse}px` // then
             }
         )
     }

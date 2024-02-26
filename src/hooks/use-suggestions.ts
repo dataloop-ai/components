@@ -475,11 +475,14 @@ const getError = (
                     return (acc = errors.FORBIDDEN_KEY(field))
                 }
 
-                const valid = isValidByDataType(
-                    validateBracketValues(value),
-                    getDataType(schema, aliases, fieldKey),
-                    operator
-                )
+                const valid =
+                    operator === operators.$exists ||
+                    operator === operators.$doesnt_exist_dummy ||
+                    isValidByDataType(
+                        validateBracketValues(value),
+                        getDataType(schema, aliases, fieldKey),
+                        operator
+                    )
 
                 if (!valid) {
                     arr.splice(1)

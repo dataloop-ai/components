@@ -760,6 +760,9 @@ export default defineComponent({
             }
 
             if (!isValid.value) {
+                if (lastSearchQuery !== searchQuery.value) {
+                    processBlur()
+                }
                 return
             }
 

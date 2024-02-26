@@ -18,7 +18,7 @@
                 :inline="false"
                 icon="icon-dl-info"
                 class="info-icon"
-                color="dl-color-lighter"
+                color="dl-color-medium"
             />
             <dl-tooltip v-if="showTooltip === true">
                 {{ tooltip }}
@@ -111,7 +111,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-tab {
     padding: 12px 16px;
-    color: var(--dl-color-lighter);
+    color: var(--dl-color-medium);
     transition: all 200ms;
     display: flex;
     align-items: center;
