@@ -118,6 +118,10 @@ export default defineComponent({
             return !!props.props?.dense || !!props.props?.col?.dense
         })
 
+        const isResizingInProgress = computed(() => {
+            return !!props.props?.isResizingInProgress
+        })
+
         const column = computed(() => {
             let col: any
             const name = vm.vnode.key as string
@@ -164,6 +168,9 @@ export default defineComponent({
         })
 
         const handleClick = (evt: Event) => {
+            if (isResizingInProgress.value) {
+                return
+            }
             if (column.value.sortable) {
                 const sort = props.props?.sort as Function
                 sort(column.value)
@@ -176,6 +183,7 @@ export default defineComponent({
         return {
             hasHint,
             isDense,
+            isResizingInProgress,
             isSortable: !hasOptionalProps.value
                 ? false
                 : column?.value?.sortable ?? false,
