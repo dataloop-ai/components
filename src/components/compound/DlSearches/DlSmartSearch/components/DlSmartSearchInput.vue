@@ -621,7 +621,18 @@ export default defineComponent({
         }
 
         const endsWithOperator = computed(() => {
-            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+            const operators = [
+                '>=',
+                '<=',
+                '!=',
+                '=',
+                '>',
+                '<',
+                'IN',
+                'NOT-IN',
+                'EXISTS',
+                'DOESNT-EXIST'
+            ]
 
             for (const op of operators) {
                 if (
