@@ -425,7 +425,7 @@ export default defineComponent({
                     queryLeftSide = words.join('.')
                 } else if (
                     queryLeftSide.endsWith(' ') &&
-                    queryLeftSide.match(/'/g)?.length % 2 === 0
+                    (queryLeftSide.match(/'/g)?.length ?? 0) % 2 === 0
                 ) {
                     // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
