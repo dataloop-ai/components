@@ -1,33 +1,30 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-time-picker"
-    >
+    <div :id="uuid" class="dl-time-picker">
         <div
             class="dl-time-picker--input"
             :class="{ 'dl-time-picker--input-disabled': disableInput }"
         >
-            <span>From: {{ formatedFrom }}</span>
+            <span>{{ singleTime ? 'On' : 'From' }}: {{ formatedFrom }}</span>
             <dl-time-picker-input
                 :disabled="disableInput"
                 :model-value="formatedFromValue"
                 @update:model-value="handleFromTimeChange"
             />
         </div>
-        <div class="dl-time-picker--dash">
-            -
-        </div>
-        <div
-            class="dl-time-picker--input"
-            :class="{ 'dl-time-picker--input-disabled': disableInput }"
-        >
-            <span>To: {{ formatedTo }}</span>
-            <dl-time-picker-input
-                :disabled="disableInput"
-                :model-value="formatedToValue"
-                @update:model-value="handleToTimeChange"
-            />
-        </div>
+        <template v-if="!singleTime">
+            <div class="dl-time-picker--dash">-</div>
+            <div
+                class="dl-time-picker--input"
+                :class="{ 'dl-time-picker--input-disabled': disableInput }"
+            >
+                <span>To: {{ formatedTo }}</span>
+                <dl-time-picker-input
+                    :disabled="disableInput"
+                    :model-value="formatedToValue"
+                    @update:model-value="handleToTimeChange"
+                />
+            </div>
+        </template>
     </div>
 </template>
 <script lang="ts">
@@ -50,6 +47,10 @@ export default defineComponent({
         modelValue: {
             type: Object as PropType<DateInterval | null>,
             default: null
+        },
+        singleTime: {
+            type: Boolean,
+            default: false
         },
         disabled: Boolean
     },
@@ -107,7 +108,10 @@ export default defineComponent({
             const newFrom = new CustomDate(this.modelValue.from)
             newFrom.hours(parseInt(value.hour)).minutes(parseInt(value.minute))
 
-            if (newFrom.isBefore(new CustomDate(this.modelValue.to))) {
+            if (
+                this.singleTime ||
+                newFrom.isBefore(new CustomDate(this.modelValue.to))
+            ) {
                 this.$emit('update:model-value', {
                     from: newFrom.toDate(),
                     to: this.modelValue.to
