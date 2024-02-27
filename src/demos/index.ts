@@ -22,6 +22,7 @@ import DlThDemo from './DlThDemo.vue'
 import DlTdDemo from './DlTdDemo.vue'
 import DlTableDemo from './DlTableDemo.vue'
 import DlPaginationDemo from './DlPaginationDemo.vue'
+import DlDateTimePickerDemo from './DlDateTimePickerDemo.vue'
 import DlDateTimeRangeDemo from './DlDateTimeRangeDemo.vue'
 import DlSmartSearchDemo from './SmartSearchDemo/DlSmartSearchDemo.vue'
 import DlSkeletonDemo from './DlSkeletonDemo.vue'
@@ -93,6 +94,7 @@ export default {
     DlTableDemo,
     DlTreeTableDemo,
     DlPaginationDemo,
+    DlDateTimePickerDemo,
     DlDateTimeRangeDemo,
     DlSmartSearchDemo,
     DlSkeletonDemo,

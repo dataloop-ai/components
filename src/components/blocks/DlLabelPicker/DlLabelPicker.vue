@@ -17,6 +17,7 @@
             </template>
         </dl-input>
         <dl-tree-table
+            v-if="isFilterString(inputValue)"
             draggable="none"
             separator="none"
             :hide-pagination="true"
@@ -166,13 +167,28 @@ export default defineComponent({
             )
         )
         const rows = computed(() => mapItems.value)
+        const isFilterString = (input: string) => {
+            const stack = [...items.value]
+            const filter = (input ?? '').toLowerCase()
+            while (stack.length) {
+                const item = stack.pop()
+                if (item.displayLabel?.toLowerCase?.().includes(filter)) {
+                    return true
+                }
+                if (item.children) {
+                    stack.push(...item.children)
+                }
+            }
+            return false
+        }
         return {
             handleRowClick,
             inputValue,
             columns,
             placeHolderText,
             inputStyles,
-            rows
+            rows,
+            isFilterString
         }
     }
 })
