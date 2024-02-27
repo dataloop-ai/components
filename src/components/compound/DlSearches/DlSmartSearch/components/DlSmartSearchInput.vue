@@ -423,7 +423,10 @@ export default defineComponent({
                         words.push(lastWord)
                     }
                     queryLeftSide = words.join('.')
-                } else if (queryLeftSide.endsWith(' ')) {
+                } else if (
+                    queryLeftSide.endsWith(' ') &&
+                    (queryLeftSide.match(/'/g)?.length ?? 0) % 2 === 0
+                ) {
                     // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
                 } else if (/\.\S+$/.test(queryLeftSide)) {
@@ -440,7 +443,10 @@ export default defineComponent({
                     queryRightSide = queryRightSide.trimStart()
                 } else {
                     // this|situation: replace whatever is there on both sides with the value
-                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
+                    queryLeftSide = queryLeftSide.replace(
+                        /('[^']+'?|[^'\s]+)$/,
+                        ''
+                    )
                     queryRightSide =
                         removeLeadingExpression(queryRightSide).trimStart()
                 }
@@ -615,7 +621,18 @@ export default defineComponent({
         }
 
         const endsWithOperator = computed(() => {
-            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+            const operators = [
+                '>=',
+                '<=',
+                '!=',
+                '=',
+                '>',
+                '<',
+                'IN',
+                'NOT-IN',
+                'EXISTS',
+                'DOESNT-EXIST'
+            ]
 
             for (const op of operators) {
                 if (
