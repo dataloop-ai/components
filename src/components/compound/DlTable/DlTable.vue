@@ -889,7 +889,10 @@
             <div v-else class="dl-table__control">
                 <slot name="bottom" v-bind="marginalsScope">
                     <div
-                        v-if="hasBottomSelectionBanner"
+                        v-if="
+                            hasBottomSelectionBanner &&
+                                selectedRowsLabel(rowsSelectedNumber)
+                        "
                         class="dl-table__control"
                     >
                         <div>
