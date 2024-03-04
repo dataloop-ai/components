@@ -10,13 +10,22 @@
             >
                 <div
                     style="
-                        background-image: url(https://dataloop.ai/wp-content/uploads/2020/03/logo.svg);
+                        background-image: url(https://dataloop.ai/wp-content/uploads/2024/02/dataloop-logo-main.svg);
                         width: 160px;
-                        height: 28px;
+                        height: 48px;
                         display: inline-block;
+                        background-repeat: no-repeat;
                     "
                 />
-                Components library
+                <div
+                    style="
+                        position: relative;
+                        top: -12px;
+                        display: inline-block;
+                    "
+                >
+                    Components library
+                </div>
             </dl-typography>
             <div style="display: flex; align-items: center">
                 <dl-icon
@@ -26,10 +35,7 @@
                         !darkMode ? 'dl-color-secondary' : 'dl-color-darker'
                     "
                 />
-                <dl-switch
-                    v-model="darkMode"
-                    style="margin: 0 20px"
-                />
+                <dl-switch v-model="darkMode" style="margin: 0 20px" />
                 <dl-icon
                     icon="icon-dl-dark-theme"
                     size="20px"
@@ -45,10 +51,7 @@
                     style="margin-bottom: 5px"
                 />
 
-                <dl-button
-                    v-if="activeDemo"
-                    outlined
-                >
+                <dl-button v-if="activeDemo" outlined>
                     <span style="text-transform: capitalize">
                         Selected: {{ computeDemoName(activeDemo.name) }}
                     </span>

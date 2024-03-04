@@ -9,11 +9,7 @@
             :icon-size="iconSize"
             :icon-color="iconColor"
         />
-        <div
-            v-if="text"
-            class="dl-spinner-text"
-            :style="textStyles"
-        >
+        <div v-if="text" class="dl-spinner-text" :style="textStyles">
             <span>{{ text }}</span>
         </div>
     </div>
@@ -25,7 +21,6 @@ import DlSpinnerGrid from './components/DlSpinnerGrid.vue'
 import DlSpinnerCircle from './components/DlSpinnerCircle.vue'
 import DlSpinnerClock from './components/DlSpinnerClock.vue'
 import DlSpinnerDots from './components/DlSpinnerDots.vue'
-import DlSpinnerLogo from './components/DlSpinnerLogo.vue'
 import { DlSpinnerTypes } from './types'
 
 export default defineComponent({
@@ -33,8 +28,7 @@ export default defineComponent({
         DlSpinnerGrid,
         DlSpinnerCircle,
         DlSpinnerClock,
-        DlSpinnerDots,
-        DlSpinnerLogo
+        DlSpinnerDots
     },
     props: {
         text: {
@@ -85,9 +79,8 @@ export default defineComponent({
                     return 'DlSpinnerDots'
                 case DlSpinnerTypes.CLOCK:
                     return 'DlSpinnerClock'
-                case DlSpinnerTypes.LOGO:
                 default:
-                    return 'DlSpinnerLogo'
+                    return 'DlSpinnerGrid'
             }
         }
     }
