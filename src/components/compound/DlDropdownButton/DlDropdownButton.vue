@@ -246,7 +246,7 @@ export default defineComponent({
         contentGap: {
             type: String,
             required: false,
-            default: ''
+            default: null
         }
     },
     emits: [
@@ -315,7 +315,7 @@ export default defineComponent({
                 '--justify-content': props.fluid
                     ? 'space-between'
                     : 'space-around',
-                ...(props.contentGap !== '' && {
+                ...(props.contentGap && {
                     '--dl-button-content-gap': props.contentGap
                 })
             }
