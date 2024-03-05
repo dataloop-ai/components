@@ -101,8 +101,6 @@ const Template = (args) => ({
    `
 })
 
-export const PreviewLogo = Template.bind({})
-PreviewLogo.args = {}
 export const PreviewCircle = Template.bind({})
 PreviewCircle.args = {
     type: 'circle'
