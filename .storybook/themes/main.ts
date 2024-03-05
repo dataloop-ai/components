@@ -6,6 +6,7 @@ export default create({
     fontCode: 'Roboto',
     brandTitle: 'Dataloop Components Library',
     brandUrl: 'https://dataloop.ai/',
-    brandImage: 'https://dataloop.ai/wp-content/uploads/2020/03/logo.svg',
+    brandImage:
+        'https://dataloop.ai/wp-content/uploads/2024/02/dataloop-logo-main.svg',
     brandTarget: '_self'
 })
