@@ -242,6 +242,11 @@ export default defineComponent({
         arrowNavItems: {
             type: Array as PropType<any[]>,
             default: () => [] as any[]
+        },
+        contentGap: {
+            type: String,
+            required: false,
+            default: null
         }
     },
     emits: [
@@ -309,7 +314,10 @@ export default defineComponent({
             return {
                 '--justify-content': props.fluid
                     ? 'space-between'
-                    : 'space-around'
+                    : 'space-around',
+                ...(props.contentGap && {
+                    '--dl-button-content-gap': props.contentGap
+                })
             }
         })
 
