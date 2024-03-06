@@ -79,6 +79,7 @@
             :anchor="menuAnchor"
             :self="menuSelf"
             :offset="menuOffset"
+            :z-index="zIndex"
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
@@ -140,6 +141,7 @@
             :anchor="menuAnchor"
             :self="menuSelf"
             :offset="menuOffset"
+            :z-index="zIndex"
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
@@ -246,6 +248,10 @@ export default defineComponent({
         contentGap: {
             type: String,
             required: false,
+            default: null
+        },
+        zIndex: {
+            type: [String, Number],
             default: null
         }
     },
