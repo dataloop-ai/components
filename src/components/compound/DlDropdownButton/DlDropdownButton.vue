@@ -109,6 +109,7 @@
         :no-wrap="props.noWrap"
         :tooltip="tooltip"
         :max-width="maxWidth"
+        :hover-text-color="mainButtonHoverColor"
         @click="onClick"
     >
         <div class="dl-button-dropdown--simple__title">
