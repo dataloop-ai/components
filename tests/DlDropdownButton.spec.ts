@@ -54,7 +54,8 @@ describe('DlDropdownButton', () => {
                 tooltip: null,
                 arrowNavItems: [],
                 contentGap: null,
-                zIndex: null
+                zIndex: null,
+                mainButtonHoverColor: null
             })
         })
         it('should right button style', function () {

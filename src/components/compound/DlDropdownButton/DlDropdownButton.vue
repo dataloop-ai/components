@@ -253,6 +253,11 @@ export default defineComponent({
         zIndex: {
             type: [String, Number],
             default: null
+        },
+        mainButtonHoverColor: {
+            type: String,
+            required: false,
+            default: null
         }
     },
     emits: [
