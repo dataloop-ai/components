@@ -110,6 +110,7 @@
         :tooltip="tooltip"
         :max-width="maxWidth"
         :hover-text-color="mainButtonHoverColor"
+        :size="mainButtonFontSize"
         @click="onClick"
     >
         <div class="dl-button-dropdown--simple__title">
@@ -117,7 +118,7 @@
                 :class="{
                     'dl-button-no-wrap': noWrap
                 }"
-                style="margin-right: 5px"
+                style="margin-right: 6px"
             >
                 {{ label }}
             </span>
@@ -259,6 +260,11 @@ export default defineComponent({
             type: String,
             required: false,
             default: null
+        },
+        mainButtonFontSize: {
+            type: String,
+            required: false,
+            default: 'm'
         }
     },
     emits: [
