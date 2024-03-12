@@ -121,7 +121,7 @@ export default defineComponent({
         id: {
             type: String,
             required: false,
-            default: null
+            default: `dl-popup-${v4()}`
         },
         anchor: {
             type: String,
