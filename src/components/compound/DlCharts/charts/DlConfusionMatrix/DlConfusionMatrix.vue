@@ -204,7 +204,6 @@ import {
     getGradationValues,
     validateMatrix,
     setZoom,
-    getCellWidth,
     flattenConfusionMatrix
 } from './utils'
 import { debounce, isObject } from 'lodash'
@@ -421,7 +420,7 @@ export default defineComponent({
                         (isObject(el) ? el.title : `${el}`).length
                 )
             )
-            this.rotateXLabels = longest * 12 > getCellWidth()
+            this.rotateXLabels = longest * 12 > this.getMatrixCellWidth()
         },
         handleResizeObserver(options: { dispose?: boolean } = {}) {
             if (this.isDisposed) return
@@ -466,7 +465,7 @@ export default defineComponent({
                     ctx.matrix.length / (brush.max - brush.min),
                     ctx.$refs.matrix
                 )
-                const scroll = brush.min * getCellWidth()
+                const scroll = brush.min * ctx.getMatrixCellWidth()
                 const container = ctx.$refs.matrixWrapper
                 container.scroll(scroll, 0)
                 ctx.currentBrushState = brush
@@ -476,7 +475,15 @@ export default defineComponent({
         ),
         resizeYAxis() {
             const yAxis = this.$refs.yAxis as HTMLElement
-            yAxis.style.height = `${getCellWidth() * this.matrix.length}px`
+            yAxis.style.height = `${this.getMatrixWidth()}px`
+        },
+        getMatrixWidth() {
+            const matrixElement = this.$refs.matrix as HTMLElement
+            const width = matrixElement.getBoundingClientRect().width
+            return width
+        },
+        getMatrixCellWidth() {
+            return this.getMatrixWidth() / this.matrix.length
         },
         handleMatrixScroll(e: MouseEvent | UIEvent) {
             const target = e.target as HTMLElement
