@@ -107,7 +107,11 @@ export default defineComponent({
         cover: Boolean,
 
         square: Boolean,
-
+        id: {
+            type: String,
+            required: false,
+            default: `dl-menu-${v4()}`
+        },
         anchor: {
             type: String,
             default: 'bottom left',
@@ -496,7 +500,7 @@ export default defineComponent({
         })
 
         return {
-            uuid: `dl-menu-${v4()}`,
+            uuid: props.id,
             onClick,
             portalIsAccessible,
             anchorEl,

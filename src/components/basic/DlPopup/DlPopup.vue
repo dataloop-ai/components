@@ -1,5 +1,6 @@
 <template>
     <dl-menu
+        :id="id"
         ref="menuRef"
         v-bind="menuProps"
         :model-value="modelV"
@@ -27,16 +28,10 @@
             :with-close-button="withCloseButton"
             @close-button-click="handleCloseClick"
         >
-            <template
-                v-if="hasHeaderSlot"
-                #header
-            >
+            <template v-if="hasHeaderSlot" #header>
                 <slot name="header" />
             </template>
-            <template
-                v-if="hasCloseButtonSlot"
-                #close-button
-            >
+            <template v-if="hasCloseButtonSlot" #close-button>
                 <slot name="close-button" />
             </template>
         </popup-header>
@@ -46,21 +41,12 @@
                 v-if="isEmpty && emptyStateProps"
                 v-bind="emptyStateProps"
             >
-                <template
-                    v-for="(_, slot) in $slots"
-                    #[slot]="props"
-                >
-                    <slot
-                        :name="slot"
-                        v-bind="props"
-                    />
+                <template v-for="(_, slot) in $slots" #[slot]="props">
+                    <slot :name="slot" v-bind="props" />
                 </template>
             </dl-empty-state>
         </div>
-        <div
-            v-if="hasFooterSlot"
-            class="popup-footer"
-        >
+        <div v-if="hasFooterSlot" class="popup-footer">
             <slot name="footer" />
         </div>
     </dl-menu>
@@ -132,6 +118,11 @@ export default defineComponent({
         fitContent: Boolean,
         cover: Boolean,
         square: Boolean,
+        id: {
+            type: String,
+            required: false,
+            default: null
+        },
         anchor: {
             type: String,
             default: 'bottom middle',
