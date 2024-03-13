@@ -481,6 +481,20 @@ export default defineComponent({
             emit('highlighted-item', value, arrowNavItems.value[value] ?? null)
         })
 
+        const { zIndex, height, width } = toRefs(props)
+
+        const computedStyles = computed<any>(() => {
+            return [
+                attrs.style,
+                transitionStyle.value,
+                {
+                    '--menu-z-index': zIndex.value ?? 'var(--dl-z-index-menu)',
+                    '--menu-height': height.value,
+                    '--menu-width': width.value
+                }
+            ]
+        })
+
         return {
             uuid: (attrs.id as string)?.length
                 ? (attrs.id as string)
@@ -493,15 +507,7 @@ export default defineComponent({
             portalEl: isVue2 ? '[data-test-id="portal"]' : portalEl,
             portalIsActive,
             classes: 'dl-menu dl-position-engine scroll' + classes.value,
-            styles: [
-                attrs.style,
-                transitionStyle.value,
-                {
-                    '--menu-z-index': props.zIndex ?? 'var(--dl-z-index-menu)',
-                    '--menu-height': props.height,
-                    '--menu-width': props.width
-                }
-            ] as any,
+            styles: computedStyles,
             selectedItem,
             highlightedIndex
         }
