@@ -2,17 +2,10 @@
     <div>
         <dl-button label="Basic Menu">
             <dl-menu>
-                <dl-list
-                    bordered
-                    separator
-                >
+                <dl-list bordered separator>
                     <dl-list-item> Default list item </dl-list-item>
-                    <dl-list-item disabled>
-                        Disabled list item
-                    </dl-list-item>
-                    <dl-list-item clickable>
-                        Clickable list item
-                    </dl-list-item>
+                    <dl-list-item disabled> Disabled list item </dl-list-item>
+                    <dl-list-item clickable> Clickable list item </dl-list-item>
                     <dl-list-item
                         clickable
                         disabled
@@ -28,9 +21,7 @@
                         start-icon="icon-dl-search"
                         end-icon="icon-dl-id"
                     >
-                        <dl-item-section side>
-                            Left text
-                        </dl-item-section>
+                        <dl-item-section side> Left text </dl-item-section>
                         <dl-item-section no-wrap>
                             main content
                         </dl-item-section>
@@ -47,10 +38,7 @@
                             item with custom icon colors
                         </dl-item-section>
                     </dl-list-item>
-                    <dl-list-item
-                        clickable
-                        bordered
-                    >
+                    <dl-list-item clickable bordered>
                         <dl-item-section side>
                             <dl-icon icon="icon-dl-id" />
                         </dl-item-section>
@@ -60,14 +48,8 @@
                         <dl-item-section side>
                             <dl-icon icon="icon-dl-id" />
                         </dl-item-section>
-                        <dl-menu
-                            anchor="top end"
-                            self="top start"
-                        >
-                            <dl-list
-                                bordered
-                                separator
-                            >
+                        <dl-menu anchor="top end" self="top start">
+                            <dl-list bordered separator>
                                 <dl-list-item
                                     v-for="n in 3"
                                     :key="n"
@@ -109,17 +91,10 @@
         <dl-button label="Basic Menu With SubText">
             This is a menu button
             <dl-menu>
-                <dl-list
-                    bordered
-                    separator
-                >
+                <dl-list bordered separator>
                     <dl-list-item> Default list item </dl-list-item>
-                    <dl-list-item disabled>
-                        Disabled list item
-                    </dl-list-item>
-                    <dl-list-item clickable>
-                        Clickable list item
-                    </dl-list-item>
+                    <dl-list-item disabled> Disabled list item </dl-list-item>
+                    <dl-list-item clickable> Clickable list item </dl-list-item>
                     <dl-list-item
                         clickable
                         disabled
@@ -135,9 +110,7 @@
                         start-icon="icon-dl-search"
                         end-icon="icon-dl-id"
                     >
-                        <dl-item-section side>
-                            Left text
-                        </dl-item-section>
+                        <dl-item-section side> Left text </dl-item-section>
                         <dl-item-section no-wrap>
                             main content
                         </dl-item-section>
@@ -154,10 +127,7 @@
                             item with custom icon colors
                         </dl-item-section>
                     </dl-list-item>
-                    <dl-list-item
-                        clickable
-                        bordered
-                    >
+                    <dl-list-item clickable bordered>
                         <dl-item-section side>
                             <dl-icon icon="icon-dl-id" />
                         </dl-item-section>
@@ -167,14 +137,8 @@
                         <dl-item-section side>
                             <dl-icon icon="icon-dl-id" />
                         </dl-item-section>
-                        <dl-menu
-                            anchor="top end"
-                            self="top start"
-                        >
-                            <dl-list
-                                bordered
-                                separator
-                            >
+                        <dl-menu anchor="top end" self="top start">
+                            <dl-list bordered separator>
                                 <dl-list-item
                                     v-for="n in 3"
                                     :key="n"
@@ -214,24 +178,12 @@
         </dl-button>
 
         <div style="width: 300px; height: 50px; background-color: yellow">
-            <p style="color: blue">
-                Context-menu
-            </p>
-            <dl-menu
-                max-height="300px"
-                context-menu
-            >
-                <dl-list
-                    bordered
-                    separator
-                >
+            <p style="color: blue">Context-menu</p>
+            <dl-menu max-height="300px" context-menu>
+                <dl-list bordered separator>
                     <dl-list-item> Default list item </dl-list-item>
-                    <dl-list-item disabled>
-                        Disabled list item
-                    </dl-list-item>
-                    <dl-list-item clickable>
-                        Clickable list item
-                    </dl-list-item>
+                    <dl-list-item disabled> Disabled list item </dl-list-item>
+                    <dl-list-item clickable> Clickable list item </dl-list-item>
                     <dl-list-item
                         clickable
                         disabled
@@ -247,9 +199,7 @@
                         start-icon="icon-dl-search"
                         end-icon="icon-dl-id"
                     >
-                        <dl-item-section side>
-                            Left text
-                        </dl-item-section>
+                        <dl-item-section side> Left text </dl-item-section>
                         <dl-item-section no-wrap>
                             main content
                         </dl-item-section>
@@ -266,10 +216,7 @@
                             item with custom icon colors
                         </dl-item-section>
                     </dl-list-item>
-                    <dl-list-item
-                        clickable
-                        bordered
-                    >
+                    <dl-list-item clickable bordered>
                         <dl-item-section side>
                             <dl-icon icon="icon-dl-id" />
                         </dl-item-section>
@@ -279,14 +226,8 @@
                         <dl-item-section side>
                             <dl-icon icon="icon-dl-id" />
                         </dl-item-section>
-                        <dl-menu
-                            anchor="top end"
-                            self="top start"
-                        >
-                            <dl-list
-                                bordered
-                                separator
-                            >
+                        <dl-menu anchor="top end" self="top start">
+                            <dl-list bordered separator>
                                 <dl-list-item
                                     v-for="i in 3"
                                     :key="i"
@@ -411,10 +352,7 @@
                     </dl-menu>
                 </dl-button>
 
-                <dl-button
-                    color="brown"
-                    label="Max Height Menu"
-                >
+                <dl-button color="brown" label="Max Height Menu">
                     <dl-menu max-height="130px">
                         <dl-list style="min-width: 100px">
                             <dl-list-item clickable>
@@ -480,10 +418,7 @@
 
                 <h4>Arrow navigation</h4>
                 <dl-button :label="arrowNavigationLabel">
-                    <dl-menu
-                        @show="onShow"
-                        @hide="onHide"
-                    >
+                    <dl-menu @show="onShow" @hide="onHide">
                         <dl-list style="min-width: 100px">
                             <dl-list-item
                                 v-for="(item, index) in listItems"
@@ -529,6 +464,7 @@
         <h4>With model as button: {{ isOpen }}</h4>
         <dl-button label="test">
             <dl-menu
+                id="TestID"
                 v-model="isOpen"
                 max-height="250px"
                 self="bottom middle"
@@ -736,3 +672,8 @@ export default defineComponent({
     }
 })
 </script>
+<style>
+#TestID {
+    background-color: red;
+}
+</style>

@@ -496,7 +496,9 @@ export default defineComponent({
         })
 
         return {
-            uuid: `dl-menu-${v4()}`,
+            uuid: (attrs.id as string)?.length
+                ? (attrs.id as string)
+                : `dl-menu-${v4()}`,
             onClick,
             portalIsAccessible,
             anchorEl,
