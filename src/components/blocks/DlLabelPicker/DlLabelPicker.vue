@@ -18,6 +18,7 @@
         </dl-input>
         <dl-tree-table
             v-if="isFilterString(inputValue)"
+            ref="table"
             draggable="none"
             separator="none"
             :hide-pagination="true"
@@ -114,7 +115,13 @@ export default defineComponent({
             items.value ? items.value[0] : null
         )
 
-        const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
+        const table = ref()
+        const handleRowClick = (event: MouseEvent, item: DlLabelPickerItem) => {
+            table.value.$el
+                .querySelectorAll('tr.selected')
+                .forEach((tr: Element) => tr.classList.remove('selected'))
+            const target = event.target as Element
+            target.closest('tr').classList.add('selected')
             currentSelectedLabel.value = item
             emit('selected-label', item)
             emit('click', item)
@@ -188,6 +195,7 @@ export default defineComponent({
             placeHolderText,
             inputStyles,
             rows,
+            table,
             isFilterString
         }
     }
