@@ -151,7 +151,7 @@ export function replaceJSDatesWithStringifiedDates(
             if (typeof value === 'object') {
                 const testKey = Object.keys(toReturn[key])[0]
                 if (
-                    ['$gt', '$gte', '$lt', '$lte', '$eq', '$neq'].includes(
+                    ['$gt', '$gte', '$lt', '$lte', '$eq', '$ne'].includes(
                         testKey
                     )
                 ) {
@@ -218,7 +218,7 @@ export function revertValueAliases(json: Data, schema: Data) {
         '$in',
         '$nin',
         '$eq',
-        '$neq',
+        '$ne',
         '$gt',
         '$gte',
         '$lt',
@@ -278,7 +278,7 @@ export function setValueAliases(json: Data, schema: Data) {
         '$in',
         '$nin',
         '$eq',
-        '$neq',
+        '$ne',
         '$gt',
         '$gte',
         '$lt',
@@ -288,9 +288,7 @@ export function setValueAliases(json: Data, schema: Data) {
     const replaceValues = (where: Data) => {
         for (const key in where) {
             const val = where[key]
-
             if (typeof val === 'object') {
-                const val = where[key]
                 const isOperator = operatorKeys.includes(Object.keys(val)[0])
                 const isArrayOperator = ['$in', '$nin'].includes(
                     Object.keys(val)[0]
@@ -299,19 +297,22 @@ export function setValueAliases(json: Data, schema: Data) {
                 if (isOperator) {
                     const opVal = val[Object.keys(val)[0]]
                     const aliases = valueAliases(schema, key)
+                    const aliasesKeys = Object.keys(aliases)
 
                     if (isArrayOperator) {
                         for (let i = 0; i < opVal.length; ++i) {
-                            const value = opVal[i]
-                            for (const alias in aliases) {
-                                if (value === aliases[alias]) {
-                                    val[Object.keys(val)[0]][i] = alias
-                                    break
-                                }
+                            const opVal_i = opVal[i]
+                            const value = aliasesKeys.find(
+                                (key) => aliases[key] === opVal_i
+                            )
+                            if (value) {
+                                val[Object.keys(val)[0]][i] = value
                             }
                         }
                     } else {
-                        const value = aliases[opVal]
+                        const value = aliasesKeys.find(
+                            (key) => aliases[key] === opVal
+                        )
                         if (value) {
                             val[Object.keys(val)[0]] = value
                         }
