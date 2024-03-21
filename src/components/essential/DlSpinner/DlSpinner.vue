@@ -21,6 +21,7 @@ import DlSpinnerGrid from './components/DlSpinnerGrid.vue'
 import DlSpinnerCircle from './components/DlSpinnerCircle.vue'
 import DlSpinnerClock from './components/DlSpinnerClock.vue'
 import DlSpinnerDots from './components/DlSpinnerDots.vue'
+import DlSpinnerLogo from './components/DlSpinnerLogo.vue'
 import { DlSpinnerTypes } from './types'
 
 export default defineComponent({
@@ -28,7 +29,8 @@ export default defineComponent({
         DlSpinnerGrid,
         DlSpinnerCircle,
         DlSpinnerClock,
-        DlSpinnerDots
+        DlSpinnerDots,
+        DlSpinnerLogo
     },
     props: {
         text: {
@@ -80,7 +82,7 @@ export default defineComponent({
                 case DlSpinnerTypes.CLOCK:
                     return 'DlSpinnerClock'
                 default:
-                    return 'DlSpinnerGrid'
+                    return 'DlSpinnerLogo'
             }
         }
     }

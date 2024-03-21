@@ -3,10 +3,7 @@
         <dl-button @click="isOpenedStudioModal = true">
             Studio Layout
         </dl-button>
-        <div
-            v-if="isOpenedStudioModal"
-            class="fullscreen-template"
-        >
+        <div v-if="isOpenedStudioModal" class="fullscreen-template">
             <div class="fullscreen-template__close">
                 <dl-button
                     flat
@@ -19,6 +16,8 @@
                     <left-menu-content />
                 </template>
                 <template #leftDrawer>
+                    testestest
+
                     <studio-left-drawer />
                 </template>
                 <template #rightDrawer>
