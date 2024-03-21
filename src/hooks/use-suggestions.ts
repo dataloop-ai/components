@@ -565,7 +565,7 @@ const isValidByDataType = (
 
 const validateBracketValues = (value: string) => {
     const bracketless = removeBrackets(value)
-    const pureValue = bracketless.split(',')
+    const pureValue = bracketless.split(/,\s*/)
     if (pureValue.length === 1) {
         return pureValue[0]
     }
