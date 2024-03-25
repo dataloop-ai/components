@@ -1,5 +1,5 @@
 :root {
-    // Constants
+    /* Constants */
     --dl-color-alert-success: #38d079;
     --dl-color-alert-success-background: #e1fff0;
     --dl-color-alert-warn: #ffda3a;
@@ -10,13 +10,13 @@
     --dl-color-alert-info-background: #f3f9ff;
     --dl-color-alert-text: #171723;
 
-    // Z-Index
+    /* Z-Index */
     --dl-z-index-toast: 1052;
-    --dl-z-index-panel: 3000; // panel & panel contaiener content
-    --dl-z-index-panel-elements: 3010; // separator + glutter
+    --dl-z-index-panel: 3000; /* panel & panel contaiener content */
+    --dl-z-index-panel-elements: 3010; /* separator + glutter */
     --dl-z-index-panel-header-footer: 3020;
     --dl-z-index-panel-container-overlay: 3025;
-    --dl-z-index-panel-container-elements: 3030; // collapse icon + separator
+    --dl-z-index-panel-container-elements: 3030; /* collapse icon + separator */
 
     --dl-z-index-overlay: 5000;
     --dl-z-index-dialog: 5200;
@@ -24,7 +24,7 @@
     --dl-z-index-menu: 6000;
     --dl-z-index-tooltip: 9000;
 
-    // chart colors
+    /* chart colors */
     --dl-color-chart-1: #4db1d3;
     --dl-color-chart-2: #ff2f7a;
     --dl-color-chart-3: #d4e3ff;
