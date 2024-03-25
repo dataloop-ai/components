@@ -672,9 +672,8 @@ export default defineComponent({
             const text = (e.target as HTMLElement).textContent
             if (text.endsWith('.') || text.endsWith(',')) {
                 setInputValue(text)
-            } else {
-                debouncedSetInputValue.value(text)
             }
+            debouncedSetInputValue.value(text)
         }
 
         const onDateSelection = (value: DateInterval) => {
