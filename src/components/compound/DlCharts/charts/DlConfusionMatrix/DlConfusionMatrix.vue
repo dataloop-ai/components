@@ -162,8 +162,8 @@
                 <div class="color-spectrum__gradient" />
                 <div class="color-spectrum__gradation">
                     <div
-                        v-for="value in gradationValues"
-                        :key="value"
+                        v-for="(value, index) in gradationValues"
+                        :key="index"
                         class="color-spectrum__gradation--element"
                     >
                         <span class="color-spectrum__gradation--element-line"
