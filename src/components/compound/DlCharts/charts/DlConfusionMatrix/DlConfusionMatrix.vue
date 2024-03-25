@@ -162,8 +162,8 @@
                 <div class="color-spectrum__gradient" />
                 <div class="color-spectrum__gradation">
                     <div
-                        v-for="value in gradationValues"
-                        :key="value"
+                        v-for="(value, index) in gradationValues"
+                        :key="index"
                         class="color-spectrum__gradation--element"
                     >
                         <span class="color-spectrum__gradation--element-line"
@@ -450,6 +450,8 @@ export default defineComponent({
             this.cellWidth = Math.round(width / this.matrix.length)
             colorSpectrum.style.height = `${width}px`
             yAxisOuter.style.height = `${width}px`
+
+            this.resizeYAxis()
         },
         handleBrushUpdate(brush: DlConfusionMatrixBrushState) {
             if (
@@ -508,7 +510,7 @@ export default defineComponent({
     user-select: none;
 }
 .vertical_wrapper {
-    width: 80%;
+    width: calc(100% - 120px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -556,6 +558,10 @@ export default defineComponent({
         &--text {
             font-size: 12px;
         }
+        .legend-avatar {
+            max-height: 30px;
+            max-width: 100%;
+        }
     }
 }
 .y-axis {
@@ -569,6 +575,11 @@ export default defineComponent({
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 12px;
+        min-width: 30px;
+        .legend-avatar {
+            max-height: 100%;
+            max-width: 30px;
+        }
     }
 }
 .y-axis-outer {
@@ -617,6 +628,7 @@ export default defineComponent({
 .color-spectrum {
     color: var(--dl-color-darker);
     display: flex;
+    width: 20px;
     margin: 0px 15px;
     &__gradient {
         width: 40%;
@@ -686,7 +698,5 @@ export default defineComponent({
 
 .legend-avatar {
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
 }
 </style>
