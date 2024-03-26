@@ -347,7 +347,10 @@ export default defineComponent({
         flattenedMatrix(): DlConfusionMatrixCell[] {
             return flattenConfusionMatrix(
                 this.matrix,
-                this.labels.map(this.getLabelString)
+                (this.labels as any[]).map(
+                    (el: DlConfusionMatrixLabel | string) =>
+                        this.getLabelString(el)
+                )
             )
         },
         matrixStyles(): Record<string, number | string> {
@@ -415,7 +418,7 @@ export default defineComponent({
         },
         calculateRotatedXLabels() {
             const longest = Math.max(
-                ...this.visibleLabels.map(
+                ...(this.visibleLabels as any[]).map(
                     (el: DlConfusionMatrixLabel | string) =>
                         this.getLabelString(el).length
                 )
