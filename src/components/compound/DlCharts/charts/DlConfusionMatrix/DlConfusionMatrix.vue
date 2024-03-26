@@ -40,7 +40,7 @@
                             {{ label }}
                         </span>
                         <dl-tooltip :offset="[0, 0]">
-                            {{ labelStrings[index] }}
+                            {{ getLabelString(label) }}
                         </dl-tooltip>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                             self="top middle"
                             :offset="debouncedCalculateXAxisElOffset(index)"
                         >
-                            {{ labelStrings[index] }}
+                            {{ getLabelString(label) }}
                         </dl-tooltip>
                     </div>
                 </div>
@@ -335,22 +335,11 @@ export default defineComponent({
         }
     },
     computed: {
-        visibleLabels(): DlConfusionMatrixLabel[] {
-            if (this.labels[0]) {
-                const arr = this.labels as DlConfusionMatrixLabel[]
-                return arr.slice(
-                    this.currentBrushState.min,
-                    this.currentBrushState.max
-                )
-            }
-            return []
-        },
-        labelStrings(): string[] | DlConfusionMatrixLabel[] {
-            if (isObject(this.labels[0])) {
-                const arr = this.labels as DlConfusionMatrixLabel[]
-                return arr.map((label: DlConfusionMatrixLabel) => label.title)
-            }
-            return this.labels
+        visibleLabels(): DlConfusionMatrixLabel[] | string[] {
+            return this.labels.slice(
+                this.currentBrushState.min,
+                this.currentBrushState.max
+            )
         },
         labelImages(): string[] {
             return this.visibleLabels.map((label: any) => label.image)
@@ -359,7 +348,10 @@ export default defineComponent({
             return validateMatrix(this.matrix, this.labels)
         },
         flattenedMatrix(): DlConfusionMatrixCell[] {
-            return flattenConfusionMatrix(this.matrix, this.labelStrings)
+            return flattenConfusionMatrix(
+                this.matrix,
+                this.labels.map(this.getLabelString)
+            )
         },
         matrixStyles(): Record<string, number | string> {
             return {
@@ -413,11 +405,17 @@ export default defineComponent({
         this.handleResizeObserver({ dispose: true })
     },
     methods: {
+        getLabelString(label: DlConfusionMatrixLabel | string) {
+            if (isObject(label)) {
+                return (label as DlConfusionMatrixLabel).title
+            }
+            return label as string
+        },
         calculateRotatedXLabels() {
             const longest = Math.max(
                 ...this.visibleLabels.map(
-                    (el: DlConfusionMatrixLabel) =>
-                        (isObject(el) ? el.title : `${el}`).length
+                    (el: DlConfusionMatrixLabel | string) =>
+                        this.getLabelString(el).length
                 )
             )
             this.rotateXLabels = longest * 12 > this.getMatrixCellWidth()
