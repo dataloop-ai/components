@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-@import 'constants';
+@import 'constants.css';
 
 body {
     font-family: 'Roboto', sans-serif;
