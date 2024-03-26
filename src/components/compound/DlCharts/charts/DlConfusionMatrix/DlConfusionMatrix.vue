@@ -223,12 +223,12 @@ export default defineComponent({
         labels: {
             required: true,
             type: Array as PropType<string[] | DlConfusionMatrixLabel[]>,
-            default: (): string[] | DlConfusionMatrixLabel[] => []
+            default: () => [] as string[] | DlConfusionMatrixLabel[]
         },
         matrix: {
             required: true,
             type: Array as PropType<number[][] | DlConfusionMatrixCell[][]>,
-            default: (): number[][] | DlConfusionMatrixCell[][] => []
+            default: () => [] as number[][] | DlConfusionMatrixLabel[][]
         },
         normalized: {
             type: Boolean,
@@ -345,13 +345,13 @@ export default defineComponent({
             return validateMatrix(this.matrix, this.labels)
         },
         flattenedMatrix(): DlConfusionMatrixCell[] {
-            return flattenConfusionMatrix(
-                this.matrix,
-                (this.labels as any[]).map(
-                    (el: DlConfusionMatrixLabel | string) =>
-                        this.getLabelString(el)
-                )
-            )
+            const labelStrings: string[] = []
+            for (const label of this.labels) {
+                const labelString = this.getLabelString(label)
+                labelStrings.push(labelString)
+            }
+
+            return flattenConfusionMatrix(this.matrix, labelStrings)
         },
         matrixStyles(): Record<string, number | string> {
             return {
@@ -417,13 +417,17 @@ export default defineComponent({
             }
         },
         calculateRotatedXLabels() {
-            const longest = Math.max(
-                ...(this.visibleLabels as any[]).map(
-                    (el: DlConfusionMatrixLabel | string) =>
-                        this.getLabelString(el).length
-                )
-            )
-            this.rotateXLabels = longest * 12 > this.getMatrixCellWidth()
+            let maxStrLen = 0
+            for (const label of this.labels) {
+                const strLabel = this.getLabelString(label)
+                const strLabelLen = strLabel.length
+
+                if (strLabelLen > maxStrLen) {
+                    maxStrLen = strLabelLen
+                }
+            }
+
+            this.rotateXLabels = maxStrLen * 12 > this.getMatrixCellWidth()
         },
         handleResizeObserver(options: { dispose?: boolean } = {}) {
             if (this.isDisposed) return
