@@ -32,9 +32,9 @@
                         "
                     >
                         <img
-                            v-if="labelImages[0]"
+                            v-if="getLabelImage(label)"
                             class="legend-avatar"
-                            :src="labelImages[index]"
+                            :src="getLabelImage(label)"
                         />
                         <span v-else class="label label-y">
                             {{ label }}
@@ -115,7 +115,7 @@
                             :style="`
                                 justify-content: center;
                                 display: flex;${
-                                !labelImages[0]
+                                !getLabelImage(label)
                                     ? `transform: rotate(${
                                         rotateXLabels ? '70' : '0'
                                     }deg); line-height: ${
@@ -126,9 +126,9 @@
                         >
                             <span class="x-axis__element--text">
                                 <img
-                                    v-if="labelImages[0]"
+                                    v-if="getLabelImage(label)"
                                     class="legend-avatar"
-                                    :src="labelImages[index]"
+                                    :src="getLabelImage(label)"
                                 />
                                 <span v-else class="label label-x">
                                     {{ label }}
@@ -341,9 +341,6 @@ export default defineComponent({
                 this.currentBrushState.max
             )
         },
-        labelImages(): string[] {
-            return this.visibleLabels.map((label: any) => label.image)
-        },
         isValidMatrix(): boolean {
             return validateMatrix(this.matrix, this.labels)
         },
@@ -410,6 +407,11 @@ export default defineComponent({
                 return (label as DlConfusionMatrixLabel).title
             }
             return label as string
+        },
+        getLabelImage(label: DlConfusionMatrixLabel | string) {
+            if (isObject(label)) {
+                return (label as DlConfusionMatrixLabel).image
+            }
         },
         calculateRotatedXLabels() {
             const longest = Math.max(
