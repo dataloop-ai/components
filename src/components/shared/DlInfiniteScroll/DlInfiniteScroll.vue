@@ -4,6 +4,7 @@
         class="dl-infinite-scroll"
         :style="computedStyles"
         :class="computedClasses"
+        @scrollend="onScrollEnd"
     >
         <DlTopScroll
             :container-ref="containerRef"
@@ -15,6 +16,7 @@
             </div>
         </slot>
         <DlBottomScroll
+            ref="bottomRef"
             :container-ref="containerRef"
             @scroll-to-bottom="onScrollToBottom"
         />
@@ -59,6 +61,7 @@ export default defineComponent({
     emits: ['scroll-to-top', 'scroll-to-bottom'],
     setup(props, { emit, attrs }) {
         const { items, pageSize, scrollDebounce } = toRefs(props)
+        const bottomRef = ref(null)
         const containerRef = ref(null)
         const currentPage = ref(0)
         const pagesCount = ref(0)
@@ -105,6 +108,8 @@ export default defineComponent({
                     containerRef.value.scrollTop -=
                         containerRef.value.scrollHeight * 0.333
                 }
+
+                onScrollEnd()
             })
 
             return toDisplay
@@ -112,6 +117,15 @@ export default defineComponent({
 
         const itemKey = (item: any) => {
             return item.id ?? item.key ?? JSON.stringify(item)
+        }
+
+        const onScrollEnd = () => {
+            const top =
+                bottomRef.value.$el.offsetTop - containerRef.value.scrollTop
+            if (top < containerRef.value.offsetHeight) {
+                containerRef.value.scrollTop +=
+                    top - containerRef.value.offsetHeight
+            }
         }
 
         const onScrollToTop = () => {
@@ -154,13 +168,18 @@ export default defineComponent({
                     items.value,
                     pageSize.value
                 )
+                if (!itemPages.value.get(currentPage.value)) {
+                    currentPage.value = 0
+                }
                 onScrollToTop()
             },
             { immediate: true }
         )
 
         return {
+            bottomRef,
             containerRef,
+            onScrollEnd,
             onScrollToTop,
             onScrollToBottom,
             displayItems,
