@@ -822,6 +822,18 @@ export default defineComponent({
             input.value.blur()
             processBlur()
         }
+
+        const updateParentElementWidth = () => {
+            if (!input.value) {
+                return
+            }
+            if (focused.value) {
+                input.value.parentElement.style.width = '100%'
+                setMenuOffset(isEligibleToChange(input.value, focused.value))
+            } else {
+                input.value.parentElement.style.width = '1px'
+            }
+        }
         //#endregion
 
         //#region computed
@@ -988,12 +1000,7 @@ export default defineComponent({
                 return
             }
 
-            if (!value) {
-                input.value.parentElement.style.width = '1px'
-            } else {
-                setMenuOffset(isEligibleToChange(input.value, value))
-                input.value.parentElement.style.width = '100%'
-            }
+            updateParentElementWidth()
         })
 
         watch(showDatePicker, (value, old) => {
@@ -1045,6 +1052,7 @@ export default defineComponent({
             }
             window.addEventListener('mousemove', watchMouseMove)
             window.addEventListener('keyup', watchKeyUp)
+            updateParentElementWidth()
         })
         onBeforeUnmount(() => {
             window.removeEventListener('mousemove', watchMouseMove)
