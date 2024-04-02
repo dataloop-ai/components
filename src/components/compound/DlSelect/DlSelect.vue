@@ -782,6 +782,9 @@ export default defineComponent({
         },
         emitValue() {
             this.setSelectedIndex()
+        },
+        options() {
+            this.setSelectedIndex()
         }
     },
     beforeMount() {

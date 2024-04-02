@@ -32,15 +32,15 @@
                         "
                     >
                         <img
-                            v-if="labelImages[0]"
+                            v-if="getLabelImage(label)"
                             class="legend-avatar"
-                            :src="labelImages[index]"
+                            :src="getLabelImage(label)"
                         />
                         <span v-else class="label label-y">
                             {{ label }}
                         </span>
                         <dl-tooltip :offset="[0, 0]">
-                            {{ labelStrings[index] }}
+                            {{ getLabelString(label) }}
                         </dl-tooltip>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                             :style="`
                                 justify-content: center;
                                 display: flex;${
-                                !labelImages[0]
+                                !getLabelImage(label)
                                     ? `transform: rotate(${
                                         rotateXLabels ? '70' : '0'
                                     }deg); line-height: ${
@@ -126,9 +126,9 @@
                         >
                             <span class="x-axis__element--text">
                                 <img
-                                    v-if="labelImages[0]"
+                                    v-if="getLabelImage(label)"
                                     class="legend-avatar"
-                                    :src="labelImages[index]"
+                                    :src="getLabelImage(label)"
                                 />
                                 <span v-else class="label label-x">
                                     {{ label }}
@@ -139,7 +139,7 @@
                             self="top middle"
                             :offset="debouncedCalculateXAxisElOffset(index)"
                         >
-                            {{ labelStrings[index] }}
+                            {{ getLabelString(label) }}
                         </dl-tooltip>
                     </div>
                 </div>
@@ -223,12 +223,12 @@ export default defineComponent({
         labels: {
             required: true,
             type: Array as PropType<string[] | DlConfusionMatrixLabel[]>,
-            default: (): string[] | DlConfusionMatrixLabel[] => []
+            default: () => [] as string[] | DlConfusionMatrixLabel[]
         },
         matrix: {
             required: true,
             type: Array as PropType<number[][] | DlConfusionMatrixCell[][]>,
-            default: (): number[][] | DlConfusionMatrixCell[][] => []
+            default: () => [] as number[][] | DlConfusionMatrixLabel[][]
         },
         normalized: {
             type: Boolean,
@@ -335,31 +335,23 @@ export default defineComponent({
         }
     },
     computed: {
-        visibleLabels(): DlConfusionMatrixLabel[] {
-            if (this.labels[0]) {
-                const arr = this.labels as DlConfusionMatrixLabel[]
-                return arr.slice(
-                    this.currentBrushState.min,
-                    this.currentBrushState.max
-                )
-            }
-            return []
-        },
-        labelStrings(): string[] | DlConfusionMatrixLabel[] {
-            if (isObject(this.labels[0])) {
-                const arr = this.labels as DlConfusionMatrixLabel[]
-                return arr.map((label: DlConfusionMatrixLabel) => label.title)
-            }
-            return this.labels
-        },
-        labelImages(): string[] {
-            return this.visibleLabels.map((label: any) => label.image)
+        visibleLabels(): DlConfusionMatrixLabel[] | string[] {
+            return this.labels.slice(
+                this.currentBrushState.min,
+                this.currentBrushState.max
+            )
         },
         isValidMatrix(): boolean {
             return validateMatrix(this.matrix, this.labels)
         },
         flattenedMatrix(): DlConfusionMatrixCell[] {
-            return flattenConfusionMatrix(this.matrix, this.labelStrings)
+            const labelStrings: string[] = []
+            for (const label of this.labels) {
+                const labelString = this.getLabelString(label)
+                labelStrings.push(labelString)
+            }
+
+            return flattenConfusionMatrix(this.matrix, labelStrings)
         },
         matrixStyles(): Record<string, number | string> {
             return {
@@ -413,14 +405,29 @@ export default defineComponent({
         this.handleResizeObserver({ dispose: true })
     },
     methods: {
+        getLabelString(label: DlConfusionMatrixLabel | string) {
+            if (isObject(label)) {
+                return (label as DlConfusionMatrixLabel).title
+            }
+            return label as string
+        },
+        getLabelImage(label: DlConfusionMatrixLabel | string) {
+            if (isObject(label)) {
+                return (label as DlConfusionMatrixLabel).image
+            }
+        },
         calculateRotatedXLabels() {
-            const longest = Math.max(
-                ...this.visibleLabels.map(
-                    (el: DlConfusionMatrixLabel) =>
-                        (isObject(el) ? el.title : `${el}`).length
-                )
-            )
-            this.rotateXLabels = longest * 12 > this.getMatrixCellWidth()
+            let maxStrLen = 0
+            for (const label of this.labels) {
+                const strLabel = this.getLabelString(label)
+                const strLabelLen = strLabel.length
+
+                if (strLabelLen > maxStrLen) {
+                    maxStrLen = strLabelLen
+                }
+            }
+
+            this.rotateXLabels = maxStrLen * 12 > this.getMatrixCellWidth()
         },
         handleResizeObserver(options: { dispose?: boolean } = {}) {
             if (this.isDisposed) return
