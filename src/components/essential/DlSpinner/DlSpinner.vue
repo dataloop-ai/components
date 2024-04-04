@@ -88,3 +88,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.dl-spinner-text {
+    color: var(--dl-color-darker);
+}
+</style>
