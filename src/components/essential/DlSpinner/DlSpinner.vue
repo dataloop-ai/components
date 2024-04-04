@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="non-selectable">
         <component
             :is="spinnerType"
             :size="size"
