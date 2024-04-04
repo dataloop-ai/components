@@ -840,10 +840,6 @@ export default defineComponent({
 
         const onModelValueChange = (val: string | number) => {
             if (val !== null && val !== undefined) {
-                if (readonly.value || disabled.value) {
-                    return
-                }
-
                 if (val === input.value.innerHTML) {
                     return
                 }
@@ -1145,6 +1141,10 @@ export default defineComponent({
             }
         },
         onKeydown(e: KeyboardEvent) {
+            if (this.readonly || this.disabled) {
+                return
+            }
+
             if (e.key !== 'Backspace') {
                 /**
                  * Allow only numbers
