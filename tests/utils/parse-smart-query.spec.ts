@@ -8,6 +8,7 @@ import {
     replaceJSDatesWithStringifiedDates
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import moment from 'moment'
+import { pureDateSuggestionPattern } from '../../src/hooks/use-suggestions'
 
 describe('parseSmartQuery', () => {
     it('should return the correct query for a single key-value pair', () => {
@@ -67,8 +68,11 @@ describe('parseSmartQuery', () => {
     })
 
     it('should not replace with alias non fitting words', () => {
-        const stringDate = '26/05/2023'
-        const createdAt = moment(stringDate, 'DD/MM/YYYY').valueOf()
+        const stringDate = '26/05/2023 00:00:00'
+        const createdAt = moment(
+            stringDate,
+            pureDateSuggestionPattern
+        ).valueOf()
         const string = `createdAt = (${stringDate}) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
@@ -203,7 +207,7 @@ describe('stringifySmartQuery', () => {
     })
 
     it('should not replace with alias non fitting words', () => {
-        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const string = `createdAt = (26/05/2023 03:00:00) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
                 {
@@ -225,7 +229,7 @@ describe('stringifySmartQuery', () => {
 
 describe(replaceJSDatesWithStringifiedDates.name, () => {
     const time = 1685059200000
-    const date = '26/05/2023'
+    const date = '26/05/2023 03:00:00'
 
     it('should work on a simple object', () => {
         const obj = {
