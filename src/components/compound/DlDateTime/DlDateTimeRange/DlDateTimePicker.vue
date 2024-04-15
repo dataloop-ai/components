@@ -15,6 +15,7 @@
             >
                 <div class="dl-date-time-range--card">
                     <dl-date-time-card
+                        ref="dateTimeRangeCard"
                         :model-value="modelValue"
                         :show-time="showTime"
                         :available-range="availableRange"

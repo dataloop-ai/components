@@ -174,7 +174,8 @@ import {
     Data,
     useSuggestions,
     removeBrackets,
-    removeLeadingExpression
+    removeLeadingExpression,
+    dateSuggestionPattern
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 import { StateManager, stateManager } from '../../../../../StateManager'
@@ -334,7 +335,7 @@ export default defineComponent({
             }
 
             // to handle date suggestion modal to open automatically.
-            if (value.includes('(dd/mm/yyyy)')) {
+            if (value.includes(dateSuggestionPattern)) {
                 value = value.trimEnd()
             }
 
