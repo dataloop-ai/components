@@ -13,63 +13,38 @@
                 :offset="[0, 5]"
                 :disabled="disabled"
             >
-                <div class="dl-date-time-range--card">
-                    <div
-                        class="dl-date-time-range--card_content"
-                        :style="cardContentStyles"
-                    >
-                        <dl-date-picker
-                            :model-value="dateInterval"
-                            :available-range="availableRange"
-                            :disabled="isInputDisabled"
-                            single-calendar
-                            single-selection
-                            @update:model-value="
-                                updateDateIntervalWithAutoClose
-                            "
-                        />
-                        <dl-time-picker
-                            v-if="showTime"
-                            :disabled="isInputDisabled"
-                            :model-value="dateInterval"
-                            single-time
-                            @update:model-value="updateDateInterval"
-                        />
-
-                        <dl-button
-                            size="s"
-                            outlined
-                            class="dl-date-time-range--button"
-                            @click="handleClearAction"
-                        >
-                            <span style="text-transform: capitalize">
-                                Clear
-                            </span>
-                        </dl-button>
-                    </div>
+                <div
+                    class="dl-date-time-range--card"
+                    :style="cardContentStyles"
+                >
+                    <dl-date-time-card
+                        :model-value="modelValue"
+                        :show-time="showTime"
+                        :available-range="availableRange"
+                        @update:model-value="handleModelValueChange"
+                        @date-selected="onDateSelected"
+                        @clear="handleClearAction"
+                    />
                 </div>
             </dl-menu>
         </date-input>
     </div>
 </template>
 <script lang="ts">
-import { DlTimePicker } from '../DlTimePicker'
 import { DateInterval } from '../types'
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
-import DlDatePicker from '../DlDatePicker/DlDatePicker.vue'
 import DateInput from './DateInput.vue'
+import DlDateTimeCard from './DlDateTimeCard.vue'
 import { DlMenu } from '../../../essential'
-import { DlButton } from '../../../basic'
 import { defineComponent, PropType } from 'vue-demi'
 import { v4 } from 'uuid'
+import { isEqual } from 'lodash'
 
 export default defineComponent({
     components: {
-        DlDatePicker,
-        DlTimePicker,
         DateInput,
         DlMenu,
-        DlButton
+        DlDateTimeCard
     },
     model: {
         prop: 'modelValue',
@@ -103,18 +78,11 @@ export default defineComponent({
     emits: ['update:model-value', 'set-type', 'change'],
     data(): {
         uuid: string
-        dateInterval: DateInterval | null
         isOpen: boolean
         isInputDisabled: boolean
     } {
         return {
             uuid: `dl-date-time-range-${v4()}`,
-            dateInterval: this.modelValue
-                ? {
-                      from: this.modelValue,
-                      to: new Date(this.modelValue)
-                  }
-                : null,
             isOpen: false,
             isInputDisabled: false
         }
@@ -124,19 +92,16 @@ export default defineComponent({
             return { width: `${this.dateInputText.length / 2}em` }
         },
         dateInputText(): string {
-            if (this.dateInterval === null) {
+            if (this.modelValue === null) {
                 return this.placeholder
             }
 
             let text = ''
 
             if (this.showTime) {
-                text = CustomDate.format(
-                    this.dateInterval.from,
-                    'MMM D, YYYY, HH:mm'
-                )
+                text = CustomDate.format(this.modelValue, 'MMM D, YYYY, HH:mm')
             } else {
-                text = CustomDate.format(this.dateInterval.from, 'MMM D, YYYY')
+                text = CustomDate.format(this.modelValue, 'MMM D, YYYY')
             }
 
             return text
@@ -147,40 +112,15 @@ export default defineComponent({
             }
         }
     },
-    watch: {
-        availableRange: {
-            handler() {
-                this.updateDateInterval(null)
-            },
-            deep: true
-        },
-        modelValue(value: Date | null) {
-            this.dateInterval = value && {
-                from: value,
-                to: new Date(value)
-            }
-        }
-    },
     methods: {
         handleClearAction() {
             this.isInputDisabled = false
-            this.updateDateInterval(null)
         },
-        updateDateInterval(value: DateInterval | null) {
-            if (value === null) {
-                this.dateInterval = null
-            } else {
-                this.dateInterval = {
-                    from: value.from,
-                    to: new Date(value.from)
-                }
-            }
-            this.$emit('update:model-value', value?.from)
-            this.$emit('change', value?.from)
+        handleModelValueChange(value: Date) {
+            this.$emit('update:model-value', value)
+            this.$emit('change', value)
         },
-        updateDateIntervalWithAutoClose(value: DateInterval) {
-            this.updateDateInterval(value)
-
+        onDateSelected() {
             if (this.autoClose) {
                 const dateTimeRangeMenu = this.$refs[
                     'dateTimeRangeMenu'
@@ -199,23 +139,8 @@ export default defineComponent({
     justify-content: center;
 
     &--card {
-        background-color: var(--dl-color-bg);
         z-index: 1;
         display: flex;
-        border-radius: 2px;
-        border-radius: 2px;
-    }
-
-    &--card_content {
-        width: var(--card-content-width);
-    }
-
-    &--button {
-        display: flex;
-        margin-left: auto;
-        width: fit-content;
-        margin-right: 16px;
-        margin-bottom: 16px;
     }
 }
 </style>
