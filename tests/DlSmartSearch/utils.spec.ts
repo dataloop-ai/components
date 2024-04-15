@@ -54,36 +54,26 @@ describe('formatToNumericDate', () => {
     })
 })
 
-/**
- * TODO: these tests dont hold up to new design and need to be replaced.
- * We do not have from to anymore.
- */
 describe('replaceDateInterval', () => {
     it('should replace the last occurrence of the value that matches the "dateIntervalPattern"', () => {
-        const string =
-            'field = (From (12/12/22) To (22/12/22)) AND field = (From (dd/mm/yyyy) To (dd/mm/yyyy))'
-        const toReplace = {
-            from: new Date(formatToNumericDate('(02/12/2022)')),
-            to: new Date(formatToNumericDate('(22/12/2022)'))
-        }
-        const expected =
-            'field = (From (12/12/22) To (22/12/22)) AND field = (From (02/12/2022) To (dd/mm/yyyy))'
+        const string = 'field = (02/12/2022) AND field = (dd/mm/yyyy)'
+        const toReplace = new Date(formatToNumericDate('(02/12/2022)'))
+        const expected = 'field = (02/12/2022) AND field = (02/12/2022)'
         const replaced = replaceDateInterval(string, toReplace)
 
-        console.log(toReplace)
+        console.log(replaced)
         expect(replaced).toEqual(expected)
     })
 
-    it('should return the original string', () => {
-        expect(
-            replaceDateInterval(
-                'field = (From (12/12/22) To (22/12/22)) AND field = 10',
-                {
-                    from: new Date('2022-12-02T09:40:34.633Z'),
-                    to: new Date('2022-12-22T09:40:34.633Z')
-                }
-            )
-        ).toEqual('field = (From (12/12/22) To (22/12/22)) AND field = 10')
+    describe(`When changing date interval that doesn't fit anything`, () => {
+        it('should return the original string', () => {
+            expect(
+                replaceDateInterval(
+                    'field = (From (12/12/22) To (22/12/22)) AND field = 10',
+                    new Date('2022-12-02T09:40:34.633Z')
+                )
+            ).toEqual('field = (From (12/12/22) To (22/12/22)) AND field = 10')
+        })
     })
 })
 

@@ -37,8 +37,8 @@ export const isEndingWithDateIntervalPattern = (str: string) => {
     return isEndOfString(str, datePattern, { checkWhiteSpace: true })
 }
 
-export const replaceDateInterval = (str: string, date: DateInterval) => {
-    const newStr = `${formatDate(date.from)}`
+export const replaceDateInterval = (str: string, date: Date) => {
+    const newStr = `${formatDate(date)}`
     const replaced = replaceFirstOrLastOccurrence(
         str,
         newStr,

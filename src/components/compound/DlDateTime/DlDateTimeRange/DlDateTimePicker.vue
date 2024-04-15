@@ -13,14 +13,13 @@
                 :offset="[0, 5]"
                 :disabled="disabled"
             >
-                <div
-                    class="dl-date-time-range--card"
-                    :style="cardContentStyles"
-                >
+                <div class="dl-date-time-range--card">
                     <dl-date-time-card
                         :model-value="modelValue"
                         :show-time="showTime"
                         :available-range="availableRange"
+                        :width="datePickerCardWidth"
+                        :disabled="disabled"
                         @update:model-value="handleModelValueChange"
                         @date-selected="onDateSelected"
                         @clear="handleClearAction"
@@ -38,7 +37,6 @@ import DlDateTimeCard from './DlDateTimeCard.vue'
 import { DlMenu } from '../../../essential'
 import { defineComponent, PropType } from 'vue-demi'
 import { v4 } from 'uuid'
-import { isEqual } from 'lodash'
 
 export default defineComponent({
     components: {
@@ -105,11 +103,6 @@ export default defineComponent({
             }
 
             return text
-        },
-        cardContentStyles(): Record<string, any> {
-            return {
-                '--card-content-width': this.datePickerCardWidth
-            }
         }
     },
     methods: {
@@ -141,6 +134,8 @@ export default defineComponent({
     &--card {
         z-index: 1;
         display: flex;
+        width: 100%;
+        height: 100%;
     }
 }
 </style>

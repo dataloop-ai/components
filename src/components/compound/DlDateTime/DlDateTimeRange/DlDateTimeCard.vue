@@ -1,5 +1,5 @@
 <template>
-    <div :id="uuid" class="dl-date-time-range-card">
+    <div :id="uuid" class="dl-date-time-range-card" :style="computedStyles">
         <div class="dl-date-time-range-card--content">
             <dl-date-picker
                 :model-value="dateInterval"
@@ -65,11 +65,15 @@ export default defineComponent({
             type: Object as PropType<Partial<DateInterval> | null>,
             default: null
         },
-        disabled: Boolean
+        disabled: Boolean,
+        width: {
+            type: String,
+            default: 'auto'
+        }
     },
     emits: ['update:model-value', 'date-selected', 'change', 'clear'],
     setup(props, { emit }) {
-        const { modelValue, availableRange } = toRefs(props)
+        const { modelValue, availableRange, width } = toRefs(props)
 
         const uuid = ref(`dl-date-time-card-${v4()}`)
         const dateInterval = computed<DateInterval>({
@@ -91,6 +95,12 @@ export default defineComponent({
             updateDateInterval(null)
         }
 
+        const computedStyles = computed(() => {
+            return {
+                '--card-content-width': width.value
+            }
+        })
+
         const updateDateInterval = (value: DateInterval | null) => {
             if (value === null) {
                 dateInterval.value = null
@@ -106,7 +116,7 @@ export default defineComponent({
 
                 dateInterval.value = newVal
             }
-            emit('change', value.from)
+            emit('change', value ? value.from : null)
         }
 
         const dateSelected = (value: DateInterval) => {
@@ -127,7 +137,8 @@ export default defineComponent({
             dateInterval,
             handleClearAction,
             updateDateInterval,
-            dateSelected
+            dateSelected,
+            computedStyles
         }
     }
 })
