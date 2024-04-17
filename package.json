@@ -7,9 +7,10 @@
     "./types": "./types.ts"
   },
   "scripts": {
-    "dev": "vite",
+    "preserve": "./moveToPublic.sh",
+    "dev": "npm run preserve && vite",
     "dev:2": "./misc/unpackAndRunV2.sh",
-    "build": "vue-tsc --noEmit --skipLibCheck && vite build",
+    "build": "npm run preserve &&  vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
