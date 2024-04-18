@@ -69,7 +69,7 @@
                             :type="showPass ? 'text' : type"
                             :disabled="disabled"
                             :readonly="readonly"
-                            @input="onChange"
+                            @input="debouncedInput"
                             @focus="onFocus"
                             @blur="debouncedBlur"
                             @keyup.enter="onKeyPress"
@@ -91,7 +91,12 @@
                             ]"
                         >
                             <slot name="append" />
-                            <span v-if="showClearButton && focused">
+                            <span
+                                v-if="showClearButton"
+                                v-show="focused || mouseOverClear"
+                                @mouseenter="mouseOverClear = true"
+                                @mouseleave="mouseOverClear = false"
+                            >
                                 <dl-button
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
@@ -245,9 +250,10 @@ import { DlMenu, DlIcon, DlList, DlEllipsis } from '../../essential'
 import { DlButton } from '../../basic'
 import { InputSizes, TInputSizes } from '../../../utils/input-sizes'
 import { v4 } from 'uuid'
+import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
-    name: 'DlInputField',
+    name: 'DlInput',
     components: {
         DlButton,
         DlIcon,
@@ -368,10 +374,15 @@ export default defineComponent({
         margin: {
             type: String,
             default: null
+        },
+        debounce: {
+            type: Number,
+            default: 100
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
     setup(props, { emit }) {
+        const mouseOverClear = ref(false)
         const highlightedIndex = ref(-1)
         const isMenuOpen = ref(false)
         const suggestItems = computed<string[]>(() => {
@@ -402,7 +413,8 @@ export default defineComponent({
             onAutoSuggestClick,
             isMenuOpen,
             setHighlightedIndex,
-            handleSelectedItem
+            handleSelectedItem,
+            mouseOverClear
         }
     },
     data() {
@@ -528,6 +540,9 @@ export default defineComponent({
             return !!this.suggestItems.length && !!this.modelValue
         },
         debouncedBlur(): any {
+            if (stateManager.disableDebounce) {
+                return this.onBlur.bind(this)
+            }
             const debounced = debounce(this.onBlur.bind(this), 50)
             return debounced
         },
@@ -553,6 +568,13 @@ export default defineComponent({
             }
 
             return classes
+        },
+        debouncedInput(): any {
+            if (stateManager.disableDebounce) {
+                return this.onChange.bind(this)
+            }
+            const debounced = debounce(this.onChange.bind(this), this.debounce)
+            return debounced
         }
     },
     methods: {
@@ -703,11 +725,10 @@ export default defineComponent({
         display: flex;
         align-items: center;
 
+        &--small,
         &--s {
-            margin: 4px auto auto;
-        }
-        &--small {
-            margin: 4px auto auto;
+            margin-bottom: 0;
+            margin-right: 4px;
         }
     }
 

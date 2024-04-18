@@ -3,5 +3,5 @@
 mkdir -p public/icons
 mkdir -p public/icons/assets
 
-mv node_modules/@dataloop-ai/icons/assets public/icons
+cp -r node_modules/@dataloop-ai/icons/assets public/icons
  

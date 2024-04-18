@@ -70,7 +70,7 @@ import { DlCodeEditorDemo } from './DlCodeEditor'
 import DlLabelPickerDemo from './DlLabelPickerDemo.vue'
 import DlInfiniteScrollDemo from './DlInfiniteScrollDemo.vue'
 import DlMarkdownDemo from './DlMarkdownDemo.vue'
-import DlInputFieldDemo from './DlInputFieldDemo.vue'
+import DlTextInputDemo from './DlTextInputDemo.vue'
 
 export default {
     AvatarDemo,
@@ -142,5 +142,5 @@ export default {
     DlLabelPickerDemo,
     DlInfiniteScrollDemo,
     DlMarkdownDemo,
-    DlInputFieldDemo
+    DlTextInputDemo
 }
