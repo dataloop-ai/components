@@ -253,7 +253,7 @@ import { v4 } from 'uuid'
 import { stateManager } from '../../../StateManager'
 
 export default defineComponent({
-    name: 'DlInput',
+    name: 'DlTextInput',
     components: {
         DlButton,
         DlIcon,
