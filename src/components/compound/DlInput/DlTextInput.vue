@@ -873,11 +873,11 @@ export default defineComponent({
         width: 28px;
 
         &--l {
-            height: 34px;
+            height: 38px;
         }
 
         &--large {
-            height: 34px;
+            height: 38px;
         }
 
         &--m {
