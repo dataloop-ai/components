@@ -795,6 +795,16 @@ export default defineComponent({
             width: calc(100% - 28px - 28px);
         }
 
+        &--l {
+            height: 16px;
+            line-height: 16px;
+        }
+
+        &--large {
+            height: 16px;
+            line-height: 16px;
+        }
+
         &--m {
             padding-top: 7px;
             padding-bottom: 7px;
