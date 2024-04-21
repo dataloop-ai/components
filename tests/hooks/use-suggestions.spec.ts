@@ -1,5 +1,10 @@
 import { toRef } from 'vue'
-import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
+import {
+    Alias,
+    Schema,
+    dateSuggestionPattern,
+    useSuggestions
+} from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
 export const schema: Schema = {
@@ -200,7 +205,7 @@ describe('use-suggestions', () => {
     describe('when the field is of type "datetime"', () => {
         it('suggestions should have the "dateIntervalSuggestionString"', () => {
             findSuggestions('StartTime = ')
-            expect(suggestions.value).toEqual(['(dd/mm/yyyy)'])
+            expect(suggestions.value).toEqual([dateSuggestionPattern])
         })
 
         it('suggestions should be empty when value does not matches', () => {

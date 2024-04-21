@@ -79,16 +79,17 @@ type Expression = {
 }
 
 const space = ' '
-const dateSuggestionPattern = '(dd/mm/yyyy)'
+export const pureDateSuggestionPattern = 'DD/MM/YYYY HH:mm:ss'
+export const dateSuggestionPattern = `(${pureDateSuggestionPattern})`
 
 let localSuggestions: Suggestion[] = []
 
 export const datePattern = new RegExp(
-    /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+    /[\(']?(\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?DD\/MM\/YYYY)\s?(\d{2}:\d{2}:\d{2}|\s?HH:mm:ss)[\)']?/,
     'gi'
 )
 export const datePatternNoBrackets =
-    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/
+    /(\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?DD\/MM\/YYYY)\s?(\d{2}:\d{2}:\d{2}|\s?HH:mm:ss)/
 
 const existsValuePlaceholder = 'existsValuePlaceholder'
 

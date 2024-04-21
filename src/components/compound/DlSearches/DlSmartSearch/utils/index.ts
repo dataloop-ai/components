@@ -8,7 +8,8 @@ import {
     Data,
     datePattern,
     datePatternNoBrackets,
-    removeBrackets
+    removeBrackets,
+    pureDateSuggestionPattern
 } from '../../../../../hooks/use-suggestions'
 import moment from 'moment'
 import { cloneDeep, get } from 'lodash'
@@ -37,8 +38,8 @@ export const isEndingWithDateIntervalPattern = (str: string) => {
     return isEndOfString(str, datePattern, { checkWhiteSpace: true })
 }
 
-export const replaceDateInterval = (str: string, date: DateInterval) => {
-    const newStr = `${formatDate(date.from)}`
+export const replaceDateInterval = (str: string, date: Date) => {
+    const newStr = `${formatDate(date)}`
     const replaced = replaceFirstOrLastOccurrence(
         str,
         newStr,
@@ -52,7 +53,7 @@ export const removeDateInterval = (str: string) => {
 }
 
 const formatDate = (date: Date | string | number): string => {
-    return moment(date).format('DD/MM/YYYY')
+    return moment(date).format(pureDateSuggestionPattern)
 }
 
 const replaceFirstOrLastOccurrence = (
@@ -67,7 +68,7 @@ const replaceFirstOrLastOccurrence = (
     let match
 
     while ((match = regex.exec(string))) {
-        if (match[0] === 'dd/mm/yyyy' && !firstMatch) {
+        if (match[0] === pureDateSuggestionPattern && !firstMatch) {
             firstMatch = match
         }
         lastMatch = match
@@ -120,7 +121,7 @@ export function replaceStringifiedDatesWithJSDates(str: string) {
 
 export function formatToNumericDate(str: string) {
     const dateString = str.replace(/['"\(\)]+/g, '')
-    const newDate = moment(dateString, 'DD/MM/YYYY')
+    const newDate = moment(dateString, pureDateSuggestionPattern)
     const ms = newDate.toDate().getTime()
     return ms
 }

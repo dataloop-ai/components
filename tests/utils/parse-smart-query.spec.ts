@@ -8,6 +8,7 @@ import {
     replaceJSDatesWithStringifiedDates
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import moment from 'moment'
+import { pureDateSuggestionPattern } from '../../src/hooks/use-suggestions'
 
 describe('parseSmartQuery', () => {
     it('should return the correct query for a single key-value pair', () => {
@@ -67,8 +68,11 @@ describe('parseSmartQuery', () => {
     })
 
     it('should not replace with alias non fitting words', () => {
-        const stringDate = '26/05/2023'
-        const createdAt = moment(stringDate, 'DD/MM/YYYY').valueOf()
+        const stringDate = '26/05/2023 00:00:00'
+        const createdAt = moment(
+            stringDate,
+            pureDateSuggestionPattern
+        ).valueOf()
         const string = `createdAt = (${stringDate}) OR dir = 'test AND test OR me Test' AND hidden = true`
         const expected = {
             $or: [
@@ -203,11 +207,17 @@ describe('stringifySmartQuery', () => {
     })
 
     it('should not replace with alias non fitting words', () => {
-        const string = `createdAt = (26/05/2023) OR dir = 'test AND test OR me Test' AND hidden = true`
+        const date = moment(
+            '26/05/2023 00:00:00',
+            pureDateSuggestionPattern
+        ).utc()
+        const formatted = date.local().format(pureDateSuggestionPattern)
+        const string = `createdAt = (${formatted}) OR dir = 'test AND test OR me Test' AND hidden = true`
+
         const expected = {
             $or: [
                 {
-                    createdAt: 1685059200000 // in utc
+                    createdAt: date.valueOf() // in utc
                 },
                 {
                     dir: 'test AND test OR me Test',
@@ -224,31 +234,31 @@ describe('stringifySmartQuery', () => {
 })
 
 describe(replaceJSDatesWithStringifiedDates.name, () => {
-    const time = 1685059200000
-    const date = '26/05/2023'
+    const date = moment('26/05/2023 03:00:00', pureDateSuggestionPattern).utc()
+    const formatted = date.local().format(pureDateSuggestionPattern)
 
     it('should work on a simple object', () => {
         const obj = {
-            createdAt: time
+            createdAt: date.valueOf()
         }
         const result = replaceJSDatesWithStringifiedDates(obj, ['createdAt'])
         expect(result).toEqual({
-            createdAt: date
+            createdAt: formatted
         })
     })
 
     it('should work on a nested object', () => {
         const obj = {
-            createdAt: time,
+            createdAt: date.valueOf(),
             nested: {
-                createdAt: time
+                createdAt: date.valueOf()
             }
         }
         const result = replaceJSDatesWithStringifiedDates(obj, ['createdAt'])
         expect(result).toEqual({
-            createdAt: date,
+            createdAt: formatted,
             nested: {
-                createdAt: date
+                createdAt: formatted
             }
         })
     })
@@ -256,13 +266,13 @@ describe(replaceJSDatesWithStringifiedDates.name, () => {
     it('should work with $ operators', () => {
         const obj = {
             createdAt: {
-                $gt: time
+                $gt: date.valueOf()
             }
         }
         const result = replaceJSDatesWithStringifiedDates(obj, ['createdAt'])
         expect(result).toEqual({
             createdAt: {
-                $gt: date
+                $gt: formatted
             }
         })
     })

@@ -105,8 +105,9 @@
             @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
-                <dl-date-picker
-                    :single-selection="true"
+                <dl-date-time-card
+                    :model-value="datePickerSelection"
+                    show-time
                     @change="onDateSelection"
                 />
                 <div class="dl-smart-search-input__date-picker-buttons">
@@ -138,7 +139,7 @@ import {
     onBeforeUnmount
 } from 'vue-demi'
 import { DlButton } from '../../../../basic'
-import { DlDatePicker } from '../../../DlDateTime'
+import { DlDateTimeCard } from '../../../DlDateTime'
 import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
@@ -173,7 +174,8 @@ import {
     Data,
     useSuggestions,
     removeBrackets,
-    removeLeadingExpression
+    removeLeadingExpression,
+    dateSuggestionPattern
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 import { StateManager, stateManager } from '../../../../../StateManager'
@@ -184,7 +186,7 @@ export default defineComponent({
         DlButton,
         SuggestionsDropdown,
         DlTooltip,
-        DlDatePicker,
+        DlDateTimeCard,
         DlMenu,
         DlLabel
     },
@@ -300,7 +302,7 @@ export default defineComponent({
         const menuOffset = ref([0, 5])
         const cancelBlur = ref(0)
         const expanded = ref(true)
-        const datePickerSelection = ref(null)
+        const datePickerSelection = ref<Date>(null)
         const showDatePicker = ref(false)
         const suggestionsDropdown = ref(null)
         //#endregion
@@ -333,7 +335,7 @@ export default defineComponent({
             }
 
             // to handle date suggestion modal to open automatically.
-            if (value.includes('(dd/mm/yyyy)')) {
+            if (value.includes(dateSuggestionPattern)) {
                 value = value.trimEnd()
             }
 
@@ -676,7 +678,7 @@ export default defineComponent({
             debouncedSetInputValue.value(text)
         }
 
-        const onDateSelection = (value: DateInterval) => {
+        const onDateSelection = (value: Date) => {
             datePickerSelection.value = value
         }
 
@@ -1331,10 +1333,6 @@ export default defineComponent({
         word-break: break-all;
         bottom: -15px;
         max-width: 100%;
-    }
-
-    &__date-picker-wrapper {
-        width: 562px;
     }
 
     &__date-picker-buttons {
