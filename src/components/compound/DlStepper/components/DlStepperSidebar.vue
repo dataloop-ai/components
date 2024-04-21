@@ -8,7 +8,12 @@
                 :end-icon="endIcon(step)"
                 :start-icon="
                     step.icon
-                        ? { icon: step.icon, color: 'secondary' }
+                        ? {
+                            icon: step.icon,
+                            color: step.active
+                                ? 'secondary'
+                                : 'dl-color-lighter'
+                        }
                         : undefined
                 "
                 :clickable="!disabled"

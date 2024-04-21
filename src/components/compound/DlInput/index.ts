@@ -1,2 +1,3 @@
 import DlInput from './DlInput.vue'
-export { DlInput }
+import DlTextInput from './DlTextInput.vue'
+export { DlInput, DlTextInput }
