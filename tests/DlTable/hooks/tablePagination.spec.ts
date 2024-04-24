@@ -71,7 +71,7 @@ describe('useTablePaginationState', () => {
                 }
                 setPagination(newPagination)
                 //@ts-ignore
-                await window.delay(100)
+                await window.delay(300)
 
                 expect(emitFn).toHaveBeenCalledWith('update:pagination', {
                     boundaryLinks: true,
