@@ -156,10 +156,7 @@
             all-items-option
         >
             <template #prepend>
-                <dl-icon
-                    size="12px"
-                    icon="icon-dl-filter"
-                />
+                <dl-icon size="12px" icon="icon-dl-filter" />
             </template>
         </dl-select>
         custom search
@@ -594,13 +591,36 @@
             multiselect
             style="margin-bottom: 150px"
         />
+
+        <dl-select
+            :options="searchOptions"
+            title="With before and after options"
+        >
+            <template #before-options>
+                <dl-button label="Button" />
+            </template>
+            <template #after-options>
+                <dl-button label="Button" />
+            </template>
+        </dl-select>
+        <dl-select
+            :options="alotOfOptions"
+            title="With before and after options - lots of options"
+        >
+            <template #before-options>
+                <dl-button label="Button" />
+            </template>
+            <template #after-options>
+                <dl-button label="Button" />
+            </template>
+        </dl-select>
     </div>
 </template>
 
 <script lang="ts">
 import { cloneDeep } from 'lodash'
 import { defineComponent } from 'vue-demi'
-import { DlChip, DlSelect, DlIcon, DlBadge } from '../components'
+import { DlChip, DlSelect, DlIcon, DlBadge, DlButton } from '../components'
 import { DlSelectOptionType } from '../components/compound/DlSelect/utils'
 
 const defaultOptions = [
@@ -828,7 +848,7 @@ const treeOptionsExpanded: DlSelectOptionType[] = [
 ]
 
 export default defineComponent({
-    components: { DlSelect, DlIcon, DlChip, DlBadge },
+    components: { DlSelect, DlIcon, DlChip, DlBadge, DlButton },
     data() {
         return {
             selectedWithFit: [],
