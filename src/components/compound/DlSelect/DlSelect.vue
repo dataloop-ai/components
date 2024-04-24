@@ -165,7 +165,15 @@
                         <slot name="no-options"> No options </slot>
                     </dl-item-section>
                 </dl-list-item>
-                <dl-list class="select-list" :padding="false">
+                <dl-list
+                    class="select-list"
+                    :padding="false"
+                    :style="
+                        optionsCount > MAX_ITEMS_PER_LIST
+                            ? ''
+                            : `width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px); overflow-y: scroll;`
+                    "
+                >
                     <dl-select-option
                         v-if="showAllItems"
                         :multiselect="multiselect"

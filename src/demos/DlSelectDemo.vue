@@ -614,6 +614,17 @@
                 <dl-button label="Button" />
             </template>
         </dl-select>
+        <dl-select
+            :options="someOptions"
+            title="With before and after options - some options"
+        >
+            <template #before-options>
+                <dl-button label="Button" />
+            </template>
+            <template #after-options>
+                <dl-button label="Button" />
+            </template>
+        </dl-select>
     </div>
 </template>
 
@@ -892,6 +903,21 @@ export default defineComponent({
             const arr = [] as any[]
 
             for (let i = 0; i < 1000; ++i) {
+                arr.push({
+                    key: i,
+                    subLabel: 'not so high',
+                    label: 'High ' + i,
+                    value: 'high',
+                    bgColor: 'dl-color-negative'
+                })
+            }
+
+            return arr
+        },
+        someOptions(): DlSelectOptionType[] {
+            const arr = [] as any[]
+
+            for (let i = 0; i < 10; ++i) {
                 arr.push({
                     key: i,
                     subLabel: 'not so high',
