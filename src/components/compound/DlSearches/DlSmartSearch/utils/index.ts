@@ -1,6 +1,5 @@
 export * from './highlightSyntax'
 
-import { DateInterval } from '../../../DlDateTime/types'
 import { ColorSchema, SyntaxColorSchema, Filters } from '../types'
 import {
     operators,
