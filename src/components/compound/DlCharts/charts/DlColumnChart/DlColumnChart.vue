@@ -1,20 +1,8 @@
 <template>
-    <div
-        :style="cssVars"
-        :class="chartWrapperClasses"
-    >
-        <dl-empty-state
-            v-if="isEmpty"
-            v-bind="emptyStateProps"
-        >
-            <template
-                v-for="(_, slot) in $slots"
-                #[slot]="props"
-            >
-                <slot
-                    :name="slot"
-                    v-bind="props"
-                />
+    <div :style="cssVars" :class="chartWrapperClasses">
+        <dl-empty-state v-if="isEmpty" v-bind="emptyStateProps">
+            <template v-for="(_, slot) in $slots" #[slot]="props">
+                <slot :name="slot" v-bind="props" />
             </template>
         </dl-empty-state>
         <Bar
@@ -25,6 +13,7 @@
             :style="(chartStyles, `max-height: ${wrapperHeight}`)"
             :data="chartData"
             :options="chartOptions"
+            :plugins="chartPlugins"
             @mouseout="onChartLeave"
         />
         <slot
@@ -484,6 +473,8 @@ export default defineComponent({
             )
         )
 
+        const chartPlugins = props.plugins || []
+
         watch(
             () => chart.value?.scales?.x?.width,
             (val: string) => {
@@ -627,6 +618,7 @@ export default defineComponent({
             variables,
             chartData,
             chartOptions,
+            chartPlugins,
             brush,
             xLabels,
             columnChart,
