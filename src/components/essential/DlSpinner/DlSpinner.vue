@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="non-selectable">
         <component
             :is="spinnerType"
             :size="size"
@@ -88,3 +88,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.dl-spinner-text {
+    color: var(--dl-color-darker);
+}
+</style>

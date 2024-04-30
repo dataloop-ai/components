@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
+import { DlSmartSearchInput } from '../../src/components'
 import {
     describe,
     it,
@@ -10,6 +10,7 @@ import {
     afterAll
 } from 'vitest'
 import { stateManager } from '../../src/StateManager'
+import { dateSuggestionPattern } from '../../src/hooks/use-suggestions'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -349,7 +350,9 @@ describe('DlSmartSearchInput', () => {
 
             it('should open date picker after typing a date patten, and append a space after selecting a date there', async () => {
                 wrapper.vm.focused = true
-                wrapper.vm.debouncedSetInputValue('StartTime = (dd/mm/yyyy)')
+                wrapper.vm.debouncedSetInputValue(
+                    `StartTime = ${dateSuggestionPattern}`
+                )
                 // @ts-ignore
                 await window.delay(500)
                 await wrapper.vm.$nextTick()

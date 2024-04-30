@@ -261,32 +261,42 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
                             [key: string]: string | number | string[] | number[]
                         }
                     )[operator]
+
+                    let stringValue = ''
+                    if (
+                        ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte'].includes(
+                            operator
+                        )
+                    ) {
+                        if (isNumber(operatorValue)) {
+                            stringValue = `${operatorValue}`
+                        } else if (isBoolean(operatorValue)) {
+                            stringValue = `${operatorValue}`
+                        } else if (isDatePattern(`${operatorValue}`)) {
+                            stringValue = `(${operatorValue})`
+                        } else {
+                            stringValue = `'${operatorValue}'`
+                        }
+                    }
+
                     switch (operator) {
                         case '$eq':
-                            result += `${key} = ${
-                                isString(operatorValue)
-                                    ? `'${operatorValue}'`
-                                    : operatorValue
-                            }`
+                            result += `${key} = ${stringValue}`
                             break
                         case '$ne':
-                            result += `${key} != ${
-                                isString(operatorValue)
-                                    ? `'${operatorValue}'`
-                                    : operatorValue
-                            }`
+                            result += `${key} != ${stringValue}`
                             break
                         case '$gt':
-                            result += `${key} > ${operatorValue}`
+                            result += `${key} > ${stringValue}`
                             break
                         case '$gte':
-                            result += `${key} >= ${operatorValue}`
+                            result += `${key} >= ${stringValue}`
                             break
                         case '$lt':
-                            result += `${key} < ${operatorValue}`
+                            result += `${key} < ${stringValue}`
                             break
                         case '$lte':
-                            result += `${key} <= ${operatorValue}`
+                            result += `${key} <= ${stringValue}`
                             break
                         case '$exists':
                             result += `${key} ${

@@ -24,18 +24,25 @@ describe('Date Time Picker', () => {
                 modelValue: date
             }
         })
+
+        wrapper.vm.$refs['dateTimeRangeMenu'].show()
+        await wrapper.vm.$nextTick()
     })
 
     it('should have date range with both ends equal', () => {
-        expect(wrapper.vm.dateInterval).toEqual({
+        const internalInterval = wrapper.vm.$refs.dateTimeRangeCard.dateInterval
+
+        expect(internalInterval).toEqual({
             from: date,
             to: date
         })
     })
 
-    it('should clear the selection on click Clear button', async () => {
+    it('should clear the selection on click Clear button', () => {
+        wrapper.vm.$refs.dateTimeRangeCard.handleClearAction()
         wrapper.vm.handleClearAction()
-        expect(wrapper.vm.dateInterval).toEqual(null)
+        const emitted = wrapper.emitted()['update:model-value'][0][0]
+        expect(emitted).toEqual(null)
         expect(wrapper.vm.isInputDisabled).toEqual(false)
     })
 
