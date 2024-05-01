@@ -53,6 +53,7 @@
                     }px;`
             "
             :col-index="colIndex"
+            :tool-tip="toolTip"
         >
             <template v-if="!hasSlotByName(`body-cell-${col.name}`)">
                 {{ getCellValue(col, row) }}
@@ -148,6 +149,10 @@ export default defineComponent({
         },
         modelValue: {
             type: [String, Boolean],
+            default: null
+        },
+        toolTip: {
+            type: String,
             default: null
         }
     },
