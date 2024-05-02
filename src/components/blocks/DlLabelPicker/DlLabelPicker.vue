@@ -42,6 +42,7 @@
                     :text="item.row.displayLabel"
                     :indicator-color="item.row.color"
                     class="dl-label-picker-item"
+                    :data-label-picker-identifier="item.row.identifier"
                 />
             </template>
         </dl-tree-table>
@@ -49,7 +50,15 @@
 </template>
 
 <script lang="ts">
-import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
+import {
+    ref,
+    PropType,
+    defineComponent,
+    computed,
+    toRefs,
+    onMounted,
+    nextTick
+} from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
 import { DlEmptyStateProps, DlTableColumn, DlTableRow } from '../../types'
@@ -189,6 +198,18 @@ export default defineComponent({
             }
             return false
         }
+
+        onMounted(() => {
+            nextTick(() => {
+                if (items.value?.[0]?.identifier) {
+                    const target = table.value.$el.querySelector(
+                        `[data-label-picker-identifier="${items.value[0].identifier}"]`
+                    )
+                    target?.closest('tr')?.classList.add('selected')
+                }
+            })
+        })
+
         return {
             handleRowClick,
             inputValue,
