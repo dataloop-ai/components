@@ -200,10 +200,12 @@ export default defineComponent({
 
         onMounted(() => {
             nextTick(() => {
-                const target = table.value.$el.querySelector(
-                    `[data-label-picker-identifier="${items.value?.[0]?.identifier}"]`
-                )
-                target?.closest('tr')?.classList.add('selected')
+                if (items.value?.[0]?.identifier) {
+                    const target = table.value.$el.querySelector(
+                        `[data-label-picker-identifier="${items.value[0].identifier}"]`
+                    )
+                    target?.closest('tr')?.classList.add('selected')
+                }
             })
         })
 
