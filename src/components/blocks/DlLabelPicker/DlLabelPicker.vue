@@ -34,6 +34,7 @@
             :empty-state-props="emptyStateProps"
             :hide-bottom="hideBottom"
             :hide-no-data="hideNoData"
+            identifier-as-tooltip
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">

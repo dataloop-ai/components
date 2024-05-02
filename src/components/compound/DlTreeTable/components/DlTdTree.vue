@@ -6,7 +6,10 @@
         :data-col-index="colIndex"
     >
         <slot name="icon" />
-        <dl-tooltip v-if="hasEllipsis">
+        <dl-tooltip v-if="tooltip">
+            {{ tooltip }}
+        </dl-tooltip>
+        <dl-tooltip v-else-if="hasEllipsis">
             <slot />
         </dl-tooltip>
         <slot />
@@ -38,6 +41,10 @@ export default defineComponent({
         },
         colIndex: {
             type: Number,
+            default: null
+        },
+        tooltip: {
+            type: String,
             default: null
         }
     },
