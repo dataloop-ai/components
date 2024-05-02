@@ -537,7 +537,7 @@ export default defineComponent({
                 computedCols: tableRootRef.value.computedCols,
                 modelValue: isRowSelected(props.rowKey, getRowKey.value(row)),
                 scopedSlots: currentSlots,
-                toolTip: props.identifierAsTooltip ? row.identifier : null,
+                tooltip: props.identifierAsTooltip ? row.identifier : null,
                 'onUpdate:modelValue': (adding: boolean, evt: Event) => {
                     updateSelectionHierarchy(adding, evt, row)
                 },
