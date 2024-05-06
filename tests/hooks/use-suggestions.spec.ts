@@ -13,6 +13,7 @@ export const schema: Schema = {
     completed: 'boolean',
     metadata: {
         nesting: {
+            ['*']: 'any',
             age: 'number',
             valid: 'boolean',
             arrVal: ['a', 'b', 'c', 'string']
@@ -83,9 +84,29 @@ describe('use-suggestions', () => {
         'Arr'
     ].sort(sortString)
 
+    const genericOperators = [
+        '=',
+        '!=',
+        'IN',
+        'NOT-IN',
+        'EXISTS',
+        'DOESNT-EXIST'
+    ]
+
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
         expect(suggestions.value).toEqual(allTheFields)
+    })
+
+    it('suggestions should not have aliased keys', () => {
+        findSuggestions('metadata.nesting')
+        expect(suggestions.value).toEqual(['.valid'])
+
+        findSuggestions('metadata.nesting.')
+        expect(suggestions.value).toEqual(['.valid'])
+
+        findSuggestions('metadata.nesting.v')
+        expect(suggestions.value).toEqual(['.valid', ...genericOperators])
     })
 
     const limited = useSuggestions(schemaRef, aliasesRef, {
@@ -126,15 +147,6 @@ describe('use-suggestions', () => {
     })
 
     it('suggestions should have the generic operators', () => {
-        const genericOperators = [
-            '=',
-            '!=',
-            'IN',
-            'NOT-IN',
-            'EXISTS',
-            'DOESNT-EXIST'
-        ]
-
         findSuggestions('Level ')
         expect(suggestions.value).toEqual(genericOperators)
 

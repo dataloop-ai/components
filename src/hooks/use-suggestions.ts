@@ -272,12 +272,24 @@ export const useSuggestions = (
                     if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
                         for (const key of Object.keys(fieldOf)) {
                             if (key === '*') continue
+                            if (aliasedKeys.includes(`${matchedField}.${key}`))
+                                continue
                             toAdd.push(`.${key}`)
                         }
                     }
                 } else {
+                    const matchedFieldBeforeDot = matchedField.replace(
+                        new RegExp(`\\.${lastWord}$`),
+                        ''
+                    )
                     for (const key in fieldOf) {
                         if (key === '*') continue
+                        if (
+                            aliasedKeys.includes(
+                                `${matchedFieldBeforeDot}.${key}`
+                            )
+                        )
+                            continue
                         if (key.startsWith(lastWord)) {
                             toAdd.push(`.${key}`)
                         }
