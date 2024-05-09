@@ -1,16 +1,15 @@
 <template>
-    <div style="width: 200px">
+    <div class="dl-label-picker">
         <dl-input
             v-model="inputValue"
             :placeholder="placeHolderText"
-            size="l"
+            size="m"
             has-prepend
-            padding-prop="0px 0px 0px 0px"
             :style="inputStyles"
         >
             <template #prepend>
                 <dl-icon
-                    style="margin-bottom: 5px"
+                    color="dl-color-lighter"
                     icon="icon-dl-search"
                     size="12px"
                 />
@@ -139,7 +138,7 @@ export default defineComponent({
 
         const placeHolderText = computed(() => {
             if (!currentSelectedLabel.value) {
-                return `No items selected`
+                return 'Search a label'
             }
 
             return currentSelectedLabel.value.displayLabel
@@ -225,7 +224,25 @@ export default defineComponent({
 </script>
 
 <style scope>
+.dl-label-picker {
+    width: 200px;
+}
 .dl-label-picker-item {
     cursor: pointer;
+    height: 32px;
+    line-height: 30px;
+}
+</style>
+
+<style>
+.dl-label-picker .dl-table thead tr,
+.dl-label-picker .dl-table .inner-th-wrapper {
+    height: 10px;
+}
+.dl-label-picker .dl-table tbody tr {
+    height: auto;
+}
+.dl-label-picker .dl-table tbody tr td {
+    padding: 2px 0;
 }
 </style>
