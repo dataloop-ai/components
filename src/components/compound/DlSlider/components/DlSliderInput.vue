@@ -2,7 +2,7 @@
     <input
         ref="sliderInput"
         :value="modelRef"
-        type="number"
+        type="text"
         :min="min"
         :max="max"
         :readonly="readonly"
@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { debounce } from 'lodash'
-import { computed, defineComponent, ref, toRef } from 'vue-demi'
+import { computed, defineComponent, ref, toRef, watch } from 'vue-demi'
 import { stateManager } from '../../../../StateManager'
 import { getInputValue } from '../utils'
 
@@ -54,8 +54,17 @@ export default defineComponent({
         const sliderInput = ref<HTMLInputElement>(null)
 
         const handleChange = (evt: any) => {
-            const val = evt.target.value
-            if (val === '') return
+            const validPartialExpressions = [
+                '',
+                '-',
+                '.',
+                '-.',
+                '-0.',
+                '0.',
+                '.0'
+            ]
+            const val = evt.target.value.trim()
+            if (validPartialExpressions.includes(val)) return
 
             const { value } = getInputValue(val, props.min, props.max)
 
@@ -64,17 +73,24 @@ export default defineComponent({
             if (sliderInput.value) sliderInput.value.value = value
         }
 
-        const debouncedHandleChange = computed(() => {
-            if (stateManager.disableDebounce) {
-                return handleChange
-            }
-            return debounce(handleChange, 100)
-        })
+        watch(
+            modelRef,
+            (newValue, oldValue) => {
+                if (isNaN(newValue)) {
+                    emit('update:model-value', oldValue)
+                    emit('change', oldValue)
+                    if (sliderInput.value)
+                        sliderInput.value.value = oldValue.toString()
+                    return
+                }
+            },
+            { immediate: true, deep: true }
+        )
 
         return {
             sliderInput,
             modelRef,
-            handleChange: debouncedHandleChange
+            handleChange
         }
     },
     methods: {
@@ -90,7 +106,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-input[type='number'] {
+input[type='text'] {
     width: 31px;
     height: 20px;
     padding-top: 3px;
