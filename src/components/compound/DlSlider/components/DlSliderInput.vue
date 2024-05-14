@@ -68,7 +68,7 @@ export default defineComponent({
             if (stateManager.disableDebounce) {
                 return handleChange
             }
-            return debounce(handleChange, 100)
+            return debounce(handleChange, 600)
         })
 
         return {
