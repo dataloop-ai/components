@@ -44,7 +44,7 @@ describe('DlSliderInput', () => {
                     await sliderInput.setValue('1')
 
                     // @ts-ignore
-                    await window.delay(300)
+                    await window.delay(1000)
                     // todo: this became flaky... need to investigate
                     await wrapper.vm.$nextTick()
                 })
