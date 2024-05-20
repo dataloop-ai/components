@@ -245,11 +245,11 @@ export const useSuggestions = (
                     matchedField.indexOf('.') > 0
                         ? matchedField
                         : matchedField + '.'
-                aliasesArray.forEach((a) => {
+                for (const a of aliasesArray) {
                     if (a.alias.startsWith(matchedFieldWithDot)) {
                         localSuggestions.push(a.alias.replace(/^.+\./, '.'))
                     }
-                })
+                }
                 continue
             }
 
