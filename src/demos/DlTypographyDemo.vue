@@ -1,9 +1,12 @@
 <template>
     <div>
-        <div v-for="(item, index) in typographyTypes" :key="index">
+        <div
+            v-for="(item, index) in typographyTypes"
+            :key="index"
+        >
             <DlTypography
                 :color="item.color"
-                :size="getItemSize(item)"
+                :size="item.size || item.variant"
                 :variant="item.variant"
             >
                 Typography {{ item ? item.variant : item }}
@@ -20,8 +23,8 @@
                 Typography Bold
             </dl-typography>
         </DlButton>
-        <br />
-        <br />
+        <br>
+        <br>
         <DlButton>
             <dl-typography
                 color="dl-color-tooltip-text"
@@ -38,7 +41,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlButton, DlTypography } from '../components'
-import { DlTypographyVariant } from '../types'
 
 export default defineComponent({
     name: 'DlTypographyDemo',
@@ -46,7 +48,7 @@ export default defineComponent({
         DlTypography,
         DlButton
     },
-    data(): { typographyTypes: Record<string, any>[] } {
+    data() {
         return {
             typographyTypes: [
                 {
@@ -84,11 +86,6 @@ export default defineComponent({
                     color: 'dl-color-warning'
                 }
             ]
-        }
-    },
-    methods: {
-        getItemSize(item: Record<string, string>): string {
-            return item.size || item.variant
         }
     }
 })

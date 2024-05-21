@@ -36,7 +36,7 @@
                 size="12px"
                 style="text-align: center"
             >
-                For more ontology settings <br />
+                For more ontology settings <br>
                 <a href="https://google.com/">go to receipe</a>
             </dl-typography>
         </div>
@@ -53,7 +53,7 @@
                 @selectedOption="handleOption"
             />
         </div>
-        <hr />
+        <hr>
         <div>
             <div>
                 <dl-button
@@ -82,7 +82,7 @@
                 </dl-button>
             </div>
         </div>
-        <hr />
+        <hr>
         <div
             style="
                 display: flex;
@@ -226,19 +226,13 @@ export default defineComponent({
             selectedIconMenu.value = iconMenu
         }
 
-        const autoNextItem = ref(false)
-
         return {
             listAutocomleteItems,
             handleOption,
             selectedItem,
             iconsMenu,
             selectedIconMenu,
-            handleSelectedIconMenu,
-            logValue: (value: any) => {
-                console.log('log value: ', value)
-            },
-            autoNextItem
+            handleSelectedIconMenu
         }
     }
 })

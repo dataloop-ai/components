@@ -3,7 +3,10 @@
         <div>Label picker component</div>
         <DlLabelPicker
             :items="items"
-            :empty-state-props="emptyStateProps"
+            :empty-state-props="{
+                title: '',
+                icon: ''
+            }"
             hide-bottom
             hide-no-data
             @selected-label="setSelectedEvent"
@@ -16,12 +19,6 @@
 import { DlLabelPicker } from '../components'
 import { defineComponent, ref } from 'vue-demi'
 import { DlLabelPickerItem } from '../types'
-
-const emptyStateProps: any = {
-    title: '',
-    icon: ''
-}
-
 const rows: DlLabelPickerItem[] = [
     {
         identifier: 'a',
@@ -79,7 +76,7 @@ export default defineComponent({
         const setSelectedEvent = (item: DlLabelPickerItem) => {
             lastSelected.value = item
         }
-        return { items, lastSelected, setSelectedEvent, emptyStateProps }
+        return { items, lastSelected, setSelectedEvent }
     }
 })
 </script>

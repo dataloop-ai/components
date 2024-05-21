@@ -6,7 +6,10 @@
         @mouseleave="onCardMouseleave"
         @click="onCardClick"
     >
-        <div v-if="icon && !isEmpty" class="card--icon">
+        <div
+            v-if="icon && !isEmpty"
+            class="card--icon"
+        >
             <dl-icon
                 :icon="icon.icon"
                 :styles="iconStyles"
@@ -14,13 +17,20 @@
                 :color="iconColor"
             />
         </div>
-        <div v-else-if="image && !isEmpty" class="card--image">
+        <div
+            v-else-if="image && !isEmpty"
+            class="card--image"
+        >
             <div
                 v-if="interactive && hasImageLink"
                 class="card--image__link-icon"
                 @click="stopPropagationEvent"
             >
-                <DlLink newtab external :href="imageLink">
+                <DlLink
+                    newtab
+                    external
+                    :href="imageLink"
+                >
                     <dl-icon
                         :icon="image.link.icon"
                         :size="image.link.size"
@@ -43,7 +53,7 @@
                     class="card--image__image-holder__image"
                     :onload="onImageLoad"
                     @mousemove="movePreview"
-                />
+                >
                 <div
                     v-if="hasMagnifyingGlass"
                     ref="magnifyingGlass"
@@ -67,11 +77,14 @@
                         :src="image.src"
                         :alt="imageAlt"
                         class="card--image__image-preview__image"
-                    />
+                    >
                 </figure>
             </dl-tooltip>
         </div>
-        <div v-if="!isEmpty" class="card--content">
+        <div
+            v-if="!isEmpty"
+            class="card--content"
+        >
             <div>
                 <slot name="header">
                     <div v-if="interactive">
@@ -104,7 +117,10 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else class="card--header">
+                    <div
+                        v-else
+                        class="card--header"
+                    >
                         <span class="card--header_title">{{ title }}</span>
                     </div>
                 </slot>
@@ -152,14 +168,20 @@
                             </dl-ellipsis>
                         </div>
                     </div>
-                    <span v-else class="card--content_text">{{ text }}</span>
+                    <span
+                        v-else
+                        class="card--content_text"
+                    >{{ text }}</span>
                 </slot>
             </div>
             <slot name="footer">
                 <div v-if="interactive">
                     <div class="card__interactive-description">
                         <div class="flex full-width items-center">
-                            <dl-typography size="10px" color="dl-color-medium">
+                            <dl-typography
+                                size="10px"
+                                color="dl-color-medium"
+                            >
                                 Description
                             </dl-typography>
                         </div>
@@ -171,7 +193,10 @@
                         </div>
                     </div>
                     <div class="card__interactive-description__text">
-                        <dl-ellipsis v-if="description" :text="description" />
+                        <dl-ellipsis
+                            v-if="description"
+                            :text="description"
+                        />
                         <dl-typography
                             v-else
                             size="12px"
@@ -181,7 +206,10 @@
                         </dl-typography>
                     </div>
                 </div>
-                <div v-else class="card--links">
+                <div
+                    v-else
+                    class="card--links"
+                >
                     <div
                         v-for="(link, idx) in links"
                         :key="idx"
@@ -211,8 +239,14 @@
             v-if="isEmpty && emptyStateProps"
             v-bind="emptyStateProps"
         >
-            <template v-for="(_, slot) in $slots" #[slot]="props">
-                <slot :name="slot" v-bind="props" />
+            <template
+                v-for="(_, slot) in $slots"
+                #[slot]="props"
+            >
+                <slot
+                    :name="slot"
+                    v-bind="props"
+                />
             </template>
         </dl-empty-state>
     </div>
@@ -270,7 +304,7 @@ export default defineComponent({
         },
         links: {
             type: Array as PropType<DlCardLinkType[]>,
-            default: (): DlCardLinkType[] => [] as DlCardLinkType[]
+            default: (): DlCardLinkType[] => []
         },
         height: {
             type: String,

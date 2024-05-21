@@ -32,7 +32,10 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div style="margin-top: 10px" class="dl-dtr--option__range">
+            <div
+                style="margin-top: 10px"
+                class="dl-dtr--option__range"
+            >
                 <span class="dl-dtr--option_title">Available Range: </span>
                 <dl-switch
                     v-model="switchState"
@@ -46,7 +49,7 @@
                     value="auto-close"
                     class="dl-dtr--option_switch"
                 />
-                <br />
+                <br>
                 <span>From</span>
                 <input
                     type="date"
@@ -55,7 +58,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="setRangeFrom"
-                />
+                >
                 <span style="margin-left: 5px">To</span>
                 <input
                     :disabled="!range"
@@ -64,7 +67,7 @@
                     class="dl-dtr--range-input"
                     placeholder="to"
                     @input="setRangeTo"
-                />
+                >
             </div>
         </div>
         <div>
@@ -115,8 +118,8 @@
                     :value="date.from"
                     class="dl-dtr--range-input"
                     placeholder="from"
-                    @input="updateFrom"
-                />
+                    @input="date.from = new Date($event.target.value)"
+                >
 
                 from
                 <input
@@ -125,8 +128,8 @@
                     :value="date.to"
                     class="dl-dtr--range-input"
                     placeholder="from"
-                    @input="updateTo"
-                />
+                    @input="date.to = new Date($event.target.value)"
+                >
             </div>
 
             vmodel date: {{ date }}
@@ -174,10 +177,10 @@ export default defineComponent({
         }
     },
     computed: {
-        type(): 'month' | 'day' {
+        type(): string {
             return this.switchState.includes('type') ? 'month' : 'day'
         },
-        mode(): 'multi' | 'single' {
+        mode(): string {
             return this.switchState.includes('mode') ? 'multi' : 'single'
         },
         showTime(): boolean {
@@ -212,26 +215,20 @@ export default defineComponent({
                 this.switchState.push('type')
             }
         },
-        setRangeFrom({ target }: any) {
+        setRangeFrom({ target }: { target: HTMLInputElement }) {
             this.availableRange = {
                 from: target.value ? new Date(target.value) : null,
                 to: this.availableRange?.to
             }
         },
-        setRangeTo({ target }: any) {
+        setRangeTo({ target }: { target: HTMLInputElement }) {
             this.availableRange = {
                 to: target.value ? new Date(target.value) : null,
                 from: this.availableRange?.from
             }
         },
-        handleRange({ target }: any) {
+        handleRange({ target }: { target: HTMLInputElement }) {
             if (!target.checked) this.availableRange = null
-        },
-        updateTo({ target }: any) {
-            this.date.to = new Date(target.value)
-        },
-        updateFrom({ target }: any) {
-            this.date.from = new Date(target.value)
         }
     }
 })

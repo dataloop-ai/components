@@ -16,7 +16,10 @@
                 label="Error"
                 @click="$emit('error-click')"
             />
-            <dl-button label="Reset" @click="$emit('reset-click')" />
+            <dl-button
+                label="Reset"
+                @click="$emit('reset-click')"
+            />
         </div>
         <div class="inputs-container">
             <dl-input
@@ -81,13 +84,7 @@ export default defineComponent({
         DlInput,
         DlSelect
     },
-    emits: [
-        'reset-click',
-        'error-click',
-        'complete-click',
-        'warning-click',
-        'set-subtitle'
-    ],
+    emits: ['reset-click', 'error-click', 'complete-click', 'warning-click'],
     data() {
         return {
             owner: 'Rotem Shaham',

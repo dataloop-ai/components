@@ -11,6 +11,9 @@ export default defineConfig({
         deps: {
             inline: ['vitest-canvas-mock']
         },
+        coverage: {
+            reporter: ['lcovonly', 'text']
+        },
         exclude: [
             'node_modules/**/*.spec.js',
             'node_modules/**/*.spec.ts',

@@ -57,7 +57,10 @@
                 </div>
 
                 <div class="right-panel">
-                    <button class="btn" @click="addRowPerPage">
+                    <button
+                        class="btn"
+                        @click="addRowPerPage"
+                    >
                         Add Rows/Page
                     </button>
 
@@ -203,9 +206,7 @@
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
-                    :visible-columns="
-                        tableColumns.slice(0, -1).map((c) => c.name)
-                    "
+                    :visible-columns="tableColumns.slice(0, -1)"
                 />
             </div>
             <div>
@@ -267,7 +268,7 @@ import {
 import { defineComponent, ref, computed, nextTick, watch } from 'vue-demi'
 import { times, cloneDeep } from 'lodash'
 import { v4 } from 'uuid'
-import { DlTableColumn, DlTableRow } from '../types'
+import { DlTableRow } from '../types'
 
 const columns = [
     {
@@ -576,7 +577,7 @@ export default defineComponent({
         const tableRows = ref(rows)
         const tableRowsVS = ref(cloneDeep(rows))
         const draggable = ref('both')
-        const tableColumns = ref<DlTableColumn[]>(columns as any)
+        const tableColumns = ref(columns)
         const rowsPerPageOptions = ref([10, 12, 14, 16])
 
         const infiniteLoading = ref(false)

@@ -147,10 +147,9 @@ export default defineComponent({
                 thClasses: null,
                 isSortable: false,
                 hasEllipsis: false,
-                onClick: onClickFn as any as (payload: MouseEvent) => void,
+                onClick: onClickFn,
                 hasHint,
-                isDense,
-                computedSortIcon: ''
+                isDense
             }
         }
 
@@ -179,9 +178,7 @@ export default defineComponent({
             onClickFn(evt, column.value.name)
         }
 
-        const onClick: (payload: MouseEvent) => void = !hasOptionalProps.value
-            ? (onClickFn as any as (payload: MouseEvent) => void)
-            : (handleClick as any as (payload: MouseEvent) => void)
+        const onClick = !hasOptionalProps.value ? onClickFn : handleClick
 
         return {
             hasHint,

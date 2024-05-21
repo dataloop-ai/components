@@ -494,7 +494,7 @@ export default defineComponent({
         getMatrixCellWidth() {
             return this.getMatrixWidth() / this.matrix.length
         },
-        handleMatrixScroll(e: MouseEvent | UIEvent | any) {
+        handleMatrixScroll(e: MouseEvent | UIEvent) {
             const target = e.target as HTMLElement
             ;(this.$refs.yAxisOuter as HTMLElement).scroll(0, target.scrollTop)
         },

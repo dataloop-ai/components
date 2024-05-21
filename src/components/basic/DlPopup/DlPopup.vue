@@ -147,7 +147,7 @@ export default defineComponent({
             default: ''
         },
         arrowNavItems: {
-            type: Array as PropType<any[]>,
+            type: [String, Array, Object],
             default: () => [] as any[]
         },
         zIndex: {

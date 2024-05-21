@@ -1,21 +1,34 @@
 <template>
     <div class="add-filter">
-        <dl-button icon="icon-dl-add" label="Add filter" flat>
+        <dl-button
+            icon="icon-dl-add"
+            label="Add filter"
+            flat
+        >
             <dl-menu>
                 <div class="add-filter__menu">
                     <div class="add-filter__header">
                         <div class="add-filter__header__title">
-                            <dl-typography color="dl-color-medium" size="14px">
+                            <dl-typography
+                                color="dl-color-medium"
+                                size="14px"
+                            >
                                 Filters
                             </dl-typography>
                             <div style="text-align: end">
-                                <dl-button flat color="secondary">
+                                <dl-button
+                                    flat
+                                    color="secondary"
+                                >
                                     Reset Filters
                                 </dl-button>
                             </div>
                         </div>
                         <div class="add-filter__header__subtitle">
-                            <dl-typography color="dl-color-medium" size="10px">
+                            <dl-typography
+                                color="dl-color-medium"
+                                size="10px"
+                            >
                                 A maximum of 8 filters can be selected.
                             </dl-typography>
                         </div>
@@ -25,7 +38,10 @@
                             v-for="(section, sectionIndex) in sections"
                             :key="sectionIndex"
                         >
-                            <dl-typography color="dl-color-darker" size="12px">
+                            <dl-typography
+                                color="dl-color-darker"
+                                size="12px"
+                            >
                                 {{ section.label }}
                             </dl-typography>
                             <div class="add-filter__content__section">
@@ -53,8 +69,7 @@ import {
     DlButton,
     DlMenu,
     DlTypography,
-    DlOptionGroup,
-    DlOptionGroupOptions
+    DlOptionGroup
 } from '../../../../components'
 
 export default defineComponent({
@@ -69,9 +84,7 @@ export default defineComponent({
         const logValue = (newValue: any) => console.log('New value:', newValue)
         const customValueCheck = ref('')
         const switchValue = ref<number[]>([1, 3])
-        const sections = ref<
-            { label: string; options: DlOptionGroupOptions }[]
-        >([
+        const sections = ref([
             {
                 label: 'Items',
                 options: [

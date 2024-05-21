@@ -12,11 +12,11 @@
             top-message="Pariatur consequat non sit aliqua labore ad reprehenderit deserunt ullamco incididunt non irure laborum deserunt."
             info-message="Ipsum amet quis velit amet. Anim consectetur nostrud sunt eu non non consequat sint eu amet."
             :auto-suggest-items="[
-                { suggestion: 'foo' },
-                { suggestion: 'bar' },
-                { suggestion: 'foobar' },
-                { suggestion: 'barfoo' },
-                { suggestion: 'foo bar foobarv' }
+                'foo',
+                'bar',
+                'foobar',
+                'barfoo',
+                'foo bar foobarv'
             ]"
             show-counter
             :max-length="20"

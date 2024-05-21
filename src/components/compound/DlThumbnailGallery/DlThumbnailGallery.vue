@@ -1,6 +1,9 @@
 <template>
     <div class="slider-wrapper">
-        <div :style="imageContainerStyles" class="slider">
+        <div
+            :style="imageContainerStyles"
+            class="slider"
+        >
             <div class="slider__arrow">
                 <div
                     :class="getChevronClass('left')"
@@ -15,7 +18,10 @@
                 </div>
             </div>
 
-            <div ref="images" class="slider__images">
+            <div
+                ref="images"
+                class="slider__images"
+            >
                 <div
                     v-for="image in currentImages"
                     :key="image.src"
@@ -31,7 +37,10 @@
                             :icon="getStatusIcon(image.status)"
                         />
                     </div>
-                    <img :src="image.src" @error="handleImageError" />
+                    <img
+                        :src="image.src"
+                        @error="handleImageError"
+                    >
                     <dl-tooltip>{{ image.name }}</dl-tooltip>
                 </div>
             </div>
@@ -80,7 +89,7 @@ export default defineComponent({
          */
         images: {
             type: Array as PropType<DlThumbnail[]>,
-            default: (): DlThumbnail[] => [] as DlThumbnail[]
+            default: (): DlThumbnail[] => []
         },
         /**
          * The number of thumbnails visible at once
@@ -118,7 +127,7 @@ export default defineComponent({
         }
     },
     computed: {
-        imageContainerStyles(): Record<string, any> {
+        imageContainerStyles(): object {
             return {
                 '--thumbnail-size': `${100 / this.visibleThumbnails}%`,
                 '--img-object-fit':
@@ -136,7 +145,7 @@ export default defineComponent({
             return this.images.slice(
                 this.currentList.first,
                 this.currentList.last
-            ) as DlThumbnail[]
+            )
         }
     },
     methods: {
@@ -148,8 +157,8 @@ export default defineComponent({
             this.currentList.first -= this.visibleThumbnails
             this.currentList.last -= this.visibleThumbnails
         },
-        handleImageError(e: any) {
-            ;(e.target as HTMLImageElement).src = this.invalidImage
+        handleImageError(e: ErrorEvent) {
+            (e.target as HTMLImageElement).src = this.invalidImage
         },
         getImageOutline(image: string) {
             return {
@@ -176,7 +185,7 @@ export default defineComponent({
                 ? 'slider__arrow--icon'
                 : 'slider__arrow--icon--invisible'
         },
-        handleThumbnailMousedown(image: DlThumbnail) {
+        handleThumbnailMousedown(image: string) {
             this.$emit('update:model-value', image)
             this.$emit('selected', image)
         }

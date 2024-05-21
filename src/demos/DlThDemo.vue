@@ -1,10 +1,12 @@
 <template>
     <div>
         <DlTh> Table Th component </DlTh>
-        <DlTh :auto-width="true"> Table Th component auto width </DlTh>
+        <DlTh :auto-width="true">
+            Table Th component auto width
+        </DlTh>
         <DlTh
             :props="{
-                sort: sort,
+                sort: (el) => log(el),
                 col: { sortable: true, align: 'left' }
             }"
         >
@@ -24,9 +26,6 @@ export default defineComponent({
     methods: {
         log(e: Event) {
             console.log(e)
-        },
-        sort(el: any) {
-            console.log(el)
         }
     }
 })

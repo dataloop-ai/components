@@ -1,5 +1,10 @@
 <template>
-    <component :is="variant" :id="uuid" :class="classes" :style="styles">
+    <component
+        :is="variant"
+        :id="uuid"
+        :class="classes"
+        :style="styles"
+    >
         <slot />
     </component>
 </template>
@@ -8,13 +13,16 @@ import { v4 } from 'uuid'
 import { defineComponent, PropType } from 'vue-demi'
 import { getColor } from '../../../utils'
 import { DlTextTransformOptions } from '../../shared/types'
-import { DlTypographyVariant, DlTypographySizes } from './types'
+
+type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'div'
+
+const sizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'small']
 
 export default defineComponent({
     name: 'DlTypography',
     props: {
         variant: {
-            type: String as PropType<DlTypographyVariant>,
+            type: String as PropType<Variant>,
             required: false,
             default: 'p'
         },
@@ -48,7 +56,7 @@ export default defineComponent({
                 fontWeight: this.bold ? 'bold' : 400
             }
 
-            if (this.size && !DlTypographySizes.includes(this.size)) {
+            if (this.size && !sizes.includes(this.size)) {
                 styles.fontSize = this.size as string
             }
 
@@ -64,11 +72,11 @@ export default defineComponent({
             const classes = [`dl-typography`]
 
             if (this.size) {
-                if (DlTypographySizes.includes(this.size)) {
+                if (sizes.includes(this.size)) {
                     classes.push(`dl-typography--${this.size}`)
                 }
             } else {
-                if (DlTypographySizes.includes(this.variant)) {
+                if (sizes.includes(this.variant)) {
                     classes.push(`dl-typography--${this.variant}`)
                 } else {
                     classes.push(`dl-typography--body`)

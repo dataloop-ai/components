@@ -38,6 +38,6 @@
         "experimentalDisableTemplateSupport": true
     },
     "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-    "exclude": ["node_modules", "**/*.stories.ts", "**/*.temp.vue", "**/*.temp.ts"],
+    "exclude": ["node_modules", "**/*.stories.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -517,7 +517,7 @@ export default defineComponent({
     setup() {
         const showing = ref(false)
         const isMenuOpen = ref(false)
-        const arrowNavigationLabel = ref<string>('Arrow Navigation Label')
+        const arrowNavigationLabel = ref<ItemType>('Arrow Navigation Label')
         const isOpen = ref(false)
 
         const listItems = ref([
@@ -645,7 +645,7 @@ export default defineComponent({
         )
 
         watch(selectedItem, (value: ItemType | string) => {
-            arrowNavigationLabel.value = value as any
+            arrowNavigationLabel.value = value
         })
 
         onMounted(() => {

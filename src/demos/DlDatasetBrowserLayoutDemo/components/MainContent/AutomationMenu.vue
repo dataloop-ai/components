@@ -8,7 +8,10 @@
         size="s"
         text-color="dl-color-darker"
     >
-        <dl-list bordered separator>
+        <dl-list
+            bordered
+            separator
+        >
             <dl-list-item
                 v-for="item in items"
                 :key="item.id"
@@ -21,7 +24,10 @@
                 <dl-item-section :color="item.labelColor">
                     {{ item.label }}
                 </dl-item-section>
-                <dl-item-section v-if="item.children" side>
+                <dl-item-section
+                    v-if="item.children"
+                    side
+                >
                     <dl-icon icon="icon-dl-right-chevron" />
                 </dl-item-section>
                 <dl-menu
@@ -30,7 +36,10 @@
                     anchor="top end"
                     self="top start"
                 >
-                    <dl-list bordered separator>
+                    <dl-list
+                        bordered
+                        separator
+                    >
                         <dl-list-item
                             v-for="itemChildren in item.children"
                             :key="itemChildren.id"
@@ -40,7 +49,10 @@
                             <dl-item-section>
                                 {{ itemChildren.label }}
                             </dl-item-section>
-                            <dl-item-section v-if="itemChildren.icon" side>
+                            <dl-item-section
+                                v-if="itemChildren.icon"
+                                side
+                            >
                                 <dl-icon :icon="itemChildren.icon" />
                             </dl-item-section>
                         </dl-list-item>
@@ -52,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 import {
     DlList,
     DlMenu,
@@ -73,13 +85,13 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Array as PropType<Record<string, any>[]>,
+            type: Array,
             default: () => [] as Record<string, any>[]
         }
     },
     emits: ['onChange'],
     setup(props, context) {
-        const handleOption = (event: any) => {
+        const handleOption = (event: Event) => {
             console.log('click: ', event)
             context.emit('onChange', event)
         }

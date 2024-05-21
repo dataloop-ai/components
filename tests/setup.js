@@ -63,6 +63,3 @@ document.createRange = () => {
     range.startContainer.getBoundingClientRect = vi.fn()
     return range
 }
-
-window.ontouchstart = null
-delete window.ontouchstart

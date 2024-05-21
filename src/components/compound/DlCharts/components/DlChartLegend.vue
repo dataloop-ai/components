@@ -1,11 +1,16 @@
 <template>
-    <div :style="legendStyles" class="dl-chart-legend">
+    <div
+        :style="legendStyles"
+        class="dl-chart-legend"
+    >
         <div
             v-for="(item, index) in datasets"
             :key="index"
             class="dl-chart-legend--item"
             :style="{
-                '--dl-chart-badge-color': getColor(item)
+                '--dl-chart-badge-color': getColor(
+                    item.backgroundColor.replace('--', '')
+                )
             }"
             @click="hideData($event, item, index)"
             @mouseenter="onMouseEnter(item, index)"
@@ -13,7 +18,9 @@
         >
             <dl-badge
                 :color="
-                    item.hidden ? 'var(--dl-color-disabled)' : getColor(item)
+                    item.hidden
+                        ? 'var(--dl-color-disabled)'
+                        : getColor(item.backgroundColor.replace('--', ''))
                 "
             />
             <dl-typography
@@ -28,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue-demi'
-import type { ChartDataset } from 'chart.js'
+import type { LegendItem, DatasetChartOptions } from 'chart.js'
 import { getColor } from '../../../../utils'
 import { DlBadge, DlTypography } from '../../../essential'
 
@@ -50,8 +57,8 @@ export default defineComponent({
             default: '100%'
         },
         datasets: {
-            type: Array as PropType<ChartDataset[]>,
-            default: () => [] as any as ChartDataset[]
+            type: Array,
+            default: () => [] as unknown as DatasetChartOptions
         },
         alignItems: {
             type: String as PropType<'left' | 'right' | 'center'>,
@@ -68,17 +75,17 @@ export default defineComponent({
         }
     },
     methods: {
-        onMouseEnter(item: ChartDataset, index: number) {
+        onMouseEnter(item: LegendItem, index: number) {
             if (!item.hidden) {
                 this.$emit('on-hover', item, index)
             }
         },
-        onMouseLeave(item: ChartDataset, index: number) {
+        onMouseLeave(item: LegendItem, index: number) {
             if (!item.hidden) {
                 this.$emit('on-leave', item, index)
             }
         },
-        hideData(event: Event, item: ChartDataset, index: number) {
+        hideData(event: Event, item: LegendItem, index: number) {
             this.$emit(
                 'hide',
                 {
@@ -88,11 +95,7 @@ export default defineComponent({
                 index
             )
         },
-        getColor: (item: ChartDataset) => {
-            if ((item.backgroundColor as any)?.replace) {
-                return getColor((item.backgroundColor as any).replace('--', ''))
-            }
-        }
+        getColor
     }
 })
 </script>
