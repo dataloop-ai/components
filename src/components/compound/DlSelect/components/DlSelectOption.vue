@@ -1,9 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        :class="identifierClass"
-        style="width: 100%"
-    >
+    <div :id="uuid" :class="identifierClass" style="width: 100%">
         <div
             v-if="readonly"
             :class="[{ 'readonly-option': true }, { capitalized }]"
@@ -22,10 +18,7 @@
             style="width: 100%"
             @click="handleClick"
         >
-            <dl-item-section
-                :color="color"
-                style="width: 100%"
-            >
+            <dl-item-section :color="color" style="width: 100%">
                 <span
                     v-if="multiselect"
                     class="multiselect-option"
@@ -58,15 +51,9 @@
                             }}
                         </slot>
                     </dl-checkbox>
-                    <span
-                        v-if="count"
-                        class="counter"
-                    > ({{ count }}) </span>
+                    <span v-if="count" class="counter"> ({{ count }}) </span>
                 </span>
-                <div
-                    v-else
-                    :class="{ capitalized }"
-                >
+                <div v-else :class="{ capitalized }">
                     <slot>
                         {{
                             capitalized
@@ -130,8 +117,12 @@ import { DlItemSection } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
-import { DlSelectOptionType, getCaseInsensitiveInput, getLabel } from '../utils'
-import { DlSelectedValueType, DlSelectOption } from '../../types'
+import { getCaseInsensitiveInput, getLabel } from '../utils'
+import {
+    DlSelectedValueType,
+    DlSelectOption,
+    DlSelectOptionType
+} from '../../types'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -240,7 +231,7 @@ export default defineComponent({
         getOptionLabel(option: any) {
             return getLabel(option) ?? this.getOptionValue(option)
         },
-        getOptionHtml(option: DlSelectOptionType) {
+        getOptionHtml(option: DlSelectOptionType | DlSelectedValueType) {
             const label = `${this.getOptionLabel(option)}`
             let highlightedHtml = label
 
@@ -412,7 +403,9 @@ export default defineComponent({
     display: flex !important;
     justify-content: center !important;
     color: var(--dl-color-medium);
-    transition-property: transform, -webkit-transform;
+    transition-property:
+        transform,
+        -webkit-transform;
     transition-duration: 0.28s, 0.28s;
     transition-timing-function: ease, ease;
     transition-delay: 0s, 0s;

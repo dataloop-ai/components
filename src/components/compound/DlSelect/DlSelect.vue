@@ -341,11 +341,13 @@ import {
     getLabel,
     getIconSize,
     optionsValidator,
-    DlSelectOptionType,
     getLabelOfSelectedOption,
     getCaseInsensitiveInput
 } from './utils'
-import { DlSelectOption as DlSelectOptionEntry } from '../types'
+import {
+    DlSelectOption as DlSelectOptionEntry,
+    DlSelectOptionType
+} from '../types'
 import DlSelectOption from './components/DlSelectOption.vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { getColor } from '../../../utils'
@@ -1219,7 +1221,9 @@ export default defineComponent({
         justify-content: center !important;
         align-items: center;
         color: var(--dl-color-medium);
-        transition-property: transform, -webkit-transform;
+        transition-property:
+            transform,
+            -webkit-transform;
         transition-duration: 0.28s, 0.28s;
         transition-timing-function: ease, ease;
         transition-delay: 0s, 0s;

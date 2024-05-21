@@ -1,19 +1,12 @@
 <template>
-    <div
-        class="tabs-menu"
-        :style="cssVars"
-    >
+    <div class="tabs-menu" :style="cssVars">
         <dl-tabs
             v-model="selectedTab"
             :items="tabItems"
             @update:model-value="handleSelectedOption"
         />
         <div class="tabs-menu__border-icon">
-            <dl-button
-                flat
-                :icon="expandIcon"
-                @click="onToggle"
-            />
+            <dl-button flat :icon="expandIcon" @click="onToggle" />
         </div>
         <component :is="tabs" />
     </div>
@@ -43,7 +36,6 @@ export default defineComponent({
         DlButton,
         DlIcon
     },
-    props: {},
     setup() {
         const LARGE_WIDTH = '250px'
         const SMALL_WIDTH = '0px'

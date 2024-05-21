@@ -632,15 +632,15 @@
 import { cloneDeep } from 'lodash'
 import { defineComponent } from 'vue-demi'
 import { DlChip, DlSelect, DlIcon, DlBadge, DlButton } from '../components'
-import { DlSelectOptionType } from '../components/compound/DlSelect/utils'
+import { DlSelectOption } from '../components/types'
 
-const defaultOptions = [
+const defaultOptions: DlSelectOption[] = [
     { label: 'Contributor 1', value: 'c1' },
     { label: 'Contributor 2', value: 'c2' },
     { label: 'Contributor 3', value: 'c3' }
 ]
 
-const treeOptions = [
+const treeOptions: DlSelectOption[] = [
     {
         label: 'root',
         value: 'root',
@@ -729,7 +729,7 @@ const treeOptions = [
     }
 ]
 
-const treeOptionsWithReadonly = [
+const treeOptionsWithReadonly: DlSelectOption[] = [
     {
         label: 'Without children',
         value: 'r0',
@@ -790,7 +790,7 @@ const treeOptionsWithReadonly = [
     }
 ]
 
-const treeOptionsExpanded: DlSelectOptionType[] = [
+const treeOptionsExpanded: DlSelectOption[] = [
     {
         label: 'Readonly option with children & readonly child',
         value: 'r6',
@@ -899,7 +899,7 @@ export default defineComponent({
             // @ts-ignore
             return defaultOptions.includes(this.selectedBySearch as any)
         },
-        alotOfOptions(): DlSelectOptionType[] {
+        alotOfOptions(): DlSelectOption[] {
             const arr = [] as any[]
 
             for (let i = 0; i < 1000; ++i) {
@@ -914,7 +914,7 @@ export default defineComponent({
 
             return arr
         },
-        someOptions(): DlSelectOptionType[] {
+        someOptions(): DlSelectOption[] {
             const arr = [] as any[]
 
             for (let i = 0; i < 10; ++i) {
@@ -929,7 +929,7 @@ export default defineComponent({
 
             return arr
         },
-        alotOfOptionsExpanded(): DlSelectOptionType[] {
+        alotOfOptionsExpanded(): DlSelectOption[] {
             const arr = cloneDeep(this.alotOfOptions)
             arr.push(treeOptionsExpanded[0])
             return arr
@@ -941,8 +941,8 @@ export default defineComponent({
         },
         filterFn(val: string) {
             this.searchOptions = defaultOptions.filter(
-                (v: { label: string; value: string } | undefined) =>
-                    v.label.toLowerCase().indexOf(val.toLowerCase()) > -1
+                (v: DlSelectOption) =>
+                    v.value.toLowerCase().indexOf(val.toLowerCase()) > -1
             )
             this.showAllOption =
                 this.searchOptions.length === defaultOptions.length

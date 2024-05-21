@@ -295,7 +295,7 @@ export default defineComponent({
         hasIcon(): boolean {
             return typeof this.icon === 'string' && this.icon !== ''
         },
-        containerStyles(): object {
+        containerStyles(): Record<string, any> {
             return this.fluid ? { width: '100%' } : {}
         },
         hasContent(): boolean {
@@ -422,10 +422,10 @@ export default defineComponent({
                 '--dl-button-padding': this.dense
                     ? '0'
                     : this.padding
-                    ? this.padding
-                    : this.hasIcon && !this.hasContent
-                    ? setIconPadding(this.size)
-                    : setPadding(this.size),
+                      ? this.padding
+                      : this.hasIcon && !this.hasContent
+                        ? setIconPadding(this.size)
+                        : setPadding(this.size),
                 '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
                 '--dl-button-cursor': this.isActionable

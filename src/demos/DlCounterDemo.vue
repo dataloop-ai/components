@@ -49,7 +49,7 @@
                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
                 },
                 {
-                    value: '154h:35m:20s',
+                    value: 1610015720,
                     text: 'ipsum lorem',
                     subtext:
                         'Cupidatat est labore et nisi do culpa veniam reprehenderit anim consectetur dolor mollit.',

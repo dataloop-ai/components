@@ -145,7 +145,7 @@ export default defineComponent({
                     title: 'Developers',
                     icon: 'icon-dl-code'
                 }
-            ]
+            ] as any
         }
     },
     template: 'dl-tooltip-demo'

@@ -1,20 +1,12 @@
 <template>
-    <div
-        :id="uuid"
-        ref="rootRef"
-        class="root"
-        :style="rootStyle"
-    >
+    <div :id="uuid" ref="rootRef" class="root" :style="rootStyle">
         <div class="progress-bar">
             <div
                 v-for="item in progressBarItems"
                 :key="item.index"
                 :style="getBarItemStyles(item)"
             >
-                <dl-tooltip
-                    anchor="center middle"
-                    self="bottom middle"
-                >
+                <dl-tooltip anchor="center middle" self="bottom middle">
                     {{ item.tooltipText }}
                 </dl-tooltip>
             </div>
@@ -29,10 +21,7 @@
                 <dl-tooltip v-if="isOverflowing[item.index]">
                     {{ item.name }}
                 </dl-tooltip>
-                <span
-                    class="circle"
-                    :style="{ backgroundColor: item.color }"
-                />
+                <span class="circle" :style="{ backgroundColor: item.color }" />
                 <div
                     v-if="isVue2"
                     ref="textRef"
@@ -46,7 +35,7 @@
                     v-else
                     :ref="
                         (el) => {
-                            textRef[item.index] = el
+                            setTextRef(item.index, el)
                         }
                     "
                     :data-index="item.index"
@@ -63,10 +52,10 @@
                         :size="12"
                         color="color"
                         data-test="counter-link"
-                    >({{ item.value }})</dl-link><span
-                        v-else
-                        data-test="counter-text"
-                    >({{ item.value }})</span>
+                    >({{ item.value }})</dl-link
+                    ><span v-else data-test="counter-text"
+                    >({{ item.value }})</span
+                    >
                 </span>
             </div>
         </div>
@@ -220,6 +209,9 @@ export default defineComponent({
                 flexShrink: item.percentage,
                 backgroundColor: item.color
             }
+        },
+        setTextRef(index: number, el: any) {
+            this.textRef[index] = el as any
         }
     },
 
