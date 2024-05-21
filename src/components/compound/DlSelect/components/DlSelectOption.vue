@@ -231,7 +231,7 @@ export default defineComponent({
         getOptionLabel(option: any) {
             return getLabel(option) ?? this.getOptionValue(option)
         },
-        getOptionHtml(option: DlSelectOptionType) {
+        getOptionHtml(option: DlSelectOptionType | DlSelectedValueType) {
             const label = `${this.getOptionLabel(option)}`
             let highlightedHtml = label
 

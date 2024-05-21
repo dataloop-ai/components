@@ -1,4 +1,5 @@
-export interface DlSelectOption {
+type Dictionary = { [key: string]: any }
+export interface DlSelectOption extends Dictionary {
     label: string
     value: any
     key?: string

@@ -53,7 +53,10 @@ export const dragType = {
 }
 
 export const useSliderProps = {
-    ...useFormProps,
+    name: {
+        type: String,
+        default: null as string
+    },
     text: {
         type: String,
         default: ''

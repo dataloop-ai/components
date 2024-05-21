@@ -10,10 +10,7 @@
             >
                 <dl-tr :key="index">
                     <dl-td>#{{ index }}</dl-td>
-                    <dl-td
-                        v-for="col in columns"
-                        :key="index + '-' + col"
-                    >
+                    <dl-td v-for="col in columns" :key="index + '-' + col">
                         {{ row[col] }}
                     </dl-td>
                 </dl-tr>
@@ -27,10 +24,7 @@
                 :items="horizontalList"
                 virtual-scroll-horizontal
             >
-                <div
-                    :key="index"
-                    :class="item.class"
-                >
+                <div :key="index" :class="item.class">
                     #{{ index }} - {{ item.label }}
                 </div>
             </dl-virtual-scroll>
@@ -44,10 +38,7 @@
                 separator
                 @virtual-scroll="log"
             >
-                <dl-list-item
-                    :key="index"
-                    dense
-                >
+                <dl-list-item :key="index" dense>
                     <dl-item-section>
                         #{{ index }} - {{ item.label }}
                     </dl-item-section>
@@ -271,7 +262,10 @@ export default defineComponent({
             horizontalList,
             customList,
             columns,
-            cardData
+            cardData,
+            log: () => {
+                console.log('hi')
+            }
         }
     }
 })

@@ -1,16 +1,13 @@
 <template>
-    <div
-        :style="labelStyles"
-        class="dl-chart-labels-container"
-    >
+    <div :style="labelStyles" class="dl-chart-labels-container">
         <div class="dl-chart-labels">
             <div
-                v-for="(label, index) in labels"
+                v-for="(label, index) in computedLabels"
                 :key="index"
                 class="dl-chart-labels--label"
             >
                 <dl-tooltip v-if="isOverflowing[index]">
-                    {{ stringVerification(label.title, label) }}
+                    {{ stringVerification(label.title) }}
                 </dl-tooltip>
                 <dl-typography
                     v-if="isVue2"
@@ -19,7 +16,7 @@
                     :data-index="index"
                     :color="labelColor"
                 >
-                    {{ label.title || label }}
+                    {{ label.title }}
                 </dl-typography>
                 <dl-typography
                     v-else
@@ -28,16 +25,13 @@
                     :size="fontSize"
                     :color="labelColor"
                 >
-                    {{ stringVerification(label.title, label) }}
+                    {{ stringVerification(label.title) }}
                 </dl-typography>
             </div>
         </div>
-        <div
-            v-if="hasSubtitles"
-            class="dl-chart-labels"
-        >
+        <div v-if="hasSubtitles" class="dl-chart-labels">
             <div
-                v-for="(label, index) in labels"
+                v-for="(label, index) in computedLabels"
                 :key="index"
                 class="dl-chart-labels--label"
             >
@@ -64,14 +58,8 @@
                 </dl-typography>
             </div>
         </div>
-        <div
-            v-if="title"
-            class="dl-chart-labels-title"
-        >
-            <dl-typography
-                :size="titleSize"
-                :color="titleColor"
-            >
+        <div v-if="title" class="dl-chart-labels-title">
+            <dl-typography :size="titleSize" :color="titleColor">
                 {{ title }}
             </dl-typography>
         </div>
@@ -165,6 +153,14 @@ export default defineComponent({
         }
     },
     computed: {
+        computedLabels(): { title: string; subtitle: string }[] {
+            return this.labels.map((label) => {
+                if (typeof label === 'string') {
+                    return { title: label, subtitle: '' }
+                }
+                return label
+            })
+        },
         labelStyles(): Record<string, string> {
             return {
                 '--dl-chart-labels-width': this.width
@@ -195,13 +191,13 @@ export default defineComponent({
                   ) as Element[])
                 : this[elementRef]
             for (const el of elements as Element[]) {
-                (this[ref] as ResizeObserver).observe(el)
+                ;(this[ref] as ResizeObserver).observe(el)
             }
         })
     },
     beforeUnmount() {
         observerRefs.forEach(({ ref }) => {
-            (this[ref] as ResizeObserver).disconnect()
+            ;(this[ref] as ResizeObserver).disconnect()
             this[ref] = null
         })
     },
@@ -218,12 +214,12 @@ export default defineComponent({
             }
         },
         forwardChildEl(
-            el: { $el: Element },
+            el: { $el: Element } | any,
             refName: 'textRef' | 'subtitleRef',
             index: number
         ) {
             if (el?.$el) {
-                (this[refName] as Element[])[index] = el.$el
+                ;(this[refName] as Element[])[index] = el.$el
             }
         }
     }

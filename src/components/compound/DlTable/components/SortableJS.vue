@@ -8,12 +8,7 @@
     >
         <slot />
     </component>
-    <component
-        :is="$props.tag"
-        v-else
-        v-bind="props"
-        :class="$props.class"
-    >
+    <component :is="$props.tag" v-else v-bind="props" :class="$props.class">
         <slot />
     </component>
 </template>
@@ -24,10 +19,10 @@ import { useSortable, useSortableProps, emits } from '../hooks/use-sortable'
 export default defineComponent({
     props: useSortableProps,
     emits,
-    setup() {
+    setup(props) {
         const vm = getCurrentInstance()
         const { getKey, rootRef } = useSortable(vm)
-        return { getKey, rootRef }
+        return { getKey, rootRef, props: props as { [key: string]: any } }
     }
 })
 </script>

@@ -9,10 +9,7 @@
         size="s"
         text-color="dl-color-darker"
     >
-        <dl-list
-            bordered
-            separator
-        >
+        <dl-list bordered separator>
             <dl-list-item
                 v-for="item in items"
                 :key="item.id"
@@ -31,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue-demi'
+import { defineComponent, PropType } from 'vue-demi'
 import {
     DlDropdownButton,
     DlList,
@@ -49,13 +46,13 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Array,
+            type: Array as PropType<Record<string, any>[]>,
             default: () => [] as Record<string, any>[]
         }
     },
     emits: ['onChange'],
     setup(props, context) {
-        const handleOption = (event: Event) => {
+        const handleOption = (event: any) => {
             console.log('click: ', event)
             context.emit('onChange', event)
         }

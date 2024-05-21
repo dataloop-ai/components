@@ -16,10 +16,7 @@
             }"
             description="text"
             title="title"
-            :links="{
-                title: 'title',
-                href: image.url
-            }"
+            :links="getLinks(image)"
             :tags="[
                 {
                     label: 'A',
@@ -56,6 +53,7 @@
 import { defineComponent, PropType } from 'vue-demi'
 import { ImageMetadata } from '../types/imageMetadata'
 import { DlCard } from '../../../../components'
+import { DlCardLinkType } from '../../../../types'
 
 export default defineComponent({
     name: 'CardView',
@@ -64,8 +62,8 @@ export default defineComponent({
     },
     props: {
         items: {
-            type: Array,
-            default: () => Array as PropType<ImageMetadata[]>
+            type: Array as PropType<ImageMetadata[]>,
+            default: (): ImageMetadata[] => [] as ImageMetadata[]
         }
     },
     setup() {
@@ -82,7 +80,15 @@ export default defineComponent({
         }
 
         return {
-            imageStyles
+            imageStyles,
+            getLinks: (image: ImageMetadata): DlCardLinkType[] => {
+                return [
+                    {
+                        title: 'title',
+                        href: image.url
+                    }
+                ] as DlCardLinkType[]
+            }
         }
     }
 })
