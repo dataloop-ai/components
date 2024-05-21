@@ -75,7 +75,7 @@
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
                 </dl-tooltip>
-                <div v-if="hasSelectedSlot && hasSelection" style="width: 100%">
+                <div v-if="hasSelectedSlot" style="width: 100%">
                     <slot
                         v-if="searchable ? !isExpanded : true"
                         :opt="selectedOption"
