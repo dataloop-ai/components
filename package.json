@@ -1,15 +1,16 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.19.213",
+  "version": "0.19.284",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
     "./types": "./types.ts"
   },
   "scripts": {
-    "dev": "vite",
+    "preserve": "./moveToPublic.sh",
+    "dev": "npm run preserve && vite",
     "dev:2": "./misc/unpackAndRunV2.sh",
-    "build": "vue-tsc --noEmit --skipLibCheck && vite build",
+    "build": "npm run preserve &&  vue-tsc --noEmit --skipLibCheck && vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
@@ -22,11 +23,12 @@
     "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
   },
   "dependencies": {
-    "@dataloop-ai/icons": "^3.0.43",
+    "@dataloop-ai/icons": "^3.0.91",
     "@types/flat": "^5.0.2",
     "@types/lodash": "^4.14.184",
     "@types/sortablejs": "^1.15.7",
     "chart.js": "^3.9.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "flat": "^5.0.2",
     "highlight.js": "^11.8.0",
     "lodash": "^4.17.21",
@@ -40,8 +42,7 @@
     "vanilla-jsoneditor": "^0.10.2",
     "vue-demi": "^0.14.5",
     "vue-sortable": "^0.1.3",
-    "vue2-teleport": "^1.0.1",
-    "zero-md": "^2.5.3"
+    "vue2-teleport": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -81,7 +82,7 @@
     "storybook": "^7.0.4",
     "storybook-addon-themes": "^6.1.0",
     "typescript": "^4.5.4",
-    "vite": "^4.2.3",
+    "vite": "^4.5.2",
     "vitest": "^0.29.2",
     "vitest-canvas-mock": "^0.2.2",
     "vue": "^3.3.4",

@@ -79,6 +79,7 @@
             :anchor="menuAnchor"
             :self="menuSelf"
             :offset="menuOffset"
+            :z-index="zIndex"
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
@@ -108,6 +109,8 @@
         :no-wrap="props.noWrap"
         :tooltip="tooltip"
         :max-width="maxWidth"
+        :hover-text-color="mainButtonHoverColor"
+        :size="mainButtonFontSize"
         @click="onClick"
     >
         <div class="dl-button-dropdown--simple__title">
@@ -115,7 +118,7 @@
                 :class="{
                     'dl-button-no-wrap': noWrap
                 }"
-                style="margin-right: 5px"
+                style="margin-right: 6px"
             >
                 {{ label }}
             </span>
@@ -140,6 +143,7 @@
             :anchor="menuAnchor"
             :self="menuSelf"
             :offset="menuOffset"
+            :z-index="zIndex"
             separate-close-popup
             :disabled="disabled"
             :max-height="maxHeight"
@@ -218,6 +222,7 @@ export default defineComponent({
         noIconAnimation: Boolean,
         disabled: Boolean,
         color: { type: String!, default: '' },
+        inheritIconColor: Boolean,
         label: { type: String, default: '' },
         textColor: { type: String!, default: '' },
         size: { type: String, default: 'm' },
@@ -241,6 +246,25 @@ export default defineComponent({
         arrowNavItems: {
             type: Array as PropType<any[]>,
             default: () => [] as any[]
+        },
+        contentGap: {
+            type: String,
+            required: false,
+            default: null
+        },
+        zIndex: {
+            type: [String, Number],
+            default: null
+        },
+        mainButtonHoverColor: {
+            type: String,
+            required: false,
+            default: null
+        },
+        mainButtonFontSize: {
+            type: String,
+            required: false,
+            default: 'm'
         }
     },
     emits: [
@@ -308,7 +332,10 @@ export default defineComponent({
             return {
                 '--justify-content': props.fluid
                     ? 'space-between'
-                    : 'space-around'
+                    : 'space-around',
+                ...(props.contentGap && {
+                    '--dl-button-content-gap': props.contentGap
+                })
             }
         })
 
@@ -393,6 +420,10 @@ export default defineComponent({
         })
 
         const getIconColor = computed(() => {
+            if (props.inheritIconColor) {
+                return null
+            }
+
             if (props.disabled) {
                 return 'dl-color-disabled'
             }

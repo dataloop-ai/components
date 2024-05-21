@@ -29,13 +29,10 @@
                     class="dialog-wrapper--draggable-icon"
                     color="dl-color-medium"
                     icon="icon-dl-drag"
-                    size="12px"
+                    :size="`${draggableOptions.draggableIconSize}px`"
                     @mousedown="startDragElement"
                 />
-                <div
-                    v-if="hasHeader"
-                    class="header"
-                >
+                <div v-if="hasHeader" class="header">
                     <slot name="header" />
                 </div>
                 <div
@@ -45,29 +42,17 @@
                         'content--fullheight': fullHeight
                     }"
                 >
-                    <slot
-                        v-if="!isEmpty"
-                        name="body"
-                    />
+                    <slot v-if="!isEmpty" name="body" />
                     <dl-empty-state
                         v-if="isEmpty && emptyStateProps"
                         v-bind="emptyStateProps"
                     >
-                        <template
-                            v-for="(_, slot) in $slots"
-                            #[slot]="props"
-                        >
-                            <slot
-                                :name="slot"
-                                v-bind="props"
-                            />
+                        <template v-for="(_, slot) in $slots" #[slot]="props">
+                            <slot :name="slot" v-bind="props" />
                         </template>
                     </dl-empty-state>
                 </div>
-                <div
-                    v-if="hasFooter"
-                    class="footer"
-                >
+                <div v-if="hasFooter" class="footer">
                     <slot name="footer" />
                 </div>
             </div>
@@ -126,6 +111,7 @@ export default defineComponent({
             originalX: number
             originalY: number
             draggableCursor: string
+            draggableIconSize: number
         }
         visibleDragIcon: boolean
     } {
@@ -139,7 +125,8 @@ export default defineComponent({
                 draggableY: 0,
                 originalX: 0,
                 originalY: 0,
-                draggableCursor: 'pointer'
+                draggableCursor: 'pointer',
+                draggableIconSize: 12
             },
             visibleDragIcon: false
         }
@@ -154,9 +141,11 @@ export default defineComponent({
                     ? '1px solid var(--dl-color-separator)'
                     : 'none',
                 '--dl-dialog-box-drag-icon-left': `${
-                    typeof this.width === 'string'
+                    (typeof this.width === 'string'
                         ? parseInt(this.width)
-                        : this.width / 2
+                        : this.width) /
+                        2 -
+                    this.draggableOptions.draggableIconSize / 2
                 }px`,
                 '--dialog-z-index':
                     `${this.zIndex}` ?? 'var(--dl-z-index-dialog)'

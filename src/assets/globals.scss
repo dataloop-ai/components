@@ -1,16 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-@import 'constants';
+@import "./theme.css";
 
 body {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-
     & > * {
         font-weight: 400;
         font-family: 'Roboto', sans-serif;
     }
-
-    background-color: var(--dl-color-bg);
 }
 
 // tranform
@@ -73,19 +67,25 @@ body {
 
 .scroll {
     overflow: auto;
-    scrollbar-color: transparent transparent; /* For Firefox */
 }
 
 .scroll::-webkit-scrollbar-thumb {
-    background-color: transparent;
-}
-
-.scroll:hover {
-    scrollbar-color: var(--dl-color-lighter);
-}
-
-.scroll:hover::-webkit-scrollbar-thumb {
     background-color: var(--dl-color-lighter);
+}
+
+@supports (-moz-appearance: none) {
+    .scroll {
+        scrollbar-color: var(--dl-color-lighter) transparent;
+    }
+}
+
+.reactive-scroll {
+    .scroll::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+    .scroll:hover::-webkit-scrollbar-thumb {
+        background-color: var(--dl-color-lighter);
+    }
 }
 
 .scroll,
@@ -138,6 +138,18 @@ body {
 
 .non-selectable {
     user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.non-draggable {
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 .no-outline {
@@ -172,136 +184,6 @@ body {
     height: 100%;
 }
 
-:root {
-    // common
-    --dl-color-white: #fff;
-    --dl-color-black: #000;
-    --dl-color-bg: #fff;
-    --dl-color-background: var(--dl-color-bg);
-    --dl-color-transparent: transparent;
-
-    // fontSizes
-    --dl-font-size-h1: 30px;
-    --dl-font-size-h2: 20px;
-    --dl-font-size-h3: 16px;
-    --dl-font-size-h4: 14px;
-    --dl-font-size-h5: 12px;
-    --dl-font-size-h6: 10px;
-    --dl-font-size-body: 12px;
-    --dl-font-size-small: 10px;
-
-    // shadows
-    --dl-menu-shadow: 0px 3px 6px rgba(16, 30, 115, 0.15);
-
-    // colors
-    --dl-color-tooltip-text: #fefefe;
-    --dl-color-tooltip-background: #171723d9;
-    --dl-color-text-darker-buttons: #171723;
-    --dl-color-secondary: #3452ff;
-    --dl-color-secondary-opaque: #3452ff10;
-    --dl-color-text-buttons: #ffffff;
-    --dl-color-darker: #171723;
-    --dl-color-medium: #767676;
-    --dl-color-lighter: #999999;
-    --dl-color-hover: #7b8cff;
-    --dl-color-disabled: #b3b3b3;
-    --dl-color-fill: #00000005;
-    --dl-color-fill-hover: #f8f8f8;
-    --dl-color-separator: #e4e4e4;
-    --dl-color-scrollbar: #e4e4e4;
-    --dl-color-body-background: #eef1ff;
-    --dl-color-panel-background: #ffffff;
-    --dl-color-side-panel: #18195c;
-    --dl-color-shadow: #ffffff;
-    --dl-color-icon-default: #171723;
-    --dl-color-fill-secondary: #fbf8f8;
-    --dl-color-fill-third: #fbfbfb;
-    --dl-color-link: #20abfa;
-    --dl-color-cell-background: #fffae2;
-    --dl-color-disabled-slider: #B3B3B3;
-    --q-color-positive: #38d079;
-    --q-color-warning: #e1b75b;
-
-    // alert colors
-    --dl-color-negative: var(--dl-color-alert-error);
-    --dl-color-negative-background: var(--dl-color-alert-error-background);
-    --dl-color-warning: var(--dl-color-alert-warn);
-    --dl-color-warning-background: var(--dl-color-alert-warn-background);
-    --dl-color-positive: var(--dl-color-alert-success);
-    --dl-color-positive-background: var(--dl-color-alert-success-background);
-    --dl-color-info: var(--dl-color-alert-info);
-    --dl-color-info-background: var(--dl-color-alert-info-background);
-
-    --dl-color-chart-brush: #eef1ff;
-
-    --dl-date-picker-shadow: 0px 3px 6px #101e7326;
-    --dl-date-picker-selected-strip: rgb(52, 82, 255, 0.2);
-    --dl-date-picker-selected-date: #8fa0ff;
-
-    // DlJsonEditor based on atom one themes
-    --dl-json-editor-key-color: #a626a4;
-    --dl-json-editor-background-color: #fafafa;
-    --dl-json-editor-panel-background: #fafafa;
-    --dl-json-editor-value-color-boolean: #0184bb;
-    --dl-json-editor-value-color-number: #c18401;
-    --dl-json-editor-value-color-string: #50a14f;
-}
-
-/* Define styles for the root window with dark - mode preference */
-[data-theme='dark-mode'] {
-    // shadows
-    --dl-menu-shadow: 0px 3px 6px rgba(41, 46, 53, 0.5);
-
-    // colors
-    --dl-color-bg: #30363d;
-    --dl-color-tooltip-text: #161616;
-    --dl-color-tooltip-background: #ffffffd9;
-    --dl-color-text-darker-buttons: #171723;
-    --dl-color-secondary: #7c8cff;
-    --dl-color-secondary-opaque: #7c8cff10;
-    --dl-color-text-buttons: #ffffff;
-    --dl-color-darker: #ffffffcc;
-    --dl-color-medium: #ffffff99;
-    --dl-color-lighter: #ffffff66;
-    --dl-color-hover: #aeb9ff;
-    --dl-color-disabled: #ffffff40;
-    --dl-color-fill: #ffffff05;
-    --dl-color-fill-secondary: #f8f8f81a;
-    --dl-color-fill-hover: #454a50;
-    --dl-color-separator: #ffffff26;
-    --dl-color-body-background: #24282d;
-    --dl-color-panel-background: #30363d;
-    --dl-color-side-panel: #2a343e;
-    --dl-color-shadow: #30363d;
-    --dl-color-icon-default: #ffffffbf;
-    --dl-color-fill-secondary: #ffffff1a;
-    --dl-color-fill-third: #9e9e9e1a;
-    --dl-color-link: #53b2e8;
-    --dl-color-cell-background: #fffae2;
-    --dl-color-disabled-slider: #64686d;
-    --q-color-positive: #a1e5b6;
-    --q-color-warning: #f8d29a;
-
-    // alert colors
-    --dl-color-negative-background: #734145;
-    --dl-color-warning-background: #7b7241;
-    --dl-color-positive-background: #3a644e;
-    --dl-color-info-background: #4b5a6b;
-    --dl-color-info: #92cdf2;
-
-    --dl-color-chart-brush: #475077;
-
-    --dl-date-picker-shadow: 0px 3px 6px #292e3580;
-    --dl-date-picker-selected-strip: rgb(124, 140, 255, 0.2);
-    --dl-date-picker-selected-date: #535e96;
-
-    --dl-json-editor-key-color: #c678dd;
-    --dl-json-editor-background-color: #282c34;
-    --dl-json-editor-panel-background: #282c34;
-    --dl-json-editor-value-color-boolean: #56b6c2;
-    --dl-json-editor-value-color-number: #d19a66;
-    --dl-json-editor-value-color-string: #98c379;
-}
 
 // scrollbar
 
@@ -324,13 +206,6 @@ html {
 ::-webkit-scrollbar-thumb {
     background-color: var(--dl-color-scrollbar);
     border-radius: 3px;
-}
-
-.no-user-select {
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
 }
 
 .flex-column {

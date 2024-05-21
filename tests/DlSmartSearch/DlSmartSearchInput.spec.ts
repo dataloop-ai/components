@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import DlSmartSearchInput from '../../src/components/compound/DlSearches/DlSmartSearch/components/DlSmartSearchInput.vue'
+import { DlSmartSearchInput } from '../../src/components'
 import {
     describe,
     it,
@@ -10,6 +10,7 @@ import {
     afterAll
 } from 'vitest'
 import { stateManager } from '../../src/StateManager'
+import { dateSuggestionPattern } from '../../src/hooks/use-suggestions'
 
 window.ResizeObserver =
     window.ResizeObserver ||
@@ -281,6 +282,36 @@ describe('DlSmartSearchInput', () => {
             })
         })
 
+        describe('when specifying omit-suggestions', () => {
+            let wrapper2: any
+
+            beforeAll(() => {
+                wrapper2 = mount(DlSmartSearchInput, {
+                    props: {
+                        schema,
+                        aliases,
+                        omitSuggestions: ['!=', 'OR']
+                    }
+                })
+            })
+
+            it('should change status to error if typed a query with an operator on the list', async () => {
+                await wrapper2.vm.debouncedSetInputValue(`name != 'test'`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper2.vm.$nextTick()
+                expect(wrapper2.vm.computedStatus.type).toMatch('error')
+
+                await wrapper2.vm.debouncedSetInputValue(
+                    `name = 'test' OR level = 'low'`
+                )
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper2.vm.$nextTick()
+                expect(wrapper2.vm.computedStatus.type).toMatch('error')
+            })
+        })
+
         describe('when typing inside the input', () => {
             it('should set input model and active query when typing in the smart search input component', async () => {
                 const testString = 'Age = 21'
@@ -319,7 +350,9 @@ describe('DlSmartSearchInput', () => {
 
             it('should open date picker after typing a date patten, and append a space after selecting a date there', async () => {
                 wrapper.vm.focused = true
-                wrapper.vm.debouncedSetInputValue('StartTime = (dd/mm/yyyy)')
+                wrapper.vm.debouncedSetInputValue(
+                    `StartTime = ${dateSuggestionPattern}`
+                )
                 // @ts-ignore
                 await window.delay(500)
                 await wrapper.vm.$nextTick()

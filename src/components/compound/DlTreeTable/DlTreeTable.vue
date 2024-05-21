@@ -166,6 +166,13 @@ export default defineComponent({
             default: false
         },
         /**
+         * identifier As Tooltip form row object
+         */
+        identifierAsTooltip: {
+            type: Boolean,
+            default: false
+        },
+        /**
          * Function to generate the label visible when selecting rows
          */
         selectedRowsLabel: {
@@ -530,6 +537,7 @@ export default defineComponent({
                 computedCols: tableRootRef.value.computedCols,
                 modelValue: isRowSelected(props.rowKey, getRowKey.value(row)),
                 scopedSlots: currentSlots,
+                tooltip: props.identifierAsTooltip ? row.identifier : null,
                 'onUpdate:modelValue': (adding: boolean, evt: Event) => {
                     updateSelectionHierarchy(adding, evt, row)
                 },

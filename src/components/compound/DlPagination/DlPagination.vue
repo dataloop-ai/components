@@ -1,8 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-pagination"
-    >
+    <div :id="uuid" class="dl-pagination">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
@@ -19,7 +16,7 @@
 
             <div
                 v-if="rowsPerPageState"
-                class="dl-pagination--navigation"
+                class="dl-pagination--navigation dl-pagination--navigation-legend"
                 :class="
                     withLegend || (withRowsPerPage && rowsPerPageState)
                         ? ''

@@ -73,7 +73,7 @@ export function getGradationValues(
 
 export function flattenConfusionMatrix(
     matrix: number[][] | DlConfusionMatrixCell[][],
-    labelStrings: string[] | DlConfusionMatrixLabel[]
+    labelStrings: string[]
 ) {
     const toNormalize: DlConfusionMatrixCell[] = []
 

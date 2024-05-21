@@ -31,6 +31,7 @@ describe('DlDropdownButton', () => {
                 icon: '',
                 label: '',
                 iconSize: '20px',
+                inheritIconColor: false,
                 mainButtonStyle: '',
                 maxHeight: null,
                 maxWidth: null,
@@ -51,7 +52,11 @@ describe('DlDropdownButton', () => {
                 noWrap: false,
                 overflow: false,
                 tooltip: null,
-                arrowNavItems: []
+                arrowNavItems: [],
+                contentGap: null,
+                zIndex: null,
+                mainButtonHoverColor: null,
+                mainButtonFontSize: 'm'
             })
         })
         it('should right button style', function () {

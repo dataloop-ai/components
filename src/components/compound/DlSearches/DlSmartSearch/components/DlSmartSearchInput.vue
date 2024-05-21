@@ -29,6 +29,7 @@
                         :style="textareaStyles"
                         :placeholder="inputPlaceholder"
                         :contenteditable="!disabled"
+                        :spellcheck="false"
                         @keypress="onKeyPress"
                         @keyup.esc="onKeyPress"
                         @input="onInput"
@@ -62,7 +63,7 @@
                     <div style="padding: 10px">
                         <div class="tooltip-title">
                             <dl-icon :icon="defaultIcon" />
-                            Smart Search Query
+                            Schema Based Search
                         </div>
                         <div class="tooltip-subtitle">
                             A powerful and flexible search. Allows users to
@@ -104,8 +105,9 @@
             @escapekey="onEscapeKey"
         >
             <div class="dl-smart-search-input__date-picker-wrapper">
-                <dl-date-picker
-                    :single-selection="true"
+                <dl-date-time-card
+                    :model-value="datePickerSelection"
+                    show-time
                     @change="onDateSelection"
                 />
                 <div class="dl-smart-search-input__date-picker-buttons">
@@ -137,7 +139,7 @@ import {
     onBeforeUnmount
 } from 'vue-demi'
 import { DlButton } from '../../../../basic'
-import { DlDatePicker } from '../../../DlDateTime'
+import { DlDateTimeCard } from '../../../DlDateTime'
 import { DlMenu, DlIcon, DlLabel } from '../../../../essential'
 import { isEllipsisActive } from '../../../../../utils/is-ellipsis-active'
 import { useSizeObserver } from '../../../../../hooks/use-size-observer'
@@ -172,7 +174,8 @@ import {
     Data,
     useSuggestions,
     removeBrackets,
-    removeLeadingExpression
+    removeLeadingExpression,
+    dateSuggestionPattern
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 import { StateManager, stateManager } from '../../../../../StateManager'
@@ -183,7 +186,7 @@ export default defineComponent({
         DlButton,
         SuggestionsDropdown,
         DlTooltip,
-        DlDatePicker,
+        DlDateTimeCard,
         DlMenu,
         DlLabel
     },
@@ -299,7 +302,7 @@ export default defineComponent({
         const menuOffset = ref([0, 5])
         const cancelBlur = ref(0)
         const expanded = ref(true)
-        const datePickerSelection = ref(null)
+        const datePickerSelection = ref<Date>(null)
         const showDatePicker = ref(false)
         const suggestionsDropdown = ref(null)
         //#endregion
@@ -332,7 +335,7 @@ export default defineComponent({
             }
 
             // to handle date suggestion modal to open automatically.
-            if (value.includes('(dd/mm/yyyy)')) {
+            if (value.includes(dateSuggestionPattern)) {
                 value = value.trimEnd()
             }
 
@@ -422,7 +425,10 @@ export default defineComponent({
                         words.push(lastWord)
                     }
                     queryLeftSide = words.join('.')
-                } else if (queryLeftSide.endsWith(' ')) {
+                } else if (
+                    queryLeftSide.endsWith(' ') &&
+                    (queryLeftSide.match(/'/g)?.length ?? 0) % 2 === 0
+                ) {
                     // caret after space: only replace multiple spaces on the left
                     queryLeftSide = queryLeftSide.trimEnd() + ' '
                 } else if (/\.\S+$/.test(queryLeftSide)) {
@@ -439,7 +445,10 @@ export default defineComponent({
                     queryRightSide = queryRightSide.trimStart()
                 } else {
                     // this|situation: replace whatever is there on both sides with the value
-                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
+                    queryLeftSide = queryLeftSide.replace(
+                        /('[^']+'?|[^'\s]+)$/,
+                        ''
+                    )
                     queryRightSide =
                         removeLeadingExpression(queryRightSide).trimStart()
                 }
@@ -468,28 +477,25 @@ export default defineComponent({
         const forceStringsType = (data: string | Data): string | Data => {
             const convertNode = (node: Data) => {
                 for (const key in node) {
-                    const value = node[key]
-                    if (Array.isArray(value)) {
-                        for (let i = 0; i < value.length; i++) {
-                            value[i] = '' + value[i]
+                    if (key !== '$exists') {
+                        const value = node[key]
+                        if (Array.isArray(value)) {
+                            for (let i = 0; i < value.length; i++) {
+                                value[i] = '' + value[i]
+                            }
+                        } else {
+                            node[key] = '' + value
                         }
-                    } else {
-                        node[key] = '' + value
                     }
                 }
             }
             if (typeof data !== 'string' && schema.value) {
                 for (const key in data) {
                     const type = schema.value[key]
-                    if (Array.isArray(type)) {
-                        if (type.includes('string')) {
-                            if (typeof data[key] === 'object') {
-                                convertNode(data[key])
-                            } else {
-                                data[key] = '' + data[key]
-                            }
-                        }
-                    } else if (type === 'string') {
+                    if (
+                        (Array.isArray(type) && type.includes('string')) ||
+                        type === 'string'
+                    ) {
                         if (typeof data[key] === 'object') {
                             convertNode(data[key])
                         } else {
@@ -617,7 +623,18 @@ export default defineComponent({
         }
 
         const endsWithOperator = computed(() => {
-            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
+            const operators = [
+                '>=',
+                '<=',
+                '!=',
+                '=',
+                '>',
+                '<',
+                'IN',
+                'NOT-IN',
+                'EXISTS',
+                'DOESNT-EXIST'
+            ]
 
             for (const op of operators) {
                 if (
@@ -657,12 +674,11 @@ export default defineComponent({
             const text = (e.target as HTMLElement).textContent
             if (text.endsWith('.') || text.endsWith(',')) {
                 setInputValue(text)
-            } else {
-                debouncedSetInputValue.value(text)
             }
+            debouncedSetInputValue.value(text)
         }
 
-        const onDateSelection = (value: DateInterval) => {
+        const onDateSelection = (value: Date) => {
             datePickerSelection.value = value
         }
 
@@ -762,6 +778,9 @@ export default defineComponent({
             }
 
             if (!isValid.value) {
+                if (lastSearchQuery !== searchQuery.value) {
+                    processBlur()
+                }
                 return
             }
 
@@ -804,6 +823,18 @@ export default defineComponent({
 
             input.value.blur()
             processBlur()
+        }
+
+        const updateParentElementWidth = () => {
+            if (!input.value) {
+                return
+            }
+            if (focused.value) {
+                input.value.parentElement.style.width = '100%'
+                setMenuOffset(isEligibleToChange(input.value, focused.value))
+            } else {
+                input.value.parentElement.style.width = '1px'
+            }
         }
         //#endregion
 
@@ -971,12 +1002,7 @@ export default defineComponent({
                 return
             }
 
-            if (!value) {
-                input.value.parentElement.style.width = '1px'
-            } else {
-                setMenuOffset(isEligibleToChange(input.value, value))
-                input.value.parentElement.style.width = '100%'
-            }
+            updateParentElementWidth()
         })
 
         watch(showDatePicker, (value, old) => {
@@ -1014,7 +1040,8 @@ export default defineComponent({
         const watchKeyUp = (e: KeyboardEvent) => {
             if (
                 focused.value &&
-                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight') &&
+                !e.altKey
             ) {
                 setInputValue(searchQuery.value, { noEmit: true })
             }
@@ -1027,6 +1054,7 @@ export default defineComponent({
             }
             window.addEventListener('mousemove', watchMouseMove)
             window.addEventListener('keyup', watchKeyUp)
+            updateParentElementWidth()
         })
         onBeforeUnmount(() => {
             window.removeEventListener('mousemove', watchMouseMove)
@@ -1305,10 +1333,6 @@ export default defineComponent({
         word-break: break-all;
         bottom: -15px;
         max-width: 100%;
-    }
-
-    &__date-picker-wrapper {
-        width: 562px;
     }
 
     &__date-picker-buttons {

@@ -38,7 +38,9 @@ export const operators: Operators = {
     $lt: '<', // number, date, datetime, time
     $lte: '<=', // number, date, datetime, time
     $in: 'IN', // all types
-    $nin: 'NOT-IN' // all types
+    $nin: 'NOT-IN', // all types
+    $exists: 'EXISTS', // all types
+    $doesnt_exist_dummy: 'DOESNT-EXIST' // all types
 }
 
 type OperatorToDataTypeMap = {
@@ -53,7 +55,9 @@ const operatorToDataTypeMap: OperatorToDataTypeMap = {
     $lt: ['number', 'date', 'datetime', 'time'],
     $lte: ['number', 'date', 'datetime', 'time'],
     $in: [],
-    $nin: []
+    $nin: [],
+    $exists: [],
+    $doesnt_exist_dummy: []
 }
 
 const knownDataTypes = [
@@ -75,16 +79,19 @@ type Expression = {
 }
 
 const space = ' '
-const dateSuggestionPattern = '(dd/mm/yyyy)'
+export const pureDateSuggestionPattern = 'DD/MM/YYYY HH:mm:ss'
+export const dateSuggestionPattern = `(${pureDateSuggestionPattern})`
 
 let localSuggestions: Suggestion[] = []
 
 export const datePattern = new RegExp(
-    /([\(']?\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?\(dd\/mm\/yyyy\)\s?)/,
+    /[\(']?(\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?DD\/MM\/YYYY)\s?(\d{2}:\d{2}:\d{2}|\s?HH:mm:ss)[\)']?/,
     'gi'
 )
 export const datePatternNoBrackets =
-    /(\d{2}\/\d{2}\/\d{4}\s?|\s?dd\/mm\/yyyy\s?)/
+    /(\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?DD\/MM\/YYYY)\s?(\d{2}:\d{2}:\d{2}|\s?HH:mm:ss)/
+
+const existsValuePlaceholder = 'existsValuePlaceholder'
 
 const mergeWords = (words: string[]) => {
     const result: string[] = []
@@ -93,8 +100,18 @@ const mergeWords = (words: string[]) => {
 
     for (let i = 0; i < words.length; ++i) {
         const currentItem = words[i]
-
-        if (currentItem === 'IN' || currentItem === 'NOT-IN') {
+        if (
+            currentItem === operators.$exists ||
+            currentItem === operators.$doesnt_exist_dummy
+        ) {
+            merging = false
+            result.push(currentItem)
+            result.push(existsValuePlaceholder)
+            continue
+        } else if (
+            currentItem === operators.$in ||
+            currentItem === operators.$nin
+        ) {
             merging = true
             result.push(currentItem)
             mergeIndex = result.length
@@ -143,10 +160,11 @@ export const useSuggestions = (
     )
 
     for (const alias of aliasesArray) {
-        if (aliasedSuggestions.includes(alias.alias)) {
+        const aliasBeforeDot = alias.alias.replace(/\..+$/, '')
+        if (aliasedSuggestions.includes(aliasBeforeDot)) {
             continue
         }
-        aliasedSuggestions.push(alias.alias)
+        aliasedSuggestions.push(aliasBeforeDot)
     }
 
     const sortString = (a: string, b: string) =>
@@ -166,7 +184,8 @@ export const useSuggestions = (
         error.value = input.length
             ? getError(schemaValue, aliasesArray, expressions, {
                   strict,
-                  forbiddenKeys
+                  forbiddenKeys,
+                  omitSuggestions
               })
             : null
     }
@@ -221,6 +240,16 @@ export const useSuggestions = (
             )
             if (!dataType) {
                 localSuggestions = []
+                // 2nd half of key aliases with the dot: matchedField ~ 'Item.H' of 'Item.Height'
+                const matchedFieldWithDot =
+                    matchedField.indexOf('.') > 0
+                        ? matchedField
+                        : matchedField + '.'
+                for (const a of aliasesArray) {
+                    if (a.alias.startsWith(matchedFieldWithDot)) {
+                        localSuggestions.push(a.alias.replace(/^.+\./, '.'))
+                    }
+                }
                 continue
             }
 
@@ -246,6 +275,8 @@ export const useSuggestions = (
                     fieldOf = fieldOf[key] as Schema
                 }
 
+                if (!fieldOf) continue
+
                 const toAdd: string[] = []
 
                 if (fieldOf[lastWord]) {
@@ -254,12 +285,24 @@ export const useSuggestions = (
                     if (isObject(fieldOf) && !Array.isArray(fieldOf)) {
                         for (const key of Object.keys(fieldOf)) {
                             if (key === '*') continue
+                            if (aliasedKeys.includes(`${matchedField}.${key}`))
+                                continue
                             toAdd.push(`.${key}`)
                         }
                     }
                 } else {
+                    const matchedFieldBeforeDot = matchedField.replace(
+                        new RegExp(`\\.${lastWord}$`),
+                        ''
+                    )
                     for (const key in fieldOf) {
                         if (key === '*') continue
+                        if (
+                            aliasedKeys.includes(
+                                `${matchedFieldBeforeDot}.${key}`
+                            )
+                        )
+                            continue
                         if (key.startsWith(lastWord)) {
                             toAdd.push(`.${key}`)
                         }
@@ -317,7 +360,12 @@ export const useSuggestions = (
                 localSuggestions = []
             }
 
-            if (!value || !isNextCharSpace(input, value)) {
+            const lastTerm =
+                operator === operators.$exists ||
+                operator === operators.$doesnt_exist_dummy
+                    ? operator
+                    : value
+            if (!lastTerm || !isNextCharSpace(input, lastTerm)) {
                 continue
             }
 
@@ -349,6 +397,7 @@ export const useSuggestions = (
 
 const errors = {
     INVALID_EXPRESSION: 'Invalid Expression',
+    INVALID_OPERATOR: 'Invalid operator',
     INVALID_VALUE: (field: string) => `Invalid value for "${field}" field`,
     FORBIDDEN_KEY: (field: string) => `Forbidden field "${field}"`
 }
@@ -382,9 +431,13 @@ const getError = (
     schema: Schema,
     aliases: Alias[],
     expressions: Expression[],
-    options: { strict?: Ref<boolean>; forbiddenKeys?: Ref<string[]> } = {}
+    options: {
+        strict?: Ref<boolean>
+        forbiddenKeys?: Ref<string[]>
+        omitSuggestions?: Ref<string[]>
+    } = {}
 ): string | null => {
-    const { strict, forbiddenKeys } = options
+    const { strict, forbiddenKeys, omitSuggestions } = options
     const hasErrorInStructure = expressions
         .flatMap((exp) => Object.values(exp))
         .some((el, index, arr) => {
@@ -398,68 +451,88 @@ const getError = (
 
     return expressions
         .filter(({ field, value }) => field !== null && value !== null)
-        .reduce<string | null>((acc, { field, value, operator }, _, arr) => {
-            if (acc && acc !== 'warning') return acc
-            const fieldKey: string =
-                getAliasObjByAlias(aliases, field)?.key ?? field
+        .reduce<string | null>(
+            (acc, { field, value, keyword, operator }, _, arr) => {
+                if (acc && acc !== 'warning') return acc
+                const fieldKey: string =
+                    getAliasObjByAlias(aliases, field)?.key ?? field
 
-            /**
-             * Handle nested keys to validate if the key exists in the schema or not.
-             */
-            const keys: string[] = []
-            for (const key of Object.keys(schema)) {
-                if (isObject(schema[key]) && !Array.isArray(schema[key])) {
-                    const flattened = flatten({ [key]: schema[key] })
-                    for (const k of Object.keys(flattened)) {
-                        keys.push(k)
-                    }
-                } else {
-                    keys.push(key)
-                }
-            }
-
-            function hasValidExpression(
-                arr: string[],
-                pattern: RegExp
-            ): boolean {
-                for (const item of arr) {
-                    if (pattern.test(item)) {
-                        return true
+                /**
+                 * Handle nested keys to validate if the key exists in the schema or not.
+                 */
+                const keys: string[] = []
+                for (const key of Object.keys(schema)) {
+                    if (isObject(schema[key]) && !Array.isArray(schema[key])) {
+                        const flattened = flatten({ [key]: schema[key] })
+                        for (const k of Object.keys(flattened)) {
+                            keys.push(k)
+                        }
+                    } else {
+                        keys.push(key)
                     }
                 }
-                return false
-            }
 
-            const pattern = new RegExp(`^${fieldKey}\\.\\d`)
-            const isValid = isInputAllowed(fieldKey, keys)
-            const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
-            if (
-                !keys.includes(fieldKey) &&
-                !hasValidExpression(keys, pattern) &&
-                !isValid &&
-                !isForbidden
-            ) {
-                return strict?.value ? errors.INVALID_EXPRESSION : 'warning'
-            }
+                function hasValidExpression(
+                    arr: string[],
+                    pattern: RegExp
+                ): boolean {
+                    for (const item of arr) {
+                        if (pattern.test(item)) {
+                            return true
+                        }
+                    }
+                    return false
+                }
 
-            if (isForbidden) {
-                arr.splice(1)
-                return (acc = errors.FORBIDDEN_KEY(field))
-            }
+                const pattern = new RegExp(`^${fieldKey}\\.\\d`)
+                const isValid = isInputAllowed(fieldKey, keys)
+                const isForbidden = !!forbiddenKeys?.value?.includes(fieldKey)
+                if (
+                    !keys.includes(fieldKey) &&
+                    !hasValidExpression(keys, pattern) &&
+                    !isValid &&
+                    !isForbidden
+                ) {
+                    return strict?.value ? errors.INVALID_EXPRESSION : 'warning'
+                }
 
-            const valid = isValidByDataType(
-                validateBracketValues(value),
-                getDataType(schema, aliases, fieldKey),
-                operator
-            )
+                if (isForbidden) {
+                    arr.splice(1)
+                    return (acc = errors.FORBIDDEN_KEY(field))
+                }
 
-            if (!valid) {
-                arr.splice(1)
-                return (acc = errors.INVALID_VALUE(field))
-            }
+                const valid =
+                    operator === operators.$exists ||
+                    operator === operators.$doesnt_exist_dummy ||
+                    isValidByDataType(
+                        validateBracketValues(value),
+                        getDataType(schema, aliases, fieldKey),
+                        operator
+                    )
 
-            return acc === 'warning' ? acc : (acc = null)
-        }, null)
+                if (!valid) {
+                    arr.splice(1)
+                    return (acc = errors.INVALID_VALUE(field))
+                }
+
+                if (omitSuggestions) {
+                    if (omitSuggestions.value.includes(value)) {
+                        arr.splice(1)
+                        return (acc = errors.INVALID_VALUE(field))
+                    }
+                    if (
+                        omitSuggestions.value.includes(keyword) ||
+                        omitSuggestions.value.includes(operator)
+                    ) {
+                        arr.splice(1)
+                        return (acc = errors.INVALID_OPERATOR)
+                    }
+                }
+
+                return acc === 'warning' ? acc : (acc = null)
+            },
+            null
+        )
 }
 
 const isValidByDataType = (
@@ -518,7 +591,7 @@ const isValidByDataType = (
 
 const validateBracketValues = (value: string) => {
     const bracketless = removeBrackets(value)
-    const pureValue = bracketless.split(',')
+    const pureValue = bracketless.split(/,\s*/)
     if (pureValue.length === 1) {
         return pureValue[0]
     }

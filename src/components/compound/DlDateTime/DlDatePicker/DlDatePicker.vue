@@ -1,13 +1,7 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-date-picker"
-    >
-        <div
-            v-if="type === 'day'"
-            class="dl-date-picker--day_picker"
-        >
-            <div class="dl-date-picker--calendar_from">
+    <div :id="uuid" class="dl-date-picker">
+        <div v-if="type === 'day'" class="dl-date-picker--day_picker">
+            <div v-if="!singleCalendar" class="dl-date-picker--calendar_from">
                 <dl-calendar
                     v-if="calendarFrom"
                     :model-value="dateInterval"
@@ -30,7 +24,9 @@
                     :dates="calendarTo.dates"
                     :available-range="availableRange"
                     :disabled="disabled"
+                    :with-left-chevron="singleCalendar"
                     :with-right-chevron="true"
+                    @prev="handleDatePrev"
                     @next="handleDateNext"
                     @update:model-value="updateDateInterval"
                     @mousedown="handleMousedown"
@@ -38,10 +34,7 @@
                 />
             </div>
         </div>
-        <div
-            v-else
-            class="dl-date-picker--month_picker"
-        >
+        <div v-else class="dl-date-picker--month_picker">
             <div class="dl-date-picker--calendar_from">
                 <dl-month-calendar
                     :model-value="dateInterval"
@@ -103,6 +96,10 @@ export default defineComponent({
         availableRange: {
             type: Object as PropType<Partial<DateInterval> | null>,
             default: null
+        },
+        singleCalendar: {
+            type: Boolean,
+            default: false
         },
         singleSelection: {
             type: Boolean,

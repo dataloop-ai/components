@@ -26,17 +26,17 @@ const rows: DlLabelPickerItem[] = [
         color: '#ff0000',
         children: [
             {
-                identifier: 'b',
+                identifier: 'a.a',
                 displayLabel: 'hello',
                 color: '#ffff00',
                 children: [
                     {
-                        identifier: 'c',
+                        identifier: 'a.a.a',
                         displayLabel: 'test 2',
                         color: '#00ff00',
                         children: [
                             {
-                                identifier: 'd',
+                                identifier: 'a.a.a.a',
                                 displayLabel: 'test 3',
                                 color: '#ff00aa',
                                 children: []
@@ -44,7 +44,7 @@ const rows: DlLabelPickerItem[] = [
                         ]
                     },
                     {
-                        identifier: 'd',
+                        identifier: 'a.a.b',
                         displayLabel: 'test 4',
                         color: '#ff00ff',
                         children: []

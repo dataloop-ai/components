@@ -2,7 +2,7 @@
     <div
         :id="uuid"
         class="dl-panel"
-        :class="{ 'no-user-select': avoidUserSelect }"
+        :class="{ 'non-selectable': avoidUserSelect }"
         :data-resizable="resizable"
         :style="cssVariables"
     >
@@ -14,10 +14,7 @@
             class="separator"
             :class="{ resize: canResizeOrCollapse }"
         >
-            <div
-                v-show="canResizeOrCollapse"
-                class="gutter"
-            />
+            <div v-show="canResizeOrCollapse" class="gutter" />
         </div>
     </div>
 </template>
@@ -142,7 +139,7 @@ export default defineComponent({
                 elementHeight >= this.computedMinHeight &&
                 elementHeight <= this.computedMaxHeight
             ) {
-                (this.$el as HTMLDivElement).style.height =
+                ;(this.$el as HTMLDivElement).style.height =
                     elementHeight + 'px'
             }
         },
@@ -160,7 +157,7 @@ export default defineComponent({
                 elementHeight = this.computedMinHeight
             }
 
-            (this.$el as HTMLDivElement).style.height = elementHeight + 'px'
+            ;(this.$el as HTMLDivElement).style.height = elementHeight + 'px'
 
             this.setIsFullHeight()
         },

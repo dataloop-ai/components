@@ -178,7 +178,7 @@ export default defineComponent({
                 try {
                     svgElement.src = svgSource.value
                         ? `${svgSource.value}/${cleanedIconName.value}.svg`
-                        : `https://raw.githubusercontent.com/dataloop-ai/icons/main/assets/${cleanedIconName.value}.svg`
+                        : `/icons/assets/${cleanedIconName.value}.svg`
                 } catch (e) {
                     reject(e)
                 }

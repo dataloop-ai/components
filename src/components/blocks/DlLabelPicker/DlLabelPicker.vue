@@ -7,6 +7,9 @@
             has-prepend
             padding-prop="0px 0px 0px 0px"
             :style="inputStyles"
+            @focus="onFocus"
+            @blur="onBlur"
+            @clear="onClear"
         >
             <template #prepend>
                 <dl-icon
@@ -17,6 +20,8 @@
             </template>
         </dl-input>
         <dl-tree-table
+            v-if="isFilterString(inputValue)"
+            ref="table"
             draggable="none"
             separator="none"
             :hide-pagination="true"
@@ -32,6 +37,7 @@
             :empty-state-props="emptyStateProps"
             :hide-bottom="hideBottom"
             :hide-no-data="hideNoData"
+            identifier-as-tooltip
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -39,6 +45,7 @@
                     :text="item.row.displayLabel"
                     :indicator-color="item.row.color"
                     class="dl-label-picker-item"
+                    :data-label-picker-identifier="item.row.identifier"
                 />
             </template>
         </dl-tree-table>
@@ -46,7 +53,15 @@
 </template>
 
 <script lang="ts">
-import { ref, PropType, defineComponent, computed, toRefs } from 'vue-demi'
+import {
+    ref,
+    PropType,
+    defineComponent,
+    computed,
+    toRefs,
+    onMounted,
+    nextTick
+} from 'vue-demi'
 import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
 import { DlEmptyStateProps, DlTableColumn, DlTableRow } from '../../types'
@@ -92,7 +107,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['selected-label', 'click'],
+    emits: ['selected-label', 'click', 'focus', 'blur', 'clear'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
 
@@ -113,7 +128,13 @@ export default defineComponent({
             items.value ? items.value[0] : null
         )
 
-        const handleRowClick = (_: MouseEvent, item: DlLabelPickerItem) => {
+        const table = ref()
+        const handleRowClick = (event: MouseEvent, item: DlLabelPickerItem) => {
+            table.value.$el
+                .querySelectorAll('tr.selected')
+                .forEach((tr: Element) => tr.classList.remove('selected'))
+            const target = event.target as Element
+            target.closest('tr').classList.add('selected')
             currentSelectedLabel.value = item
             emit('selected-label', item)
             emit('click', item)
@@ -166,13 +187,52 @@ export default defineComponent({
             )
         )
         const rows = computed(() => mapItems.value)
+        const isFilterString = (input: string) => {
+            const stack = [...items.value]
+            const filter = (input ?? '').toLowerCase()
+            while (stack.length) {
+                const item = stack.pop()
+                if (item.displayLabel?.toLowerCase?.().includes(filter)) {
+                    return true
+                }
+                if (item.children) {
+                    stack.push(...item.children)
+                }
+            }
+            return false
+        }
+
+        onMounted(() => {
+            nextTick(() => {
+                if (items.value?.[0]?.identifier) {
+                    const target = table.value.$el.querySelector(
+                        `[data-label-picker-identifier="${items.value[0].identifier}"]`
+                    )
+                    target?.closest('tr')?.classList.add('selected')
+                }
+            })
+        })
+        const onFocus = (event: InputEvent) => {
+            emit('focus', event)
+        }
+        const onBlur = (event: InputEvent) => {
+            emit('blur', event)
+        }
+        const onClear = (event: InputEvent) => {
+            emit('clear', event)
+        }
         return {
             handleRowClick,
             inputValue,
             columns,
             placeHolderText,
             inputStyles,
-            rows
+            rows,
+            table,
+            isFilterString,
+            onClear,
+            onBlur,
+            onFocus
         }
     }
 })

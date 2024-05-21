@@ -34,6 +34,11 @@ describe('DlStepperSidebar', () => {
             title: 'disabled step',
             value: 'disabled'
             // disabled: true
+        },
+        {
+            title: 'step with icon',
+            value: 'withIcon',
+            icon: 'icon-dl-lock'
         }
     ]
     describe('When mounting', () => {
@@ -69,6 +74,24 @@ describe('DlStepperSidebar', () => {
                 expect(listItems[4].text()).toEqual('5. Error step')
                 expect(listItems[5].text()).toEqual('6. Disabled step')
             })
+            it('should render the icon for the step with an icon', () => {
+                const listItemComponent = wrapper.findAllComponents({
+                    name: 'DlListItem'
+                })[6]
+                expect(listItemComponent.props('startIcon').icon).toEqual(
+                    'icon-dl-lock'
+                )
+                expect(listItems[6].text()).to.not.contain('7.')
+            })
+            it('should apply the active step background class to the active step', () => {
+                expect(listItems[0].classes()).to.contain(
+                    'sidebar--item-active'
+                )
+                expect(listItems[1].classes()).to.not.contain(
+                    'sidebar--item-active'
+                )
+            })
+
             describe('When click on list item', () => {
                 beforeAll(async () => {
                     wrapper.vm.handleStepClick({}, 1)

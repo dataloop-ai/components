@@ -8,6 +8,7 @@ import {
 } from '../../src/components/compound/DlSearches/DlSmartSearch/utils'
 import { stringifySmartQuery } from '../../src/utils'
 import { describe, it, expect, beforeAll } from 'vitest'
+import { pureDateSuggestionPattern } from '../../src/hooks/use-suggestions'
 
 describe('isEndOfString', () => {
     it('should retun "false" when the string does not match the pattern', () => {
@@ -41,11 +42,14 @@ describe('isEndingWithDateIntervalPattern', () => {
 
 describe('formatToNumericDate', () => {
     it('should return the correct date', () => {
-        const expected = moment('02/12/2022', 'DD/MM/YYYY').toDate()
+        const expected = moment(
+            '02/12/2022 00:00:00',
+            pureDateSuggestionPattern
+        ).toDate()
         // expected value will have 0 hours in local timezone
         expect(expected.getHours()).toEqual(0)
 
-        const date = '(02/12/2022)'
+        const date = '(02/12/2022 00:00:00)'
         const formattedDate = formatToNumericDate(date)
         // formatted date will nonetheless be equal to the number of ms
         // since the midnight at the beginning of January 1, 1970, UTC
@@ -54,36 +58,16 @@ describe('formatToNumericDate', () => {
     })
 })
 
-/**
- * TODO: these tests dont hold up to new design and need to be replaced.
- * We do not have from to anymore.
- */
 describe('replaceDateInterval', () => {
     it('should replace the last occurrence of the value that matches the "dateIntervalPattern"', () => {
-        const string =
-            'field = (From (12/12/22) To (22/12/22)) AND field = (From (dd/mm/yyyy) To (dd/mm/yyyy))'
-        const toReplace = {
-            from: new Date(formatToNumericDate('(02/12/2022)')),
-            to: new Date(formatToNumericDate('(22/12/2022)'))
-        }
+        const string = `field = (02/12/2022 00:00:00) AND field = (${pureDateSuggestionPattern})`
+        const toReplace = new Date(formatToNumericDate('(02/12/2022 00:00:00)'))
         const expected =
-            'field = (From (12/12/22) To (22/12/22)) AND field = (From (02/12/2022) To (dd/mm/yyyy))'
+            'field = (02/12/2022 00:00:00) AND field = (02/12/2022 00:00:00)'
         const replaced = replaceDateInterval(string, toReplace)
 
-        console.log(toReplace)
+        console.log(replaced)
         expect(replaced).toEqual(expected)
-    })
-
-    it('should return the original string', () => {
-        expect(
-            replaceDateInterval(
-                'field = (From (12/12/22) To (22/12/22)) AND field = 10',
-                {
-                    from: new Date('2022-12-02T09:40:34.633Z'),
-                    to: new Date('2022-12-22T09:40:34.633Z')
-                }
-            )
-        ).toEqual('field = (From (12/12/22) To (22/12/22)) AND field = 10')
     })
 })
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="non-selectable">
         <component
             :is="spinnerType"
             :size="size"
@@ -9,11 +9,7 @@
             :icon-size="iconSize"
             :icon-color="iconColor"
         />
-        <div
-            v-if="text"
-            class="dl-spinner-text"
-            :style="textStyles"
-        >
+        <div v-if="text" class="dl-spinner-text" :style="textStyles">
             <span>{{ text }}</span>
         </div>
     </div>
@@ -85,7 +81,6 @@ export default defineComponent({
                     return 'DlSpinnerDots'
                 case DlSpinnerTypes.CLOCK:
                     return 'DlSpinnerClock'
-                case DlSpinnerTypes.LOGO:
                 default:
                     return 'DlSpinnerLogo'
             }
@@ -93,3 +88,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.dl-spinner-text {
+    color: var(--dl-color-darker);
+}
+</style>

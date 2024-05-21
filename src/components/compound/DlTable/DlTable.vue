@@ -141,6 +141,7 @@
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                class="dl-table-visible-column"
                                 no-tooltip
                                 padding="0"
                             >
@@ -161,7 +162,11 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            text-color="dl-color-medium"
+                                            :text-color="
+                                                isVisibleColumnsOpen
+                                                    ? 'dl-color-secondary'
+                                                    : 'dl-color-medium'
+                                            "
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
@@ -178,7 +183,12 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-popup dense>
+                                                <dl-popup
+                                                    v-model="
+                                                        isVisibleColumnsOpen
+                                                    "
+                                                    dense
+                                                >
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -341,6 +351,7 @@
                                     :style="col.tdStyle(props.item)"
                                     :no-hover="noHover"
                                     :col-index="colIndex"
+                                    :no-tooltip="col.ignoreTooltip"
                                     :padding="`0 ${columnSpacing}`"
                                 >
                                     <slot
@@ -366,7 +377,7 @@
                                 <DlTd
                                     v-if="showRowActions"
                                     key="visibleColumnsSlot"
-                                    class="visible-columns-justify-end"
+                                    class="visible-columns-justify-end dl-table-visible-column"
                                     no-tooltip
                                 >
                                     <slot
@@ -527,10 +538,9 @@
                             <DlTh
                                 v-if="showRowActions"
                                 key="visibleColumnsSlot"
+                                class="dl-table-visible-column"
                                 no-tooltip
-                                :padding="
-                                    isTreeTable ? '0' : `0 ${columnSpacing}`
-                                "
+                                padding="0"
                             >
                                 <slot
                                     name="header-cell-visible-columns-button"
@@ -549,7 +559,11 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            text-color="dl-color-medium"
+                                            :text-color="
+                                                isVisibleColumnsOpen
+                                                    ? 'dl-color-secondary'
+                                                    : 'dl-color-medium'
+                                            "
                                             flat
                                             icon="icon-dl-column"
                                             tooltip="Manage columns"
@@ -566,7 +580,12 @@
                                                     handleVisibleColumnsUpdate
                                                 "
                                             >
-                                                <dl-popup dense>
+                                                <dl-popup
+                                                    v-model="
+                                                        isVisibleColumnsOpen
+                                                    "
+                                                    dense
+                                                >
                                                     <slot
                                                         name="header-cell-visible-columns-menu-content"
                                                         :visible-columns-state="
@@ -772,9 +791,8 @@
                                     <DlTd
                                         v-if="showRowActions"
                                         key="visibleColumnsSlot"
-                                        class="visible-columns-justify-end"
+                                        class="visible-columns-justify-end dl-table-visible-column"
                                         no-tooltip
-                                        :padding="`0 ${columnSpacing}`"
                                     >
                                         <slot
                                             v-bind="
@@ -871,7 +889,10 @@
             <div v-else class="dl-table__control">
                 <slot name="bottom" v-bind="marginalsScope">
                     <div
-                        v-if="hasBotomSelectionBanner"
+                        v-if="
+                            hasBottomSelectionBanner &&
+                                selectedRowsLabel(rowsSelectedNumber)
+                        "
                         class="dl-table__control"
                     >
                         <div>
@@ -1298,6 +1319,7 @@ export default defineComponent({
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
         const tableScroll = ref(null)
+        const isVisibleColumnsOpen = ref(false)
 
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
@@ -1340,11 +1362,15 @@ export default defineComponent({
         )
 
         const isResizing = ref(false)
+        const isResizingInProgress = ref(false)
         const isDragging = ref(false)
         const setIsResizing = (val: boolean) => (isResizing.value = val)
+        const setResizingInProgress = (val: boolean) =>
+            (isResizingInProgress.value = val)
         const setIsDragging = (val: boolean) => (isDragging.value = val)
         const getIsDragging = () => isDragging.value
         const getIsResizing = () => isResizing.value
+        const getResizingInProgress = () => isResizingInProgress.value
         const getVisibleColumnsState = () => visibleColumnsState.value
 
         // table slots
@@ -1752,7 +1778,7 @@ export default defineComponent({
             )
         })
 
-        const hasBotomSelectionBanner = computed(() => {
+        const hasBottomSelectionBanner = computed(() => {
             return (
                 hideSelectedBanner.value !== true &&
                 hasSelectionMode.value === true &&
@@ -1794,6 +1820,10 @@ export default defineComponent({
                     () => headerSelectedValue.value,
                     onMultipleSelectionSet
                 )
+            }
+
+            if (resizable.value) {
+                injectProp(data, 'isResizingInProgress', getResizingInProgress)
             }
 
             return data
@@ -2018,8 +2048,10 @@ export default defineComponent({
             updateColumns,
             reorderColumns,
             setIsResizing,
+            setResizingInProgress,
             setIsDragging,
             getIsResizing,
+            getResizingInProgress,
             getIsDragging,
             getVisibleColumnsState,
             getTableKey
@@ -2118,7 +2150,7 @@ export default defineComponent({
             noDataMessage,
             paginationState,
             hasTopSelectionMode,
-            hasBotomSelectionBanner,
+            hasBottomSelectionBanner,
             rowsSelectedNumber,
             singleSelection,
             multipleSelection,
@@ -2160,7 +2192,8 @@ export default defineComponent({
             computedPagination,
             getRowExpandedKey,
             hasExpandableSlot,
-            tableScroll
+            tableScroll,
+            isVisibleColumnsOpen
         }
     }
 })

@@ -82,7 +82,7 @@
                         name="selected"
                     />
                 </div>
-                <template v-if="!hasSelectedSlot">
+                <template v-else>
                     <span
                         v-show="
                             (multiselect && !searchable) ||
@@ -155,17 +155,25 @@
                 @highlighted-item="setHighlightedIndex"
                 @selected-item="handleSelectedItem"
             >
-                <dl-list class="select-list" :padding="false">
-                    <dl-list-item v-if="noOptions">
-                        <dl-item-section color="dl-color-medium">
-                            <slot name="no-options"> No options </slot>
-                        </dl-item-section>
-                    </dl-list-item>
-                    <dl-list-item v-if="hasBeforeOptions && !noOptions">
-                        <dl-item-section color="dl-color-medium">
-                            <slot name="before-options" />
-                        </dl-item-section>
-                    </dl-list-item>
+                <dl-list-item v-if="hasBeforeOptions && !noOptions">
+                    <dl-item-section color="dl-color-medium">
+                        <slot name="before-options" />
+                    </dl-item-section>
+                </dl-list-item>
+                <dl-list-item v-if="noOptions">
+                    <dl-item-section color="dl-color-medium">
+                        <slot name="no-options"> No options </slot>
+                    </dl-item-section>
+                </dl-list-item>
+                <dl-list
+                    class="select-list"
+                    :padding="false"
+                    :style="
+                        optionsCount > MAX_ITEMS_PER_LIST
+                            ? ''
+                            : `width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px); overflow-y: scroll;`
+                    "
+                >
                     <dl-select-option
                         v-if="showAllItems"
                         :multiselect="multiselect"
@@ -194,7 +202,7 @@
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
                         :virtual-scroll-sticky-size-end="20"
-                        :style="`width: 100%; max-height: calc(${dropdownMaxHeight} - 20px);`"
+                        :style="`width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px);`"
                     >
                         <dl-select-option
                             :key="getKeyForOption(item)"
@@ -290,12 +298,12 @@
                             </slot>
                         </dl-select-option>
                     </div>
-                    <dl-list-item v-if="hasAfterOptions && !noOptions">
-                        <dl-item-section>
-                            <slot name="after-options" />
-                        </dl-item-section>
-                    </dl-list-item>
                 </dl-list>
+                <dl-list-item v-if="hasAfterOptions && !noOptions">
+                    <dl-item-section>
+                        <slot name="after-options" />
+                    </dl-item-section>
+                </dl-list-item>
             </dl-menu>
         </div>
         <div
@@ -425,6 +433,13 @@ export default defineComponent({
         selectChildren: {
             type: Boolean,
             default: true
+        },
+        /**
+         * the label to show when items are selected
+         */
+        selectedResourceLabel: {
+            type: String,
+            default: 'Selected Items'
         }
     },
     emits: [
@@ -441,7 +456,7 @@ export default defineComponent({
         'selected',
         'deselected'
     ],
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
         const isExpanded = ref(false)
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
@@ -459,6 +474,8 @@ export default defineComponent({
             emit('change', val)
         }
 
+        const hasSlotByName = (name: string) => !!slots[name]
+
         return {
             uuid: `dl-select-${v4()}`,
             MAX_ITEMS_PER_LIST,
@@ -469,7 +486,8 @@ export default defineComponent({
             setHighlightedIndex,
             handleModelValueUpdate,
             searchTerm, // todo: merge this sometime
-            searchInputValue
+            searchInputValue,
+            hasSlotByName
         }
     },
     computed: {
@@ -480,46 +498,6 @@ export default defineComponent({
             if (this.customFilter || this.searchTerm === '') {
                 return this.options
             }
-
-            // alternate version here it shows from child down
-            // const labelIncluded = (
-            //     options: DlSelectOptionType[],
-            //     term: string
-            // ): DlSelectOptionType[] => {
-            //     const filteredNodes: DlSelectOptionType[] = []
-
-            //     for (const op of options) {
-            //         const queue: DlSelectOptionType[] = [op]
-            //         while (queue.length) {
-            //             const node = queue.shift()
-            //             let shouldPush = false
-
-            //             const label = getLabel(node)
-
-            //             if (
-            //                 label &&
-            //                 label
-            //                     .toLowerCase()
-            //                     .includes(term.toLowerCase().trim())
-            //             ) {
-            //                 filteredNodes.push(node)
-            //                 shouldPush = true
-            //             }
-
-            //             if (
-            //                 !shouldPush &&
-            //                 (node as DlSelectOptionEntry)?.children?.length
-            //             ) {
-            //                 queue.push(
-            //                     ...(node as DlSelectOptionEntry).children
-            //                 )
-            //             }
-            //         }
-            //     }
-
-            //     return filteredNodes
-            // }
-
             const labelIncluded = (
                 options: DlSelectOptionType[],
                 term: string
@@ -566,6 +544,27 @@ export default defineComponent({
             }
 
             return labelIncluded(cloneDeep(this.options), this.searchTerm)
+        },
+        calculatedDropdownMaxHeight(): string {
+            const knownValuePhrases = ['vh', 'px', 'vw', 'em', 'rem', '%']
+            let val = this.dropdownMaxHeight
+
+            for (const phrase of knownValuePhrases) {
+                if (val.includes(phrase)) {
+                    val = val.replace(phrase, '')
+                    let value = parseInt(val)
+                    if (this.hasAfterOptions) {
+                        value -= 5
+                    }
+                    if (this.hasBeforeOptions) {
+                        value -= 5
+                    }
+                    return String(value + phrase)
+                }
+            }
+
+            // :shrug: if it's not a known value, just return it
+            return `calc(${this.dropdownMaxHeight} - 20px)`
         },
         computedMenuStyle(): string {
             let style = this.menuStyle ?? ''
@@ -616,7 +615,7 @@ export default defineComponent({
                 return getLabelOfSelectedOption(valueToSearch, this.options)
             }
             return this.modelValueLength > 0
-                ? `${this.modelValueLength} Selected Items`
+                ? `${this.modelValueLength} ${this.selectedResourceLabel}`
                 : this.computedPlaceholder
         },
         computedAllItemsLabel(): string {
@@ -641,13 +640,13 @@ export default defineComponent({
             return getIconSize(this.size)
         },
         hasOptionSlot(): boolean {
-            return !!this.$slots.option
+            return !!this.hasSlotByName('option')
         },
         hasAllItemsSlot(): boolean {
-            return !!this.$slots['all-items']
+            return !!this.hasSlotByName('all-items')
         },
         hasSelectedSlot(): boolean {
-            return !!this.$slots.selected
+            return !!this.hasSlotByName('selected')
         },
         computedPlaceholder(): string {
             return this.placeholder || 'Select option'
@@ -774,6 +773,9 @@ export default defineComponent({
             this.setSelectedIndex()
         },
         emitValue() {
+            this.setSelectedIndex()
+        },
+        options() {
             this.setSelectedIndex()
         }
     },
@@ -1021,7 +1023,7 @@ export default defineComponent({
         align-items: center;
     }
     &--placeholder {
-        color: var(--dl-select-palceholder-color, --placeholder-color);
+        color: var(--dl-select-placeholder-color, var(--placeholder-color));
     }
 
     .dl-select__title-container {
@@ -1038,7 +1040,7 @@ export default defineComponent({
     }
 
     .selected-label {
-        color: var(--dl-select-palceholder-color, --placeholder-color);
+        color: var(--dl-select-placeholder-color, var(--placeholder-color));
     }
 
     .dl-select__title {

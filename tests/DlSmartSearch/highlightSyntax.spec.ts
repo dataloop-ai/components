@@ -29,7 +29,18 @@ const schema = {
         color: 'blue'
     },
     operators: {
-        values: ['=', '!=', '>', '>=', '<', '<=', 'IN', 'NOT-IN'],
+        values: [
+            '=',
+            '!=',
+            '>',
+            '>=',
+            '<',
+            '<=',
+            'IN',
+            'NOT-IN',
+            'EXISTS',
+            'DOESNT-EXIST'
+        ],
         color: 'darkgreen'
     },
     keywords: { values: ['OR', 'AND'], color: 'bold' }

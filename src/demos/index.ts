@@ -22,6 +22,7 @@ import DlThDemo from './DlThDemo.vue'
 import DlTdDemo from './DlTdDemo.vue'
 import DlTableDemo from './DlTableDemo.vue'
 import DlPaginationDemo from './DlPaginationDemo.vue'
+import DlDateTimePickerDemo from './DlDateTimePickerDemo.vue'
 import DlDateTimeRangeDemo from './DlDateTimeRangeDemo.vue'
 import DlSmartSearchDemo from './SmartSearchDemo/DlSmartSearchDemo.vue'
 import DlSkeletonDemo from './DlSkeletonDemo.vue'
@@ -69,6 +70,7 @@ import { DlCodeEditorDemo } from './DlCodeEditor'
 import DlLabelPickerDemo from './DlLabelPickerDemo.vue'
 import DlInfiniteScrollDemo from './DlInfiniteScrollDemo.vue'
 import DlMarkdownDemo from './DlMarkdownDemo.vue'
+import DlTextInputDemo from './DlTextInputDemo.vue'
 
 export default {
     AvatarDemo,
@@ -93,6 +95,7 @@ export default {
     DlTableDemo,
     DlTreeTableDemo,
     DlPaginationDemo,
+    DlDateTimePickerDemo,
     DlDateTimeRangeDemo,
     DlSmartSearchDemo,
     DlSkeletonDemo,
@@ -138,5 +141,6 @@ export default {
     DlLayoutDemo,
     DlLabelPickerDemo,
     DlInfiniteScrollDemo,
-    DlMarkdownDemo
+    DlMarkdownDemo,
+    DlTextInputDemo
 }

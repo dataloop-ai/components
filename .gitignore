@@ -66,3 +66,4 @@ tsconfig.node.tsbuildinfo
 
 *.temp.vue
 *.temp.ts
+public/icons

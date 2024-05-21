@@ -1,5 +1,10 @@
 import { toRef } from 'vue'
-import { Alias, Schema, useSuggestions } from '../../src/hooks/use-suggestions'
+import {
+    Alias,
+    Schema,
+    dateSuggestionPattern,
+    useSuggestions
+} from '../../src/hooks/use-suggestions'
 import { describe, it, expect } from 'vitest'
 
 export const schema: Schema = {
@@ -8,6 +13,7 @@ export const schema: Schema = {
     completed: 'boolean',
     metadata: {
         nesting: {
+            ['*']: 'any',
             age: 'number',
             valid: 'boolean',
             arrVal: ['a', 'b', 'c', 'string']
@@ -78,9 +84,29 @@ describe('use-suggestions', () => {
         'Arr'
     ].sort(sortString)
 
+    const genericOperators = [
+        '=',
+        '!=',
+        'IN',
+        'NOT-IN',
+        'EXISTS',
+        'DOESNT-EXIST'
+    ]
+
     it('suggestions should have the aliases when the input is empty', () => {
         findSuggestions('')
         expect(suggestions.value).toEqual(allTheFields)
+    })
+
+    it('suggestions should not have aliased keys', () => {
+        findSuggestions('metadata.nesting')
+        expect(suggestions.value).toEqual(['.valid'])
+
+        findSuggestions('metadata.nesting.')
+        expect(suggestions.value).toEqual(['.valid'])
+
+        findSuggestions('metadata.nesting.v')
+        expect(suggestions.value).toEqual(['.valid', ...genericOperators])
     })
 
     const limited = useSuggestions(schemaRef, aliasesRef, {
@@ -121,8 +147,6 @@ describe('use-suggestions', () => {
     })
 
     it('suggestions should have the generic operators', () => {
-        const genericOperators = ['=', '!=', 'IN', 'NOT-IN']
-
         findSuggestions('Level ')
         expect(suggestions.value).toEqual(genericOperators)
 
@@ -140,7 +164,9 @@ describe('use-suggestions', () => {
             '<',
             '<=',
             'IN',
-            'NOT-IN'
+            'NOT-IN',
+            'EXISTS',
+            'DOESNT-EXIST'
         ])
     })
 
@@ -191,7 +217,7 @@ describe('use-suggestions', () => {
     describe('when the field is of type "datetime"', () => {
         it('suggestions should have the "dateIntervalSuggestionString"', () => {
             findSuggestions('StartTime = ')
-            expect(suggestions.value).toEqual(['(dd/mm/yyyy)'])
+            expect(suggestions.value).toEqual([dateSuggestionPattern])
         })
 
         it('suggestions should be empty when value does not matches', () => {
