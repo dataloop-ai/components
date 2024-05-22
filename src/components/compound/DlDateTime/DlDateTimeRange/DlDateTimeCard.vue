@@ -57,7 +57,7 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Object as PropType<Date | null>,
+            type: Date,
             default: null
         },
         showTime: Boolean,
