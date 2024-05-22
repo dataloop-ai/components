@@ -5,7 +5,7 @@
             width="500px"
             text="slider"
             :step="1"
-            :min="-100"
+            :min="50"
             :max="100"
             :slim="slim"
             :readonly="readonly"
