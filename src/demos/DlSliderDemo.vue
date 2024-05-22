@@ -5,7 +5,7 @@
             width="500px"
             text="slider"
             :step="1"
-            :min="-100"
+            :min="50"
             :max="100"
             :slim="slim"
             :readonly="readonly"
@@ -50,20 +50,18 @@ export default defineComponent({
     },
     watch: {
         value(newValue, oldValue) {
-            console.log(`@@@ model value update ${oldValue} to ${newValue}`)
-            this.events[0] = `@@@ model value update ${oldValue} to ${newValue}`
+            this.events[0] = `model value update ${oldValue} to ${newValue}`
         }
     },
     methods: {
         handleChange(value: number) {
-            console.log(`@@@ handling change ${value}`)
-            this.events[1] = `@@@ handling change ${value}`
+            this.events[1] = `handling change ${value}`
         },
         handleFocus(event: Event) {
-            this.events[1] = `@@@ Input Focus `
+            this.events[1] = `Input Focus `
         },
         handleBlur(event: Event) {
-            this.events[1] = `@@@ Input Blur `
+            this.events[1] = `Input Blur `
         }
     },
     template: 'dl-slider-demo'

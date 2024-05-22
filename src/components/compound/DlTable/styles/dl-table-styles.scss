@@ -32,35 +32,28 @@
     .inner-th-wrapper {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         height: 34px;
-        position: relative;
         line-height: 34px;
-        &--left {
-            left: 0;
-            transform: none;
-        }
+    }
+
+    .text-left .inner-th-wrapper {
+        justify-content: left;
+    }
+
+    .text-right .inner-th-wrapper {
+        justify-content: right;
     }
 
     .inner-th {
-        display: inline-block;
         flex: 0 1 auto;
-        left: 50%;
-        transform: translateX(-50%);
         overflow: hidden;
-        position: relative;
         line-height: 34px;
-
-        &--left {
-            left: 0;
-            transform: none;
-        }
     }
 
     .th-icons {
         display: flex;
         flex: 0 1 auto;
-        margin-left: auto;
         align-items: center;
         justify-content: flex-end;
     }
@@ -68,7 +61,6 @@
     .th-sort-icon {
         display: flex;
         flex: 0 1 auto;
-        margin-right: auto;
         align-items: center;
         justify-content: flex-start;
     }
