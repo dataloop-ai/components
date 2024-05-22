@@ -1,7 +1,7 @@
 import { isVue2, VNode } from 'vue-demi'
 
 export const getSlot = (isVue2: boolean, slot: any) => {
-    if (isVue2) {
+    if (isVue2 && typeof slot !== 'function') {
         return slot
     }
     return slot()

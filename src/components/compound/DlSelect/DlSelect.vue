@@ -356,6 +356,7 @@ import DlSelectOption from './components/DlSelectOption.vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
+import { getChildrenFromSlot } from '../DlTabPanels/utils'
 
 export default defineComponent({
     components: {
@@ -482,11 +483,8 @@ export default defineComponent({
 
         const hasSlotByName = (name: string) => !!slots[name]
         const hasSlotContent = (name: string) => {
-            const slot = slots[name]
-            if (slot) {
-                return slot()?.length ?? 0
-            }
-            return 0
+            const slotChildren = getChildrenFromSlot(slots[name])
+            return !!slotChildren.length
         }
 
         return {
@@ -663,7 +661,7 @@ export default defineComponent({
             return !!this.hasSlotByName('selected')
         },
         hasSelectedSlotContent(): boolean {
-            return !!this.hasSlotContent('selected')
+            return this.hasSlotContent('selected')
         },
         isActiveSearchInput(): boolean {
             return this.searchable && this.isExpanded
