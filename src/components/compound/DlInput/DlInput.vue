@@ -1563,7 +1563,7 @@ export default defineComponent({
 
     &__adornment-container {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         align-items: var(--dl-input-align-items);
         flex: 0 0 22px;
         &--expandable {
