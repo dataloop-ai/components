@@ -212,7 +212,7 @@ export default defineComponent({
                 key: 'id'
             },
             {
-                alias: 'ItemHeight',
+                alias: 'Item.Height',
                 key: 'metadata.system.height'
             },
             {

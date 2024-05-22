@@ -160,10 +160,11 @@ export const useSuggestions = (
     )
 
     for (const alias of aliasesArray) {
-        if (aliasedSuggestions.includes(alias.alias)) {
+        const aliasBeforeDot = alias.alias.replace(/\..+$/, '')
+        if (aliasedSuggestions.includes(aliasBeforeDot)) {
             continue
         }
-        aliasedSuggestions.push(alias.alias)
+        aliasedSuggestions.push(aliasBeforeDot)
     }
 
     const sortString = (a: string, b: string) =>
@@ -239,6 +240,16 @@ export const useSuggestions = (
             )
             if (!dataType) {
                 localSuggestions = []
+                // 2nd half of key aliases with the dot: matchedField ~ 'Item.H' of 'Item.Height'
+                const matchedFieldWithDot =
+                    matchedField.indexOf('.') > 0
+                        ? matchedField
+                        : matchedField + '.'
+                for (const a of aliasesArray) {
+                    if (a.alias.startsWith(matchedFieldWithDot)) {
+                        localSuggestions.push(a.alias.replace(/^.+\./, '.'))
+                    }
+                }
                 continue
             }
 
@@ -263,6 +274,8 @@ export const useSuggestions = (
                 for (const key of dotSeparated) {
                     fieldOf = fieldOf[key] as Schema
                 }
+
+                if (!fieldOf) continue
 
                 const toAdd: string[] = []
 
