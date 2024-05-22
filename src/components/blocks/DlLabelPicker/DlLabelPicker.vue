@@ -6,6 +6,9 @@
             size="m"
             has-prepend
             :style="inputStyles"
+            @focus="onFocus"
+            @blur="onBlur"
+            @clear="onClear"
         >
             <template #prepend>
                 <dl-icon
@@ -103,7 +106,7 @@ export default defineComponent({
             default: false
         }
     },
-    emits: ['selected-label', 'click'],
+    emits: ['selected-label', 'click', 'focus', 'blur', 'clear'],
     setup(props, { emit, slots }) {
         const { items } = toRefs(props)
 
@@ -208,7 +211,15 @@ export default defineComponent({
                 }
             })
         })
-
+        const onFocus = (event: InputEvent) => {
+            emit('focus', event)
+        }
+        const onBlur = (event: InputEvent) => {
+            emit('blur', event)
+        }
+        const onClear = (event: InputEvent) => {
+            emit('clear', event)
+        }
         return {
             handleRowClick,
             inputValue,
@@ -217,7 +228,10 @@ export default defineComponent({
             inputStyles,
             rows,
             table,
-            isFilterString
+            isFilterString,
+            onClear,
+            onBlur,
+            onFocus
         }
     }
 })

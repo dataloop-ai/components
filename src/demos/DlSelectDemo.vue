@@ -632,7 +632,7 @@
 import { cloneDeep } from 'lodash'
 import { defineComponent } from 'vue-demi'
 import { DlChip, DlSelect, DlIcon, DlBadge, DlButton } from '../components'
-import { DlSelectOptionType } from '../components/compound/DlSelect/utils'
+import { DlSelectOptionType } from '../components/types'
 
 const defaultOptions = [
     { label: 'Contributor 1', value: 'c1' },
