@@ -1,7 +1,5 @@
 import { TInputSizes } from '../../../utils/input-sizes'
-import { DlSelectOption } from './types'
-
-export type DlSelectOptionType = string | number | DlSelectOption
+import { DlSelectOptionType } from './types'
 
 export const getLabel = (option: any) => {
     if (typeof option === 'object' && 'label' in option) {
