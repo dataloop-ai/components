@@ -82,7 +82,7 @@
                         name="selected"
                     />
                 </div>
-                <template v-if="!hasSelectedSlot">
+                <template v-else>
                     <span
                         v-show="
                             (multiselect && !searchable) ||
@@ -341,11 +341,13 @@ import {
     getLabel,
     getIconSize,
     optionsValidator,
-    DlSelectOptionType,
     getLabelOfSelectedOption,
     getCaseInsensitiveInput
 } from './utils'
-import { DlSelectOption as DlSelectOptionEntry } from '../types'
+import {
+    DlSelectOption as DlSelectOptionEntry,
+    DlSelectOptionType
+} from '../types'
 import DlSelectOption from './components/DlSelectOption.vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { getColor } from '../../../utils'
@@ -456,7 +458,7 @@ export default defineComponent({
         'selected',
         'deselected'
     ],
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
         const isExpanded = ref(false)
         const selectedIndex = ref(-1)
         const highlightedIndex = ref(-1)
@@ -474,6 +476,8 @@ export default defineComponent({
             emit('change', val)
         }
 
+        const hasSlotByName = (name: string) => !!slots[name]
+
         return {
             uuid: `dl-select-${v4()}`,
             MAX_ITEMS_PER_LIST,
@@ -484,7 +488,8 @@ export default defineComponent({
             setHighlightedIndex,
             handleModelValueUpdate,
             searchTerm, // todo: merge this sometime
-            searchInputValue
+            searchInputValue,
+            hasSlotByName
         }
     },
     computed: {
@@ -637,13 +642,13 @@ export default defineComponent({
             return getIconSize(this.size)
         },
         hasOptionSlot(): boolean {
-            return !!this.$slots.option
+            return !!this.hasSlotByName('option')
         },
         hasAllItemsSlot(): boolean {
-            return !!this.$slots['all-items']
+            return !!this.hasSlotByName('all-items')
         },
         hasSelectedSlot(): boolean {
-            return !!this.$slots.selected
+            return !!this.hasSlotByName('selected')
         },
         computedPlaceholder(): string {
             return this.placeholder || 'Select option'
@@ -1216,7 +1221,9 @@ export default defineComponent({
         justify-content: center !important;
         align-items: center;
         color: var(--dl-color-medium);
-        transition-property: transform, -webkit-transform;
+        transition-property:
+            transform,
+            -webkit-transform;
         transition-duration: 0.28s, 0.28s;
         transition-timing-function: ease, ease;
         transition-delay: 0s, 0s;

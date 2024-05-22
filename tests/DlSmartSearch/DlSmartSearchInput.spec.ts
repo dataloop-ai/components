@@ -689,10 +689,6 @@ describe('DlSmartSearchInput', () => {
             // @ts-ignore
             await window.delay(500)
             await wrapper.vm.$nextTick()
-            console.log(
-                '@@@',
-                JSON.stringify(wrapper.emitted()['update:model-value'])
-            )
             expect(wrapper.emitted()['update:model-value']).toEqual([
                 [{ 'metadata.name': { $in: ['Arouet'] } }]
             ])
