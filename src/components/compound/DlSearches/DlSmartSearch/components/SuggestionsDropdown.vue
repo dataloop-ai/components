@@ -121,6 +121,16 @@ export default defineComponent({
 
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
+
+            const element =
+                menu.value?.portalEl.querySelectorAll('.dl-list-item')[value]
+            if (element) {
+                if (element.scrollIntoViewIfNeeded) {
+                    element.scrollIntoViewIfNeeded()
+                } else {
+                    element.scrollIntoView()
+                }
+            }
         }
         const handleSelectedItem = (value: any) => {
             if (!value) {
