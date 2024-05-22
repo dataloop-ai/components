@@ -356,7 +356,6 @@ import DlSelectOption from './components/DlSelectOption.vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { getColor } from '../../../utils'
 import { v4 } from 'uuid'
-import { getChildrenFromSlot } from '../DlTabPanels/utils'
 
 export default defineComponent({
     components: {
@@ -483,8 +482,12 @@ export default defineComponent({
 
         const hasSlotByName = (name: string) => !!slots[name]
         const hasSlotContent = (name: string) => {
-            const slotChildren = getChildrenFromSlot(slots[name])
-            return !!slotChildren.length
+            const slot = slots[name]
+            if (slot) {
+                const newSlot = typeof slot === 'function' ? slot() : slot
+                return newSlot?.length > 0
+            }
+            return false
         }
 
         return {
