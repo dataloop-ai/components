@@ -77,10 +77,16 @@
                 </dl-tooltip>
                 <div v-if="hasSelectedSlot" style="width: 100%">
                     <slot
-                        v-if="searchable ? !isExpanded : true"
+                        v-if="shouldShowSelectedSlotContent"
                         :opt="selectedOption"
                         name="selected"
                     />
+                    <span
+                        v-else-if="!isActiveSearchInput"
+                        class="root-container--placeholder"
+                    >
+                        {{ filterSelectLabel }}
+                    </span>
                 </div>
                 <template v-else>
                     <span
@@ -477,6 +483,14 @@ export default defineComponent({
         }
 
         const hasSlotByName = (name: string) => !!slots[name]
+        const hasSlotContent = (name: string) => {
+            const slot = slots[name]
+            if (slot) {
+                const newSlot = typeof slot === 'function' ? slot() : slot
+                return newSlot?.length > 0
+            }
+            return false
+        }
 
         return {
             uuid: `dl-select-${v4()}`,
@@ -489,7 +503,8 @@ export default defineComponent({
             handleModelValueUpdate,
             searchTerm, // todo: merge this sometime
             searchInputValue,
-            hasSlotByName
+            hasSlotByName,
+            hasSlotContent
         }
     },
     computed: {
@@ -649,6 +664,15 @@ export default defineComponent({
         },
         hasSelectedSlot(): boolean {
             return !!this.hasSlotByName('selected')
+        },
+        hasSelectedSlotContent(): boolean {
+            return this.hasSlotContent('selected')
+        },
+        isActiveSearchInput(): boolean {
+            return this.searchable && this.isExpanded
+        },
+        shouldShowSelectedSlotContent(): boolean {
+            return this.hasSelectedSlotContent && !this.isActiveSearchInput
         },
         computedPlaceholder(): string {
             return this.placeholder || 'Select option'
