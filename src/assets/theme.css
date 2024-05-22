@@ -40,7 +40,7 @@ body {
     --dl-color-lighter: #999999;
     --dl-color-hover: #7b8cff;
     --dl-color-disabled: #b3b3b3;
-    --dl-color-fill: #00000005;
+    --dl-color-fill: #0000001e;
     --dl-color-fill-hover: #f8f8f8;
     --dl-color-separator: #e4e4e4;
     --dl-color-scrollbar: #e4e4e4;
@@ -100,7 +100,7 @@ body {
     --dl-color-lighter: #ffffff66;
     --dl-color-hover: #aeb9ff;
     --dl-color-disabled: #ffffff40;
-    --dl-color-fill: #ffffff05;
+    --dl-color-fill: #ffffff1e;
     --dl-color-fill-secondary: #f8f8f81a;
     --dl-color-fill-hover: #454a50;
     --dl-color-separator: #ffffff26;
