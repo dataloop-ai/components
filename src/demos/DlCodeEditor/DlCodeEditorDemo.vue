@@ -1,17 +1,8 @@
 <template>
     <div>
-        <dl-switch
-            v-model="lines"
-            left-label="code lines"
-        />
-        <dl-switch
-            v-model="readonly"
-            left-label="readonly"
-        />
-        <dl-switch
-            v-model="bordered"
-            left-label="bordered"
-        />
+        <dl-switch v-model="lines" left-label="code lines" />
+        <dl-switch v-model="readonly" left-label="readonly" />
+        <dl-switch v-model="bordered" left-label="bordered" />
         <dl-code-editor
             v-model="codeEditorValue"
             width="45vw"
@@ -195,7 +186,7 @@ if __name__ == "__main__":
         }))
 
         watch(codeEditorValue, (val) => {
-            console.log('@@@', val)
+            console.log('Code Value Changed: ', val)
         })
 
         return {

@@ -1563,9 +1563,9 @@ export default defineComponent({
 
     &__adornment-container {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: var(--dl-input-align-items);
-        width: 30px;
+        flex: 0 0 22px;
         &--expandable {
             margin-top: 3px;
             margin-right: 3px;

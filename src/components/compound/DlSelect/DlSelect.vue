@@ -75,12 +75,18 @@
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
                 </dl-tooltip>
-                <div v-if="hasSelectedSlot && hasSelection" style="width: 100%">
+                <div v-if="hasSelectedSlot" style="width: 100%">
                     <slot
-                        v-if="searchable ? !isExpanded : true"
+                        v-if="shouldShowSelectedSlotContent"
                         :opt="selectedOption"
                         name="selected"
                     />
+                    <span
+                        v-else-if="!isActiveSearchInput"
+                        class="root-container--placeholder"
+                    >
+                        {{ filterSelectLabel }}
+                    </span>
                 </div>
                 <template v-else>
                     <span
@@ -341,11 +347,13 @@ import {
     getLabel,
     getIconSize,
     optionsValidator,
-    DlSelectOptionType,
     getLabelOfSelectedOption,
     getCaseInsensitiveInput
 } from './utils'
-import { DlSelectOption as DlSelectOptionEntry } from '../types'
+import {
+    DlSelectOption as DlSelectOptionEntry,
+    DlSelectOptionType
+} from '../types'
 import DlSelectOption from './components/DlSelectOption.vue'
 import { cloneDeep, isEqual } from 'lodash'
 import { getColor } from '../../../utils'
@@ -475,6 +483,14 @@ export default defineComponent({
         }
 
         const hasSlotByName = (name: string) => !!slots[name]
+        const hasSlotContent = (name: string) => {
+            const slot = slots[name]
+            if (slot) {
+                const newSlot = typeof slot === 'function' ? slot() : slot
+                return newSlot?.length > 0
+            }
+            return false
+        }
 
         return {
             uuid: `dl-select-${v4()}`,
@@ -487,7 +503,8 @@ export default defineComponent({
             handleModelValueUpdate,
             searchTerm, // todo: merge this sometime
             searchInputValue,
-            hasSlotByName
+            hasSlotByName,
+            hasSlotContent
         }
     },
     computed: {
@@ -647,6 +664,15 @@ export default defineComponent({
         },
         hasSelectedSlot(): boolean {
             return !!this.hasSlotByName('selected')
+        },
+        hasSelectedSlotContent(): boolean {
+            return this.hasSlotContent('selected')
+        },
+        isActiveSearchInput(): boolean {
+            return this.searchable && this.isExpanded
+        },
+        shouldShowSelectedSlotContent(): boolean {
+            return this.hasSelectedSlotContent && !this.isActiveSearchInput
         },
         computedPlaceholder(): string {
             return this.placeholder || 'Select option'
@@ -1219,7 +1245,9 @@ export default defineComponent({
         justify-content: center !important;
         align-items: center;
         color: var(--dl-color-medium);
-        transition-property: transform, -webkit-transform;
+        transition-property:
+            transform,
+            -webkit-transform;
         transition-duration: 0.28s, 0.28s;
         transition-timing-function: ease, ease;
         transition-delay: 0s, 0s;
