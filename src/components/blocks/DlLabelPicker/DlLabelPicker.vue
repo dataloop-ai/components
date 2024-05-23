@@ -106,14 +106,14 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        defaultSelectedLabel: {
+        initialSelection: {
             type: Object as PropType<DlLabelPickerItem>,
-            default: undefined
+            default: null
         }
     },
     emits: ['selected-label', 'click', 'focus', 'blur', 'clear'],
     setup(props, { emit, slots }) {
-        const { items, defaultSelectedLabel } = toRefs(props)
+        const { items, initialSelection } = toRefs(props)
 
         const columns: DlTableColumn[] = [
             {
@@ -129,7 +129,7 @@ export default defineComponent({
 
         const inputValue = ref('')
         const currentSelectedLabel = ref<DlLabelPickerItem>(
-            (defaultSelectedLabel.value ?? items.value?.[0]) || null
+            (initialSelection?.value ?? items.value?.[0]) || null
         )
         const table = ref()
         const handleRowClick = (event: MouseEvent, item: DlLabelPickerItem) => {
