@@ -104,11 +104,15 @@ export default defineComponent({
         hideNoData: {
             type: Boolean,
             default: false
+        },
+        initialSelection: {
+            type: Object as PropType<DlLabelPickerItem>,
+            default: null
         }
     },
     emits: ['selected-label', 'click', 'focus', 'blur', 'clear'],
     setup(props, { emit, slots }) {
-        const { items } = toRefs(props)
+        const { items, initialSelection } = toRefs(props)
 
         const columns: DlTableColumn[] = [
             {
@@ -124,9 +128,8 @@ export default defineComponent({
 
         const inputValue = ref('')
         const currentSelectedLabel = ref<DlLabelPickerItem>(
-            items.value ? items.value[0] : null
+            (initialSelection?.value ?? items.value?.[0]) || null
         )
-
         const table = ref()
         const handleRowClick = (event: MouseEvent, item: DlLabelPickerItem) => {
             table.value.$el
@@ -203,9 +206,9 @@ export default defineComponent({
 
         onMounted(() => {
             nextTick(() => {
-                if (items.value?.[0]?.identifier) {
+                if (currentSelectedLabel.value.identifier) {
                     const target = table.value.$el.querySelector(
-                        `[data-label-picker-identifier="${items.value[0].identifier}"]`
+                        `[data-label-picker-identifier="${currentSelectedLabel.value.identifier}"]`
                     )
                     target?.closest('tr')?.classList.add('selected')
                 }

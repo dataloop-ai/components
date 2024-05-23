@@ -7,6 +7,7 @@
                 title: '',
                 icon: ''
             }"
+            :initial-selection="initialSelection"
             hide-bottom
             hide-no-data
             @selected-label="setSelectedEvent"
@@ -72,11 +73,12 @@ export default defineComponent({
     },
     setup() {
         const items = ref(rows)
+        const initialSelection = ref(rows[1])
         const lastSelected = ref<DlLabelPickerItem>(null)
         const setSelectedEvent = (item: DlLabelPickerItem) => {
             lastSelected.value = item
         }
-        return { items, lastSelected, setSelectedEvent }
+        return { items, lastSelected, setSelectedEvent, initialSelection }
     }
 })
 </script>
