@@ -28,7 +28,7 @@
                         >
                             <template #selected="scope">
                                 <span class="json-query-menu-option">
-                                    {{ scope.opt.label }}
+                                    {{ scope.opt ? scope.opt.label : '' }}
                                 </span>
                             </template>
                             <template #option="scope">
