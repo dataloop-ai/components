@@ -105,6 +105,16 @@ export default {
                 defaultValue: { summary: '900px' }
             }
         },
+        sidebarWidth: {
+            name: 'sidebarWidth',
+            defaultValue: 'fit-content',
+            description: 'The width of the stepper sidebar',
+            control: 'text',
+            table: {
+                type: { summary: String },
+                defaultValue: { summary: 'fit-content' }
+            }
+        },
         hasNextStep: {
             name: 'hasNextStep',
             defaultValue: false,
