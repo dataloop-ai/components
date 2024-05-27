@@ -107,12 +107,12 @@ export default {
         },
         sidebarWidth: {
             name: 'sidebarWidth',
-            defaultValue: '100%',
+            defaultValue: 'fit-content',
             description: 'The width of the stepper sidebar',
             control: 'text',
             table: {
                 type: { summary: String },
-                defaultValue: { summary: '100%' }
+                defaultValue: { summary: 'fit-content' }
             }
         },
         hasNextStep: {

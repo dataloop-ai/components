@@ -73,7 +73,7 @@ export default defineComponent({
         width: {
             type: String,
             required: false,
-            default: '100%'
+            default: 'fit-content'
         }
     },
     emits: ['step-click'],

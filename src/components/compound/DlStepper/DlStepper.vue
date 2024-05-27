@@ -141,7 +141,7 @@ export default defineComponent({
         sidebarWidth: {
             type: String,
             required: false,
-            default: '100%'
+            default: 'fit-content'
         },
         bgColor: {
             type: String,
