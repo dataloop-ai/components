@@ -21,6 +21,7 @@
                 :bg-color="bgColor"
                 :hide="hide"
                 :disabled="disabled"
+                :width="sidebarWidth"
                 @step-click="$emit('set-step', $event)"
             />
             <div class="dl-stepper-content dl-stepper-content--slot">
@@ -136,6 +137,11 @@ export default defineComponent({
             type: String,
             required: false,
             default: '700px'
+        },
+        sidebarWidth: {
+            type: String,
+            required: false,
+            default: '100%'
         },
         bgColor: {
             type: String,
