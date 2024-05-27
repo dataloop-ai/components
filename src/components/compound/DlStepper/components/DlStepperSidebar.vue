@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar">
+    <div class="sidebar" :style="cssVars">
         <dl-list v-if="!hide">
             <dl-list-item
                 v-for="(step, index) in steps"
@@ -24,13 +24,13 @@
                 <dl-item-section no-wrap>
                     <span :class="stepClass(step)">
                         <span v-if="!step.icon">{{ index + 1 }}. </span>
-                        <div>
-                            <span>
+                        <div style="width: 94%">
+                            <dl-ellipsis>
                                 {{ getStepTitle(step) }}
-                            </span>
-                            <span class="sidebar--subtitle">
+                            </dl-ellipsis>
+                            <dl-ellipsis class="sidebar--subtitle">
                                 {{ getStepSubtitle(step) }}
-                            </span>
+                            </dl-ellipsis>
                         </div>
                         <dl-tooltip v-if="isStepDisabled(step)">
                             {{ getStepDisabledTooltip(step) }}
@@ -46,7 +46,7 @@
 import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
 import { DlItemSection, DlTooltip } from '../../../shared'
-import { DlList } from '../../../essential'
+import { DlList, DlEllipsis } from '../../../essential'
 import { Step } from '../models'
 
 export default defineComponent({
@@ -55,7 +55,8 @@ export default defineComponent({
         DlList,
         DlListItem,
         DlItemSection,
-        DlTooltip
+        DlTooltip,
+        DlEllipsis
     },
     props: {
         steps: {
@@ -68,9 +69,21 @@ export default defineComponent({
             default: 'dl-color-fill-third'
         },
         disabled: { type: Boolean, default: false },
-        hide: { type: Boolean, default: false }
+        hide: { type: Boolean, default: false },
+        width: {
+            type: String,
+            required: false,
+            default: 'fit-content'
+        }
     },
     emits: ['step-click'],
+    computed: {
+        cssVars(): Record<string, string | number> {
+            return {
+                '--dl-stepper-sidebar-width': this.width
+            }
+        }
+    },
     methods: {
         endIcon(step: Step) {
             return {
@@ -142,6 +155,7 @@ export default defineComponent({
 .sidebar {
     display: flex;
     min-width: 250px;
+    width: var(--dl-stepper-sidebar-width);
     padding: 15px 0px;
     border-right: 1px solid var(--dl-color-separator);
     background-color: var(--dl-stepper-bg);
@@ -165,7 +179,6 @@ export default defineComponent({
     }
 
     &--subtitle {
-        display: block;
         line-height: 1;
         font-size: var(--dl-font-size-body);
         color: var(--dl-color-lighter);
@@ -173,6 +186,7 @@ export default defineComponent({
 
     &--step {
         display: flex;
+        position: relative;
         gap: 3px;
         font-size: var(--dl-font-size-h4);
         line-height: 18px;

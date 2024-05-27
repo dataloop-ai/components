@@ -5,6 +5,7 @@
             :hide-close-button="true"
             done-button-label="Create"
             width="calc(100vh-400px)"
+            sidebar-width="300px"
             header-title="Create New Task"
             :content-title="`${stepper.currentIndex + 1}. ${
                 stepper.currentStep.value
@@ -24,10 +25,7 @@
         >
             <template #content-header="{ state }">
                 <div style="display: flex; gap: 20px; align-items: center">
-                    <dl-typography
-                        size="h3"
-                        variant="h3"
-                    >
+                    <dl-typography size="h3" variant="h3">
                         {{
                             `${stepper.currentIndex + 1}. ${
                                 stepper.currentStep.value
@@ -142,12 +140,16 @@ export default defineComponent({
                 {
                     value: 'general',
                     title: 'general',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae massa porttitor, tempor ex vel, varius felis. ',
                     warning: 'Some issues in the step',
                     completed: true
                 },
                 {
                     value: 'data',
                     title: 'data',
+                    subtitle:
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae massa porttitor, tempor ex vel, varius felis. ',
                     completed: true
                 },
                 {
