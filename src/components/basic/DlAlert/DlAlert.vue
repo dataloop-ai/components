@@ -227,6 +227,7 @@ export default defineComponent({
     .text {
         padding-left: 10px;
         font-size: var(--dl-font-size-body);
+        line-height: normal;
         align-self: center;
         word-break: break-word;
     }
