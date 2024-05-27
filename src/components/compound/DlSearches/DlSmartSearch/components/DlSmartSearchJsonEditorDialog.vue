@@ -15,10 +15,7 @@
             </template>
             <template #body>
                 <div class="json-editor-layout">
-                    <div
-                        class="json-query-menu"
-                        style="margin-bottom: 10px"
-                    >
+                    <div class="json-query-menu" style="margin-bottom: 10px">
                         <dl-select
                             :model-value="selectedOption"
                             width="300px"
@@ -28,7 +25,7 @@
                         >
                             <template #selected="scope">
                                 <span class="json-query-menu-option">
-                                    {{ scope.opt.label }}
+                                    {{ scope.opt ? scope.opt.label : '' }}
                                 </span>
                             </template>
                             <template #option="scope">
@@ -143,9 +140,7 @@
             </template>
             <template #footer>
                 <div class="full-width flex justify-end">
-                    <dl-button @click="deleteQuery">
-                        Delete
-                    </dl-button>
+                    <dl-button @click="deleteQuery"> Delete </dl-button>
                 </div>
             </template>
         </dl-dialog-box>
