@@ -15,9 +15,12 @@
                 :color="iconColor"
                 :size="iconSize"
             />
-            <span class="text" :style="textStyle"
-            ><slot v-if="!text" /> <span v-else> {{ text }}</span></span
-            >
+            <span class="text" :style="textStyle">
+                <slot v-if="!text" />
+                <span v-else>
+                    {{ text }}
+                </span>
+            </span>
         </div>
         <div
             v-if="closable"
@@ -46,6 +49,7 @@ import {
     onMounted,
     Ref,
     ref,
+    toRefs,
     watch
 } from 'vue-demi'
 import { getColor, includes } from '../../../utils'
@@ -112,15 +116,19 @@ export default defineComponent({
         text: {
             type: String,
             default: null
+        },
+        padding: {
+            type: String,
+            default: null
         }
     },
     emits: ['update:model-value'],
     setup(props, { emit }) {
-        const show = ref(props.modelValue)
-        const type = ref(props.type as DlAlertType)
-        const typeIcon = computed(() => typeToIconMap[type.value])
-        const icon = computed(() => typeToIconMap[type.value])
-        const iconColor = computed(() => typeToIconColorMap[type.value])
+        const { padding, modelValue, type } = toRefs(props)
+        const icon = computed(() => typeToIconMap[type.value as DlAlertType])
+        const iconColor = computed(
+            () => typeToIconColorMap[type.value as DlAlertType]
+        )
         const textStyle = computed(() => ({
             color: getColor(props.textColor, 'dl-color-darker')
         }))
@@ -134,26 +142,21 @@ export default defineComponent({
             normalizeStyles(props.fluid)
         })
 
-        watch(
-            () => props.modelValue,
-            (val) => {
-                show.value = val
-            }
-        )
+        watch(modelValue, (val) => {
+            modelValue.value = val
+        })
 
-        watch(
-            () => props.type,
-            (val) => {
-                type.value = val as DlAlertType
-            }
-        )
+        watch(type, (val) => {
+            type.value = val as DlAlertType
+        })
 
         watch(
             [
                 () => props.fluid,
                 () => props.text,
                 () => props.closable,
-                () => props.type
+                () => props.type,
+                () => props.padding
             ],
             ([fluid]) => {
                 normalizeStyles(fluid)
@@ -169,7 +172,9 @@ export default defineComponent({
                     display: 'flex'
                 }
                 const rootS: Record<string, any> = {
-                    backgroundColor: getColor(typeToBackgroundMap[type.value])
+                    backgroundColor: getColor(
+                        typeToBackgroundMap[type.value as DlAlertType]
+                    )
                 }
                 if (height > 46) {
                     iconS.alignSelf = 'flex-start'
@@ -181,6 +186,11 @@ export default defineComponent({
                 } else {
                     rootS.width = 'fit-content'
                 }
+
+                if (padding.value) {
+                    rootS['--dl-alert-padding'] = padding.value
+                }
+
                 iconStyle.value = iconS
                 rootStyle.value = rootS
                 closeButtonStyle.value = iconS
@@ -188,14 +198,14 @@ export default defineComponent({
         }
 
         function handleClose() {
-            show.value = false
+            modelValue.value = false
             emit('update:model-value', false)
         }
 
         return {
             uuid: `dl-alert-${v4()}`,
             rootRef,
-            show,
+            show: modelValue,
             icon,
             iconColor,
             rootStyle,
@@ -221,7 +231,7 @@ export default defineComponent({
     > div {
         display: flex;
         flex-direction: row;
-        padding: 10px 16px;
+        padding: var(--dl-alert-padding, 10px 16px);
     }
 
     .text {
