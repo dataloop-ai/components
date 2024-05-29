@@ -1,6 +1,6 @@
 <template>
     <div>
-        <DlAlert type="info" :closable="true" fluid>
+        <DlAlert type="info" :closable="true" fluid padding="150px">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quas eos
             amet, nobis unde animi atque itaque? Provident suscipit enim eos
             sequi dolor minima optio tempora error tenetur, autem ratione
