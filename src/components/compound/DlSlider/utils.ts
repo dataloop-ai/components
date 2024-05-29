@@ -1,7 +1,7 @@
 export const getInputValue = (value: string, min: number, max: number) => {
-    if (parseFloat(value) > max || parseFloat(value) < min) {
-        return { value: (parseFloat(value) > max ? max : min).toString() }
-    }
+    const numericValue = parseFloat(value)
+    const clampedValue = Math.max(min, Math.min(numericValue, max))
+    const isUpdated = numericValue !== clampedValue
 
-    return { value }
+    return { value: clampedValue.toString(), isUpdated }
 }

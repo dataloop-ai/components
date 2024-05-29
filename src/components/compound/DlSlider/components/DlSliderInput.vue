@@ -57,11 +57,18 @@ export default defineComponent({
             const val = evt.target.value
             if (val === '') return
 
-            const { value } = getInputValue(val, props.min, props.max)
+            const { value, isUpdated } = getInputValue(
+                val,
+                props.min,
+                props.max
+            )
 
-            emit('change', Number(value))
-            emit('update:model-value', Number(value))
-            if (sliderInput.value) sliderInput.value.value = value
+            emit('change', value)
+            emit('update:model-value', value)
+
+            if (isUpdated) {
+                if (sliderInput.value) sliderInput.value.value = value
+            }
         }
 
         const debouncedHandleChange = computed(() => {
