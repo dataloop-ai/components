@@ -177,7 +177,7 @@
                     :style="
                         optionsCount > MAX_ITEMS_PER_LIST
                             ? ''
-                            : `width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px); overflow-y: scroll;`
+                            : `width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px); overflow-y: auto;`
                     "
                 >
                     <dl-select-option
@@ -1245,9 +1245,7 @@ export default defineComponent({
         justify-content: center !important;
         align-items: center;
         color: var(--dl-color-medium);
-        transition-property:
-            transform,
-            -webkit-transform;
+        transition-property: transform, -webkit-transform;
         transition-duration: 0.28s, 0.28s;
         transition-timing-function: ease, ease;
         transition-delay: 0s, 0s;
