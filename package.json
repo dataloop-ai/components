@@ -84,7 +84,6 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vitest": "^1.6.0",
-    "vitest-canvas-mock": "^0.3.3",
     "vue": "^3.4.27",
     "vue-composition-test-utils": "^1.0.3",
     "vue-loader": "^17.4.2",

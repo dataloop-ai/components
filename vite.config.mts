@@ -8,9 +8,6 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         setupFiles: ['tests/setup.js'],
-        deps: {
-            inline: ['vitest-canvas-mock']
-        },
         exclude: [
             'node_modules/**/*.spec.js',
             'node_modules/**/*.spec.ts',
