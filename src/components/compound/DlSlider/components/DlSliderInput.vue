@@ -67,7 +67,9 @@ export default defineComponent({
             emit('update:model-value', value)
 
             if (isUpdated) {
-                if (sliderInput.value) sliderInput.value.value = value
+                if (sliderInput.value) {
+                    sliderInput.value.value = String(value)
+                }
             }
         }
 

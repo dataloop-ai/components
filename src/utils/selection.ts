@@ -1,3 +1,5 @@
+import { isMobileOrTablet } from '.'
+
 export function clearSelection() {
     if (window.getSelection) {
         const selection = window.getSelection()
@@ -7,7 +9,7 @@ export function clearSelection() {
             selection.empty()
         } else if (selection.removeAllRanges) {
             selection.removeAllRanges()
-            if ('ontouchstart' in window) {
+            if (isMobileOrTablet()) {
                 selection.addRange(document.createRange())
             }
         }

@@ -3,5 +3,5 @@ export const getInputValue = (value: string, min: number, max: number) => {
     const clampedValue = Math.max(min, Math.min(numericValue, max))
     const isUpdated = numericValue !== clampedValue
 
-    return { value: clampedValue.toString(), isUpdated }
+    return { value: clampedValue, isUpdated }
 }

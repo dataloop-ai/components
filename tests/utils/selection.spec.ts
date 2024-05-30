@@ -1,5 +1,15 @@
+import * as utils from '../../src/utils'
 import { clearSelection } from '../../src/utils'
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import {
+    describe,
+    it,
+    expect,
+    beforeEach,
+    afterEach,
+    vi,
+    beforeAll,
+    afterAll
+} from 'vitest'
 
 describe('Selection utils', () => {
     describe('clearSelection', () => {
@@ -49,8 +59,23 @@ describe('Selection utils', () => {
                 })
 
                 describe('if the window has "ontouchstart" method', () => {
+                    let utilMock: any = null
+                    beforeAll(() => {
+                        utilMock = vi
+                            .spyOn(utils, 'isMobileOrTablet')
+                            .mockImplementation(() => true)
+                    })
+                    afterAll(() => {
+                        if (utilMock) {
+                            utilMock.mockRestore()
+                        }
+                    })
+
                     it('should call the "addRange" method', () => {
                         window.ontouchstart = vi.fn()
+                        vi.spyOn(utils, 'isMobileOrTablet').mockImplementation(
+                            () => true
+                        )
                         const docSpy = vi.spyOn(document, 'createRange')
 
                         spy.mockImplementation(() => ({
@@ -58,10 +83,13 @@ describe('Selection utils', () => {
                             addRange: vi.fn()
                         }))
 
-                        docSpy.mockImplementation(() => ({
-                            startOffset: 0,
-                            endOffset: 0
-                        }))
+                        docSpy.mockImplementation(
+                            () =>
+                                ({
+                                    startOffset: 0,
+                                    endOffset: 0
+                                }) as any
+                        )
 
                         clearSelection()
                         expect(window.getSelection()!.addRange).toBeDefined()
