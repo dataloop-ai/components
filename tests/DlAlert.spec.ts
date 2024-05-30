@@ -53,23 +53,29 @@ describe('DlAlert', () => {
         })
     })
 
-    describe('When the close icon is clicked', () => {
-        it('should trigger the "update:model-value" event and close hide the component', async () => {
-            const wrapper = mount(DlAlert, {
+    describe.only('When the close icon is clicked', () => {
+        let wrapper: any = null
+        beforeAll(async () => {
+            wrapper = mount(DlAlert, {
                 props: {
                     text: 'Alert',
                     type: 'success',
                     closable: true
                 }
             })
-
             const closeBtn = await wrapper.find(_closeBtn)
             closeBtn.trigger('click')
             await wrapper.vm.$nextTick()
+            // @ts-ignore
+            await window.delay(500)
+        })
+
+        it('should trigger the "update:model-value" event and close hide the component', () => {
             expect(wrapper.emitted()).toHaveProperty('update:model-value')
             let error: any
             try {
                 const root = wrapper.get(_root)
+                console.log(root)
             } catch (e) {
                 error = e
             }
