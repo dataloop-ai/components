@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { VueWrapper, mount } from '@vue/test-utils'
 import { DlSliderBase } from '../../src/components/compound/DlSlider/components'
 import touchPanDirective from '../../src/directives/TouchPan'
 import { describe, it, expect, beforeAll } from 'vitest'
@@ -8,7 +8,7 @@ describe('DlSliderBase', () => {
     const _trackContainer = '[data-test="track-container"]'
 
     describe('When mounting', () => {
-        let wrapper: any
+        let wrapper: VueWrapper<any>
 
         beforeAll(() => {
             wrapper = mount(DlSliderBase, {
@@ -31,7 +31,8 @@ describe('DlSliderBase', () => {
         })
         describe('When emitted slider events', () => {
             it('should the right model value length', async function () {
-                await wrapper.find(_trackContainer).trigger('mousedown')
+                const elem = await wrapper.find(_trackContainer)
+                await elem.trigger('mousedown')
                 expect(wrapper.emitted()['update:model-value'].length).toBe(1)
             })
             it('should the right model value length', async function () {

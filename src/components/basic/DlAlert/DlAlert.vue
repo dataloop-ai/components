@@ -125,6 +125,7 @@ export default defineComponent({
     emits: ['update:model-value'],
     setup(props, { emit }) {
         const { padding, modelValue, type } = toRefs(props)
+        const show = ref(modelValue.value)
         const icon = computed(() => typeToIconMap[type.value as DlAlertType])
         const iconColor = computed(
             () => typeToIconColorMap[type.value as DlAlertType]
@@ -143,7 +144,7 @@ export default defineComponent({
         })
 
         watch(modelValue, (val) => {
-            modelValue.value = val
+            show.value = val
         })
 
         watch(type, (val) => {
@@ -198,14 +199,14 @@ export default defineComponent({
         }
 
         function handleClose() {
-            modelValue.value = false
+            show.value = false
             emit('update:model-value', false)
         }
 
         return {
             uuid: `dl-alert-${v4()}`,
             rootRef,
-            show: modelValue,
+            show,
             icon,
             iconColor,
             rootStyle,

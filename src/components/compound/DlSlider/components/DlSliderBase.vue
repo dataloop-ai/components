@@ -13,26 +13,15 @@
             data-test="track-container"
             v-on="trackContainerEvents"
         >
-            <div
-                class="track"
-                :style="trackStyle"
-                data-test="track"
-            >
-                <div
-                    class="selection"
-                    :style="selectionBarStyle"
-                />
-                <div
-                    class="thumb"
-                    :style="thumbStyle"
-                    data-test="thumb"
-                >
+            <div class="track" :style="trackStyle" data-test="track">
+                <div class="selection" :style="selectionBarStyle" />
+                <div class="thumb" :style="thumbStyle" data-test="thumb">
                     <input
                         v-if="name !== null && disabled !== true"
                         type="hidden"
                         :name="name"
                         :value="model"
-                    >
+                    />
                 </div>
             </div>
         </div>
@@ -48,7 +37,8 @@ import {
     stopAndPrevent,
     position,
     keyCodes,
-    between
+    between,
+    isMobileOrTablet
 } from '../../../../utils'
 import touchPanDirective from '../../../../directives/TouchPan'
 
@@ -131,7 +121,7 @@ export default defineComponent({
     },
     computed: {
         isMobile(): boolean {
-            return 'ontouchstart' in window
+            return isMobileOrTablet()
         },
         modelRatio(): number {
             return this.convertModelToRatio(this.model)
@@ -324,6 +314,7 @@ export default defineComponent({
             return between(val, this.minRation, this.maxRatio)
         },
         onActivate(evt: MouseEvent) {
+            console.log('hiihihihihihih')
             this.updatePosition(evt, this.getDragging(evt))
             this.updateValue()
 
