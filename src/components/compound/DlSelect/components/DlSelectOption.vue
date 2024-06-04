@@ -403,9 +403,7 @@ export default defineComponent({
     display: flex !important;
     justify-content: center !important;
     color: var(--dl-color-medium);
-    transition-property:
-        transform,
-        -webkit-transform;
+    transition-property: transform, -webkit-transform;
     transition-duration: 0.28s, 0.28s;
     transition-timing-function: ease, ease;
     transition-delay: 0s, 0s;
@@ -422,7 +420,7 @@ export default defineComponent({
 }
 
 .readonly-option {
-    height: 28px;
+    min-height: 28px;
     display: flex;
     align-items: center;
     font-size: 12px;
