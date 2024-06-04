@@ -53,7 +53,7 @@ describe('DlAlert', () => {
         })
     })
 
-    describe.only('When the close icon is clicked', () => {
+    describe('When the close icon is clicked', () => {
         let wrapper: any = null
         beforeAll(async () => {
             wrapper = mount(DlAlert, {
