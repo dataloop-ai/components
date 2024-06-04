@@ -77,16 +77,14 @@
                 </dl-tooltip>
                 <div v-if="hasSelectedSlot" style="width: 100%">
                     <slot
-                        v-if="shouldShowSelectedSlotContent"
+                        v-if="!isActiveSearchInput"
                         :opt="selectedOption"
                         name="selected"
-                    />
-                    <span
-                        v-else-if="!isActiveSearchInput"
-                        class="root-container--placeholder"
                     >
-                        {{ filterSelectLabel }}
-                    </span>
+                        <span class="root-container--placeholder">
+                            {{ filterSelectLabel }}
+                        </span>
+                    </slot>
                 </div>
                 <template v-else>
                     <span
@@ -671,9 +669,6 @@ export default defineComponent({
         isActiveSearchInput(): boolean {
             return this.searchable && this.isExpanded
         },
-        shouldShowSelectedSlotContent(): boolean {
-            return this.hasSelectedSlotContent && !this.isActiveSearchInput
-        },
         computedPlaceholder(): string {
             return this.placeholder || 'Select option'
         },
@@ -690,9 +685,34 @@ export default defineComponent({
             }
         },
         selectedOption(): DlSelectOptionType {
-            return this.selectedIndex === -1
-                ? this.computedPlaceholder
-                : this.options[this.selectedIndex]
+            if (this.multiselect) {
+                if (this.modelValueLength === 1) {
+                    return this.options.find((option: any) => {
+                        return isEqual(
+                            option.value,
+                            Array.isArray(this.modelValue)
+                                ? this.modelValue[0]
+                                : this.modelValue
+                        )
+                    })
+                } else {
+                    return {
+                        label: this.filterSelectLabel,
+                        value: this.modelValue,
+                        readonly: true
+                    }
+                }
+            }
+
+            if (this.selectedIndex === -1) {
+                return {
+                    label: this.computedPlaceholder,
+                    value: null,
+                    readonly: true
+                }
+            }
+
+            return this.options[this.selectedIndex]
         },
         hasBeforeOptions(): boolean {
             return !!this.$slots['before-options']
