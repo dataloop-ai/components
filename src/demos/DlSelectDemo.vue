@@ -625,6 +625,66 @@
                 <dl-button label="Button" />
             </template>
         </dl-select>
+
+        Select with auto select selected
+        <dl-select
+            v-model="preSelectedValue"
+            width="84px"
+            without-borders
+            with-chips
+            align-right
+            searchable
+            :options="[
+                { label: 'High', value: 'high', bgColor: 'dl-color-negative' },
+                {
+                    label: 'Medium',
+                    value: 'medium',
+                    bgColor: 'dl-color-warning',
+                    textColor: 'dl-color-darker',
+                    icon: 'icon-dl-search'
+                },
+                {
+                    label: 'Low',
+                    value: 'low',
+                    bgColor: 'dl-color-positive',
+                    textColor: 'dl-color-darker'
+                }
+            ]"
+            required
+        >
+            <template #selected="scope">
+                <dl-chip
+                    :text-color="scope.opt.textColor"
+                    :color="scope.opt.bgColor"
+                >
+                    {{ scope.opt.label }}
+                </dl-chip>
+            </template>
+            <template #option="scope">
+                <div class="flex">
+                    <dl-chip
+                        :text-color="scope.opt.textColor"
+                        :color="scope.opt.bgColor"
+                    >
+                        {{ scope.opt.label }}
+                    </dl-chip>
+                </div>
+            </template>
+        </dl-select>
+
+        Select with multiselect auto expanded and fixed width and virtual scroll
+        with selected slot
+        <dl-select
+            v-model="selectedWithChildrenAndReadonly"
+            :options="alotOfOptionsExpanded"
+            multiselect
+            searchable
+            style="margin-bottom: 150px; width: 200px"
+        >
+            <template #selected="scope">
+                <div>{{ scope.opt.label }}</div>
+            </template>
+        </dl-select>
     </div>
 </template>
 
@@ -891,7 +951,8 @@ export default defineComponent({
             selectedWithChildrenCapitalized: [],
             tasksFilter: [],
             showAllOption: true,
-            disabledSelected: 'disabled option'
+            disabledSelected: 'disabled option',
+            preSelectedValue: null
         }
     },
     computed: {
@@ -907,7 +968,7 @@ export default defineComponent({
                     key: i,
                     subLabel: 'not so high',
                     label: 'High ' + i,
-                    value: 'high',
+                    value: 'high' + i,
                     bgColor: 'dl-color-negative'
                 })
             }
@@ -922,7 +983,7 @@ export default defineComponent({
                     key: i,
                     subLabel: 'not so high',
                     label: 'High ' + i,
-                    value: 'high',
+                    value: 'high' + i,
                     bgColor: 'dl-color-negative'
                 })
             }
