@@ -272,7 +272,8 @@ describe('dl-select computed', () => {
 
     it('should compute the selected option', async () => {
         const wrapper = mount(DlSelect)
-        expect(wrapper.vm.selectedOption).toMatch('Select option')
+        expect(typeof wrapper.vm.selectedOption).toBe('object')
+        expect(wrapper.vm.selectedOption.label).toMatch('Select option')
         await wrapper.setProps({
             options: ['option1']
         })
