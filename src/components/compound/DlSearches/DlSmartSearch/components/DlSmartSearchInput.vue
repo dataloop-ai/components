@@ -445,10 +445,11 @@ export default defineComponent({
                     queryRightSide = queryRightSide.trimStart()
                 } else {
                     // this|situation: replace whatever is there on both sides with the value
-                    queryLeftSide = queryLeftSide.replace(
-                        /('[^']+'?|[^'\s]+)$/,
-                        ''
-                    )
+                    if (/^[^']+('[^']?'[^']+)?'[^']+'?$/.test(queryLeftSide)) {
+                        queryLeftSide = queryLeftSide.replace(/'[^']+'?$/, '')
+                    } else {
+                        queryLeftSide = queryLeftSide.replace(/[^'\s]+$/, '')
+                    }
                     queryRightSide =
                         removeLeadingExpression(queryRightSide).trimStart()
                 }
