@@ -369,6 +369,22 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.searchQuery.endsWith(' ')).toBeTruthy()
             })
 
+            it('should apply suggestions after string values correctly', async () => {
+                wrapper.vm.focused = true
+                wrapper.vm.debouncedSetInputValue(`name = 'Jesus' AND co`)
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.showSuggestions).toBeTruthy()
+                wrapper.vm.setInputFromSuggestion(wrapper.vm.suggestions[0])
+                // @ts-ignore
+                await window.delay(500)
+                await wrapper.vm.$nextTick()
+                expect(wrapper.vm.searchQuery).toBe(
+                    `name = 'Jesus' AND completed `
+                )
+            })
+
             describe('when moving the caret back in the entered text', async () => {
                 const testString = `level = low AND metadata.test = 'ok'`
                 const resultString1 = `completed = low AND metadata.test = 'ok'`
@@ -649,7 +665,7 @@ describe('DlSmartSearchInput', () => {
             await wrapper.vm.$nextTick()
             wrapper.vm.blur()
             // @ts-ignore
-            await window.delay(500)
+            await window.delay(900)
             await wrapper.vm.$nextTick()
             expect(wrapper.emitted()['update:model-value']).toEqual([
                 [{ name: { $in: ['Arouet'] } }]
