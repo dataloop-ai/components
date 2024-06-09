@@ -181,6 +181,18 @@
             searchable
         />
 
+        selected ellipsis
+        <div style="width: 200px">
+            <dl-select
+                v-model="selectedByFilteringSearch"
+                :options="ellipsisSelected"
+                size="m"
+                multiselect
+                placeholder="contributors"
+                searchable
+            />
+        </div>
+
         <dl-select
             v-model="selectedWithEmitValue"
             title="Emit Value"
@@ -700,6 +712,21 @@ const defaultOptions = [
     { label: 'Contributor 3', value: 'c3' }
 ]
 
+const defaultOptions1 = [
+    {
+        label: 'Contributor 1 Contributor 1 Contributor 1 Contributor 1 Contributor 1 Contributor 1',
+        value: 'c1'
+    },
+    {
+        label: 'Contributor 2 Contributor 2 Contributor 2 Contributor 2 Contributor 2 Contributor 2',
+        value: 'c2'
+    },
+    {
+        label: 'Contributor 3 Contributor 3 Contributor 3 Contributor 3 Contributor 3 Contributor 3',
+        value: 'c3'
+    }
+]
+
 const treeOptions = [
     {
         label: 'root',
@@ -939,6 +966,7 @@ export default defineComponent({
                 badgeColor: 'dl-color-disabled'
             },
             searchOptions: defaultOptions,
+            ellipsisSelected: defaultOptions1,
             treeOptions,
             treeOptionsWithReadonly,
             treeOptionsExpanded,

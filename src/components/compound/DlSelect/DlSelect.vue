@@ -82,7 +82,7 @@
                         name="selected"
                     >
                         <span class="root-container--placeholder">
-                            {{ filterSelectLabel }}
+                            <dl-ellipsis :text="filterSelectLabel" />
                         </span>
                     </slot>
                 </div>
@@ -98,7 +98,7 @@
                             {{ computedAllItemsLabel }}
                         </template>
                         <template v-else>
-                            {{ filterSelectLabel }}
+                            <dl-ellipsis :text="filterSelectLabel" />
                         </template>
                     </span>
                     <span
@@ -1070,6 +1070,7 @@ export default defineComponent({
     }
     &--placeholder {
         color: var(--dl-select-placeholder-color, var(--placeholder-color));
+        width: 100%;
     }
 
     .dl-select__title-container {
