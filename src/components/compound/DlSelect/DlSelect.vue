@@ -82,7 +82,9 @@
                         name="selected"
                     >
                         <span class="root-container--placeholder">
-                            <dl-ellipsis :text="filterSelectLabel" />
+                            <dl-ellipsis>
+                                {{ filterSelectLabel }}
+                            </dl-ellipsis>
                         </span>
                     </slot>
                 </div>
@@ -98,7 +100,7 @@
                             {{ computedAllItemsLabel }}
                         </template>
                         <template v-else>
-                            <dl-ellipsis :text="filterSelectLabel" />
+                            <dl-ellipsis> filterSelectLabel </dl-ellipsis>
                         </template>
                     </span>
                     <span
@@ -108,7 +110,9 @@
                         "
                         class="selected-label"
                     >
-                        {{ getLabel(selectedOption) }}
+                        <dl-ellipsis>
+                            {{ getLabel(selectedOption) }}
+                        </dl-ellipsis>
                     </span>
                 </template>
                 <div
@@ -1088,6 +1092,8 @@ export default defineComponent({
 
     .selected-label {
         color: var(--dl-select-placeholder-color, var(--placeholder-color));
+        width: fit-content;
+        max-width: 100%;
     }
 
     .dl-select__title {
@@ -1096,6 +1102,7 @@ export default defineComponent({
         text-align: left;
         margin-right: 5px;
         white-space: nowrap;
+        width: 100%;
     }
 
     .required-asterisk {
