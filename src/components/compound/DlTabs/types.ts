@@ -5,4 +5,5 @@ export interface DlTabDetails {
     disabled?: boolean
     showTooltip?: boolean
     tooltip?: string
+    icon?: string
 }
