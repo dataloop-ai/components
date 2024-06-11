@@ -107,6 +107,16 @@ export default {
                 type: { summary: 'string' },
                 defaultValue: { summary: '12px' }
             }
+        },
+        icon: {
+            name: 'icon',
+            defaultValue: '',
+            description: 'The name of the icon',
+            control: 'text',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: '' }
+            }
         }
     }
 }
