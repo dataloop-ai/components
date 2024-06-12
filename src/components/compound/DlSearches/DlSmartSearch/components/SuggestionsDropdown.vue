@@ -159,7 +159,7 @@ export default defineComponent({
         const removeQuotes = (item: any) => {
             const str = '' + item
             const match = str.match(/^'(.*)'$/)
-            return match ? match[1] : str
+            return match ? match[1].replace(/\\'/g, "'") : str
         }
 
         const updatePosition = () => {

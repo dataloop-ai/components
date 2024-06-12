@@ -17,6 +17,26 @@ describe('parseSmartQuery', () => {
         expect(result).toEqual({ name: 'John' })
     })
 
+    it('should retain quotes within string values', () => {
+        const query = 'name = "a\\" \'b"'
+        const result = parseSmartQuery(query)
+        expect(result).toEqual({ name: 'a" \'b' })
+
+        const query2 = "name = '\" a\\''"
+        const result2 = parseSmartQuery(query2)
+        expect(result2).toEqual({ name: '" a\'' })
+    })
+
+    it('should not be confused by operators within string values', () => {
+        const query = 'name = "lol >= kek"'
+        const result = parseSmartQuery(query)
+        expect(result).toEqual({ name: 'lol >= kek' })
+
+        const query2 = "name IN 'EXISTS lol'"
+        const result2 = parseSmartQuery(query2)
+        expect(result2).toEqual({ name: { $in: ['EXISTS lol'] } })
+    })
+
     it('should return the correct query for multiple key-value pairs joined by "AND"', () => {
         const query = 'name = "John" AND age >= 30 AND city = "New York"'
         const result = parseSmartQuery(query)
@@ -230,6 +250,12 @@ describe('stringifySmartQuery', () => {
         ])
         const result = stringifySmartQuery(replaced)
         expect(result).toEqual(string)
+    })
+
+    it('should convert and escape quotes', () => {
+        const query = 'name = "a\\" b\'"'
+        const result = stringifySmartQuery(parseSmartQuery(query))
+        expect(result).toBe("name = 'a\" b\\''")
     })
 })
 

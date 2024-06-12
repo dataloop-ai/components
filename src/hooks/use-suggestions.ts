@@ -333,10 +333,12 @@ export const useSuggestions = (
                 const mappedTypes: string[] = []
                 for (const type of filteredTypes) {
                     if (typeof type === 'string') {
-                        mappedTypes.push(`'${type}'`)
+                        mappedTypes.push(enquoteString(type))
                     } else if (typeof type === 'object') {
                         mappedTypes.push(
-                            ...Object.keys(type).map((key) => `'${key}'`)
+                            ...Object.keys(type).map((key) =>
+                                enquoteString(key)
+                            )
                         )
                     } else {
                         mappedTypes.push(type)
@@ -614,10 +616,19 @@ const isValidBoolean = (str: string) => {
 }
 
 const isValidString = (str: string) => {
-    const match = str.match(/(?<=\")(.*?)(?=\")|(?<=\')(.*?)(?=\')/)
-    if (!match) return false
-    const trimmed = str.trim()
-    return match[0] === trimmed.substring(1, trimmed.length - 1)
+    const matchSingleQuotes = str.match(/^\s*(?<!\\)'(.*)(?<!\\)'\s*$/)
+    if (matchSingleQuotes) {
+        return !/(?<!\\)'/.test(matchSingleQuotes[1])
+    }
+    const matchDoubleQuotes = str.match(/^\s*(?<!\\)"(.*)(?<!\\)"\s*$/)
+    if (matchDoubleQuotes) {
+        return !/(?<!\\)"/.test(matchDoubleQuotes[1])
+    }
+    return false
+}
+
+const enquoteString = (str: string) => {
+    return `'${str.replace(/'/g, "\\'")}'`
 }
 
 const getOperatorByDataType = (dataType: string) => {
@@ -728,7 +739,9 @@ const getValueMatch = (
         let serach = s
 
         if (typeof str === 'string') {
-            term = insensitive(str.replace(/["']/gi, ''))
+            term = insensitive(
+                str.replace(/^["'](.*)["']$/, '$1').replace(/\\'/g, "'")
+            )
         }
         if (typeof s === 'string') {
             serach = insensitive(s)
@@ -844,7 +857,9 @@ const getValueSuggestions = (
                 !knownDataTypes.includes(type as string) &&
                 typeof type !== 'object'
             ) {
-                suggestion.push(typeof type === 'string' ? `'${type}'` : type)
+                suggestion.push(
+                    typeof type === 'string' ? enquoteString(type) : type
+                )
             }
         }
     }
@@ -863,7 +878,7 @@ const getValueSuggestions = (
             default:
                 if (typeof type === 'object') {
                     // value aliases: key is the alias, value is the actual value
-                    for (const key in type) suggestion.push(`'${key}'`)
+                    for (const key in type) suggestion.push(enquoteString(key))
                 }
                 break
         }

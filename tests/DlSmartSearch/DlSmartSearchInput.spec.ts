@@ -369,21 +369,87 @@ describe('DlSmartSearchInput', () => {
                 expect(wrapper.vm.searchQuery.endsWith(' ')).toBeTruthy()
             })
 
-            it('should apply suggestions after string values correctly', async () => {
-                wrapper.vm.focused = true
-                wrapper.vm.debouncedSetInputValue(`name = 'Jesus' AND co`)
-                // @ts-ignore
-                await window.delay(500)
-                await wrapper.vm.$nextTick()
-                expect(wrapper.vm.showSuggestions).toBeTruthy()
-                wrapper.vm.setInputFromSuggestion(wrapper.vm.suggestions[0])
-                // @ts-ignore
-                await window.delay(500)
-                await wrapper.vm.$nextTick()
-                expect(wrapper.vm.searchQuery).toBe(
-                    `name = 'Jesus' AND completed `
+            it('should apply suggestions correctly', async () => {
+                const applySuggestion = async (
+                    before: string,
+                    after: string,
+                    suggestion?: string
+                ) => {
+                    if (wrapper.vm.searchQuery !== before) {
+                        wrapper.vm.focused = true
+                        wrapper.vm.debouncedSetInputValue(before)
+                        // @ts-ignore
+                        await window.delay(500)
+                    }
+                    await wrapper.vm.$nextTick()
+                    if (!suggestion) {
+                        expect(wrapper.vm.suggestions.length).toBeGreaterThan(0)
+                    }
+                    wrapper.vm.setInputFromSuggestion(
+                        suggestion ?? wrapper.vm.suggestions[0]
+                    )
+                    await wrapper.vm.$nextTick()
+                    expect(wrapper.vm.searchQuery).toBe(after)
+                }
+                // basic flow + DAT-71796
+                const flow = [
+                    'na',
+                    'Name ',
+                    ['Name = ', `Name = vo`],
+                    `Name = 'Voltaire' `,
+                    [`Name = 'Voltaire' AND `, `Name = 'Voltaire' AND co`],
+                    `Name = 'Voltaire' AND completed `,
+                    `Name = 'Voltaire' AND completed = `,
+                    `Name = 'Voltaire' AND completed = true `
+                ]
+                for (let i = 0; i < flow.length - 1; i += 2) {
+                    await applySuggestion(
+                        (Array.isArray(flow[i])
+                            ? flow[i][1]
+                            : flow[i]) as string,
+                        (Array.isArray(flow[i + 1])
+                            ? flow[i + 1][0]
+                            : flow[i + 1]) as string
+                    )
+                }
+                // DAT-66655
+                for (const jb of [
+                    `Name = 'Ja`,
+                    `Name = 'James `,
+                    `Name = 'james bo`
+                ]) {
+                    await applySuggestion(
+                        jb,
+                        `Name = 'James Bond' `,
+                        `'James Bond'`
+                    )
+                }
+                // DAT-71796 with escaped quotes
+                await applySuggestion(
+                    `Name = 'A`,
+                    `Name = 'A\\'zz' `,
+                    `'A\\'zz'`
                 )
-            })
+                await applySuggestion(
+                    `Name = 'B\\`,
+                    `Name = 'B\\'zz' `,
+                    `'B\\'zz'`
+                )
+                await applySuggestion(
+                    `Name = 'C\\'`,
+                    `Name = 'C\\'zz' `,
+                    `'C\\'zz'`
+                )
+                await applySuggestion(
+                    `Name = 'D\\'z`,
+                    `Name = 'D\\'zz' `,
+                    `'D\\'zz'`
+                )
+                // previous fails
+                //await applySuggestion('completed = a', 'completed = false ')
+                //await applySuggestion('completed = false a', 'completed = false AND ') // actual: completed = false AND a
+                //await applySuggestion(`Name = '`, `Name = 'Voltaire' `)
+            }, 9999)
 
             describe('when moving the caret back in the entered text', async () => {
                 const testString = `level = low AND metadata.test = 'ok'`
