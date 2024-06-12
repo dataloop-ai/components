@@ -445,6 +445,10 @@ describe('DlSmartSearchInput', () => {
                     `Name = 'D\\'zz' `,
                     `'D\\'zz'`
                 )
+                await applySuggestion(
+                    `Name = 'E\\'zz' AND co`,
+                    `Name = 'E\\'zz' AND completed `
+                )
                 // previous fails
                 //await applySuggestion('completed = a', 'completed = false ')
                 //await applySuggestion('completed = false a', 'completed = false AND ') // actual: completed = false AND a
