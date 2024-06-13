@@ -136,7 +136,7 @@ export default defineComponent({
                 '*': 'any'
             },
             type: ['dir', 'file'],
-            test0: ['why wont', 'this work', 123],
+            test0: ['why wont', 'this work', 123, '1\' = 12"'],
             test1: [...numbersArr, 'number'],
             test2: ['true', 'false']
         }

@@ -33,4 +33,29 @@ describe('splitByQuotes', () => {
             '"(1, 2)"'
         ])
     })
+
+    it('should ignore brackets and other or escaped quotes between quotes', () => {
+        expect(splitByQuotes('word1 "(1, 2" ', ' ')).toEqual([
+            'word1',
+            '"(1, 2"',
+            ''
+        ])
+
+        expect(splitByQuotes(`hey = 'hello" there' `, ' ')).toEqual([
+            'hey',
+            '=',
+            `'hello" there'`,
+            ''
+        ])
+
+        expect(splitByQuotes(`ok 'parse\\' this' lol`, ' ')).toEqual([
+            'ok',
+            `'parse\\' this'`,
+            'lol'
+        ])
+
+        expect(
+            splitByQuotes(`now "multiple\\" )quotes' please'" okay`, ' ')
+        ).toEqual(['now', `"multiple\\" )quotes' please'"`, 'okay'])
+    })
 })
