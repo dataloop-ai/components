@@ -3,10 +3,10 @@ import { DlSelectOptionType } from './types'
 
 export const getLabel = (option: any) => {
     if (typeof option === 'object' && 'label' in option) {
-        return option.label
+        return String(option.label)
     }
 
-    return option
+    return String(option)
 }
 
 const ICON_SIZES = {
@@ -45,12 +45,12 @@ export const getLabelOfSelectedOption = (
             typeof selected === 'string' &&
             option === selected
         ) {
-            return option
+            return String(option)
         } else if (
             typeof option === 'object' &&
             isValueSelected(option, selected)
         ) {
-            return option.label
+            return String(option.label)
         }
     }
     return '1 Option Selected'

@@ -82,33 +82,27 @@
                         name="selected"
                     >
                         <span class="root-container--placeholder">
-                            {{ filterSelectLabel }}
+                            <dl-ellipsis :text="filterSelectLabel" />
                         </span>
                     </slot>
                 </div>
                 <template v-else>
                     <span
-                        v-show="
-                            (multiselect && !searchable) ||
-                                (multiselect && searchable && !isExpanded)
-                        "
+                        v-show="multiselect && (!searchable || !isExpanded)"
                         class="root-container--placeholder"
                     >
                         <template v-if="allFiltersModel">
-                            {{ computedAllItemsLabel }}
+                            <dl-ellipsis :text="computedAllItemsLabel" />
                         </template>
                         <template v-else>
-                            {{ filterSelectLabel }}
+                            <dl-ellipsis :text="filterSelectLabel" />
                         </template>
                     </span>
                     <span
-                        v-show="
-                            (!multiselect && !searchable) ||
-                                (!multiselect && searchable && !isExpanded)
-                        "
+                        v-show="!multiselect && (!searchable || !isExpanded)"
                         class="selected-label"
                     >
-                        {{ getLabel(selectedOption) }}
+                        <dl-ellipsis :text="getLabel(selectedOption)" />
                     </span>
                 </template>
                 <div
@@ -631,10 +625,10 @@ export default defineComponent({
             }
             return this.modelValueLength > 0
                 ? `${this.modelValueLength} ${this.selectedResourceLabel}`
-                : this.computedPlaceholder
+                : String(this.computedPlaceholder)
         },
         computedAllItemsLabel(): string {
-            return this.allItemsOptionLabel || 'All Items'
+            return String(this.allItemsOptionLabel ?? 'All Items')
         },
         isModelValuePrimitiveType(): boolean {
             return this.isPrimitiveValue(this.modelValue)
@@ -670,7 +664,7 @@ export default defineComponent({
             return this.searchable && this.isExpanded
         },
         computedPlaceholder(): string {
-            return this.placeholder || 'Select option'
+            return String(this.placeholder ?? 'Select option')
         },
         placeholderStyles(): Record<string, string> {
             if (this.disabled) {
@@ -1070,6 +1064,7 @@ export default defineComponent({
     }
     &--placeholder {
         color: var(--dl-select-placeholder-color, var(--placeholder-color));
+        width: 100%;
     }
 
     .dl-select__title-container {
@@ -1087,6 +1082,8 @@ export default defineComponent({
 
     .selected-label {
         color: var(--dl-select-placeholder-color, var(--placeholder-color));
+        width: fit-content;
+        max-width: 100%;
     }
 
     .dl-select__title {
@@ -1095,6 +1092,7 @@ export default defineComponent({
         text-align: left;
         margin-right: 5px;
         white-space: nowrap;
+        width: 100%;
     }
 
     .required-asterisk {
