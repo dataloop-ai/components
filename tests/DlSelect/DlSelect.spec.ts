@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { VueWrapper, mount } from '@vue/test-utils'
 import { DlSelect } from '../../src/components'
 
 describe('dl-select methods', () => {
@@ -517,6 +517,29 @@ describe('DlSelect', () => {
             })
             it('should clear the model value', () => {
                 expect(wrapper.emitted()['update:model-value']).toEqual([['']])
+            })
+        })
+    })
+
+    describe('When mutliselect', () => {
+        describe('When loading select with selected value and no select slot', () => {
+            let wrapper: VueWrapper
+
+            beforeAll(() => {
+                wrapper = mount(DlSelect, {
+                    props: {
+                        multiselect: true,
+                        options: ['one', 'two', 'three'],
+                        modelValue: ['two']
+                    }
+                })
+            })
+
+            it('should show the selected value', () => {
+                const selectedValue = wrapper.find(
+                    '.root-container--placeholder'
+                )
+                expect(selectedValue.text()).toMatch('two')
             })
         })
     })

@@ -88,10 +88,7 @@
                 </div>
                 <template v-else>
                     <span
-                        v-show="
-                            (multiselect && !searchable) ||
-                                (multiselect && searchable && !isExpanded)
-                        "
+                        v-show="multiselect && (!searchable || !isExpanded)"
                         class="root-container--placeholder"
                     >
                         <template v-if="allFiltersModel">
@@ -102,10 +99,7 @@
                         </template>
                     </span>
                     <span
-                        v-show="
-                            (!multiselect && !searchable) ||
-                                (!multiselect && searchable && !isExpanded)
-                        "
+                        v-show="!multiselect && (!searchable || !isExpanded)"
                         class="selected-label"
                     >
                         <dl-ellipsis :text="getLabel(selectedOption)" />
