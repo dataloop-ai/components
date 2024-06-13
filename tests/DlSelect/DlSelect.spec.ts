@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import { VueWrapper, mount } from '@vue/test-utils'
 import { DlSelect } from '../../src/components'
+import exp from 'constants'
 
 describe('dl-select methods', () => {
     describe('When set the index according to the model value', () => {
@@ -517,6 +518,54 @@ describe('DlSelect', () => {
             })
             it('should clear the model value', () => {
                 expect(wrapper.emitted()['update:model-value']).toEqual([['']])
+            })
+        })
+    })
+
+    describe('When loading select with selected value', () => {
+        describe('When no selected slot is passed', () => {
+            let wrapper: VueWrapper
+
+            beforeAll(() => {
+                wrapper = mount(DlSelect, {
+                    props: {
+                        options: ['one', 'two', 'three'],
+                        modelValue: 'two'
+                    }
+                })
+            })
+
+            it('should show the selected value', () => {
+                const selectedValue = wrapper.find('.selected-label')
+                expect(selectedValue.text()).toMatch('two')
+            })
+        })
+        describe('When selected slot is passed', () => {
+            let wrapper: VueWrapper<any>
+
+            beforeAll(async () => {
+                wrapper = mount(DlSelect, {
+                    props: {
+                        options: ['one', 'two', 'three'],
+                        modelValue: 'two'
+                    },
+
+                    slots: {
+                        selected: `<div class="custom-slot-selected">Custom select value</div>`
+                    }
+                })
+
+                await wrapper.vm.$nextTick()
+            })
+
+            it('should not be active', () => {
+                expect(wrapper.vm.isExpanded).toBeFalsy()
+                expect(wrapper.vm.isActiveSearchInput).toBeFalsy()
+            })
+
+            it('should show the selected value', () => {
+                const selectedValue = wrapper.find('.custom-slot-selected')
+                expect(selectedValue.text()).toMatch('Custom select value')
             })
         })
     })
