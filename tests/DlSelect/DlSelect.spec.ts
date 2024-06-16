@@ -420,11 +420,12 @@ describe('dl-select computed', () => {
     })
 
     describe('when usng dl-select with small size and tooltip', () => {
-        let wrapper: any
+        let wrapper: VueWrapper<any>
 
         beforeAll(() => {
             wrapper = mount(DlSelect, {
                 props: {
+                    title: 'test title',
                     options: ['one', 'two', 'three'],
                     size: 's'
                 }
