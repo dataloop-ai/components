@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import { VueWrapper, mount } from '@vue/test-utils'
 import { DlSelect } from '../../src/components'
-import exp from 'constants'
 
 describe('dl-select methods', () => {
     describe('When set the index according to the model value', () => {
