@@ -1092,7 +1092,6 @@ export default defineComponent({
         text-align: left;
         margin-right: 5px;
         white-space: nowrap;
-        width: 100%;
     }
 
     .required-asterisk {
