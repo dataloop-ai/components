@@ -3,7 +3,7 @@ export function splitByQuotes(input: string, split: string) {
         .replace('sp', split)
         .replace('o', '[\\(\\{\\[]')
         .replace('c', '[\\)\\}\\]]')
-        .replace('t', '[\'"]')
+        .replace('t', '(?<!\\\\)[\'"]')
         .replace('e', '[\\\\]')
     const r = new RegExp(pattern, 'gi')
     const stack: string[] = []
@@ -13,11 +13,20 @@ export function splitByQuotes(input: string, split: string) {
         if ($e) {
             buffer.push($1, $s || $o || $c || $t)
             return
-        } else if ($o) stack.push($o)
-        else if ($c) stack.pop()
-        else if ($t) {
-            if (stack[stack.length - 1] !== $t) stack.push($t)
-            else stack.pop()
+        } else if ($o) {
+            if (!stack.includes("'") && !stack.includes('"')) {
+                stack.push($o)
+            }
+        } else if ($c) {
+            if (!stack.includes("'") && !stack.includes('"')) {
+                stack.pop()
+            }
+        } else if ($t) {
+            const otherQuote = $t === '"' ? "'" : '"'
+            if (!stack.includes(otherQuote)) {
+                if (stack[stack.length - 1] !== $t) stack.push($t)
+                else stack.pop()
+            }
         } else {
             if ($s ? !stack.length : !$1) {
                 buffer.push($1)

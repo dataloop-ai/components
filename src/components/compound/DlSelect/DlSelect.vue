@@ -10,18 +10,18 @@
         }"
     >
         <div
-            v-show="!!title.length || !!tooltip.length"
+            v-if="!!title.length || !!tooltip.length"
             :class="{
                 'dl-select__title-container': true,
                 'dl-select__title-container--s': isSmall
             }"
         >
-            <label v-show="!!title.length" class="dl-select__title">
+            <label v-if="!!title.length" class="dl-select__title">
                 {{ title
-                }}<span v-show="required" :class="asteriskClasses"> *</span>
+                }}<span v-if="required" :class="asteriskClasses"> *</span>
                 {{ !required && optional ? ' (Optional)' : null }}
             </label>
-            <span v-show="!!tooltip.length">
+            <span v-if="!!tooltip.length">
                 <dl-icon
                     icon="icon-dl-info"
                     :inline="false"
@@ -34,11 +34,11 @@
             </span>
         </div>
         <div
-            v-show="!!topMessage.length && !isSmall"
+            v-if="!!topMessage.length && !isSmall"
             class="top-message-container"
         >
             <dl-info-error-message
-                v-show="!!topMessage.length"
+                v-if="!!topMessage.length"
                 position="above"
                 :value="topMessage"
             />
@@ -46,7 +46,7 @@
         <div class="select-wrapper" tabindex="0" :style="placeholderStyles">
             <div ref="select" :class="selectClasses">
                 <div
-                    v-show="hasPrepend || searchable"
+                    v-if="hasPrepend || searchable"
                     :class="[
                         ...adornmentClasses,
                         'adornment-container--pos-left'
@@ -82,37 +82,27 @@
                         name="selected"
                     >
                         <span class="root-container--placeholder">
-                            <dl-ellipsis>
-                                {{ filterSelectLabel }}
-                            </dl-ellipsis>
+                            <dl-ellipsis :text="filterSelectLabel" />
                         </span>
                     </slot>
                 </div>
                 <template v-else>
                     <span
-                        v-show="
-                            (multiselect && !searchable) ||
-                                (multiselect && searchable && !isExpanded)
-                        "
+                        v-if="multiselect && (!searchable || !isExpanded)"
                         class="root-container--placeholder"
                     >
                         <template v-if="allFiltersModel">
-                            {{ computedAllItemsLabel }}
+                            <dl-ellipsis :text="computedAllItemsLabel" />
                         </template>
                         <template v-else>
-                            <dl-ellipsis> filterSelectLabel </dl-ellipsis>
+                            <dl-ellipsis :text="filterSelectLabel" />
                         </template>
                     </span>
                     <span
-                        v-show="
-                            (!multiselect && !searchable) ||
-                                (!multiselect && searchable && !isExpanded)
-                        "
+                        v-if="!multiselect && (!searchable || !isExpanded)"
                         class="selected-label"
                     >
-                        <dl-ellipsis>
-                            {{ getLabel(selectedOption) }}
-                        </dl-ellipsis>
+                        <dl-ellipsis :text="getLabel(selectedOption)" />
                     </span>
                 </template>
                 <div
@@ -315,16 +305,16 @@
             </dl-menu>
         </div>
         <div
-            v-show="!isSmall && (!!infoMessage.length || !!errorMessage.length)"
+            v-if="!isSmall && (!!infoMessage.length || !!errorMessage.length)"
             class="bottom-message-container"
         >
             <dl-info-error-message
-                v-show="!!infoMessage.length && !error"
+                v-if="!!infoMessage.length && !error"
                 position="below"
                 :value="infoMessage"
             />
             <dl-info-error-message
-                v-show="error && !!errorMessage.length"
+                v-if="error && !!errorMessage.length"
                 position="below"
                 error
                 :value="errorMessage"
@@ -635,10 +625,10 @@ export default defineComponent({
             }
             return this.modelValueLength > 0
                 ? `${this.modelValueLength} ${this.selectedResourceLabel}`
-                : this.computedPlaceholder
+                : String(this.computedPlaceholder)
         },
         computedAllItemsLabel(): string {
-            return this.allItemsOptionLabel || 'All Items'
+            return String(this.allItemsOptionLabel ?? 'All Items')
         },
         isModelValuePrimitiveType(): boolean {
             return this.isPrimitiveValue(this.modelValue)
@@ -674,7 +664,7 @@ export default defineComponent({
             return this.searchable && this.isExpanded
         },
         computedPlaceholder(): string {
-            return this.placeholder || 'Select option'
+            return String(this.placeholder ?? 'Select option')
         },
         placeholderStyles(): Record<string, string> {
             if (this.disabled) {
@@ -1102,7 +1092,6 @@ export default defineComponent({
         text-align: left;
         margin-right: 5px;
         white-space: nowrap;
-        width: 100%;
     }
 
     .required-asterisk {

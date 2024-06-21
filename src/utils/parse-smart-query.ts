@@ -29,6 +29,17 @@ const GeneratePureValue = (value: any) => {
             if (isFinite(num)) {
                 return num
             }
+
+            let unquoted = value.replace(/^[^']*'(.*)'[^']*$/, '$1')
+            if (unquoted !== value) {
+                return unquoted.replace(/\\'/g, "'")
+            }
+
+            unquoted = value.replace(/^[^"]*"(.*)"[^"]*$/, '$1')
+            if (unquoted !== value) {
+                return unquoted.replace(/\\"/g, '"')
+            }
+
             return value.replaceAll('"', '').replaceAll("'", '')
         } catch (e) {}
     }
@@ -47,6 +58,14 @@ const Operators: string[] = [
     'EXISTS',
     'DOESNT-EXIST'
 ]
+
+const SplitFirst = (what: string, by: string): string[] => {
+    const result = what.split(by)
+    if (result.length > 2) {
+        return [result.shift(), result.join(by)]
+    }
+    return result
+}
 
 /**
  * Method to convert a DlSmartSearch query string to Mongo based JSON query
@@ -112,66 +131,67 @@ export const parseSmartQuery = (
         for (const term of andTerms) {
             pureValue = null
 
+            const termUpToQuote = term.replace(/^([^'"]+)['"].*$/, '$1')
+
             switch (true) {
-                case term.includes('>='):
-                    ;[key, value] = term.split('>=').map((x) => x.trim())
+                case termUpToQuote.includes('>='):
+                    ;[key, value] = SplitFirst(term, '>=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $gte: pureValue } })
                     }
                     break
-                case term.includes('<='):
-                    ;[key, value] = term.split('<=').map((x) => x.trim())
+                case termUpToQuote.includes('<='):
+                    ;[key, value] = SplitFirst(term, '<=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $lte: pureValue } })
                     }
                     break
-                case term.includes('>'):
-                    ;[key, value] = term.split('>').map((x) => x.trim())
+                case termUpToQuote.includes('>'):
+                    ;[key, value] = SplitFirst(term, '>').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $gt: pureValue } })
                     }
                     break
-                case term.includes('<'):
-                    ;[key, value] = term.split('<').map((x) => x.trim())
+                case termUpToQuote.includes('<'):
+                    ;[key, value] = SplitFirst(term, '<').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $lt: pureValue } })
                     }
                     break
-                case term.includes('!='):
-                    ;[key, value] = term.split('!=').map((x) => x.trim())
+                case termUpToQuote.includes('!='):
+                    ;[key, value] = SplitFirst(term, '!=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: { $ne: pureValue } })
                     }
                     break
-                case term.includes('='):
-                    ;[key, value] = term.split('=').map((x) => x.trim())
+                case termUpToQuote.includes('='):
+                    ;[key, value] = SplitFirst(term, '=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
                     if (pureValue !== null) {
                         andQuery.push({ [key]: pureValue })
                     }
                     break
-                case term.includes('EXISTS'):
+                case termUpToQuote.includes('EXISTS'):
                     key = term.split('EXISTS')[0].trim()
                     andQuery.push({ [key]: { $exists: true } })
                     break
-                case term.includes('DOESNT-EXIST'):
+                case termUpToQuote.includes('DOESNT-EXIST'):
                     key = term.split('DOESNT-EXIST')[0].trim()
                     andQuery.push({ [key]: { $exists: false } })
                     break
-                case term.includes('IN'):
-                    ;[key, value] = term.split('IN').map((x) => x.trim())
+                case termUpToQuote.includes('IN'):
+                    ;[key, value] = SplitFirst(term, 'IN').map((x) => x.trim())
                     if (key.includes('NOT-')) {
-                        ;[key, value] = term
-                            .split('NOT-IN')
-                            .map((x) => x.trim())
-                        queryValue = term
-                            .split('NOT-IN')
-                            .map((x) => x.trim())[1]
+                        ;[key, value] = SplitFirst(term, 'NOT-IN').map((x) =>
+                            x.trim()
+                        )
+                        // TODO make , inside quotes work
+                        queryValue = value
                             .split(',')
                             .map((x) => GeneratePureValue(x.trim()))
                             .filter((x) => x)
@@ -181,9 +201,8 @@ export const parseSmartQuery = (
                             andQuery.push({ [key]: { $nin: pureValue } })
                         }
                     } else {
-                        queryValue = term
-                            .split('IN')
-                            .map((x) => x.trim())[1]
+                        // TODO make , inside quotes work
+                        queryValue = value
                             .split(',')
                             .map((x) => GeneratePureValue(x.trim()))
                             .filter((x) => x)
@@ -344,7 +363,7 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
         } else if (isDatePattern(value)) {
             result += `${key} = (${value})`
         } else {
-            result += `${key} = '${value}'`
+            result += `${key} = '${value.toString().replace(/'/g, "\\'")}'`
         }
     }
 

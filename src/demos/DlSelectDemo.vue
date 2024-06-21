@@ -697,6 +697,19 @@
                 <div>{{ scope.opt.label }}</div>
             </template>
         </dl-select>
+
+        Select numbers as labels
+        <dl-select
+            v-model="selectedNumbers"
+            :options="optionsAsNumbers"
+            multiselect
+            searchable
+            style="margin-bottom: 150px; width: 200px"
+        >
+            <template #selected="scope">
+                <div>{{ scope.opt.label }}</div>
+            </template>
+        </dl-select>
     </div>
 </template>
 
@@ -710,6 +723,12 @@ const defaultOptions = [
     { label: 'Contributor 1', value: 'c1' },
     { label: 'Contributor 2', value: 'c2' },
     { label: 'Contributor 3', value: 'c3' }
+]
+
+const optionsAsNumbers = [
+    { label: 1, value: 1 },
+    { label: 2, value: 2 },
+    { label: 3, value: 3 }
 ]
 
 const defaultOptions1 = [
@@ -980,7 +999,9 @@ export default defineComponent({
             tasksFilter: [],
             showAllOption: true,
             disabledSelected: 'disabled option',
-            preSelectedValue: null
+            preSelectedValue: null,
+            optionsAsNumbers,
+            selectedNumbers: []
         }
     },
     computed: {
