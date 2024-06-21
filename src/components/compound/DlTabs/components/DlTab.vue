@@ -10,6 +10,7 @@
         @keydown="onKeydown"
         @keyup="onKeyup"
     >
+        <dl-icon v-if="icon !== ''" size="14px" :icon="icon" class="tab-icon" />
         {{ label }}
         <span>
             <dl-icon
@@ -50,7 +51,8 @@ export default defineComponent({
         tooltip: { type: String, default: null },
         tabindex: { type: String, default: '0' },
         fontSize: { type: String, default: '18px' },
-        bordered: { type: Boolean, default: true }
+        bordered: { type: Boolean, default: true },
+        icon: { type: String, default: '' }
     },
     emits: ['click'],
     data() {
@@ -116,10 +118,17 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
+    .tab-icon {
+        margin: 0px 5px;
+        color: var(--dl-color-medium);
+    }
     &--active {
         color: var(--dl-color-secondary);
         border-color: var(--dl-color-secondary) !important;
         cursor: default;
+        .tab-icon {
+            color: var(--dl-color-secondary);
+        }
     }
     &--simple {
         font-size: var(--dl-tab-font-size);
@@ -144,10 +153,16 @@ export default defineComponent({
         &:hover {
             color: var(--dl-color-disabled) !important;
         }
+        .tab-icon {
+            color: var(--dl-color-disabled) !important;
+        }
     }
     &:hover {
         color: var(--dl-color-hover);
         border-color: var(--dl-color-hover);
+        .tab-icon {
+            color: var(--dl-color-hover);
+        }
     }
     &--no-border-bottom {
         border-bottom: unset;
@@ -155,6 +170,7 @@ export default defineComponent({
     cursor: pointer;
     flex-grow: 1;
 }
+
 .info-icon {
     margin: 0px 5px;
 }

@@ -33,6 +33,7 @@
                     :is-active="modelValue === item.name"
                     :font-size="fontSize"
                     :bordered="bordered"
+                    :icon="icon"
                     @click="handleTabClick"
                 />
             </div>
