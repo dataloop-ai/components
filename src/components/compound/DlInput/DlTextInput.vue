@@ -74,6 +74,9 @@
                             @blur="debouncedBlur"
                             @keyup.enter="onKeyPress"
                         />
+                        <dl-tooltip v-if="disabled && disabledTooltip">
+                            {{ disabledTooltip }}
+                        </dl-tooltip>
                         <div
                             v-if="hasPrepend"
                             :class="[
@@ -378,6 +381,10 @@ export default defineComponent({
         debounce: {
             type: Number,
             default: 100
+        },
+        disabledTooltip: {
+            type: String,
+            default: ''
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
