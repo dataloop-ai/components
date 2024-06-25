@@ -384,7 +384,7 @@ export default defineComponent({
         },
         disabledTooltip: {
             type: String,
-            default: 'Disabled'
+            default: ''
         }
     },
     emits: ['input', 'focus', 'blur', 'clear', 'enter', 'update:model-value'],
