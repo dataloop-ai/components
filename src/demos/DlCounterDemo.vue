@@ -1,6 +1,7 @@
 <template>
     <div>
         <dl-counters
+            :title-number-of-lines="2"
             :items="[
                 {
                     value: 123,
@@ -20,6 +21,7 @@
             ]"
         />
         <dl-counters
+            :title-number-of-lines="1"
             small
             :items="[
                 {
