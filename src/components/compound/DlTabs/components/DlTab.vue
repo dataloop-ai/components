@@ -119,7 +119,7 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     .tab-icon {
-        margin: 0px 5px;
+        margin: 0px 8px 0px 5px;
         color: var(--dl-color-medium);
     }
     &--active {
