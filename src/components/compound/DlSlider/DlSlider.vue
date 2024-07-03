@@ -182,8 +182,16 @@ export default defineComponent({
     },
     emits: ['update:model-value', 'change', 'input-focus', 'input-blur'],
     setup(props, { emit }) {
-        const { modelValue, min, max, textColor, width, thumbSize, color } =
-            toRefs(props)
+        const {
+            modelValue,
+            min,
+            max,
+            textColor,
+            width,
+            thumbSize,
+            color,
+            defaultValue
+        } = toRefs(props)
         const initialValue = ref(
             modelValue.value === null
                 ? min.value
@@ -220,7 +228,7 @@ export default defineComponent({
         }
 
         const handleResetButtonClick = () => {
-            onChange(props.defaultValue ?? min.value)
+            onChange(defaultValue.value ?? initialValue.value)
         }
 
         watch(
