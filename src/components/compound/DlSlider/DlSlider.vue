@@ -141,6 +141,10 @@ export default defineComponent({
             type: Number,
             default: 100
         },
+        defaultValue: {
+            type: Number,
+            default: null
+        },
         readonly: {
             type: Boolean,
             default: false
@@ -216,7 +220,7 @@ export default defineComponent({
         }
 
         const handleResetButtonClick = () => {
-            onChange(initialValue.value)
+            onChange(props.defaultValue ?? min.value)
         }
 
         watch(
