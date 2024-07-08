@@ -591,9 +591,13 @@ export default defineComponent({
         onChange(e: any): void {
             this.isMenuOpen = true
             const trimmedValue = e.target.value.trim()
-            console.log('trimmedValue', trimmedValue)
-            this.$emit('input', trimmedValue, e)
-            this.$emit('update:model-value', trimmedValue)
+            if (trimmedValue !== e.target.value) {
+                this.$emit('input', trimmedValue, e)
+                this.$emit('update:model-value', trimmedValue)
+            } else {
+                this.$emit('input', e.target.value, e)
+                this.$emit('update:model-value', e.target.value)
+            }
         },
         focus(): void {
             const inputRef = this.$refs.input as HTMLInputElement
