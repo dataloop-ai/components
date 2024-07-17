@@ -98,8 +98,8 @@ export default defineComponent({
                     stateManager.logger.warn(
                         '[DlJsonEditor] Failed to parse JSON'
                     )
-                    return
                 }
+                return
             }
 
             if (
