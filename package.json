@@ -23,7 +23,7 @@
     "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
   },
   "dependencies": {
-    "@dataloop-ai/icons": "^3.0.145",
+    "@dataloop-ai/icons": "^3.0.148",
     "@types/flat": "^5.0.2",
     "@types/lodash": "^4.14.184",
     "@types/sortablejs": "^1.15.7",
