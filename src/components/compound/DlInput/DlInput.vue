@@ -720,7 +720,7 @@ export default defineComponent({
 
             const target = e.target as HTMLElement
             let toEmit: string | number = target.innerText.replace(
-                new RegExp('&nbsp;', 'g'),
+                new RegExp('&nbsp;|\u00A0', 'g'),
                 ' '
             )
 
