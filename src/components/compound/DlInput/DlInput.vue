@@ -719,9 +719,10 @@ export default defineComponent({
             isMenuOpen.value = true
 
             const target = e.target as HTMLElement
-            let toEmit: string | number = target.innerText
-                .replace(new RegExp('&nbsp;', 'g'), ' ')
-                .replace(new RegExp(String.fromCharCode(160), 'g'), ' ')
+            let toEmit: string | number = target.innerText.replace(
+                new RegExp('&nbsp;|\u00A0', 'g'),
+                ' '
+            )
 
             if (type.value === 'number') {
                 if (toEmit === '') {
