@@ -346,6 +346,43 @@ describe('DlInput component', () => {
             })
         })
     })
+    describe('when input contains non-breaking spaces', () => {
+        let wrapper: any
+        beforeAll(async () => {
+            wrapper = mount(DlInput, {
+                props: {
+                    modelValue: 'text with spaces',
+                    debounce: 0
+                }
+            })
+
+            await wrapper.vm.$nextTick()
+            // @ts-ignore
+            await window.delay(100)
+        })
+
+        describe('When emitting change', () => {
+            beforeAll(async () => {
+                await wrapper.vm.onChange({
+                    target: {
+                        innerText: `text with space test${String.fromCharCode(
+                            160
+                        )}`
+                    }
+                })
+                await wrapper.vm.$nextTick()
+                // @ts-ignore
+                await window.delay(100)
+            })
+
+            it('should not have last space should be modified to normal space', () => {
+                const modelValue = wrapper.emitted()[
+                    'update:model-value'
+                ][0][0] as string
+                expect(modelValue.charCodeAt(modelValue.length - 1)).toEqual(32)
+            })
+        })
+    })
 
     /**
      * TODO: add tests for input type number
