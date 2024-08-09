@@ -2,7 +2,7 @@
     <div v-if="infiniteScroll">
         <dl-infinite-scroll
             :items="items"
-            :page-size="infiniteScrollPageSize"
+            :page-size="maxElementsPerRowForInfinite"
             :style="$attrs.style"
             :class="$attrs.class"
             style="height: var(--dl-virtual-scroll-height, 500px)"
@@ -10,20 +10,13 @@
             @scroll-to-bottom="$emit('scroll-to-bottom')"
         >
             <template #content="{ items }">
-                <div
-                    ref="grid"
-                    :style="gridStyles"
-                    :class="gridClass"
-                >
+                <div ref="grid" :style="gridStyles" :class="gridClass">
                     <div
                         v-for="item in items"
                         :key="item.id"
                         class="item-wrapper"
                     >
-                        <slot
-                            name="item-slot"
-                            v-bind="{ item }"
-                        />
+                        <slot name="item-slot" v-bind="{ item }" />
                     </div>
                 </div>
             </template>
@@ -37,21 +30,9 @@
     >
         <slot />
     </div>
-    <div
-        v-else
-        ref="grid"
-        :style="gridStyles"
-        :class="gridClass"
-    >
-        <div
-            v-for="item in items"
-            :key="item.id"
-            class="item-wrapper"
-        >
-            <slot
-                name="item-slot"
-                v-bind="{ item }"
-            />
+    <div v-else ref="grid" :style="gridStyles" :class="gridClass">
+        <div v-for="item in items" :key="item.id" class="item-wrapper">
+            <slot name="item-slot" v-bind="{ item }" />
         </div>
     </div>
 </template>
@@ -158,10 +139,14 @@ export default defineComponent({
             if (!isGridMode.value) {
                 gridStyles['--element-per-row'] = maxElementsPerRow.value
             }
-
             return gridStyles
         })
 
+        const maxElementsPerRowForInfinite = computed(() => {
+            const pageSize = props.infiniteScrollPageSize ?? 15
+            const maxElements = maxElementsPerRow.value ?? 3
+            return pageSize + (maxElements - (pageSize % maxElements))
+        })
         const layoutChanged = () => {
             emit('layout-changed', modelValue.value)
         }
@@ -268,7 +253,8 @@ export default defineComponent({
             gridClass,
             gridStyles,
             grid,
-            hasItems
+            hasItems,
+            maxElementsPerRowForInfinite
         }
     }
 })

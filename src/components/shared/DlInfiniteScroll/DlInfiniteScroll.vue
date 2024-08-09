@@ -92,11 +92,11 @@ export default defineComponent({
             } else if (nextPage?.length) {
                 toDisplay.push(...nextPage.slice(0, pageSize.value))
             }
-
+            const movePercent = (prevPage?.length ?? 0) / toDisplay.length
             nextTick(() => {
                 if (lastOp.value === 'top' && page !== 0) {
                     containerRef.value.scrollTop +=
-                        containerRef.value.scrollHeight * 0.333
+                        containerRef.value.scrollHeight * movePercent
                 } else if (
                     lastOp.value === 'bottom' &&
                     page !== pagesCount.value
@@ -104,9 +104,6 @@ export default defineComponent({
                     if (currentPage.value - 1 === 0) {
                         return
                     }
-
-                    containerRef.value.scrollTop -=
-                        containerRef.value.scrollHeight * 0.333
                 }
 
                 onScrollEnd()
