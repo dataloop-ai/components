@@ -7,12 +7,18 @@
         :data-resizable="resizable"
         :data-collapsable="collapsable"
         :data-direction="direction"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
     >
         <div ref="panel" class="inner-container" style="height: 100%">
             <div v-if="collapsed" class="inner-container-overlay" />
             <div v-if="collapsable === true">
                 <div
-                    v-if="direction === 'right' && isFullWidth === true"
+                    v-if="
+                        direction === 'right' &&
+                            isFullWidth === true &&
+                            hideCollapseButton === false
+                    "
                     class="collapse-icon collapse-icon--right"
                     @click="handleCollapseButtonClick"
                 >
@@ -36,7 +42,11 @@
                     />
                 </div>
                 <div
-                    v-else-if="direction === 'left' && isFullWidth === true"
+                    v-else-if="
+                        direction === 'left' &&
+                            isFullWidth === true &&
+                            hideCollapseButton === false
+                    "
                     class="collapse-icon collapse-icon--left"
                     @click="handleCollapseButtonClick"
                 >
@@ -181,7 +191,8 @@ export default defineComponent({
             left: 0,
             isFullWidth: true,
             avoidUserSelect: false,
-            collapsed: false
+            collapsed: false,
+            hideCollapseButton: false
         }
     },
     computed: {
@@ -288,6 +299,12 @@ export default defineComponent({
         }
     },
     methods: {
+        handleMouseEnter() {
+            this.hideCollapseButton = false
+        },
+        handleMouseLeave() {
+            this.hideCollapseButton = true
+        },
         reset() {
             const element = this.$refs['panel'] as HTMLDivElement
             element.style.width = this.w + 'px'
