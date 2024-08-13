@@ -140,6 +140,11 @@ export default defineComponent({
             default: 36,
             validator: (val: number) => val >= 0
         },
+        maxStretchableWidth: {
+            type: Number,
+            default: 360,
+            validator: (val: number) => val >= 0
+        },
         direction: {
             type: String,
             default: 'right',
@@ -168,7 +173,7 @@ export default defineComponent({
             default: null
         }
     },
-    emits: ['update:model-value'],
+    emits: ['update:model-value', 'panel-width'],
     data() {
         return {
             uuid: `dl-panel-container-${v4()}`,
@@ -328,8 +333,8 @@ export default defineComponent({
                     this.collapsed = false
                 }
             } else {
-                if (e.pageX > this.left + this.w) {
-                    element.style.width = this.w + 'px'
+                if (e.pageX > this.left + this.maxStretchableWidth) {
+                    element.style.width = this.maxStretchableWidth + 'px'
 
                     this.collapsed = false
                 } else if (e.pageX < this.left + this.minW) {
@@ -342,6 +347,7 @@ export default defineComponent({
                     this.collapsed = false
                 }
             }
+            this.$emit('panel-width', parseInt(element.style.width))
         },
         mouseup(e: MouseEvent) {
             if (this.direction === 'right') {
@@ -387,7 +393,6 @@ export default defineComponent({
                 if (this.isFullWidth === false) {
                     element.style.width = this.w + 'px'
                     element.style.right = this.w + 'px'
-
                     this.isFullWidth = true
                     this.collapsed = false
                 } else {
@@ -397,6 +402,7 @@ export default defineComponent({
                     this.isFullWidth = false
                     this.collapsed = true
                 }
+                this.$emit('panel-width', parseInt(element.style.width))
             }
         }
     },
