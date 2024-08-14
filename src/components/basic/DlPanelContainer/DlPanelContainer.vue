@@ -16,8 +16,8 @@
                 <div
                     v-if="
                         direction === 'right' &&
-                            isFullWidth === true &&
-                            hideCollapseButton === false
+                        isFullWidth === true &&
+                        hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--right"
                     @click="handleCollapseButtonClick"
@@ -44,8 +44,8 @@
                 <div
                     v-else-if="
                         direction === 'left' &&
-                            isFullWidth === true &&
-                            hideCollapseButton === false
+                        isFullWidth === true &&
+                        hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--left"
                     @click="handleCollapseButtonClick"
