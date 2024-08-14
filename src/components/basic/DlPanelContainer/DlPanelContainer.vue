@@ -181,6 +181,10 @@ export default defineComponent({
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
             default: null
+        },
+        showCollapseOnHover: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'panel-width'],
@@ -300,10 +304,14 @@ export default defineComponent({
     },
     methods: {
         handleMouseEnter() {
-            this.hideCollapseButton = false
+            if (this.showCollapseOnHover) {
+                this.hideCollapseButton = false
+            }
         },
         handleMouseLeave() {
-            this.hideCollapseButton = true
+            if (this.showCollapseOnHover) {
+                this.hideCollapseButton = true
+            }
         },
         reset() {
             const element = this.$refs['panel'] as HTMLDivElement
