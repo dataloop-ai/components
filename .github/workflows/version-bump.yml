@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-          token: ${{ secrets.TEMP_TOKEN }}
+          token: ${{ secrets.CICD_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.2
@@ -44,6 +44,6 @@ jobs:
 
       - name: Push changes
         env:
-          GITHUB_TOKEN: ${{ secrets.TEMP_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CICD_TOKEN }}
         run: |
           git push --follow-tags
