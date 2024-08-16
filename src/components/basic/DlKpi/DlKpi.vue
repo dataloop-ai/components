@@ -20,6 +20,7 @@
                         color="dl-color-darker"
                         variant="h3"
                         :size="titleFontSizeComputed"
+                        :number-of-lines="titleNumberOfLines"
                     >
                         {{ title }}
                     </dl-typography>
@@ -128,6 +129,10 @@ export default defineComponent({
         prefix: {
             type: String,
             default: null
+        },
+        titleNumberOfLines: {
+            type: Number,
+            default: 1
         }
     },
     setup(props) {

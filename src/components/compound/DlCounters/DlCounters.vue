@@ -22,6 +22,7 @@
                         :progress="null"
                         :small="small"
                         :dense="dense"
+                        :title-number-of-lines="titleNumberOfLines"
                     />
                 </div>
                 <div class="divider" />
@@ -70,7 +71,11 @@ export default defineComponent({
             type: String,
             default: '12px'
         },
-        dense: Boolean
+        dense: Boolean,
+        titleNumberOfLines: {
+            type: Number,
+            default: 1
+        }
     },
     data() {
         return {
