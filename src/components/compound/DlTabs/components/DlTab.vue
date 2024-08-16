@@ -118,6 +118,8 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    flex-grow: 1;
     .tab-icon {
         margin: 0px 8px 0px 5px;
         color: var(--dl-color-medium);
@@ -167,8 +169,6 @@ export default defineComponent({
     &--no-border-bottom {
         border-bottom: unset;
     }
-    cursor: pointer;
-    flex-grow: 1;
 }
 
 .info-icon {

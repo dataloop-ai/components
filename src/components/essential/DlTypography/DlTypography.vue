@@ -96,6 +96,11 @@ export default defineComponent({
 .dl-typography {
     margin: 0;
     padding: 0;
+
+    // important needed below for sizing of h tags.. quasar conflict
+    // to deal with quasar conflicts.
+    line-height: initial !important;
+
     &--h1 {
         font-size: var(--dl-font-size-h1);
     }
@@ -120,9 +125,5 @@ export default defineComponent({
     &--small {
         font-size: var(--dl-font-size-small);
     }
-
-    // important needed above for sizing of h tags.. quasar conflict
-    // to deal with quasar conflicts.
-    line-height: initial !important;
 }
 </style>
