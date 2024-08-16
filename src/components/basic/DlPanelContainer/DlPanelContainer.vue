@@ -16,8 +16,8 @@
                 <div
                     v-if="
                         direction === 'right' &&
-                        isFullWidth === true &&
-                        hideCollapseButton === false
+                            isFullWidth === true &&
+                            hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--right"
                     @click="handleCollapseButtonClick"
@@ -44,8 +44,8 @@
                 <div
                     v-else-if="
                         direction === 'left' &&
-                        isFullWidth === true &&
-                        hideCollapseButton === false
+                            isFullWidth === true &&
+                            hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--left"
                     @click="handleCollapseButtonClick"
@@ -444,6 +444,7 @@ export default defineComponent({
     .inner-container {
         text-align: left;
         font-size: var(--dl-font-size-body);
+        width: calc(var(--dl-panel-container-width) - 10px);
 
         position: relative;
         padding: 0px 10px;
@@ -477,7 +478,7 @@ export default defineComponent({
                 border-bottom-left-radius: 2px;
 
                 &--collapsed {
-                    left: 0px;
+                    left: 10px;
                     margin-right: 15px;
                     border-top-right-radius: 2px;
                     border-bottom-right-radius: 2px;
