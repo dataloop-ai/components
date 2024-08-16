@@ -433,7 +433,7 @@ export default defineComponent({
             height: 20px;
             background-color: var(--dl-color-fill);
             position: absolute;
-            top: 8px;
+            top: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -446,7 +446,7 @@ export default defineComponent({
             }
 
             &--left {
-                right: 0px;
+                right: -10px;
                 margin-left: 15px;
                 border-top-left-radius: 2px;
                 border-bottom-left-radius: 2px;
