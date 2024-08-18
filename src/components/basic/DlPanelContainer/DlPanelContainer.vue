@@ -10,7 +10,7 @@
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
     >
-        <div ref="panel" class="inner-container" style="height: 100%">
+        <div ref="panel" :style="innerContainerStyles" class="inner-container">
             <div v-if="collapsed" class="inner-container-overlay" />
             <div v-if="collapsable === true">
                 <div
@@ -20,6 +20,7 @@
                             hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--right"
+                    :style="collapseIconStyle"
                     @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
@@ -32,6 +33,7 @@
                 <div
                     v-else-if="direction === 'right' && isFullWidth === false"
                     class="collapse-icon collapse-icon--right"
+                    :style="collapseIconStyle"
                     @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Show</dl-tooltip>
@@ -48,6 +50,7 @@
                             hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--left"
+                    :style="[collapseIconStyle, leftCollapseIconStyle]"
                     @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
@@ -60,6 +63,7 @@
                 <div
                     v-else-if="direction === 'left' && isFullWidth === false"
                     class="collapse-icon collapse-icon--left--collapsed"
+                    :style="[collapseIconStyle, leftClosedCollapseIconStyle]"
                     @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Show</dl-tooltip>
@@ -185,6 +189,10 @@ export default defineComponent({
         showCollapseOnHover: {
             type: Boolean,
             default: false
+        },
+        isStudioLeftPanel: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'panel-width'],
@@ -267,6 +275,51 @@ export default defineComponent({
         footerStyles(): Record<string, any> {
             return {
                 [this.position]: '0px'
+            }
+        },
+        innerContainerStyles(): Record<string, string> {
+            return {
+                textAlign: 'left',
+                fontSize: 'var(--dl-font-size-body)',
+                position: 'relative',
+                padding: '0px 10px',
+                height: '100%',
+                boxSizing: 'border-box',
+                color: 'var(--dl-color-darker)',
+                backgroundColor: 'var(--dl-color-panel-background)',
+                zIndex: 'var(--dl-z-index-panel)',
+                width: this.isStudioLeftPanel
+                    ? 'calc(var(--dl-panel-container-width) - 10px)'
+                    : '100%'
+            }
+        },
+        collapseIconStyle(): Record<string, string> {
+            return {
+                zIndex: 'var(--dl-z-index-panel-container-elements)',
+                width: '20px',
+                height: '20px',
+                backgroundColor: 'var(--dl-color-fill)',
+                position: 'absolute',
+                top: this.isStudioLeftPanel ? '40px' : '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }
+        },
+        leftCollapseIconStyle(): Record<string, string> {
+            return {
+                right: this.isStudioLeftPanel ? '-10px' : '0px',
+                marginLeft: '15px',
+                borderTopLeftRadius: '2px',
+                borderBottomLeftRadius: '2px'
+            }
+        },
+        leftClosedCollapseIconStyle(): Record<string, string> {
+            return {
+                left: this.isStudioLeftPanel ? '10px' : '0px',
+                marginRight: '15px',
+                borderTopRightRadius: '2px',
+                borderBottomRightRadius: '2px'
             }
         }
     },
@@ -442,47 +495,12 @@ export default defineComponent({
     max-height: var(--dl-panel-container-height);
 
     .inner-container {
-        text-align: left;
-        font-size: var(--dl-font-size-body);
-        width: calc(var(--dl-panel-container-width) - 10px);
-
-        position: relative;
-        padding: 0px 10px;
-        box-sizing: border-box;
-        color: var(--dl-color-darker);
-        background-color: var(--dl-color-panel-background);
-        z-index: var(--dl-z-index-panel);
-
         .collapse-icon {
-            z-index: var(--dl-z-index-panel-container-elements);
-            width: 20px;
-            height: 20px;
-            background-color: var(--dl-color-fill);
-            position: absolute;
-            top: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
             &--right {
                 border-top-left-radius: 2px;
                 border-bottom-left-radius: 2px;
                 right: 0px;
                 margin-left: 15px;
-            }
-
-            &--left {
-                right: -10px;
-                margin-left: 15px;
-                border-top-left-radius: 2px;
-                border-bottom-left-radius: 2px;
-
-                &--collapsed {
-                    left: 10px;
-                    margin-right: 15px;
-                    border-top-right-radius: 2px;
-                    border-bottom-right-radius: 2px;
-                }
             }
         }
 
