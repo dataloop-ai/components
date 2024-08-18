@@ -290,7 +290,7 @@ export default defineComponent({
                 zIndex: 'var(--dl-z-index-panel)',
                 width: this.isStudioLeftPanel
                     ? 'calc(var(--dl-panel-container-width) - 10px)'
-                    : '100%'
+                    : this.width + 'px'
             }
         },
         collapseIconStyle(): Record<string, string> {
