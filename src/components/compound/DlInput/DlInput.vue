@@ -1358,6 +1358,8 @@ export default defineComponent({
 }
 
 .dl-input {
+    display: flex;
+    align-items: center;
     margin: var(--dl-input-margin);
 
     /* Chrome, Safari, Edge, Opera */
@@ -1371,9 +1373,6 @@ export default defineComponent({
     input[type='number'] {
         -moz-appearance: textfield;
     }
-
-    display: flex;
-    align-items: center;
 
     &--dense {
         padding: 0;

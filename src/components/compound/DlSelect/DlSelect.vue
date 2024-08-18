@@ -1193,10 +1193,10 @@ export default defineComponent({
             width: calc(100% - var(--dl-select-expand-icon-width));
             padding: 0;
             padding-right: var(--dl-select-expand-icon-width);
+            height: auto;
             .adornment-container {
                 height: 100%;
             }
-            height: auto;
 
             &__with-prepend {
                 padding-left: 30px;

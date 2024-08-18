@@ -232,13 +232,13 @@ export default defineComponent({
             max-width: 60px;
             max-height: 60px;
             transition: 0.1s;
+            cursor: pointer;
+            background-color: var(--dl-color-text-buttons);
+            padding: var(--img-padding);
             &:hover {
                 transform: scale(1.1);
                 outline: 1px solid var(--dl-color-hover) !important;
             }
-            cursor: pointer;
-            background-color: var(--dl-color-text-buttons);
-            padding: var(--img-padding);
         }
         &--image img {
             pointer-events: none;
