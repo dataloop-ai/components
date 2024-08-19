@@ -122,8 +122,12 @@ export default defineComponent({
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
 
+            const portalEl =
+                typeof menu.value?.portalEl === 'string'
+                    ? document.querySelector(menu.value.portalEl)
+                    : menu.value?.portalEl
             const element =
-                menu.value?.portalEl.querySelectorAll?.('.dl-list-item')[value]
+                portalEl?.querySelectorAll?.('.dl-list-item')[value]
             if (element) {
                 if (element.scrollIntoViewIfNeeded) {
                     element.scrollIntoViewIfNeeded()
