@@ -113,6 +113,8 @@ export default defineComponent({
         padding-left: 5px;
         padding-right: 5px;
         font-size: 10px;
+        max-width: 30px; // 40px - 10px (paddings)
+        -moz-appearance: textfield;
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -135,8 +137,6 @@ export default defineComponent({
                 border-color: var(--dl-color-disabled);
             }
         }
-        max-width: 30px; // 40px - 10px (paddings)
-        -moz-appearance: textfield;
     }
 }
 

@@ -1,13 +1,7 @@
 <template>
     <div>
-        <dl-button
-            label="Open Dialog Box (Center)"
-            @click="openStepper"
-        />
-        <div
-            class="dl-stepper-wrapper"
-            :style="cssVars"
-        >
+        <dl-button label="Open Dialog Box (Center)" @click="openStepper" />
+        <div class="dl-stepper-wrapper" :style="cssVars">
             <dl-stepper
                 v-model="isOpen"
                 done-button-label="Create"
@@ -33,10 +27,7 @@
             >
                 <template #content-header="{ state }">
                     <div style="display: flex; gap: 20px; align-items: center">
-                        <dl-typography
-                            size="h3"
-                            variant="h3"
-                        >
+                        <dl-typography size="h3" variant="h3">
                             {{
                                 `${stepper.currentIndex + 1}. ${
                                     stepper.currentStep.value

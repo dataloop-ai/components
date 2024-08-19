@@ -67,6 +67,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .input-file-element {
+    padding: 5px;
     position: relative;
     &--default {
         display: flex;
@@ -86,7 +87,6 @@ export default defineComponent({
     &--icon {
         cursor: pointer;
     }
-    padding: 5px;
 }
 .file-image {
     width: 100px;

@@ -3,6 +3,11 @@
 }
 
 .dl-table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
     .vertical-border {
         border-left: 1px solid var(--dl-color-separator);
         border-right: 1px solid var(--dl-color-separator);
@@ -70,11 +75,6 @@
         display: flex;
         justify-content: center;
     }
-
-    width: 100%;
-    max-width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
 
     &__drag-icon>div {
         transition: all ease-in 0.1s;
