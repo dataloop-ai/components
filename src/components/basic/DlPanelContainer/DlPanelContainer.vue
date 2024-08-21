@@ -52,6 +52,8 @@
                     class="collapse-icon collapse-icon--left"
                     :style="[collapseIconStyle, leftCollapseIconStyle]"
                     @click="handleCollapseButtonClick"
+                    @mouseleave="collapseButtonMouseLeave"
+                    @mouseenter="collapseButtonMouseEnter"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
                     <dl-icon
@@ -65,6 +67,8 @@
                     class="collapse-icon collapse-icon--left--collapsed"
                     :style="[collapseIconStyle, leftClosedCollapseIconStyle]"
                     @click="handleCollapseButtonClick"
+                    @mouseleave="collapseButtonMouseLeave"
+                    @mouseenter="collapseButtonMouseEnter"
                 >
                     <dl-tooltip>Show</dl-tooltip>
                     <dl-icon
@@ -81,6 +85,7 @@
                 :style="separatorStyles"
             >
                 <div
+                    v-if="showDragHandle"
                     v-show="resizable === true"
                     class="gutter"
                     :style="glutterStyles"
@@ -159,6 +164,11 @@ export default defineComponent({
             default: 360,
             validator: (val: number) => val >= 0
         },
+        minStretchableWidth: {
+            type: Number,
+            default: 36,
+            validator: (val: number) => val >= 0
+        },
         direction: {
             type: String,
             default: 'right',
@@ -190,9 +200,13 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        isStudioLeftPanel: {
+        layoutMode: {
+            type: String,
+            default: 'regular'
+        },
+        showDragHandle: {
             type: Boolean,
-            default: false
+            default: true
         }
     },
     emits: ['update:model-value', 'panel-width'],
@@ -204,10 +218,15 @@ export default defineComponent({
             isFullWidth: true,
             avoidUserSelect: false,
             collapsed: false,
-            hideCollapseButton: false
+            hideCollapseButton: false,
+            collapseBorder:
+                '1px solid var(--dl-color-separator, rgba(255, 255, 255, 0.15))'
         }
     },
     computed: {
+        isStudioMode() {
+            return this.layoutMode === 'studio'
+        },
         minW(): number {
             if (this.minWidth <= 0) {
                 return 0
@@ -282,13 +301,12 @@ export default defineComponent({
                 textAlign: 'left',
                 fontSize: 'var(--dl-font-size-body)',
                 position: 'relative',
-                padding: '0px 10px',
                 height: '100%',
                 boxSizing: 'border-box',
                 color: 'var(--dl-color-darker)',
                 backgroundColor: 'var(--dl-color-panel-background)',
                 zIndex: 'var(--dl-z-index-panel)',
-                width: this.isStudioLeftPanel
+                width: this.isStudioMode
                     ? 'calc(var(--dl-panel-container-width) - 10px)'
                     : this.width + 'px'
             }
@@ -300,15 +318,20 @@ export default defineComponent({
                 height: '20px',
                 backgroundColor: 'var(--dl-color-fill)',
                 position: 'absolute',
-                top: this.isStudioLeftPanel ? '40px' : '8px',
+                top: this.isStudioMode ? '40px' : '8px',
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                borderRadius: '2px',
+                border: this.collapseBorder,
+                background: 'var(--dl-color-component, #30363D)',
+                boxShadow:
+                    '0px 4px 4px 0px var(--dl-color-shadow, rgba(27, 30, 34, 0.24))'
             }
         },
         leftCollapseIconStyle(): Record<string, string> {
             return {
-                right: this.isStudioLeftPanel ? '-10px' : '0px',
+                right: this.isStudioMode ? '-10px' : '0px',
                 marginLeft: '15px',
                 borderTopLeftRadius: '2px',
                 borderBottomLeftRadius: '2px'
@@ -316,7 +339,7 @@ export default defineComponent({
         },
         leftClosedCollapseIconStyle(): Record<string, string> {
             return {
-                left: this.isStudioLeftPanel ? '10px' : '0px',
+                left: this.isStudioMode ? '10px' : '0px',
                 marginRight: '15px',
                 borderTopRightRadius: '2px',
                 borderBottomRightRadius: '2px'
@@ -366,6 +389,13 @@ export default defineComponent({
                 this.hideCollapseButton = true
             }
         },
+        collapseButtonMouseEnter() {
+            this.collapseBorder = '1px solid var(--dl-color-hover)'
+        },
+        collapseButtonMouseLeave() {
+            this.collapseBorder =
+                '1px solid var(--dl-color-separator, rgba(255, 255, 255, 0.15))'
+        },
         reset() {
             const element = this.$refs['panel'] as HTMLDivElement
             element.style.width = this.w + 'px'
@@ -411,17 +441,24 @@ export default defineComponent({
                     this.collapsed = false
                 }
             } else {
-                if (e.pageX > this.left + this.maxStretchableWidth) {
+                const newWidth = e.pageX - this.left
+
+                if (newWidth > this.maxStretchableWidth) {
                     element.style.width = this.maxStretchableWidth + 'px'
-
                     this.collapsed = false
-                } else if (e.pageX < this.left + this.minW) {
-                    element.style.width = this.minW + 'px'
-
-                    this.collapsed = true
+                } else if (newWidth < this.minW) {
+                    const widthToSet = Math.max(
+                        this.minStretchableWidth,
+                        this.minW
+                    )
+                    element.style.width = widthToSet + 'px'
+                    this.collapsed = widthToSet === this.minW
                 } else {
-                    element.style.width = offset + 'px'
-
+                    const widthToSet = Math.max(
+                        newWidth,
+                        this.minStretchableWidth
+                    )
+                    element.style.width = widthToSet + 'px'
                     this.collapsed = false
                 }
             }
@@ -435,11 +472,7 @@ export default defineComponent({
                     this.isFullWidth = false
                 }
             } else {
-                if (e.pageX > this.left + this.w) {
-                    this.isFullWidth = true
-                } else {
-                    this.isFullWidth = false
-                }
+                this.isFullWidth = true
             }
 
             document.removeEventListener('mousemove', this.mousemove)
@@ -502,6 +535,9 @@ export default defineComponent({
                 right: 0px;
                 margin-left: 15px;
             }
+            &:hover {
+                border: 1px solid var(--dl-color-hover);
+            }
         }
 
         & .separator {
@@ -537,7 +573,6 @@ export default defineComponent({
 
         & .content {
             overflow-x: hidden;
-            overflow-y: scroll;
             max-height: calc(
                 var(--dl-panel-container-height) - var(--dl-header-height, 0) -
                     var(--dl-footer-height, 0)
