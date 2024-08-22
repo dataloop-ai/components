@@ -10,16 +10,17 @@
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
     >
-        <div ref="panel" class="inner-container" style="height: 100%">
+        <div ref="panel" :style="innerContainerStyles" class="inner-container">
             <div v-if="collapsed" class="inner-container-overlay" />
             <div v-if="collapsable === true">
                 <div
                     v-if="
                         direction === 'right' &&
-                        isFullWidth === true &&
-                        hideCollapseButton === false
+                            isFullWidth === true &&
+                            hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--right"
+                    :style="collapseIconStyle"
                     @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
@@ -32,6 +33,7 @@
                 <div
                     v-else-if="direction === 'right' && isFullWidth === false"
                     class="collapse-icon collapse-icon--right"
+                    :style="collapseIconStyle"
                     @click="handleCollapseButtonClick"
                 >
                     <dl-tooltip>Show</dl-tooltip>
@@ -44,11 +46,14 @@
                 <div
                     v-else-if="
                         direction === 'left' &&
-                        isFullWidth === true &&
-                        hideCollapseButton === false
+                            isFullWidth === true &&
+                            hideCollapseButton === false
                     "
                     class="collapse-icon collapse-icon--left"
+                    :style="[collapseIconStyle, leftCollapseIconStyle]"
                     @click="handleCollapseButtonClick"
+                    @mouseleave="collapseButtonMouseLeave"
+                    @mouseenter="collapseButtonMouseEnter"
                 >
                     <dl-tooltip>Hide</dl-tooltip>
                     <dl-icon
@@ -60,7 +65,10 @@
                 <div
                     v-else-if="direction === 'left' && isFullWidth === false"
                     class="collapse-icon collapse-icon--left--collapsed"
+                    :style="[collapseIconStyle, leftClosedCollapseIconStyle]"
                     @click="handleCollapseButtonClick"
+                    @mouseleave="collapseButtonMouseLeave"
+                    @mouseenter="collapseButtonMouseEnter"
                 >
                     <dl-tooltip>Show</dl-tooltip>
                     <dl-icon
@@ -77,6 +85,7 @@
                 :style="separatorStyles"
             >
                 <div
+                    v-if="showDragHandle"
                     v-show="resizable === true"
                     class="gutter"
                     :style="glutterStyles"
@@ -155,6 +164,11 @@ export default defineComponent({
             default: 360,
             validator: (val: number) => val >= 0
         },
+        minStretchableWidth: {
+            type: Number,
+            default: 36,
+            validator: (val: number) => val >= 0
+        },
         direction: {
             type: String,
             default: 'right',
@@ -185,6 +199,14 @@ export default defineComponent({
         showCollapseOnHover: {
             type: Boolean,
             default: false
+        },
+        layoutMode: {
+            type: String,
+            default: 'regular'
+        },
+        showDragHandle: {
+            type: Boolean,
+            default: true
         }
     },
     emits: ['update:model-value', 'panel-width'],
@@ -196,10 +218,15 @@ export default defineComponent({
             isFullWidth: true,
             avoidUserSelect: false,
             collapsed: false,
-            hideCollapseButton: false
+            hideCollapseButton: false,
+            collapseBorder:
+                '1px solid var(--dl-color-separator, rgba(255, 255, 255, 0.15))'
         }
     },
     computed: {
+        isStudioMode() {
+            return this.layoutMode === 'studio'
+        },
         minW(): number {
             if (this.minWidth <= 0) {
                 return 0
@@ -268,6 +295,56 @@ export default defineComponent({
             return {
                 [this.position]: '0px'
             }
+        },
+        innerContainerStyles(): Record<string, string> {
+            return {
+                textAlign: 'left',
+                fontSize: 'var(--dl-font-size-body)',
+                position: 'relative',
+                height: '100%',
+                boxSizing: 'border-box',
+                color: 'var(--dl-color-darker)',
+                backgroundColor: 'var(--dl-color-panel-background)',
+                zIndex: 'var(--dl-z-index-panel)',
+                width: this.isStudioMode
+                    ? 'calc(var(--dl-panel-container-width) - 10px)'
+                    : this.width + 'px',
+                padding: this.isStudioMode ? '0px' : '0px 10px'
+            }
+        },
+        collapseIconStyle(): Record<string, string> {
+            return {
+                zIndex: 'var(--dl-z-index-panel-container-elements)',
+                width: '20px',
+                height: '20px',
+                backgroundColor: 'var(--dl-color-fill)',
+                position: 'absolute',
+                top: this.isStudioMode ? '40px' : '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '2px',
+                border: this.collapseBorder,
+                background: 'var(--dl-color-component, #30363D)',
+                boxShadow:
+                    '0px 4px 4px 0px var(--dl-color-shadow, rgba(27, 30, 34, 0.24))'
+            }
+        },
+        leftCollapseIconStyle(): Record<string, string> {
+            return {
+                right: this.isStudioMode ? '-10px' : '0px',
+                marginLeft: '15px',
+                borderTopLeftRadius: '2px',
+                borderBottomLeftRadius: '2px'
+            }
+        },
+        leftClosedCollapseIconStyle(): Record<string, string> {
+            return {
+                left: this.isStudioMode ? '10px' : '0px',
+                marginRight: '15px',
+                borderTopRightRadius: '2px',
+                borderBottomRightRadius: '2px'
+            }
         }
     },
     watch: {
@@ -312,6 +389,13 @@ export default defineComponent({
             if (this.showCollapseOnHover) {
                 this.hideCollapseButton = true
             }
+        },
+        collapseButtonMouseEnter() {
+            this.collapseBorder = '1px solid var(--dl-color-hover)'
+        },
+        collapseButtonMouseLeave() {
+            this.collapseBorder =
+                '1px solid var(--dl-color-separator, rgba(255, 255, 255, 0.15))'
         },
         reset() {
             const element = this.$refs['panel'] as HTMLDivElement
@@ -358,17 +442,24 @@ export default defineComponent({
                     this.collapsed = false
                 }
             } else {
-                if (e.pageX > this.left + this.maxStretchableWidth) {
+                const newWidth = e.pageX - this.left
+
+                if (newWidth > this.maxStretchableWidth) {
                     element.style.width = this.maxStretchableWidth + 'px'
-
                     this.collapsed = false
-                } else if (e.pageX < this.left + this.minW) {
-                    element.style.width = this.minW + 'px'
-
-                    this.collapsed = true
+                } else if (newWidth < this.minW) {
+                    const widthToSet = Math.max(
+                        this.minStretchableWidth,
+                        this.minW
+                    )
+                    element.style.width = widthToSet + 'px'
+                    this.collapsed = widthToSet === this.minW
                 } else {
-                    element.style.width = offset + 'px'
-
+                    const widthToSet = Math.max(
+                        newWidth,
+                        this.minStretchableWidth
+                    )
+                    element.style.width = widthToSet + 'px'
                     this.collapsed = false
                 }
             }
@@ -376,19 +467,11 @@ export default defineComponent({
         },
         mouseup(e: MouseEvent) {
             if (this.direction === 'right') {
-                if (e.pageX < this.left) {
-                    this.isFullWidth = true
-                } else {
-                    this.isFullWidth = false
-                }
+                this.isFullWidth = e.pageX < this.left
             } else {
-                if (e.pageX > this.left + this.w) {
-                    this.isFullWidth = true
-                } else {
-                    this.isFullWidth = false
-                }
+                this.isFullWidth =
+                    this.isStudioMode || e.pageX > this.left + this.w
             }
-
             document.removeEventListener('mousemove', this.mousemove)
             document.removeEventListener('mouseup', this.mouseup)
 
@@ -442,46 +525,15 @@ export default defineComponent({
     max-height: var(--dl-panel-container-height);
 
     .inner-container {
-        text-align: left;
-        font-size: var(--dl-font-size-body);
-
-        position: relative;
-        padding: 0px 10px;
-        box-sizing: border-box;
-        color: var(--dl-color-darker);
-        background-color: var(--dl-color-panel-background);
-        z-index: var(--dl-z-index-panel);
-
         .collapse-icon {
-            z-index: var(--dl-z-index-panel-container-elements);
-            width: 20px;
-            height: 20px;
-            background-color: var(--dl-color-fill);
-            position: absolute;
-            top: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
             &--right {
                 border-top-left-radius: 2px;
                 border-bottom-left-radius: 2px;
                 right: 0px;
                 margin-left: 15px;
             }
-
-            &--left {
-                right: 0px;
-                margin-left: 15px;
-                border-top-left-radius: 2px;
-                border-bottom-left-radius: 2px;
-
-                &--collapsed {
-                    left: 0px;
-                    margin-right: 15px;
-                    border-top-right-radius: 2px;
-                    border-bottom-right-radius: 2px;
-                }
+            &:hover {
+                border: 1px solid var(--dl-color-hover);
             }
         }
 
@@ -518,7 +570,6 @@ export default defineComponent({
 
         & .content {
             overflow-x: hidden;
-            overflow-y: scroll;
             max-height: calc(
                 var(--dl-panel-container-height) - var(--dl-header-height, 0) -
                     var(--dl-footer-height, 0)
