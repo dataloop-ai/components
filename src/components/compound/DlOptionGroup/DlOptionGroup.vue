@@ -196,10 +196,10 @@ export default defineComponent({
 }
 
 .disabled {
+    color: var(--dl-color-disabled);
     cursor: not-allowed;
     & label {
         cursor: not-allowed;
     }
-    color: var(--dl-color-disabled);
 }
 </style>
