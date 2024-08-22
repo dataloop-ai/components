@@ -308,7 +308,8 @@ export default defineComponent({
                 zIndex: 'var(--dl-z-index-panel)',
                 width: this.isStudioMode
                     ? 'calc(var(--dl-panel-container-width) - 10px)'
-                    : this.width + 'px'
+                    : this.width + 'px',
+                padding: this.isStudioMode ? '0px' : '0px 10px'
             }
         },
         collapseIconStyle(): Record<string, string> {
@@ -466,15 +467,11 @@ export default defineComponent({
         },
         mouseup(e: MouseEvent) {
             if (this.direction === 'right') {
-                if (e.pageX < this.left) {
-                    this.isFullWidth = true
-                } else {
-                    this.isFullWidth = false
-                }
+                this.isFullWidth = e.pageX < this.left
             } else {
-                this.isFullWidth = true
+                this.isFullWidth =
+                    this.isStudioMode || e.pageX > this.left + this.w
             }
-
             document.removeEventListener('mousemove', this.mousemove)
             document.removeEventListener('mouseup', this.mouseup)
 
