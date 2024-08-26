@@ -325,7 +325,7 @@ export default defineComponent({
                 alignItems: 'center',
                 borderRadius: '2px',
                 border: this.collapseBorder,
-                background: 'var(--dl-color-component, #30363D)',
+                background: 'var(--dl-color-bg, #30363D)',
                 boxShadow:
                     '0px 4px 4px 0px var(--dl-color-shadow, rgba(27, 30, 34, 0.24))'
             }
