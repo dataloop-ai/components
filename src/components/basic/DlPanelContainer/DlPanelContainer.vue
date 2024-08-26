@@ -224,7 +224,7 @@ export default defineComponent({
         }
     },
     computed: {
-        isStudioMode() {
+        isStudioMode(): boolean {
             return this.layoutMode === 'studio'
         },
         minW(): number {
