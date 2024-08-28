@@ -12,76 +12,10 @@
     >
         <div ref="panel" :style="innerContainerStyles" class="inner-container">
             <div v-if="collapsed" class="inner-container-overlay" />
-            <div v-if="collapsable === true">
-                <div
-                    v-if="
-                        direction === 'right' &&
-                            isFullWidth === true &&
-                            hideCollapseButton === false
-                    "
-                    class="collapse-icon collapse-icon--right"
-                    :style="collapseIconStyle"
-                    @click="handleCollapseButtonClick"
-                >
-                    <dl-tooltip>Hide</dl-tooltip>
-                    <dl-icon
-                        icon="icon-dl-collapse"
-                        color="dl-color-darker"
-                        size="16px"
-                    />
-                </div>
-                <div
-                    v-else-if="direction === 'right' && isFullWidth === false"
-                    class="collapse-icon collapse-icon--right"
-                    :style="collapseIconStyle"
-                    @click="handleCollapseButtonClick"
-                >
-                    <dl-tooltip>Show</dl-tooltip>
-                    <dl-icon
-                        icon="icon-dl-expand"
-                        color="dl-color-darker"
-                        size="16px"
-                    />
-                </div>
-                <div
-                    v-else-if="
-                        direction === 'left' &&
-                            isFullWidth === true &&
-                            hideCollapseButton === false
-                    "
-                    class="collapse-icon collapse-icon--left"
-                    :style="[collapseIconStyle, leftCollapseIconStyle]"
-                    @click="handleCollapseButtonClick"
-                    @mouseleave="collapseButtonMouseLeave"
-                    @mouseenter="collapseButtonMouseEnter"
-                >
-                    <dl-tooltip>Hide</dl-tooltip>
-                    <dl-icon
-                        icon="icon-dl-expand"
-                        color="dl-color-darker"
-                        size="16px"
-                    />
-                </div>
-                <div
-                    v-else-if="direction === 'left' && isFullWidth === false"
-                    class="collapse-icon collapse-icon--left--collapsed"
-                    :style="[collapseIconStyle, leftClosedCollapseIconStyle]"
-                    @click="handleCollapseButtonClick"
-                    @mouseleave="collapseButtonMouseLeave"
-                    @mouseenter="collapseButtonMouseEnter"
-                >
-                    <dl-tooltip>Show</dl-tooltip>
-                    <dl-icon
-                        icon="icon-dl-collapse"
-                        color="dl-color-darker"
-                        size="16px"
-                    />
-                </div>
-            </div>
             <div
                 ref="separator"
                 class="separator"
-                :class="{ resize: resizable === true }"
+                :class="{ resize: resizable === true && isFullWidth === true }"
                 :style="separatorStyles"
             >
                 <div
@@ -119,6 +53,72 @@
             >
                 <div class="overflow-hidden">
                     <slot name="footer" />
+                </div>
+            </div>
+            <div v-if="collapsable === true">
+                <div
+                    v-if="
+                        direction === 'right' &&
+                            isFullWidth === true &&
+                            hideCollapseButton === false
+                    "
+                    class="collapse-icon collapse-icon--right"
+                    :style="collapseIconStyle"
+                    @click="handleCollapseButtonClick"
+                >
+                    <dl-tooltip>Collapse Panel</dl-tooltip>
+                    <dl-icon
+                        icon="icon-dl-collapse"
+                        color="dl-color-darker"
+                        size="16px"
+                    />
+                </div>
+                <div
+                    v-else-if="direction === 'right' && isFullWidth === false"
+                    class="collapse-icon collapse-icon--right"
+                    :style="collapseIconStyle"
+                    @click="handleCollapseButtonClick"
+                >
+                    <dl-tooltip>Expand Panel</dl-tooltip>
+                    <dl-icon
+                        icon="icon-dl-expand"
+                        color="dl-color-darker"
+                        size="16px"
+                    />
+                </div>
+                <div
+                    v-else-if="
+                        direction === 'left' &&
+                            isFullWidth === true &&
+                            hideCollapseButton === false
+                    "
+                    class="collapse-icon collapse-icon--left"
+                    :style="[collapseIconStyle, leftCollapseIconStyle]"
+                    @click="handleCollapseButtonClick"
+                    @mouseleave="collapseButtonMouseLeave"
+                    @mouseenter="collapseButtonMouseEnter"
+                >
+                    <dl-tooltip>Collapse Panel</dl-tooltip>
+                    <dl-icon
+                        icon="icon-dl-expand"
+                        color="dl-color-darker"
+                        size="16px"
+                    />
+                </div>
+                <div
+                    v-else-if="direction === 'left' && isFullWidth === false"
+                    class="collapse-icon collapse-icon--left--collapsed"
+                    :style="[collapseIconStyle, leftClosedCollapseIconStyle]"
+                    @click="handleCollapseButtonClick"
+                    @mouseleave="collapseButtonMouseLeave"
+                    @mouseenter="collapseButtonMouseEnter"
+                >
+                    <dl-tooltip>Expand Panel</dl-tooltip>
+                    <dl-icon
+                        icon="icon-dl-collapse"
+                        color="dl-color-darker"
+                        size="16px"
+                    />
                 </div>
             </div>
         </div>
@@ -340,7 +340,7 @@ export default defineComponent({
         },
         leftClosedCollapseIconStyle(): Record<string, string> {
             return {
-                left: this.isStudioMode ? '10px' : '0px',
+                left: this.isStudioMode ? '6px' : '0px',
                 marginRight: '15px',
                 borderTopRightRadius: '2px',
                 borderBottomRightRadius: '2px'
