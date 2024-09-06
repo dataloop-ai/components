@@ -79,6 +79,7 @@
                                 :contenteditable="contenteditable"
                                 :class="inputClasses"
                                 :placeholder="placeholder"
+                                :style="stylesInput"
                                 @input="onChange"
                                 @focus="onFocus"
                                 @blur="onBlur"
@@ -100,6 +101,7 @@
                                     ...adornmentClasses,
                                     'dl-input__adornment-container--pos-right'
                                 ]"
+                                :style="styleAppend"
                             >
                                 <slot v-if="hasAppend" name="append" />
                                 <span
@@ -626,6 +628,14 @@ export default defineComponent({
         trimDebounce: {
             type: Number,
             default: 500
+        },
+        styleAppend: {
+            type: String,
+            default: ''
+        },
+        stylesInput: {
+            type: String,
+            default: ''
         }
     },
     emits: [
