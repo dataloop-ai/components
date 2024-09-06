@@ -124,6 +124,25 @@
                 />
             </template>
         </dl-input>
+        <div class="numberClip" style="max-width: 64px">
+            <dl-input
+                v-model="numberClip"
+                title="Number Clip"
+                dense
+                size="m"
+                hide-clear-button
+                fit-content
+                type="number"
+                text-overflow="clip"
+                style-append="flex: none; transform:translateX(-2px);"
+                styles-input="text-overflow: clip;margin-right: 5px"
+            >
+                <template #append>
+                    <span>%</span>
+                </template>
+            </dl-input>
+        </div>
+
         <dl-input
             v-model="passFieldValue"
             title="Password"
@@ -277,6 +296,7 @@ export default defineComponent({
 
         const textVal = ref<string>('test me')
         const numberVal = ref<number>()
+        const numberClip = ref<number>(0)
         const emittedNumberValues = ref<number[]>([])
 
         const trimmedValue = ref('')
@@ -296,6 +316,7 @@ export default defineComponent({
             sizeSFieldValue,
             files,
             updateFiles,
+            numberClip,
             addFile
         }
     }
