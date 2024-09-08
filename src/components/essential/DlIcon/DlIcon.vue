@@ -176,9 +176,13 @@ export default defineComponent({
                 }
 
                 try {
+                    const publicPath =
+                        process.env.PUBLIC_PATH === 'true'
+                            ? '__PUBLIC_PATH'
+                            : ''
                     svgElement.src = svgSource.value
                         ? `${svgSource.value}/${cleanedIconName.value}.svg`
-                        : `/icons/assets/${cleanedIconName.value}.svg`
+                        : `${publicPath}/icons/assets/${cleanedIconName.value}.svg`
                 } catch (e) {
                     reject(e)
                 }
