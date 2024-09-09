@@ -176,7 +176,11 @@ export default defineComponent({
                 }
 
                 try {
-                    const publicPath = process.env.BASE_URL ?? ''
+                    let publicPath = process.env.BASE_URL ?? ''
+                    if (publicPath.endsWith('/')) {
+                        publicPath = publicPath.slice(0, -1)
+                    }
+                    console.log('@@@@', publicPath)
                     svgElement.src = svgSource.value
                         ? `${svgSource.value}/${cleanedIconName.value}.svg`
                         : `${publicPath}/icons/assets/${cleanedIconName.value}.svg`
