@@ -176,9 +176,13 @@ export default defineComponent({
                 }
 
                 try {
+                    let publicPath = process.env.BASE_URL ?? ''
+                    if (publicPath.endsWith('/')) {
+                        publicPath = publicPath.slice(0, -1)
+                    }
                     svgElement.src = svgSource.value
                         ? `${svgSource.value}/${cleanedIconName.value}.svg`
-                        : `/icons/assets/${cleanedIconName.value}.svg`
+                        : `${publicPath}/icons/assets/${cleanedIconName.value}.svg`
                 } catch (e) {
                     reject(e)
                 }
