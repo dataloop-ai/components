@@ -176,10 +176,7 @@ export default defineComponent({
                 }
 
                 try {
-                    const publicPath =
-                        process.env.PUBLIC_PATH === 'true'
-                            ? '__PUBLIC_PATH'
-                            : ''
+                    const publicPath = process.env.BASE_URL ?? ''
                     svgElement.src = svgSource.value
                         ? `${svgSource.value}/${cleanedIconName.value}.svg`
                         : `${publicPath}/icons/assets/${cleanedIconName.value}.svg`
