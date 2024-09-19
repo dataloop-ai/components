@@ -1,15 +1,12 @@
 <template>
-    <div
-        :style="legendStyles"
-        class="dl-chart-legend"
-    >
+    <div :style="legendStyles" class="dl-chart-legend">
         <div
             v-for="(item, index) in datasets"
             :key="index"
             class="dl-chart-legend--item"
             :style="{
                 '--dl-chart-badge-color': getColor(
-                    item.backgroundColor.replace('--', '')
+                    (item.backgroundColor || '').replace('--', '')
                 )
             }"
             @click="hideData($event, item, index)"
@@ -20,7 +17,9 @@
                 :color="
                     item.hidden
                         ? 'var(--dl-color-disabled)'
-                        : getColor(item.backgroundColor.replace('--', ''))
+                        : getColor(
+                            (item.backgroundColor || '').replace('--', '')
+                        )
                 "
             />
             <dl-typography
