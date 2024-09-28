@@ -155,13 +155,15 @@ export default defineComponent({
 
         const loadSvg = () => {
             return new Promise<void>((resolve, reject) => {
+                const loadedIcon = icon.value
+
                 const svgElement = new Image()
                 svgElement.setAttribute('height', size.value)
                 svgElement.setAttribute('width', size.value)
 
                 svgElement.onload = () => {
                     // In order to handle events and loading that occur mid unmounting.
-                    if (isDestroyed.value) {
+                    if (isDestroyed.value || loadedIcon !== icon.value) {
                         return
                     }
                     const container = svgIcon.value as HTMLDivElement
