@@ -158,7 +158,7 @@
                         <slot name="before-options" />
                     </dl-item-section>
                 </dl-list-item>
-                <dl-list-item v-if="noOptions">
+                <dl-list-item v-if="noOptions" :style="computedNoOptionsStyle">
                     <dl-item-section color="dl-color-medium">
                         <slot name="no-options"> No options </slot>
                     </dl-item-section>
@@ -225,6 +225,7 @@
                             :children="getOptionChildren(item)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(item)"
+                            :indentation="indentation"
                             :is-expanded="item.expanded"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(item)"
@@ -274,6 +275,7 @@
                             :children="getOptionChildren(option)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(option)"
+                            :indentation="indentation"
                             :is-expanded="isExpandedOption(option)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
@@ -281,6 +283,9 @@
                             @deselected="handleDeselected"
                             @depth-change="handleDepthChange"
                         >
+                            <template #option="scope">
+                                <slot name="option" v-bind="scope" />
+                            </template>
                             <slot :opt="option" name="option">
                                 <span
                                     v-if="fitContent"
@@ -393,6 +398,7 @@ export default defineComponent({
         type: { type: String, default: 'text' },
         multiselect: { type: Boolean, default: false },
         dropdownIcon: { type: String, default: 'icon-dl-down-chevron' },
+        indentation: { type: Number, default: 30 },
         topMessage: { type: String, default: '' },
         redAsterisk: { type: Boolean, default: false },
         infoMessage: { type: String, default: '' },
@@ -464,6 +470,7 @@ export default defineComponent({
         const searchTerm = ref('')
         const searchInputValue = ref('')
         const MAX_ITEMS_PER_LIST = 100 // HARDCODED - max items per list before virtual scroll
+        const initialMenuWidth = ref(0)
 
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
@@ -496,7 +503,8 @@ export default defineComponent({
             searchTerm, // todo: merge this sometime
             searchInputValue,
             hasSlotByName,
-            hasSlotContent
+            hasSlotContent,
+            initialMenuWidth
         }
     },
     computed: {
@@ -581,6 +589,9 @@ export default defineComponent({
                 style += '; overflow-y: hidden'
             }
             return style
+        },
+        computedNoOptionsStyle(): string {
+            return `min-width: ${this.initialMenuWidth}px`
         },
         optionsCount(): number {
             return this.options?.length ?? 0
@@ -805,6 +816,13 @@ export default defineComponent({
                     const inputRef = this.$refs.searchInput as HTMLInputElement
                     this.$nextTick(() => {
                         inputRef?.focus({})
+                        setTimeout(() => {
+                            const menuRef = this.$refs.menu as {
+                                innerRef?: HTMLElement
+                            }
+                            this.initialMenuWidth =
+                                menuRef?.innerRef?.clientWidth ?? 0
+                        }, 100)
                     })
                 }
             }
