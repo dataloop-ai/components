@@ -3,7 +3,7 @@
         <div
             v-if="readonly"
             :class="[{ 'readonly-option': true }, { capitalized }]"
-            :style="`padding-left: ${10 + depth * 30}px;`"
+            :style="`padding-left: ${10 + depth * indentation}px;`"
         >
             <slot>
                 {{ label ? (capitalized ? label.toLowerCase() : label) : null }}
@@ -22,7 +22,7 @@
                 <span
                     v-if="multiselect"
                     class="multiselect-option"
-                    :style="`padding-left: ${depth * 30}px;`"
+                    :style="`padding-left: ${depth * indentation}px;`"
                 >
                     <span v-if="hasChildren">
                         <dl-icon
@@ -73,7 +73,7 @@
                     :ref="`option-${getValue(child)}`"
                     :multiselect="multiselect"
                     :select-children="selectChildren"
-                    :count="count"
+                    :count="getOptionCount(child)"
                     clickable
                     :model-value="modelValue"
                     :value="getValue(child)"
@@ -84,6 +84,7 @@
                     :with-wave="withWave"
                     :capitalized="capitalized"
                     :readonly="isReadonlyOption(child)"
+                    :indentation="indentation"
                     :is-expanded="isExpanded"
                     :filter-term="filterTerm"
                     :fit-content="fitContent"
@@ -92,17 +93,22 @@
                     @deselected="handleSingleDeselect"
                     @depth-change="$emit('depth-change')"
                 >
-                    <span
-                        v-if="fitContent"
-                        class="inner-option"
-                        v-html="getOptionHtml(child)"
-                    />
-                    <dl-ellipsis v-else>
+                    <template #option="scope">
+                        <slot name="option" v-bind="scope" />
+                    </template>
+                    <slot :opt="child" name="option">
                         <span
+                            v-if="fitContent"
                             class="inner-option"
                             v-html="getOptionHtml(child)"
                         />
-                    </dl-ellipsis>
+                        <dl-ellipsis v-else>
+                            <span
+                                class="inner-option"
+                                v-html="getOptionHtml(child)"
+                            />
+                        </dl-ellipsis>
+                    </slot>
                 </dl-select-option>
             </div>
         </div>
@@ -160,6 +166,7 @@ export default defineComponent({
         label: { type: String, default: null },
         capitalized: { type: Boolean, default: false },
         readonly: { type: Boolean, default: false },
+        indentation: { type: Number, default: 30 },
         isExpanded: {
             type: Boolean,
             default: false
@@ -216,9 +223,6 @@ export default defineComponent({
         },
         hasChildren(): boolean {
             return this.children && this.children?.length > 0
-        },
-        indent(): { padding: string } {
-            return { padding: `0 ${this.depth * 30}px 0 0` }
         },
         displayLabel(): string {
             return String(this.label ? this.label : this.value)
@@ -340,6 +344,9 @@ export default defineComponent({
         },
         toggleChildren() {
             this.showChildren = !this.showChildren
+        },
+        getOptionCount(option: any) {
+            return option?.count ?? null
         },
         getChildren(option: any) {
             return typeof option === 'object' ? option.children : null
