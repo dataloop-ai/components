@@ -325,6 +325,11 @@ export default defineComponent({
         flex-wrap: wrap;
     }
 
+    &--day_picker {
+        max-height: 265px;
+        overflow-y: hidden;
+    }
+
     &--calendar_from,
     &--calendar_to {
         width: 230px;
