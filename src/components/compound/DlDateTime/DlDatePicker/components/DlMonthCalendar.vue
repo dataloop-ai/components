@@ -269,11 +269,11 @@ export default defineComponent({
         border: 1px solid var(--dl-color-separator);
         border-radius: 2px;
         margin-left: 15px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         cursor: pointer;
         font-size: 14px;
         text-transform: capitalize;
-        padding: 7px 21px;
+        padding: 4px 21px;
 
         &-disabled {
             cursor: not-allowed;
