@@ -163,7 +163,7 @@ export function setAllColumnWidths(
                         getIconWidth(targetEl) +
                         35
                     // Set the width of the column
-                    targetEl.style.minWidth =
+                    targetEl.style.width =
                         typeof col.width === 'number' || !col.width
                             ? `${width}px`
                             : col.width
