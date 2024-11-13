@@ -854,6 +854,7 @@ export default defineComponent({
             class: this.containerClass,
             hideBottom: this.hideBottom,
             hideNoData: this.hideNoData,
+            hideHeader: this.hideHeader,
             on: {
                 'row-click': this.emitRowClick,
                 'row-dblclick': this.emitRowDblclick,
