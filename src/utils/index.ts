@@ -43,7 +43,6 @@ export const registerToWindow = (params: {
     let { key, ref } = params
     key = !key && ref._isVue ? `${ref.$vnode.tag}-${ref._uid}` : key
     const dispose = () => {
-        // console.log(`DISPOSING ${key}`)
         // @ts-ignore
         window[key] = undefined
         // @ts-ignore
@@ -51,7 +50,6 @@ export const registerToWindow = (params: {
     }
 
     const destroyRef = () => {
-        // console.log(`DESTROYING ${key}`)
         const keys = Object.keys(ref.$data)
         keys.forEach((k) => {
             if (k === 'unsubscribers' && Array.isArray(ref.$data[k])) {

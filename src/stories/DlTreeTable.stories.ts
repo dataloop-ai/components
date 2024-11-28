@@ -135,9 +135,7 @@ const setupFunction = () => {
         setPagination({ page: pagesNumber.value })
     }
 
-    const onRowClick = (item: any) => {
-        // console.log('onRowClick TreeTableDemo: ', item)
-    }
+    const onRowClick = (item: any) => {}
 
     const reorderRows = (newRows: any[]) => {
         tableRows.value = newRows

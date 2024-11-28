@@ -314,7 +314,6 @@ export default defineComponent({
             return between(val, this.minRation, this.maxRatio)
         },
         onActivate(evt: MouseEvent) {
-            console.log('hiihihihihihih')
             this.updatePosition(evt, this.getDragging(evt))
             this.updateValue()
 

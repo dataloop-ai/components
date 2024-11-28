@@ -478,7 +478,6 @@ describe('DlSmartSearchInput', () => {
                         await window.delay(500)
                         await wrapper.vm.$nextTick()
                         expect(wrapper.vm.showSuggestions).toBeTruthy()
-                        //console.log('suggestions:', wrapper.vm.suggestions)
                         wrapper.vm.setInputFromSuggestion(
                             wrapper.vm.suggestions[suggestion]
                         )
