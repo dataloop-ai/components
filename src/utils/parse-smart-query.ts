@@ -23,6 +23,9 @@ const GeneratePureValue = (value: any) => {
         if (value === 'false') {
             return false
         }
+        if (value === 'null') {
+            return null
+        }
 
         try {
             const num = Number(value)

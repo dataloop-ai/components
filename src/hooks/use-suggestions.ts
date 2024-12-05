@@ -858,7 +858,7 @@ const getValueSuggestions = (
                 typeof type !== 'object'
             ) {
                 suggestion.push(
-                    typeof type === 'string' ? enquoteString(type) : type
+                    type !== 'null' && typeof type === 'string' ? enquoteString(type) : type
                 )
             }
         }
