@@ -13,7 +13,7 @@ export function isDatePattern(str: string) {
 
 const GeneratePureValue = (value: any) => {
     if (value === '') {
-        return null
+        return
     }
 
     if (typeof value === 'string') {
@@ -140,42 +140,42 @@ export const parseSmartQuery = (
                 case termUpToQuote.includes('>='):
                     ;[key, value] = SplitFirst(term, '>=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue !== null) {
+                    if (pureValue !== undefined) {
                         andQuery.push({ [key]: { $gte: pureValue } })
                     }
                     break
                 case termUpToQuote.includes('<='):
                     ;[key, value] = SplitFirst(term, '<=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue !== null) {
+                    if (pureValue !== undefined) {
                         andQuery.push({ [key]: { $lte: pureValue } })
                     }
                     break
                 case termUpToQuote.includes('>'):
                     ;[key, value] = SplitFirst(term, '>').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue !== null) {
+                    if (pureValue !== undefined) {
                         andQuery.push({ [key]: { $gt: pureValue } })
                     }
                     break
                 case termUpToQuote.includes('<'):
                     ;[key, value] = SplitFirst(term, '<').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue !== null) {
+                    if (pureValue !== undefined) {
                         andQuery.push({ [key]: { $lt: pureValue } })
                     }
                     break
                 case termUpToQuote.includes('!='):
                     ;[key, value] = SplitFirst(term, '!=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue !== null) {
+                    if (pureValue !== undefined) {
                         andQuery.push({ [key]: { $ne: pureValue } })
                     }
                     break
                 case termUpToQuote.includes('='):
                     ;[key, value] = SplitFirst(term, '=').map((x) => x.trim())
                     pureValue = GeneratePureValue(value)
-                    if (pureValue !== null) {
+                    if (pureValue !== undefined) {
                         andQuery.push({ [key]: pureValue })
                     }
                     break
@@ -200,7 +200,7 @@ export const parseSmartQuery = (
                             .filter((x) => x)
 
                         pureValue = GeneratePureValue(queryValue)
-                        if (pureValue !== null && Array.isArray(pureValue)) {
+                        if (pureValue !== undefined && Array.isArray(pureValue)) {
                             andQuery.push({ [key]: { $nin: pureValue } })
                         }
                     } else {
@@ -211,7 +211,7 @@ export const parseSmartQuery = (
                             .filter((x) => x)
 
                         pureValue = GeneratePureValue(queryValue)
-                        if (pureValue !== null && Array.isArray(pureValue)) {
+                        if (pureValue !== undefined && Array.isArray(pureValue)) {
                             andQuery.push({ [key]: { $in: pureValue } })
                         }
                     }

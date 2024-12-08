@@ -227,7 +227,7 @@ export function revertValueAliases(json: Data, schema: Data) {
 
     const replaceAliases = (where: Data) => {
         for (const key in where) {
-            if (typeof where[key] === 'object') {
+            if (where[key] && typeof where[key] === 'object') {
                 const val = where[key]
                 const isOperator = operatorKeys.includes(Object.keys(val)[0])
                 const isArrayOperator = ['$in', '$nin'].includes(
@@ -288,7 +288,7 @@ export function setValueAliases(json: Data, schema: Data) {
     const replaceValues = (where: Data) => {
         for (const key in where) {
             const val = where[key]
-            if (typeof val === 'object') {
+            if (val && typeof val === 'object') {
                 const isOperator = operatorKeys.includes(Object.keys(val)[0])
                 const isArrayOperator = ['$in', '$nin'].includes(
                     Object.keys(val)[0]
