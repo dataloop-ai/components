@@ -1,10 +1,5 @@
 <template>
-    <component
-        :is="variant"
-        :id="uuid"
-        :class="classes"
-        :style="styles"
-    >
+    <component :is="variant" :id="uuid" :class="classes" :style="styles">
         <slot />
     </component>
 </template>
@@ -53,7 +48,7 @@ export default defineComponent({
             const styles: Record<string, string | number> = {
                 color: getColor(this.color as string, 'dl-color-darker'),
                 textTransform: this.letterClass ? null : this.transform,
-                fontWeight: this.bold ? 'bold' : 400
+                fontWeight: this.bold ? 500 : 400
             }
 
             if (this.size && !sizes.includes(this.size)) {

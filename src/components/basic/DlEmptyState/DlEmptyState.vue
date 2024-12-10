@@ -31,10 +31,7 @@
             {{ subtitle }}
         </dl-typography>
 
-        <div
-            v-if="hasCTASlot"
-            class="empty-state--cta"
-        >
+        <div v-if="hasCTASlot" class="empty-state--cta">
             <slot name="cta" />
         </div>
 
@@ -47,10 +44,7 @@
             {{ info }}
         </dl-typography>
 
-        <div
-            v-if="hasLinkSlot"
-            class="empty-state--links"
-        >
+        <div v-if="hasLinkSlot" class="empty-state--links">
             <slot name="links" />
         </div>
     </div>
@@ -243,8 +237,7 @@ export default defineComponent({
     background-size: var(--bg-size);
 
     &--title {
-        line-height: 24px;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
     }
 
     &--subtitle,
