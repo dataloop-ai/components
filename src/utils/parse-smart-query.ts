@@ -275,7 +275,9 @@ export const stringifySmartQuery = (query: { [key: string]: any }): string => {
             result += ' AND '
         }
 
-        if (isObject(value)) {
+        if (value === null) {
+            result += `${key} = null`
+        } else if (isObject(value)) {
             for (const operator in value) {
                 if (value.hasOwnProperty(operator)) {
                     let operatorValue = (

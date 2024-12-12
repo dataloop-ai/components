@@ -162,7 +162,7 @@ export function replaceJSDatesWithStringifiedDates(
             } else {
                 toReturn[key] = formatToStringDate(value)
             }
-        } else if (typeof value === 'object') {
+        } else if (value && typeof value === 'object') {
             toReturn[key] = replaceJSDatesWithStringifiedDates(
                 toReturn[key],
                 dateKeys
