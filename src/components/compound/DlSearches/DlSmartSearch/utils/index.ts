@@ -343,12 +343,24 @@ export function setValueAliases(json: Data, schema: Data) {
 
 export function createColorSchema(
     colorSchema: ColorSchema,
-    aliases: Alias[]
+    aliases: Alias[],
+    schema: Data
 ): SyntaxColorSchema {
     const thisFields = []
     for (const key in aliases) {
         thisFields.push(aliases[key].alias)
     }
+
+    const addKeysFromSchema = (schema: Data, parentKey?: string) => {
+        for (const key in schema) {
+            const fullKey = parentKey ? `${parentKey}.${key}` : key
+            thisFields.push(fullKey)
+            if (typeof schema[key] === 'object') {
+                addKeysFromSchema(schema[key], fullKey)
+            }
+        }
+    }
+    addKeysFromSchema(schema)
 
     const thisOperators = []
     for (const key in operators) {
