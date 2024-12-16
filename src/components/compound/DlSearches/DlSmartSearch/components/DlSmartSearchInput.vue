@@ -848,7 +848,7 @@ export default defineComponent({
 
         //#region computed
         const editorStyle = computed((): SyntaxColorSchema => {
-            return createColorSchema(colorSchema.value, aliases.value)
+            return createColorSchema(colorSchema.value, aliases.value, schema.value)
         })
 
         const defaultIcon = 'icon-dl-stars'
