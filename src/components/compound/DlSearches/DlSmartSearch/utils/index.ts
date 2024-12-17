@@ -346,9 +346,13 @@ export function createColorSchema(
     aliases: Alias[],
     schema: Data
 ): SyntaxColorSchema {
-    const thisFields = []
+    const thisFields: string[] = []
     for (const key in aliases) {
-        thisFields.push(aliases[key].alias)
+        const aliasParts = aliases[key].alias.split('.')
+        while (aliasParts.length > 0) {
+            thisFields.push(aliasParts.join('.'))
+            aliasParts.pop()
+        }
     }
 
     const addKeysFromSchema = (schema: Data, parentKey?: string) => {
@@ -362,7 +366,7 @@ export function createColorSchema(
     }
     addKeysFromSchema(schema)
 
-    const thisOperators = []
+    const thisOperators: string[] = []
     for (const key in operators) {
         thisOperators.push(operators[key])
     }
