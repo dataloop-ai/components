@@ -7,27 +7,25 @@
         <p
             v-if="multiline"
             ref="dlEllipsisRef"
-            class="dl-ellipsis__multiline-text"
+            :class="`dl-ellipsis__multiline-text ${textClass}`"
+            @click="onClick"
         >
             {{ fullText }}
         </p>
-        <span
-            v-if="!multiline"
-            ref="dlEllipsisRef"
-            class="dl-ellipsis__left"
-        >
-            <slot
-                v-if="hasDefaultSlot"
-                name="default"
-            />
+        <span v-if="!multiline" ref="dlEllipsisRef" class="dl-ellipsis__left">
+            <slot v-if="hasDefaultSlot" name="default" />
             <span
                 v-else
                 style="white-space: nowrap"
-            >{{ leftText }}</span>
+                :class="textClass"
+                @click="onClick"
+            >{{ leftText }}</span
+            >
         </span>
         <span
             v-if="!multiline && rightText"
-            class="dl-ellipsis__right"
+            :class="`dl-ellipsis__right ${textClass}`"
+            @click="onClick"
         >
             {{ rightText }}
         </span>
@@ -38,10 +36,7 @@
             :anchor="tooltipPosition"
             :offset="tooltipOffset"
         >
-            <slot
-                v-if="hasDefaultSlot"
-                name="default"
-            />
+            <slot v-if="hasDefaultSlot" name="default" />
             <span v-else>{{ fullText }}</span>
         </dl-tooltip>
     </div>
@@ -115,8 +110,13 @@ export default defineComponent({
         maxLines: {
             type: Number,
             default: 3
+        },
+        textClass: {
+            type: String,
+            default: ''
         }
     },
+    emits: ['click'],
     // TODO: fix type issue here
     setup(props: any, { slots }: any) {
         const dlEllipsisRef = ref(null)
@@ -167,6 +167,11 @@ export default defineComponent({
             dlEllipsisRef,
             hasEllipsis,
             cssVars
+        }
+    },
+    methods: {
+        onClick(e: Event) {
+            this.$emit('click', e)
         }
     }
 })
