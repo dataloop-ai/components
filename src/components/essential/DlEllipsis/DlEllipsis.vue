@@ -12,15 +12,15 @@
         >
             {{ fullText }}
         </p>
-        <span v-if="!multiline" ref="dlEllipsisRef" class="dl-ellipsis__left">
+        <span
+            v-if="!multiline"
+            ref="dlEllipsisRef"
+            :class="`dl-ellipsis__left ${textClass}`"
+        >
             <slot v-if="hasDefaultSlot" name="default" />
-            <span
-                v-else
-                style="white-space: nowrap"
-                :class="textClass"
-                @click="onClick"
-            >{{ leftText }}</span
-            >
+            <span v-else style="white-space: nowrap" @click="onClick">{{
+                leftText
+            }}</span>
         </span>
         <span
             v-if="!multiline && rightText"
