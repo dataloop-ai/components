@@ -627,7 +627,7 @@ const isValidString = (str: string) => {
     return false
 }
 
-const enquoteString = (str: string) => {
+export const enquoteString = (str: string) => {
     return `'${str.replace(/'/g, "\\'")}'`
 }
 
