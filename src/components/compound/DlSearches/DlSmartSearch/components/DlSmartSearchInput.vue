@@ -32,6 +32,7 @@
                         :spellcheck="false"
                         @keypress="onKeyPress"
                         @keyup.esc="onKeyPress"
+                        @paste="onPaste"
                         @input="onInput"
                         @blur="blur"
                     />
@@ -149,10 +150,9 @@ import {
     setSelectionOffset
 } from '../../../../../utils'
 import { ColorSchema, SearchStatus, SyntaxColorSchema } from '../types'
-import { cloneDeep, debounce, isEqual } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
 import SuggestionsDropdown from './SuggestionsDropdown.vue'
-import { DateInterval } from '../../../DlDateTime/types'
 import {
     isEndingWithDateIntervalPattern,
     replaceDateInterval,
@@ -172,6 +172,7 @@ import {
     Schema,
     Alias,
     Data,
+    enquoteString,
     useSuggestions,
     removeBrackets,
     removeLeadingExpression,
@@ -678,6 +679,40 @@ export default defineComponent({
             }
         }
 
+        const onPaste = (e: ClipboardEvent) => {
+            const selection = window.getSelection()
+            if (selection.rangeCount) {
+                let text = (e.clipboardData || (window as any).clipboardData).getData('text')
+                if (text?.length > 0) {
+                    const range = selection.getRangeAt(0)
+
+                    const container = range.startContainer
+                    const offset = range.startOffset
+                    range.setStart(input.value, 0)
+                    const preceedingText = selection.toString()
+                    range.setStart(container, offset)
+
+                    if (
+                        /(IN|[^>]=|,)\s*$/.test(preceedingText) &&
+                        !/^\s*['"]/.test(text) &&
+                        isNaN(Number(text)) &&
+                        text !== "false" &&
+                        text !== "true"
+                    ) {
+                        text = enquoteString(text)
+                    }
+
+                    selection.deleteFromDocument()
+                    selection.getRangeAt(0).insertNode(document.createTextNode(text))
+                    selection.collapseToEnd()
+
+                    e.preventDefault()
+
+                    setInputValue(input.value.textContent)
+                }
+            }
+        }
+
         const onInput = (e: Event) => {
             const text = (e.target as HTMLElement).textContent
             if (text.endsWith('.') || text.endsWith(',')) {
@@ -1105,6 +1140,7 @@ export default defineComponent({
             blur,
             onClear,
             onKeyPress,
+            onPaste,
             onInput,
             onDateSelection,
             onDateSelectionCancel,
