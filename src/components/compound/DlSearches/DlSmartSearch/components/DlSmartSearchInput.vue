@@ -173,6 +173,7 @@ import {
     Alias,
     Data,
     enquoteString,
+    getStringOperators,
     useSuggestions,
     removeBrackets,
     removeLeadingExpression,
@@ -692,8 +693,9 @@ export default defineComponent({
                     const preceedingText = selection.toString()
                     range.setStart(container, offset)
 
+                    const stringOperators = getStringOperators()
                     if (
-                        /(IN|[^>]=|,)\s*$/.test(preceedingText) &&
+                        new RegExp(`(,|\\s(${stringOperators.join('|')}))\\s*$`).test(preceedingText) &&
                         !/^\s*['"]/.test(text) &&
                         isNaN(Number(text)) &&
                         text !== "false" &&
@@ -703,7 +705,9 @@ export default defineComponent({
                     }
 
                     selection.deleteFromDocument()
-                    selection.getRangeAt(0).insertNode(document.createTextNode(text))
+                    selection.getRangeAt(0).insertNode(document.createTextNode(
+                        (preceedingText.endsWith(' ') ? '' : ' ') + text + ' '
+                    ))
                     selection.collapseToEnd()
 
                     e.preventDefault()
