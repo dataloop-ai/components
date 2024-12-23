@@ -627,7 +627,7 @@ const isValidString = (str: string) => {
     return false
 }
 
-const enquoteString = (str: string) => {
+export const enquoteString = (str: string) => {
     return `'${str.replace(/'/g, "\\'")}'`
 }
 
@@ -652,6 +652,11 @@ const getOperatorByDataType = (dataType: string) => {
 }
 
 const getOperators = (op: string[]) => op.map((o) => operators[o])
+
+export function getStringOperators() {
+    const keys = getOperatorByDataType('string').filter(key => !key.includes('exist'))
+    return getOperators(keys)
+}
 
 const mapWordsToExpression = (words: string[]): Expression => {
     let operator = words[1] ?? null
