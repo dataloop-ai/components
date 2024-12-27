@@ -31,7 +31,7 @@
             "
             :overflow="overflow"
             :tooltip="tooltip"
-            @click="onClickHide"
+            @click.capture="onClickHide"
         />
         <dl-button
             class="dl-button-dropdown__arrow-container"
