@@ -27,16 +27,16 @@ describe('isEndOfString', () => {
 describe('isEndingWithDatePattern', () => {
     it('should return "false" when the string does not match the "dateSuggestionPattern" at the end', () => {
         expect(
-            isEndingWithDatePattern('field > 12/12/22)')
+            isEndingWithDatePattern('field > (12/12/22 00:00:00)')
         ).toBe(false)
     })
 
     it('should return "true" when the string does match the "dateSuggestionPattern" at the end', () => {
         expect(
             isEndingWithDatePattern(
-                'field > (12/12/22)'
+                'field > (DD/MM/YYYY HH:mm:ss)'
             )
-        ).toBe(false)
+        ).toBe(true)
     })
 })
 
