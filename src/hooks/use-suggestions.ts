@@ -32,7 +32,7 @@ export enum Logical {
 
 export const operators: Operators = {
     $eq: '=', // all types
-    $neq: '!=', // all types
+    $ne: '!=', // all types
     $gt: '>', // number, date, datetime, time
     $gte: '>=', // number, date, datetime, time
     $lt: '<', // number, date, datetime, time
@@ -49,7 +49,7 @@ type OperatorToDataTypeMap = {
 
 const operatorToDataTypeMap: OperatorToDataTypeMap = {
     $eq: [],
-    $neq: [],
+    $ne: [],
     $gt: ['number', 'date', 'datetime', 'time'],
     $gte: ['number', 'date', 'datetime', 'time'],
     $lt: ['number', 'date', 'datetime', 'time'],
@@ -632,7 +632,7 @@ export const enquoteString = (str: string) => {
 }
 
 const getOperatorByDataType = (dataType: string) => {
-    if (dataType === 'boolean') return ['$eq', '$neq']
+    if (dataType === 'boolean') return ['$eq', '$ne']
 
     if (dataType === 'object') {
         return []
@@ -644,7 +644,7 @@ const getOperatorByDataType = (dataType: string) => {
     })
 
     if (dataType === 'date' || dataType === 'datetime') {
-        const toExclude = ['$eq', '$neq', '$in', '$nin']
+        const toExclude = ['$eq', '$ne', '$in', '$nin']
         operators = operators.filter((s) => !toExclude.includes(s))
     }
 
