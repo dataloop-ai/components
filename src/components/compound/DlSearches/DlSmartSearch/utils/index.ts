@@ -33,7 +33,7 @@ export const isEndOfString = (
     return trimmed.lastIndexOf(lastMatch) + lastMatch.length === trimmed.length
 }
 
-export const isEndingWithDateIntervalPattern = (str: string) => {
+export const isEndingWithDatePattern = (str: string) => {
     return isEndOfString(str, datePattern, { checkWhiteSpace: true })
 }
 
@@ -151,7 +151,7 @@ export function replaceJSDatesWithStringifiedDates(
             if (typeof value === 'object') {
                 const testKey = Object.keys(toReturn[key])[0]
                 if (
-                    ['$gt', '$gte', '$lt', '$lte', '$eq', '$ne'].includes(
+                    ['$gt', '$gte', '$lt', '$lte'].includes(
                         testKey
                     )
                 ) {

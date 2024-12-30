@@ -154,7 +154,7 @@ import { debounce, isEqual } from 'lodash'
 import { DlTooltip } from '../../../../shared'
 import SuggestionsDropdown from './SuggestionsDropdown.vue'
 import {
-    isEndingWithDateIntervalPattern,
+    isEndingWithDatePattern,
     replaceDateInterval,
     removeDateInterval,
     updateEditor,
@@ -380,7 +380,7 @@ export default defineComponent({
             }
 
             if (focused.value) {
-                if (value.length && isEndingWithDateIntervalPattern(value)) {
+                if (value.length && isEndingWithDatePattern(value)) {
                     showDatePicker.value = true
                     showSuggestions.value = false
                 } else {

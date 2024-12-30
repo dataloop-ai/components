@@ -215,14 +215,9 @@ describe('use-suggestions', () => {
     })
 
     describe('when the field is of type "datetime"', () => {
-        it('suggestions should have the "dateIntervalSuggestionString"', () => {
+        it('suggestions should have the "dateSuggestionPattern"', () => {
             findSuggestions('StartTime = ')
             expect(suggestions.value).toEqual([dateSuggestionPattern])
-        })
-
-        it('suggestions should be empty when value does not matches', () => {
-            findSuggestions('StartTime = (From (dd/mm/ffff)')
-            expect(suggestions.value).toEqual([])
         })
     })
 
@@ -259,7 +254,7 @@ describe('use-suggestions', () => {
 
     it('should give suggestions for multiple expressions', () => {
         findSuggestions(
-            'Age = 10 AND Level = medium AND StartTime = (From 12/12/2022 To 15/12/2022) '
+            'Age = 10 AND Level = medium AND StartTime > (12/12/2022) '
         )
         expect(suggestions.value).toEqual(['AND', 'OR'])
     })
