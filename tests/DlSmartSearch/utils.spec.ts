@@ -1,7 +1,7 @@
 import moment from 'moment'
 import {
     isEndOfString,
-    isEndingWithDateIntervalPattern,
+    isEndingWithDatePattern,
     replaceDateInterval,
     formatToNumericDate,
     setAliases
@@ -24,17 +24,17 @@ describe('isEndOfString', () => {
     })
 })
 
-describe('isEndingWithDateIntervalPattern', () => {
-    it('should return "false" when the string does not match the "dateIntervalPattern" at the end', () => {
+describe('isEndingWithDatePattern', () => {
+    it('should return "false" when the string does not match the "dateSuggestionPattern" at the end', () => {
         expect(
-            isEndingWithDateIntervalPattern('field = (From (12/12/22)')
+            isEndingWithDatePattern('field > 12/12/22)')
         ).toBe(false)
     })
 
-    it('should return "true" when the string does match the "dateIntervalPattern" at the end', () => {
+    it('should return "true" when the string does match the "dateSuggestionPattern" at the end', () => {
         expect(
-            isEndingWithDateIntervalPattern(
-                'field = (From (12/12/22) To (22/12/22))'
+            isEndingWithDatePattern(
+                'field > (12/12/22)'
             )
         ).toBe(false)
     })

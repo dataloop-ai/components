@@ -644,7 +644,7 @@ const getOperatorByDataType = (dataType: string) => {
     })
 
     if (dataType === 'date' || dataType === 'datetime') {
-        const toExclude = ['$in', '$nin']
+        const toExclude = ['$eq', '$neq', '$in', '$nin']
         operators = operators.filter((s) => !toExclude.includes(s))
     }
 

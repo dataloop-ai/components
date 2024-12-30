@@ -33,7 +33,7 @@ export const isEndOfString = (
     return trimmed.lastIndexOf(lastMatch) + lastMatch.length === trimmed.length
 }
 
-export const isEndingWithDateIntervalPattern = (str: string) => {
+export const isEndingWithDatePattern = (str: string) => {
     return isEndOfString(str, datePattern, { checkWhiteSpace: true })
 }
 
