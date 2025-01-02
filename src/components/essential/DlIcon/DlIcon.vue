@@ -178,7 +178,13 @@ export default defineComponent({
                 }
 
                 try {
-                    let publicPath = process.env.BASE_URL ?? ''
+                    let publicPath = ''
+                    try {
+                        publicPath = process.env.BASE_URL ?? ''
+                    } catch (err) {
+                        // skip in case 'process' is not defined
+                    }
+
                     if (publicPath.endsWith('/')) {
                         publicPath = publicPath.slice(0, -1)
                     }
