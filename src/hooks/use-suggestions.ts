@@ -145,10 +145,10 @@ export const useSuggestions = (
         strict?: Ref<boolean>
         forbiddenKeys?: Ref<string[]>
         omitSuggestions?: Ref<string[]>
-        operatorOverrides?: Ref<{[name: string]: string[]}>
+        operatorsOverride?: Ref<{[name: string]: string[]}>
     } = {}
 ) => {
-    const { strict, forbiddenKeys, omitSuggestions, operatorOverrides } = options
+    const { strict, forbiddenKeys, omitSuggestions, operatorsOverride } = options
     const aliasesArray = aliases.value ?? []
     const schemaValue = schema.value ?? {}
 
@@ -262,7 +262,7 @@ export const useSuggestions = (
                 }
             }
 
-            localSuggestions = operatorOverrides?.value?.[
+            localSuggestions = operatorsOverride?.value?.[
                 getAliasObjByAlias(aliasesArray, matchedField)?.key ?? matchedField
             ]
             if (!localSuggestions) {

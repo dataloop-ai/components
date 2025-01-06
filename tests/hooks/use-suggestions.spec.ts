@@ -67,7 +67,7 @@ describe('use-suggestions', () => {
         aliasesRef,
         {
             strict: toRef(false),
-            operatorOverrides: toRef({
+            operatorsOverride: toRef({
                 'name': ['=']
             })
         }

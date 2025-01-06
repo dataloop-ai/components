@@ -245,7 +245,7 @@ export default defineComponent({
             type: Array as PropType<string[]>,
             default: () => [] as string[]
         },
-        operatorOverrides: {
+        operatorsOverride: {
             type: Object as PropType<{[name: string]: string[]}>,
             default: () => ({})
         },
@@ -289,7 +289,7 @@ export default defineComponent({
             disabled,
             schema,
             omitSuggestions,
-            operatorOverrides,
+            operatorsOverride,
             height,
             width,
             forbiddenKeys,
@@ -322,7 +322,7 @@ export default defineComponent({
                 strict,
                 forbiddenKeys,
                 omitSuggestions,
-                operatorOverrides
+                operatorsOverride
             })
         //#endregion
 
