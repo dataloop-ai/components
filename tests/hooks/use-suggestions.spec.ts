@@ -65,7 +65,12 @@ describe('use-suggestions', () => {
     const { suggestions, error, findSuggestions, checkErrors } = useSuggestions(
         schemaRef,
         aliasesRef,
-        { strict: toRef(false) }
+        {
+            strict: toRef(false),
+            operatorsOverride: toRef({
+                'name': ['=']
+            })
+        }
     )
 
     const findSuggestionsAndCheckErrors = (input: string) => {
@@ -168,6 +173,9 @@ describe('use-suggestions', () => {
             'EXISTS',
             'DOESNT-EXIST'
         ])
+
+        findSuggestions('Name ')
+        expect(suggestions.value).toEqual(['='])
     })
 
     describe('when the field has values defined', () => {

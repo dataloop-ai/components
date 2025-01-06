@@ -245,6 +245,10 @@ export default defineComponent({
             type: Array as PropType<string[]>,
             default: () => [] as string[]
         },
+        operatorsOverride: {
+            type: Object as PropType<{[name: string]: string[]}>,
+            default: () => ({})
+        },
         forbiddenKeys: {
             type: Array as PropType<string[]>,
             default: () => [] as string[]
@@ -285,6 +289,7 @@ export default defineComponent({
             disabled,
             schema,
             omitSuggestions,
+            operatorsOverride,
             height,
             width,
             forbiddenKeys,
@@ -316,7 +321,8 @@ export default defineComponent({
             useSuggestions(schema, aliases, {
                 strict,
                 forbiddenKeys,
-                omitSuggestions
+                omitSuggestions,
+                operatorsOverride
             })
         //#endregion
 

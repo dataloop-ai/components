@@ -145,9 +145,10 @@ export const useSuggestions = (
         strict?: Ref<boolean>
         forbiddenKeys?: Ref<string[]>
         omitSuggestions?: Ref<string[]>
+        operatorsOverride?: Ref<{[name: string]: string[]}>
     } = {}
 ) => {
-    const { strict, forbiddenKeys, omitSuggestions } = options
+    const { strict, forbiddenKeys, omitSuggestions, operatorsOverride } = options
     const aliasesArray = aliases.value ?? []
     const schemaValue = schema.value ?? {}
 
@@ -261,11 +262,16 @@ export const useSuggestions = (
                 }
             }
 
-            const ops: string[] = Array.isArray(dataType)
-                ? getGenericOperators()
-                : getOperatorByDataType(dataType)
+            localSuggestions = operatorsOverride?.value?.[
+                getAliasObjByAlias(aliasesArray, matchedField)?.key ?? matchedField
+            ]
+            if (!localSuggestions) {
+                const ops: string[] = Array.isArray(dataType)
+                    ? getGenericOperators()
+                    : getOperatorByDataType(dataType)
 
-            localSuggestions = getOperators(ops)
+                localSuggestions = getOperators(ops)
+            }
 
             if (!operator) {
                 const dotSeparated = matchedField.split('.')
