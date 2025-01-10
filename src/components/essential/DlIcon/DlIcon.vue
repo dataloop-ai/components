@@ -182,7 +182,7 @@ export default defineComponent({
                     try {
                         publicPath = process.env.BASE_URL ?? ''
                     } catch (err) {
-                        publicPath = '@dataloop-ai'
+                        publicPath = '/node_modules/@dataloop-ai'
                     }
 
                     if (publicPath.endsWith('/')) {
