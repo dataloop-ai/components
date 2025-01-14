@@ -182,7 +182,11 @@ export default defineComponent({
                     try {
                         publicPath = process.env.BASE_URL ?? ''
                     } catch (err) {
-                        publicPath = '/node_modules/@dataloop-ai'
+                        let urlPath = window.location.pathname ?? ''
+                        urlPath = urlPath.endsWith('/')
+                            ? urlPath.slice(0, -1)
+                            : urlPath
+                        publicPath = `${urlPath}/node_modules/@dataloop-ai`
                     }
 
                     if (publicPath.endsWith('/')) {
