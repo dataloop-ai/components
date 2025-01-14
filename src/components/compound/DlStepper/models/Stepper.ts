@@ -8,9 +8,8 @@ export class Stepper {
     constructor(steps: Step[]) {
         this._steps = steps
 
-        if (this.currentStep) {
-            this.currentStep.active = true
-        }
+        const activeStepIndex = steps.findIndex((step) => step.active)
+        this.currentIndex = Math.max(0, activeStepIndex)
     }
 
     public get steps(): Step[] {
