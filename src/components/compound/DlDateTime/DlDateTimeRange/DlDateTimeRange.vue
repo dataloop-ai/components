@@ -1,8 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-date-time-range"
-    >
+    <div :id="uuid" class="dl-date-time-range">
         <date-input
             :text="dateInputText"
             :input-style="dateInputStyle"
@@ -421,8 +418,36 @@ export default defineComponent({
                     this.typeState === 'day'
                         ? DAY_SIDEBAR_OPTION.custom
                         : MONTH_SIDEBAR_OPTION.custom
-
-                this.updateDateInterval(null)
+                let updatedDateInterval: DateInterval | null = null
+                if (this.dateInterval) {
+                    let newFrom: Date = this.dateInterval.from
+                    let newTo: Date = this.dateInterval.to
+                    if (
+                        this.availableRange?.from &&
+                        !isInRange(
+                            this.availableRange,
+                            new CustomDate(this.dateInterval.from)
+                        )
+                    ) {
+                        newFrom = this.availableRange.from
+                    }
+                    if (
+                        this.availableRange?.to &&
+                        !isInRange(
+                            this.availableRange,
+                            new CustomDate(this.dateInterval.to)
+                        )
+                    ) {
+                        newTo = this.availableRange.to
+                    }
+                    if (newFrom && newTo) {
+                        updatedDateInterval = {
+                            from: newFrom,
+                            to: newTo
+                        }
+                    }
+                }
+                this.updateDateInterval(updatedDateInterval)
             },
             deep: true
         },
