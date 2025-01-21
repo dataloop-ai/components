@@ -137,6 +137,10 @@ export default defineComponent({
         disabledType: {
             type: String,
             default: null
+        },
+        skipAvailableRangeIntervalUpdate: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -429,36 +433,23 @@ export default defineComponent({
                     this.typeState === 'day'
                         ? DAY_SIDEBAR_OPTION.custom
                         : MONTH_SIDEBAR_OPTION.custom
-                let updatedDateInterval: DateInterval | null = null
                 if (this.dateInterval) {
-                    let newFrom: Date = this.dateInterval.from
-                    let newTo: Date = this.dateInterval.to
                     if (
-                        this.availableRange?.from &&
-                        !isInRange(
+                        isInRange(
                             this.availableRange,
                             new CustomDate(this.dateInterval.from)
-                        )
-                    ) {
-                        newFrom = this.availableRange.from
-                    }
-                    if (
-                        this.availableRange?.to &&
-                        !isInRange(
+                        ) &&
+                        isInRange(
                             this.availableRange,
                             new CustomDate(this.dateInterval.to)
                         )
                     ) {
-                        newTo = this.availableRange.to
-                    }
-                    if (newFrom && newTo) {
-                        updatedDateInterval = {
-                            from: newFrom,
-                            to: newTo
-                        }
+                        return
                     }
                 }
-                this.updateDateInterval(updatedDateInterval)
+                if (!this.skipAvailableRangeIntervalUpdate) {
+                    this.updateDateInterval(null)
+                }
             },
             deep: true
         },
