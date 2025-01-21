@@ -133,6 +133,10 @@ export default defineComponent({
         width: {
             type: String,
             default: 'fit-content'
+        },
+        disabledType: {
+            type: String,
+            default: null
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -144,10 +148,14 @@ export default defineComponent({
         isInputDisabled: boolean
         currentSidebarOption: DAY_SIDEBAR_OPTION | MONTH_SIDEBAR_OPTION
     } {
+        let type: 'day' | 'month' = this.type
+        if (this.disabledType === this.type) {
+            type = this.type === 'day' ? 'month' : 'day'
+        }
         return {
             uuid: `dl-date-time-range-${v4()}`,
             dateInterval: this.modelValue,
-            typeState: this.type,
+            typeState: type,
             isOpen: false,
             isInputDisabled: false,
             currentSidebarOption: DAY_SIDEBAR_OPTION.custom
@@ -218,7 +226,8 @@ export default defineComponent({
                         to: new CalendarDate(this.dateInterval.from)
                             .startOf('month')
                             .toDate()
-                    }
+                    },
+                    disabled: this.disabledType === 'month'
                 }
             ]
         },
@@ -282,7 +291,8 @@ export default defineComponent({
                         to: new CalendarDate(this.dateInterval.from)
                             .startOf('day')
                             .toDate()
-                    }
+                    },
+                    disabled: this.disabledType === 'day'
                 },
                 { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom }
             ]
@@ -290,13 +300,13 @@ export default defineComponent({
         sidebarDayOptions(): DayTypeOption[] {
             return this.dayTypeOptions.map((o) => ({
                 ...o,
-                disabled: !isInRange(this.availableRange, o.value)
+                disabled: !isInRange(this.availableRange, o.value) || o.disabled
             }))
         },
         sidebarMonthOptions(): MonthTypeOption[] {
             return this.monthTypeOptions.map((o) => ({
                 ...o,
-                disabled: !isInRange(this.availableRange, o.value)
+                disabled: !isInRange(this.availableRange, o.value) || o.disabled
             }))
         },
         dateInputStyle(): Record<string, any> {
@@ -393,6 +403,7 @@ export default defineComponent({
     },
     watch: {
         type(value: 'day' | 'month') {
+            if (value === this.disabledType) return
             this.typeState = value
 
             if (this.dateInterval === null) return
