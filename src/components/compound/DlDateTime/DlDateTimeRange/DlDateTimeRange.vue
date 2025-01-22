@@ -1,8 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-date-time-range"
-    >
+    <div :id="uuid" class="dl-date-time-range">
         <date-input
             :text="dateInputText"
             :input-style="dateInputStyle"
@@ -136,6 +133,14 @@ export default defineComponent({
         width: {
             type: String,
             default: 'fit-content'
+        },
+        disabledType: {
+            type: String,
+            default: null
+        },
+        skipAvailableRangeIntervalUpdate: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -147,10 +152,14 @@ export default defineComponent({
         isInputDisabled: boolean
         currentSidebarOption: DAY_SIDEBAR_OPTION | MONTH_SIDEBAR_OPTION
     } {
+        let type: 'day' | 'month' = this.type
+        if (this.disabledType === this.type) {
+            type = this.type === 'day' ? 'month' : 'day'
+        }
         return {
             uuid: `dl-date-time-range-${v4()}`,
             dateInterval: this.modelValue,
-            typeState: this.type,
+            typeState: type,
             isOpen: false,
             isInputDisabled: false,
             currentSidebarOption: DAY_SIDEBAR_OPTION.custom
@@ -221,7 +230,8 @@ export default defineComponent({
                         to: new CalendarDate(this.dateInterval.from)
                             .startOf('month')
                             .toDate()
-                    }
+                    },
+                    disabled: this.disabledType === 'month'
                 }
             ]
         },
@@ -285,7 +295,8 @@ export default defineComponent({
                         to: new CalendarDate(this.dateInterval.from)
                             .startOf('day')
                             .toDate()
-                    }
+                    },
+                    disabled: this.disabledType === 'day'
                 },
                 { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom }
             ]
@@ -293,13 +304,13 @@ export default defineComponent({
         sidebarDayOptions(): DayTypeOption[] {
             return this.dayTypeOptions.map((o) => ({
                 ...o,
-                disabled: !isInRange(this.availableRange, o.value)
+                disabled: !isInRange(this.availableRange, o.value) || o.disabled
             }))
         },
         sidebarMonthOptions(): MonthTypeOption[] {
             return this.monthTypeOptions.map((o) => ({
                 ...o,
-                disabled: !isInRange(this.availableRange, o.value)
+                disabled: !isInRange(this.availableRange, o.value) || o.disabled
             }))
         },
         dateInputStyle(): Record<string, any> {
@@ -396,6 +407,7 @@ export default defineComponent({
     },
     watch: {
         type(value: 'day' | 'month') {
+            if (value === this.disabledType) return
             this.typeState = value
 
             if (this.dateInterval === null) return
@@ -421,8 +433,23 @@ export default defineComponent({
                     this.typeState === 'day'
                         ? DAY_SIDEBAR_OPTION.custom
                         : MONTH_SIDEBAR_OPTION.custom
-
-                this.updateDateInterval(null)
+                if (this.dateInterval) {
+                    if (
+                        isInRange(
+                            this.availableRange,
+                            new CustomDate(this.dateInterval.from)
+                        ) &&
+                        isInRange(
+                            this.availableRange,
+                            new CustomDate(this.dateInterval.to)
+                        )
+                    ) {
+                        return
+                    }
+                }
+                if (!this.skipAvailableRangeIntervalUpdate) {
+                    this.updateDateInterval(null)
+                }
             },
             deep: true
         },
