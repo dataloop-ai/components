@@ -246,7 +246,7 @@ export default defineComponent({
             default: () => [] as string[]
         },
         operatorsOverride: {
-            type: Object as PropType<{[name: string]: string[]}>,
+            type: Object as PropType<{ [name: string]: string[] }>,
             default: () => ({})
         },
         forbiddenKeys: {
@@ -335,28 +335,7 @@ export default defineComponent({
 
             showSuggestions.value = false
 
-            // to handle typing . or , after accepting a suggestion
-            const dotOrCommaRegEx = /\s+([\.|\,]\s?)$/
-            const dotOrCommaMatch = value.match(dotOrCommaRegEx)
-            if (dotOrCommaMatch) {
-                value = value.replace(dotOrCommaRegEx, dotOrCommaMatch[1])
-            }
-
-            // to handle date suggestion modal to open automatically.
-            if (value.includes(dateSuggestionPattern)) {
-                value = value.trimEnd()
-            }
-
-            const specialSuggestions = suggestions.value.filter(
-                (suggestion) =>
-                    typeof suggestion === 'string' && suggestion.startsWith('.')
-            )
-
-            for (const suggestion of specialSuggestions) {
-                if (value.includes(suggestion)) {
-                    value = value.replace(` ${suggestion}`, suggestion)
-                }
-            }
+            value = _normalizeInputValue(value)
 
             searchQuery.value = value
 
@@ -406,6 +385,43 @@ export default defineComponent({
             if (!noEmit) {
                 emit('input', value)
             }
+        }
+
+        const _normalizeInputValue = (value: string): string => {
+            // Normalize logical operators (' and ' -> ' AND ', ' or ' -> ' OR ')
+            const logicalOperatorsRegEx = /\s(and|or)\s/g
+            const logicalMatch = value.match(logicalOperatorsRegEx)
+            if (logicalMatch) {
+                value = value.replace(
+                    logicalOperatorsRegEx,
+                    (_, match) => ` ${match.toUpperCase()} `
+                )
+            }
+
+            // Handle typing '.' or ',' after accepting a suggestion
+            const dotOrCommaRegEx = /\s+([.,]\s?)$/
+            const dotOrCommaMatch = value.match(dotOrCommaRegEx)
+            if (dotOrCommaMatch) {
+                value = value.replace(dotOrCommaRegEx, dotOrCommaMatch[1])
+            }
+
+            // Handle date suggestion modal to open automatically.
+            if (value.includes(dateSuggestionPattern)) {
+                value = value.trimEnd()
+            }
+
+            // Handle special suggestions (suggestions that start with '.')
+            const specialSuggestions = suggestions.value.filter(
+                (suggestion) =>
+                    typeof suggestion === 'string' && suggestion.startsWith('.')
+            )
+            for (const suggestion of specialSuggestions) {
+                if (value.includes(suggestion)) {
+                    value = value.replace(` ${suggestion}`, suggestion)
+                }
+            }
+
+            return value
         }
 
         const setInputFromSuggestion = (suggestion: any) => {
@@ -639,18 +655,7 @@ export default defineComponent({
         }
 
         const endsWithOperator = computed(() => {
-            const operators = [
-                '>=',
-                '<=',
-                '!=',
-                '=',
-                '>',
-                '<',
-                'IN',
-                'NOT-IN',
-                'EXISTS',
-                'DOESNT-EXIST'
-            ]
+            const operators = ['>=', '<=', '!=', '=', '>', '<', 'IN', 'NOT-IN']
 
             for (const op of operators) {
                 if (
@@ -689,7 +694,9 @@ export default defineComponent({
         const onPaste = (e: ClipboardEvent) => {
             const selection = window.getSelection()
             if (selection.rangeCount) {
-                let text = (e.clipboardData || (window as any).clipboardData).getData('text')
+                let text = (
+                    e.clipboardData || (window as any).clipboardData
+                ).getData('text')
                 if (text?.length > 0) {
                     const range = selection.getRangeAt(0)
 
@@ -701,19 +708,27 @@ export default defineComponent({
 
                     const stringOperators = getStringOperators()
                     if (
-                        new RegExp(`(,|\\s(${stringOperators.join('|')}))\\s*$`).test(preceedingText) &&
+                        new RegExp(
+                            `(,|\\s(${stringOperators.join('|')}))\\s*$`
+                        ).test(preceedingText) &&
                         !/^\s*['"]/.test(text) &&
                         isNaN(Number(text)) &&
-                        text !== "false" &&
-                        text !== "true"
+                        text !== 'false' &&
+                        text !== 'true'
                     ) {
                         text = enquoteString(text)
                     }
 
                     selection.deleteFromDocument()
-                    selection.getRangeAt(0).insertNode(document.createTextNode(
-                        (preceedingText.endsWith(' ') ? '' : ' ') + text + ' '
-                    ))
+                    selection
+                        .getRangeAt(0)
+                        .insertNode(
+                            document.createTextNode(
+                                (preceedingText.endsWith(' ') ? '' : ' ') +
+                                    text +
+                                    ' '
+                            )
+                        )
                     selection.collapseToEnd()
 
                     e.preventDefault()
@@ -893,7 +908,11 @@ export default defineComponent({
 
         //#region computed
         const editorStyle = computed((): SyntaxColorSchema => {
-            return createColorSchema(colorSchema.value, aliases.value, schema.value)
+            return createColorSchema(
+                colorSchema.value,
+                aliases.value,
+                schema.value
+            )
         })
 
         const defaultIcon = 'icon-dl-stars'
