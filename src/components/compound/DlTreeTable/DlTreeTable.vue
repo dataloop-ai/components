@@ -290,6 +290,8 @@ export default defineComponent({
         const denseState = ref([])
         const resizableState = ref([])
         const hasFlatTreeData = true
+        const draggedRow = ref<DlTableRow | null>(null)
+        const targetRow = ref<DlTableRow | null>(null)
 
         const vue2h = ref()
 
@@ -553,7 +555,7 @@ export default defineComponent({
                 onUpdateExpandedRow: () =>
                     updateExpandedRow(!row.isExpanded, getRowKey.value(row)),
                 on: {
-                    'update:modelValue': (adding: boolean, evt: Event) => {
+                    'update:model-value': (adding: boolean, evt: Event) => {
                         updateSelectionHierarchy(adding, evt, row)
                     },
                     rowClick: (event: Event, row: any, index: number) => {
@@ -656,10 +658,16 @@ export default defineComponent({
         }
 
         const handleEndEvent = (event: SortableJs.SortableEvent) => {
+            emit('row-drag-end', {
+                draggedRow: draggedRow.value,
+                targetRow: targetRow.value
+            })
             emit(
                 'row-reorder',
                 moveNestedRow(tableRows.value, event, sortingMovement.value)
             )
+            draggedRow.value = null
+            targetRow.value = null
             mainTableKey.value = v4()
         }
 
@@ -669,6 +677,17 @@ export default defineComponent({
                 originalEvent.srcElement,
                 'dl-tr'
             ) as HTMLElement
+            if (passedElement) {
+                const targetRowId = passedElement.dataset.id
+                targetRow.value =
+                    tableRows.value.find(
+                        (row) => getRowKey.value(row) === targetRowId
+                    ) || null
+                emit('row-drag-over', {
+                    draggedRow: draggedRow.value,
+                    targetRow: targetRow.value
+                })
+            }
             const currentY = originalEvent.clientY
             if (currentY > prevMouseY) {
                 sortingMovement.value.direction = 'down'
@@ -679,8 +698,16 @@ export default defineComponent({
             sortingMovement.value.lastId = passedElement.dataset.id
         }
 
-        const handleStartEvent = (event: any) =>
-            (prevMouseY = event.originalEvent.clientY)
+        const handleStartEvent = (event: any) => {
+            prevMouseY = event.originalEvent.clientY
+            const rowIndex = event.oldIndex
+            if (rowIndex !== undefined && rowIndex >= 0) {
+                draggedRow.value = tableRows.value[rowIndex] || null
+                emit('row-drag-start', {
+                    draggedRow: draggedRow.value
+                })
+            }
+        }
 
         const updateColumns = (newColumns: DlTableColumn[]) => {
             emit('col-update', newColumns)
