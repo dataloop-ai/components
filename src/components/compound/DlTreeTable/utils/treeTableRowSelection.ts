@@ -16,7 +16,7 @@ export const useTreeTableRowSelectionProps = {
     }
 }
 
-export const useTreeTableRowSelectionEmits = ['selection', 'selected-iitems']
+export const useTreeTableRowSelectionEmits = ['selection', 'selected-items']
 
 export function useTreeTableRowSelection(
     props: DlTableProps,
@@ -119,7 +119,7 @@ export function useTreeTableRowSelection(
         const { selectedItems } = convertToNestedObject(payload)
         selectedItemsNested.value = selectedItems
 
-        emit('selectedItems', selectedItems)
+        emit('selected-items', selectedItems)
     }
 
     function isIncludedInSelectedNestedItems(
