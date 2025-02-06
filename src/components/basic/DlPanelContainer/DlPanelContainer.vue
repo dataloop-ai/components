@@ -11,7 +11,9 @@
         @mouseleave="handleMouseLeave"
     >
         <div ref="panel" :style="innerContainerStyles" class="inner-container">
-            <div v-if="collapsed" class="inner-container-overlay" />
+            <div v-if="collapsed" class="inner-container-overlay">
+                <slot name="overlay" />
+            </div>
             <div
                 ref="separator"
                 class="separator"
