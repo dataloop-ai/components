@@ -273,7 +273,7 @@ export default defineComponent({
         const getCellBackground = (value: number = 1): string => {
             return (
                 (isDark.value ? '#7c8cff' : '#3452ff') +
-                Math.round(value * 255).toString()
+                Math.round(value * 255).toString(16)
             )
         }
 
