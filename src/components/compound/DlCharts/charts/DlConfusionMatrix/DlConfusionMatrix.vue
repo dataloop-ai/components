@@ -195,8 +195,6 @@ import {
     DlConfusionMatrixLabel,
     DlConfusionMatrixBrushState
 } from '../../types'
-import { hexToRgbA } from '../../../../../utils/colors'
-import { colorNames } from '../../../../../utils/css-color-names'
 import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 import { useThemeVariables } from '../../../../../hooks/use-theme'
@@ -262,7 +260,7 @@ export default defineComponent({
     },
     setup(props) {
         const vm = getCurrentInstance()
-        const { variables, isDark = { value: false } } = useThemeVariables()
+        const { isDark = { value: false } } = useThemeVariables()
         const currentBrushState = ref<{ min: number; max: number }>({
             min: 0,
             max: Math.min(props.matrix.length, props.cellDisplayLimit)
@@ -273,12 +271,10 @@ export default defineComponent({
         const isDisposed = ref(false)
 
         const getCellBackground = (value: number = 1): string => {
-            const object: { [key: string]: any } = {
-                ...variables,
-                ...colorNames
-            }
-            const hex = object[props.color]
-            return hexToRgbA(hex, value)
+            return (
+                (isDark.value ? '#7c8cff' : '#3452ff') +
+                Math.round(value * 255).toString()
+            )
         }
 
         const getCellTextColor = (value: number) => {
@@ -321,7 +317,6 @@ export default defineComponent({
 
         return {
             resizeObserver,
-            variables,
             getCellBackground,
             getCellTextColor,
             cellWidth,
