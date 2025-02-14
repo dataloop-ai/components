@@ -905,8 +905,9 @@ export default defineComponent({
                         (): [] => []
                     ),
                 tbody,
-                'no-data':
-                    this.$slots['no-data'] || (() => this.renderEmptyState())
+                'no-data': this.$slots['no-data']
+                    ? () => this.$slots['no-data']
+                    : undefined
             }
         })
     }
