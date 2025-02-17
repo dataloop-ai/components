@@ -141,6 +141,10 @@ export default defineComponent({
         skipAvailableRangeIntervalUpdate: {
             type: Boolean,
             default: false
+        },
+        includingCurrentMonth: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -237,10 +241,14 @@ export default defineComponent({
         },
         monthTypeOptions(): MonthTypeOption[] {
             const thisMonth = CustomDate.startOf('month').toDate()
+            const currentMonth = this.includingCurrentMonth
+                ? CustomDate.endOf('month').toDate()
+                : thisMonth
             const lastMonth = CustomDate.subtract(1, 'months')
                 .startOf('month')
                 .toDate()
             const today = CustomDate.endOf('day').toDate()
+            const removeMonth = this.includingCurrentMonth ? 1 : 0
             return [
                 {
                     title: 'this month',
@@ -253,36 +261,43 @@ export default defineComponent({
                 {
                     title: 'last month',
                     key: MONTH_SIDEBAR_OPTION.last_month,
-                    value: { from: lastMonth, to: thisMonth }
+                    value: {
+                        from: lastMonth,
+                        to: this.includingCurrentMonth
+                            ? CustomDate.subtract(1, 'months')
+                                  .endOf('month')
+                                  .toDate()
+                            : thisMonth
+                    }
                 },
                 {
                     title: 'last 3 months',
                     key: MONTH_SIDEBAR_OPTION.last_3_months,
                     value: {
-                        from: CustomDate.subtract(3, 'months')
+                        from: CustomDate.subtract(3 - removeMonth, 'months')
                             .startOf('month')
                             .toDate(),
-                        to: thisMonth
+                        to: currentMonth
                     }
                 },
                 {
                     title: 'last 6 months',
                     key: MONTH_SIDEBAR_OPTION.last_6_months,
                     value: {
-                        from: CustomDate.subtract(6, 'months')
+                        from: CustomDate.subtract(6 - removeMonth, 'months')
                             .startOf('month')
                             .toDate(),
-                        to: thisMonth
+                        to: currentMonth
                     }
                 },
                 {
                     title: 'last 12 months',
                     key: MONTH_SIDEBAR_OPTION.last_12_months,
                     value: {
-                        from: CustomDate.subtract(1, 'year')
+                        from: CustomDate.subtract(12 - removeMonth, 'months')
                             .startOf('month')
                             .toDate(),
-                        to: thisMonth
+                        to: currentMonth
                     }
                 },
                 {

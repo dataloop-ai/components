@@ -32,10 +32,7 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div
-                style="margin-top: 10px"
-                class="dl-dtr--option__range"
-            >
+            <div style="margin-top: 10px" class="dl-dtr--option__range">
                 <span class="dl-dtr--option_title">Available Range: </span>
                 <dl-switch
                     v-model="switchState"
@@ -49,7 +46,15 @@
                     value="auto-close"
                     class="dl-dtr--option_switch"
                 />
-                <br>
+                <span class="dl-dtr--option_title"
+                >Includes end date of current Month:
+                </span>
+                <dl-switch
+                    v-model="switchState"
+                    value="includes-current-month-end"
+                    class="dl-dtr--option_switch"
+                />
+                <br />
                 <span>From</span>
                 <input
                     type="date"
@@ -58,7 +63,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="setRangeFrom"
-                >
+                />
                 <span style="margin-left: 5px">To</span>
                 <input
                     :disabled="!range"
@@ -67,7 +72,7 @@
                     class="dl-dtr--range-input"
                     placeholder="to"
                     @input="setRangeTo"
-                >
+                />
             </div>
         </div>
         <div>
@@ -82,6 +87,7 @@
                     :mode="mode"
                     :show-time="showTime"
                     :auto-close="autoClose"
+                    :including-current-month="includesCurrentMonthEnd"
                     @set-type="handleSetType"
                     @change="handleModelValueUpdate"
                 />
@@ -97,6 +103,7 @@
                 :mode="mode"
                 :show-time="showTime"
                 :auto-close="autoClose"
+                :including-current-month="includesCurrentMonthEnd"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
             />
@@ -119,7 +126,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="date.from = new Date($event.target.value)"
-                >
+                />
 
                 from
                 <input
@@ -129,7 +136,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="date.to = new Date($event.target.value)"
-                >
+                />
             </div>
 
             vmodel date: {{ date }}
@@ -141,6 +148,7 @@
                 :mode="mode"
                 :show-time="showTime"
                 :auto-close="autoClose"
+                :including-current-month="includesCurrentMonthEnd"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
             />
@@ -197,6 +205,9 @@ export default defineComponent({
         },
         autoClose(): boolean {
             return this.switchState.includes('auto-close')
+        },
+        includesCurrentMonthEnd(): boolean {
+            return this.switchState.includes('includes-current-month-end')
         }
     },
     methods: {
