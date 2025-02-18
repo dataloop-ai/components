@@ -149,6 +149,10 @@ export default defineComponent({
         shouldHideDisabledType: {
             type: Boolean,
             default: false
+        },
+        shouldClearSelectFirstOption: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -488,6 +492,14 @@ export default defineComponent({
     },
     methods: {
         handleClearAction() {
+            if (this.shouldClearSelectFirstOption) {
+                if (this.type === 'day') {
+                    this.handleDayTypeOptionClick(this.dayTypeOptions[0])
+                } else {
+                    this.handleMonthTypeOptionClick(this.monthTypeOptions[0])
+                }
+                return
+            }
             this.currentSidebarOption = DAY_SIDEBAR_OPTION.custom
             this.isInputDisabled = false
             this.updateDateInterval(null)

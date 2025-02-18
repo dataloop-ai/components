@@ -70,6 +70,16 @@
                         class="dl-dtr--option_switch"
                     />
                 </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title"
+                    >Clear select first option:
+                    </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="should-clear-select-first-option"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
 
                 <br />
                 <span>From</span>
@@ -106,6 +116,9 @@
                     :auto-close="autoClose"
                     :including-current-month="includesCurrentMonthEnd"
                     :should-hide-disabled-type="shouldHideDisabledType"
+                    :should-clear-select-first-option="
+                        shouldClearSelectFirstOption
+                    "
                     @set-type="handleSetType"
                     @change="handleModelValueUpdate"
                 />
@@ -123,6 +136,7 @@
                 :auto-close="autoClose"
                 :including-current-month="includesCurrentMonthEnd"
                 :should-hide-disabled-type="shouldHideDisabledType"
+                :should-clear-select-first-option="shouldClearSelectFirstOption"
                 :disabled-type="type === 'day' ? 'month' : 'day'"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
@@ -231,6 +245,9 @@ export default defineComponent({
         },
         shouldHideDisabledType(): boolean {
             return this.switchState.includes('should-hide-disabled-type')
+        },
+        shouldClearSelectFirstOption(): boolean {
+            return this.switchState.includes('should-clear-select-first-option')
         }
     },
     methods: {
