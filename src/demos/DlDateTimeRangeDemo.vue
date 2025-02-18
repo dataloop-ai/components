@@ -62,16 +62,6 @@
                 </div>
                 <div class="date-range-options">
                     <span class="dl-dtr--option_title"
-                    >Hide disabled type:
-                    </span>
-                    <dl-switch
-                        v-model="switchState"
-                        value="should-hide-disabled-type"
-                        class="dl-dtr--option_switch"
-                    />
-                </div>
-                <div class="date-range-options">
-                    <span class="dl-dtr--option_title"
                     >Clear select first option:
                     </span>
                     <dl-switch
@@ -115,7 +105,7 @@
                     :show-time="showTime"
                     :auto-close="autoClose"
                     :including-current-month="includesCurrentMonthEnd"
-                    :should-hide-disabled-type="shouldHideDisabledType"
+                    :disabled-type="type === 'day' ? 'month' : 'day'"
                     :should-clear-select-first-option="
                         shouldClearSelectFirstOption
                     "
@@ -135,7 +125,6 @@
                 :show-time="showTime"
                 :auto-close="autoClose"
                 :including-current-month="includesCurrentMonthEnd"
-                :should-hide-disabled-type="shouldHideDisabledType"
                 :should-clear-select-first-option="shouldClearSelectFirstOption"
                 :disabled-type="type === 'day' ? 'month' : 'day'"
                 @set-type="handleSetType"
@@ -242,9 +231,6 @@ export default defineComponent({
         },
         includesCurrentMonthEnd(): boolean {
             return this.switchState.includes('includes-current-month-end')
-        },
-        shouldHideDisabledType(): boolean {
-            return this.switchState.includes('should-hide-disabled-type')
         },
         shouldClearSelectFirstOption(): boolean {
             return this.switchState.includes('should-clear-select-first-option')

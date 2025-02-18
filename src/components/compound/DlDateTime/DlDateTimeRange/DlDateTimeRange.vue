@@ -146,10 +146,6 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        shouldHideDisabledType: {
-            type: Boolean,
-            default: false
-        },
         shouldClearSelectFirstOption: {
             type: Boolean,
             default: false
@@ -232,7 +228,7 @@ export default defineComponent({
                     }
                 },
                 { title: 'custom by day', key: DAY_SIDEBAR_OPTION.custom },
-                ...(this.shouldHideDisabledType
+                ...(this.disabledType === 'month'
                     ? []
                     : [
                           {
@@ -245,8 +241,7 @@ export default defineComponent({
                                   to: new CalendarDate(this.dateInterval.from)
                                       .startOf('month')
                                       .toDate()
-                              },
-                              disabled: this.disabledType === 'month'
+                              }
                           }
                       ])
             ]
@@ -272,8 +267,8 @@ export default defineComponent({
                 },
                 {
                     title: this.includingCurrentMonth
-                        ? 'previous month'
-                        : 'last month',
+                        ? 'Previous month'
+                        : 'Last month',
                     key: MONTH_SIDEBAR_OPTION.last_month,
                     value: {
                         from: lastMonth,
@@ -314,7 +309,7 @@ export default defineComponent({
                         to: currentMonth
                     }
                 },
-                ...(this.shouldHideDisabledType
+                ...(this.disabledType === 'day'
                     ? []
                     : [
                           {
@@ -327,8 +322,7 @@ export default defineComponent({
                                   to: new CalendarDate(this.dateInterval.to)
                                       .startOf('day')
                                       .toDate()
-                              },
-                              disabled: this.disabledType === 'day'
+                              }
                           }
                       ]),
                 { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom }
