@@ -145,6 +145,10 @@ export default defineComponent({
         includingCurrentMonth: {
             type: Boolean,
             default: false
+        },
+        shouldHideDisabledType: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -224,19 +228,23 @@ export default defineComponent({
                     }
                 },
                 { title: 'custom by day', key: DAY_SIDEBAR_OPTION.custom },
-                {
-                    title: 'custom by month',
-                    key: DAY_SIDEBAR_OPTION.custom_by_month,
-                    value: this.dateInterval && {
-                        from: new CalendarDate(this.dateInterval.from)
-                            .startOf('month')
-                            .toDate(),
-                        to: new CalendarDate(this.dateInterval.from)
-                            .startOf('month')
-                            .toDate()
-                    },
-                    disabled: this.disabledType === 'month'
-                }
+                ...(this.shouldHideDisabledType
+                    ? []
+                    : [
+                          {
+                              title: 'custom by month',
+                              key: DAY_SIDEBAR_OPTION.custom_by_month,
+                              value: this.dateInterval && {
+                                  from: new CalendarDate(this.dateInterval.from)
+                                      .startOf('month')
+                                      .toDate(),
+                                  to: new CalendarDate(this.dateInterval.from)
+                                      .startOf('month')
+                                      .toDate()
+                              },
+                              disabled: this.disabledType === 'month'
+                          }
+                      ])
             ]
         },
         monthTypeOptions(): MonthTypeOption[] {
@@ -251,7 +259,7 @@ export default defineComponent({
             const removeMonth = this.includingCurrentMonth ? 1 : 0
             return [
                 {
-                    title: 'this month',
+                    title: 'Current month',
                     key: MONTH_SIDEBAR_OPTION.this_month,
                     value: {
                         from: thisMonth,
@@ -259,7 +267,9 @@ export default defineComponent({
                     }
                 },
                 {
-                    title: 'last month',
+                    title: this.includingCurrentMonth
+                        ? 'previous month'
+                        : 'last month',
                     key: MONTH_SIDEBAR_OPTION.last_month,
                     value: {
                         from: lastMonth,
@@ -300,19 +310,23 @@ export default defineComponent({
                         to: currentMonth
                     }
                 },
-                {
-                    title: 'custom by day',
-                    key: MONTH_SIDEBAR_OPTION.custom_by_day,
-                    value: this.dateInterval && {
-                        from: new CalendarDate(this.dateInterval.from)
-                            .startOf('day')
-                            .toDate(),
-                        to: new CalendarDate(this.dateInterval.from)
-                            .startOf('day')
-                            .toDate()
-                    },
-                    disabled: this.disabledType === 'day'
-                },
+                ...(this.shouldHideDisabledType
+                    ? []
+                    : [
+                          {
+                              title: 'custom by day',
+                              key: MONTH_SIDEBAR_OPTION.custom_by_day,
+                              value: this.dateInterval && {
+                                  from: new CalendarDate(this.dateInterval.from)
+                                      .startOf('day')
+                                      .toDate(),
+                                  to: new CalendarDate(this.dateInterval.to)
+                                      .startOf('day')
+                                      .toDate()
+                              },
+                              disabled: this.disabledType === 'day'
+                          }
+                      ]),
                 { title: 'custom by month', key: MONTH_SIDEBAR_OPTION.custom }
             ]
         },

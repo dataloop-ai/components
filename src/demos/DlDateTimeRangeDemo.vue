@@ -2,7 +2,7 @@
     <div class="dl-dtr">
         <div class="dl-dtr--options">
             <span class="dl-dtr--options_title">General Configuration</span>
-            <div class="dl-dtr--option">
+            <div class="dl-dtr--option date-range-options">
                 <span class="dl-dtr--option_title">Show time:</span>
                 <dl-switch
                     v-model="switchState"
@@ -12,8 +12,8 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div class="dl-dtr--option">
-                <span class="dl-dtr--option_title">Type:</span>
+            <div class="dl-dtr--option date-range-options">
+                <span class="dl-dtr--option_title">Type: {{ type }}</span>
                 <dl-switch
                     v-model="switchState"
                     value="type"
@@ -22,7 +22,7 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div class="dl-dtr--option">
+            <div class="dl-dtr--option date-range-options">
                 <span class="dl-dtr--option_title">Mode:</span>
                 <dl-switch
                     v-model="switchState"
@@ -33,27 +33,44 @@
                 />
             </div>
             <div style="margin-top: 10px" class="dl-dtr--option__range">
-                <span class="dl-dtr--option_title">Available Range: </span>
-                <dl-switch
-                    v-model="switchState"
-                    value="range"
-                    class="dl-dtr--option_switch"
-                    @input="handleRange"
-                />
-                <span class="dl-dtr--option_title">Auto Close: </span>
-                <dl-switch
-                    v-model="switchState"
-                    value="auto-close"
-                    class="dl-dtr--option_switch"
-                />
-                <span class="dl-dtr--option_title"
-                >Includes end date of current Month:
-                </span>
-                <dl-switch
-                    v-model="switchState"
-                    value="includes-current-month-end"
-                    class="dl-dtr--option_switch"
-                />
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title">Available Range: </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="range"
+                        class="dl-dtr--option_switch"
+                        @input="handleRange"
+                    />
+                </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title">Auto Close: </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="auto-close"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title"
+                    >Includes end date of current Month:
+                    </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="includes-current-month-end"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title"
+                    >Hide disabled type:
+                    </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="should-hide-disabled-type"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
+
                 <br />
                 <span>From</span>
                 <input
@@ -88,6 +105,7 @@
                     :show-time="showTime"
                     :auto-close="autoClose"
                     :including-current-month="includesCurrentMonthEnd"
+                    :should-hide-disabled-type="shouldHideDisabledType"
                     @set-type="handleSetType"
                     @change="handleModelValueUpdate"
                 />
@@ -104,6 +122,8 @@
                 :show-time="showTime"
                 :auto-close="autoClose"
                 :including-current-month="includesCurrentMonthEnd"
+                :should-hide-disabled-type="shouldHideDisabledType"
+                :disabled-type="type === 'day' ? 'month' : 'day'"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
             />
@@ -208,6 +228,9 @@ export default defineComponent({
         },
         includesCurrentMonthEnd(): boolean {
             return this.switchState.includes('includes-current-month-end')
+        },
+        shouldHideDisabledType(): boolean {
+            return this.switchState.includes('should-hide-disabled-type')
         }
     },
     methods: {
@@ -245,6 +268,11 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+.date-range-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
 .dl-dtr {
     display: flex;
     justify-content: center;
