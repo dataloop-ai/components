@@ -2,7 +2,7 @@
     <div class="dl-dtr">
         <div class="dl-dtr--options">
             <span class="dl-dtr--options_title">General Configuration</span>
-            <div class="dl-dtr--option">
+            <div class="dl-dtr--option date-range-options">
                 <span class="dl-dtr--option_title">Show time:</span>
                 <dl-switch
                     v-model="switchState"
@@ -12,8 +12,8 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div class="dl-dtr--option">
-                <span class="dl-dtr--option_title">Type:</span>
+            <div class="dl-dtr--option date-range-options">
+                <span class="dl-dtr--option_title">Type: {{ type }}</span>
                 <dl-switch
                     v-model="switchState"
                     value="type"
@@ -22,7 +22,7 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div class="dl-dtr--option">
+            <div class="dl-dtr--option date-range-options">
                 <span class="dl-dtr--option_title">Mode:</span>
                 <dl-switch
                     v-model="switchState"
@@ -32,24 +32,46 @@
                     class="dl-dtr--option_switch"
                 />
             </div>
-            <div
-                style="margin-top: 10px"
-                class="dl-dtr--option__range"
-            >
-                <span class="dl-dtr--option_title">Available Range: </span>
-                <dl-switch
-                    v-model="switchState"
-                    value="range"
-                    class="dl-dtr--option_switch"
-                    @input="handleRange"
-                />
-                <span class="dl-dtr--option_title">Auto Close: </span>
-                <dl-switch
-                    v-model="switchState"
-                    value="auto-close"
-                    class="dl-dtr--option_switch"
-                />
-                <br>
+            <div style="margin-top: 10px" class="dl-dtr--option__range">
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title">Available Range: </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="range"
+                        class="dl-dtr--option_switch"
+                        @input="handleRange"
+                    />
+                </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title">Auto Close: </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="auto-close"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title"
+                    >Includes end date of current Month:
+                    </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="includes-current-month-end"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
+                <div class="date-range-options">
+                    <span class="dl-dtr--option_title"
+                    >Clear select first option:
+                    </span>
+                    <dl-switch
+                        v-model="switchState"
+                        value="should-clear-select-first-option"
+                        class="dl-dtr--option_switch"
+                    />
+                </div>
+
+                <br />
                 <span>From</span>
                 <input
                     type="date"
@@ -58,7 +80,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="setRangeFrom"
-                >
+                />
                 <span style="margin-left: 5px">To</span>
                 <input
                     :disabled="!range"
@@ -67,7 +89,7 @@
                     class="dl-dtr--range-input"
                     placeholder="to"
                     @input="setRangeTo"
-                >
+                />
             </div>
         </div>
         <div>
@@ -82,6 +104,11 @@
                     :mode="mode"
                     :show-time="showTime"
                     :auto-close="autoClose"
+                    :including-current-month="includesCurrentMonthEnd"
+                    :disabled-type="type === 'day' ? 'month' : 'day'"
+                    :should-clear-select-first-option="
+                        shouldClearSelectFirstOption
+                    "
                     @set-type="handleSetType"
                     @change="handleModelValueUpdate"
                 />
@@ -97,6 +124,9 @@
                 :mode="mode"
                 :show-time="showTime"
                 :auto-close="autoClose"
+                :including-current-month="includesCurrentMonthEnd"
+                :should-clear-select-first-option="shouldClearSelectFirstOption"
+                :disabled-type="type === 'day' ? 'month' : 'day'"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
             />
@@ -119,7 +149,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="date.from = new Date($event.target.value)"
-                >
+                />
 
                 from
                 <input
@@ -129,7 +159,7 @@
                     class="dl-dtr--range-input"
                     placeholder="from"
                     @input="date.to = new Date($event.target.value)"
-                >
+                />
             </div>
 
             vmodel date: {{ date }}
@@ -141,6 +171,7 @@
                 :mode="mode"
                 :show-time="showTime"
                 :auto-close="autoClose"
+                :including-current-month="includesCurrentMonthEnd"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
             />
@@ -197,6 +228,12 @@ export default defineComponent({
         },
         autoClose(): boolean {
             return this.switchState.includes('auto-close')
+        },
+        includesCurrentMonthEnd(): boolean {
+            return this.switchState.includes('includes-current-month-end')
+        },
+        shouldClearSelectFirstOption(): boolean {
+            return this.switchState.includes('should-clear-select-first-option')
         }
     },
     methods: {
@@ -234,6 +271,11 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+.date-range-options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
 .dl-dtr {
     display: flex;
     justify-content: center;
