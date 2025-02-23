@@ -445,7 +445,9 @@ export default defineComponent({
     word-break: break-word;
     pointer-events: none;
 }
-
+.capitalize {
+    white-space-collapse: collapse;
+}
 .capitalize::first-letter {
     text-transform: var(--dl-tooltip-text-transform);
 }
