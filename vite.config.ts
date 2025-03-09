@@ -12,6 +12,7 @@ export default defineConfig({
             inline: ['vitest-canvas-mock']
         },
         coverage: {
+            provider: 'c8',
             reporter: ['lcovonly', 'text']
         },
         exclude: [
@@ -33,6 +34,13 @@ export default defineConfig({
     resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js'
+        }
+    },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                additionalData: `@use "sass:math"; @use "sass:color";`
+            }
         }
     }
 })

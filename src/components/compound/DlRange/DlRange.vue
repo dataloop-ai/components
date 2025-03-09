@@ -40,14 +40,8 @@
                     data-test="track-container"
                     v-on="trackContainerEvents"
                 >
-                    <div
-                        class="track"
-                        :style="trackStyle"
-                    >
-                        <div
-                            class="selection"
-                            :style="selectionBarStyle"
-                        />
+                    <div class="track" :style="trackStyle">
+                        <div class="selection" :style="selectionBarStyle" />
                         <div
                             key="tmin"
                             ref="minThumbRef"
@@ -67,7 +61,7 @@
                             type="hidden"
                             :name="name"
                             :value="displayValue"
-                        >
+                        />
                     </div>
                 </div>
             </div>
@@ -425,7 +419,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../DlSlider/sliderStyles.scss';
+@use '../DlSlider/sliderStyles.scss';
 
 .value-container {
     padding-left: 10px;

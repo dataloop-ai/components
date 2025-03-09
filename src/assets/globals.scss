@@ -1,4 +1,5 @@
-@import "./theme.css";
+@use "./theme.css";
+@use 'grid';
 
 body {
     & > * {
@@ -235,4 +236,3 @@ html {
     cursor: not-allowed !important;
 }
 
-@import 'grid';

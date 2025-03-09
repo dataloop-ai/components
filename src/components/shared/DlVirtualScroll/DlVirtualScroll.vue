@@ -357,6 +357,6 @@ export default defineComponent({
 })
 </script>
 <style scoped lang="scss">
-@import './styles/dl-virtual-scroll-styles.scss';
-@import '../../compound/DlTable/styles/dl-table-styles.scss';
+@use './styles/dl-virtual-scroll-styles.scss';
+@use '../../compound/DlTable/styles/dl-table-styles.scss';
 </style>

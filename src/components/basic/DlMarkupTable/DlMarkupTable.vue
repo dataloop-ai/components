@@ -1,8 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        :class="classes"
-    >
+    <div :id="uuid" :class="classes">
         <table class="dl-table">
             <slot />
         </table>
@@ -66,5 +63,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../compound/DlTable/styles/dl-table-styles.scss';
+@use '../../compound/DlTable/styles/dl-table-styles.scss';
 </style>

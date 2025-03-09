@@ -273,7 +273,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import './sliderStyles.scss';
+@use './sliderStyles.scss';
 
 .dl-button {
     padding: 0;

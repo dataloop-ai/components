@@ -35,7 +35,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/spinnerStyles.scss';
+@use '../styles/spinnerStyles.scss';
 
 @keyframes moveFirstRect {
     0% {

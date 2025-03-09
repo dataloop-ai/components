@@ -121,5 +121,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../DlTable/styles/dl-table-styles.scss';
+@use '../../DlTable/styles/dl-table-styles.scss';
 </style>

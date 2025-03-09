@@ -321,7 +321,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../DlTable/styles/dl-table-styles.scss';
+@use '../../DlTable/styles/dl-table-styles.scss';
 .chevron-icon {
     cursor: pointer;
     width: 25px;

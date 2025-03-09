@@ -2200,7 +2200,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import './styles/dl-table-styles.scss';
+@use './styles/dl-table-styles.scss';
 
 table {
     width: 100%;
