@@ -41,9 +41,12 @@
                             :available-range="availableRange"
                             :disabled="isInputDisabled"
                             :normalize-calendars="normalizeCalendars"
+                            :active-date-from="activeDateFrom"
+                            :active-date-to="activeDateTo"
                             @update:model-value="
                                 updateDateIntervalWithAutoClose
                             "
+                            @update:from-to-date="updateFromToDate"
                         />
                         <dl-time-picker
                             v-if="showTime && typeState === 'day'"
@@ -159,6 +162,8 @@ export default defineComponent({
         isOpen: boolean
         isInputDisabled: boolean
         currentSidebarOption: DAY_SIDEBAR_OPTION | MONTH_SIDEBAR_OPTION
+        activeDateTo: CalendarDate | null
+        activeDateFrom: CalendarDate | null
     } {
         let type: 'day' | 'month' = this.type
         if (this.disabledType === this.type) {
@@ -170,7 +175,9 @@ export default defineComponent({
             typeState: type,
             isOpen: false,
             isInputDisabled: false,
-            currentSidebarOption: DAY_SIDEBAR_OPTION.custom
+            currentSidebarOption: DAY_SIDEBAR_OPTION.custom,
+            activeDateTo: null,
+            activeDateFrom: null
         }
     },
     computed: {
@@ -436,7 +443,7 @@ export default defineComponent({
         type(value: 'day' | 'month') {
             if (value === this.disabledType) return
             this.typeState = value
-
+            this.updateFromToDate()
             if (this.dateInterval === null) return
 
             const date = new CustomDate(this.dateInterval.from)
@@ -486,6 +493,7 @@ export default defineComponent({
     },
     methods: {
         handleClearAction() {
+            this.updateFromToDate()
             if (this.shouldClearSelectFirstOption) {
                 if (this.type === 'day') {
                     this.handleDayTypeOptionClick(this.dayTypeOptions[0])
@@ -520,6 +528,10 @@ export default defineComponent({
             this.$emit('update:model-value', value)
             this.$emit('change', value)
         },
+        updateFromToDate(value?: { from: CalendarDate; to: CalendarDate }) {
+            this.activeDateFrom = value?.from || null
+            this.activeDateTo = value?.to || null
+        },
         updateDateIntervalWithAutoClose(value: DateInterval) {
             this.updateDateInterval(value)
 
@@ -533,6 +545,7 @@ export default defineComponent({
             }
         },
         handleDayTypeOptionClick(option: DayTypeOption) {
+            this.updateFromToDate()
             this.currentSidebarOption = option.key as DAY_SIDEBAR_OPTION
             this.isInputDisabled = option.key !== DAY_SIDEBAR_OPTION.custom
 
@@ -548,6 +561,7 @@ export default defineComponent({
             }
         },
         handleMonthTypeOptionClick(option: MonthTypeOption) {
+            this.updateFromToDate()
             this.currentSidebarOption = option.key as MONTH_SIDEBAR_OPTION
             this.isInputDisabled = option.key !== MONTH_SIDEBAR_OPTION.custom
 

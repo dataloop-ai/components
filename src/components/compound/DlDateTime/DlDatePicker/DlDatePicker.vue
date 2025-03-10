@@ -105,10 +105,18 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        activeDateFrom: {
+            type: Object as PropType<Partial<CalendarDate> | null>,
+            default: null
+        },
+        activeDateTo: {
+            type: Object as PropType<Partial<CalendarDate> | null>,
+            default: null
+        },
         normalizeCalendars: Boolean,
         disabled: Boolean
     },
-    emits: ['update:model-value', 'change'],
+    emits: ['update:model-value', 'change', 'update:from-to-date'],
     data(): {
         uuid: string
         timeout: number | null
@@ -171,9 +179,13 @@ export default defineComponent({
             1,
             unit
         )
-
         this.calendarTo = new Calendar(cDateTo)
         this.calendarTo.activeDate = cDateTo
+
+        if (this.activeDateFrom && this.activeDateTo) {
+            this.calendarFrom.activeDate = new CalendarDate(this.activeDateFrom)
+            this.calendarTo.activeDate = new CalendarDate(this.activeDateTo)
+        }
     },
     beforeUnmount() {
         if (this.timeout) {
@@ -201,6 +213,10 @@ export default defineComponent({
             }
             this.$emit('update:model-value', valueToUse)
             this.$emit('change', valueToUse)
+            this.$emit('update:from-to-date', {
+                from: this.calendarFrom.activeDate,
+                to: this.calendarTo.activeDate
+            })
         },
 
         updateDateInterval(value: DateInterval) {
