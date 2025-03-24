@@ -133,7 +133,8 @@ body {
 
     /* alert colors */
     --dl-color-negative-background: #734145;
-    --dl-color-warning-background: #7b7241;
+    --dl-color-warning: #FFDE5C;
+    --dl-color-warning-background: #686045;
     --dl-color-positive-background: #3a644e;
     --dl-color-info-background: #4b5a6b;
     --dl-color-info: #92cdf2;
