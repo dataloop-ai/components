@@ -142,7 +142,7 @@ export default defineComponent({
         },
         maxDisplayRange: {
             type: Number,
-            default: 7,
+            default: 5,
             validator: (v: number) => v >= 0
         },
         disabled: Boolean,
@@ -173,7 +173,8 @@ export default defineComponent({
             pgFrom: this.min,
             pgTo: this.max,
             ellipsesStart: false,
-            ellipsesEnd: false
+            ellipsesEnd: false,
+            defaultMaxDisplayRange: 5
         }
     },
     computed: {
@@ -247,17 +248,16 @@ export default defineComponent({
             this.ellipsesEnd = false
 
             let maxDisplayRange = Math.max(
-                this.maxDisplayRange,
+                !this.maxDisplayRange || isNaN(Number(this.maxDisplayRange))
+                    ? this.defaultMaxDisplayRange
+                    : this.maxDisplayRange,
                 3 + (this.boundaryNumbers ? 2 : 0)
             )
 
             this.pgFrom = this.boundaryNumbers ? this.min + 1 : this.min
             this.pgTo = this.boundaryNumbers ? this.max - 1 : this.max
 
-            if (
-                this.maxDisplayRange &&
-                maxDisplayRange < this.max - this.min + 1
-            ) {
+            if (maxDisplayRange && maxDisplayRange < this.max - this.min + 1) {
                 maxDisplayRange = 1 + Math.floor(maxDisplayRange / 2) * 2
 
                 this.pgFrom = Math.max(
