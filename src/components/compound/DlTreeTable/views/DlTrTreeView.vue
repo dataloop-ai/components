@@ -7,8 +7,8 @@
         @click="emitRowClick($event, row, rowIndex)"
         @dblclick="onTrDoubleClick($event, row, rowIndex)"
         @contextmenu="onTrContextMenu($event, row, rowIndex)"
-        @mouseenter="isDragIconVisible = true"
-        @mouseleave="isDragIconVisible = false"
+        @mouseenter="onRowHoverStart($event, row, rowIndex)"
+        @mouseleave="onRowHoverEnd($event, row, rowIndex)"
     >
         <td
             v-if="hasDraggableRows"
@@ -161,7 +161,9 @@ export default defineComponent({
         'rowDoubleClick',
         'rowContextMenu',
         'update:model-value',
-        'updateExpandedRow'
+        'updateExpandedRow',
+        'rowHoverStart',
+        'rowHoverEnd'
     ],
     setup(props, { emit, slots }) {
         const visibleChildren = ref(0)
@@ -188,6 +190,24 @@ export default defineComponent({
             rowIndex: number
         ) => {
             emit('rowClick', event, row, rowIndex)
+        }
+
+        const onRowHoverStart = (
+            event: MouseEvent,
+            row: Record<string, any>,
+            rowIndex: number
+        ) => {
+            isDragIconVisible.value = true
+            emit('rowHoverStart', event, row, rowIndex)
+        }
+
+        const onRowHoverEnd = (
+            event: MouseEvent,
+            row: Record<string, any>,
+            rowIndex: number
+        ) => {
+            isDragIconVisible.value = false
+            emit('rowHoverEnd', event, row, rowIndex)
         }
 
         const onTrDoubleClick = (
@@ -314,7 +334,9 @@ export default defineComponent({
             rowClass,
             getSlotByName,
             getExpandedvisibleChildren,
-            updateExpandedvisibleChildren
+            updateExpandedvisibleChildren,
+            onRowHoverStart,
+            onRowHoverEnd
         }
     }
 })
