@@ -569,8 +569,8 @@ export default defineComponent({
                     },
                     updateExpandedRow: () =>
                         updateExpandedRow(!row.isExpanded, getRowKey.value(row)),
-                    'row-hover-start': (...args: any) => emit('row-hover-start', ...args),
-                    'row-hover-end': (...args: any) => emit('row-hover-end', ...args)
+                    rowHoverStart: (...args: any) => emit('row-hover-start', ...args),
+                    rowHoverEnd: (...args: any) => emit('row-hover-end', ...args)
                 }
             })
         }

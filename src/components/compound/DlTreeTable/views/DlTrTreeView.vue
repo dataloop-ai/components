@@ -162,8 +162,8 @@ export default defineComponent({
         'rowContextMenu',
         'update:model-value',
         'updateExpandedRow',
-        'row-hover-start',
-        'row-hover-end'
+        'rowHoverStart',
+        'rowHoverEnd'
     ],
     setup(props, { emit, slots }) {
         const visibleChildren = ref(0)
@@ -198,7 +198,7 @@ export default defineComponent({
             rowIndex: number
         ) => {
             isDragIconVisible.value = true
-            emit('row-hover-start', event, row, rowIndex)
+            emit('rowHoverStart', event, row, rowIndex)
         }
 
         const onRowHoverEnd = (
@@ -207,7 +207,7 @@ export default defineComponent({
             rowIndex: number
         ) => {
             isDragIconVisible.value = false
-            emit('row-hover-end', event, row, rowIndex)
+            emit('rowHoverEnd', event, row, rowIndex)
         }
 
         const onTrDoubleClick = (
