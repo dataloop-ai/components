@@ -11,6 +11,8 @@ export const emits = [
     'row-double-click',
     'row-contextmenu',
     'update:visible-columns',
+    'row-hover-start',
+    'row-hover-end',
     ...useTableRowExpandEmits,
     ...useTreeTableRowSelectionEmits
 ]

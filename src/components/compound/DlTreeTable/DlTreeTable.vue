@@ -568,7 +568,9 @@ export default defineComponent({
                         tableRootRef.value.onTrContextMenu(event, row, index)
                     },
                     updateExpandedRow: () =>
-                        updateExpandedRow(!row.isExpanded, getRowKey.value(row))
+                        updateExpandedRow(!row.isExpanded, getRowKey.value(row)),
+                    'row-hover-start': (...args: any) => emit('row-hover-start', ...args),
+                    'row-hover-end': (...args: any) => emit('row-hover-end', ...args)
                 }
             })
         }
