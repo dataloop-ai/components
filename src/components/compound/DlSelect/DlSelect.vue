@@ -71,6 +71,8 @@
                     @input="handleSearchInput"
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
+                    @keyup.enter="handleSearchEnter"
+                    @keyup.esc="handleSearchEscape"
                 />
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
@@ -451,6 +453,8 @@ export default defineComponent({
     emits: [
         'search-focus',
         'search-blur',
+        'search-enter',
+        'search-escape',
         'filter',
         'change',
         'search-input',
@@ -1022,6 +1026,16 @@ export default defineComponent({
             const html = `<span>${highlightedHtml}</span>`
 
             return html
+        },
+        handleSearchEnter(e: Event): void {
+            if (this.searchable) {
+                this.$emit('search-enter', e, this.searchInputValue)
+            }
+        },
+        handleSearchEscape(e: Event): void {
+            if (this.searchable) {
+                this.$emit('search-escape', e, this.searchInputValue)
+            }
         },
         handleSearchBlur(e: Event): void {
             if (this.searchable) {
