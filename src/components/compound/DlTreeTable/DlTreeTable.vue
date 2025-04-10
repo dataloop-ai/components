@@ -543,7 +543,11 @@ export default defineComponent({
                     : '',
                 isRowHighlighted:
                     props.highlightedRow &&
-                    row[props.rowKey] === props.highlightedRow,
+                    row[
+                        typeof props.rowKey === 'string'
+                            ? props.rowKey
+                            : props.rowKey()
+                    ] === props.highlightedRow,
                 level,
                 class: 'nested-element dl-tr',
                 'data-level': level,
