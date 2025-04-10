@@ -181,6 +181,28 @@
             searchable
         />
 
+        normal search without hightlights
+        <dl-select
+            v-model="selectedByFilteringSearch"
+            :options="searchOptions"
+            size="m"
+            multiselect
+            placeholder="contributors"
+            searchable
+            disable-search-highlighting
+        />
+
+        normal search open menu during search
+        <dl-select
+            v-model="selectedByFilteringSearch"
+            :options="searchOptions"
+            size="m"
+            multiselect
+            placeholder="contributors"
+            searchable
+            open-menu-during-search
+        />
+
         selected ellipsis
         <div style="width: 200px">
             <dl-select

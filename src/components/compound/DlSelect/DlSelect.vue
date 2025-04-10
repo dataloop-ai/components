@@ -68,6 +68,7 @@
                     :style="!isExpanded ? 'display: none;' : 'width: 100%;'"
                     :disabled="disabled"
                     :readonly="readonly"
+                    :placeholder="computedPlaceholder"
                     @input="handleSearchInput"
                     @focus="handleSearchFocus"
                     @blur="handleSearchBlur"
@@ -126,6 +127,7 @@
                         @click.prevent.stop="clearSelection"
                     />
                     <dl-icon
+                        v-if="!hideChevron"
                         :icon="dropdownIcon"
                         :color="chevronIconColor"
                         class="expand-icon"
@@ -166,6 +168,7 @@
                     </dl-item-section>
                 </dl-list-item>
                 <dl-list
+                    v-if="showMenuList"
                     class="select-list"
                     :padding="false"
                     :style="
@@ -448,6 +451,21 @@ export default defineComponent({
         selectedResourceLabel: {
             type: String,
             default: 'Selected Items'
+        },
+        hideChevron: {
+            type: Boolean,
+            default: false
+        },
+        disableSearchHighlighting: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * shows search results only when there is some user input
+         */
+        openMenuDuringSearch: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [
@@ -591,6 +609,9 @@ export default defineComponent({
             let style = this.menuStyle ?? ''
             if (this.optionsCount > this.MAX_ITEMS_PER_LIST) {
                 style += '; overflow-y: hidden'
+            }
+            if (!this.showMenuList) {
+                style += '; border: none;'
             }
             return style
         },
@@ -811,6 +832,16 @@ export default defineComponent({
         },
         chevronIconColor(): string {
             return `${this.disabled ? 'dl-color-disabled' : null}`
+        },
+        showMenuList(): boolean {
+            if (
+                this.openMenuDuringSearch &&
+                this.searchable &&
+                this.searchInputValue.length === 0
+            ) {
+                return false
+            }
+            return true
         }
     },
     watch: {
@@ -1011,7 +1042,10 @@ export default defineComponent({
             const label = `${this.getOptionLabel(option)}`
             let highlightedHtml = label
 
-            if (this.searchInputValue?.length) {
+            if (
+                this.searchInputValue?.length &&
+                !this.disableSearchHighlighting
+            ) {
                 const toReplace = new RegExp(this.searchInputValue, 'gi')
 
                 highlightedHtml = label.replace(
@@ -1368,6 +1402,10 @@ export default defineComponent({
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border: 0;
+        }
+
+        &::placeholder {
+            color: var(--dl-color-lighter);
         }
     }
     .bottom-message-container {

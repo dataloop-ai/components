@@ -267,6 +267,34 @@ export default defineComponent({
                 } as unknown as PropType<DlEmptyStateProps>)
         },
         /**
+         * Custom icon class to use for expanded rows.
+         */
+        customIconExpandedRow: {
+            type: String,
+            default: 'icon-dl-down-chevron'
+        },
+        /**
+         * Custom icon class to use for compressed (collapsed) rows.
+         */
+        customIconCompressedRow: {
+            type: String,
+            default: 'icon-dl-right-chevron'
+        },
+        /**
+         * color of the chevron icon
+         */
+        chevronIconColor: {
+            type: String,
+            default: ''
+        },
+        /**
+         * identifier (rowKey) to highlight a row.
+         */
+        highlightedRow: {
+            type: String,
+            default: ''
+        },
+        /**
          * Scrolling delay
          */
         scrollDebounce: {
@@ -513,6 +541,9 @@ export default defineComponent({
                 isRowSelected: isRowSelected(props.rowKey, getRowKey.value(row))
                     ? 'selected'
                     : '',
+                isRowHighlighted:
+                    props.highlightedRow &&
+                    row[props.rowKey] === props.highlightedRow,
                 level,
                 class: 'nested-element dl-tr',
                 'data-level': level,
@@ -540,6 +571,9 @@ export default defineComponent({
                 modelValue: isRowSelected(props.rowKey, getRowKey.value(row)),
                 scopedSlots: currentSlots,
                 tooltip: props.identifierAsTooltip ? row.identifier : null,
+                customIconExpandedRow: props.customIconExpandedRow,
+                customIconCompressedRow: props.customIconCompressedRow,
+                chevronIconColor: props.chevronIconColor,
                 'onUpdate:modelValue': (adding: boolean, evt: Event) => {
                     updateSelectionHierarchy(adding, evt, row)
                 },
@@ -568,9 +602,14 @@ export default defineComponent({
                         tableRootRef.value.onTrContextMenu(event, row, index)
                     },
                     updateExpandedRow: () =>
-                        updateExpandedRow(!row.isExpanded, getRowKey.value(row)),
-                    rowHoverStart: (...args: any) => emit('row-hover-start', ...args),
-                    rowHoverEnd: (...args: any) => emit('row-hover-end', ...args)
+                        updateExpandedRow(
+                            !row.isExpanded,
+                            getRowKey.value(row)
+                        ),
+                    rowHoverStart: (...args: any) =>
+                        emit('row-hover-start', ...args),
+                    rowHoverEnd: (...args: any) =>
+                        emit('row-hover-end', ...args)
                 }
             })
         }
