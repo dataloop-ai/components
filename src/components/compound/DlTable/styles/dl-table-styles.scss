@@ -139,6 +139,12 @@
         }
     }
 
+    tbody tr.highlighted {
+        td {
+            background-color: var(--dl-color-fill);
+        }
+    }
+
     .dl-table-cell-inner-div {
         text-overflow: ellipsis;
         white-space: nowrap;

@@ -1,6 +1,6 @@
 <template>
     <DlTrTree
-        :class="rowClass"
+        :class="rowClass()"
         :no-hover="noHover"
         :children="childrenCount"
         :props="{ row }"
@@ -16,17 +16,9 @@
         >
             <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
         </td>
-        <td class="chevron-icon">
-            <DlIcon
-                v-if="(row.children || []).length > 0"
-                :icon="`icon-dl-${row.isExpanded ? 'down' : 'right'}-chevron`"
-                @click.stop.prevent="emitUpdateExpandedRow"
-            />
-        </td>
         <td v-if="hasSelectionMode" class="dl-table--col-auto-width">
             <slot name="body-selection" v-bind="bindBodySelection">
                 <DlCheckbox
-                    style="padding-left: 10px"
                     :color="color"
                     :model-value="modelValue"
                     :indeterminate-value="true"
@@ -37,6 +29,20 @@
                     "
                 />
             </slot>
+        </td>
+        <td class="chevron-icon-container">
+            <div class="chevron-icon">
+                <DlIcon
+                    v-if="(row.children || []).length > 0"
+                    :icon="`${
+                        row.isExpanded
+                            ? customIconExpandedRow
+                            : customIconCompressedRow
+                    }`"
+                    :style="`color: ${chevronIconColor};`"
+                    @click.stop.prevent="emitUpdateExpandedRow"
+                />
+            </div>
         </td>
         <DlTdTree
             v-for="(col, colIndex) in computedCols"
@@ -154,6 +160,31 @@ export default defineComponent({
         tooltip: {
             type: String,
             default: null
+        },
+        /**
+         * Custom icon class to use for expanded rows.
+         */
+        customIconExpandedRow: {
+            type: String,
+            default: 'icon-dl-down-chevron'
+        },
+        /**
+         * Custom icon class to use for compressed (collapsed) rows.
+         */
+        customIconCompressedRow: {
+            type: String,
+            default: 'icon-dl-right-chevron'
+        },
+        /**
+         * color of the chevron icon
+         */
+        chevronIconColor: {
+            type: String,
+            default: ''
+        },
+        isRowHighlighted: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [
@@ -251,14 +282,9 @@ export default defineComponent({
         }
 
         const rowClass = (): string => {
-            if (props.isRowSelected) {
-                return 'selected'
+            if (props.isRowHighlighted) {
+                return 'highlighted'
             }
-            if (props.hasAnyAction) {
-                return ' cursor-pointer'
-            }
-
-            return 'dl-tr'
         }
 
         const getExpandedvisibleChildren = (): void => {
@@ -345,8 +371,15 @@ export default defineComponent({
 <style scoped lang="scss">
 @import '../../DlTable/styles/dl-table-styles.scss';
 .chevron-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 5px;
+    height: 100%;
+}
+.chevron-icon-container {
     cursor: pointer;
     width: 25px;
-    padding: 5px;
 }
 </style>

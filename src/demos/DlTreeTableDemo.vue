@@ -57,10 +57,7 @@
                 </div>
 
                 <div class="right-panel">
-                    <button
-                        class="btn"
-                        @click="addRowPerPage"
-                    >
+                    <button class="btn" @click="addRowPerPage">
                         Add Rows/Page
                     </button>
 
@@ -111,6 +108,7 @@
                     :virtual-scroll="vScroll"
                     style="height: 500px"
                     :rows-per-page-options="rowsPerPageOptions"
+                    highlighted-row="Frozen Yogurt"
                     @row-click="onRowClick"
                     @th-click="log"
                     @selected-items="selectedItems"
