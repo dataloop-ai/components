@@ -12,7 +12,9 @@
     >
         <td
             v-if="hasDraggableRows"
-            :style="`width: 25px; opacity: ${isDragIconVisible ? '1' : '0'}`"
+            :style="`width: 25px; opacity: ${
+                isDragIconVisible || isRowHighlighted ? '1' : '0'
+            }`"
         >
             <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
         </td>
