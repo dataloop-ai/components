@@ -449,6 +449,19 @@ describe('DlSmartSearchInput', () => {
                     `Name = 'E\\'zz' AND co`,
                     `Name = 'E\\'zz' AND completed `
                 )
+                // DAT-91927
+                await applySuggestion(
+                    `Name = 'A' OR Name = 'B' AND co`,
+                    `Name = 'A' OR Name = 'B' AND completed `
+                )
+                await applySuggestion(
+                    `Name = 'A' OR Name = '\\'B' AND co`,
+                    `Name = 'A' OR Name = '\\'B' AND completed `
+                )
+                await applySuggestion(
+                    `Name = 'A\\'' OR Name = 'B' AND co`,
+                    `Name = 'A\\'' OR Name = 'B' AND completed `
+                )
                 // previous fails
                 //await applySuggestion('completed = a', 'completed = false ')
                 //await applySuggestion('completed = false a', 'completed = false AND ') // actual: completed = false AND a

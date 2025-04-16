@@ -470,7 +470,7 @@ export default defineComponent({
                 } else {
                     // this|situation: replace whatever is there on both sides with the value
                     if (
-                        /^[^']+((?<!\\)'.*(?<!\\)'[^']+)*(?<!\\)'([^']+\\')*[^']*((?<!\\)')?$/.test(
+                        /^[^']+((?<!\\)'([^']|(?<=\\)')*(?<!\\)'[^']+)*(?<!\\)'([^']+\\')*[^']*((?<!\\)')?$/.test(
                             queryLeftSide
                         )
                     ) {
