@@ -324,7 +324,7 @@
                     v-if="!!infoMessage.length && !error"
                     icon="icon-dl-info"
                     :inline="false"
-                    size="l"
+                    :size="iconSize"
                 >
                     <dl-tooltip>
                         {{ infoMessage }}
@@ -335,7 +335,7 @@
                     :icon="errorIcon"
                     :inline="false"
                     color="dl-color-negative"
-                    size="l"
+                    :size="iconSize"
                 >
                     <dl-tooltip>
                         {{ errorMessage }}
