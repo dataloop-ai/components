@@ -6,7 +6,8 @@
         :class="{
             'root-container--s': isSmall,
             [identifierClass]: true,
-            'fit-content': fitContent
+            'fit-content': fitContent,
+            'row-root': !!errorIcon.length
         }"
     >
         <div
@@ -318,17 +319,42 @@
             v-if="!isSmall && (!!infoMessage.length || !!errorMessage.length)"
             class="bottom-message-container"
         >
-            <dl-info-error-message
-                v-if="!!infoMessage.length && !error"
-                position="below"
-                :value="infoMessage"
-            />
-            <dl-info-error-message
-                v-if="error && !!errorMessage.length"
-                position="below"
-                error
-                :value="errorMessage"
-            />
+            <span v-if="!!errorIcon.length">
+                <dl-icon
+                    v-if="!!infoMessage.length && !error"
+                    icon="icon-dl-info"
+                    :inline="false"
+                    size="l"
+                >
+                    <dl-tooltip>
+                        {{ infoMessage }}
+                    </dl-tooltip>
+                </dl-icon>
+                <dl-icon
+                    v-if="error && !!errorMessage.length"
+                    :icon="errorIcon"
+                    :inline="false"
+                    color="dl-color-negative"
+                    size="l"
+                >
+                    <dl-tooltip>
+                        {{ errorMessage }}
+                    </dl-tooltip>
+                </dl-icon>
+            </span>
+            <span v-else>
+                <dl-info-error-message
+                    v-if="!!infoMessage.length && !error"
+                    position="below"
+                    :value="infoMessage"
+                />
+                <dl-info-error-message
+                    v-if="error && !!errorMessage.length"
+                    position="below"
+                    error
+                    :value="errorMessage"
+                />
+            </span>
         </div>
     </div>
 </template>
@@ -409,6 +435,7 @@ export default defineComponent({
         infoMessage: { type: String, default: '' },
         errorMessage: { type: String, default: '' },
         error: { type: Boolean, default: false },
+        errorIcon: { type: String, default: '' },
         disabled: { type: Boolean, default: false },
         readonly: { type: Boolean, default: false },
         emitValue: { type: Boolean, default: false }, // We emit the value from the option and compare with it as a modelvalue
@@ -1417,5 +1444,10 @@ export default defineComponent({
 }
 .fit-content > * {
     max-width: fit-content;
+}
+.row-root {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 </style>

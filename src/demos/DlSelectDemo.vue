@@ -732,6 +732,30 @@
                 <div>{{ scope.opt.label }}</div>
             </template>
         </dl-select>
+        Recipe for a select with {{ labelInputError }} as labels
+        <dl-select
+            ref="newLabelInput"
+            v-model.trim="labelInputError"
+            hide-dropdown-icon
+            :input-debounce="0"
+            :options="searchOptions"
+            :error="labelInputError.length === 0"
+            error-message="label Input Error Message"
+            hide-selected
+            searchable
+            placeholder="Insert label number"
+            size="m"
+            style="width: 80%; margin-bottom: 0"
+            custom-filter
+            hide-chevron
+            open-menu-during-search
+            disable-search-highlighting
+            menu-class="--js-add-new-recipe-label"
+            class="--js-add-new-recipe-label"
+            error-icon="icon-dl-error-filled"
+        >
+            <template #prepend><span /></template>
+        </dl-select>
     </div>
 </template>
 
@@ -1023,7 +1047,8 @@ export default defineComponent({
             disabledSelected: 'disabled option',
             preSelectedValue: null,
             optionsAsNumbers,
-            selectedNumbers: []
+            selectedNumbers: [],
+            labelInputError: ''
         }
     },
     computed: {
