@@ -58,7 +58,7 @@ export default defineComponent({
             default: Mode.text
         }
     },
-    emits: ['update:model-value', 'align-text', 'change', 'focus', 'blur'],
+    emits: ['update:model-value', 'align-text', 'change', 'content-error', 'focus', 'blur'],
     setup(props, { emit }) {
         const { modelValue, indentation, readonly, mode } = toRefs(props)
 
@@ -99,6 +99,7 @@ export default defineComponent({
                         '[DlJsonEditor] Failed to parse JSON'
                     )
                 }
+                emit('content-error')
                 return
             }
 
