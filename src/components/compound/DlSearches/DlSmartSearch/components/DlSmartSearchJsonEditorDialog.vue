@@ -43,6 +43,7 @@
                             flat
                             color="secondary"
                             padding="0px 3px"
+                            :disabled="alignDisabled"
                             @click="alignJSON"
                         />
                     </div>
@@ -51,6 +52,7 @@
                         v-model="stringifiedJSON"
                         class="json-editor"
                         @change="onChange"
+                        @content-error="onContentError"
                     />
                 </div>
             </template>
@@ -230,6 +232,7 @@ export default defineComponent({
         const showSaveDialog = ref(false)
         const showDeleteDialog = ref(false)
         const newQueryName = ref('')
+        const alignDisabled = ref(false)
 
         const selectOptions = computed<DlSelectOption[]>(() => {
             return uniqBy(
@@ -313,6 +316,11 @@ export default defineComponent({
             const parsed = toObject(json)
             if (!parsed) return
             emit('change', parsed)
+            alignDisabled.value = false
+        }
+
+        const onContentError = () => {
+            alignDisabled.value = true
         }
 
         const saveQuery = (searchAfterSave = false) => {
@@ -386,10 +394,12 @@ export default defineComponent({
             alignJSON,
             onQuerySelect,
             newQueryName,
+            alignDisabled,
             showDeleteDialog,
             selectOptions,
             search,
             onChange,
+            onContentError,
             saveQuery,
             deleteQuery
         }
