@@ -44,7 +44,12 @@
                 :value="topMessage"
             />
         </div>
-        <div class="select-wrapper" tabindex="0" :style="placeholderStyles">
+        <div
+            class="select-wrapper"
+            tabindex="0"
+            :style="placeholderStyles"
+            @keydown="handleKeyDown"
+        >
             <div ref="select" :class="selectClasses">
                 <div
                     v-if="hasPrepend || searchable"
@@ -1142,6 +1147,24 @@ export default defineComponent({
         },
         handleDeselected(value: any) {
             this.$emit('deselected', value)
+        },
+        handleKeyDown(event: KeyboardEvent): void {
+            if (event.key === 'Enter' && this.isExpanded) {
+                event.preventDefault()
+                event.stopPropagation()
+
+                if (
+                    this.highlightedIndex !== -1 &&
+                    this.filteredOptions.length > this.highlightedIndex
+                ) {
+                    const selectedItem =
+                        this.filteredOptions[this.highlightedIndex]
+                    if (selectedItem) {
+                        this.selectOption(selectedItem)
+                        this.closeMenu()
+                    }
+                }
+            }
         }
     }
 })
