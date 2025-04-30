@@ -249,6 +249,10 @@ export default defineComponent({
             type: [String, Array, Object],
             default: null as unknown as PropType<any[]>
         },
+        menuClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
         noHover: Boolean,
         /**
          * Indicates the data is empty
@@ -922,6 +926,7 @@ export default defineComponent({
             'onUpdate:selected': this.updateSelected,
             onColUpdate: this.updateColumns,
             class: this.containerClass,
+            menuClass: this.menuClass,
             hideBottom: this.hideBottom,
             hideNoData: this.hideNoData,
             hideHeader: this.hideHeader,

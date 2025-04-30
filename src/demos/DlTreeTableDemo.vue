@@ -204,6 +204,7 @@
                     :rows="tableRows"
                     :columns="tableColumns"
                     title="Editable Columns"
+                    menu-class="editable-menu-class"
                     :visible-columns="tableColumns.slice(0, -1)"
                 />
             </div>
