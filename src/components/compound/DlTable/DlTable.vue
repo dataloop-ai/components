@@ -201,7 +201,9 @@
                                                             handleVisibleColumnsUpdate
                                                         "
                                                     >
-                                                        <dl-list>
+                                                        <dl-list
+                                                            :class="menuClass"
+                                                        >
                                                             <dl-option-group
                                                                 :model-value="
                                                                     computedVisibleCols
@@ -598,7 +600,9 @@
                                                             handleVisibleColumnsUpdate
                                                         "
                                                     >
-                                                        <dl-list>
+                                                        <dl-list
+                                                            :class="menuClass"
+                                                        >
                                                             <dl-option-group
                                                                 :model-value="
                                                                     computedVisibleCols
@@ -1212,6 +1216,10 @@ export default defineComponent({
             type: [String, Array, Object],
             default: null as unknown as PropType<any[]>
         },
+        menuClass: {
+            type: [String, Array, Object],
+            default: null as unknown as PropType<any[]>
+        },
         noHover: Boolean,
         /**
          * Will add another column with a button opening a menu which lets the user choose the visible columns
@@ -1286,6 +1294,7 @@ export default defineComponent({
             tableClass,
             tableHeaderStyle,
             tableHeaderClass,
+            menuClass,
             dense,
             draggable,
             virtualScroll,
