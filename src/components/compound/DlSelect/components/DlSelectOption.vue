@@ -5,6 +5,9 @@
             :class="[{ 'readonly-option': true }, { capitalized }]"
             :style="`padding-left: ${10 + depth * indentation}px;`"
         >
+            <dl-tooltip v-if="tooltip">
+                {{ tooltip }}
+            </dl-tooltip>
             <slot>
                 {{ label ? (capitalized ? label.toLowerCase() : label) : null }}
             </slot>
@@ -43,6 +46,9 @@
                         @checked="handleSingleSelect"
                         @unchecked="handleSingleDeselect"
                     >
+                        <dl-tooltip v-if="tooltip">
+                            {{ tooltip }}
+                        </dl-tooltip>
                         <slot>
                             {{
                                 capitalized
@@ -54,6 +60,9 @@
                     <span v-if="count" class="counter"> ({{ count }}) </span>
                 </span>
                 <div v-else :class="{ capitalized }">
+                    <dl-tooltip v-if="tooltip">
+                        {{ tooltip }}
+                    </dl-tooltip>
                     <slot>
                         {{
                             capitalized
@@ -88,6 +97,7 @@
                     :is-expanded="isExpanded"
                     :filter-term="filterTerm"
                     :fit-content="fitContent"
+                    :tooltip="tooltip"
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect($event, true)"
                     @deselected="handleSingleDeselect"
@@ -119,7 +129,7 @@
 import { defineComponent, PropType } from 'vue-demi'
 import { DlListItem } from '../../../basic'
 import { DlIcon, DlCheckbox, DlEllipsis } from '../../../essential'
-import { DlItemSection } from '../../../shared'
+import { DlItemSection, DlTooltip } from '../../../shared'
 import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
@@ -139,7 +149,8 @@ export default defineComponent({
         DlItemSection,
         DlCheckbox,
         DlIcon,
-        DlEllipsis
+        DlEllipsis,
+        DlTooltip
     },
     model: {
         prop: 'modelValue',
@@ -182,7 +193,8 @@ export default defineComponent({
         selectChildren: {
             type: Boolean,
             default: true
-        }
+        },
+        tooltip: { type: String, default: null }
     },
     emits: [
         'update:model-value',

@@ -5,6 +5,7 @@ export interface DlSelectOption {
     expanded?: boolean
     children?: DlSelectOption[]
     readonly?: boolean
+    tooltip?: string
 }
 
 export type DlSelectOptionType = string | number | DlSelectOption
