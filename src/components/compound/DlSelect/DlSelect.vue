@@ -238,6 +238,7 @@
                             :readonly="isReadonlyOption(item)"
                             :indentation="indentation"
                             :is-expanded="item.expanded"
+                            :tooltip="getOptionTooltip(item)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(item)"
                             @selected="handleSelected"
@@ -288,6 +289,7 @@
                             :readonly="isReadonlyOption(option)"
                             :indentation="indentation"
                             :is-expanded="isExpandedOption(option)"
+                            :tooltip="getOptionTooltip(option)"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
                             @selected="handleSelected"
@@ -983,6 +985,12 @@ export default defineComponent({
         },
         getOptionCount(option: any) {
             return option?.count ?? null
+        },
+        getOptionTooltip(option: DlSelectOptionType): string | null {
+            if (typeof option === 'object' && option?.tooltip) {
+                return option.tooltip
+            }
+            return null
         },
         getKeyForOption(
             option:
