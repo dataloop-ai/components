@@ -11,18 +11,12 @@
                 style="padding: 0; margin-bottom: 10px"
                 @click.stop.prevent="$emit('onClose')"
             />
-            <h2
-                v-if="hasTitle"
-                class="title"
-            >
+            <h2 v-if="hasTitle" class="title">
                 <slot name="title">
                     <dl-ellipsis :text="title" />
                 </slot>
             </h2>
-            <p
-                v-if="hasSubtitle"
-                class="subtitle"
-            >
+            <p v-if="hasSubtitle" class="subtitle">
                 <slot name="subtitle">
                     <dl-ellipsis :text="subtitle" />
                 </slot>
@@ -30,14 +24,18 @@
         </div>
         <dl-button
             v-if="closeButton"
-            style="height: 100%; display: flex; align-items: start"
+            style="
+                --dl-button-padding: 5px;
+                --dl-button-bg-hover: var(--dl-color-fill-secondary);
+            "
             class="close-button"
             icon="icon-dl-close"
-            size="s"
             flat
             text-color="dl-color-darker"
             @click="$emit('onClose')"
-        />
+        >
+            <dl-tooltip :delay="800"> Close </dl-tooltip>
+        </dl-button>
     </div>
 </template>
 
@@ -45,12 +43,14 @@
 import { computed, defineComponent } from 'vue-demi'
 import { DlButton } from '../../../basic'
 import { DlEllipsis } from '../../../essential'
+import { DlTooltip } from '../../../shared'
 
 export default defineComponent({
     name: 'DlDialogBoxHeader',
     components: {
         DlButton,
-        DlEllipsis
+        DlEllipsis,
+        DlTooltip
     },
     props: {
         title: { type: String, default: '' },
@@ -90,5 +90,7 @@ export default defineComponent({
 
 .close-button {
     margin-top: 5px;
+    display: flex;
+    align-items: start;
 }
 </style>
