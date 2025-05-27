@@ -91,6 +91,6 @@ export default defineComponent({
 .close-button {
     margin-top: 5px;
     display: flex;
-    align-items: start;
+    align-items: flex-start;
 }
 </style>
