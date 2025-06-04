@@ -37,6 +37,7 @@
     "sass": "^1.51.0",
     "sass-loader": "^12.6.0",
     "sortablejs": "^1.15.0",
+    "tokenizr": "^1.7.0",
     "uuid": "^8.3.2",
     "v-wave": "^1.5.0",
     "vanilla-jsoneditor": "^0.10.2",
