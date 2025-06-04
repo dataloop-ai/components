@@ -223,6 +223,40 @@ export default defineComponent({
         const onClear = (event: InputEvent) => {
             emit('clear', event)
         }
+
+        function setSelectedLabelByName(displayLabel: string) {
+            const stack = [...items.value]
+
+            while (stack.length) {
+                const item = stack.pop()
+
+                if (item.displayLabel === displayLabel) {
+                    currentSelectedLabel.value = item
+                    emit('selected-label', item)
+
+                    nextTick(() => {
+                        const target = table.value?.$el.querySelector(
+                            `[data-label-picker-identifier="${item.identifier}"]`
+                        )
+                        table.value?.$el
+                            .querySelectorAll('tr.selected')
+                            .forEach((tr: Element) =>
+                                tr.classList.remove('selected')
+                            )
+                        target?.closest('tr')?.classList.add('selected')
+                    })
+                    return
+                }
+
+                if (item.children?.length) {
+                    stack.push(...item.children)
+                }
+            }
+            console.warn(
+                `[DlLabelPicker] No label found for displayLabel "${displayLabel}"`
+            )
+        }
+
         return {
             handleRowClick,
             inputValue,
@@ -234,7 +268,8 @@ export default defineComponent({
             isFilterString,
             onClear,
             onBlur,
-            onFocus
+            onFocus,
+            setSelectedLabelByName
         }
     }
 })
@@ -248,6 +283,14 @@ export default defineComponent({
     cursor: pointer;
     height: 32px;
     line-height: 30px;
+}
+
+.dl-label-picker .dl-table tbody tr.highlighted td {
+    background-color: var(--dl-color-panel-background);
+}
+
+.dl-label-picker .dl-table tbody tr.selected td {
+    background-color: var(--dl-color-fill);
 }
 </style>
 
