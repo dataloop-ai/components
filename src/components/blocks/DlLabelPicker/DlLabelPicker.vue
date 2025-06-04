@@ -232,10 +232,18 @@ export default defineComponent({
 
                 if (item.displayLabel === displayLabel) {
                     currentSelectedLabel.value = item
+                    emit('selected-label', item)
 
                     nextTick(() => {
-                        const simulatedClickEvent = new MouseEvent('click')
-                        handleRowClick(simulatedClickEvent, item)
+                        const target = table.value?.$el.querySelector(
+                            `[data-label-picker-identifier="${item.identifier}"]`
+                        )
+                        table.value?.$el
+                            .querySelectorAll('tr.selected')
+                            .forEach((tr: Element) =>
+                                tr.classList.remove('selected')
+                            )
+                        target?.closest('tr')?.classList.add('selected')
                     })
                     return
                 }
