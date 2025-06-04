@@ -57,6 +57,7 @@ body {
     --dl-color-fill: #0000001e;
     --dl-color-fill-hover: #f8f8f8;
     --dl-color-separator: #e4e4e4;
+    --dl-color-component: #ffffff;
     --dl-color-scrollbar: #e4e4e4;
     --dl-color-body-background: #eef1ff;
     --dl-color-panel-background: #ffffff;
@@ -118,6 +119,7 @@ body {
     --dl-color-fill-secondary: #f8f8f81a;
     --dl-color-fill-hover: #454a50;
     --dl-color-separator: #ffffff26;
+    --dl-color-component: #30363d;
     --dl-color-body-background: #24282d;
     --dl-color-panel-background: #30363d;
     --dl-color-side-panel: #2a343e;
