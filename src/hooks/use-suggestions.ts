@@ -223,7 +223,7 @@ export const useSuggestions = (
                     break
                 case TokenType.OPERATOR:
                     // quirk: mapWordsToExpression would only set operator if followed by a whitespace
-                    if (whitespace) {
+                    if (whitespace || valueToken) {
                         operatorToken = token
                     }
                     break
@@ -273,7 +273,9 @@ export const useSuggestions = (
 
             if (
                 !matchedField ||
-                (!isNextCharSpace(input, matchedField) &&
+                (
+                    !operator &&
+                    insensitive(input).endsWith(insensitive(matchedField)) &&
                     fieldSeparated.length === 1)
             ) {
                 continue
@@ -373,7 +375,10 @@ export const useSuggestions = (
                 continue
             }
 
-            if (!matchedOperator || !isNextCharSpace(input, matchedOperator)) {
+            if (!matchedOperator || (
+                !value &&
+                !isNextCharSpace(input, matchedOperator)
+            )) {
                 continue
             }
 
