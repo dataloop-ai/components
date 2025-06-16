@@ -181,6 +181,7 @@ import {
 } from '../../../../../hooks/use-suggestions'
 import { parseSmartQuery, stringifySmartQuery } from '../../../../../utils'
 import { StateManager, stateManager } from '../../../../../StateManager'
+import { TokenType, tokenize } from '../../../../../utils/splitByQuotes'
 
 export default defineComponent({
     components: {
@@ -428,68 +429,63 @@ export default defineComponent({
             const value = '' + suggestion
             let stringValue = ''
             let caretPosition = 0
-            if (searchQuery.value.length) {
-                let queryLeftSide = searchQuery.value.substring(
-                    0,
-                    caretAt.value
-                )
-                let queryRightSide = searchQuery.value.substring(caretAt.value)
 
+            const search = searchQuery.value ?? ''
+            const tokens = tokenize(search)
+            let leftTokenIndex = tokens.length
+            while(leftTokenIndex --> 0) {
+                if (tokens[leftTokenIndex].pos < caretAt.value) {
+                    break
+                }
+            }
+
+            if (leftTokenIndex < 0) {
+                stringValue = value + ' ' + search.replace(/^\S*\s*/, '')
+                caretPosition = value.length + 1
+            } else {
+                const token = tokens[leftTokenIndex]
+                const tokenLeftText = token.text.substring(0, caretAt.value - token.pos)
+                const tokenRightText = token.text.substring(caretAt.value - token.pos)
+
+                if (token.type === TokenType.WHITESPACE) {
+                    // caret after space
+                    token.text = ' ' + value + ' '
+                    caretPosition = token.pos + 1 + value.length + 1
+                } else
                 if (['AND', 'OR'].includes(value)) {
                     // do not replace text if the value is AND or OR
-                    const leftover = queryLeftSide.match(/\S+$/)?.[0] || ''
-                    queryLeftSide =
-                        queryLeftSide.replace(/\S+$/, '').trimEnd() + ' '
-                    queryRightSide = leftover + queryRightSide
+                    token.text = value + ' ' + token.text
+                    caretPosition = token.pos + value.length + 1
                 } else if (value.startsWith('.')) {
                     // dot notation case
-                    const words = queryLeftSide.trimEnd().split('.')
+                    const words = tokenLeftText.split('.')
                     const lastWord = words.pop()
                     if (!value.startsWith('.' + lastWord)) {
                         words.push(lastWord)
                     }
-                    queryLeftSide = words.join('.')
-                } else if (
-                    queryLeftSide.endsWith(' ') &&
-                    (queryLeftSide.match(/'/g)?.length ?? 0) % 2 === 0
-                ) {
-                    // caret after space: only replace multiple spaces on the left
-                    queryLeftSide = queryLeftSide.trimEnd() + ' '
-                } else if (/\.\S+$/.test(queryLeftSide)) {
-                    // if there are dots in left side expression, suggestions have an operator
+                    const text = words.join('.')
+                    token.text = text + value + ' ' + tokenRightText
+                    caretPosition = token.pos + text.length + value.length + 1
+                } else if (/\.\S+$/.test(tokenLeftText)) {
+                    // if there are dots in left side expression...
                     // looks like a bug in findSuggestions TODO find it - for now work around it here
-                    const leftover = queryRightSide.match(/^\S+/)?.[0] || ''
-                    queryLeftSide += leftover + ' '
-                    queryRightSide = queryRightSide
-                        .substring(leftover.length)
-                        .trimStart()
-                } else if (queryRightSide.startsWith(' ')) {
-                    // this| situation: replace whatever is there on the left side with the value
-                    queryLeftSide = queryLeftSide.replace(/\S+$/, '')
-                    queryRightSide = queryRightSide.trimStart()
+                    const leftover = tokenRightText.match(/^\S+/)?.[0] || ''
+                    token.text = tokenLeftText + leftover + ' ' + value + ' ' +
+                        tokenRightText.substring(leftover.length).trimStart()
+                    caretPosition = token.pos + tokenLeftText.length +
+                        leftover.length + 1 + value.length + 1
                 } else {
+                    // this| situation: replace whatever is there on the left side with the value
                     // this|situation: replace whatever is there on both sides with the value
-                    if (
-                        /^[^']+((?<!\\)'([^']|(?<=\\)')*(?<!\\)'[^']+)*(?<!\\)'([^']+\\')*[^']*((?<!\\)')?$/.test(
-                            queryLeftSide
-                        )
-                    ) {
-                        queryLeftSide = queryLeftSide.replace(
-                            /(?<!\\)'([^']+\\')*[^']*((?<!\\)')?$/,
-                            ''
-                        )
-                    } else {
-                        queryLeftSide = queryLeftSide.replace(/[^'\s]+$/, '')
+                    const newValue = token.type === TokenType.COMMA ? ', ' + value : value
+                    token.text = newValue
+                    caretPosition = token.pos + newValue.length
+                    if (tokens[leftTokenIndex + 1]?.type !== TokenType.WHITESPACE) {
+                        token.text += ' '
+                        caretPosition += 1
                     }
-                    queryRightSide =
-                        removeLeadingExpression(queryRightSide).trimStart()
                 }
-
-                stringValue = queryLeftSide + value + ' ' + queryRightSide
-                caretPosition = stringValue.length - queryRightSide.length
-            } else {
-                stringValue = value + ' '
-                caretPosition = stringValue.length
+                stringValue = tokens.map(token => token.text).join('')
             }
 
             setInputValue(stringValue)
