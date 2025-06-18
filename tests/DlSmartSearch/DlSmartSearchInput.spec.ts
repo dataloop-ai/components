@@ -462,10 +462,25 @@ describe('DlSmartSearchInput', () => {
                     `Name = 'A\\'' OR Name = 'B' AND co`,
                     `Name = 'A\\'' OR Name = 'B' AND completed `
                 )
-                // previous fails
-                //await applySuggestion('completed = a', 'completed = false ')
-                //await applySuggestion('completed = false a', 'completed = false AND ') // actual: completed = false AND a
-                //await applySuggestion(`Name = '`, `Name = 'Voltaire' `)
+                // IN suggestions
+                await applySuggestion(
+                    `level = IN 'hi`,
+                    `level = IN 'high' `,
+                )
+                await applySuggestion(
+                    `level = IN 'low' `,
+                    `level = IN 'low', `,
+                    ','
+                )
+                await applySuggestion(
+                    `level = IN 'low', `,
+                    `level = IN 'low', 'high' `,
+                )
+                // IN suggestions with no space
+                await applySuggestion(
+                    `level = IN 'low',`,
+                    `level = IN 'low', 'high' `,
+                )
             }, 9999)
 
             describe('when moving the caret back in the entered text', async () => {

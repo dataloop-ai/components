@@ -1,5 +1,6 @@
 import { Ref, ref } from 'vue-demi'
-import { splitByQuotes } from '../utils/splitByQuotes'
+import { splitByQuotes, tokenize, TokenType } from '../utils/splitByQuotes'
+import { Token } from 'tokenizr'
 import { flatten } from 'flat'
 import { isObject } from 'lodash'
 
@@ -192,12 +193,56 @@ export const useSuggestions = (
     }
 
     const findSuggestions = (input: string) => {
-        input = input.replace(/\s+/g, ' ').trimStart()
-        localSuggestions = sortedSuggestions
+        const tokens = tokenize(input)
 
-        const words = splitByQuotes(input, space)
-        const mergedWords = mergeWords(words)
-        const expressions = mapWordsToExpressions(mergedWords)
+        let fieldToken: Token | null = null
+        let operatorToken: Token | null = null
+        let valueToken: Token | null = null
+        let keywordToken: Token | null = null
+
+        let i = tokens.length -1
+        let whitespace = false
+        while (i > -1) {
+            const token = tokens[i]
+            switch (token.type) {
+                case TokenType.WHITESPACE:
+                    whitespace = true
+                    break
+                case TokenType.LOGICAL:
+                    keywordToken = token
+                    break
+                case TokenType.BOOLEAN:
+                case TokenType.COMMA:
+                case TokenType.DATETIME:
+                case TokenType.NUMBER:
+                case TokenType.STRING:
+                case TokenType.PARTIAL_VALUE:
+                    if (!valueToken) {
+                        valueToken = token
+                    }
+                    break
+                case TokenType.OPERATOR:
+                    // quirk: mapWordsToExpression would only set operator if followed by a whitespace
+                    if (whitespace || valueToken) {
+                        operatorToken = token
+                    }
+                    break
+                case TokenType.FIELD:
+                    fieldToken = token
+                    i = 0
+                    break
+            }
+            i--
+        }
+
+        const expressions: Expression[] = [{
+            field: fieldToken?.text,
+            operator: operatorToken?.text,
+            value: valueToken?.type === TokenType.COMMA ? '' : valueToken?.text,
+            keyword: keywordToken?.text
+        }]
+                
+        localSuggestions = sortedSuggestions
 
         for (const { field, operator, value, keyword } of expressions) {
             let matchedField: Suggestion | null = null
@@ -228,7 +273,9 @@ export const useSuggestions = (
 
             if (
                 !matchedField ||
-                (!isNextCharSpace(input, matchedField) &&
+                (
+                    !operator &&
+                    insensitive(input).endsWith(insensitive(matchedField)) &&
                     fieldSeparated.length === 1)
             ) {
                 continue
@@ -328,7 +375,10 @@ export const useSuggestions = (
                 continue
             }
 
-            if (!matchedOperator || !isNextCharSpace(input, matchedOperator)) {
+            if (!matchedOperator || (
+                !value &&
+                !isNextCharSpace(input, matchedOperator)
+            )) {
                 continue
             }
 

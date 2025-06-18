@@ -157,6 +157,9 @@ describe('use-suggestions', () => {
 
         findSuggestions('Level =')
         expect(suggestions.value).toEqual(genericOperators)
+
+        findSuggestions('Level=')
+        expect(suggestions.value).toEqual(genericOperators)
     })
 
     it('suggestions should have the correct operators', () => {
@@ -184,33 +187,64 @@ describe('use-suggestions', () => {
             findSuggestions('Level = ')
             expect(suggestions.value).toEqual(levelValues)
 
+            findSuggestions('Level= ')
+            expect(suggestions.value).toEqual(levelValues)
+
             findSuggestions('Level IN ')
             expect(suggestions.value).toEqual(levelValues)
 
             findSuggestions("Level IN 'high',")
             expect(suggestions.value).toEqual(levelValues)
 
+            findSuggestions("Level IN'high',")
+            expect(suggestions.value).toEqual(levelValues)
+
             findSuggestions("Level IN 'high', 'low' OR Level IN ")
+            expect(suggestions.value).toEqual(levelValues)
+
+            findSuggestions("Level IN'high','low'OR Level IN ")
             expect(suggestions.value).toEqual(levelValues)
         })
 
         it('suggestions should match the correct field value without the quotes', () => {
             findSuggestions('Level = me')
             expect(suggestions.value).toEqual([`'medium'`])
+
+            findSuggestions('Level =me')
+            expect(suggestions.value).toEqual([`'medium'`])
+
+            findSuggestions('Level= me')
+            expect(suggestions.value).toEqual([`'medium'`])
+
+            findSuggestions('Level=me')
+            expect(suggestions.value).toEqual([`'medium'`])
         })
 
         it('suggestions should be empty when none of the field values were matched', () => {
             findSuggestions("Level = 'memo'")
             expect(suggestions.value).toEqual([])
-        })
 
-        it('suggestions should be empty when none of the field values were matched', () => {
-            findSuggestions("Level = 'memo'")
+            findSuggestions("Level ='memo'")
+            expect(suggestions.value).toEqual([])
+
+            findSuggestions("Level= 'memo'")
+            expect(suggestions.value).toEqual([])
+
+            findSuggestions("Level='memo'")
             expect(suggestions.value).toEqual([])
         })
 
         it('suggestions should match aliased value that is also filtered', () => {
             findSuggestions('name = vol')
+            expect(suggestions.value).toEqual([`'Voltaire'`])
+
+            findSuggestions('name =vol')
+            expect(suggestions.value).toEqual([`'Voltaire'`])
+
+            findSuggestions('name= vol')
+            expect(suggestions.value).toEqual([`'Voltaire'`])
+
+            findSuggestions('name=vol')
             expect(suggestions.value).toEqual([`'Voltaire'`])
         })
     })

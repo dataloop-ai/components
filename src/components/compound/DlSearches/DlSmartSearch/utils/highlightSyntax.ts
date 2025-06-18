@@ -1,3 +1,4 @@
+import { tokenize } from '../../../../../utils/splitByQuotes'
 import { SyntaxColorSchema } from '../types'
 
 const SPAN_STYLES = `overflow: hidden;
@@ -91,7 +92,7 @@ function restoreSelection(
 }
 
 function renderText(text: string, colorSchema: SyntaxColorSchema) {
-    const words = text?.split(/(\s+)/)
+    const words = tokenize(text ?? '').map(token => token.text)
     const output = words?.map((word) => {
         if (colorSchema) {
             if (colorSchema.keywords.values.includes(word)) {
