@@ -433,7 +433,7 @@ export default defineComponent({
             const search = searchQuery.value ?? ''
             const tokens = tokenize(search)
             let leftTokenIndex = tokens.length
-            while(leftTokenIndex --> 0) {
+            while(leftTokenIndex-- > 0) {
                 if (tokens[leftTokenIndex].pos < caretAt.value) {
                     break
                 }
