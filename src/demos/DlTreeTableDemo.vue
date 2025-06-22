@@ -86,6 +86,14 @@
                             :model-value="resizableState"
                             @update:model-value="updateResizableState"
                         />
+                        <dl-switch
+                            left-label="Disable Child Checkbox"
+                            value="disableChildCheckbox"
+                            :model-value="disableChildCheckboxState"
+                            @update:model-value="
+                                updateDisableChildCheckboxState
+                            "
+                        />
                     </div>
                 </div>
             </div>
@@ -109,6 +117,8 @@
                     style="height: 500px"
                     :rows-per-page-options="rowsPerPageOptions"
                     highlighted-row="Frozen Yogurt"
+                    :disable-child-checkbox="disableChildCheckbox"
+                    disable-child-checkbox-tooltip="Child checkbox is disabled (parent is selected)"
                     @row-click="onRowClick"
                     @th-click="log"
                     @selected-items="selectedItems"
@@ -583,6 +593,9 @@ export default defineComponent({
 
         const nextPageNumber = ref(2)
 
+        const disableChildCheckbox = ref(false)
+        const disableChildCheckboxState = ref([])
+
         let allRows: DlTableRow[] = []
         for (let i = 0; i < 100; i++) {
             allRows = allRows.concat(
@@ -732,7 +745,9 @@ export default defineComponent({
             isFirstPage,
             onRowClick,
             rows2,
-            columns2
+            columns2,
+            disableChildCheckbox,
+            disableChildCheckboxState
         }
     },
 
@@ -764,6 +779,11 @@ export default defineComponent({
             this.resizableState = val
 
             this.resizable = val.length !== 0
+        },
+        updateDisableChildCheckboxState(val: boolean[]): void {
+            this.disableChildCheckboxState = val
+
+            this.disableChildCheckbox = val.length !== 0
         },
         log(...args: any[]) {
             console.log(...args)
