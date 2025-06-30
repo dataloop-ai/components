@@ -305,6 +305,20 @@ export default defineComponent({
             type: Number,
             default: 100
         },
+        /**
+         * Disable child checkbox when parent is selected
+         */
+        disableChildCheckbox: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Tooltip text for disabled child checkbox
+         */
+        childDisabledCheckboxTooltip: {
+            type: String,
+            default: 'Cannot unselect child when parent is selected'
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -532,12 +546,14 @@ export default defineComponent({
             row: DlTableRow,
             index: number,
             children: DlTableRow[] = [],
-            level: number = 1
+            level: number = 1,
+            parentSelected: boolean = false
         ) => {
             const currentSlots = {
                 default: () => children,
                 ...computedCellSlots.value
             }
+
             return renderComponent(vue2h.value, DlTrTreeView, {
                 row,
                 rowIndex: index,
@@ -580,6 +596,10 @@ export default defineComponent({
                 customIconExpandedRow: props.customIconExpandedRow,
                 customIconCompressedRow: props.customIconCompressedRow,
                 chevronIconColor: props.chevronIconColor,
+                disableChildCheckbox: props.disableChildCheckbox,
+                childDisabledCheckboxTooltip:
+                    props.childDisabledCheckboxTooltip,
+                parentSelected,
                 'onUpdate:modelValue': (adding: boolean, evt: Event) => {
                     updateSelectionHierarchy(adding, evt, row)
                 },
@@ -623,11 +643,14 @@ export default defineComponent({
         const renderTr = (
             row: DlTableRow,
             index: number,
-            level: number = 1
+            level: number = 1,
+            parentSelected: boolean = false
         ) => {
             const children = []
+            const isCurrentRowSelected =
+                isRowSelected(props.rowKey, getRowKey.value(row)) === true
 
-            children.push(renderDlTrTree(row, index, [], level))
+            children.push(renderDlTrTree(row, index, [], level, parentSelected))
 
             const tbodyEls: VNode[] = []
 
@@ -645,7 +668,7 @@ export default defineComponent({
                                 'data-level': level,
                                 class: 'nested-tbody'
                             },
-                            renderTr(childRow, i, level)
+                            renderTr(childRow, i, level, isCurrentRowSelected)
                         ) as VNode
                     )
                 })

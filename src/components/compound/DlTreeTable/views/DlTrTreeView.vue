@@ -20,12 +20,18 @@
         </td>
         <td v-if="hasSelectionMode" class="dl-table--col-auto-width">
             <slot name="body-selection" v-bind="bindBodySelection">
+                <dl-tooltip
+                    v-if="isCheckboxDisabled && childDisabledCheckboxTooltip"
+                >
+                    {{ childDisabledCheckboxTooltip }}
+                </dl-tooltip>
                 <DlCheckbox
                     :color="color"
                     :model-value="modelValue"
                     :indeterminate-value="true"
                     :false-value="false"
                     :true-value="true"
+                    :disabled="isCheckboxDisabled"
                     @update:model-value="
                         (adding, evt) => emitUpdateModelValue(adding, evt)
                     "
@@ -84,12 +90,14 @@ import {
     ref,
     toRefs,
     watch,
-    getCurrentInstance
+    getCurrentInstance,
+    computed
 } from 'vue-demi'
 import DlTrTree from '../components/DlTrTree.vue'
 import DlTdTree from '../components/DlTdTree.vue'
 import DlIcon from '../../../essential/DlIcon/DlIcon.vue'
 import DlCheckbox from '../../../essential/DlCheckbox/DlCheckbox.vue'
+import DlTooltip from '../../../shared/DlTooltip/DlTooltip.vue'
 import { getRowKey } from '../utils/getRowKey'
 import { DlTableRow } from '../../DlTable/types'
 import { setTrPadding } from '../utils/trSpacing'
@@ -101,7 +109,8 @@ export default defineComponent({
         DlTrTree,
         DlTdTree,
         DlIcon,
-        DlCheckbox
+        DlCheckbox,
+        DlTooltip
     },
     props: {
         row: {
@@ -187,6 +196,27 @@ export default defineComponent({
         isRowHighlighted: {
             type: Boolean,
             default: false
+        },
+        /**
+         * Disable child checkbox when parent is selected
+         */
+        disableChildCheckbox: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Tooltip text for disabled child checkbox
+         */
+        childDisabledCheckboxTooltip: {
+            type: String,
+            default: 'Cannot unselect child when parent is selected'
+        },
+        /**
+         * Whether the parent row is selected
+         */
+        parentSelected: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [
@@ -205,6 +235,18 @@ export default defineComponent({
         const isDragIconVisible = ref(false)
 
         const vm = getCurrentInstance()
+
+        const isCheckboxDisabled = computed(() => {
+            if (!props.disableChildCheckbox) {
+                return false
+            }
+
+            if (props.level === 1) {
+                return false
+            }
+
+            return props.parentSelected
+        })
 
         watch(
             row,
@@ -364,7 +406,8 @@ export default defineComponent({
             getExpandedvisibleChildren,
             updateExpandedvisibleChildren,
             onRowHoverStart,
-            onRowHoverEnd
+            onRowHoverEnd,
+            isCheckboxDisabled
         }
     }
 })
