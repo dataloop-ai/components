@@ -118,7 +118,7 @@
                     :rows-per-page-options="rowsPerPageOptions"
                     highlighted-row="Frozen Yogurt"
                     :disable-child-checkbox="disableChildCheckbox"
-                    disable-child-checkbox-tooltip="Child checkbox is disabled (parent is selected)"
+                    child-disabled-checkbox-tooltip="Child checkbox is disabled (parent is selected)"
                     @row-click="onRowClick"
                     @th-click="log"
                     @selected-items="selectedItems"

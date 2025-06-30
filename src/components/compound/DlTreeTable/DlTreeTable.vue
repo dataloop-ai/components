@@ -315,7 +315,7 @@ export default defineComponent({
         /**
          * Tooltip text for disabled child checkbox
          */
-        disableChildCheckboxTooltip: {
+        childDisabledCheckboxTooltip: {
             type: String,
             default: 'Cannot unselect child when parent is selected'
         },
@@ -554,9 +554,6 @@ export default defineComponent({
                 ...computedCellSlots.value
             }
 
-            const isParentSelected =
-                isRowSelected(props.rowKey, getRowKey.value(row)) === true
-
             return renderComponent(vue2h.value, DlTrTreeView, {
                 row,
                 rowIndex: index,
@@ -600,7 +597,8 @@ export default defineComponent({
                 customIconCompressedRow: props.customIconCompressedRow,
                 chevronIconColor: props.chevronIconColor,
                 disableChildCheckbox: props.disableChildCheckbox,
-                disableChildCheckboxTooltip: props.disableChildCheckboxTooltip,
+                childDisabledCheckboxTooltip:
+                    props.childDisabledCheckboxTooltip,
                 parentSelected,
                 'onUpdate:modelValue': (adding: boolean, evt: Event) => {
                     updateSelectionHierarchy(adding, evt, row)

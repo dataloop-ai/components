@@ -21,9 +21,9 @@
         <td v-if="hasSelectionMode" class="dl-table--col-auto-width">
             <slot name="body-selection" v-bind="bindBodySelection">
                 <dl-tooltip
-                    v-if="isCheckboxDisabled && disableChildCheckboxTooltip"
+                    v-if="isCheckboxDisabled && childDisabledCheckboxTooltip"
                 >
-                    {{ disableChildCheckboxTooltip }}
+                    {{ childDisabledCheckboxTooltip }}
                 </dl-tooltip>
                 <DlCheckbox
                     :color="color"
@@ -207,7 +207,7 @@ export default defineComponent({
         /**
          * Tooltip text for disabled child checkbox
          */
-        disableChildCheckboxTooltip: {
+        childDisabledCheckboxTooltip: {
             type: String,
             default: 'Cannot unselect child when parent is selected'
         },
