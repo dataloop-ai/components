@@ -16,7 +16,16 @@
                 isDragIconVisible || isRowHighlighted ? '1' : '0'
             }`"
         >
-            <dl-icon class="draggable-icon" icon="icon-dl-drag" size="12px" />
+            <dl-icon
+                class="draggable-icon"
+                icon="icon-dl-drag"
+                size="12px"
+                :color="
+                    isDragIconHovered ? 'dl-color-darker' : 'dl-color-lighter'
+                "
+                @mouseenter="isDragIconHovered = true"
+                @mouseleave="isDragIconHovered = false"
+            />
         </td>
         <td v-if="hasSelectionMode" class="dl-table--col-auto-width">
             <slot name="body-selection" v-bind="bindBodySelection">
@@ -233,7 +242,7 @@ export default defineComponent({
         const childrenCount = ref(0)
         const { row } = toRefs(props)
         const isDragIconVisible = ref(false)
-
+        const isDragIconHovered = ref(false)
         const vm = getCurrentInstance()
 
         const isCheckboxDisabled = computed(() => {
@@ -391,6 +400,7 @@ export default defineComponent({
             visibleChildren,
             childrenCount,
             isDragIconVisible,
+            isDragIconHovered,
             getRowKey,
             emitRowClick,
             onTrDoubleClick,
