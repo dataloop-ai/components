@@ -46,7 +46,8 @@ describe('DlButton', () => {
                 tooltipTriggerPercentage: 1,
                 hoverBgColor: null,
                 hoverBorderColor: null,
-                hoverTextColor: null
+                hoverTextColor: null,
+                pressedBgColor: null
             })
         })
     })
