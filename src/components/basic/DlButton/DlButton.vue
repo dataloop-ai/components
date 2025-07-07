@@ -195,7 +195,7 @@ export default defineComponent({
         /**
          * Overwrite default background color on mouse press
          */
-        pressedBgColor: { type: String, default: null },
+        pressedBgColor: { type: String, default: null, required: false },
         /**
          * Overwrite default border color on hover
          */
