@@ -193,6 +193,10 @@ export default defineComponent({
          */
         hoverBgColor: { type: String, default: null },
         /**
+         * Overwrite default background color on mouse press
+         */
+        pressedBgColor: { type: String, default: null },
+        /**
          * Overwrite default border color on hover
          */
         hoverBorderColor: { type: String, default: null },
@@ -404,10 +408,13 @@ export default defineComponent({
                         shaded: this.shaded,
                         outlined: this.shaded
                     }),
-                    '--dl-button-bg-pressed': setBgOnPressed({
-                        shaded: this.shaded,
-                        outlined: this.outlined
-                    }),
+                    '--dl-button-bg-pressed':
+                        this.pressedBgColor ??
+                        setBgOnPressed({
+                            shaded: this.shaded,
+                            outlined: this.outlined
+                        }),
+
                     '--dl-button-border-pressed': setBorderOnPressed({
                         shaded: this.shaded,
                         outlined: this.outlined
