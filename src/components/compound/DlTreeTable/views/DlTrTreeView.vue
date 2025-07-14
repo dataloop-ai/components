@@ -47,8 +47,14 @@
                 />
             </slot>
         </td>
-        <td class="chevron-icon-container">
-            <div class="chevron-icon">
+        <td
+            class="chevron-icon-container"
+            :class="{ 'no-children': (row.children || []).length === 0 }"
+        >
+            <div
+                class="chevron-icon"
+                :class="{ 'no-children': (row.children || []).length === 0 }"
+            >
                 <DlIcon
                     v-if="(row.children || []).length > 0"
                     :icon="`${
@@ -67,13 +73,13 @@
             :class="col.tdClass(row)"
             :style="
                 col.tdStyle(row) +
-                    `padding-left: ${
-                        setTrPadding(
-                            level,
-                            (row.children || []).length > 0,
-                            colIndex
-                        ) + 1
-                    }px;`
+                `padding-left: ${
+                    setTrPadding(
+                        level,
+                        (row.children || []).length > 0,
+                        colIndex
+                    ) + 1
+                }px;`
             "
             :col-index="colIndex"
             :tooltip="tooltip"
@@ -432,9 +438,17 @@ export default defineComponent({
     cursor: pointer;
     padding: 5px;
     height: 100%;
+
+    &.no-children {
+        cursor: default;
+    }
 }
 .chevron-icon-container {
     cursor: pointer;
     width: 25px;
+
+    &.no-children {
+        cursor: default;
+    }
 }
 </style>
