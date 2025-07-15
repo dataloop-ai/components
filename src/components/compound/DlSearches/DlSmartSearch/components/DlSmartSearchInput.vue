@@ -234,6 +234,14 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
+        defaultIcon: {
+            type: String,
+            default: 'icon-dl-stars'
+        },
+        defaultIconColor: {
+            type: String,
+            default: 'orange'
+        },
         width: {
             type: String,
             default: '250px'
@@ -288,6 +296,8 @@ export default defineComponent({
             strict,
             status,
             disabled,
+            defaultIcon,
+            defaultIconColor,
             schema,
             omitSuggestions,
             operatorsOverride,
@@ -910,9 +920,6 @@ export default defineComponent({
                 schema.value
             )
         })
-
-        const defaultIcon = 'icon-dl-stars'
-        const defaultIconColor = 'orange'
 
         const statusIcon = computed(() => {
             switch (computedStatus.value.type) {
