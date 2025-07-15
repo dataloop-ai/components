@@ -1,6 +1,9 @@
 import { cloneDeep } from 'lodash'
 
-export function convertToNestedObject(selectedRows: Record<string, any>[]) {
+export function convertToNestedObject(
+    selectedRows: Record<string, any>[],
+    getRowKey: Function
+) {
     const clonedSelectedRows = cloneDeep(selectedRows)
     let selectedItems: Record<string, any>[] = []
 
@@ -11,7 +14,9 @@ export function convertToNestedObject(selectedRows: Record<string, any>[]) {
         for (const rowsItem of rows) {
             if (rowsItem.children) {
                 const indexItem = rowsItem.children.findIndex(
-                    (item: Record<string, any>) => item.name === row.name
+                    (item: Record<string, any>) => {
+                        return getRowKey(item) === getRowKey(row)
+                    }
                 )
 
                 if (indexItem > -1) {
