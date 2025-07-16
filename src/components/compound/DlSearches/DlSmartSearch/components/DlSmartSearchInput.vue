@@ -63,7 +63,6 @@
                 >
                     <div style="padding: 10px">
                         <div class="tooltip-title">
-                            <dl-icon :icon="defaultIcon" />
                             Schema Based Search
                         </div>
                         <div class="tooltip-subtitle">
