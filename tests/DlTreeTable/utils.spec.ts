@@ -74,7 +74,7 @@ const mockSortingMovement = {
 
 describe('convertToNestedObject', () => {
     it('convert array to object', () => {
-        expect(convertToNestedObject(rows)).toEqual(nestedObjects)
+        expect(convertToNestedObject(rows, getRowKey)).toEqual(nestedObjects)
     })
 })
 describe('getFromChildren', () => {

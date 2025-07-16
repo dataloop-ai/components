@@ -116,7 +116,10 @@ export function useTreeTableRowSelection(
 
         selectedRows.value = payload
 
-        const { selectedItems } = convertToNestedObject(payload)
+        const { selectedItems } = convertToNestedObject(
+            payload,
+            getRowKey.value
+        )
         selectedItemsNested.value = selectedItems
 
         emit('selected-items', selectedItems)
