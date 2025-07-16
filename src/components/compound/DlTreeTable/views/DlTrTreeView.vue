@@ -23,8 +23,8 @@
                 :color="
                     isDragIconHovered ? 'dl-color-darker' : 'dl-color-lighter'
                 "
-                @mouseenter="isDragIconHovered = true"
-                @mouseleave="isDragIconHovered = false"
+                @mouseenter.native="isDragIconHovered = true"
+                @mouseleave.native="isDragIconHovered = false"
             />
         </td>
         <td v-if="hasSelectionMode" class="dl-table--col-auto-width">
@@ -73,13 +73,13 @@
             :class="col.tdClass(row)"
             :style="
                 col.tdStyle(row) +
-                `padding-left: ${
-                    setTrPadding(
-                        level,
-                        (row.children || []).length > 0,
-                        colIndex
-                    ) + 1
-                }px;`
+                    `padding-left: ${
+                        setTrPadding(
+                            level,
+                            (row.children || []).length > 0,
+                            colIndex
+                        ) + 1
+                    }px;`
             "
             :col-index="colIndex"
             :tooltip="tooltip"
