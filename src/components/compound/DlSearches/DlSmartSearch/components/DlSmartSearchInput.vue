@@ -1157,8 +1157,6 @@ export default defineComponent({
             error,
             editorStyle,
             debouncedSetInputValue,
-            defaultIcon,
-            defaultIconColor,
             statusIcon,
             statusIconColor,
             textareaStyles,
