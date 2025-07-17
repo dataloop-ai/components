@@ -506,7 +506,7 @@ export default defineComponent({
             innerRef,
             portalEl: isVue2 ? '[data-test-id="portal"]' : portalEl,
             portalIsActive,
-            classes: classes,
+            classes,
             styles: computedStyles,
             selectedItem,
             highlightedIndex
