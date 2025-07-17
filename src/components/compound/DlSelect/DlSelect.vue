@@ -1470,7 +1470,6 @@ export default defineComponent({
         display: flex;
         justify-content: space-between;
         text-align: left;
-        padding-top: 3px;
     }
 }
 .fit-content > * {

@@ -215,7 +215,7 @@ export default defineComponent({
 
         const classes = computed(
             () =>
-                ' ' +
+                'dl-menu dl-position-engine scroll ' +
                 props.menuClass +
                 (props.square === true ? ' dl-menu--square' : '')
         )
@@ -506,7 +506,7 @@ export default defineComponent({
             innerRef,
             portalEl: isVue2 ? '[data-test-id="portal"]' : portalEl,
             portalIsActive,
-            classes: 'dl-menu dl-position-engine scroll' + classes.value,
+            classes: classes,
             styles: computedStyles,
             selectedItem,
             highlightedIndex
