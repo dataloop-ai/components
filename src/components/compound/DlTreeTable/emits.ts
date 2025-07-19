@@ -13,6 +13,8 @@ export const emits = [
     'update:visible-columns',
     'row-hover-start',
     'row-hover-end',
+    'row-expand',
+    'row-collapse',
     ...useTableRowExpandEmits,
     ...useTreeTableRowSelectionEmits
 ]

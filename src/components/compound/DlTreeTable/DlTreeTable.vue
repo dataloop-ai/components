@@ -16,6 +16,14 @@ import { DlEmptyState } from '../../basic'
 import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
+
+interface RowExpandEventData {
+    row: DlTableRow
+    rowKey: any
+    isExpanded: boolean
+    level: number
+    hasChildren: boolean
+}
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { useNestedTableFilter } from './hooks/nestedTableFilter'
 import { getFromChildren } from './utils/getFromChildren'
@@ -431,6 +439,22 @@ export default defineComponent({
                         row.isExpanded = isExpanded
                     }
                     updateNestedRows(row, isExpanded)
+
+                    const eventData: RowExpandEventData = {
+                        row,
+                        rowKey: getRowKey.value(row),
+                        isExpanded,
+                        level: row.level || 1,
+                        hasChildren: (row.children || []).length > 0
+                    }
+
+                    if (isExpanded) {
+                        emit('row-expand', eventData)
+                    } else {
+                        emit('row-collapse', eventData)
+                    }
+
+                    break
                 } else {
                     if ((row.children || []).length > 0) {
                         updateExpandedRow(isExpanded, name, row.children)
@@ -512,6 +536,14 @@ export default defineComponent({
         }
         const emitThClick = (payload: any) => {
             emit('th-click', payload)
+        }
+
+        const emitRowExpand = (eventData: RowExpandEventData) => {
+            emit('row-expand', eventData)
+        }
+
+        const emitRowCollapse = (eventData: RowExpandEventData) => {
+            emit('row-collapse', eventData)
         }
 
         const hasSlotByName = (name: string) => !!slots[name]
@@ -898,6 +930,8 @@ export default defineComponent({
             emitRowClick,
             emitRowDblclick,
             emitThClick,
+            emitRowExpand,
+            emitRowCollapse,
             hasSlotByName,
             getSlotByName,
             renderTBody,
