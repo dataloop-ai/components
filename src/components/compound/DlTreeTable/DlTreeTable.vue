@@ -17,13 +17,6 @@ import DlTable from '../DlTable/DlTable.vue'
 import DlTrTreeView from './views/DlTrTreeView.vue'
 import { DlTableColumn, DlTableProps, DlTableRow } from '../DlTable/types'
 
-interface RowExpandEventData {
-    row: DlTableRow
-    rowKey: any
-    isExpanded: boolean
-    level: number
-    hasChildren: boolean
-}
 import { useTreeTableRowSelection } from './utils/treeTableRowSelection'
 import { useNestedTableFilter } from './hooks/nestedTableFilter'
 import { getFromChildren } from './utils/getFromChildren'
@@ -46,6 +39,7 @@ import { useTableFilterProps } from '../DlTable/hooks/tableFilter'
 import { useTableSortProps } from '../DlTable/hooks/tableSort'
 import { useTableColumnSelectionProps } from '../DlTable/hooks/tableColumnSelection'
 import { useTableRowSelectionProps } from '../DlTable/hooks/tableRowSelection'
+import { RowExpandEventData } from './types'
 
 let prevMouseY = 0
 
