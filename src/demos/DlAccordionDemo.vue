@@ -19,7 +19,7 @@
                 title="Background color and custom open close icons"
                 closed-icon="icon-dl-caret-right"
                 opened-icon="icon-dl-caret-down"
-                show-background
+                with-background
                 background-color="dl-color-fill"
                 font-weight="500"
                 font-size="14px"
