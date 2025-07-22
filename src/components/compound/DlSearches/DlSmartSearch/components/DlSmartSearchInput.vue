@@ -925,7 +925,7 @@ export default defineComponent({
                 case 'success':
                     return 'icon-dl-approve-filled'
                 case 'error':
-                    return 'icon-dl-discard-filled'
+                    return 'icon-dl-error-filled'
                 case 'warning':
                     return 'icon-dl-alert-filled'
                 default:
