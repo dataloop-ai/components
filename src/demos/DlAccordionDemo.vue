@@ -12,6 +12,26 @@
                 which had taken place did not square with this.
             </dl-accordion>
         </div>
+
+        <div style="width: 100%">
+            <dl-accordion
+                v-model="isAccordionOpen"
+                title="Background color and custom open close icons"
+                closed-icon="icon-dl-caret-right"
+                opened-icon="icon-dl-caret-down"
+                show-background
+                background-color="dl-color-fill"
+                font-weight="500"
+                font-size="14px"
+            >
+                Some of the animals remembered -- or thought they remembered --
+                that the Sixth Commandment decreed, 'No animal shall kill any
+                other animal.' And though no one cared to mention it in the
+                hearing of the pigs or the dogs, it was felt that the killings
+                which had taken place did not square with this.
+            </dl-accordion>
+        </div>
+
         <div style="width: 100%">
             <p>Accordion in an accordion</p>
             <dl-accordion
@@ -20,19 +40,13 @@
             >
                 <template #header>
                     Custom header content 1
-                    <dl-switch
-                        v-model="switchModel"
-                        :value="2"
-                    />
+                    <dl-switch v-model="switchModel" :value="2" />
                 </template>
 
                 <dl-accordion default-opened>
                     <template #header>
                         Custom header content 2
-                        <dl-switch
-                            v-model="switchModel"
-                            :value="2"
-                        />
+                        <dl-switch v-model="switchModel" :value="2" />
                     </template>
                     <template #default>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit,
@@ -69,10 +83,7 @@
             <dl-accordion>
                 <template #header>
                     Custom header content
-                    <dl-switch
-                        v-model="switchModel"
-                        :value="2"
-                    />
+                    <dl-switch v-model="switchModel" :value="2" />
                 </template>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
@@ -94,19 +105,13 @@
             <dl-accordion default-opened>
                 <template #header>
                     Custom header content
-                    <dl-switch
-                        v-model="switchModel"
-                        :value="2"
-                    />
+                    <dl-switch v-model="switchModel" :value="2" />
                 </template>
 
                 <dl-accordion default-opened>
                     <template #header>
                         Custom header content
-                        <dl-switch
-                            v-model="switchModel"
-                            :value="2"
-                        />
+                        <dl-switch v-model="switchModel" :value="2" />
                     </template>
                     <template #default>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit,

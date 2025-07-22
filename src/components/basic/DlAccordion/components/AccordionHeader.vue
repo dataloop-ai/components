@@ -9,15 +9,12 @@
             class="expand-icon"
             :size="$props.fontSize"
             :class="{ expanded: isOpen, rightSide }"
-            :icon="rightSide ? 'icon-dl-down-chevron' : 'icon-dl-right-chevron'"
+            :icon="rightSide ? openedIcon : closedIcon"
             :color="titleColor"
         />
         <div class="header-content">
             <slot name="header">
-                <span
-                    ref="dlAccordionTitleRef"
-                    class="accordion-title"
-                >
+                <span ref="dlAccordionTitleRef" class="accordion-title">
                     <dl-tooltip v-if="isOverflowing">
                         {{ title }}
                     </dl-tooltip>
@@ -55,10 +52,15 @@ export default defineComponent({
         additionalInfo: { type: String!, default: '' },
         defaultOpened: { type: Boolean, default: false },
         fontSize: { type: String, default: '12px' },
+        fontWeight: { type: String, default: '400' },
         title: { type: String, default: null },
         titleColor: { type: String, default: 'dl-color-medium' },
         isOpen: { type: Boolean, default: false },
-        rightSide: { type: Boolean, default: false }
+        rightSide: { type: Boolean, default: false },
+        closedIcon: { type: String, default: 'icon-dl-right-chevron' },
+        openedIcon: { type: String, default: 'icon-dl-down-chevron' },
+        backgroundColor: { type: String, default: 'dl-color-fill' },
+        withBackground: { type: Boolean, default: false }
     },
     emits: ['click'],
     setup() {
@@ -83,7 +85,20 @@ export default defineComponent({
                 '--dl-accordion-header-flex-direction': this.rightSide
                     ? 'row-reverse'
                     : 'row',
-                '--dl-accordion-header-fontsize': this.fontSize
+                '--dl-accordion-header-fontsize': this.fontSize,
+                '--dl-accordion-header-fontweight': this.fontWeight,
+                '--dl-accordion-header-background-color':
+                    this.withBackground && !this.isOpen
+                        ? getColor(this.backgroundColor)
+                        : '',
+                '--dl-accordion-header-border-radius':
+                    this.withBackground && !this.isOpen ? '4px' : '0px',
+                '--dl-accordion-header-padding': this.withBackground
+                    ? '4px'
+                    : '12px 16px',
+                '--dl-accordion-header-margin-bottom': this.withBackground
+                    ? '2px'
+                    : '0px'
             }
         },
         hasSlot(): boolean {
@@ -106,11 +121,18 @@ export default defineComponent({
     padding: var(--dl-accordion-header-padding, 12px 16px);
     cursor: pointer;
     font-size: var(--dl-accordion-header-fontsize);
+    font-weight: var(--dl-accordion-header-fontweight);
     display: flex;
     align-items: center;
     gap: 10px;
     flex-direction: var(--dl-accordion-header-flex-direction);
     color: var(--dl-title-color);
+    margin-bottom: var(--dl-accordion-header-margin-bottom);
+}
+
+.accordion-header:hover {
+    background-color: var(--dl-accordion-header-background-color, transparent);
+    border-radius: var(--dl-accordion-header-border-radius, 0px);
 }
 
 .accordion-title {
