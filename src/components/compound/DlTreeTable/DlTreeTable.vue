@@ -393,7 +393,8 @@ export default defineComponent({
 
             isRowSelected,
             clearSelection,
-            updateSelection
+            updateSelection,
+            selectAllRows
         } = useTreeTableRowSelection(
             props as unknown as DlTableProps,
             emit,
@@ -516,8 +517,16 @@ export default defineComponent({
             updateSelected(value ? tableRows.value : [])
         }
         const updateSelected = (payload: any) => {
-            selectedData.value = payload
-            emitSelectedItems(payload)
+            if (payload.length > 0) {
+                selectedData.value = payload
+                selectAllRows(true)
+            } else if (payload.length === 0 && selectedData.value.length > 0) {
+                selectedData.value = payload
+                selectAllRows(false)
+            } else {
+                selectedData.value = payload
+                emitSelectedItems(payload)
+            }
         }
         const emitSelectedItems = (payload: any) => {
             emit('selected-items', payload)
@@ -988,21 +997,6 @@ export default defineComponent({
                 'col-update': this.updateColumns
             },
             scopedSlots: {
-                'header-selection': () =>
-                    renderComponent(
-                        vue2h,
-                        DlCheckbox,
-                        {
-                            color: this.color,
-                            modelValue: this.headerSelectedValue,
-                            indeterminateValue: true,
-                            'onUpdate:modelValue': this.onMultipleSelectionSet,
-                            on: {
-                                'update:modelValue': this.onMultipleSelectionSet
-                            }
-                        },
-                        (): [] => []
-                    ),
                 tbody,
                 'no-data': this.$slots['no-data']
                     ? () => this.$slots['no-data']

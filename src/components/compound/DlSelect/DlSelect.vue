@@ -315,7 +315,10 @@
                         </dl-select-option>
                     </div>
                 </dl-list>
-                <dl-list-item v-if="hasAfterOptions && !noOptions">
+                <dl-list-item
+                    v-if="hasAfterOptions && !noOptions"
+                    :padding="afterOptionsPadding"
+                >
                     <dl-item-section>
                         <slot name="after-options" />
                     </dl-item-section>
@@ -500,6 +503,10 @@ export default defineComponent({
         openMenuDuringSearch: {
             type: Boolean,
             default: false
+        },
+        afterOptionsPadding: {
+            type: String,
+            default: null
         }
     },
     emits: [

@@ -174,6 +174,29 @@ export function useTreeTableRowSelection(
         return selectedKeys.value[rowKeyValue] === true
     }
 
+    function getAllRows(rows: DlTableRow[]): DlTableRow[] {
+        const allRows: DlTableRow[] = []
+        for (const row of rows) {
+            allRows.push(row)
+            if (row.children && row.children.length > 0) {
+                allRows.push(...getAllRows(row.children))
+            }
+        }
+        return allRows
+    }
+
+    function selectAllRows(select: boolean) {
+        if (select) {
+            const allRows = getAllRows(computedRows.value)
+            const allKeys = allRows.map(getRowKey.value)
+            updateSelection(allKeys, allRows, true)
+        } else {
+            clearSelection()
+            selectedItemsNested.value = []
+            emit('selected-items', [])
+        }
+    }
+
     return {
         hasSelectionMode,
         singleSelection,
@@ -183,6 +206,7 @@ export function useTreeTableRowSelection(
         rowsSelectedNumber,
         isRowSelected,
         clearSelection,
-        updateSelection
+        updateSelection,
+        selectAllRows
     }
 }
