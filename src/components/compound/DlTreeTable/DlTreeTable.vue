@@ -333,7 +333,7 @@ export default defineComponent({
     emits,
     setup(props, { emit, slots }) {
         const dlTableRef = ref(null)
-        const selectedData = ref([])
+        const selectedData = ref<DlTableRow[]>([])
         const borderState = ref([])
         const denseState = ref([])
         const resizableState = ref([])
@@ -516,19 +516,19 @@ export default defineComponent({
 
             updateSelected(value ? tableRows.value : [])
         }
-        const updateSelected = (payload: any) => {
+        const updateSelected = (payload: DlTableRow[]) => {
+            const hasSelection = selectedData.value.length > 0
+            selectedData.value = payload
+
             if (payload.length > 0) {
-                selectedData.value = payload
                 selectAllRows(true)
-            } else if (payload.length === 0 && selectedData.value.length > 0) {
-                selectedData.value = payload
+            } else if (payload.length === 0 && hasSelection) {
                 selectAllRows(false)
             } else {
-                selectedData.value = payload
                 emitSelectedItems(payload)
             }
         }
-        const emitSelectedItems = (payload: any) => {
+        const emitSelectedItems = (payload: DlTableRow[]) => {
             emit('selected-items', payload)
         }
         const emitRowClick = (...payload: any) => {
