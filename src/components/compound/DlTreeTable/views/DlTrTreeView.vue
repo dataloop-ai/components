@@ -17,6 +17,7 @@
             }`"
         >
             <dl-icon
+                v-if="!row.disableDraggable"
                 class="draggable-icon"
                 icon="icon-dl-drag"
                 size="12px"
@@ -40,7 +41,7 @@
                     :indeterminate-value="true"
                     :false-value="false"
                     :true-value="true"
-                    :disabled="isCheckboxDisabled"
+                    :disabled="isCheckboxDisabled || !row.isSelectable"
                     @update:model-value="
                         (adding, evt) => emitUpdateModelValue(adding, evt)
                     "
