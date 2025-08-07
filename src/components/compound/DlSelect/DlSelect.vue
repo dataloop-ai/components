@@ -1125,15 +1125,18 @@ export default defineComponent({
         handleSearchBlur(e: Event): void {
             if (this.searchable) {
                 const focusEvent = e as FocusEvent
-                if (this.keepFocusOnBlur && !focusEvent.relatedTarget) {
-                    if (this.isExpanded) {
-                        this.$nextTick(() => {
-                            const inputRef = this.$refs.searchInput as HTMLInputElement
-                            if (inputRef) {
-                                inputRef.focus({})
-                            }
-                        })
-                    }
+                if (
+                    this.keepFocusOnBlur &&
+                    !focusEvent.relatedTarget &&
+                    this.isExpanded
+                ) {
+                    this.$nextTick(() => {
+                        const inputRef = this.$refs
+                            .searchInput as HTMLInputElement
+                        if (inputRef) {
+                            inputRef.focus({})
+                        }
+                    })
                     return
                 }
                 const inputRef = this.$refs.searchInput as HTMLInputElement
