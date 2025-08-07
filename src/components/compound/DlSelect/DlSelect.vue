@@ -507,6 +507,10 @@ export default defineComponent({
         afterOptionsPadding: {
             type: String,
             default: null
+        },
+        keepFocusOnBlur: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [
@@ -1120,6 +1124,18 @@ export default defineComponent({
         },
         handleSearchBlur(e: Event): void {
             if (this.searchable) {
+                const focusEvent = e as FocusEvent
+                if (this.keepFocusOnBlur && !focusEvent.relatedTarget) {
+                    if (this.isExpanded) {
+                        this.$nextTick(() => {
+                            const inputRef = this.$refs.searchInput as HTMLInputElement
+                            if (inputRef) {
+                                inputRef.focus({})
+                            }
+                        })
+                    }
+                    return
+                }
                 const inputRef = this.$refs.searchInput as HTMLInputElement
                 this.$nextTick(() => {
                     inputRef?.focus({})
