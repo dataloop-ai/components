@@ -646,7 +646,8 @@ export default defineComponent({
         'enter',
         'file-update',
         'update:model-value',
-        'suggestion-click'
+        'suggestion-click',
+        'keydown'
     ],
     setup(props, { emit }) {
         const mouseOverClear = ref(false)
@@ -1642,3 +1643,4 @@ export default defineComponent({
     }
 }
 </style>
+
