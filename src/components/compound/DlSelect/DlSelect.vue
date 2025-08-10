@@ -80,6 +80,7 @@
                     @blur="handleSearchBlur"
                     @keyup.enter="handleSearchEnter"
                     @keyup.esc="handleSearchEscape"
+                    @keydown="handleSearchKeyDown"
                 />
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
@@ -518,6 +519,7 @@ export default defineComponent({
         'search-blur',
         'search-enter',
         'search-escape',
+        'search-keydown',
         'filter',
         'change',
         'search-input',
@@ -1115,6 +1117,11 @@ export default defineComponent({
         handleSearchEnter(e: Event): void {
             if (this.searchable) {
                 this.$emit('search-enter', e, this.searchInputValue)
+            }
+        },
+        handleSearchKeyDown(e: KeyboardEvent): void {
+            if (this.searchable) {
+                this.$emit('search-keydown', e)
             }
         },
         handleSearchEscape(e: Event): void {

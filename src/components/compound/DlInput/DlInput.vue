@@ -1155,6 +1155,8 @@ export default defineComponent({
                 return
             }
 
+            this.$emit('keydown', e)
+
             if (e.key !== 'Backspace') {
                 /**
                  * Allow only numbers
