@@ -75,6 +75,7 @@ export function useTreeTableRowSelection(
 
     function clearSelection() {
         selectedRows.value = []
+        selectedItemsNested.value = []
     }
 
     function updateSelection(

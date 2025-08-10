@@ -1127,9 +1127,7 @@ export default defineComponent({
 
             const focusEvent = e as FocusEvent
             const shouldKeepFocus =
-                this.keepFocusOnBlur &&
-                !focusEvent.relatedTarget &&
-                this.isExpanded
+                this.keepFocusOnBlur && !focusEvent.relatedTarget
 
             this.$nextTick(() => {
                 const inputRef = this.$refs.searchInput as HTMLInputElement

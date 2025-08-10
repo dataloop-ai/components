@@ -482,6 +482,12 @@ export default defineComponent({
                 }
             }
         }
+
+        const clearSelectionWithRerender = () => {
+            clearSelection()
+            mainTableKey.value = v4()
+        }
+
         const updateSelectionHierarchy = (
             adding: boolean,
             event: any,
@@ -943,7 +949,9 @@ export default defineComponent({
             mainTbodyUuid,
             vue2h,
             containerClass,
-            computedFilter
+            computedFilter,
+            clearSelection,
+            clearSelectionWithRerender
         }
     },
     // adding ignore here as overloading the render function like this is not a known type
