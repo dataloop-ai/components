@@ -646,7 +646,8 @@ export default defineComponent({
         'enter',
         'file-update',
         'update:model-value',
-        'suggestion-click'
+        'suggestion-click',
+        'keydown'
     ],
     setup(props, { emit }) {
         const mouseOverClear = ref(false)
@@ -1155,6 +1156,8 @@ export default defineComponent({
                 return
             }
 
+            this.$emit('keydown', e)
+
             if (e.key !== 'Backspace') {
                 /**
                  * Allow only numbers
@@ -1640,3 +1643,4 @@ export default defineComponent({
     }
 }
 </style>
+
