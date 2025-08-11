@@ -165,7 +165,7 @@ import {
     revertAliases,
     setValueAliases,
     revertValueAliases,
-    isPositionInsideQuotes
+    isInsideQuotedString
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -400,17 +400,7 @@ export default defineComponent({
 
         const _normalizeInputValue = (value: string): string => {
             // Normalize logical operators (' and ' -> ' AND ', ' or ' -> ' OR ')
-            const logicalOperatorsRegEx = /\s(and|or)\s/g
-            const logicalMatch = value.match(logicalOperatorsRegEx)
-            if (logicalMatch) {
-                value = value.replace(logicalOperatorsRegEx,
-                    (match, operator, offset) => {
-                        const textBeforeMatch = value.substring(0, offset)
-                        const isInsideQuotes = isPositionInsideQuotes(textBeforeMatch)
-
-                        return isInsideQuotes ? match : ` ${operator.toUpperCase()} `
-                })
-            }
+            value = _normalizeLogicalOperators(value)
 
             // Handle typing '.' or ',' after accepting a suggestion
             const dotOrCommaRegEx = /\s+([.,]\s?)$/
@@ -436,6 +426,18 @@ export default defineComponent({
             }
 
             return value
+        }
+
+        const _normalizeLogicalOperators = (value: string): string => {
+            const logicalOperatorsRegEx = /\s(and|or)\s/g
+            return value.replace(
+                logicalOperatorsRegEx,
+                (match, op, offset) => {
+                    const textBeforeTheMatch = value.substring(0, offset)
+                    const isMatchInsideQuotes = isInsideQuotedString(textBeforeTheMatch)
+                    return isMatchInsideQuotes ? match : ` ${op.toUpperCase()} `
+                }
+            )
         }
 
         const setInputFromSuggestion = (suggestion: any) => {

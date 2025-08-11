@@ -410,7 +410,7 @@ export const isEligibleToChange = (target: HTMLElement, expanded: boolean) => {
     }
 }
 
-export const isPositionInsideQuotes = (textBeforePosition: string): boolean => {
+export const isInsideQuotedString = (textBeforePosition: string): boolean => {
     const singleQuoteCount = (textBeforePosition.match(/'/g) || []).length
     const doubleQuoteCount = (textBeforePosition.match(/"/g) || []).length
 
