@@ -164,7 +164,8 @@ import {
     setAliases,
     revertAliases,
     setValueAliases,
-    revertValueAliases
+    revertValueAliases,
+    isPositionInsideQuotes
 } from '../utils'
 import { v4 } from 'uuid'
 import {
@@ -402,10 +403,13 @@ export default defineComponent({
             const logicalOperatorsRegEx = /\s(and|or)\s/g
             const logicalMatch = value.match(logicalOperatorsRegEx)
             if (logicalMatch) {
-                value = value.replace(
-                    logicalOperatorsRegEx,
-                    (_, match) => ` ${match.toUpperCase()} `
-                )
+                value = value.replace(logicalOperatorsRegEx,
+                    (match, operator, offset) => {
+                        const textBeforeMatch = value.substring(0, offset)
+                        const isInsideQuotes = isPositionInsideQuotes(textBeforeMatch)
+
+                        return isInsideQuotes ? match : ` ${operator.toUpperCase()} `
+                })
             }
 
             // Handle typing '.' or ',' after accepting a suggestion
