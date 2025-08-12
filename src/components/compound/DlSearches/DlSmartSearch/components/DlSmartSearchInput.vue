@@ -735,9 +735,7 @@ export default defineComponent({
                         .getRangeAt(0)
                         .insertNode(
                             document.createTextNode(
-                                (preceedingText.endsWith(' ') ? '' : ' ') +
-                                    text +
-                                    ' '
+                                text
                             )
                         )
                     selection.collapseToEnd()
