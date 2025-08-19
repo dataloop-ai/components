@@ -312,6 +312,33 @@
                     </dl-list>
                 </dl-dropdown-button>
             </div>
+
+            <div class="grid grid-cols-3" style="column-gap: 10px">
+                <dl-dropdown-button
+                    auto-close
+                    :model-value="showing"
+                    main-button-style="width: 150px;"
+                    @show="onOpen"
+                >
+                    <template #label>
+                        <div class="flex row" style="gap: 5px">
+                            <span>{{ slotLabel }}</span>
+                            <dl-icon icon="icon-dl-info" size="s" />
+                        </div>
+                    </template>
+                    <dl-list>
+                        <dl-list-item clickable>
+                            <dl-item-section> Photos </dl-item-section>
+                        </dl-list-item>
+                        <dl-list-item clickable>
+                            <dl-item-section> Videos </dl-item-section>
+                        </dl-list-item>
+                        <dl-list-item clickable>
+                            <dl-item-section> Articles </dl-item-section>
+                        </dl-list-item>
+                    </dl-list>
+                </dl-dropdown-button>
+            </div>
         </div>
 
         <div style="margin-top: 20px; display: flex; flex-direction: column">
@@ -346,7 +373,8 @@ import {
     DlItemSection,
     DlList,
     DlDropdownButton,
-    DlEllipsis
+    DlEllipsis,
+    DlIcon
 } from '../components'
 
 export default defineComponent({
@@ -356,7 +384,8 @@ export default defineComponent({
         DlItemSection,
         DlList,
         DlDropdownButton,
-        DlEllipsis
+        DlEllipsis,
+        DlIcon
     },
     setup() {
         const highlightedIndex = ref(-1)
@@ -365,6 +394,7 @@ export default defineComponent({
         const arrowNavigationLabel = ref('Arrow Navigation Label')
         const outlinedLabel = ref('Outlined Label')
         const containedLabel = ref('Contained Label')
+        const slotLabel = ref('Slot Label')
 
         const listItems = ref([
             'New tab',
@@ -415,7 +445,8 @@ export default defineComponent({
             highlightedIndex,
             arrowNavigationLabel,
             outlinedLabel,
-            containedLabel
+            containedLabel,
+            slotLabel
         }
     }
 })
