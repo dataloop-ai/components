@@ -283,7 +283,7 @@ export default defineComponent({
         ...arrowNavigationEvents
     ],
 
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
         const proxy = vm!.proxy!
         const { textColor } = toRefs(props)
@@ -292,7 +292,7 @@ export default defineComponent({
         const menuRef = ref(null)
 
         const hasLabelSlot = computed(() => {
-            return !!proxy.$slots.label
+            return !!slots.label
         })
         const attributes = computed(() => {
             const acc: Record<string, string> = {
