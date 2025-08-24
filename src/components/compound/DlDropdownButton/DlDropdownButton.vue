@@ -114,14 +114,19 @@
         @click="onClick"
     >
         <div class="dl-button-dropdown--simple__title">
-            <span
-                :class="{
-                    'dl-button-no-wrap': noWrap
-                }"
-                style="margin-right: 6px"
-            >
-                {{ label }}
-            </span>
+            <template v-if="hasLabelSlot">
+                <slot name="label" />
+            </template>
+            <template v-else>
+                <span
+                    :class="{
+                        'dl-button-no-wrap': noWrap
+                    }"
+                    style="margin-right: 6px"
+                >
+                    {{ label }}
+                </span>
+            </template>
             <dl-icon
                 :class="iconClass"
                 :icon="dropdownIcon"
@@ -278,7 +283,7 @@ export default defineComponent({
         ...arrowNavigationEvents
     ],
 
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
         const vm = getCurrentInstance()
         const proxy = vm!.proxy!
         const { textColor } = toRefs(props)
@@ -286,6 +291,9 @@ export default defineComponent({
         const showing = ref<boolean>(!!props.modelValue) as Ref<boolean>
         const menuRef = ref(null)
 
+        const hasLabelSlot = computed(() => {
+            return !!slots.label
+        })
         const attributes = computed(() => {
             const acc: Record<string, string> = {
                 'aria-expanded': showing.value === true ? 'true' : 'false',
@@ -489,7 +497,8 @@ export default defineComponent({
             cssVars,
             getIconColor,
             computedTextColor,
-            separatorColor
+            separatorColor,
+            hasLabelSlot
         }
     }
 })

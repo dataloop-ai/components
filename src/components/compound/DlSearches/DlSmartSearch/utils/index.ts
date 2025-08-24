@@ -409,3 +409,11 @@ export const isEligibleToChange = (target: HTMLElement, expanded: boolean) => {
         return [-target.clientWidth, 5]
     }
 }
+
+export const isInsideQuotedString = (textBeforePosition: string): boolean => {
+    // Count unescaped single and double quotes (using negative lookbehind to exclude escaped quotes)
+    const unescapedSingleQuotes = (textBeforePosition.match(/(?<!\\)'/g) || []).length
+    const unescapedDoubleQuotes = (textBeforePosition.match(/(?<!\\)"/g) || []).length
+    
+    return unescapedSingleQuotes % 2 === 1 || unescapedDoubleQuotes % 2 === 1
+}

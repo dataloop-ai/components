@@ -80,6 +80,7 @@
                     @blur="handleSearchBlur"
                     @keyup.enter="handleSearchEnter"
                     @keyup.esc="handleSearchEscape"
+                    @keydown="handleSearchKeyDown"
                 />
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
@@ -315,7 +316,10 @@
                         </dl-select-option>
                     </div>
                 </dl-list>
-                <dl-list-item v-if="hasAfterOptions && !noOptions">
+                <dl-list-item
+                    v-if="hasAfterOptions && !noOptions"
+                    :padding="afterOptionsPadding"
+                >
                     <dl-item-section>
                         <slot name="after-options" />
                     </dl-item-section>
@@ -500,6 +504,14 @@ export default defineComponent({
         openMenuDuringSearch: {
             type: Boolean,
             default: false
+        },
+        afterOptionsPadding: {
+            type: String,
+            default: null
+        },
+        keepFocusOnBlur: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [
@@ -507,6 +519,7 @@ export default defineComponent({
         'search-blur',
         'search-enter',
         'search-escape',
+        'search-keydown',
         'filter',
         'change',
         'search-input',
@@ -1106,17 +1119,29 @@ export default defineComponent({
                 this.$emit('search-enter', e, this.searchInputValue)
             }
         },
+        handleSearchKeyDown(e: KeyboardEvent): void {
+            if (this.searchable) {
+                this.$emit('search-keydown', e)
+            }
+        },
         handleSearchEscape(e: Event): void {
             if (this.searchable) {
                 this.$emit('search-escape', e, this.searchInputValue)
             }
         },
         handleSearchBlur(e: Event): void {
-            if (this.searchable) {
+            if (!this.searchable) return
+
+            const focusEvent = e as FocusEvent
+            const shouldKeepFocus =
+                this.keepFocusOnBlur && !focusEvent.relatedTarget
+
+            this.$nextTick(() => {
                 const inputRef = this.$refs.searchInput as HTMLInputElement
-                this.$nextTick(() => {
-                    inputRef?.focus({})
-                })
+                inputRef?.focus({})
+            })
+
+            if (!shouldKeepFocus) {
                 this.$emit('search-blur', e)
             }
         },

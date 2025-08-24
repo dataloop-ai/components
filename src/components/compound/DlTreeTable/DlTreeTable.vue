@@ -333,7 +333,7 @@ export default defineComponent({
     emits,
     setup(props, { emit, slots }) {
         const dlTableRef = ref(null)
-        const selectedData = ref([])
+        const selectedData = ref<DlTableRow[]>([])
         const borderState = ref([])
         const denseState = ref([])
         const resizableState = ref([])
@@ -393,7 +393,8 @@ export default defineComponent({
 
             isRowSelected,
             clearSelection,
-            updateSelection
+            updateSelection,
+            selectAllRows
         } = useTreeTableRowSelection(
             props as unknown as DlTableProps,
             emit,
@@ -481,6 +482,12 @@ export default defineComponent({
                 }
             }
         }
+
+        const clearSelectionWithRerender = () => {
+            clearSelection()
+            mainTableKey.value = v4()
+        }
+
         const updateSelectionHierarchy = (
             adding: boolean,
             event: any,
@@ -515,11 +522,19 @@ export default defineComponent({
 
             updateSelected(value ? tableRows.value : [])
         }
-        const updateSelected = (payload: any) => {
+        const updateSelected = (payload: DlTableRow[]) => {
+            const hasSelection = selectedData.value.length > 0
             selectedData.value = payload
-            emitSelectedItems(payload)
+
+            if (payload.length > 0) {
+                selectAllRows(true)
+            } else if (payload.length === 0 && hasSelection) {
+                selectAllRows(false)
+            } else {
+                emitSelectedItems(payload)
+            }
         }
-        const emitSelectedItems = (payload: any) => {
+        const emitSelectedItems = (payload: DlTableRow[]) => {
             emit('selected-items', payload)
         }
         const emitRowClick = (...payload: any) => {
@@ -934,7 +949,9 @@ export default defineComponent({
             mainTbodyUuid,
             vue2h,
             containerClass,
-            computedFilter
+            computedFilter,
+            clearSelection,
+            clearSelectionWithRerender
         }
     },
     // adding ignore here as overloading the render function like this is not a known type
@@ -988,21 +1005,6 @@ export default defineComponent({
                 'col-update': this.updateColumns
             },
             scopedSlots: {
-                'header-selection': () =>
-                    renderComponent(
-                        vue2h,
-                        DlCheckbox,
-                        {
-                            color: this.color,
-                            modelValue: this.headerSelectedValue,
-                            indeterminateValue: true,
-                            'onUpdate:modelValue': this.onMultipleSelectionSet,
-                            on: {
-                                'update:modelValue': this.onMultipleSelectionSet
-                            }
-                        },
-                        (): [] => []
-                    ),
                 tbody,
                 'no-data': this.$slots['no-data']
                     ? () => this.$slots['no-data']

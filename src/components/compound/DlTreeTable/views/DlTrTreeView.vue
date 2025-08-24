@@ -17,6 +17,7 @@
             }`"
         >
             <dl-icon
+                v-if="!row.disableDraggable"
                 class="draggable-icon"
                 icon="icon-dl-drag"
                 size="12px"
@@ -35,12 +36,12 @@
                     {{ childDisabledCheckboxTooltip }}
                 </dl-tooltip>
                 <DlCheckbox
+                    v-if="!isCheckboxDisabled && row.isSelectable"
                     :color="color"
                     :model-value="modelValue"
                     :indeterminate-value="true"
                     :false-value="false"
                     :true-value="true"
-                    :disabled="isCheckboxDisabled"
                     @update:model-value="
                         (adding, evt) => emitUpdateModelValue(adding, evt)
                     "
