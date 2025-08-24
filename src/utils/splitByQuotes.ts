@@ -1,4 +1,4 @@
-import Tokenizr from "tokenizr"
+import Tokenizr from 'tokenizr/src/tokenizr.js'
 
 export enum TokenType {
     NUMBER = 'number',
@@ -18,35 +18,44 @@ enum Tags {
     HAD_VALUE = 'had-value'
 }
 
-let tokenizer = new Tokenizr()
+const tokenizer = new Tokenizr()
 
 tokenizer.rule(/[+-]?[0-9\.]+/, (ctx, match) => {
     ctx.accept(TokenType.NUMBER, parseFloat(match[0])).tag(Tags.HAD_VALUE)
 })
 
-tokenizer.rule(/\((\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?DD\/MM\/YYYY)\s?(\d{2}:\d{2}:\d{2}|\s?HH:mm:ss)?\)/, (ctx, match) => {
-    ctx.accept(TokenType.DATETIME, parseFloat(match[0])).tag(Tags.HAD_VALUE)
-})
-
+tokenizer.rule(
+    /\((\d{2}\/\d{2}\/\d{4}[\)']?\s?|\s?DD\/MM\/YYYY)\s?(\d{2}:\d{2}:\d{2}|\s?HH:mm:ss)?\)/,
+    (ctx, match) => {
+        ctx.accept(TokenType.DATETIME, parseFloat(match[0])).tag(Tags.HAD_VALUE)
+    }
+)
 ;[
-    /<=?/, />=?/, /!=?/, /=/,
+    /<=?/,
+    />=?/,
+    /!=?/,
+    /=/,
     /in?(?![^\s'"])/i,
     /n(o(t(-(in?)?)?)?)?(?![^\s'"])/i,
     /e(x(i(s(ts?)?)?)?)?(?!\S)/i,
     /d(o(e(s(n(t(-(e(x(i(st?)?)?)?)?)?)?)?)?)?)?(?!\S)/i
-].forEach(re => tokenizer.rule(re, (ctx, match) => {
-    if (!ctx.tagged(Tags.HAD_FIELD) && /^[a-z]/i.test(match[0])) {
-        ctx.accept(TokenType.FIELD).tag(Tags.HAD_FIELD)
-    } else {
-        ctx.accept(TokenType.OPERATOR, match[0].toUpperCase())
-    }
-}))
+].forEach((re) =>
+    tokenizer.rule(re, (ctx, match) => {
+        if (!ctx.tagged(Tags.HAD_FIELD) && /^[a-z]/i.test(match[0])) {
+            ctx.accept(TokenType.FIELD).tag(Tags.HAD_FIELD)
+        } else {
+            ctx.accept(TokenType.OPERATOR, match[0].toUpperCase())
+        }
+    })
+)
 
 tokenizer.rule(/[a-z][a-z\.\d\-_]*/i, (ctx, match) => {
     const upper = match[0].toUpperCase()
     if (ctx.tagged(Tags.HAD_VALUE)) {
         // we just had a value - it would be followed by AND or OR
-        ctx.untag(Tags.HAD_FIELD).untag(Tags.HAD_VALUE).accept(TokenType.LOGICAL, upper)
+        ctx.untag(Tags.HAD_FIELD)
+            .untag(Tags.HAD_VALUE)
+            .accept(TokenType.LOGICAL, upper)
     } else if (ctx.tagged(Tags.HAD_FIELD)) {
         // we had a field but no value yet - this must be either a boolean or an unquoted string
         if (['TRUE', 'FALSE'].includes(upper)) {
@@ -65,16 +74,22 @@ tokenizer.rule(/,/, (ctx) => {
 })
 
 tokenizer.rule(/(?<!\\)"(.*?)(?<!\\)"/, (ctx, match) => {
-    ctx.accept(TokenType.STRING, match[1].replace(/\\"/g, '"')).tag(Tags.HAD_VALUE)
+    ctx.accept(TokenType.STRING, match[1].replace(/\\"/g, '"')).tag(
+        Tags.HAD_VALUE
+    )
 })
 
 tokenizer.rule(/(?<!\\)'(.*?)(?<!\\)'/, (ctx, match) => {
-    ctx.accept(TokenType.STRING, match[1].replace(/\\'/g, "'")).tag(Tags.HAD_VALUE)
+    ctx.accept(TokenType.STRING, match[1].replace(/\\'/g, "'")).tag(
+        Tags.HAD_VALUE
+    )
 })
 
 tokenizer.rule(/(?<!\\)['"](.*)/, (ctx, match) => {
     // partial string
-    ctx.accept(TokenType.PARTIAL_VALUE, match[1].replace(/\\'/g, "'")).tag(Tags.HAD_VALUE)
+    ctx.accept(TokenType.PARTIAL_VALUE, match[1].replace(/\\'/g, "'")).tag(
+        Tags.HAD_VALUE
+    )
 })
 
 tokenizer.rule(/\s+/, (ctx) => {
@@ -94,16 +109,16 @@ export function tokenize(input: string) {
 
 export function splitByQuotes(input: string, ignore?: string) {
     const parts = tokenize(input)
-        .filter(token => token.type !== 'whitespace')
-        .map(token => token.text)
+        .filter((token) => token.type !== 'whitespace')
+        .map((token) => token.text)
         .map((text, index, array) => {
-            if(array[index + 1] === ',') {
+            if (array[index + 1] === ',') {
                 return text + ','
             } else {
                 return text === ',' ? '' : text
             }
         })
-        .filter(text => text !== '')
+        .filter((text) => text !== '')
 
     if (/\s$/.test(input)) {
         parts.push('')
