@@ -321,6 +321,21 @@ export default defineComponent({
             type: String,
             default: 'Cannot unselect child when parent is selected'
         },
+        /**
+         * Enforce restrictions that prevent parents from being dragged to child levels
+         * and children from being dragged to parent levels
+         */
+        enforceParentChildRestrictions: {
+            type: Boolean,
+            default: true
+        },
+        /**
+         * Enforce restrictions that prevent children from being dragged between different parents
+         */
+        enforceSameParentRestrictions: {
+            type: Boolean,
+            default: true
+        },
         ...useTableActionsProps,
         ...commonVirtScrollProps,
         ...useTableRowExpandProps,
@@ -773,13 +788,20 @@ export default defineComponent({
                 draggedRow: draggedRow.value,
                 targetRow: targetRow.value
             })
-            emit(
-                'row-reorder',
-                moveNestedRow(tableRows.value, event, sortingMovement.value)
+            const isDragValid = checkParentCondition(
+                draggedRow.value,
+                targetRow.value
             )
+            if (isDragValid) {
+                emit(
+                    'row-reorder',
+                    moveNestedRow(tableRows.value, event, sortingMovement.value)
+                )
+            } else {
+                mainTableKey.value = v4()
+            }
             draggedRow.value = null
             targetRow.value = null
-            mainTableKey.value = v4()
         }
 
         const handleChangeEvent = (event: any) => {
@@ -790,10 +812,30 @@ export default defineComponent({
             ) as HTMLElement
             if (passedElement) {
                 const targetRowId = passedElement.dataset.id
-                targetRow.value =
-                    tableRows.value.find(
-                        (row) => getRowKey.value(row) === targetRowId
-                    ) || null
+                const targetLevel = passedElement.getAttribute('data-level')
+
+                if (!targetRowId) {
+                    return
+                }
+
+                let foundRow = tableRows.value.find(
+                    (row: DlTableRow) => row.id === targetRowId
+                )
+                if (!foundRow) {
+                    foundRow = findRowInNestedStructure(targetRowId, props.rows)
+                }
+                if (!foundRow) {
+                    console.warn(
+                        `Row with ID ${targetRowId} not found in data structure`
+                    )
+                    return
+                }
+
+                targetRow.value = foundRow
+                if (targetLevel) {
+                    targetRow.value.level = parseInt(targetLevel)
+                }
+
                 emit('row-drag-over', {
                     draggedRow: draggedRow.value,
                     targetRow: targetRow.value
@@ -812,12 +854,141 @@ export default defineComponent({
         const handleStartEvent = (event: any) => {
             prevMouseY = event.originalEvent.clientY
             const rowIndex = event.oldIndex
-            if (rowIndex !== undefined && rowIndex >= 0) {
-                draggedRow.value = tableRows.value[rowIndex] || null
-                emit('row-drag-start', {
-                    draggedRow: draggedRow.value
-                })
+            const draggedElement = event.item
+            if (!draggedElement) {
+                return
             }
+
+            const draggedLevel = draggedElement.getAttribute('data-level')
+            let draggedId = draggedElement.getAttribute('data-id')
+
+            if (!draggedId && draggedElement.tagName === 'TBODY') {
+                const firstTr = draggedElement.querySelector('tr')
+                if (firstTr) {
+                    draggedId = firstTr.getAttribute('data-id')
+                }
+            }
+
+            if (draggedId) {
+                let foundRow = tableRows.value.find(
+                    (row: DlTableRow) => row.id === draggedId
+                )
+                if (!foundRow) {
+                    foundRow = findRowInNestedStructure(draggedId, props.rows)
+                }
+                if (!foundRow) {
+                    console.warn(
+                        `Dragged row with ID ${draggedId} not found in data structure`
+                    )
+                    return
+                }
+
+                draggedRow.value = foundRow
+                if (draggedLevel) {
+                    draggedRow.value.level = parseInt(draggedLevel)
+                }
+            } else if (rowIndex !== undefined && rowIndex >= 0) {
+                draggedRow.value = tableRows.value[rowIndex] || null
+            }
+            emit('row-drag-start', {
+                draggedRow: draggedRow.value,
+                targetRow: targetRow.value
+            })
+        }
+
+        const checkParentCondition = (
+            draggedRow: DlTableRow,
+            targetRow: DlTableRow
+        ): boolean => {
+            if (!draggedRow || !targetRow) {
+                return false
+            }
+
+            const originalRows = props.rows
+            const draggedIsTopLevel = originalRows.some(
+                (row: DlTableRow) => row.id === draggedRow.id
+            )
+            const targetIsTopLevel = originalRows.some(
+                (row: DlTableRow) => row.id === targetRow.id
+            )
+            if (
+                props.enforceParentChildRestrictions &&
+                draggedIsTopLevel !== targetIsTopLevel
+            ) {
+                return false
+            }
+            if (!draggedIsTopLevel && props.enforceSameParentRestrictions) {
+                const draggedParent = findParentForChild(
+                    draggedRow.id,
+                    originalRows
+                )
+                const targetParent = findParentForChild(
+                    targetRow.id,
+                    originalRows
+                )
+                if (draggedParent !== targetParent) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        const buildParentMap = (rows: DlTableRow[]): Map<string, string> => {
+            const parentMap = new Map<string, string>()
+            const traverse = (rowList: DlTableRow[]) => {
+                for (const row of rowList) {
+                    if (row.children) {
+                        for (const child of row.children) {
+                            parentMap.set(child.id, row.id)
+                        }
+                        traverse(row.children)
+                    }
+                }
+            }
+            traverse(rows)
+            return parentMap
+        }
+
+        const findParentForChild = (
+            childId: string,
+            rows: DlTableRow[]
+        ): string | null => {
+            const parentMap = buildParentMap(rows)
+            return parentMap.get(childId) || null
+        }
+
+        const calculateRowLevel = (row: DlTableRow): number => {
+            const parentMap = buildParentMap(props.rows)
+            let level = 1
+            let currentId = row.id
+            while (parentMap.has(currentId)) {
+                level++
+                currentId = parentMap.get(currentId)!
+            }
+            return level
+        }
+
+        const findRowInNestedStructure = (
+            rowId: string,
+            rows: DlTableRow[]
+        ): DlTableRow | null => {
+            const searchRecursively = (
+                rowList: DlTableRow[]
+            ): DlTableRow | null => {
+                for (const row of rowList) {
+                    if (row.id === rowId) {
+                        return row
+                    }
+                    if (row.children && row.children.length > 0) {
+                        const found = searchRecursively(row.children)
+                        if (found) {
+                            return found
+                        }
+                    }
+                }
+                return null
+            }
+            return searchRecursively(rows)
         }
 
         const updateColumns = (newColumns: DlTableColumn[]) => {
@@ -851,11 +1022,12 @@ export default defineComponent({
                 const [renderRow] = rowBodySlot
                     ? rowBodySlot({ row })
                     : [renderTr(row, i)]
+                const actualLevel = calculateRowLevel(row)
                 return renderComponent(
                     vue2h.value,
                     'tbody',
                     {
-                        'data-level': 1,
+                        'data-level': actualLevel,
                         key: getRowKey.value(row) + i,
                         class: 'nested-tbody'
                     },
