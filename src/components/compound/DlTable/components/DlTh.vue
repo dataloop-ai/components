@@ -30,7 +30,7 @@
                     v-if="hasHint"
                     icon="icon-dl-info"
                     size="10px"
-                    style="max-width: 30%; margin-top: 1px"
+                    style="max-width: 30%; margin-top: 1px; margin-left: 4px"
                 >
                     <dl-tooltip>
                         {{ props.col.hint }}
