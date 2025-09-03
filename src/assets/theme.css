@@ -95,6 +95,10 @@ body {
     --dl-json-editor-value-color-boolean: #0184bb;
     --dl-json-editor-value-color-number: #c18401;
     --dl-json-editor-value-color-string: #50a14f;
+
+    --dl-color-discovery: #7F3EE0;
+    --dl-color-discovery-bg: #F6F2FD;
+
 }
 
 /* Define styles for the root window with dark - mode preference */
@@ -153,4 +157,7 @@ body {
     --dl-json-editor-value-color-boolean: #56b6c2;
     --dl-json-editor-value-color-number: #d19a66;
     --dl-json-editor-value-color-string: #98c379;
+
+    --dl-color-discovery: #B687FD;
+    --dl-color-discovery-bg: #392556;
 }
