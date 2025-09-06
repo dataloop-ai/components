@@ -75,12 +75,16 @@ body {
     /* alert colors */
     --dl-color-negative: var(--dl-color-alert-error);
     --dl-color-negative-background: var(--dl-color-alert-error-background);
+    --dl-color-negative-bg: var(--dl-color-alert-error-bg);
     --dl-color-warning: var(--dl-color-alert-warn);
     --dl-color-warning-background: var(--dl-color-alert-warn-background);
+    --dl-color-warning-bg: var(--dl-color-alert-warn-bg);
     --dl-color-positive: var(--dl-color-alert-success);
     --dl-color-positive-background: var(--dl-color-alert-success-background);
+    --dl-color-positive-bg: var(--dl-color-alert-success-bg);
     --dl-color-info: var(--dl-color-alert-info);
     --dl-color-info-background: var(--dl-color-alert-info-background);
+    --dl-color-info-bg: var(--dl-color-alert-info-bg);
 
     --dl-color-chart-brush: #eef1ff;
 
@@ -138,11 +142,15 @@ body {
     --q-color-warning: #f8d29a;
 
     /* alert colors */
-    --dl-color-negative-background: #734145;
+    --dl-color-negative-background: #391A19;
+    --dl-color-negative-bg: #391A19;
     --dl-color-warning: #FFDE5C;
-    --dl-color-warning-background: #686045;
-    --dl-color-positive-background: #3a644e;
-    --dl-color-info-background: #4b5a6b;
+    --dl-color-warning-background: #393218;
+    --dl-color-warning-bg: #393218;
+    --dl-color-positive-background: #183928;
+    --dl-color-positive-bg: #183928;
+    --dl-color-info-background: #1F3447;
+    --dl-color-info-bg: #1F3447;
     --dl-color-info: #92cdf2;
 
     --dl-color-chart-brush: #475077;

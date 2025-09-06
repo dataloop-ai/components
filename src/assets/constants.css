@@ -1,13 +1,17 @@
 :root {
     /* Constants */
     --dl-color-alert-success: #38d079;
-    --dl-color-alert-success-background: #e1fff0;
+    --dl-color-alert-success-background: #EDFCF4;
+    --dl-color-alert-success-bg: #EDFCF4;
     --dl-color-alert-warn: #F5C114;
-    --dl-color-alert-warn-background: #FFF8E0;
+    --dl-color-alert-warn-background: #FEFAEB;
+    --dl-color-alert-warn-bg: #FEFAEB;
     --dl-color-alert-error: #ff3434;
-    --dl-color-alert-error-background: #ffeaea;
+    --dl-color-alert-error-background: #FCEFEE;
+    --dl-color-alert-error-bg: #FCEFEE;
     --dl-color-alert-info: #4e81b3;
-    --dl-color-alert-info-background: #f3f9ff;
+    --dl-color-alert-info-background: #F2F8FD;
+    --dl-color-alert-info-bg: #F2F8FD;
     --dl-color-alert-text: #171723;
 
     /* Z-Index */
