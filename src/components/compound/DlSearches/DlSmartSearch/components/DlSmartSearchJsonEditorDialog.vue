@@ -8,7 +8,7 @@
         >
             <template #header>
                 <dl-dialog-box-header
-                    title="DQL Search"
+                    title="DQL Editor"
                     :close-button="true"
                     @onClose="isOpen = false"
                 />
@@ -21,9 +21,13 @@
                     >
                         <dl-select
                             :model-value="selectedOption"
+                            ref="jsonQueryMenu"
                             width="300px"
                             :options="selectOptions"
                             placeholder="New Query"
+                            searchable
+                            after-options-padding="0"
+                            no-options-padding="0"
                             @update:model-value="onQuerySelect"
                         >
                             <template #selected="scope">
@@ -36,15 +40,58 @@
                                     {{ scope.opt.label }}
                                 </span>
                             </template>
+                            <template #after-options>
+                                <dl-separator
+                                    style="margin: 0 0 2px 0 !important"
+                                    type="horizontal"
+                                />
+                                <dl-button
+                                    icon="icon-dl-save"
+                                    flat
+                                    fluid
+                                    secondary
+                                    size="s"
+                                    label="Save Query"
+                                    class="json-query-menu-save-button"
+                                    @click="onSave"
+                                />
+                            </template>
+                            <template #no-options>
+                                <div class="json-query-menu-no-option">
+                                    {{ noOptionsLabel }}
+                                </div>
+                                <dl-separator
+                                    style="margin: 0 0 2px 0 !important"
+                                    type="horizontal"
+                                />
+                                <dl-button
+                                    icon="icon-dl-save"
+                                    flat
+                                    fluid
+                                    secondary
+                                    size="s"
+                                    label="Save Query"
+                                    class="json-query-menu-save-button"
+                                    @click="onSave"
+                                />
+                            </template>
                         </dl-select>
+                        <div style="display: flex; flex-grow: 1" />
                         <dl-button
                             icon="icon-dl-align-left"
-                            label="Align Left"
                             flat
                             color="secondary"
                             padding="0px 3px"
                             :disabled="alignDisabled"
                             @click="alignJSON"
+                        />
+                        <dl-button
+                            icon="icon-dl-copy"
+                            flat
+                            color="secondary"
+                            padding="0px 3px"
+                            :disabled="alignDisabled"
+                            @click="copyJSON"
                         />
                     </div>
                     <dl-json-editor
@@ -101,26 +148,19 @@
             <template #body>
                 <dl-input
                     v-model="newQueryName"
-                    title="Query name"
-                    style="text-align: center"
-                    placeholder="Type query name"
+                    :red-asterisk="true"
+                    :required="true"
+                    title="Query Name"
+                    placeholder="Insert query name"
                 />
             </template>
             <template #footer>
                 <div class="dl-smart-search__buttons--save">
                     <dl-button
                         :disabled="!newQueryName"
-                        outlined
-                        style="margin-right: 5px"
                         @click="() => saveQuery(false)"
                     >
                         Save
-                    </dl-button>
-                    <dl-button
-                        :disabled="!newQueryName"
-                        @click="() => saveQuery(true)"
-                    >
-                        Save and Search
                     </dl-button>
                 </div>
             </template>
@@ -135,12 +175,13 @@
                 />
             </template>
             <template #body>
-                <dl-typography
-                    size="h3"
-                    style="display: flex; justify-content: center"
-                >
-                    Are you sure you want to delete
-                    {{ selectedOption.label }}?
+                <dl-typography size="h5">
+                    Are you sure you want to permanently delete the following query?
+                    <br />
+                    {{ selectedOption.label }}
+                    <br />
+                    <br />
+                    This action cannot be undone.
                 </dl-typography>
             </template>
             <template #footer>
@@ -166,6 +207,7 @@ import {
 } from 'vue-demi'
 import { DlSelect } from '../../../DlSelect'
 import { DlSelectOption } from '../../../DlSelect/types'
+import { DlSeparator } from '../../../../essential/DlSeparator'
 import { DlButton } from '../../../../basic'
 import { DlDialogBox, DlDialogBoxHeader } from '../../../DlDialogBox'
 import { DlJsonEditor } from '../../../DlJsonEditor'
@@ -182,6 +224,7 @@ export default defineComponent({
         DlJsonEditor,
         DlButton,
         DlSelect,
+        DlSeparator,
         DlTypography,
         DlInput
     },
@@ -214,11 +257,19 @@ export default defineComponent({
         'update:modelValue',
         'search',
         'change',
+        'copied',
         'update:options',
         'save',
         'delete',
         'select'
     ],
+    methods: {
+        onSave() {
+            const select = this.$refs['jsonQueryMenu'] as InstanceType<typeof DlSelect>
+            select?.closeMenu()
+            this.showSaveDialog = true
+        }
+    },
     setup(props, { emit }) {
         const { modelValue, options, json, selectedFilter } = toRefs(props)
 
@@ -252,6 +303,12 @@ export default defineComponent({
             }
         )
 
+        const noOptionsLabel = computed<string>(() => {
+            return selectOptions.value.length
+                ? 'No Results Found'
+                : 'No Saved Queries'
+        })
+
         watch(
             selectedFilter,
             () => {
@@ -271,6 +328,11 @@ export default defineComponent({
 
         const alignJSON = () => {
             jsonEditor.value?.format()
+        }
+
+        const copyJSON = async () => {
+            await navigator.clipboard.writeText(stringifiedJSON.value)
+            emit('copied')
         }
 
         const onQuerySelect = (option: DlSelectOption) => {
@@ -390,8 +452,10 @@ export default defineComponent({
             showSaveDialog,
             stringifiedJSON,
             selectedOption,
+            noOptionsLabel,
             hasActiveFilter,
             alignJSON,
+            copyJSON,
             onQuerySelect,
             newQueryName,
             alignDisabled,
@@ -431,5 +495,19 @@ export default defineComponent({
     width: 265px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.json-query-menu-no-option {
+    display: flex;
+    padding: 20px 0;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+}
+.json-query-menu-save-button:hover {
+    background-color: var(--dl-color-fill-secondary);
+}
+.dl-smart-search__buttons--save {
+    text-align: right;
+    width: 100%;
 }
 </style>
