@@ -18,6 +18,9 @@
             {{ externalIcon ? icon : null }}
         </i>
         <slot />
+        <dl-tooltip v-if="tooltip">
+            {{ tooltip }}
+        </dl-tooltip>
     </div>
     <div
         v-else
@@ -48,9 +51,13 @@ import {
 } from 'vue-demi'
 import { getColor, loggerFactory, stringStyleToRecord } from '../../../utils'
 import { COLORED_ICONS } from '@dataloop-ai/icons/types'
+import { DlTooltip } from '../../shared'
 
 export default defineComponent({
     name: 'DlIcon',
+    components: {
+        DlTooltip
+    },
     props: {
         color: {
             type: String,
@@ -79,11 +86,15 @@ export default defineComponent({
         svgSource: {
             type: String,
             default: null
+        },
+        tooltip: {
+            type: String,
+            default: null
         }
     },
     emits: ['click', 'mousemove', 'mouseup', 'mousedown'],
     setup(props) {
-        const { styles, color, size, icon, svg, inline, svgSource } =
+        const { styles, color, size, icon, svg, inline, svgSource, tooltip } =
             toRefs(props)
 
         const svgIcon = ref(null)

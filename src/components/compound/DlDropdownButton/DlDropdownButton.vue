@@ -64,6 +64,8 @@
                 :icon="dropdownIcon"
                 :size="iconSize"
                 :color="getIconColor"
+                :tooltip="iconTooltip"
+                @click="onClickIcon"
             />
         </dl-button>
         <dl-menu
@@ -132,6 +134,8 @@
                 :icon="dropdownIcon"
                 :size="iconSize"
                 :color="getIconColor"
+                :tooltip="iconTooltip"
+                @click="onClickIcon"
             />
         </div>
 
@@ -235,6 +239,11 @@ export default defineComponent({
         fluid: Boolean,
         icon: { type: String, required: false, default: '' },
         iconSize: { type: String, required: false, default: '20px' },
+        iconTooltip: {
+            type: String,
+            required: false,
+            default: null
+        },
         flat: Boolean,
         transform: {
             type: String as PropType<DlTextTransformOptions>,
@@ -276,6 +285,7 @@ export default defineComponent({
         'update:model-value',
         'update:model-value',
         'click',
+        'icon-clicked',
         'before-show',
         'show',
         'before-hide',
@@ -384,6 +394,10 @@ export default defineComponent({
             emit('click', e)
         }
 
+        function onClickIcon(e: Event) {
+            emit('icon-clicked', e)
+        }
+
         function onClickHide(e: Event) {
             stop(e)
             hide(e)
@@ -486,6 +500,7 @@ export default defineComponent({
             onShow,
             onHide,
             onClick,
+            onClickIcon,
             onClickHide,
             toggle,
             show,
