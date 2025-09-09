@@ -75,12 +75,19 @@ import {
     refocusTargetFn,
     conditionalHandler
 } from './utils'
-import { isMobileOrTablet } from '../../../utils'
+import {
+    addEvt,
+    isMobileOrTablet
+} from '../../../utils'
 import { v4 } from 'uuid'
 import {
     arrowNavigationEvents,
     useArrowNavigation
 } from '../../../hooks/use-arrow-navigation'
+
+const hoverGroupHiders: {
+    [group: string]: ((evt: AnchorEvent) => void)[]
+} = {}
 
 export default defineComponent({
     name: 'DlMenu',
@@ -107,6 +114,11 @@ export default defineComponent({
         cover: Boolean,
 
         square: Boolean,
+
+        hoverGroup: {
+            type: String,
+            default: ''
+        },
 
         anchor: {
             type: String,
@@ -206,10 +218,20 @@ export default defineComponent({
             unconfigureScrollTarget
         } = useScrollTarget(props, configureScrollTarget)
 
-        const { anchorEl, canShow } = useAnchor({
-            toggleKey: toggleKey.value,
-            ignoreEvents: ignoreEvents.value
-        })
+        const isMobile = computed(() => isMobileOrTablet())
+
+        const { anchorEl, canShow, anchorEvents } = useAnchor(
+            props.hoverGroup && !isMobile.value
+                ? {
+                    configureAnchorEl
+                }
+                : {
+                    toggleKey: toggleKey.value,
+                    ignoreEvents: ignoreEvents.value
+                }
+        )
+
+        Object.assign(anchorEvents, { delayShow })
 
         const screen = useWindowSize()
 
@@ -222,7 +244,7 @@ export default defineComponent({
 
         const isInitialized = ref(false)
 
-        const { hide } = useModelToggle({
+        const { show, hide } = useModelToggle({
             showing,
             canShow,
             handleShow,
@@ -281,8 +303,6 @@ export default defineComponent({
                 }
             })
         }
-
-        const isMobile = computed(() => isMobileOrTablet())
 
         function handleShow(evt: MouseEvent | TouchEvent) {
             isMenuOpen.value = true
@@ -463,7 +483,54 @@ export default defineComponent({
             })
         }
 
-        onBeforeUnmount(anchorCleanup as any)
+        const {
+            registerTimeout: registerHoverTimeout,
+            removeTimeout: removeHoverTimeout
+        } = useTimeout()
+
+        function delayShow(evt: AnchorEvent) {
+            for (const hider of hoverGroupHiders[props.hoverGroup]) {
+                if (hider !== delayHide) {
+                    hider(evt)
+                }
+            }
+            removeHoverTimeout()
+            registerHoverTimeout(() => {
+                show(evt)
+            }, 250)
+        }
+
+        function delayHide(evt: AnchorEvent) {
+            removeHoverTimeout()
+            registerHoverTimeout(() => {
+                hide(evt)
+            }, 250)
+        }
+
+        function configureAnchorEl() {
+            if (anchorEl.value === null) {
+                return
+            }
+            addEvt(anchorEvents, 'anchor', [
+                [anchorEl.value, 'mouseenter', 'delayShow', 'passive']
+            ])
+        }
+
+        if (props.hoverGroup) {
+            hoverGroupHiders[props.hoverGroup] = hoverGroupHiders[props.hoverGroup] ?? []
+            hoverGroupHiders[props.hoverGroup].push(delayHide)
+        }
+
+        onBeforeUnmount(() => {
+            anchorCleanup(false)
+            if (props.hoverGroup) {
+                const hiders = hoverGroupHiders[props.hoverGroup]
+                hiders.splice(hiders.indexOf(delayHide), 1)
+                if (hiders.length === 0) {
+                    delete hoverGroupHiders[props.hoverGroup]
+                }
+            }
+        })
 
         // expose public methods
         Object.assign(proxy, { focus, updatePosition })
