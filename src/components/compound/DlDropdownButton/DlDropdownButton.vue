@@ -65,7 +65,7 @@
                 :size="iconSize"
                 :color="getIconColor"
                 :tooltip="iconTooltip"
-                @click="onClickIcon"
+                @click="onIconClicked"
             />
         </dl-button>
         <dl-menu
@@ -135,7 +135,7 @@
                 :size="iconSize"
                 :color="getIconColor"
                 :tooltip="iconTooltip"
-                @click="onClickIcon"
+                @click="onIconClicked"
             />
         </div>
 
@@ -394,7 +394,7 @@ export default defineComponent({
             emit('click', e)
         }
 
-        function onClickIcon(e: Event) {
+        function onIconClicked(e: Event) {
             emit('icon-clicked', e)
         }
 
@@ -500,7 +500,7 @@ export default defineComponent({
             onShow,
             onHide,
             onClick,
-            onClickIcon,
+            onIconClicked,
             onClickHide,
             toggle,
             show,
