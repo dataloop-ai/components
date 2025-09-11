@@ -75,10 +75,7 @@ import {
     refocusTargetFn,
     conditionalHandler
 } from './utils'
-import {
-    addEvt,
-    isMobileOrTablet
-} from '../../../utils'
+import { addEvt, isMobileOrTablet } from '../../../utils'
 import { v4 } from 'uuid'
 import {
     arrowNavigationEvents,
@@ -223,12 +220,12 @@ export default defineComponent({
         const { anchorEl, canShow, anchorEvents } = useAnchor(
             props.hoverGroup && !isMobile.value
                 ? {
-                    configureAnchorEl
-                }
+                      configureAnchorEl
+                  }
                 : {
-                    toggleKey: toggleKey.value,
-                    ignoreEvents: ignoreEvents.value
-                }
+                      toggleKey: toggleKey.value,
+                      ignoreEvents: ignoreEvents.value
+                  }
         )
 
         Object.assign(anchorEvents, { delayShow })
@@ -517,7 +514,8 @@ export default defineComponent({
         }
 
         if (props.hoverGroup) {
-            hoverGroupHiders[props.hoverGroup] = hoverGroupHiders[props.hoverGroup] ?? []
+            hoverGroupHiders[props.hoverGroup] =
+                hoverGroupHiders[props.hoverGroup] ?? []
             hoverGroupHiders[props.hoverGroup].push(delayHide)
         }
 

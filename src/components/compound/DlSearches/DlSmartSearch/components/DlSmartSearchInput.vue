@@ -62,9 +62,7 @@
                     self="top left"
                 >
                     <div style="padding: 10px">
-                        <div class="tooltip-title">
-                            Schema Based Search
-                        </div>
+                        <div class="tooltip-title">Schema Based Search</div>
                         <div class="tooltip-subtitle">
                             A powerful and flexible search. Allows users to
                             construct queries based on specific field selection
@@ -430,14 +428,12 @@ export default defineComponent({
 
         const _normalizeLogicalOperators = (value: string): string => {
             const logicalOperatorsRegEx = /\s(and|or)\s/g
-            return value.replace(
-                logicalOperatorsRegEx,
-                (match, op, offset) => {
-                    const textBeforeTheMatch = value.substring(0, offset)
-                    const isMatchInsideQuotes = isInsideQuotedString(textBeforeTheMatch)
-                    return isMatchInsideQuotes ? match : ` ${op.toUpperCase()} `
-                }
-            )
+            return value.replace(logicalOperatorsRegEx, (match, op, offset) => {
+                const textBeforeTheMatch = value.substring(0, offset)
+                const isMatchInsideQuotes =
+                    isInsideQuotedString(textBeforeTheMatch)
+                return isMatchInsideQuotes ? match : ` ${op.toUpperCase()} `
+            })
         }
 
         const setInputFromSuggestion = (suggestion: any) => {
@@ -448,7 +444,7 @@ export default defineComponent({
             const search = searchQuery.value ?? ''
             const tokens = tokenize(search)
             let leftTokenIndex = tokens.length
-            while(leftTokenIndex-- > 0) {
+            while (leftTokenIndex-- > 0) {
                 if (tokens[leftTokenIndex].pos < caretAt.value) {
                     break
                 }
@@ -459,15 +455,19 @@ export default defineComponent({
                 caretPosition = value.length + 1
             } else {
                 const token = tokens[leftTokenIndex]
-                const tokenLeftText = token.text.substring(0, caretAt.value - token.pos)
-                const tokenRightText = token.text.substring(caretAt.value - token.pos)
+                const tokenLeftText = token.text.substring(
+                    0,
+                    caretAt.value - token.pos
+                )
+                const tokenRightText = token.text.substring(
+                    caretAt.value - token.pos
+                )
 
                 if (token.type === TokenType.WHITESPACE) {
                     // caret after space
                     token.text = ' ' + value + ' '
                     caretPosition = token.pos + 1 + value.length + 1
-                } else
-                if (['AND', 'OR'].includes(value)) {
+                } else if (['AND', 'OR'].includes(value)) {
                     // do not replace text if the value is AND or OR
                     token.text = value + ' ' + token.text
                     caretPosition = token.pos + value.length + 1
@@ -485,22 +485,36 @@ export default defineComponent({
                     // if there are dots in left side expression...
                     // looks like a bug in findSuggestions TODO find it - for now work around it here
                     const leftover = tokenRightText.match(/^\S+/)?.[0] || ''
-                    token.text = tokenLeftText + leftover + ' ' + value + ' ' +
+                    token.text =
+                        tokenLeftText +
+                        leftover +
+                        ' ' +
+                        value +
+                        ' ' +
                         tokenRightText.substring(leftover.length).trimStart()
-                    caretPosition = token.pos + tokenLeftText.length +
-                        leftover.length + 1 + value.length + 1
+                    caretPosition =
+                        token.pos +
+                        tokenLeftText.length +
+                        leftover.length +
+                        1 +
+                        value.length +
+                        1
                 } else {
                     // this| situation: replace whatever is there on the left side with the value
                     // this|situation: replace whatever is there on both sides with the value
-                    const newValue = token.type === TokenType.COMMA ? ', ' + value : value
+                    const newValue =
+                        token.type === TokenType.COMMA ? ', ' + value : value
                     token.text = newValue
                     caretPosition = token.pos + newValue.length
-                    if (tokens[leftTokenIndex + 1]?.type !== TokenType.WHITESPACE) {
+                    if (
+                        tokens[leftTokenIndex + 1]?.type !==
+                        TokenType.WHITESPACE
+                    ) {
                         token.text += ' '
                         caretPosition += 1
                     }
                 }
-                stringValue = tokens.map(token => token.text).join('')
+                stringValue = tokens.map((token) => token.text).join('')
             }
 
             setInputValue(stringValue)
@@ -733,11 +747,7 @@ export default defineComponent({
                     selection.deleteFromDocument()
                     selection
                         .getRangeAt(0)
-                        .insertNode(
-                            document.createTextNode(
-                                text
-                            )
-                        )
+                        .insertNode(document.createTextNode(text))
                     selection.collapseToEnd()
 
                     e.preventDefault()

@@ -89,11 +89,7 @@
         </dl-button>
 
         <dl-button label="Auto-opening Submenus">
-            <dl-menu
-                auto-close
-                anchor="top end"
-                self="top start"
-            >
+            <dl-menu auto-close anchor="top end" self="top start">
                 <dl-list bordered>
                     <dl-list-item
                         v-for="i in 3"
