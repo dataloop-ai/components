@@ -169,13 +169,17 @@
                         <slot name="before-options" />
                     </dl-item-section>
                 </dl-list-item>
-                <dl-list-item v-if="noOptions" :style="computedNoOptionsStyle">
+                <dl-list-item
+                    v-if="noOptions"
+                    :style="computedNoOptionsStyle"
+                    :padding="noOptionsPadding"
+                >
                     <dl-item-section color="dl-color-medium">
                         <slot name="no-options"> No options </slot>
                     </dl-item-section>
                 </dl-list-item>
                 <dl-list
-                    v-if="showMenuList"
+                    v-else-if="showMenuList"
                     class="select-list"
                     :padding="false"
                     :style="
@@ -506,6 +510,10 @@ export default defineComponent({
             default: false
         },
         afterOptionsPadding: {
+            type: String,
+            default: null
+        },
+        noOptionsPadding: {
             type: String,
             default: null
         },
