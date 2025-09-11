@@ -61,6 +61,7 @@ describe('DlMenu', () => {
             toggleKey: 'Enter',
             width: 'auto',
             height: 'auto',
+            hoverGroup: '',
             ignoreEvents: null
         })
         expect(wrapper.vm.showing).toBe(false)
