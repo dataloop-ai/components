@@ -17,7 +17,7 @@
                                 ? defaultIconColor
                                 : statusIconColor || defaultIconColor
                         "
-                        size="12px"
+                        size="16px"
                         :inline="false"
                     />
                 </div>
@@ -49,7 +49,7 @@
                             :disabled="disabled"
                             @mousedown="onClear"
                         />
-                        <dl-tooltip> Clear Query </dl-tooltip>
+                        <dl-tooltip> Clear </dl-tooltip>
                     </div>
                 </div>
                 <dl-tooltip
