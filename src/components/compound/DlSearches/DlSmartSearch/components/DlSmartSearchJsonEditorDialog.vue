@@ -88,25 +88,26 @@
                                 />
                             </template>
                         </dl-select>
-                        <div style="display: flex; flex-grow: 1" />
-                        <dl-button
-                            icon="icon-dl-align-left"
-                            tooltip="Align Left"
-                            flat
-                            color="secondary"
-                            padding="0px 3px"
-                            :disabled="alignDisabled"
-                            @click="alignJSON"
-                        />
-                        <dl-button
-                            icon="icon-dl-copy"
-                            tooltip="Copy"
-                            flat
-                            color="secondary"
-                            padding="0px 3px"
-                            :disabled="alignDisabled"
-                            @click="copyJSON"
-                        />
+                        <div>
+                            <dl-button
+                                icon="icon-dl-align-left"
+                                tooltip="Align Left"
+                                flat
+                                color="secondary"
+                                padding="0px 3px"
+                                :disabled="alignDisabled"
+                                @click="alignJSON"
+                            />
+                            <dl-button
+                                icon="icon-dl-copy"
+                                tooltip="Copy"
+                                flat
+                                color="secondary"
+                                padding="0px 3px"
+                                :disabled="alignDisabled"
+                                @click="copyJSON"
+                            />
+                        </div>
                     </div>
                     <dl-json-editor
                         ref="jsonEditor"
