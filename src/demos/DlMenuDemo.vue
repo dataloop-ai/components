@@ -88,6 +88,61 @@
             </dl-menu>
         </dl-button>
 
+        <dl-button label="Auto-opening Submenus">
+            <dl-menu auto-close anchor="top end" self="top start">
+                <dl-list bordered>
+                    <dl-list-item
+                        v-for="i in 3"
+                        :key="i"
+                        clickable
+                        end-icon="icon-dl-right-chevron"
+                    >
+                        <dl-item-section no-wrap>
+                            Submenu {{ i }}
+                        </dl-item-section>
+                        <dl-menu
+                            auto-close
+                            anchor="top end"
+                            self="top start"
+                            hover-group="main-submenus"
+                        >
+                            <dl-list bordered>
+                                <dl-list-item
+                                    v-for="j in 3"
+                                    :key="j"
+                                    clickable
+                                    end-icon="icon-dl-right-chevron"
+                                >
+                                    <dl-item-section no-wrap>
+                                        Submenu {{ i }}. {{ j }}
+                                    </dl-item-section>
+                                    <dl-menu
+                                        auto-close
+                                        anchor="top end"
+                                        self="top start"
+                                        :hover-group="`submenus-${i}`"
+                                    >
+                                        <dl-list bordered>
+                                            <dl-list-item
+                                                v-for="k in 3"
+                                                :key="k"
+                                                clickable
+                                                dense
+                                            >
+                                                <dl-item-section no-wrap>
+                                                    Submenu item {{ k }}
+                                                </dl-item-section>
+                                            </dl-list-item>
+                                        </dl-list>
+                                    </dl-menu>
+                                </dl-list-item>
+                            </dl-list>
+                        </dl-menu>
+                    </dl-list-item>
+                </dl-list>
+            </dl-menu>
+        </dl-button>
+
         <dl-button label="Basic Menu With SubText">
             This is a menu button
             <dl-menu>

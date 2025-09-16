@@ -31,6 +31,7 @@ describe('DlDropdownButton', () => {
                 icon: '',
                 label: '',
                 iconSize: '20px',
+                iconTooltip: null,
                 inheritIconColor: false,
                 mainButtonStyle: '',
                 maxHeight: null,
