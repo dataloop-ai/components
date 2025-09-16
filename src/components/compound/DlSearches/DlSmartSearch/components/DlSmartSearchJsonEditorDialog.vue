@@ -91,6 +91,7 @@
                         <div style="display: flex; flex-grow: 1" />
                         <dl-button
                             icon="icon-dl-align-left"
+                            tooltip="Align Left"
                             flat
                             color="secondary"
                             padding="0px 3px"
@@ -99,6 +100,7 @@
                         />
                         <dl-button
                             icon="icon-dl-copy"
+                            tooltip="Copy"
                             flat
                             color="secondary"
                             padding="0px 3px"
