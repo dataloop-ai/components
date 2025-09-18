@@ -145,6 +145,7 @@
                 </div>
             </div>
             <dl-menu
+                v-if="!noOptions || !hideEmptyMenu"
                 ref="menu"
                 v-model="isExpanded"
                 fit-container
@@ -518,6 +519,10 @@ export default defineComponent({
             default: null
         },
         keepFocusOnBlur: {
+            type: Boolean,
+            default: false
+        },
+        hideEmptyMenu: {
             type: Boolean,
             default: false
         }
