@@ -46,7 +46,7 @@
         </div>
         <div
             class="select-wrapper"
-            tabindex="0"
+            :tabindex="removeTabIndex ? undefined : 0"
             :style="placeholderStyles"
             @keydown="handleKeyDown"
         >
@@ -515,6 +515,10 @@ export default defineComponent({
             default: false
         },
         hideEmptyMenu: {
+            type: Boolean,
+            default: false
+        },
+        removeTabIndex: {
             type: Boolean,
             default: false
         }
