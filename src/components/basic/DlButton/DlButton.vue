@@ -203,7 +203,11 @@ export default defineComponent({
         /**
          * Overwrite default text color on hover
          */
-        hoverTextColor: { type: String, default: null }
+        hoverTextColor: { type: String, default: null },
+        /**
+         * Override icon color when button is disabled
+         */
+        disabledIconColor: { type: String, default: null }
     },
     emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
@@ -243,6 +247,9 @@ export default defineComponent({
         },
         getIconColor(): string {
             if (this.disabled) {
+                if (this.disabledIconColor) {
+                    return this.disabledIconColor
+                }
                 return setTextColor({
                     disabled: this.disabled,
                     outlined: this.outlined,
@@ -569,6 +576,7 @@ export default defineComponent({
 
 .dl-button-icon {
     transition: var(--dl-button-text-transition-duration);
+    transition-property: color;
 }
 
 .dl-button-container {
