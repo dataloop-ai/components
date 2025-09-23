@@ -207,7 +207,7 @@ export default defineComponent({
         /**
          * Override icon color when button is disabled
          */
-        overrideDisabledIconColor: { type: String, default: null }
+        disabledIconColor: { type: String, default: null }
     },
     emits: ['click', 'mousedown', 'dblclick'],
     setup(props) {
@@ -247,8 +247,8 @@ export default defineComponent({
         },
         getIconColor(): string {
             if (this.disabled) {
-                if (this.overrideDisabledIconColor) {
-                    return this.overrideDisabledIconColor
+                if (this.disabledIconColor) {
+                    return this.disabledIconColor
                 }
                 return setTextColor({
                     disabled: this.disabled,
