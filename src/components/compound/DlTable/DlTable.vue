@@ -60,7 +60,7 @@
                     >
                         <DlTr>
                             <th
-                                v-if="hasDraggableRows"
+                                v-if="isTreeTable"
                                 class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
@@ -156,7 +156,7 @@
                                     <div
                                         v-if="
                                             visibleColumns &&
-                                                visibleColumns.length
+                                            visibleColumns.length
                                         "
                                         class="visible-columns-justify-end"
                                         style="width: 100%; display: flex"
@@ -269,8 +269,8 @@
                                     isRowSelected(getRowKey(props.item))
                                         ? 'selected'
                                         : hasAnyAction
-                                            ? ' cursor-pointer'
-                                            : ''
+                                        ? ' cursor-pointer'
+                                        : ''
                                 "
                                 :no-hover="noHover"
                                 @click="
@@ -457,7 +457,7 @@
                     >
                         <DlTr>
                             <th
-                                v-if="hasDraggableRows"
+                                v-if="isTreeTable"
                                 class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
@@ -555,7 +555,7 @@
                                     <div
                                         v-if="
                                             visibleColumns &&
-                                                visibleColumns.length
+                                            visibleColumns.length
                                         "
                                         class="visible-columns-justify-end"
                                         style="width: 100%; display: flex"
@@ -666,8 +666,8 @@
                             <dl-top-scroll
                                 v-if="
                                     tableScroll &&
-                                        infiniteScroll &&
-                                        !isDataEmpty
+                                    infiniteScroll &&
+                                    !isDataEmpty
                                 "
                                 :container-ref="tableScroll"
                                 @scroll-to-top="
@@ -701,8 +701,8 @@
                                         isRowSelected(getRowKey(row))
                                             ? 'selected'
                                             : hasAnyAction
-                                                ? ' cursor-pointer'
-                                                : ''
+                                            ? ' cursor-pointer'
+                                            : ''
                                     "
                                     :no-hover="noHover"
                                     @click="onTrClick($event, row, pageIndex)"
@@ -837,8 +837,8 @@
                             <dl-bottom-scroll
                                 v-if="
                                     tableScroll &&
-                                        infiniteScroll &&
-                                        !isDataEmpty
+                                    infiniteScroll &&
+                                    !isDataEmpty
                                 "
                                 :container-ref="tableScroll"
                                 @scroll-to-bottom="
@@ -895,7 +895,7 @@
                     <div
                         v-if="
                             hasBottomSelectionBanner &&
-                                selectedRowsLabel(rowsSelectedNumber)
+                            selectedRowsLabel(rowsSelectedNumber)
                         "
                         class="dl-table__control"
                     >
