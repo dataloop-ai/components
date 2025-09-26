@@ -182,6 +182,7 @@ export function useTreeTableRowSelection(
         selectedItemsNested.value = selectedItems
 
         emit('selected-items', selectedItems)
+        return selectedItems
     }
 
     function isIncludedInSelectedNestedItems(
@@ -257,12 +258,13 @@ export function useTreeTableRowSelection(
         if (select) {
             const allRows = getAllRows(computedRows.value)
             const allKeys = allRows.map(getRowKey.value)
-            updateSelection(allKeys, allRows, true)
+            return updateSelection(allKeys, allRows, true)
         } else {
             clearSelection()
             selectedItemsNested.value = []
             emit('selected-items', [])
         }
+        return []
     }
 
     return {
