@@ -513,7 +513,12 @@ export default defineComponent({
                 props.rowKey
             )
 
-            updateSelection(childrenKeys, childrenCollection, adding, event)
+            selectedData.value = updateSelection(
+                childrenKeys,
+                childrenCollection,
+                adding,
+                event
+            )
         }
         const headerSelectedValue = computed(() => {
             if (selectedData.value.length === tableRows.value.length)
@@ -538,16 +543,7 @@ export default defineComponent({
             updateSelected(value ? tableRows.value : [])
         }
         const updateSelected = (payload: DlTableRow[]) => {
-            const hasSelection = selectedData.value.length > 0
-            selectedData.value = payload
-
-            if (payload.length > 0) {
-                selectAllRows(true)
-            } else if (payload.length === 0 && hasSelection) {
-                selectAllRows(false)
-            } else {
-                emitSelectedItems(payload)
-            }
+            selectedData.value = selectAllRows(!allRowsSelected.value)
         }
         const emitSelectedItems = (payload: DlTableRow[]) => {
             emit('selected-items', payload)
