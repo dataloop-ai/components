@@ -560,7 +560,7 @@ const columns2 = [
         hint: 'test hint'
     }
 ]
-function markAllSelectable(list: any[]): any[] {
+function markAllSelectable(list: DlTableRow[]): DlTableRow[] {
     return list.map((r) => ({
         ...r,
         isSelectable: true,

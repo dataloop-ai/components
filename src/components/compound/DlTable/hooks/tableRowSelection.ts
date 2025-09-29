@@ -57,8 +57,8 @@ export function useTableRowSelection(
         while (stack.length) {
             const row = stack.pop() as DlTableRow
             if (selectedKeys.value[getRowKey.value(row)] === true) return true
-            if ((row as any).children && (row as any).children.length) {
-                stack.push(...(row as any).children)
+            if (row.children && row.children.length) {
+                stack.push(...row.children)
             }
         }
         return false
