@@ -22,6 +22,7 @@ export type DlTableProps = {
 
 export type DlTableRow = {
     [key: string]: any
+    children?: DlTableRow[]
 }
 
 export type DlTableFilter = string | Record<string, any>

@@ -51,14 +51,18 @@ export function useTableRowSelection(
             )
     )
 
-    const someRowsSelected = computed(
-        () =>
-            allRowsSelected.value !== true &&
-            computedRows.value.some(
-                (row) => selectedKeys.value[getRowKey.value(row)] === true
-            )
-    )
-
+    const someRowsSelected = computed(() => {
+        if (allRowsSelected.value === true) return false
+        const stack = computedRows.value.slice()
+        while (stack.length) {
+            const row = stack.pop()
+            if (selectedKeys.value[getRowKey.value(row)] === true) return true
+            if (row.children && row.children.length) {
+                stack.push(...row.children)
+            }
+        }
+        return false
+    })
     const rowsSelectedNumber = computed(() => props.selected.length)
 
     function isRowSelected(key: string) {
