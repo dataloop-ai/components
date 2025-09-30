@@ -513,7 +513,12 @@ export default defineComponent({
                 props.rowKey
             )
 
-            updateSelection(childrenKeys, childrenCollection, adding, event)
+            selectedData.value = updateSelection(
+                childrenKeys,
+                childrenCollection,
+                adding,
+                event
+            )
         }
         const headerSelectedValue = computed(() => {
             if (selectedData.value.length === tableRows.value.length)
@@ -538,16 +543,7 @@ export default defineComponent({
             updateSelected(value ? tableRows.value : [])
         }
         const updateSelected = (payload: DlTableRow[]) => {
-            const hasSelection = selectedData.value.length > 0
-            selectedData.value = payload
-
-            if (payload.length > 0) {
-                selectAllRows(true)
-            } else if (payload.length === 0 && hasSelection) {
-                selectAllRows(false)
-            } else {
-                emitSelectedItems(payload)
-            }
+            selectedData.value = selectAllRows(!allRowsSelected.value)
         }
         const emitSelectedItems = (payload: DlTableRow[]) => {
             emit('selected-items', payload)
@@ -758,7 +754,10 @@ export default defineComponent({
                                 animation: 150,
                                 fallbackOnBody: true,
                                 invertSwap: true,
-                                swapThreshold: 0.5
+                                swapThreshold: 0.85,
+                                handle: '.draggable-icon',
+                                ghostClass: 'dl-table-ghost-row',
+                                onMove: handleMoveEvent
                             }
                         },
                         isVue2 ? tbodyEls : () => tbodyEls
@@ -894,6 +893,50 @@ export default defineComponent({
                 draggedRow: draggedRow.value,
                 targetRow: targetRow.value
             })
+        }
+
+        const handleMoveEvent = (event: SortableJs.MoveEvent): boolean => {
+            if (!draggedRow.value) {
+                return false
+            }
+
+            const targetRow = getTargetRowFromMoveEvent(event)
+            if (!targetRow) {
+                return false
+            }
+
+            return checkParentCondition(draggedRow.value, targetRow)
+        }
+
+        const getTargetRowFromMoveEvent = (
+            event: SortableJs.MoveEvent
+        ): DlTableRow | null => {
+            const { related: targetElement } = event
+
+            if (!targetElement) {
+                return null
+            }
+
+            let targetRowId = targetElement.getAttribute('data-id')
+            if (!targetRowId && targetElement.tagName === 'TBODY') {
+                const firstTr = targetElement.querySelector('tr')
+                targetRowId = firstTr?.getAttribute('data-id') || null
+            }
+
+            if (!targetRowId) {
+                return null
+            }
+            let foundTargetRow = tableRows.value.find(
+                (row: DlTableRow) => row.id === targetRowId
+            )
+            if (!foundTargetRow) {
+                foundTargetRow = findRowInNestedStructure(
+                    targetRowId,
+                    props.rows
+                )
+            }
+
+            return foundTargetRow
         }
 
         const checkParentCondition = (
@@ -1073,7 +1116,10 @@ export default defineComponent({
                                     animation: 150,
                                     fallbackOnBody: true,
                                     invertSwap: true,
-                                    swapThreshold: 0.5
+                                    swapThreshold: 0.85,
+                                    handle: '.draggable-icon',
+                                    ghostClass: 'dl-table-ghost-row',
+                                    onMove: handleMoveEvent
                                 }
                             },
                             isVue2 ? children : () => children
