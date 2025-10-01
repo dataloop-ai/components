@@ -355,6 +355,7 @@ export default defineComponent({
         const hasFlatTreeData = true
         const draggedRow = ref<DlTableRow | null>(null)
         const targetRow = ref<DlTableRow | null>(null)
+        const storedValidTarget = ref<DlTableRow | null>(null)
 
         const vue2h = ref()
 
@@ -783,24 +784,38 @@ export default defineComponent({
         }
 
         const handleEndEvent = (event: SortableJs.SortableEvent) => {
+            let finalTarget = targetRow.value
+            let shouldSkipValidation = false
+
+            if (storedValidTarget.value && targetRow.value) {
+                const targetParent = findParentForChild(targetRow.value.id, tableRows.value)
+                if (targetParent === storedValidTarget.value.id) {
+                    finalTarget = storedValidTarget.value
+                    shouldSkipValidation = true
+                }
+            }
+
             emit('row-drag-end', {
                 draggedRow: draggedRow.value,
-                targetRow: targetRow.value
+                targetRow: finalTarget
             })
-            const isDragValid = checkParentCondition(
-                draggedRow.value,
-                targetRow.value
-            )
+
+            const isDragValid = shouldSkipValidation || checkParentCondition(draggedRow.value, finalTarget)
             if (isDragValid) {
+                const smartSortingMovement = {
+                    ...sortingMovement.value,
+                    lastId: finalTarget?.id || sortingMovement.value.lastId
+                }
                 emit(
                     'row-reorder',
-                    moveNestedRow(tableRows.value, event, sortingMovement.value)
+                    moveNestedRow(tableRows.value, event, smartSortingMovement)
                 )
             } else {
                 mainTableKey.value = v4()
             }
             draggedRow.value = null
             targetRow.value = null
+            storedValidTarget.value = null
         }
 
         const handleChangeEvent = (event: any) => {
@@ -905,7 +920,17 @@ export default defineComponent({
                 return false
             }
 
-            return checkParentCondition(draggedRow.value, targetRow)
+
+            if (targetRow.disableDraggable) {
+                return false
+            }
+
+            const isValid = checkParentCondition(draggedRow.value, targetRow)
+            
+            if (isValid) {
+                storedValidTarget.value = targetRow
+            }
+            return isValid
         }
 
         const getTargetRowFromMoveEvent = (
