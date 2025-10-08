@@ -7,12 +7,14 @@
         }`"
     >
         <label
-            v-if="!!leftLabel"
+            v-if="hasLeftLabel"
             class="left dl-switch-label"
             :for="computedId"
             :style="cssLabelVars"
         >
-            {{ leftLabel }}
+            <slot name="left-label">
+                {{ leftLabel }}
+            </slot>
         </label>
         <span
             class="dl-switch-container"
@@ -35,12 +37,14 @@
             />
         </span>
         <label
-            v-if="!!rightLabel"
+            v-if="hasRightLabel"
             class="right dl-switch-label"
             :for="computedId"
             :style="cssLabelVars"
         >
-            {{ rightLabel }}
+            <slot name="right-label">
+                {{ rightLabel }}
+            </slot>
         </label>
     </div>
 </template>
@@ -142,6 +146,12 @@ export default defineComponent({
             return this.modelIsArray
                 ? this.index === -1
                 : toRaw(this.modelValue) === toRaw(this.falseValue)
+        },
+        hasLeftLabel(): boolean {
+            return !!this.leftLabel || !!this.$slots['left-label']
+        },
+        hasRightLabel(): boolean {
+            return !!this.rightLabel || !!this.$slots['right-label']
         },
         cssVars(): Record<string, string> {
             return {
