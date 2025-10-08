@@ -46,7 +46,7 @@
         </div>
         <div
             class="select-wrapper"
-            tabindex="0"
+            :tabindex="removeTabIndex ? undefined : 0"
             :style="placeholderStyles"
             @keydown="handleKeyDown"
         >
@@ -145,6 +145,7 @@
                 </div>
             </div>
             <dl-menu
+                v-if="!noOptions || !hideEmptyMenu"
                 ref="menu"
                 v-model="isExpanded"
                 fit-container
@@ -518,6 +519,14 @@ export default defineComponent({
             default: null
         },
         keepFocusOnBlur: {
+            type: Boolean,
+            default: false
+        },
+        hideEmptyMenu: {
+            type: Boolean,
+            default: false
+        },
+        removeTabIndex: {
             type: Boolean,
             default: false
         }

@@ -110,7 +110,7 @@
                     :loading="loading"
                     :rows="tableRows"
                     :resizable="resizable"
-                    row-key="name"
+                    row-key="id"
                     color="dl-color-secondary"
                     title="Table Title"
                     :virtual-scroll="vScroll"
@@ -560,7 +560,15 @@ const columns2 = [
         hint: 'test hint'
     }
 ]
-
+function markAllSelectable(list: DlTableRow[]): DlTableRow[] {
+    return list.map((r) => ({
+        ...r,
+        isSelectable: true,
+        ...(Array.isArray(r.children) && r.children.length
+            ? { children: markAllSelectable(r.children) }
+            : {})
+    }))
+}
 export default defineComponent({
     components: {
         DlSwitch,
@@ -583,7 +591,7 @@ export default defineComponent({
         const denseState = ref([])
         const virtualScroll = ref([])
         const resizableState = ref([])
-        const tableRows = ref(rows)
+        const tableRows = ref(markAllSelectable(rows))
         const tableRowsVS = ref(cloneDeep(rows))
         const draggable = ref('both')
         const tableColumns = ref(columns)

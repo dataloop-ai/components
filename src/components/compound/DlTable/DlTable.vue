@@ -60,7 +60,7 @@
                     >
                         <DlTr>
                             <th
-                                v-if="hasDraggableRows"
+                                v-if="isTreeTable"
                                 class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"
@@ -457,7 +457,7 @@
                     >
                         <DlTr>
                             <th
-                                v-if="hasDraggableRows"
+                                v-if="isTreeTable"
                                 class="dl-table--col-auto-width empty-col"
                                 :data-resizable="false"
                                 style="width: 25px"

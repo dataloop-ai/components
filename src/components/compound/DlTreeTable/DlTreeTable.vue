@@ -355,6 +355,7 @@ export default defineComponent({
         const hasFlatTreeData = true
         const draggedRow = ref<DlTableRow | null>(null)
         const targetRow = ref<DlTableRow | null>(null)
+        const storedValidTarget = ref<DlTableRow | null>(null)
 
         const vue2h = ref()
 
@@ -513,7 +514,12 @@ export default defineComponent({
                 props.rowKey
             )
 
-            updateSelection(childrenKeys, childrenCollection, adding, event)
+            selectedData.value = updateSelection(
+                childrenKeys,
+                childrenCollection,
+                adding,
+                event
+            )
         }
         const headerSelectedValue = computed(() => {
             if (selectedData.value.length === tableRows.value.length)
@@ -538,16 +544,7 @@ export default defineComponent({
             updateSelected(value ? tableRows.value : [])
         }
         const updateSelected = (payload: DlTableRow[]) => {
-            const hasSelection = selectedData.value.length > 0
-            selectedData.value = payload
-
-            if (payload.length > 0) {
-                selectAllRows(true)
-            } else if (payload.length === 0 && hasSelection) {
-                selectAllRows(false)
-            } else {
-                emitSelectedItems(payload)
-            }
+            selectedData.value = selectAllRows(!allRowsSelected.value)
         }
         const emitSelectedItems = (payload: DlTableRow[]) => {
             emit('selected-items', payload)
@@ -758,7 +755,10 @@ export default defineComponent({
                                 animation: 150,
                                 fallbackOnBody: true,
                                 invertSwap: true,
-                                swapThreshold: 0.5
+                                swapThreshold: 0.85,
+                                handle: '.draggable-icon',
+                                ghostClass: 'dl-table-ghost-row',
+                                onMove: handleMoveEvent
                             }
                         },
                         isVue2 ? tbodyEls : () => tbodyEls
@@ -784,24 +784,43 @@ export default defineComponent({
         }
 
         const handleEndEvent = (event: SortableJs.SortableEvent) => {
+            let finalTarget = targetRow.value
+            let shouldSkipValidation = false
+
+            if (storedValidTarget.value && targetRow.value) {
+                const targetParent = findParentForChild(
+                    targetRow.value.id,
+                    tableRows.value
+                )
+                if (targetParent === storedValidTarget.value.id) {
+                    finalTarget = storedValidTarget.value
+                    shouldSkipValidation = true
+                }
+            }
+
             emit('row-drag-end', {
                 draggedRow: draggedRow.value,
-                targetRow: targetRow.value
+                targetRow: finalTarget
             })
-            const isDragValid = checkParentCondition(
-                draggedRow.value,
-                targetRow.value
-            )
+
+            const isDragValid =
+                shouldSkipValidation ||
+                checkParentCondition(draggedRow.value, finalTarget)
             if (isDragValid) {
+                const smartSortingMovement = {
+                    ...sortingMovement.value,
+                    lastId: finalTarget?.id || sortingMovement.value.lastId
+                }
                 emit(
                     'row-reorder',
-                    moveNestedRow(tableRows.value, event, sortingMovement.value)
+                    moveNestedRow(tableRows.value, event, smartSortingMovement)
                 )
             } else {
                 mainTableKey.value = v4()
             }
             draggedRow.value = null
             targetRow.value = null
+            storedValidTarget.value = null
         }
 
         const handleChangeEvent = (event: any) => {
@@ -894,6 +913,59 @@ export default defineComponent({
                 draggedRow: draggedRow.value,
                 targetRow: targetRow.value
             })
+        }
+
+        const handleMoveEvent = (event: SortableJs.MoveEvent): boolean => {
+            if (!draggedRow.value) {
+                return false
+            }
+
+            const targetRow = getTargetRowFromMoveEvent(event)
+            if (!targetRow) {
+                return false
+            }
+
+            if (targetRow.disableDraggable) {
+                return false
+            }
+
+            const isValid = checkParentCondition(draggedRow.value, targetRow)
+
+            if (isValid) {
+                storedValidTarget.value = targetRow
+            }
+            return isValid
+        }
+
+        const getTargetRowFromMoveEvent = (
+            event: SortableJs.MoveEvent
+        ): DlTableRow | null => {
+            const { related: targetElement } = event
+
+            if (!targetElement) {
+                return null
+            }
+
+            let targetRowId = targetElement.getAttribute('data-id')
+            if (!targetRowId && targetElement.tagName === 'TBODY') {
+                const firstTr = targetElement.querySelector('tr')
+                targetRowId = firstTr?.getAttribute('data-id') || null
+            }
+
+            if (!targetRowId) {
+                return null
+            }
+            let foundTargetRow = tableRows.value.find(
+                (row: DlTableRow) => row.id === targetRowId
+            )
+            if (!foundTargetRow) {
+                foundTargetRow = findRowInNestedStructure(
+                    targetRowId,
+                    props.rows
+                )
+            }
+
+            return foundTargetRow
         }
 
         const checkParentCondition = (
@@ -1073,7 +1145,10 @@ export default defineComponent({
                                     animation: 150,
                                     fallbackOnBody: true,
                                     invertSwap: true,
-                                    swapThreshold: 0.5
+                                    swapThreshold: 0.85,
+                                    handle: '.draggable-icon',
+                                    ghostClass: 'dl-table-ghost-row',
+                                    onMove: handleMoveEvent
                                 }
                             },
                             isVue2 ? children : () => children
