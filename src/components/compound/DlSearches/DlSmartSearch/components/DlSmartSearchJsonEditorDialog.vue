@@ -37,7 +37,15 @@
                                 </span>
                             </template>
                             <template #option="scope">
-                                <div class="json-query-menu-option">
+                                <div
+                                    v-if="selectOptions.length < 2"
+                                    class="json-query-menu-no-option"
+                                    disabled
+                                    style="cursor: default !important; padding: 14px 0 10px 0;"
+                                >
+                                    No Saved Queries
+                                </div>
+                                <div v-else class="json-query-menu-option">
                                     <div class="json-query-menu-option-label">
                                         {{ scope.opt.label }}
                                     </div>
@@ -70,7 +78,7 @@
                             </template>
                             <template #no-options>
                                 <div class="json-query-menu-no-option">
-                                    {{ noOptionsLabel }}
+                                    No Results Found
                                 </div>
                                 <dl-separator
                                     style="margin: 0 0 2px 0 !important"
@@ -334,12 +342,6 @@ export default defineComponent({
             }
         )
 
-        const noOptionsLabel = computed<string>(() => {
-            return selectOptions.value.length
-                ? 'No Results Found'
-                : 'No Saved Queries'
-        })
-
         watch(
             selectedFilter,
             () => {
@@ -483,7 +485,6 @@ export default defineComponent({
             showSaveDialog,
             stringifiedJSON,
             selectedOption,
-            noOptionsLabel,
             hasActiveFilter,
             alignJSON,
             copyJSON,
