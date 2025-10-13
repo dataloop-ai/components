@@ -523,7 +523,7 @@ export default defineComponent({
     padding: 6px 16px;
 }
 .json-editor {
-    height: 100%;
+    height: calc(100% - 40px);
     --jse-main-border: none;
 }
 
