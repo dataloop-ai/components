@@ -4,7 +4,7 @@
             v-model="isOpen"
             :height="500"
             :width="800"
-            style="--dl-dialog-box-footer-padding: 10px 16px"
+            style="--dl-dialog-box-footer-padding: 10px 16px; --dl-dialog-box-content-padding: 0"
         >
             <template #header>
                 <dl-dialog-box-header
@@ -15,10 +15,7 @@
             </template>
             <template #body>
                 <div class="json-editor-layout">
-                    <div
-                        class="json-query-menu"
-                        style="margin-bottom: 10px"
-                    >
+                    <div class="json-query-menu">
                         <dl-select
                             :model-value="selectedOption"
                             ref="jsonQueryMenu"
@@ -26,6 +23,7 @@
                             :options="selectOptions"
                             placeholder="New Query"
                             searchable
+                            size="m"
                             after-options-padding="0"
                             no-options-padding="0"
                             menu-style="overflow-y: hidden;"
@@ -37,7 +35,15 @@
                                 </span>
                             </template>
                             <template #option="scope">
-                                <div class="json-query-menu-option">
+                                <div
+                                    v-if="selectOptions.length < 2"
+                                    class="json-query-menu-no-option"
+                                    disabled
+                                    style="cursor: default !important; padding: 14px 0 10px 0;"
+                                >
+                                    No Saved Queries
+                                </div>
+                                <div v-else class="json-query-menu-option">
                                     <div class="json-query-menu-option-label">
                                         {{ scope.opt.label }}
                                     </div>
@@ -70,7 +76,7 @@
                             </template>
                             <template #no-options>
                                 <div class="json-query-menu-no-option">
-                                    {{ noOptionsLabel }}
+                                    No Results Found
                                 </div>
                                 <dl-separator
                                     style="margin: 0 0 2px 0 !important"
@@ -334,12 +340,6 @@ export default defineComponent({
             }
         )
 
-        const noOptionsLabel = computed<string>(() => {
-            return selectOptions.value.length
-                ? 'No Results Found'
-                : 'No Saved Queries'
-        })
-
         watch(
             selectedFilter,
             () => {
@@ -483,7 +483,6 @@ export default defineComponent({
             showSaveDialog,
             stringifiedJSON,
             selectedOption,
-            noOptionsLabel,
             hasActiveFilter,
             alignJSON,
             copyJSON,
@@ -503,22 +502,29 @@ export default defineComponent({
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .json-editor-layout {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-.json-editor-footer,
-.json-query-menu {
+.json-editor-footer {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
+.json-query-menu {
+    display: flex;
+    align-items: center;
+    background-color: var(--dl-color-fill);
+    justify-content: space-between;
+    padding: 6px 16px;
+}
 .json-editor {
-    height: 100%;
+    height: calc(100% - 40px);
+    --jse-main-border: none;
 }
 
 .json-query-menu-option {
@@ -527,7 +533,7 @@ export default defineComponent({
 }
 .json-query-menu-option-label,
 .json-query-menu-selected {
-    line-height: 20px;
+    padding-top: 3px;
     white-space: nowrap;
     display: inline-block;
     width: 265px;
