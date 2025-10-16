@@ -1,38 +1,142 @@
-# [Dataloop Components Library](https://dataloop-ai.github.io/components/) ![components version](https://img.shields.io/npm/v/@dataloop-ai/components?label=Latest%20Library%20Version) ![release status](https://img.shields.io/badge/Relese%20Status-Beta-yellowgreen)
+# **Dataloop Components Library**
 
-Welcome to the Dataloop Components Library, which contains custom-made Vue components for the Dataloop platform and apps use. The Vue components are written using the Vue3 composition API and can be used in Vue2 projects as well, as long as you install vue-demi. You can find our documentation with our Storybook link [here](https://dataloop-ai.github.io/components/).
+[![Components Version](https://img.shields.io/npm/v/@dataloop-ai/components?label=Latest%20Library%20Version)](https://www.npmjs.com/package/@dataloop-ai/components)
+![Release Status](https://img.shields.io/badge/Release%20Status-Beta-yellowgreen)
 
-## Release Status
-The current release status is beta. You can check the latest library version by looking at the shield above or by visiting our npm page.
+📚 [Storybook Documentation](https://dataloop-ai.github.io/components/)
 
-## Development
+A customizable Vue components library created specifically for the Dataloop platform and related applications. Built using the Vue3 Composition API, these components maintain compatibility with Vue2 via `vue-demi`.
 
-Working with this repository is straightforward, as it already has hooks set up to guarantee high code quality. The repository has automatic linting on staged files and runs tests. If any tests fail, the commit itself will fail too
+---
 
-### Using Components in other projects
-Using our components is simple: just install the npm package and import them normally into your Vue app. If you're working on a Vue2 project, make sure to install @vue/composition-api.
+## **Table of Contents**
 
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Using Components](#using-components)
+  - [Adding New Components](#adding-new-components)
+- [Development](#development)
+  - [Project Setup](#project-setup)
+  - [Available Scripts](#available-scripts)
+- [Troubleshooting](#troubleshooting)
+- [Security Guidelines](#security-guidelines)
 
-### Adding new Components
-To add new components, you are required to open a pull request. The pull request must contain the following to be approved:
+---
 
-- The component Vue file
-- The story relating to the component (for Storybook integration)
-- Tests for the component
+## **Overview**
 
-Any pull requests with missing requirements will not be approved.
+The `Dataloop Components Library` provides reusable, maintainable, and tested Vue components. Components are documented and visualized using Storybook, ensuring seamless integration and straightforward development workflows.
 
-## Scripts
-The work environment is set up to be used on Visual Studio Code. 
+- **Vue3 Composition API**
+- **Backward compatibility with Vue2** (requires `vue-demi`)
+- **Built-in tests and linting**
 
-The launch.json file contains three main configurations:
+---
 
-1. Running a Vite server to simulate the Vue3 environment
-2. Running a Storybook server to view the stories
-3. Running tests
+## **Prerequisites**
 
-You can also access these commands by running the following:
+- **Node.js** (v14+ recommended)
+- **npm** (v6+ recommended)
+- **Git**
+- **Visual Studio Code** (recommended development environment)
 
-1. npm run dev (for the Vite server)
-2. npm run storybook (for the Storybook server)
-3. npm run test (for running tests)
+---
+
+## **Installation**
+
+Install components via npm from the public registry:
+
+```bash
+npm i @dataloop-ai/components
+```
+
+**For Vue2 projects:**
+
+```bash
+npm i @vue/composition-api vue-demi
+```
+
+---
+
+## **Usage**
+
+### **Using Components**
+
+Import and use components in your Vue application:
+
+```vue
+<script setup>
+import { DlButton } from '@dataloop-ai/components'
+</script>
+
+<template>
+  <DlButton label="Click Me" />
+</template>
+```
+
+### **Adding New Components**
+
+To add a new component, create a Pull Request (PR) with:
+
+- Component Vue file (`ComponentName.vue`)
+- Corresponding Storybook story file (`ComponentName.stories.js`)
+- Comprehensive component tests
+
+Any PR missing these elements will not be approved.
+
+---
+
+## **Development**
+
+### **Project Setup**
+
+Clone and prepare your development environment:
+
+```bash
+git clone <repository-url>
+cd components
+npm install
+```
+
+### **Available Scripts**
+
+Use these scripts for local development:
+
+| Command                | Description                                      | Usage                   |
+|------------------------|--------------------------------------------------|-------------------------|
+| `npm run dev`          | Runs a local Vite server for component testing   | `npm run dev`           |
+| `npm run storybook`    | Runs a local Storybook server                    | `npm run storybook`     |
+| `npm run test`         | Runs all component tests                         | `npm run test`          |
+
+**Visual Studio Code configurations** (`launch.json`):
+
+- Vite server for Vue3 environment
+- Storybook server
+- Tests execution
+
+---
+
+## **Troubleshooting**
+
+- **Compatibility Issues with Vue2:**
+  - Ensure you have installed `vue-demi` and `@vue/composition-api`.
+
+- **Storybook Not Loading:**
+  - Verify dependencies with `npm install`.
+  - Restart the Storybook server.
+
+- **Test Failures:**
+  - Ensure code passes linting before committing.
+  - Check detailed test output to locate issues.
+
+---
+
+## **Security Guidelines**
+
+- ❌ Do not commit sensitive or secret information.
+- 📌 Maintain component security best practices.
+- 🔐 Regularly audit and update dependencies.
+
+---
