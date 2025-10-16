@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <dl-tooltip
-                    v-if="!focused"
+                    v-if="!focused && !noTooltip"
                     border="1px solid var(--dl-color-separator)"
                     background-color="dl-color-panel-background"
                     color="dl-color-darker"
@@ -248,6 +248,10 @@ export default defineComponent({
             type: String,
             default: '28px'
         },
+        noTooltip: {
+            type: Boolean,
+            default: false
+        },
         omitSuggestions: {
             type: Array as PropType<string[]>,
             default: () => [] as string[]
@@ -297,6 +301,7 @@ export default defineComponent({
             defaultIcon,
             defaultIconColor,
             schema,
+            noTooltip,
             omitSuggestions,
             operatorsOverride,
             height,
