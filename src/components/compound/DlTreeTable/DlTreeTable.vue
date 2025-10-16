@@ -788,11 +788,12 @@ export default defineComponent({
             let shouldSkipValidation = false
 
             if (storedValidTarget.value && targetRow.value) {
-                const targetParent = findParentForChild(
+                const isStoredTargetAncestor = isAncestor(
+                    storedValidTarget.value.id,
                     targetRow.value.id,
                     tableRows.value
                 )
-                if (targetParent === storedValidTarget.value.id) {
+                if (isStoredTargetAncestor) {
                     finalTarget = storedValidTarget.value
                     shouldSkipValidation = true
                 }
@@ -1027,6 +1028,22 @@ export default defineComponent({
         ): string | null => {
             const parentMap = buildParentMap(rows)
             return parentMap.get(childId) || null
+        }
+
+        const isAncestor = (
+            ancestorId: string,
+            childId: string,
+            rows: DlTableRow[]
+        ): boolean => {
+            const parentMap = buildParentMap(rows)
+            while (parentMap.has(childId)) {
+                const parentId = parentMap.get(childId)!
+                if (parentId === ancestorId) {
+                    return true
+                }
+                childId = parentId
+            }
+            return false
         }
 
         const calculateRowLevel = (row: DlTableRow): number => {
