@@ -85,6 +85,8 @@ body {
     --dl-color-info: var(--dl-color-alert-info);
     --dl-color-info-background: var(--dl-color-alert-info-background);
     --dl-color-info-bg: var(--dl-color-alert-info-bg);
+    --dl-color-info-base: #E3F0FC;
+    --dl-color-info-highlight: #C7E2FA;
 
     --dl-color-chart-brush: #eef1ff;
 
@@ -151,8 +153,10 @@ body {
     --dl-color-positive-background: #183928;
     --dl-color-positive-bg: #183928;
     --dl-color-info-background: #1F3447;
-    --dl-color-info-bg: #1F3447;
+    --dl-color-info-bg: #182F44;
     --dl-color-info: #7CC8F4;
+    --dl-color-info-base: #0A365C;
+    --dl-color-info-highlight: #034782;
 
     --dl-color-chart-brush: #475077;
 
