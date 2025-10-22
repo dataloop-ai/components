@@ -101,7 +101,9 @@
                         v-if="multiselect && (!searchable || !isExpanded)"
                         class="root-container--placeholder"
                     >
-                        <template v-if="allFiltersModel">
+                        <template
+                            v-if="allFiltersModel || isAllOptionsSelected"
+                        >
                             <dl-ellipsis :text="computedAllItemsLabel" />
                         </template>
                         <template v-else>
@@ -426,6 +428,7 @@ export default defineComponent({
         alignRight: { type: Boolean, default: false },
         allItemsOption: { type: Boolean, default: false },
         allItemsOptionLabel: { type: String, default: null },
+        isAllOptionsSelected: { type: Boolean, default: false },
         placeholder: { type: String, default: null },
         removableSelection: { type: Boolean, default: false },
         width: { type: String, default: '100%' },
