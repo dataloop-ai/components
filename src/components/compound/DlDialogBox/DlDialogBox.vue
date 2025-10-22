@@ -78,6 +78,7 @@ export default defineComponent({
     props: {
         width: { type: [Number, String], default: 400 },
         height: { type: [Number, String], default: 'fit-content' },
+        hideHeader: { type: Boolean, default: false },
         fullscreen: Boolean,
         fullHeight: Boolean,
         separators: { type: Boolean, default: true },
@@ -176,7 +177,7 @@ export default defineComponent({
             return !!parentClassList?.contains('content')
         },
         hasHeader(): boolean {
-            return !!this.$slots.header
+            return !!this.$slots.header && !this.hideHeader
         },
         hasFooter(): boolean {
             return !!this.$slots.footer
