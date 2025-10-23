@@ -79,6 +79,7 @@ export default defineComponent({
         width: { type: [Number, String], default: 400 },
         height: { type: [Number, String], default: 'fit-content' },
         hideHeader: { type: Boolean, default: false },
+        hideFooter: { type: Boolean, default: false },
         fullscreen: Boolean,
         fullHeight: Boolean,
         separators: { type: Boolean, default: true },
@@ -180,7 +181,7 @@ export default defineComponent({
             return !!this.$slots.header && !this.hideHeader
         },
         hasFooter(): boolean {
-            return !!this.$slots.footer
+            return !!this.$slots.footer && !this.hideFooter
         }
     },
     watch: {
