@@ -101,9 +101,7 @@
                         v-if="multiselect && (!searchable || !isExpanded)"
                         class="root-container--placeholder"
                     >
-                        <template
-                            v-if="allFiltersModel || isAllOptionsSelected"
-                        >
+                        <template v-if="allFiltersModel">
                             <dl-ellipsis :text="computedAllItemsLabel" />
                         </template>
                         <template v-else>
@@ -198,6 +196,7 @@
                         :highlight-selected="highlightSelected"
                         :filter-term="searchTerm"
                         :fit-content="fitContent"
+                        :uniform-width="uniformWidth"
                         total-items
                         @update:model-value="selectAll"
                         @depth-change="handleDepthChange"
@@ -243,6 +242,7 @@
                             :indentation="indentation"
                             :is-expanded="item.expanded"
                             :tooltip="getOptionTooltip(item)"
+                            :uniform-width="uniformWidth"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(item)"
                             @selected="handleSelected"
@@ -294,6 +294,7 @@
                             :indentation="indentation"
                             :is-expanded="isExpandedOption(option)"
                             :tooltip="getOptionTooltip(option)"
+                            :uniform-width="uniformWidth"
                             @update:model-value="handleModelValueUpdate"
                             @click="selectOption(option)"
                             @selected="handleSelected"
@@ -428,7 +429,6 @@ export default defineComponent({
         alignRight: { type: Boolean, default: false },
         allItemsOption: { type: Boolean, default: false },
         allItemsOptionLabel: { type: String, default: null },
-        isAllOptionsSelected: { type: Boolean, default: false },
         placeholder: { type: String, default: null },
         removableSelection: { type: Boolean, default: false },
         width: { type: String, default: '100%' },
@@ -679,6 +679,35 @@ export default defineComponent({
         },
         optionsCount(): number {
             return this.options?.length ?? 0
+        },
+        maxDepth(): number {
+            const hasChildren = (option: DlSelectOptionType) =>
+                typeof option === 'object' && option?.children?.length > 0
+
+            const getMaxDepth = (
+                options: DlSelectOptionType[],
+                depth: number = 0
+            ): number => {
+                let max = depth
+                for (const option of options) {
+                    if (hasChildren(option)) {
+                        const childDepth = getMaxDepth(
+                            (option as any).children,
+                            depth + 1
+                        )
+                        if (childDepth > max) {
+                            max = childDepth
+                        }
+                    }
+                }
+                return max
+            }
+            return getMaxDepth(this.options)
+        },
+        uniformWidth(): string {
+            return this.maxDepth === 0
+                ? '100%'
+                : `calc(100% + ${(this.maxDepth - 1) * this.indentation}px)`
         },
         identifierClass(): string {
             return `dl-select-${this.title}-${

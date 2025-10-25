@@ -38,22 +38,25 @@ const isValueSelected = (
 export const getLabelOfSelectedOption = (
     selected: string[] | string,
     options: DlSelectOptionType[] | string[]
-): string | undefined => {
-    for (const option of options) {
-        if (
-            typeof option === 'string' &&
-            typeof selected === 'string' &&
-            option === selected
-        ) {
-            return String(option)
-        } else if (
-            typeof option === 'object' &&
-            isValueSelected(option, selected)
-        ) {
-            return String(option.label)
+): string => {
+    const selectedValue = Array.isArray(selected) ? selected[0] : selected
+
+    const findLabel = (opts: DlSelectOptionType[]): string | undefined => {
+        for (const opt of opts) {
+            const optValue = typeof opt === 'object' ? opt.value : opt
+            if (optValue === selectedValue) {
+                return typeof opt === 'object' ? String(opt.label) : String(opt)
+            }
+
+            if (typeof opt === 'object' && opt?.children?.length) {
+                const found = findLabel(opt.children as DlSelectOptionType[])
+                if (found) return found
+            }
         }
+        return undefined
     }
-    return '1 Option Selected'
+
+    return findLabel(options as DlSelectOptionType[]) ?? '1 Option Selected'
 }
 
 export const getIconSize = (size: TInputSizes) => ICON_SIZES[size] ?? '14px'

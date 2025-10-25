@@ -3,7 +3,9 @@
         <div
             v-if="readonly"
             :class="[{ 'readonly-option': true }, { capitalized }]"
-            :style="`padding-left: ${10 + depth * indentation}px;`"
+            :style="`padding-left: ${
+                10 + depth * indentation
+            }px; width: ${computedWidth};`"
         >
             <dl-tooltip v-if="tooltip">
                 {{ tooltip }}
@@ -18,10 +20,10 @@
             :class="{ highlighted: highlightSelected && isSelected }"
             :with-wave="withWave"
             clickable
-            style="width: 100%"
+            :style="`width: ${computedWidth}`"
             @click="handleClick"
         >
-            <dl-item-section :color="color" style="width: 100%">
+            <dl-item-section :color="color">
                 <span
                     v-if="multiselect"
                     class="multiselect-option"
@@ -98,6 +100,7 @@
                     :filter-term="filterTerm"
                     :fit-content="fitContent"
                     :tooltip="tooltip"
+                    :uniform-width="uniformWidth"
                     @update:model-value="handleCheckboxUpdate"
                     @selected="handleSingleSelect($event, true)"
                     @deselected="handleSingleDeselect"
@@ -194,7 +197,8 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
-        tooltip: { type: String, default: null }
+        tooltip: { type: String, default: null },
+        uniformWidth: { type: String, default: null }
     },
     emits: [
         'update:model-value',
@@ -238,6 +242,12 @@ export default defineComponent({
         },
         displayLabel(): string {
             return String(this.label ? this.label : this.value)
+        },
+        computedWidth(): string {
+            if (this.uniformWidth) {
+                return this.uniformWidth
+            }
+            return 'max-content; min-width: 100%'
         }
     },
     methods: {
