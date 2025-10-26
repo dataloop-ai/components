@@ -44,7 +44,7 @@
                     >
                         <dl-button
                             icon="icon-dl-close"
-                            size="s"
+                            size="m"
                             flat
                             :disabled="disabled"
                             @mousedown="onClear"
