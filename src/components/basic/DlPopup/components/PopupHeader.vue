@@ -1,16 +1,7 @@
 <template>
-    <div
-        class="popup-header"
-        :style="cssVars"
-    >
-        <slot
-            v-if="hasHeaderSlot"
-            name="header"
-        />
-        <div
-            v-else
-            class="header-content"
-        >
+    <div class="popup-header" :style="cssVars">
+        <slot v-if="hasHeaderSlot" name="header" />
+        <div v-else class="header-content">
             <span class="title">
                 <dl-ellipsis :text="title" />
                 <span class="info-icon">
@@ -30,15 +21,12 @@
                 class="close-button"
                 @click="handleClick"
             >
-                <slot
-                    v-if="hasCloseButtonSlot"
-                    name="close-button"
-                />
+                <slot v-if="hasCloseButtonSlot" name="close-button" />
                 <dl-icon
                     v-else
                     color="dl-color-darker"
                     icon="icon-dl-close"
-                    size="12px"
+                    size="16px"
                 />
             </span>
             <span class="subtitle">

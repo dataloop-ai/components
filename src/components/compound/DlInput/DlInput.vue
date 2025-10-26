@@ -1070,8 +1070,8 @@ export default defineComponent({
             return !!this.$slots.action && !this.isSmall
         },
         clearIconSize(): string {
-            if (this.isSmall) return '7px'
-            return 's'
+            if (this.isSmall) return 'xs'
+            return 'm'
         },
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
@@ -1643,4 +1643,3 @@ export default defineComponent({
     }
 }
 </style>
-

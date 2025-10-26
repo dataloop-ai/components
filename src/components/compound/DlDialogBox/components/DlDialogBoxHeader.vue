@@ -30,6 +30,7 @@
             "
             class="close-button"
             icon="icon-dl-close"
+            size="xl"
             flat
             text-color="dl-color-darker"
             @click="$emit('onClose')"
