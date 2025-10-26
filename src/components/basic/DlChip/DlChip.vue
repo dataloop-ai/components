@@ -37,7 +37,7 @@
         >
             <dl-icon
                 class="dl-chip-remove-icon"
-                size="7px"
+                size="12px"
                 icon="icon-dl-close"
             /></span>
     </div>
