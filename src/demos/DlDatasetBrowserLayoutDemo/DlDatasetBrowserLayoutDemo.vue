@@ -3,13 +3,11 @@
         <dl-button @click="isOpenedDatasetBrowserModal = true">
             Dataset Browser
         </dl-button>
-        <div
-            v-if="isOpenedDatasetBrowserModal"
-            class="fullscreen-template"
-        >
+        <div v-if="isOpenedDatasetBrowserModal" class="fullscreen-template">
             <div class="fullscreen-template__close">
                 <dl-button
                     icon="icon-dl-close"
+                    size="xl"
                     flat
                     @click="isOpenedDatasetBrowserModal = false"
                 />

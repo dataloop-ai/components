@@ -8,6 +8,7 @@
                 <dl-button
                     flat
                     icon="icon-dl-close"
+                    size="xl"
                     @click="isOpenedStudioModal = false"
                 />
             </div>

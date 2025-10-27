@@ -33,7 +33,7 @@
                 data-test="close-button-icon"
                 icon="icon-dl-close"
                 color="dl-color-darker"
-                size="12px"
+                size="16px"
                 @click="handleClose"
             />
         </div>

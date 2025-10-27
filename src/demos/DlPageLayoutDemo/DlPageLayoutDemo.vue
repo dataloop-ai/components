@@ -3,13 +3,11 @@
         <dl-button @click="isOpenPageLayoutModal = true">
             Page Layout
         </dl-button>
-        <div
-            v-if="isOpenPageLayoutModal"
-            class="fullscreen-template"
-        >
+        <div v-if="isOpenPageLayoutModal" class="fullscreen-template">
             <div class="fullscreen-template__close">
                 <dl-button
                     icon="icon-dl-close"
+                    size="xl"
                     flat
                     @click="isOpenPageLayoutModal = false"
                 />
@@ -45,9 +43,7 @@
                                 label="Switch to Basic Browser"
                             />
                         </template>
-                        <template #subtitle>
-                            testestse
-                        </template>
+                        <template #subtitle> testestse </template>
                     </dl-page-layout-header>
                 </template>
                 <div>This is a body</div>

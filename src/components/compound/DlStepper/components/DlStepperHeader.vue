@@ -1,10 +1,7 @@
 <template>
     <div class="dl-stepper-header">
         <slot>
-            <dl-typography
-                size="h2"
-                variant="h2"
-            >
+            <dl-typography size="h2" variant="h2">
                 {{ headerTitle }}
             </dl-typography>
         </slot>
@@ -13,6 +10,7 @@
             text-color="dl-color-darker"
             flat
             icon="icon-dl-close"
+            size="xl"
             @click="$emit('close')"
         />
     </div>
