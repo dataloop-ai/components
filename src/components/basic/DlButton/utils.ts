@@ -2,6 +2,7 @@ import { getColor } from '../../../utils'
 import { getLighterGradient } from '../../../utils/getLighterGradient'
 
 export enum ButtonSizes {
+    xs = 'xs',
     s = 's',
     m = 'm',
     l = 'l',
@@ -23,6 +24,7 @@ const iconPaddings: { [key: string]: string } = {
 }
 
 const iconSizes: { [key: string]: string } = {
+    xs: '7px',
     s: '12px',
     m: '16px',
     l: '18px',

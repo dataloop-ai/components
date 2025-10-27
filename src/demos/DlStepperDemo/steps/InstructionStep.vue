@@ -16,10 +16,7 @@
                 label="Error"
                 @click="$emit('error-click')"
             />
-            <dl-button
-                label="Reset"
-                @click="$emit('reset-click')"
-            />
+            <dl-button label="Reset" @click="$emit('reset-click')" />
         </div>
         <div class="inputs-container">
             <dl-select
@@ -40,12 +37,16 @@
                 to create a new recipe.
             </dl-typography>
             <span>
-                <dl-typography color="dl-color-medium">2. Instruction Document</dl-typography>
+                <dl-typography color="dl-color-medium"
+                >2. Instruction Document</dl-typography
+                >
                 <div style="height: 10px" />
                 <dl-typography>Lorem Ipsum Dolot Sit Amat.Pdf</dl-typography>
             </span>
             <span>
-                <dl-typography color="dl-color-medium">Instruction Range</dl-typography>
+                <dl-typography color="dl-color-medium"
+                >Instruction Range</dl-typography
+                >
                 <div style="height: 4px" />
                 <dl-option-group
                     v-model="range"
@@ -57,7 +58,9 @@
                 />
             </span>
             <span>
-                <dl-typography color="dl-color-medium">Tools Settings (Optional)</dl-typography>
+                <dl-typography color="dl-color-medium"
+                >Tools Settings (Optional)</dl-typography
+                >
                 <div style="height: 10px" />
                 <dl-checkbox
                     v-model="pixel"
@@ -66,31 +69,26 @@
                 />
             </span>
             <span>
-                <dl-typography color="dl-color-medium">Labeling Task Actions</dl-typography>
+                <dl-typography color="dl-color-medium"
+                >Labeling Task Actions</dl-typography
+                >
                 <div style="height: 10px" />
                 <dl-checkbox
                     v-model="auto"
                     padding="5px 0px"
                     label="Auto apply status on classification tool"
                 />
-                <div
-                    class="labeling-option"
-                    style="margin-top: 4px"
-                >
+                <div class="labeling-option" style="margin-top: 4px">
                     <dl-radio
                         v-model="labeling"
                         label="Complete"
                         padding="5px 0px"
                         value="complete"
                     />
-                    <dl-typography
-                        size="10px"
-                        color="dl-color-lighter"
-                    >(Default)</dl-typography>
-                    <dl-icon
-                        icon="icon-dl-close"
-                        size="8px"
-                    />
+                    <dl-typography size="10px" color="dl-color-lighter"
+                    >(Default)</dl-typography
+                    >
+                    <dl-icon icon="icon-dl-close" size="12px" />
                 </div>
                 <div class="labeling-option">
                     <dl-radio
@@ -99,10 +97,7 @@
                         padding="5px 0px"
                         value="disable"
                     />
-                    <dl-icon
-                        icon="icon-dl-close"
-                        size="8px"
-                    />
+                    <dl-icon icon="icon-dl-close" size="12px" />
                 </div>
             </span>
             <dl-button

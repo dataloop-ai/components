@@ -129,7 +129,7 @@
                         v-if="clearable && hasSelection"
                         class=".dl-select__clear-button"
                         icon="icon-dl-close"
-                        :size="withoutBorders ? '10px' : '12px'"
+                        :size="withoutBorders ? '10px' : '16px'"
                         style="margin-right: 3px; cursor: pointer"
                         @click.prevent.stop="clearSelection"
                     />

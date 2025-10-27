@@ -103,7 +103,7 @@
                                 <dl-button
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
-                                    size="s"
+                                    size="m"
                                     text-color="dl-color-darker"
                                     flat
                                     fluid

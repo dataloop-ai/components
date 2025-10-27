@@ -10,15 +10,9 @@
                 v-show="!!title.length || !!tooltip.length"
                 class="dl-textarea__title-container"
             >
-                <label
-                    v-show="!!title.length"
-                    class="dl-textarea__title"
-                >
+                <label v-show="!!title.length" class="dl-textarea__title">
                     {{ title }}
-                    <span
-                        v-show="required"
-                        :class="asteriskClasses"
-                    > *</span>
+                    <span v-show="required" :class="asteriskClasses"> *</span>
                     {{ !required && optional ? ' (Optional)' : null }}
                 </label>
                 <span v-show="!!tooltip.length">
@@ -42,14 +36,11 @@
                     :value="topMessage"
                 />
             </div>
-            <span
-                v-show="showClearButton"
-                class="dl-textarea__clear-button"
-            >
+            <span v-show="showClearButton" class="dl-textarea__clear-button">
                 <dl-button
                     ref="input-clear-button"
                     icon="icon-dl-close"
-                    size="s"
+                    size="m"
                     text-color="dl-color-darker"
                     flat
                     fluid
