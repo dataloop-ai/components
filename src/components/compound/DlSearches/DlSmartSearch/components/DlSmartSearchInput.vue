@@ -279,6 +279,7 @@ export default defineComponent({
         'blur',
         'input',
         'search',
+        'status',
         'error',
         'clear'
     ],
@@ -1040,24 +1041,35 @@ export default defineComponent({
                 return status.value
             }
 
+            let newStatus: {
+                type: string
+                message: string
+            }
+
             if (!error.value && searchQuery.value !== '') {
-                return {
+                newStatus = {
                     type: 'success',
                     message: ''
                 }
             }
 
-            if (error.value === 'warning') {
-                return {
+            else if (error.value === 'warning') {
+                newStatus = {
                     type: 'warning',
                     message: 'The query is not supported technically.'
                 }
             }
 
-            return {
-                type: 'error',
-                message: error.value
+            else {
+                newStatus = {
+                    type: 'error',
+                    message: error.value
+                }
             }
+
+            emit('status', newStatus)
+
+            return newStatus
         })
 
         const inputPlaceholder = computed<string>(() => {
