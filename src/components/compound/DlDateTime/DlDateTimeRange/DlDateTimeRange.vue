@@ -15,20 +15,7 @@
                     :disabled="disabled"
                 >
                     <date-time-range-content
-                        :mode="mode"
-                        :type-state="typeState"
-                        :sidebar-day-options="sidebarDayOptions"
-                        :sidebar-month-options="sidebarMonthOptions"
-                        :current-sidebar-option="currentSidebarOption"
-                        :date-interval="dateInterval"
-                        :available-range="availableRange"
-                        :is-input-disabled="isInputDisabled"
-                        :normalize-calendars="normalizeCalendars"
-                        :active-date-from="activeDateFrom"
-                        :active-date-to="activeDateTo"
-                        :show-time="showTime"
-                        :card-content-styles="cardContentStyles"
-                        :hide-clear-button="hideClearButton"
+                        v-bind="dateTimeRangeContentProps"
                         @day-type-option-click="handleDayTypeOptionClick"
                         @month-type-option-click="handleMonthTypeOptionClick"
                         @update-date-interval="updateDateInterval"
@@ -43,20 +30,7 @@
         </template>
         <template v-else>
             <date-time-range-content
-                :mode="mode"
-                :type-state="typeState"
-                :sidebar-day-options="sidebarDayOptions"
-                :sidebar-month-options="sidebarMonthOptions"
-                :current-sidebar-option="currentSidebarOption"
-                :date-interval="dateInterval"
-                :available-range="availableRange"
-                :is-input-disabled="isInputDisabled"
-                :normalize-calendars="normalizeCalendars"
-                :active-date-from="activeDateFrom"
-                :active-date-to="activeDateTo"
-                :show-time="showTime"
-                :card-content-styles="cardContentStyles"
-                :hide-clear-button="hideClearButton"
+                v-bind="dateTimeRangeContentProps"
                 @day-type-option-click="handleDayTypeOptionClick"
                 @month-type-option-click="handleMonthTypeOptionClick"
                 @update-date-interval="updateDateInterval"
@@ -436,6 +410,24 @@ export default defineComponent({
         cardContentStyles(): Record<string, any> {
             return {
                 '--card-content-width': this.datePickerCardWidth
+            }
+        },
+        dateTimeRangeContentProps() {
+            return {
+                mode: this.mode,
+                typeState: this.typeState,
+                sidebarDayOptions: this.sidebarDayOptions,
+                sidebarMonthOptions: this.sidebarMonthOptions,
+                currentSidebarOption: this.currentSidebarOption,
+                dateInterval: this.dateInterval,
+                availableRange: this.availableRange,
+                isInputDisabled: this.isInputDisabled,
+                normalizeCalendars: this.normalizeCalendars,
+                activeDateFrom: this.activeDateFrom,
+                activeDateTo: this.activeDateTo,
+                showTime: this.showTime,
+                cardContentStyles: this.cardContentStyles,
+                hideClearButton: this.hideClearButton
             }
         }
     },
