@@ -1,6 +1,6 @@
 <template>
     <div :id="uuid" class="dl-date-time-range">
-        <template v-if="viewMode === 'input'">
+        <template v-if="isInputMode">
             <date-input
                 :text="dateInputText"
                 :input-style="dateInputStyle"
@@ -49,7 +49,8 @@ import {
     DayTypeOption,
     DAY_SIDEBAR_OPTION,
     MonthTypeOption,
-    MONTH_SIDEBAR_OPTION
+    MONTH_SIDEBAR_OPTION,
+    DATETIME_RANGE_VIEW_MODE
 } from './types'
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
 import { CalendarDate } from '../DlDatePicker/models/CalendarDate'
@@ -120,8 +121,8 @@ export default defineComponent({
             default: false
         },
         viewMode: {
-            type: String as PropType<'input' | 'inline'>,
-            default: 'input'
+            type: String as PropType<DATETIME_RANGE_VIEW_MODE>,
+            default: DATETIME_RANGE_VIEW_MODE.input
         },
         hideClearButton: {
             type: Boolean,
@@ -412,6 +413,9 @@ export default defineComponent({
                 '--card-content-width': this.datePickerCardWidth
             }
         },
+        isInputMode(): boolean {
+            return this.viewMode === DATETIME_RANGE_VIEW_MODE.input
+        },
         dateTimeRangeContentProps() {
             return {
                 mode: this.mode,
@@ -535,7 +539,10 @@ export default defineComponent({
         updateDateIntervalWithAutoClose(value: DateInterval) {
             this.updateDateInterval(value)
 
-            if (this.autoClose && this.viewMode === 'input') {
+            if (
+                this.autoClose &&
+                this.viewMode === DATETIME_RANGE_VIEW_MODE.input
+            ) {
                 const dateTimeRangeMenu = this.$refs[
                     'dateTimeRangeMenu'
                 ] as unknown as {

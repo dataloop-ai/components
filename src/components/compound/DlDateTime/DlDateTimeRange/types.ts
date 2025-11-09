@@ -40,3 +40,8 @@ export type MonthTypeOption = {
     value?: DateInterval
     disabled?: boolean
 }
+
+export enum DATETIME_RANGE_VIEW_MODE {
+    input = 'input',
+    inline = 'inline'
+}

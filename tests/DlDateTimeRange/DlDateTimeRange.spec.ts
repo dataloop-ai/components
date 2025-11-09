@@ -16,7 +16,8 @@ import {
 } from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
 import {
     DAY_SIDEBAR_OPTION,
-    MONTH_SIDEBAR_OPTION
+    MONTH_SIDEBAR_OPTION,
+    DATETIME_RANGE_VIEW_MODE
 } from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
 
 const date1 = new Date(1990, 12, 1)
@@ -250,17 +251,19 @@ describe('Date Time Range', () => {
     describe('View Mode', () => {
         it('should default to input mode', () => {
             const wrapper = mount(DlDateTimeRange)
-            expect(wrapper.vm.viewMode).toBe('input')
-            expect(wrapper.props('viewMode')).toBe('input')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
+            expect(wrapper.props('viewMode')).toBe(
+                DATETIME_RANGE_VIEW_MODE.input
+            )
         })
 
         it('should render in input mode when viewMode is "input"', () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'input'
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input
                 }
             })
-            expect(wrapper.vm.viewMode).toBe('input')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
             const html = wrapper.html()
             expect(html).toContain('dl-date-time-range')
         })
@@ -268,10 +271,10 @@ describe('Date Time Range', () => {
         it('should render in inline mode when viewMode is "inline"', () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'inline'
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline
                 }
             })
-            expect(wrapper.vm.viewMode).toBe('inline')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.inline)
             const html = wrapper.html()
             expect(html).toContain('dl-date-time-range')
         })
@@ -279,26 +282,26 @@ describe('Date Time Range', () => {
         it('should switch between input and inline modes', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'input'
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input
                 }
             })
-            expect(wrapper.vm.viewMode).toBe('input')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
 
             await wrapper.setProps({
-                viewMode: 'inline'
+                viewMode: DATETIME_RANGE_VIEW_MODE.inline
             })
-            expect(wrapper.vm.viewMode).toBe('inline')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.inline)
 
             await wrapper.setProps({
-                viewMode: 'input'
+                viewMode: DATETIME_RANGE_VIEW_MODE.input
             })
-            expect(wrapper.vm.viewMode).toBe('input')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
         })
 
         it('should work with all props in inline mode', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'inline',
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline,
                     modelValue: {
                         from: date1,
                         to: date2
@@ -309,7 +312,7 @@ describe('Date Time Range', () => {
                 }
             })
 
-            expect(wrapper.vm.viewMode).toBe('inline')
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.inline)
             expect(wrapper.vm.dateInterval).toEqual({
                 from: date1,
                 to: date2
@@ -319,7 +322,7 @@ describe('Date Time Range', () => {
         it('should emit events correctly in inline mode', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'inline',
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline,
                     modelValue: {
                         from: date1,
                         to: date2
@@ -337,7 +340,7 @@ describe('Date Time Range', () => {
         it('should update date interval in input mode with autoClose', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'input',
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input,
                     autoClose: true
                 }
             })
@@ -359,7 +362,7 @@ describe('Date Time Range', () => {
         it('should not auto-close in inline mode even when autoClose is true', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'inline',
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline,
                     autoClose: true
                 }
             })
@@ -379,7 +382,7 @@ describe('Date Time Range', () => {
         it('should update date interval when autoClose is false', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'input',
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input,
                     autoClose: false
                 }
             })
@@ -426,7 +429,7 @@ describe('Date Time Range', () => {
         it('should work with hideClearButton in both input and inline modes', async () => {
             const wrapper = mount(DlDateTimeRange, {
                 props: {
-                    viewMode: 'input',
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input,
                     hideClearButton: true,
                     modelValue: {
                         from: date1,
@@ -437,7 +440,7 @@ describe('Date Time Range', () => {
             expect(wrapper.vm.hideClearButton).toBe(true)
 
             await wrapper.setProps({
-                viewMode: 'inline'
+                viewMode: DATETIME_RANGE_VIEW_MODE.inline
             })
             expect(wrapper.vm.hideClearButton).toBe(true)
         })
