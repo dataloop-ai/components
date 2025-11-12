@@ -416,7 +416,7 @@ export default defineComponent({
         isInputMode(): boolean {
             return this.viewMode === DATETIME_RANGE_VIEW_MODE.input
         },
-        dateTimeRangeContentProps() {
+        dateTimeRangeContentProps(): Record<string, any> {
             return {
                 mode: this.mode,
                 typeState: this.typeState,
