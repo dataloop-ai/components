@@ -236,7 +236,7 @@
                         class="dl-table__progress"
                     >
                         <th
-                            :colspan="colspanWithExpandableRow"
+                            :colspan="colspanForProgressBar"
                             class="relative-position"
                         >
                             <dl-progress-bar indeterminate :color="color" />
@@ -635,7 +635,7 @@
                         class="dl-table__progress"
                     >
                         <th
-                            :colspan="colspanWithExpandableRow"
+                            :colspan="colspanForProgressBar"
                             class="relative-position"
                         >
                             <dl-progress-bar indeterminate :color="color" />
@@ -1751,6 +1751,12 @@ export default defineComponent({
             )
         })
 
+        const colspanForProgressBar = computed(() => {
+            return (
+                colspanWithExpandableRow.value - (hasDraggableRows.value ? 0 : 1)
+            )
+        })
+
         const { columnToSort, computedSortMethod, sort } = useTableSort(
             props as unknown as DlTableProps,
             computedPagination,
@@ -2139,6 +2145,7 @@ export default defineComponent({
             computedColspan,
             colspanWithActionsRow,
             colspanWithExpandableRow,
+            colspanForProgressBar,
             virtualScrollClasses,
             sortableOptions,
             getRowKey,
