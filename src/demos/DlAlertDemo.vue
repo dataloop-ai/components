@@ -66,6 +66,42 @@
                 ratione cumque!
             </DlAlert>
         </div>
+
+        <div style="margin-top: 20px">
+            <h3 style="margin-bottom: 10px">Confirmation Dialog Examples</h3>
+            <DlAlert
+                type="warning"
+                :closable="true"
+                :confirm-close="true"
+                fluid
+                @dismiss="handleDismiss"
+            >
+                Click the X button to see the confirmation dialog before
+                closing.
+            </DlAlert>
+            <DlAlert
+                type="error"
+                :closable="true"
+                :confirm-close="true"
+                confirm-close-header="Custom Dismiss Alert"
+                confirm-close-message="This is a custom confirmation message."
+                fluid
+                style="margin-top: 10px"
+                @dismiss="handleDismiss"
+            >
+                Custom confirmation dialog with custom header and message.
+            </DlAlert>
+            <DlAlert
+                type="info"
+                :closable="true"
+                :confirm-close="false"
+                fluid
+                style="margin-top: 10px"
+            >
+                This alert closes immediately without confirmation
+                (confirm-close is false).
+            </DlAlert>
+        </div>
     </div>
 </template>
 
@@ -94,6 +130,10 @@ export default defineComponent({
                 index === alertTypes.length - 1
                     ? alertTypes[0]
                     : alertTypes[index + 1]
+        },
+        handleDismiss() {
+            console.log('Alert dismissed!')
+            // You can add custom logic here when the alert is dismissed
         }
     },
     template: 'dl-alert-demo'

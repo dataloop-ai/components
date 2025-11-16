@@ -1,42 +1,76 @@
 <template>
-    <div
-        v-if="show"
-        :id="uuid"
-        ref="rootRef"
-        class="root"
-        :style="rootStyle"
-        data-test="root"
-    >
-        <div>
-            <dl-icon
-                data-test="icon"
-                :style="iconStyle"
-                :icon="icon"
-                :color="iconColor"
-                :size="iconSize"
-            />
-            <span class="text" :style="textStyle">
-                <slot v-if="!text" />
-                <span v-else>
-                    {{ text }}
-                </span>
-            </span>
-        </div>
+    <div>
         <div
-            v-if="closable"
-            class="close-button"
-            data-test="close-button"
-            :style="closeButtonStyle"
+            v-if="show"
+            :id="uuid"
+            ref="rootRef"
+            class="root"
+            :style="rootStyle"
+            data-test="root"
         >
-            <dl-icon
-                class="close-button-icon"
-                data-test="close-button-icon"
-                icon="icon-dl-close"
-                color="dl-color-darker"
-                size="16px"
-                @click="handleClose"
-            />
+            <div>
+                <dl-icon
+                    data-test="icon"
+                    :style="iconStyle"
+                    :icon="icon"
+                    :color="iconColor"
+                    :size="iconSize"
+                />
+                <span class="text" :style="textStyle">
+                    <slot v-if="!text" />
+                    <span v-else>
+                        {{ text }}
+                    </span>
+                </span>
+            </div>
+            <div
+                v-if="closable"
+                class="close-button"
+                data-test="close-button"
+                :style="closeButtonStyle"
+            >
+                <dl-icon
+                    class="close-button-icon"
+                    data-test="close-button-icon"
+                    icon="icon-dl-close"
+                    color="dl-color-darker"
+                    size="16px"
+                    @click="handleClose"
+                />
+            </div>
         </div>
+        <dl-dialog-box
+            v-model="showConfirmDialog"
+            :width="400"
+            data-test="confirm-dialog"
+        >
+            <template #header>
+                <dl-dialog-box-header
+                    :title="props.confirmCloseHeader"
+                    :close-button="false"
+                />
+            </template>
+            <template #body>
+                <p class="confirm-message">
+                    {{ props.confirmCloseMessage }}
+                </p>
+            </template>
+            <template #footer>
+                <dl-dialog-box-footer>
+                    <dl-button
+                        outlined
+                        label="Cancel"
+                        data-test="cancel-button"
+                        @click="handleCancelDismiss"
+                    />
+                    <dl-button
+                        label="Dismiss"
+                        data-test="dismiss-button"
+                        @click="handleConfirmDismiss"
+                    />
+                </dl-dialog-box-footer>
+            </template>
+        </dl-dialog-box>
     </div>
 </template>
 
@@ -54,6 +88,12 @@ import {
 } from 'vue-demi'
 import { getColor, includes } from '../../../utils'
 import { DlIcon } from '../../essential'
+import { DlButton } from '../DlButton'
+import {
+    DlDialogBox,
+    DlDialogBoxHeader,
+    DlDialogBoxFooter
+} from '../../compound/DlDialogBox'
 import { DlAlertType } from './types'
 
 const typeToIconMap: Record<DlAlertType, string> = {
@@ -80,7 +120,11 @@ const typeToBackgroundMap: Record<DlAlertType, string> = {
 export default defineComponent({
     name: 'DlAlert',
     components: {
-        DlIcon
+        DlIcon,
+        DlButton,
+        DlDialogBox,
+        DlDialogBoxHeader,
+        DlDialogBoxFooter
     },
     model: {
         prop: 'modelValue',
@@ -120,9 +164,21 @@ export default defineComponent({
         padding: {
             type: String,
             default: null
+        },
+        confirmClose: {
+            type: Boolean,
+            default: false
+        },
+        confirmCloseHeader: {
+            type: String,
+            default: 'Are you sure?'
+        },
+        confirmCloseMessage: {
+            type: String,
+            default: ''
         }
     },
-    emits: ['update:model-value'],
+    emits: ['update:model-value', 'dismiss'],
     setup(props, { emit }) {
         const { padding, modelValue, type } = toRefs(props)
         const show = ref(modelValue.value)
@@ -138,6 +194,7 @@ export default defineComponent({
         const rootStyle = ref()
         const iconStyle = ref()
         const closeButtonStyle = ref()
+        const showConfirmDialog = ref(false)
 
         onMounted(() => {
             normalizeStyles(props.fluid)
@@ -166,9 +223,12 @@ export default defineComponent({
 
         function normalizeStyles(fluid?: boolean) {
             nextTick(() => {
-                const { height } = (
-                    rootRef as Ref<HTMLElement | null>
-                ).value!.getBoundingClientRect()
+                const rootElement = (rootRef as Ref<HTMLElement | null>).value
+                if (!rootElement) {
+                    return
+                }
+
+                const { height } = rootElement.getBoundingClientRect()
                 const iconS: Record<string, any> = {
                     display: 'flex'
                 }
@@ -199,8 +259,26 @@ export default defineComponent({
         }
 
         function handleClose() {
+            if (props.confirmClose) {
+                showConfirmDialog.value = true
+            } else {
+                closeAlert()
+            }
+        }
+
+        function closeAlert() {
             show.value = false
             emit('update:model-value', false)
+        }
+
+        function handleConfirmDismiss() {
+            showConfirmDialog.value = false
+            closeAlert()
+            emit('dismiss')
+        }
+
+        function handleCancelDismiss() {
+            showConfirmDialog.value = false
         }
 
         return {
@@ -213,7 +291,11 @@ export default defineComponent({
             iconStyle,
             closeButtonStyle,
             textStyle,
-            handleClose
+            showConfirmDialog,
+            props,
+            handleClose,
+            handleConfirmDismiss,
+            handleCancelDismiss
         }
     },
     template: 'dl-alert'
@@ -256,5 +338,12 @@ export default defineComponent({
     .close-button-icon:hover {
         cursor: pointer;
     }
+}
+
+.confirm-message {
+    margin: 0;
+    color: var(--dl-color-darker);
+    font-size: var(--dl-font-size-body);
+    line-height: 1.5;
 }
 </style>
