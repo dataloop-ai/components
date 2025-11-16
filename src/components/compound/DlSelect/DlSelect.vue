@@ -532,6 +532,10 @@ export default defineComponent({
         removeTabIndex: {
             type: Boolean,
             default: false
+        },
+        isAllOptionsSelected: {
+            type: Boolean,
+            default: false
         }
     },
     emits: [
@@ -751,6 +755,10 @@ export default defineComponent({
             return false
         },
         filterSelectLabel(): string {
+            if (this.isAllOptionsSelected) {
+                return this.computedAllItemsLabel
+            }
+
             if (this.modelValueLength === 1) {
                 const valueToSearch = (this.modelValue as any)[0]
                 return getLabelOfSelectedOption(valueToSearch, this.options)
