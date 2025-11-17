@@ -160,12 +160,16 @@ export default defineComponent({
             this.$emit('search', this.modelValue)
         },
         focus(): void {
-            const inputComponent = this.$refs.input as typeof DlInput
-            inputComponent.focus()
+            const inputComponent = this.$refs.input as InstanceType<
+                typeof DlInput
+            >
+            inputComponent?.focus()
         },
         blur(): void {
-            const inputComponent = this.$refs.input as typeof DlInput
-            inputComponent.blur()
+            const inputComponent = this.$refs.input as InstanceType<
+                typeof DlInput
+            >
+            inputComponent?.blur()
         }
     }
 })
