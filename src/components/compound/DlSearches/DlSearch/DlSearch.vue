@@ -158,6 +158,14 @@ export default defineComponent({
         },
         onSearchButtonPress(): void {
             this.$emit('search', this.modelValue)
+        },
+        focus(): void {
+            const inputComponent = this.$refs.input as typeof DlInput
+            inputComponent.focus()
+        },
+        blur(): void {
+            const inputComponent = this.$refs.input as typeof DlInput
+            inputComponent.blur()
         }
     }
 })
