@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue-demi'
-import { DlButton } from '../../../basic'
+import DlButton from '../../../basic/DlButton/DlButton.vue'
 import { DlEllipsis } from '../../../essential'
 import { DlTooltip } from '../../../shared'
 
