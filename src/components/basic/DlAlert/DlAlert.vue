@@ -47,7 +47,7 @@
             <template #header>
                 <dl-dialog-box-header
                     :title="props.confirmCloseHeader"
-                    :close-button="false"
+                    @onClose="handleCancelDismiss"
                 />
             </template>
             <template #body>
