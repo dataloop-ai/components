@@ -5,6 +5,7 @@ export interface DlSelectOption {
     expanded?: boolean
     children?: DlSelectOption[]
     readonly?: boolean
+    disableRow?: boolean
     tooltip?: string
 }
 

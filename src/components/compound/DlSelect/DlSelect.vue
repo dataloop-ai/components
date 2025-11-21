@@ -239,6 +239,7 @@
                             :children="getOptionChildren(item)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(item)"
+                            :disable-row="isDisableRowOption(item)"
                             :indentation="indentation"
                             :is-expanded="item.expanded"
                             :tooltip="getOptionTooltip(item)"
@@ -291,6 +292,7 @@
                             :children="getOptionChildren(option)"
                             :capitalized="capitalizedOptions"
                             :readonly="isReadonlyOption(option)"
+                            :disable-row="isDisableRowOption(option)"
                             :indentation="indentation"
                             :is-expanded="isExpandedOption(option)"
                             :tooltip="getOptionTooltip(option)"
@@ -1044,6 +1046,9 @@ export default defineComponent({
         },
         isReadonlyOption(option: any) {
             return !!option?.readonly
+        },
+        isDisableRowOption(option: DlSelectOptionType) {
+            return typeof option === 'object' && !!option?.disableRow
         },
         getOptionCount(option: any) {
             return option?.count ?? null
