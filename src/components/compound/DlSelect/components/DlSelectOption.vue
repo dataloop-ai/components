@@ -406,7 +406,7 @@ export default defineComponent({
             return !!option?.readonly
         },
         isDisableRowOption(option: DlSelectOptionType) {
-            return typeof option === 'object' && !!option?.disableRow
+            return typeof option === 'object' && option !== null && !!option.disableRow
         }
     }
 })
