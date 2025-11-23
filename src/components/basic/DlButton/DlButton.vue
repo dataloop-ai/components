@@ -169,6 +169,10 @@ export default defineComponent({
          * The name of the icon to go inside the button
          */
         icon: { type: String, default: '' },
+        /**
+         * The size of the icon inside the button. If not provided, will be calculated based on button size
+         */
+        iconSize: { type: String, default: null, required: false },
         overflow: { type: Boolean, default: false, required: false },
         /**
          * The tooltip displayed when hovering over the button
@@ -295,7 +299,7 @@ export default defineComponent({
             return this.isActionable ? 0 : -1
         },
         iconSizePX(): string {
-            return setIconSize(this.$props.size)
+            return this.iconSize || setIconSize(this.$props.size)
         },
         hasLabel(): boolean {
             return !!this.label
