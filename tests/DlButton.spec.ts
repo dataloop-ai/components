@@ -37,6 +37,7 @@ describe('DlButton', () => {
                 size: 'm',
                 textColor: '',
                 iconColor: '',
+                iconSize: null,
                 overflow: false,
                 tooltip: null,
                 dense: false,
