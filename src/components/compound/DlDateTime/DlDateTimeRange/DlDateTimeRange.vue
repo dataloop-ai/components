@@ -512,7 +512,10 @@ export default defineComponent({
             this.typeState = value
             this.$emit('set-type', value)
         },
-        updateDateInterval(value: DateInterval | null) {
+        updateDateInterval(
+            value: DateInterval | null,
+            skipSidebarUpdate = false
+        ) {
             if (value === null) {
                 this.dateInterval = null
             } else {
@@ -521,7 +524,7 @@ export default defineComponent({
                     to: new Date(value.to)
                 }
                 // When in multi mode, update sidebar option to custom if user manually selects date
-                if (this.mode === 'multi') {
+                if (this.mode === 'multi' && !skipSidebarUpdate) {
                     this.currentSidebarOption =
                         this.typeState === 'day'
                             ? DAY_SIDEBAR_OPTION.custom
@@ -536,8 +539,11 @@ export default defineComponent({
             this.activeDateFrom = value?.from || null
             this.activeDateTo = value?.to || null
         },
-        updateDateIntervalWithAutoClose(value: DateInterval) {
-            this.updateDateInterval(value)
+        updateDateIntervalWithAutoClose(
+            value: DateInterval,
+            skipSidebarUpdate = false
+        ) {
+            this.updateDateInterval(value, skipSidebarUpdate)
 
             if (
                 this.autoClose &&
@@ -564,9 +570,9 @@ export default defineComponent({
 
             if (option.key === DAY_SIDEBAR_OPTION.custom_by_month) {
                 this.handleTypeChange('month')
-                this.updateDateInterval(option.value)
+                this.updateDateInterval(option.value, true)
             } else {
-                this.updateDateIntervalWithAutoClose(option.value)
+                this.updateDateIntervalWithAutoClose(option.value, true)
             }
         },
         handleMonthTypeOptionClick(option: MonthTypeOption) {
@@ -580,9 +586,9 @@ export default defineComponent({
 
             if (option.key === MONTH_SIDEBAR_OPTION.custom_by_day) {
                 this.handleTypeChange('day')
-                this.updateDateInterval(option.value)
+                this.updateDateInterval(option.value, true)
             } else {
-                this.updateDateIntervalWithAutoClose(option.value)
+                this.updateDateIntervalWithAutoClose(option.value, true)
             }
         }
     }
