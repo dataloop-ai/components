@@ -1,7 +1,7 @@
 <template>
     <div :id="uuid" class="dl-progress-wrapper" :style="`width: ${width};`">
         <p
-            v-if="label"
+            v-if="label || labelSlot"
             data-test-id="progress-label"
             align="left"
             class="dl-progress-bar-label"
@@ -56,6 +56,10 @@ export default defineComponent({
         label: {
             type: String,
             default: null
+        },
+        labelSlot: {
+            type: Boolean,
+            default: false
         },
         showValue: {
             type: Boolean,
