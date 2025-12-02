@@ -1,9 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-progress-wrapper"
-        :style="`width: ${width};`"
-    >
+    <div :id="uuid" class="dl-progress-wrapper" :style="`width: ${width};`">
         <p
             v-if="label"
             data-test-id="progress-label"
@@ -11,6 +7,7 @@
             class="dl-progress-bar-label"
         >
             {{ label }}
+            <slot name="label"> </slot>
         </p>
         <div class="progress-container">
             <span
@@ -35,10 +32,7 @@
                 {{ computedValue }}{{ showPercentage ? '%' : '' }}
             </p>
         </div>
-        <div
-            v-if="summary"
-            class="summary"
-        >
+        <div v-if="summary" class="summary">
             <div>
                 {{ summary }}
             </div>
