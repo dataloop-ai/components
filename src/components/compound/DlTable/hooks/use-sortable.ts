@@ -100,6 +100,12 @@ export function useSortable(vm: Record<string, any>) {
     })
 
     watch(rootRef, (newRootRef) => {
+
+        if (sortable.value) {
+            sortable.value.destroy()
+            sortable.value = null
+        }
+        
         if (newRootRef) {
             sortable.value = new Sortable(newRootRef, {
                 ...props.options,
