@@ -178,10 +178,20 @@ export default defineComponent({
             return !!parentClassList?.contains('content')
         },
         hasHeader(): boolean {
-            return !!this.$slots.header && !this.hideHeader
+            const slotKeys = Object.keys(this.$slots)
+            return (
+                !this.hideHeader &&
+                slotKeys.includes('header') &&
+                !!this.$slots.header
+            )
         },
         hasFooter(): boolean {
-            return !!this.$slots.footer && !this.hideFooter
+            const slotKeys = Object.keys(this.$slots)
+            return (
+                !this.hideFooter &&
+                slotKeys.includes('footer') &&
+                !!this.$slots.footer
+            )
         }
     },
     watch: {
