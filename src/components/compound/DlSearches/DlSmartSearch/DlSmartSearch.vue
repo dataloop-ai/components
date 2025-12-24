@@ -1,12 +1,6 @@
 <template>
-    <div
-        class="dl-smart-search"
-        :style="cssVars"
-    >
-        <div
-            ref="inputWrapper"
-            class="dl-smart-search__input-wrapper"
-        >
+    <div class="dl-smart-search" :style="cssVars">
+        <div ref="inputWrapper" class="dl-smart-search__input-wrapper">
             <dl-smart-search-input
                 ref="smartSearchInput"
                 v-model="queryObject"
@@ -18,6 +12,7 @@
                 :color-schema="colorSchema"
                 :strict="strict"
                 :placeholder="placeholder"
+                :disabled="disabled"
                 @focus="isFocused = true"
                 @blur="isFocused = false"
                 @search="emitSearchQuery"

@@ -12,11 +12,7 @@
                         :icon="
                             focused ? defaultIcon : statusIcon || defaultIcon
                         "
-                        :color="
-                            focused
-                                ? defaultIconColor
-                                : statusIconColor || defaultIconColor
-                        "
+                        :color="iconColor"
                         size="16px"
                         :inline="false"
                     />
@@ -966,6 +962,16 @@ export default defineComponent({
             }
         })
 
+        const iconColor = computed(() => {
+            if (disabled.value) {
+                return 'dl-color-disabled'
+            }
+            if (focused.value) {
+                return defaultIconColor.value
+            }
+            return statusIconColor.value || defaultIconColor.value
+        })
+
         const textareaStyles = computed<Record<string, string | number>>(() => {
             const overflow: string =
                 scroll.value && focused.value ? 'scroll' : 'hidden'
@@ -1000,9 +1006,14 @@ export default defineComponent({
         })
 
         const inputClass = computed<string>(() => {
-            return `dl-smart-search-input__textarea${
-                focused.value ? ' focus' : ''
-            }`
+            let classes = 'dl-smart-search-input__textarea'
+            if (focused.value) {
+                classes += ' focus'
+            }
+            if (disabled.value) {
+                classes += ' dl-smart-search-input__textarea--disabled'
+            }
+            return classes
         })
 
         const showClearButton = computed(() => {
@@ -1051,16 +1062,12 @@ export default defineComponent({
                     type: 'success',
                     message: ''
                 }
-            }
-
-            else if (error.value === 'warning') {
+            } else if (error.value === 'warning') {
                 newStatus = {
                     type: 'warning',
                     message: 'The query is not supported technically.'
                 }
-            }
-
-            else {
+            } else {
                 newStatus = {
                     type: 'error',
                     message: error.value
@@ -1190,6 +1197,7 @@ export default defineComponent({
             debouncedSetInputValue,
             statusIcon,
             statusIconColor,
+            iconColor,
             textareaStyles,
             searchBarClasses,
             inputClass,
@@ -1339,6 +1347,21 @@ export default defineComponent({
         }
         & > * {
             display: flex;
+        }
+    }
+
+    &__textarea--disabled {
+        &::before {
+            color: var(--dl-color-disabled);
+        }
+    }
+
+    &__search-bar--disabled {
+        .dl-smart-search-input__input,
+        .dl-smart-search-input__textarea {
+            &::before {
+                color: var(--dl-color-disabled);
+            }
         }
     }
 
