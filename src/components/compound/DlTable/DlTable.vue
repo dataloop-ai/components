@@ -67,6 +67,11 @@
                                 @mousedown="stopAndPrevent"
                             />
                             <th
+                                v-if="hasDraggableRows && !isTreeTable"
+                                class="dl-table--col-auto-width dl-table__drag-icon"
+                                style="width: 25px"
+                            />
+                            <th
                                 v-if="singleSelection"
                                 class="dl-table--col-auto-width dl-table--col-checkbox-wrapper"
                                 @mousedown="stopAndPrevent"
@@ -296,7 +301,7 @@
                                 "
                             >
                                 <td
-                                    v-if="hasDraggableRows"
+                                    v-if="hasDraggableRows && !isTreeTable"
                                     class="dl-table__drag-icon"
                                 >
                                     <dl-icon
@@ -462,6 +467,11 @@
                                 :data-resizable="false"
                                 style="width: 25px"
                                 @mousedown="stopAndPrevent"
+                            />
+                            <th
+                                v-if="hasDraggableRows && !isTreeTable"
+                                class="dl-table--col-auto-width dl-table__drag-icon"
+                                style="width: 25px"
                             />
                             <th
                                 v-if="singleSelection"
@@ -655,11 +665,9 @@
                         tag="tbody"
                         class="nested-table dl-virtual-scroll__content"
                         style="position: relative; z-index: 90"
-                        v-bind="{
-                            onEnd: handleSortableEvent
-                        }"
                         :is-sortable="hasDraggableRows"
                         :options="sortableOptions"
+                        @end="handleSortableEvent"
                     >
                         <slot name="top-row" :cols="computedCols" />
                         <slot name="table-body" :computed-rows="computedRows">
@@ -714,7 +722,7 @@
                                     "
                                 >
                                     <td
-                                        v-if="hasDraggableRows"
+                                        v-if="hasDraggableRows && !isTreeTable"
                                         style="width: 25px"
                                         class="dl-table__drag-icon"
                                     >
@@ -1329,6 +1337,7 @@ export default defineComponent({
         const virtScrollRef = ref(null)
         const tableScroll = ref(null)
         const isVisibleColumnsOpen = ref(false)
+        const tableUuid = `dl-table-${v4()}`
 
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
@@ -1753,7 +1762,8 @@ export default defineComponent({
 
         const colspanForProgressBar = computed(() => {
             return (
-                colspanWithExpandableRow.value - (hasDraggableRows.value ? 0 : 1)
+                colspanWithExpandableRow.value -
+                (hasDraggableRows.value ? 0 : 1)
             )
         })
 
@@ -2031,8 +2041,10 @@ export default defineComponent({
         const handleSortableEvent = (event: SortableEvent) => {
             const { oldIndex, newIndex } = event
             const newRows = insertAtIndex(rows.value, oldIndex, newIndex)
-            tbodyKey.value = v4()
             emit('row-reorder', newRows)
+            nextTick(() => {
+                tbodyKey.value = v4()
+            })
         }
 
         const reorderColumns = (sourceIndex: number, targetIndex: number) => {
@@ -2077,11 +2089,12 @@ export default defineComponent({
         })
 
         const sortableOptions: any = {
-            group: 'nested',
+            group: props.isTreeTable ? 'nested' : tableUuid,
             animation: 150,
             fallbackOnBody: true,
             invertSwap: true,
-            swapThreshold: 0.5
+            swapThreshold: 0.5,
+            handle: '.draggable-icon'
         }
 
         const virtualScrollClasses = computed(() => {
@@ -2137,7 +2150,7 @@ export default defineComponent({
             handleSortableEvent,
             tbodyKey,
             tableKey,
-            uuid: `dl-table-${v4()}`,
+            uuid: tableUuid,
             rootRef,
             containerClass,
             computedRows,
