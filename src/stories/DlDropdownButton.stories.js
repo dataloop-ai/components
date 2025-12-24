@@ -1,4 +1,4 @@
-import { DlDropdownButton, DlListItem, DlItemSection, DlList } from '..'
+import { DlDropdownButton, DlListItem, DlItemSection, DlList, DlIcon } from '..'
 
 export default {
     title: 'Library/Components/DlDropdownButton',
@@ -238,6 +238,30 @@ export default {
             table: {
                 type: { summary: Boolean },
                 defaultValue: { summary: false }
+            }
+        }
+    },
+    slots: {
+        'suffix-icon': {
+            description:
+                'Custom icon slot to replace the default dropdown icon. If not provided, the default icon (controlled by dropdownIcon prop) will be displayed.',
+            table: {
+                type: { summary: 'Slot' },
+                category: 'Slots'
+            }
+        },
+        label: {
+            description: 'Custom label content slot',
+            table: {
+                type: { summary: 'Slot' },
+                category: 'Slots'
+            }
+        },
+        default: {
+            description: 'Menu content slot',
+            table: {
+                type: { summary: 'Slot' },
+                category: 'Slots'
             }
         }
     }
