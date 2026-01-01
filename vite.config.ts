@@ -1,10 +1,15 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { localFileServerPlugin } from './src/plugins/localFileServer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [
+        vue(),
+        // Enable local file serving for DlSimpleIde in dev mode
+        localFileServerPlugin()
+    ],
     test: {
         environment: 'jsdom',
         setupFiles: ['tests/setup.js'],

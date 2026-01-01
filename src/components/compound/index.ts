@@ -24,6 +24,7 @@ export * from './DlThumbnailGallery'
 export * from './DlJsonEditor'
 export * from './DlCodeEditor'
 export * from './DlCard'
+export * from './DlSimpleIde'
 
 /**
  * Moved to bottom of file as dlsmartsearch specifically uses other components here and needs to be initialized last
