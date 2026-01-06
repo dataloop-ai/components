@@ -754,6 +754,8 @@ export default defineComponent({
                                 group: 'nested',
                                 animation: 150,
                                 fallbackOnBody: true,
+                                forceFallback: true,
+                                fallbackClass: 'dl-tree-table-fallback-row',
                                 invertSwap: true,
                                 swapThreshold: 0.85,
                                 handle: '.draggable-icon',
@@ -787,15 +789,20 @@ export default defineComponent({
             let finalTarget = targetRow.value
             let shouldSkipValidation = false
 
-            if (storedValidTarget.value && targetRow.value) {
-                const isStoredTargetAncestor = isAncestor(
-                    storedValidTarget.value.id,
-                    targetRow.value.id,
-                    tableRows.value
-                )
-                if (isStoredTargetAncestor) {
+            if (storedValidTarget.value) {
+                if (!targetRow.value) {
                     finalTarget = storedValidTarget.value
                     shouldSkipValidation = true
+                } else {
+                    const isStoredTargetAncestor = isAncestor(
+                        storedValidTarget.value.id,
+                        targetRow.value.id,
+                        tableRows.value
+                    )
+                    if (isStoredTargetAncestor) {
+                        finalTarget = storedValidTarget.value
+                        shouldSkipValidation = true
+                    }
                 }
             }
 
@@ -825,11 +832,15 @@ export default defineComponent({
         }
 
         const handleChangeEvent = (event: any) => {
-            const originalEvent = event.originalEvent
-            const passedElement = getElementAbove(
-                originalEvent.srcElement,
-                'dl-tr'
-            ) as HTMLElement
+            const originalEvent = event?.originalEvent
+            if (!originalEvent) {
+                return
+            }
+
+            const srcEl = (originalEvent.srcElement ||
+                originalEvent.target ||
+                null) as HTMLElement | null
+            const passedElement = srcEl ? getElementAbove(srcEl, 'dl-tr') : null
             if (passedElement) {
                 const targetRowId = passedElement.dataset.id
                 const targetLevel = passedElement.getAttribute('data-level')
@@ -861,14 +872,21 @@ export default defineComponent({
                     targetRow: targetRow.value
                 })
             }
+
             const currentY = originalEvent.clientY
-            if (currentY > prevMouseY) {
-                sortingMovement.value.direction = 'down'
-            } else if (currentY < prevMouseY) {
-                sortingMovement.value.direction = 'up'
+            if (typeof currentY === 'number') {
+                if (currentY > prevMouseY) {
+                    sortingMovement.value.direction = 'down'
+                } else if (currentY < prevMouseY) {
+                    sortingMovement.value.direction = 'up'
+                }
+                prevMouseY = currentY
             }
-            prevMouseY = currentY
-            sortingMovement.value.lastId = passedElement.dataset.id
+
+            const lastId = passedElement?.dataset?.id
+            if (lastId) {
+                sortingMovement.value.lastId = lastId
+            }
         }
 
         const handleStartEvent = (event: any) => {
@@ -1161,6 +1179,8 @@ export default defineComponent({
                                     group: 'nested',
                                     animation: 150,
                                     fallbackOnBody: true,
+                                    forceFallback: true,
+                                    fallbackClass: 'dl-tree-table-fallback-row',
                                     invertSwap: true,
                                     swapThreshold: 0.85,
                                     handle: '.draggable-icon',
@@ -1287,6 +1307,7 @@ export default defineComponent({
     gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
+
     & > * {
         flex-grow: 1;
     }
@@ -1322,13 +1343,16 @@ tr {
         /* bg color is important for th; just specify one */
         background-color: var(--dl-color-panel-background);
     }
+
     ::v-deep thead tr th {
         position: sticky !important;
         z-index: 1;
     }
+
     ::v-deep thead tr:first-child th {
         top: 0;
     }
+
     /* this is when the loading indicator appears */
     &.dl-table--loading thead tr:last-child th {
         /* height of all previous header rows */

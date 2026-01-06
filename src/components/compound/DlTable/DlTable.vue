@@ -1159,7 +1159,7 @@ export default defineComponent({
          */
         selectedRowsLabel: {
             type: Function,
-            default: (val: number) => null
+            default: (val: number): string | null => null
         },
         /**
          * Label visible when loading is active
@@ -2092,6 +2092,9 @@ export default defineComponent({
             group: props.isTreeTable ? 'nested' : tableUuid,
             animation: 150,
             fallbackOnBody: true,
+            forceFallback: true,
+            fallbackClass: 'dl-table-fallback-row',
+            ghostClass: 'dl-table-ghost-row',
             invertSwap: true,
             swapThreshold: 0.5,
             handle: '.draggable-icon'
