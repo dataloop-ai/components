@@ -1,4 +1,4 @@
-@import "./theme.css";
+@import './theme.css';
 
 body {
     & > * {
@@ -6,6 +6,231 @@ body {
         font-style: normal;
         font-family: 'Roboto', sans-serif;
     }
+}
+
+html.dl-sortable--dragging,
+html.dl-sortable--dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+
+.dl-table-fallback-row.sortable-drag {
+    display: table !important;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: var(--dl-font-size-body);
+    line-height: 14px;
+    color: var(--dl-color-darker);
+    background-color: var(--dl-color-fill-hover);
+}
+
+tr.dl-table-fallback-row.sortable-drag {
+    display: table !important;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: var(--dl-font-size-body);
+    line-height: 14px;
+    color: var(--dl-color-darker);
+}
+
+tr.dl-table-fallback-row.sortable-drag > th,
+tr.dl-table-fallback-row.sortable-drag > td {
+    display: table-cell;
+    box-sizing: border-box;
+    background-color: var(--dl-color-fill-hover);
+    color: var(--dl-color-darker);
+    vertical-align: middle;
+    height: 40px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+tbody.dl-table-fallback-row.sortable-drag {
+    display: table-row-group !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag {
+    display: table !important;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: var(--dl-font-size-body);
+    line-height: 14px;
+    color: var(--dl-color-darker);
+    background-color: var(--dl-color-panel-background);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+tr.dl-tree-table-fallback-row.sortable-drag {
+    display: table !important;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: var(--dl-font-size-body);
+    line-height: 14px;
+    color: var(--dl-color-darker);
+    background-color: var(--dl-color-panel-background);
+}
+
+tr.dl-tree-table-fallback-row.sortable-drag > th,
+tr.dl-tree-table-fallback-row.sortable-drag > td {
+    display: table-cell;
+    box-sizing: border-box;
+    background-color: var(--dl-color-fill-hover);
+    color: var(--dl-color-darker);
+    vertical-align: middle;
+    height: 40px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+tbody.dl-tree-table-fallback-row.sortable-drag {
+    display: table-row-group !important;
+}
+
+.dl-table-fallback-row.sortable-drag > tr {
+    display: table-row;
+    height: 40px;
+    vertical-align: middle;
+}
+
+.dl-tree-table-fallback-row.sortable-drag > tr {
+    display: table-row;
+    height: 40px;
+    vertical-align: middle;
+}
+
+.dl-table-fallback-row.sortable-drag > tr > th,
+.dl-table-fallback-row.sortable-drag > tr > td {
+    display: table-cell;
+    box-sizing: border-box;
+    background-color: var(--dl-color-fill-hover);
+    color: var(--dl-color-darker);
+    vertical-align: middle;
+}
+
+.dl-tree-table-fallback-row.sortable-drag > tr > th,
+.dl-tree-table-fallback-row.sortable-drag > tr > td {
+    display: table-cell;
+    box-sizing: border-box;
+    background-color: var(--dl-color-fill-hover);
+    color: var(--dl-color-darker);
+    vertical-align: middle;
+}
+
+.dl-tree-table-fallback-row.sortable-drag > tr:first-child > th,
+.dl-tree-table-fallback-row.sortable-drag > tr:first-child > td {
+    background-color: var(--dl-color-fill-hover);
+}
+
+.dl-tree-table-fallback-row.sortable-drag > tr:not(:first-child) > th,
+.dl-tree-table-fallback-row.sortable-drag > tr:not(:first-child) > td {
+    background-color: var(--dl-color-fill-hover);
+}
+
+.dl-tree-table-fallback-row.sortable-drag
+    tr[data-level]:not([data-level='1'])
+    > td:first-child,
+.dl-tree-table-fallback-row.sortable-drag
+    tr[data-level]:not([data-level='1'])
+    > td.dl-table--col-auto-width,
+.dl-tree-table-fallback-row.sortable-drag
+    tr[data-level]:not([data-level='1'])
+    > td.chevron-icon-container {
+    background-color: transparent !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag
+    tr[data-level]:not([data-level='1'])
+    > td.chevron-icon-container,
+.dl-tree-table-fallback-row.sortable-drag
+    tr[data-level]:not([data-level='1'])
+    > td.chevron-icon-container
+    *,
+.dl-tree-table-fallback-row.sortable-drag > tr:not(:first-child) .chevron-icon,
+.dl-tree-table-fallback-row.sortable-drag
+    tr[data-level]:not([data-level='1'])
+    .chevron-icon
+    * {
+    background-color: transparent !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    > tr
+    > td:first-child,
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    > tr
+    > td.dl-table--col-auto-width,
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    > tr
+    > td.chevron-icon-container {
+    background-color: transparent !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    > tr
+    > td:nth-child(-n + 3) {
+    background-color: transparent !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag
+    tr:not(:first-child)
+    > td:nth-child(-n + 3) {
+    background-color: transparent !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    > tr
+    > td.chevron-icon-container,
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    > tr
+    > td.chevron-icon-container
+    *,
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    .chevron-icon,
+.dl-tree-table-fallback-row.sortable-drag
+    tbody[data-level]:not([data-level='1'])
+    .chevron-icon
+    * {
+    background-color: transparent !important;
+}
+
+.dl-table-fallback-row.sortable-drag .draggable-icon {
+    visibility: hidden !important;
+}
+
+.dl-tree-table-fallback-row.sortable-drag .draggable-icon {
+    visibility: hidden !important;
+}
+
+.dl-table-fallback-row.sortable-drag > tr:not(:first-child) {
+    display: none !important;
 }
 
 // tranform
@@ -145,7 +370,6 @@ body {
 }
 
 .non-draggable {
-    user-drag: none;
     -webkit-user-drag: none;
     user-select: none;
     -moz-user-select: none;
@@ -184,7 +408,6 @@ body {
 .full-height {
     height: 100%;
 }
-
 
 // scrollbar
 
