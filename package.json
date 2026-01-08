@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.20.187-code.0",
+  "version": "0.20.186",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -24,8 +24,6 @@
   },
   "dependencies": {
     "@dataloop-ai/icons": "^3.1.37",
-    "@monaco-editor/loader": "^1.4.0",
-    "monaco-editor": "^0.45.0",
     "@types/flat": "^5.0.2",
     "@types/lodash": "^4.14.184",
     "@types/sortablejs": "^1.15.7",
