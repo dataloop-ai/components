@@ -1109,9 +1109,21 @@ export default defineComponent({
             })
         })
 
+        const uuid = v4()
+        const watchFocusIn = () => {
+            focused.value = focused.value ||
+                !!document.activeElement?.closest(`#DlSmartSearchInput${uuid}`)
+        }
+
         watch(focused, (value, old) => {
             if (old === value) {
                 return
+            }
+
+            if (!value) {
+                const focusIn = 'focusin'
+                window.removeEventListener(focusIn, watchFocusIn)
+                window.addEventListener(focusIn, watchFocusIn)
             }
 
             updateParentElementWidth()
@@ -1174,7 +1186,7 @@ export default defineComponent({
         })
 
         return {
-            uuid: v4(),
+            uuid,
             suggestionsDropdown,
             container,
             input,
