@@ -23,6 +23,7 @@ export * from './DlTreeTable'
 export * from './DlThumbnailGallery'
 export * from './DlJsonEditor'
 export * from './DlCodeEditor'
+export * from './DlMonacoEditor'
 export * from './DlCard'
 
 /**

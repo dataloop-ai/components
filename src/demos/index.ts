@@ -71,6 +71,7 @@ import DlLabelPickerDemo from './DlLabelPickerDemo.vue'
 import DlInfiniteScrollDemo from './DlInfiniteScrollDemo.vue'
 import DlMarkdownDemo from './DlMarkdownDemo.vue'
 import DlTextInputDemo from './DlTextInputDemo.vue'
+import DlMonacoEditorDemo from './DlMonacoEditorDemo.vue'
 
 export default {
     AvatarDemo,
@@ -142,5 +143,6 @@ export default {
     DlLabelPickerDemo,
     DlInfiniteScrollDemo,
     DlMarkdownDemo,
-    DlTextInputDemo
+    DlTextInputDemo,
+    DlMonacoEditorDemo
 }
