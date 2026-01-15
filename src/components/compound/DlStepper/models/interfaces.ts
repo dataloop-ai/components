@@ -2,6 +2,7 @@ export interface StepState {
     value: string
     title: string
     subtitle?: string
+    subtitleTooltip?: string
     icon?: string
     active?: boolean
     completed?: boolean

@@ -28,7 +28,10 @@
                             <dl-ellipsis>
                                 {{ getStepTitle(step) }}
                             </dl-ellipsis>
-                            <dl-ellipsis class="sidebar--subtitle">
+                            <dl-ellipsis
+                                class="sidebar--subtitle"
+                                :tooltip-text="step.subtitleTooltip"
+                            >
                                 {{ getStepSubtitle(step) }}
                             </dl-ellipsis>
                         </div>
