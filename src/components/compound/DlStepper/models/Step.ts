@@ -9,6 +9,7 @@ export class Step {
         this._initialState = {
             active: false,
             subtitle: '',
+            subtitleTooltip: '',
             completed: false,
             optional: false,
             disabled: false,
@@ -40,6 +41,14 @@ export class Step {
 
     public set subtitle(value: string) {
         set(this._state, 'subtitle', value)
+    }
+
+    public get subtitleTooltip(): string {
+        return this._state.subtitleTooltip
+    }
+
+    public set subtitleTooltip(value: string) {
+        set(this._state, 'subtitleTooltip', value)
     }
 
     public get icon(): string {
