@@ -1,18 +1,18 @@
 :root {
     /* Constants */
-    --dl-color-alert-success: #2CC970; /* replace to --dell-green-500: #1B8500 */
-    --dl-color-alert-success-background: #EDFCF4; /* replace to --dell-green-200: #DDEDD9 */
-    --dl-color-alert-success-bg: #EDFCF4; /* replace to --dell-green-200: #DDEDD9 */
-    --dl-color-alert-warn: #F5C114; /* replace to --dell-yellow-500: #FFC700 */
-    --dl-color-alert-warn-background: #FEFAEB; /* replace to --dell-yellow-200: #FFF7D9 */
-    --dl-color-alert-warn-bg: #FEFAEB; /* replace to --dell-yellow-200: #FFF7D9 */
-    --dl-color-alert-error: #DC2618; /* replace to --dell-red-500: #AF0000 */
-    --dl-color-alert-error-background: #FCEFEE; /* replace to --dell-red-200: #F3D9D9 */
-    --dl-color-alert-error-bg: #FCEFEE; /* replace to --dell-red-200: #F3D9D9 */
-    --dl-color-alert-info: #3B7FBA; /* replace to --dell-blue-500: #0076CE */
-    --dl-color-alert-info-background: #F2F8FD; /* replace to --dell-blue-200: #D9EAF8 */
-    --dl-color-alert-info-bg: #F2F8FD; /* replace to --dell-blue-200: #D9EAF8 */
-    --dl-color-alert-text: #171723; /* replace to --dell-gray-800: #333333 */
+    --dl-color-alert-success: #1B8500; /* replace to --dell-green-500: #1B8500 */
+    --dl-color-alert-success-background: #DDEDD9; /* replace to --dell-green-200: #DDEDD9 */
+    --dl-color-alert-success-bg: #DDEDD9; /* replace to --dell-green-200: #DDEDD9 */
+    --dl-color-alert-warn: #FFC700; /* replace to --dell-yellow-500: #FFC700 */
+    --dl-color-alert-warn-background: #FFF7D9; /* replace to --dell-yellow-200: #FFF7D9 */
+    --dl-color-alert-warn-bg: #FFF7D9; /* replace to --dell-yellow-200: #FFF7D9 */
+    --dl-color-alert-error: #AF0000; /* replace to --dell-red-500: #AF0000 */
+    --dl-color-alert-error-background: #F3D9D9; /* replace to --dell-red-200: #F3D9D9 */
+    --dl-color-alert-error-bg: #F3D9D9; /* replace to --dell-red-200: #F3D9D9 */
+    --dl-color-alert-info: #0076CE; /* replace to --dell-blue-500: #0076CE */
+    --dl-color-alert-info-background: #D9EAF8; /* replace to --dell-blue-200: #D9EAF8 */
+    --dl-color-alert-info-bg: #D9EAF8; /* replace to --dell-blue-200: #D9EAF8 */
+    --dl-color-alert-text: #333333; /* replace to --dell-gray-800: #333333 */
 
     /* Z-Index */
     --dl-z-index-toast: 1052;
