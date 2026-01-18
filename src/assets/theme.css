@@ -23,10 +23,10 @@ body {
 
 :root {
     /* common */
-    --dl-color-white: #fff;
+    --dl-color-white: #FFFFFF; /* replace to --dell-white: #FFFFFF */
     --dl-color-black: #000;
-    --dl-color-bg: #fff;
-    --dl-color-background: var(--dl-color-bg);
+    --dl-color-bg: #FFFFFF; /* replace to --dell-white: #FFFFFF */
+    --dl-color-background: #FFFFFF; /* replace to --dell-white: #FFFFFF */
     --dl-color-transparent: transparent;
 
     /* fontSizes */
@@ -44,55 +44,55 @@ body {
 
     /* colors */
     --dl-color-tooltip-text: #fefefe;
-    --dl-color-tooltip-background: #171723d9;
-    --dl-color-text-darker-buttons: #171723;
-    --dl-color-secondary: #3452ff;
-    --dl-color-secondary-opaque: #3452ff10;
-    --dl-color-text-buttons: #ffffff;
-    --dl-color-darker: #171723;
-    --dl-color-medium: #767676;
-    --dl-color-lighter: #999999;
-    --dl-color-hover: #7b8cff;
-    --dl-color-disabled: #b3b3b3;
+    --dl-color-tooltip-background: #333333; /* base color replace to --dell-gray-800: #333333 */
+    --dl-color-text-darker-buttons: #333333; /* replace to --dell-gray-800: #333333 */
+    --dl-color-secondary: #0076CE; /* replace to --dell-blue-500: #0076CE */
+    --dl-color-secondary-opaque: #0076CE; /* base color replace to --dell-blue-500: #0076CE */
+    --dl-color-text-buttons: #FFFFFF; /* replace to --dell-white: #FFFFFF */
+    --dl-color-darker: #333333; /* replace to --dell-gray-800: #333333 */
+    --dl-color-medium: #616161; /* replace to --dell-gray-600: #616161 */
+    --dl-color-lighter: #757575; /* replace to --dell-gray-500: #757575 */
+    --dl-color-hover: #0062AB; /* replace to --dell-blue-600: #0062AB */
+    --dl-color-disabled: #757575; /* replace to --dell-gray-500: #757575 */
     --dl-color-fill: #0000001e;
     --dl-color-fill-hover: #f8f8f8;
-    --dl-color-separator: #e4e4e4;
-    --dl-color-component: #ffffff;
-    --dl-color-scrollbar: #e4e4e4;
-    --dl-color-body-background: #eef1ff;
-    --dl-color-panel-background: #ffffff;
+    --dl-color-separator: #C5C5C5; /* replace to --dell-gray-300: #C5C5C5 */
+    --dl-color-component: #FFFFFF; /* replace to --dell-white: #FFFFFF */
+    --dl-color-scrollbar: #C5C5C5; /* replace to --dell-gray-300: #C5C5C5 */
+    --dl-color-body-background: #F4F4F4; /* replace to --dell-gray-100: #F4F4F4 */
+    --dl-color-panel-background: #FFFFFF; /* replace to --dell-white: #FFFFFF */
     --dl-color-side-panel: #18195c;
-    --dl-color-shadow: #ffffff;
-    --dl-color-icon-default: #171723;
+    --dl-color-shadow: #FFFFFF; /* replace to --dell-white: #FFFFFF */
+    --dl-color-icon-default: #333333; /* replace to --dell-gray-800: #333333 */
     --dl-color-fill-secondary: #fbf8f8;
     --dl-color-fill-third: #fbfbfb;
     --dl-color-link: #20abfa;
     --dl-color-cell-background: #fffae2;
-    --dl-color-disabled-slider: #b3b3b3;
-    --dl-color-text-800: #101019;
+    --dl-color-disabled-slider: #757575; /* replace to --dell-gray-500: #757575 */
+    --dl-color-text-800: #252525; /* replace to --dell-gray-900: #252525 */
     --q-color-positive: #38d079;
     --q-color-warning: #e1b75b;
 
     /* alert colors */
-    --dl-color-negative: var(--dl-color-alert-error);
-    --dl-color-negative-background: var(--dl-color-alert-error-background);
-    --dl-color-negative-bg: var(--dl-color-alert-error-bg);
-    --dl-color-warning: var(--dl-color-alert-warn);
-    --dl-color-warning-background: var(--dl-color-alert-warn-background);
-    --dl-color-warning-bg: var(--dl-color-alert-warn-bg);
-    --dl-color-positive: var(--dl-color-alert-success);
-    --dl-color-positive-background: var(--dl-color-alert-success-background);
-    --dl-color-positive-bg: var(--dl-color-alert-success-bg);
-    --dl-color-info: var(--dl-color-alert-info);
-    --dl-color-info-background: var(--dl-color-alert-info-background);
-    --dl-color-info-bg: var(--dl-color-alert-info-bg);
-    --dl-color-info-base: #E3F0FC;
-    --dl-color-info-highlight: #C7E2FA;
+    --dl-color-negative: #AF0000; /* replace to --dell-red-500: #AF0000 */
+    --dl-color-negative-background: #F3D9D9; /* replace to --dell-red-200: #F3D9D9 */
+    --dl-color-negative-bg: #F3D9D9; /* replace to --dell-red-200: #F3D9D9 */
+    --dl-color-warning: #FFC700; /* replace to --dell-yellow-500: #FFC700 */
+    --dl-color-warning-background: #FFF7D9; /* replace to --dell-yellow-200: #FFF7D9 */
+    --dl-color-warning-bg: #FFF7D9; /* replace to --dell-yellow-200: #FFF7D9 */
+    --dl-color-positive: #1B8500; /* replace to --dell-green-500: #1B8500 */
+    --dl-color-positive-background: #DDEDD9; /* replace to --dell-green-200: #DDEDD9 */
+    --dl-color-positive-bg: #DDEDD9; /* replace to --dell-green-200: #DDEDD9 */
+    --dl-color-info: #0076CE; /* replace to --dell-blue-500: #0076CE */
+    --dl-color-info-background: #D9EAF8; /* replace to --dell-blue-200: #D9EAF8 */
+    --dl-color-info-bg: #D9EAF8; /* replace to --dell-blue-200: #D9EAF8 */
+    --dl-color-info-base: #EBF4FB; /* replace to --dell-blue-100: #EBF4FB */
+    --dl-color-info-highlight: #FFFFFF; /* replace to --dell-white: #FFFFFF */
 
     --dl-color-chart-brush: #eef1ff;
 
     --dl-date-picker-shadow: 0px 3px 6px #101e7326;
-    --dl-date-picker-selected-strip: rgb(52, 82, 255, 0.2);
+    --dl-date-picker-selected-strip: #0076CE; /* base color replace to --dell-blue-500: #0076CE */
     --dl-date-picker-selected-date: #8fa0ff;
 
     /* DlJsonEditor based on atom one themes */
@@ -103,8 +103,8 @@ body {
     --dl-json-editor-value-color-number: #c18401;
     --dl-json-editor-value-color-string: #50a14f;
 
-    --dl-color-discovery: #7F3EE0;
-    --dl-color-discovery-bg: #F6F2FD;
+    --dl-color-discovery: #7F3EE0; /* replace to --dell-color-discovery: #7F3EE0 */
+    --dl-color-discovery-bg: #F6F2FD; /* replace to --dell-color-discovery-bg: #F6F2FD */
 
 }
 
