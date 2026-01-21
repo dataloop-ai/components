@@ -61,7 +61,7 @@ body {
     --dl-color-scrollbar: #C5C5C5; /* replace to --dell-gray-300: #C5C5C5 */
     --dl-color-body-background: #F4F4F4; /* replace to --dell-gray-100: #F4F4F4 */
     --dl-color-panel-background: #FFFFFF; /* replace to --dell-white: #FFFFFF */
-    --dl-color-side-panel: #616161; /* replace to --dell-gray-600: #616161 */
+    --dl-color-side-panel: #FFFFFF; /* replace to --dell-white: #FFFFFF */
     --dl-color-shadow: #FFFFFF; /* replace to --dell-white: #FFFFFF */
     --dl-color-icon-default: #333333; /* replace to --dell-gray-800: #333333 */
     --dl-color-fill-secondary: #ebf4fb; /* replace to --dell-blue-100: #ebf4fb */
