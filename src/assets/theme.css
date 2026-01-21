@@ -93,10 +93,10 @@ body {
 
     --dl-date-picker-shadow: 0px 3px 6px #101e7326; /* not in use */
     --dl-date-picker-selected-strip: #0076CE; /* base color replace to --dell-blue-500: #0076CE */
-    --dl-date-picker-selected-date: #8fa0ff;
+    --dl-date-picker-selected-date: #8fa0ff; /* not in use in OA, maybe in use in other repos*/
 
     /* DlJsonEditor based on atom one themes */
-    --dl-json-editor-key-color: #a626a4;
+    --dl-json-editor-key-color: #a626a4; /* remain the same color */
     --dl-json-editor-background-color: #ebf4fb; /* replace to --dell-gray-100: #ebf4fb */
     --dl-json-editor-panel-background: #ebf4fb; /* replace to --dell-gray-100: #ebf4fb */
     --dl-json-editor-value-color-boolean: #0184bb;
