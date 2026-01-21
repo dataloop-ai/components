@@ -40,7 +40,7 @@ body {
     --dl-font-size-small: 10px;
 
     /* shadows */
-    --dl-menu-shadow: 0px 3px 6px rgba(16, 30, 115, 0.15);
+    --dl-menu-shadow: rgba(0, 0, 0, 0.14); /* replace to --dell-shadow: rgba(0, 0, 0, 0.14); */
 
     /* colors */
     --dl-color-tooltip-text: #FFFFFF; /* replace to --dell-white: #FFFFFF */
@@ -97,11 +97,11 @@ body {
 
     /* DlJsonEditor based on atom one themes */
     --dl-json-editor-key-color: #a626a4; /* remain the same color */
-    --dl-json-editor-background-color: #ebf4fb; /* replace to --dell-gray-100: #ebf4fb */
-    --dl-json-editor-panel-background: #ebf4fb; /* replace to --dell-gray-100: #ebf4fb */
-    --dl-json-editor-value-color-boolean: #0184bb;
-    --dl-json-editor-value-color-number: #c18401; /* remain the same color */
-    --dl-json-editor-value-color-string: #50a14f; /* remain the same color */
+    --dl-json-editor-background-color: #FFFFFF; /* replace to --dell-white: #FFFFFF */
+    --dl-json-editor-panel-background: #FFFFFF; /* replace to --dell-white: #FFFFFF */
+    --dl-json-editor-value-color-boolean: #00819e; /* replace to dell-teal-500: #00819e */
+    --dl-json-editor-value-color-number: #ED6400; /* replace to dell-orange-500: #ED6400 */
+    --dl-json-editor-value-color-string: #1B8500; /* replace to --dell-green-500: #1B8500 */
 
     --dl-color-discovery: #7F3EE0; /* replace to --dell-color-discovery: #7F3EE0 */
     --dl-color-discovery-bg: #F6F2FD; /* replace to --dell-color-discovery-bg: #F6F2FD */
