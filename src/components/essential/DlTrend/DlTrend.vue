@@ -22,6 +22,24 @@ import { getColor } from '../../../utils'
 const colorValidator = (val: string | null) =>
     val === 'negative' || val === 'positive' || val === null
 
+const getColorByName = (name: string) => {
+    if (name === 'negative') {
+        return 'dell-red-500'
+    } else if (name === 'positive') {
+        return 'dell-green-500'
+    } else {
+        return 'dell-gray-800'
+    }
+}
+
+const getColorByDirection = (direction: string) => {
+    if (direction === 'up') {
+        return 'dell-green-500'
+    } else {
+        return 'dell-red-500'
+    }
+}
+
 export default defineComponent({
     name: 'DlTrend',
     props: {
@@ -60,9 +78,9 @@ export default defineComponent({
         },
         computedColor(): string {
             if (this.color !== null || !colorValidator(this.color)) {
-                return getColor(`dl-color-${this.color}`)
+                return getColor(getColorByName(this.color))
             }
-            return getColor(`dl-color-${this.isUp ? 'positive' : 'negative'}`)
+            return getColor(getColorByDirection(this.direction))
         },
         withArrow(): boolean {
             return !(this.value === 0 || this.value === '0')
