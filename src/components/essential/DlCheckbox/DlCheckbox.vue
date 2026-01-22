@@ -159,7 +159,7 @@ export default defineComponent({
     methods: {
         getCurrentColor() {
             if (this.disabled) {
-                return 'var(--dell-gray-100)'
+                return 'var(--dell-gray-500)'
             }
             return getColor(this.color, 'dell-blue-500')
         },
