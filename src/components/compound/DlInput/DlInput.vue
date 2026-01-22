@@ -1443,18 +1443,18 @@ export default defineComponent({
         position: relative;
         display: flex;
         justify-content: space-between;
-        border: 1px solid var(--dl-color-separator);
+        border: 1px solid var(--dell-gray-500);
         min-width: var(--dl-input-width);
         max-width: var(--dl-input-max-width);
         max-height: var(--dl-input-max-height);
         height: var(--dl-input-height);
 
         &--readonly {
-            border-color: var(--dl-color-separator) !important;
+            border-color: var(--dell-gray-500) !important;
         }
 
         &:hover {
-            border-color: var(--dl-input-border-color-hover);
+            border-color: var(--dell-gray-800);
         }
         &--error {
             border-color: var(--dl-color-negative);
@@ -1463,7 +1463,7 @@ export default defineComponent({
             border-color: var(--dl-input-border-color-hover);
         }
         &--disabled {
-            border-color: var(--dl-color-separator);
+            border-color: var(--dell-gray-500);
             color: var(--dl-color-disabled);
             cursor: not-allowed;
         }
@@ -1479,7 +1479,7 @@ export default defineComponent({
         display: inline-block;
         font-family: Arial, Helvetica, sans-serif;
         border-right: none;
-        border-radius: 2px;
+        border-radius: 0px;
         color: var(--dl-color-darker);
         white-space: var(--dl-input-white-space);
         font-size: var(--dl-font-size-body);

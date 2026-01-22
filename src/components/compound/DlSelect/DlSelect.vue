@@ -815,7 +815,7 @@ export default defineComponent({
             return {
                 '--placeholder-color': getColor(
                     this.modelValueLength > 0 || this.selectedIndex !== -1
-                        ? 'dl-color-darker'
+                        ? 'dell-gray-800'
                         : 'dl-color-lighter'
                 )
             }
@@ -937,7 +937,7 @@ export default defineComponent({
             return !!this.$slots.prepend && !this.isSmall
         },
         chevronIconColor(): string {
-            return `${this.disabled ? 'dl-color-disabled' : null}`
+            return `${this.disabled ? 'dell-gray-500' : null}`
         },
         showMenuList(): boolean {
             if (
@@ -1335,10 +1335,10 @@ export default defineComponent({
     }
 
     .dl_select__select {
-        border: 1px solid var(--dl-color-separator);
-        border-radius: 2px;
+        border: 1px solid var(--dell-gray-500);
+        border-radius: 0px;
         cursor: pointer;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
         height: 12px;
         width: 100%;
         box-sizing: content-box;
@@ -1427,11 +1427,11 @@ export default defineComponent({
         }
 
         &:hover {
-            border-color: var(--dl-color-hover);
+            border-color: var(--dell-gray-800);
         }
 
         &--focused {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dell-blue-500) !important;
         }
 
         &--disabled {

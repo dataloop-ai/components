@@ -88,7 +88,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
-                                        :color="color"
+                                        :color="checkboxColor"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
                                         @update:model-value="
@@ -169,8 +169,8 @@
                                         <dl-button
                                             :text-color="
                                                 isVisibleColumnsOpen
-                                                    ? 'dl-color-secondary'
-                                                    : 'dl-color-medium'
+                                                    ? 'dell-blue-600'
+                                                    : 'dell-gray-600'
                                             "
                                             flat
                                             icon="icon-dl-column"
@@ -325,7 +325,7 @@
                                         "
                                     >
                                         <DlCheckbox
-                                            :color="color"
+                                            :color="checkboxColor"
                                             :model-value="
                                                 isRowSelected(
                                                     getRowKey(props.item)
@@ -490,7 +490,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
-                                        :color="color"
+                                        :color="checkboxColor"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
                                         @update:model-value="
@@ -747,7 +747,7 @@
                                             "
                                         >
                                             <DlCheckbox
-                                                :color="color"
+                                                :color="checkboxColor"
                                                 :model-value="
                                                     isRowSelected(
                                                         getRowKey(row)
@@ -1284,6 +1284,10 @@ export default defineComponent({
             default: null,
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
+        },
+        checkboxColor: {
+            type: String,
+            default: 'dell-blue-500'
         },
         ...useTableActionsProps,
         ...commonVirtScrollProps,

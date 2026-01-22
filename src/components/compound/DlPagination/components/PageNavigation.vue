@@ -1,18 +1,12 @@
 <template>
-    <div
-        class="dl-pagination--page_navigation"
-        :style="cssVars"
-    >
+    <div class="dl-pagination--page_navigation" :style="cssVars">
         <button
             v-if="boundaryLinks"
             class="dl-pagination--nav_button"
             :disabled="disabled || isFirstPage"
             @click="setPage(min)"
         >
-            <dl-icon
-                icon="icon-dl-first-page"
-                size="16px"
-            />
+            <dl-icon icon="icon-dl-first-page" size="16px" />
         </button>
         <button
             v-if="directionLinks"
@@ -20,10 +14,7 @@
             :disabled="disabled || isFirstPage"
             @click="setPage(value - 1)"
         >
-            <dl-icon
-                icon="icon-dl-previous-page"
-                size="16px"
-            />
+            <dl-icon icon="icon-dl-previous-page" size="16px" />
         </button>
         <div class="dl-pagination--page_buttons_wrapper">
             <button
@@ -92,10 +83,7 @@
             :disabled="disabled || isLastPage"
             @click="setPage(value + 1)"
         >
-            <dl-icon
-                icon="icon-dl-right-next-page"
-                size="16px"
-            />
+            <dl-icon icon="icon-dl-right-next-page" size="16px" />
         </button>
         <button
             v-if="boundaryLinks"
@@ -103,10 +91,7 @@
             :disabled="disabled || isLastPage"
             @click="setPage(max)"
         >
-            <dl-icon
-                icon="icon-dl-last-page"
-                size="16px"
-            />
+            <dl-icon icon="icon-dl-last-page" size="16px" />
         </button>
     </div>
 </template>
@@ -155,15 +140,15 @@ export default defineComponent({
         },
         textColor: {
             type: String,
-            default: 'dl-color-darker'
+            default: 'dell-gray-800'
         },
         activeColor: {
             type: String,
-            default: 'dl-color-secondary'
+            default: 'dell-blue-500'
         },
         activeTextColor: {
             type: String,
-            default: 'dl-color-text-buttons'
+            default: 'dell-white'
         }
     },
     emits: ['update:model-value'],
@@ -194,12 +179,12 @@ export default defineComponent({
                 ),
                 '--dl-active-button-bg-color': getColor(
                     this.activeColor,
-                    'dl-color-secondary'
+                    'dell-blue-500'
                 ),
-                '--dl-text-color': getColor(this.textColor, 'dl-color-darker'),
+                '--dl-text-color': getColor(this.textColor, 'dell-gray-800'),
                 '--dl-active-text-color': getColor(
                     this.activeTextColor,
-                    'dl-color-text-buttons'
+                    'dell-white'
                 ),
                 '--dl-button-min-width': this.buttonMinWidth
             }
@@ -319,44 +304,75 @@ export default defineComponent({
     }
 
     &--active {
-        color: var(--dl-active-text-color) !important;
-        background-color: var(--dl-active-button-bg-color) !important;
+        color: var(--dell-white) !important;
+        background-color: var(--dell-blue-500) !important;
     }
 
-    &--page_button,
     &--nav_button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         min-width: var(--dl-button-min-width);
         padding: 0;
         cursor: pointer;
         border: none;
         border-radius: 2px;
-        color: var(--dl-text-color);
+        color: var(--dell-blue-500) !important;
         background-color: var(--dl-button-bg-color);
 
-        &:active:not(:disabled) {
-            background-color: var(--dl-color-secondary);
-            color: var(--dl-color-text-buttons);
+        &:hover:not(:disabled) {
+            color: var(--dell-blue-600);
+            border-radius: 2px;
+            background-color: var(--dell-gray-100);
+            border: 1px solid var(--dell-gray-100);
 
             ::v-deep .dl-icon {
-                color: var(--dl-color-text-buttons);
+                color: var(--dell-blue-600);
             }
         }
 
         &:disabled {
-            color: var(--dl-color-disabled);
+            color: var(--dell-gray-500);
             cursor: default;
 
             ::v-deep .dl-icon {
-                color: var(--dl-color-disabled);
+                color: var(--dell-gray-500);
+            }
+        }
+    }
+
+    &--page_button {
+        min-width: var(--dl-button-min-width);
+        padding: 0;
+        cursor: pointer;
+        border: none;
+        border-radius: 2px;
+        color: var(--dell-gray-800);
+        background-color: var(--dl-button-bg-color);
+
+        &:active:not(:disabled) {
+            background-color: var(--dell-blue-500);
+            color: var(--dell-white);
+            ::v-deep .dl-icon {
+                color: var(--dell-white);
+            }
+        }
+
+        &:disabled {
+            color: var(--dell-gray-500);
+            cursor: default;
+
+            ::v-deep .dl-icon {
+                color: var(--dell-gray-500);
             }
         }
 
         &:hover:not(:disabled):not(.active) {
-            background-color: var(--dl-color-hover);
-            color: var(--dl-color-text-buttons);
+            background-color: var(--dell-gray-100);
+            color: var(--dell-gray-800);
 
             ::v-deep .dl-icon {
-                color: var(--dl-color-text-buttons);
+                color: var(--dell-gray-800);
             }
         }
     }
