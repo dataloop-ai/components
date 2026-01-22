@@ -127,7 +127,7 @@ export default defineComponent({
                           color.value === 'secondary'
                               ? 'q-color-secondary'
                               : color.value,
-                          'dl-color-icon-default'
+                          'dell-gray-800'
                       )
                     : 'inherit'
             }

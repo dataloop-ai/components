@@ -10,32 +10,31 @@
             :disabled="disabled"
             @keydown="handleKeyDown"
             @keyup="handleKeyUp"
-        >
-        <dl-button
-            size="s"
-            flat
-            margin="0"
-            class="dl-pagination--quick_nav_button"
+        />
+        <dl-link
+            class="dl-pagination--quick_nav_link"
+            color="dell-blue-600"
             :disabled="disabled"
+            hover-color="dell-blue-700"
             @click="handleNavigation"
         >
             Go
-        </dl-button>
+        </dl-link>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { DlButton } from '../../../basic'
 import { DlTypography } from '../../../essential'
 import { stopAndPrevent } from '../../../../utils'
 import { admissibleKeys } from '../../../../utils/nav-keys-constants'
+import { DlLink } from '../../../essential'
 
 export default defineComponent({
     name: 'QuickNavigation',
     components: {
         DlTypography,
-        DlButton
+        DlLink
     },
     model: {
         prop: 'modelValue',
@@ -96,16 +95,16 @@ export default defineComponent({
     &--quick_navigation {
         display: flex;
         align-items: center;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
         padding-right: 16px;
         & p {
             padding-right: 4px;
         }
     }
     &--navigation_input {
-        border: 1px solid var(--dl-color-separator);
+        border: 1px solid var(--dell-gray-500);
         border-radius: 2px;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
         outline: none;
         background: none;
         padding-top: 3px;
@@ -121,22 +120,25 @@ export default defineComponent({
             margin: 0;
         }
         &:hover {
-            border-color: var(--dl-color-hover);
+            border-color: var(--dell-blue-600);
         }
 
         &:focus {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dell-blue-500);
         }
 
         &:disabled {
-            border-color: var(--dl-color-disabled);
-            color: var(--dl-color-disabled);
+            border-color: var(--dell-gray-500);
+            color: var(--dell-gray-500);
             cursor: not-allowed;
 
             &:hover {
-                border-color: var(--dl-color-disabled);
+                border-color: var(--dell-gray-500);
             }
         }
+    }
+    &--quick_nav_link {
+        margin-left: 5px;
     }
 }
 

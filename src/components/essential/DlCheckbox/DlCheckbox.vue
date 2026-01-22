@@ -1,9 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        :class="identifierClass"
-        class="container-wrapper"
-    >
+    <div :id="uuid" :class="identifierClass" class="container-wrapper">
         <label
             ref="container"
             :for="computedId"
@@ -15,10 +11,7 @@
             @keydown="onKeydown"
             @keyup="onKeyup"
         >
-            <span
-                class="checkbox-wrapper"
-                :style="cssSvgVars"
-            >
+            <span class="checkbox-wrapper" :style="cssSvgVars">
                 <input
                     :id="computedId"
                     :value="value"
@@ -27,7 +20,7 @@
                     tabindex="-1"
                     :disabled="disabled"
                     :style="cssSvgVars"
-                >
+                />
                 <svg
                     class="check"
                     :class="{ active: isTrue }"
@@ -56,21 +49,13 @@
                     />
                 </svg>
             </span>
-            <span
-                v-if="hasLabel"
-                class="checkbox-label"
-                :for="computedId"
-            >
+            <span v-if="hasLabel" class="checkbox-label" :for="computedId">
                 <slot>
                     {{ label }}
                 </slot>
             </span>
         </label>
-        <div
-            v-if="hasSubLabel"
-            :style="subLabelStyle"
-            class="sub-text"
-        >
+        <div v-if="hasSubLabel" :style="subLabelStyle" class="sub-text">
             <slot name="sub-label">
                 <span>{{ subLabel }}</span>
             </slot>
@@ -93,7 +78,7 @@ export default defineComponent({
         event: 'update:model-value'
     },
     props: {
-        color: { type: String, default: 'dl-color-secondary' },
+        color: { type: String, default: 'dell-blue-500' },
         disabled: { type: Boolean, default: false },
         id: { type: [String, Number], default: null },
         modelValue: { type: ValueTypes, required: false, default: null },
@@ -174,9 +159,9 @@ export default defineComponent({
     methods: {
         getCurrentColor() {
             if (this.disabled) {
-                return 'var(--dl-color-disabled)'
+                return 'var(--dell-gray-500)'
             }
-            return getColor(this.color, 'dl-color-secondary')
+            return getColor(this.color, 'dell-blue-500')
         },
         onClick(e: Event) {
             if (e) {
