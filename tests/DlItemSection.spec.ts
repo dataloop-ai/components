@@ -42,7 +42,7 @@ describe('DlItemSection', () => {
             await wrapper.setProps({
                 side: true,
                 noWrap: true,
-                color: 'dl-color-warning'
+                color: 'dell-yellow-500'
             })
         })
         it('should have the right class', function () {

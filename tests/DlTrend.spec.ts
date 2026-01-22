@@ -33,7 +33,7 @@ describe('DlTrend', () => {
         })
         describe('When you change color prop', () => {
             beforeAll(async () => {
-                await wrapper.setProps({ color: 'negative' })
+                await wrapper.setProps({ color: 'dell-red-500' })
             })
             it('should the right computedColor', function () {
                 expect(wrapper.vm.computedColor).toBe(
