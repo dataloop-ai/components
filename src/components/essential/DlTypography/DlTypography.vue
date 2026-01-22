@@ -35,7 +35,7 @@ export default defineComponent({
         bold: Boolean,
         color: {
             type: String,
-            default: 'dl-color-darker'
+            default: 'dell-gray-800'
         }
     },
     data() {
