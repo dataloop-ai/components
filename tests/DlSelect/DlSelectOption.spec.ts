@@ -32,7 +32,7 @@ describe('select option computed', () => {
             expect(wrapper.vm.hasChildren).toBeTruthy()
         })
         it('should compute the color', async () => {
-            expect(wrapper.vm.color).toMatch('dl-color-darker')
+            expect(wrapper.vm.color).toMatch('dell-gray-800')
             await wrapper.setProps({
                 defaultStyles: false
             })

@@ -167,7 +167,7 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            :text-color="
+                                            :icon-color="
                                                 isVisibleColumnsOpen
                                                     ? 'dell-blue-600'
                                                     : 'dell-gray-600'
@@ -571,7 +571,7 @@
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            :text-color="
+                                            :icon-color="
                                                 isVisibleColumnsOpen
                                                     ? 'dl-color-secondary'
                                                     : 'dl-color-medium'

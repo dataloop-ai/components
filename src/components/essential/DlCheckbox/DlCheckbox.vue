@@ -234,10 +234,10 @@ export default defineComponent({
 }
 .container.disabled {
     cursor: not-allowed;
-    color: var(--dl-color-disabled);
+    color: var(--dell-gray-500);
     & * {
         pointer-events: auto;
-        color: var(--dl-color-disabled);
+        color: var(--dell-gray-500);
     }
 }
 .checkbox-wrapper {
@@ -245,7 +245,7 @@ export default defineComponent({
     position: relative;
     width: 12px;
     height: 12px;
-    border: 1px solid var(--dl-color-separator);
+    border: 1px solid var(--dell-gray-300);
     border-radius: 2px;
     & svg {
         transition: fill 100ms cubic-bezier(0, 0, 0.2, 1) 0ms;
@@ -278,7 +278,7 @@ input {
 
 .checkbox-label {
     font-size: var(--dl-font-size-body);
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-800);
     overflow-wrap: break-word;
     width: 100%;
 }

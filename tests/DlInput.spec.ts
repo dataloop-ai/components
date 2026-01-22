@@ -49,9 +49,7 @@ describe('DlInput component', () => {
             })
         })
         it('should set error border color', () => {
-            expect(wrapper.vm.getBorderColor).toMatch(
-                'var(--dl-color-negative)'
-            )
+            expect(wrapper.vm.getBorderColor).toMatch('var(--dell-red-500)')
         })
     })
     describe('warning input', () => {
@@ -64,7 +62,7 @@ describe('DlInput component', () => {
             })
         })
         it('should set error border color', () => {
-            expect(wrapper.vm.getBorderColor).toMatch('var(--dl-color-warning)')
+            expect(wrapper.vm.getBorderColor).toMatch('var(--dell-yellow-500)')
         })
     })
     describe('expandable input', () => {

@@ -222,7 +222,7 @@ export default defineComponent({
             return `dl-select-option-${this.value}`.replaceAll(' ', '-')
         },
         color(): string | null {
-            return this.defaultStyles ? 'dl-color-darker' : null
+            return this.defaultStyles ? 'dell-gray-800' : null
         },
         isSelected(): boolean {
             return (
@@ -268,7 +268,7 @@ export default defineComponent({
 
                 highlightedHtml = label.replace(
                     toReplace,
-                    `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                    `<span style="background: var(--dell-yellow-500)">${getCaseInsensitiveInput(
                         label,
                         this.filterTerm
                     )}</span>`

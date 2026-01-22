@@ -63,7 +63,7 @@
                             v-if="searchable"
                             icon="icon-dl-search"
                             :size="iconSize"
-                            color="dl-color-lighter"
+                            color="dell-gray-500"
                         />
                     </slot>
                 </div>
@@ -166,7 +166,7 @@
                 @selected-item="handleSelectedItem"
             >
                 <dl-list-item v-if="hasBeforeOptions && !noOptions">
-                    <dl-item-section color="dl-color-medium">
+                    <dl-item-section color="dell-gray-600">
                         <slot name="before-options" />
                     </dl-item-section>
                 </dl-list-item>
@@ -175,7 +175,7 @@
                     :style="computedNoOptionsStyle"
                     :padding="noOptionsPadding"
                 >
-                    <dl-item-section color="dl-color-medium">
+                    <dl-item-section color="dell-gray-600">
                         <slot name="no-options"> No options </slot>
                     </dl-item-section>
                 </dl-list-item>
@@ -355,7 +355,7 @@
                     v-if="error && !!errorMessage.length"
                     :icon="errorIcon"
                     :inline="false"
-                    color="dl-color-negative"
+                    color="dell-red-500"
                     :size="iconSize"
                 >
                     <dl-tooltip>
@@ -816,7 +816,7 @@ export default defineComponent({
                 '--placeholder-color': getColor(
                     this.modelValueLength > 0 || this.selectedIndex !== -1
                         ? 'dell-gray-800'
-                        : 'dl-color-lighter'
+                        : 'dell-gray-500'
                 )
             }
         },

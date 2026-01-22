@@ -8,4 +8,4 @@ export const itemCursor = (actionable: boolean, disabled: boolean) =>
     actionable ? 'pointer' : disabled ? 'not-allowed' : 'cursor'
 
 export const itemColor = (disabled: boolean) =>
-    disabled ? 'var(--dl-color-disabled)' : 'var(--dl-color-darker)'
+    disabled ? 'var(--dell-gray-500)' : 'var(--dell-gray-800)'
