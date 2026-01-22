@@ -17,7 +17,7 @@
         <dl-list-item
             v-else
             class="option"
-            :class="{ 
+            :class="{
                 highlighted: highlightSelected && isSelected,
                 'disabled-row': disableRow
             }"
@@ -142,10 +142,7 @@ import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
 import { getCaseInsensitiveInput, getLabel } from '../utils'
-import {
-    DlSelectOption,
-    DlSelectOptionType
-} from '../../types'
+import { DlSelectOption, DlSelectOptionType } from '../../types'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -406,7 +403,11 @@ export default defineComponent({
             return !!option?.readonly
         },
         isDisableRowOption(option: DlSelectOptionType) {
-            return typeof option === 'object' && option !== null && !!option.disableRow
+            return (
+                typeof option === 'object' &&
+                option !== null &&
+                !!option.disableRow
+            )
         }
     }
 })

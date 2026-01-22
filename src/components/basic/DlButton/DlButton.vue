@@ -18,10 +18,7 @@
             @mousedown="onMouseDown"
             @mouseup="mouseDown = false"
             @mouseenter="mouseOver = true"
-            @mouseleave="
-                mouseOver = false;
-                mouseDown = false
-            "
+            @mouseleave="onMouseLeave"
         >
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
@@ -523,6 +520,10 @@ export default defineComponent({
                 this.mouseDown = true
                 this.$emit('mousedown', e)
             }
+        },
+        onMouseLeave() {
+            this.mouseOver = false
+            this.mouseDown = false
         }
     }
 })
@@ -588,10 +589,10 @@ export default defineComponent({
         }
     }
     &:focus-visible {
-    outline: 1px solid var(--dell-blue-500);
-    outline-offset: 2px;
-    border-radius: var(--dl-button-border-radius);
-}
+        outline: 1px solid var(--dell-blue-500);
+        outline-offset: 2px;
+        border-radius: var(--dl-button-border-radius);
+    }
 }
 
 .dl-button-content {

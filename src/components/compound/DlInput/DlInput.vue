@@ -1470,6 +1470,9 @@ export default defineComponent({
         &--s {
             height: 18px;
         }
+        &--m {
+            height: 26px;
+        }
     }
 
     &__input {
@@ -1518,6 +1521,7 @@ export default defineComponent({
         }
 
         &--m {
+            height: 12px;
             line-height: 12px;
             padding-top: 7px;
             padding-bottom: 7px;

@@ -266,11 +266,11 @@ export default defineComponent({
         emptyStateProps: {
             type: Object as PropType<DlEmptyStateProps>,
             default: () =>
-            ({
-                title: '',
-                subtitle: 'No data to show yet',
-                icon: 'icon-dl-dataset-filled'
-            } as unknown as PropType<DlEmptyStateProps>)
+                ({
+                    title: '',
+                    subtitle: 'No data to show yet',
+                    icon: 'icon-dl-dataset-filled'
+                } as unknown as PropType<DlEmptyStateProps>)
         },
         /**
          * Custom icon class to use for expanded rows.
@@ -392,7 +392,7 @@ export default defineComponent({
             typeof props.rowKey === 'function'
                 ? props.rowKey
                 : (row: Record<string, any>) =>
-                    row[props.rowKey as string] ?? ''
+                      row[props.rowKey as string] ?? ''
         )
 
         const hasDraggableRows = computed(() =>
@@ -537,7 +537,7 @@ export default defineComponent({
         const onMultipleSelectionSet = (val: boolean) => {
             const value =
                 selectedData.value.length > 0 &&
-                    selectedData.value.length === tableRows.value.length
+                selectedData.value.length === tableRows.value.length
                     ? false
                     : val
 
@@ -811,7 +811,9 @@ export default defineComponent({
                 targetRow: finalTarget
             })
 
-            const isDragValid = shouldSkipValidation || checkParentCondition(draggedRow.value, finalTarget)
+            const isDragValid =
+                shouldSkipValidation ||
+                checkParentCondition(draggedRow.value, finalTarget)
             if (isDragValid) {
                 const smartSortingMovement = {
                     ...sortingMovement.value,
@@ -835,10 +837,9 @@ export default defineComponent({
                 return
             }
 
-            const srcEl =
-                (originalEvent.srcElement ||
-                    originalEvent.target ||
-                    null) as HTMLElement | null
+            const srcEl = (originalEvent.srcElement ||
+                originalEvent.target ||
+                null) as HTMLElement | null
             const passedElement = srcEl ? getElementAbove(srcEl, 'dl-tr') : null
             if (passedElement) {
                 const targetRowId = passedElement.dataset.id
@@ -1243,7 +1244,7 @@ export default defineComponent({
         this.vue2h = vue2h
         const tableBodySlot = isVue2
             ? this.$slots['table-body'] &&
-            (() => (this.$slots['table-body'] as any)?.pop())
+              (() => (this.$slots['table-body'] as any)?.pop())
             : this.$slots['table-body']
         const tbody =
             tableBodySlot ?? (this.isDataEmpty ? null : this.renderTBody)
@@ -1307,7 +1308,7 @@ export default defineComponent({
     justify-content: center;
     flex-wrap: wrap;
 
-    &>* {
+    & > * {
         flex-grow: 1;
     }
 }
@@ -1336,7 +1337,6 @@ tr {
 }
 
 .sticky-header {
-
     ::v-deep .dl-table__top,
     ::v-deep .dl-table__bottom,
     ::v-deep thead tr:first-child th {
