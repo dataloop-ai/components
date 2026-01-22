@@ -16,8 +16,12 @@
             @click="onClick"
             @dblclick="onDblClick"
             @mousedown="onMouseDown"
+            @mouseup="mouseDown = false"
             @mouseenter="mouseOver = true"
-            @mouseleave="mouseOver = false"
+            @mouseleave="
+                mouseOver = false
+                mouseDown = false
+            "
         >
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
@@ -219,6 +223,7 @@ export default defineComponent({
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
         const mouseOver = ref(false)
+        const mouseDown = ref(false)
 
         const buttonClass = computed(() => {
             const classes = ['dl-button']
@@ -239,6 +244,7 @@ export default defineComponent({
             isOverflowing: hasEllipsis,
             buttonClass,
             mouseOver,
+            mouseDown,
             buttonTimeout
         }
     },
@@ -264,6 +270,21 @@ export default defineComponent({
                     textColor: this.iconColor ?? this.textColor
                 })
             }
+
+            if (this.mouseDown) {
+                if (this.colorsObject?.PRESSED?.TEXT) {
+                    return this.colorsObject.PRESSED.TEXT
+                }
+                if (!this.flat) {
+                    return 'var(--dl-button-text-color)'
+                }
+                return setTextOnPressed({
+                    disabled: this.disabled,
+                    flat: this.flat,
+                    textColor: this.iconColor ?? this.textColor
+                })
+            }
+
             if (this.mouseOver) {
                 return (
                     this.hoverTextColor ??
@@ -416,8 +437,10 @@ export default defineComponent({
                             color: this.color
                         }),
                     '--dl-button-text-color-pressed': setTextOnPressed({
-                        shaded: this.shaded,
-                        outlined: this.shaded
+                        disabled: this.disabled,
+                        flat: this.flat,
+                        color: this.color,
+                        textColor: this.textColor
                     }),
                     '--dl-button-bg-pressed':
                         this.pressedBgColor ??
@@ -497,6 +520,7 @@ export default defineComponent({
                     }
                 }
 
+                this.mouseDown = true
                 this.$emit('mousedown', e)
             }
         }
@@ -542,6 +566,7 @@ export default defineComponent({
             transition: var(--dl-button-text-transition-duration);
         }
     }
+    outline: none;
 
     &--dense {
         border: none;
@@ -561,6 +586,11 @@ export default defineComponent({
         .dl-icon {
             color: var(--dl-button-text-color-hover) !important;
         }
+    }
+    &:focus-visible {
+        outline: 1px solid var(--dell-blue-500);
+        outline-offset: 2px;
+        border-radius: var(--dl-button-border-radius);
     }
 }
 

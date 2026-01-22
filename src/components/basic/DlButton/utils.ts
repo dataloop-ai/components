@@ -213,10 +213,14 @@ export const setBgOnPressed = ({ shaded }: Partial<DlButtonProps>) => {
 }
 
 export const setTextOnPressed = ({
-    shaded,
-    outlined
+    disabled,
+    flat,
+    textColor
 }: Partial<DlButtonProps>) => {
-    return 'var(--dl-button-text-color)'
+    if (textColor) return getColor(textColor, 'dl-color-secondary')
+    if (disabled) return getColor('', 'dl-color-disabled')
+    if (!flat) return 'var(--dl-button-text-color)'
+    return 'var(--dl-color-secondary)'
 }
 
 export const setBorderOnPressed = ({
