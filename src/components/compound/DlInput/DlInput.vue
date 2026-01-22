@@ -985,11 +985,11 @@ export default defineComponent({
         },
         getBorderColor(): string {
             if (this.error) {
-                return `var(--dl-color-negative)`
+                return `var(--dell-red-500)`
             } else if (this.warning) {
-                return `var(--dl-color-warning)`
+                return `var(--dell-yellow-500)`
             } else {
-                return `var(--dl-color-secondary)`
+                return `var(--dell-blue-500)`
             }
         },
         cssVars(): Record<string, any> {
@@ -1032,6 +1032,12 @@ export default defineComponent({
 
             if (this.disabled) {
                 classes.push('dl-input__input--disabled')
+            }
+
+            if (this.inputLength) {
+                classes.push('dl-input__input--text-color')
+            } else {
+                classes.push('dl-input__input--placeholder-color')
             }
 
             return classes
@@ -1366,7 +1372,7 @@ export default defineComponent({
 [contenteditable='true']:empty:before {
     content: attr(placeholder);
     display: inline;
-    opacity: 0.5;
+    opacity: 1;
     -webkit-text-security: none;
 }
 
@@ -1480,7 +1486,6 @@ export default defineComponent({
         font-family: Arial, Helvetica, sans-serif;
         border-right: none;
         border-radius: 0px;
-        color: var(--dl-color-darker);
         white-space: var(--dl-input-white-space);
         font-size: var(--dl-font-size-body);
         overflow: hidden scroll;
@@ -1495,6 +1500,13 @@ export default defineComponent({
         position: relative;
         line-height: 10px;
         width: 100%;
+
+        &--text-color {
+            color: var(--dell-gray-800);
+        }
+        &--placeholder-color {
+            color: var(--dell-gray-500);
+        }
 
         &--prepend {
             width: calc(100% - 10px - 28px);

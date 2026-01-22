@@ -43,8 +43,12 @@ export default defineComponent({
                 : `${window.origin}/${this.href}`
         },
         linkStyles(): Record<string, string> {
-            const textColor = this.color ?? 'dl-color-studio-secondary'
-            const hoverTextColor = this.hoverColor ?? textColor
+            const textColor = this.color ?? 'dell-blue-600'
+            const hoverTextColor = this.hoverColor
+                ? this.hoverColor
+                : this.color
+                ? this.color
+                : 'dell-blue-700'
             return {
                 '--link-color': `var(--${textColor})`,
                 '--link-hover-color': `var(--${hoverTextColor})`

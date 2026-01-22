@@ -51,7 +51,7 @@ export default defineComponent({
     props: {
         color: {
             type: String,
-            default: 'dl-color-secondary'
+            default: 'dell-blue-500'
         },
         label: {
             type: String,

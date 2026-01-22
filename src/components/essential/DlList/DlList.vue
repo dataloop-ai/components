@@ -1,9 +1,5 @@
 <template>
-    <component
-        :is="type"
-        :id="uuid"
-        :class="classes"
-    >
+    <component :is="type" :id="uuid" :class="classes">
         <slot :clickable="clickable" />
     </component>
 </template>
@@ -44,12 +40,12 @@ export default defineComponent({
 <style scoped lang="scss">
 .dl-list {
     padding: 6px 0;
-    background-color: var(--dl-color-panel-background);
+    background-color: var(--dell-white);
     &--bordered {
-        border: 1px solid var(--dl-color-separator);
+        border: 1px solid var(--dell-gray-300);
     }
     &--separator {
-        border-top: 1px solid var(--dl-color-separator);
+        border-top: 1px solid var(--dell-gray-300);
         & > .dl-list-item {
             padding: 5px 10px;
         }
