@@ -1,8 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        class="trend-wrapper"
-    >
+    <div :id="uuid" class="trend-wrapper">
         <span
             v-if="withArrow"
             class="direction-arrow"
@@ -83,7 +80,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-body);
     line-height: 1;
     padding: 2px 0;
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-800);
 }
 .direction-arrow {
     width: 8px;

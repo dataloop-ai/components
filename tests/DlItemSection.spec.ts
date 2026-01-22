@@ -54,7 +54,7 @@ describe('DlItemSection', () => {
         })
         it('should have the right style', function () {
             expect(wrapper.vm.cssVars['--dl-item-color']).toBe(
-                'var(--dl-color-warning, var(--dl-color-darker))'
+                'var(--dell-yellow-500, var(--dell-gray-800))'
             )
         })
     })

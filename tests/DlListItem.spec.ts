@@ -80,8 +80,8 @@ describe('DlListItem', () => {
         const cursorActionable = itemCursor(true, false)
         const cursorDisabled = itemCursor(false, true)
 
-        expect(colorDisabled).toEqual('var(--dl-color-disabled)')
-        expect(colorEnabled).toEqual('var(--dl-color-darker)')
+        expect(colorDisabled).toEqual('var(--dell-gray-500)')
+        expect(colorEnabled).toEqual('var(--dell-gray-800)')
 
         expect(cursorActionable).toEqual('pointer')
         expect(cursorDisabled).toEqual('not-allowed')
