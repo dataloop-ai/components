@@ -96,6 +96,17 @@ tokenizer.rule(/\s+/, (ctx) => {
     ctx.accept(TokenType.WHITESPACE)
 })
 
+tokenizer.rule(/[a-z*]*/i, (ctx, match) => {
+    if (
+        ctx.tagged(Tags.HAD_FIELD) &&
+        !ctx.tagged(Tags.HAD_VALUE) &&
+        !['TRUE', 'FALSE'].includes(match[0].toUpperCase())
+    ) {
+        // an unquoted string with an asterisk
+        ctx.accept(TokenType.PARTIAL_VALUE).tag(Tags.HAD_VALUE)
+    }
+})
+
 tokenizer.rule(/.+/, (ctx, match) => {
     // unrecognized token
     ctx.accept(TokenType.WHITESPACE, match[0].replaceAll(/./g, ' '))
