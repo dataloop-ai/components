@@ -1,4 +1,4 @@
-import Tokenizr from 'tokenizr/src/tokenizr.js'
+import Tokenizr from 'tokenizr'
 
 export enum TokenType {
     NUMBER = 'number',
