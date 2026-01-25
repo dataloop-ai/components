@@ -20,7 +20,7 @@ describe('AccordionHeader', () => {
                 wrapper.vm.accordionHeadStyles['--dl-title-color']
 
             expect(titleColor).toEqual(
-                `var(--${PASSED_COLOR}, var(--dl-color-medium))`
+                `var(--${PASSED_COLOR}, var(--dell-gray-600))`
             )
         })
     })
