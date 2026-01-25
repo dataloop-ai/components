@@ -75,12 +75,9 @@ export default defineComponent({
     computed: {
         accordionHeadStyles(): Record<string, string> {
             return {
-                '--dl-title-color': getColor(
-                    this.titleColor,
-                    'dl-color-medium'
-                ),
+                '--dl-title-color': getColor(this.titleColor, 'dell-gray-600'),
                 '--dl-expand-icon-color': `var(--${
-                    this.isOpen ? 'dl-color-darker' : this.titleColor
+                    this.isOpen ? 'dell-gray-800' : this.titleColor
                 })`,
                 '--dl-accordion-header-flex-direction': this.rightSide
                     ? 'row-reverse'

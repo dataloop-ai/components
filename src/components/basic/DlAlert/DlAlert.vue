@@ -33,7 +33,7 @@
                     class="close-button-icon"
                     data-test="close-button-icon"
                     icon="icon-dl-close"
-                    color="dl-color-darker"
+                    color="dell-gray-800"
                     size="16px"
                     @click="handleClose"
                 />
@@ -104,17 +104,17 @@ const typeToIconMap: Record<DlAlertType, string> = {
 }
 
 const typeToIconColorMap: Record<DlAlertType, string> = {
-    info: 'dl-color-info',
-    success: 'dl-color-positive',
-    warning: 'dl-color-warning',
-    error: 'dl-color-negative'
+    info: 'dell-blue-500',
+    success: 'dell-green-500',
+    warning: 'dell-yellow-600',
+    error: 'dell-red-500'
 }
 
 const typeToBackgroundMap: Record<DlAlertType, string> = {
-    info: 'dl-color-info-background',
-    success: 'dl-color-positive-background',
-    warning: 'dl-color-warning-background',
-    error: 'dl-color-negative-background'
+    info: 'dell-blue-200',
+    success: 'dell-green-200',
+    warning: 'dell-yellow-200',
+    error: 'dell-red-200'
 }
 
 export default defineComponent({
@@ -342,7 +342,7 @@ export default defineComponent({
 
 .confirm-message {
     margin: 0;
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-800);
     font-size: var(--dl-font-size-body);
     line-height: 1.5;
 }
