@@ -268,7 +268,7 @@ export default defineComponent({
 
                 highlightedHtml = label.replace(
                     toReplace,
-                    `<span style="background: var(--dell-yellow-500)">${getCaseInsensitiveInput(
+                    `<span style="background: var(--dell-yellow-600)">${getCaseInsensitiveInput(
                         label,
                         this.filterTerm
                     )}</span>`

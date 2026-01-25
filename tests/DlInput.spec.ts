@@ -62,7 +62,7 @@ describe('DlInput component', () => {
             })
         })
         it('should set error border color', () => {
-            expect(wrapper.vm.getBorderColor).toMatch('var(--dell-yellow-500)')
+            expect(wrapper.vm.getBorderColor).toMatch('var(--dell-yellow-600)')
         })
     })
     describe('expandable input', () => {

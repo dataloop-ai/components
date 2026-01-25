@@ -76,7 +76,7 @@ export default defineComponent({
         title: { type: String, default: null },
         fontSize: { type: String, default: '12px' },
         fontWeight: { type: String, default: '400' },
-        titleColor: { type: String, default: 'dl-color-medium' },
+        titleColor: { type: String, default: 'dell-gray-600' },
         modelValue: { type: Boolean, default: null },
         rightSide: { type: Boolean, default: false },
         isEmpty: Boolean,
@@ -147,11 +147,11 @@ export default defineComponent({
     transition: all 300ms;
     line-height: 16px;
     padding: var(--dl-accordion-content-padding, 0 16px 15px 38px);
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-800);
     max-height: fit-content;
     overflow: hidden;
     &__border {
-        border-bottom: 1px solid var(--dl-color-separator);
+        border-bottom: 1px solid var(--dell-gray-300);
     }
     &.right-side {
         padding: 0 38px 16px 16px;
