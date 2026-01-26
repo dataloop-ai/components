@@ -92,6 +92,18 @@
         <dl-button @click="showToastMessageCustom">
             Show Toast Message
         </dl-button>
+        <dl-button @click="showToastMultiLine">
+            Multi Line
+        </dl-button>
+        <div class="flex-row" style="margin-top: 8px">
+            <dl-button @click="showToastWithLink">
+                Toast with link
+            </dl-button>
+            <dl-switch
+                v-model="htmlEnabled"
+                :left-label="htmlEnabled ? 'HTML true' : 'HTML false'"
+            />
+        </div>
     </div>
 </template>
 
@@ -126,6 +138,7 @@ export default defineComponent({
         const closable = ref(true)
         const width = ref('auto')
         const collapseCount = ref(null)
+        const htmlEnabled = ref(false)
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
@@ -160,16 +173,48 @@ export default defineComponent({
                 }
             )
         }
+        function showToastMultiLine() {
+            DlToast.open({
+                message:
+                    'This is an page-level alert that communicates an\ninformational message.',
+                position: position.value as DlToastPositions,
+                type: DlToastTypes.SUCCESS,
+                duration: Number(duration.value) || 1000,
+                closable: closable.value,
+                width: width.value,
+                collapseCount: collapseCount.value,
+                html: false,
+                multiLine: true
+            } as any)
+        }
+        function showToastWithLink() {
+            const linkHtml =
+                '<a href="https://docs.dataloop.ai/" target="_blank" rel="noopener noreferrer">Link to another page.</a>'
+            DlToast.open({
+                message: `This is an page-level alert that communicates an informational message.\n${linkHtml}`,
+                position: position.value as DlToastPositions,
+                type: DlToastTypes.SUCCESS,
+                duration: Number(duration.value) || 1000,
+                closable: closable.value,
+                width: width.value,
+                collapseCount: collapseCount.value,
+                html: htmlEnabled.value,
+                multiLine: true
+            } as any)
+        }
         return {
             showToastMessageCustom,
             showToastMessage,
+            showToastMultiLine,
+            showToastWithLink,
             message,
             duration,
             type,
             position,
             closable,
             width,
-            collapseCount
+            collapseCount,
+            htmlEnabled
         }
     }
 })
@@ -178,5 +223,11 @@ export default defineComponent({
 <style scoped>
 .flex {
     display: flex;
+}
+
+.flex-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 </style>
