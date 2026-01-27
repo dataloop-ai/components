@@ -15,18 +15,66 @@
                 class="alert"
                 :type="type"
                 :closable="closable"
-                icon-size="24px"
+                icon-size="16px"
                 :dark-mode="false"
                 close-button-position="center"
                 style="position: relative"
                 @update:model-value="closeToast"
             >
                 <slot name="message">
-                    <span
-                        class="toast-message"
-                        data-test="message-text"
-                    />
+                    <div
+                        class="toast-text"
+                        :class="{
+                            'toast-text--single': !multiLine,
+                            'toast-text--with-title': !!title
+                        }"
+                    >
+                        <div v-if="title" class="toast-title">
+                            {{ title }}
+                        </div>
+                        <div
+                            v-if="html"
+                            class="toast-message"
+                            data-test="message-text"
+                            v-html="message"
+                        />
+                        <div
+                            v-else
+                            class="toast-message"
+                            :class="{ 'toast-message--pre-line': multiLine }"
+                            data-test="message-text"
+                        >
+                            {{ message }}
+                        </div>
+
+                        <div v-if="caption" class="toast-caption">
+                            <div v-if="html" v-html="caption" />
+                            <div v-else>
+                                {{ caption }}
+                            </div>
+                        </div>
+                    </div>
                 </slot>
+                <template v-if="actions && actions.length" #actions>
+                    <dl-button
+                        v-for="(action, idx) in actions"
+                        :key="idx"
+                        :label="action.label"
+                        :icon="action.icon"
+                        :color="action.textColor || 'dl-alert-border-color'"
+                        :text-color="action.textColor || 'dl-alert-border-color'"
+                        :hover-border-color="action.textColor || 'dl-alert-border-color'"
+                        :hover-text-color="action.textColor || 'dl-alert-border-color'"
+                        :hover-bg-color="'transparent'"
+                        :pressed-bg-color="'transparent'"
+                        :styles="action.styles || defaultActionButtonStyles"
+                        :filled="false"
+                        outlined
+                        no-wrap
+                        overflow
+                        @click="onActionClick(action)"
+                    />
+                </template>
                 <dl-badge
                     v-if="count"
                     with-border
@@ -61,21 +109,45 @@ import {
     getCurrentInstance,
     onBeforeMount,
     onMounted,
+    PropType,
     ref
 } from 'vue-demi'
-import { DlAlert, DlBadge } from '../../../'
-import { DlToastTypes, DlToastPositions } from '../types'
+import { DlAlert, DlBadge, DlButton } from '../../../'
+import { DlToastAction, DlToastTypes, DlToastPositions } from '../types'
 import { removeElement } from '../utils/render'
 import { Animation } from '../types'
 import { v4 } from 'uuid'
 
+const DEFAULT_ACTION_BUTTON_STYLES =
+    'min-width:73px; max-width:100px; height:24px; max-height:24px; padding:0 8px; border-radius:2px;'
+
 export default defineComponent({
     name: 'ToastComponent',
-    components: { DlAlert, DlBadge },
+    components: { DlAlert, DlBadge, DlButton },
     props: {
+        title: {
+            type: String,
+            default: ''
+        },
         message: {
             type: String,
             required: true
+        },
+        caption: {
+            type: String,
+            default: ''
+        },
+        html: {
+            type: Boolean,
+            default: false
+        },
+        multiLine: {
+            type: Boolean,
+            default: true
+        },
+        actions: {
+            type: Array as PropType<DlToastAction[]>,
+            default: (): DlToastAction[] => []
         },
         type: {
             type: String,
@@ -203,7 +275,7 @@ export default defineComponent({
                 '.dl-toast-container--pending'
             )
             const messageContainer = root.value?.querySelector('.toast-message')
-            if (messageContainer) {
+            if (messageContainer && slots?.message) {
                 messageContainer.innerHTML = message
             }
             parent.insertAdjacentElement('afterbegin', root.value)
@@ -227,6 +299,13 @@ export default defineComponent({
             setHideTimeout()
         }
 
+        const onActionClick = (action: DlToastAction) => {
+            action?.handler?.()
+            if (action?.closeOnClick) {
+                closeToastMessage()
+            }
+        }
+
         const badgeColor = computed(() => {
             switch (props.type) {
                 case DlToastTypes.SUCCESS:
@@ -237,6 +316,8 @@ export default defineComponent({
                     return 'var(--dl-color-alert-error)'
                 case DlToastTypes.INFO:
                     return 'var(--dl-color-alert-info)'
+                case DlToastTypes.DISCOVERY:
+                    return 'var(--dl-color-discovery)'
             }
         })
 
@@ -249,6 +330,8 @@ export default defineComponent({
             correctParent,
             updateCount,
             count,
+            onActionClick,
+            defaultActionButtonStyles: DEFAULT_ACTION_BUTTON_STYLES,
             badgeColor
         }
     }
@@ -256,6 +339,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.toast-text {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.toast-title {
+    font-size: var(--dl-font-size-alert-title, 16px);
+    line-height: 150%;
+    margin-bottom: 2px;
+}
+
+.toast-text--single {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toast-caption {
+    margin-top: 2px;
+    opacity: 0.8;
+}
+
+.toast-message--pre-line {
+    white-space: pre-line;
+}
+
 .toast-item {
     display: inline-flex;
     align-items: center;
@@ -263,7 +372,7 @@ export default defineComponent({
     min-width: 400px;
     max-width: 900px;
     margin: 5px;
-    cursor: pointer;
+    cursor: default;
     animation-duration: 150ms;
 
     &.toast-item--top,
@@ -373,13 +482,13 @@ export default defineComponent({
 
 .DlToastContainer {
     --dl-color-negative: var(--dl-color-alert-error);
-    --dl-color-negative-background: var(--dl-color-alert-error-background);
+    --dl-color-negative-background: var(--dell-red-200);
     --dl-color-warning: var(--dl-color-alert-warn);
-    --dl-color-warning-background: var(--dl-color-alert-warn-background);
+    --dl-color-warning-background: var(--dell-yellow-200);
     --dl-color-positive: var(--dl-color-alert-success);
-    --dl-color-positive-background: var(--dl-color-alert-success-background);
+    --dl-color-positive-background: var(--dell-green-200);
     --dl-color-info: var(--dl-color-alert-info);
-    --dl-color-info-background: var(--dl-color-alert-info-background);
+    --dl-color-info-background: var(--dell-blue-200);
     --dl-color-darker: var(--dl-color-alert-text);
     --dl-alert-align-button: center;
 }
