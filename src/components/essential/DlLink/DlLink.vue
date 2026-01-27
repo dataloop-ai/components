@@ -26,7 +26,8 @@ export default defineComponent({
         external: { required: false, default: false, type: Boolean },
         disabled: { required: false, default: false, type: Boolean },
         color: { required: false, type: String, default: null },
-        hoverColor: { required: false, type: String, default: null }
+        hoverColor: { required: false, type: String, default: null },
+        size: { required: false, type: String, default: null }
     },
     data() {
         return {
@@ -43,6 +44,7 @@ export default defineComponent({
                 : `${window.origin}/${this.href}`
         },
         linkStyles(): Record<string, string> {
+            const fontSize = this.size ? this.size : '12px'
             const textColor = this.color ?? 'dell-blue-600'
             const hoverTextColor = this.hoverColor
                 ? this.hoverColor
@@ -51,7 +53,8 @@ export default defineComponent({
                 : 'dell-blue-700'
             return {
                 '--link-color': `var(--${textColor})`,
-                '--link-hover-color': `var(--${hoverTextColor})`
+                '--link-hover-color': `var(--${hoverTextColor})`,
+                '--link-font-size': `var(--${fontSize})`
             }
         },
         target(): string | null {
@@ -74,8 +77,8 @@ export default defineComponent({
 <style scoped lang="css">
 a {
     text-decoration: none;
-    font-size: var(--dl-font-size-body);
     color: var(--link-color) !important;
+    font-size: var(--link-font-size);
 }
 
 a:hover {
