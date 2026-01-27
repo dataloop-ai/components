@@ -24,6 +24,13 @@
                 </span>
             </div>
             <div
+                v-if="$slots.actions"
+                class="actions"
+                data-test="actions"
+            >
+                <slot name="actions" />
+            </div>
+            <div
                 v-if="closable"
                 class="close-button"
                 data-test="close-button"
@@ -100,21 +107,32 @@ const typeToIconMap: Record<DlAlertType, string> = {
     info: 'icon-dl-info-filled',
     success: 'icon-dl-approve-filled',
     warning: 'icon-dl-alert-filled',
-    error: 'icon-dl-error-filled'
+    error: 'icon-dl-error-filled',
+    discovery: 'icon-dl-error-filled'
 }
 
 const typeToIconColorMap: Record<DlAlertType, string> = {
     info: 'dell-blue-500',
     success: 'dell-green-500',
     warning: 'dell-yellow-600',
-    error: 'dell-red-500'
+    error: 'dell-red-500',
+    discovery: 'dl-color-discovery'
+}
+
+const typeToIndicatorColorMap: Record<DlAlertType, string> = {
+    info: 'dell-blue-500',
+    success: 'dell-green-500',
+    warning: 'dell-yellow-800',
+    error: 'dell-red-500',
+    discovery: 'dl-color-discovery'
 }
 
 const typeToBackgroundMap: Record<DlAlertType, string> = {
     info: 'dell-blue-200',
     success: 'dell-green-200',
     warning: 'dell-yellow-200',
-    error: 'dell-red-200'
+    error: 'dell-red-200',
+    discovery: 'dl-color-discovery-bg'
 }
 
 export default defineComponent({
@@ -139,7 +157,7 @@ export default defineComponent({
             type: String,
             required: true,
             validator: (value: string) =>
-                includes(['info', 'success', 'warning', 'error'], value)
+                includes(['info', 'success', 'warning', 'error', 'discovery'], value)
         },
         textColor: {
             type: String,
@@ -230,18 +248,26 @@ export default defineComponent({
 
                 const { height } = rootElement.getBoundingClientRect()
                 const iconS: Record<string, any> = {
-                    display: 'flex'
+                    display: 'flex',
+                    alignSelf: 'flex-start',
+                    paddingTop: '2px'
+                }
+                const closeS: Record<string, any> = {
+                    display: 'flex',
+                    alignSelf: 'flex-start'
                 }
                 const rootS: Record<string, any> = {
                     backgroundColor: getColor(
                         typeToBackgroundMap[type.value as DlAlertType]
                     )
                 }
-                if (height > 46) {
-                    iconS.alignSelf = 'flex-start'
-                } else {
-                    iconS.alignSelf = 'center'
-                }
+                rootS['--dl-alert-indicator-color'] = getColor(
+                    typeToIndicatorColorMap[type.value as DlAlertType]
+                )
+                rootS['--dl-alert-border-color'] = getColor(
+                    typeToIndicatorColorMap[type.value as DlAlertType]
+                )
+
                 if (fluid === true) {
                     rootS.width = '100%'
                 } else {
@@ -250,11 +276,13 @@ export default defineComponent({
 
                 if (padding.value) {
                     rootS['--dl-alert-padding'] = padding.value
+                } else {
+                    rootS['--dl-alert-padding'] = '8px 16px'
                 }
 
                 iconStyle.value = iconS
                 rootStyle.value = rootS
-                closeButtonStyle.value = iconS
+                closeButtonStyle.value = closeS
             })
         }
 
@@ -308,8 +336,32 @@ export default defineComponent({
     flex-direction: row;
     justify-content: space-between;
     min-height: 36px;
-    border-radius: 2px;
+    border-left: 4px solid var(--dl-alert-indicator-color, transparent);
+    border-top: 1px solid var(--dl-alert-border-color, transparent);
+    border-right: 1px solid var(--dl-alert-border-color, transparent);
+    border-bottom: 1px solid var(--dl-alert-border-color, transparent);
+    border-radius: 0px;
     box-sizing: border-box;
+
+    ::v-deep a {
+        color: var(--dell-blue-600);
+        text-decoration: none;
+    }
+
+    ::v-deep a:visited {
+        color: var(--dell-blue-600);
+        text-decoration: none;
+    }
+
+    ::v-deep a:hover {
+        color: var(--dell-blue-700);
+        text-decoration: underline;
+    }
+
+    ::v-deep a:active {
+        color: var(--dell-blue-800);
+        text-decoration: underline;
+    }
 
     > div {
         display: flex;
@@ -318,17 +370,32 @@ export default defineComponent({
     }
 
     .text {
-        padding-left: 10px;
+        padding-left: 8px;
+        padding-top: 2px;
         font-size: var(--dl-font-size-body);
         line-height: normal;
-        align-self: center;
+        align-self: flex-start;
+        font-size: 14px;
+        line-height: 16px;
+        font-weight: 400;
         word-break: break-word;
     }
 
     .close-button {
-        padding-right: 10px;
-        padding-left: 10px;
-        align-items: var(--dl-alert-align-button, start);
+        display: flex;
+        padding: 12px;
+        align-items: flex-start;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        height: 40px;
+        max-height: 40px;
+        box-sizing: border-box;
+        align-self: flex-start;
     }
 
     .icon-dl-close:hover {
