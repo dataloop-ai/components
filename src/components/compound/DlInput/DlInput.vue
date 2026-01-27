@@ -987,7 +987,7 @@ export default defineComponent({
             if (this.error) {
                 return `var(--dell-red-500)`
             } else if (this.warning) {
-                return `var(--dell-yellow-500)`
+                return `var(--dell-yellow-600)`
             } else {
                 return `var(--dell-blue-500)`
             }
@@ -1034,7 +1034,7 @@ export default defineComponent({
                 classes.push('dl-input__input--disabled')
             }
 
-            if (this.inputLength) {
+            if (this.modelValue && this.inputLength) {
                 classes.push('dl-input__input--text-color')
             } else {
                 classes.push('dl-input__input--placeholder-color')

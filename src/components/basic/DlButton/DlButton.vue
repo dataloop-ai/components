@@ -264,7 +264,7 @@ export default defineComponent({
                     color: this.color,
                     filled: this.filled,
                     shaded: this.shaded,
-                    textColor: this.iconColor ?? this.textColor
+                    textColor: this.iconColor || this.textColor
                 })
             }
 
@@ -278,7 +278,7 @@ export default defineComponent({
                 return setTextOnPressed({
                     disabled: this.disabled,
                     flat: this.flat,
-                    textColor: this.iconColor ?? this.textColor
+                    textColor: this.iconColor || this.textColor
                 })
             }
 
@@ -290,7 +290,7 @@ export default defineComponent({
                         outlined: this.outlined,
                         shaded: this.shaded,
                         flat: this.flat,
-                        color: this.iconColor ?? this.textColor
+                        color: this.iconColor || this.textColor
                     })
                 )
             }

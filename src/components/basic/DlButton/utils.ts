@@ -81,29 +81,29 @@ export const setTextColor = ({
     textColor
 }: DlButtonProps): string => {
     if (disabled) {
-        return getColor('', 'dl-color-disabled')
+        return getColor('', 'dell-gray-500')
     }
     if (shaded && outlined) {
-        return getColor(textColor, 'dl-color-text-darker-buttons')
+        return getColor(textColor, 'dell-gray-800')
     }
     if (outlined) {
-        return getColor(textColor, 'dl-color-secondary')
+        return getColor(textColor, 'dell-blue-500')
     }
     if (flat) {
         if (color === 'secondary') {
-            return getColor(textColor, 'dl-color-darker')
+            return getColor(textColor, 'dell-gray-800')
         }
 
-        return getColor(textColor, 'dl-color-secondary')
+        return getColor(textColor, 'dell-blue-500')
     }
     if (shaded) {
-        return getColor(textColor, 'dl-color-darker')
+        return getColor(textColor, 'dell-gray-800')
     }
     if (filled) {
-        return getColor(textColor, 'dl-color-text-buttons')
+        return getColor(textColor, 'dell-white')
     }
 
-    return getColor(textColor, 'dl-color-text-buttons')
+    return getColor(textColor, 'dell-white')
 }
 
 export const setBgColor = ({

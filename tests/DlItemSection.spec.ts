@@ -42,7 +42,7 @@ describe('DlItemSection', () => {
             await wrapper.setProps({
                 side: true,
                 noWrap: true,
-                color: 'dell-yellow-500'
+                color: 'dell-yellow-600'
             })
         })
         it('should have the right class', function () {
@@ -54,7 +54,7 @@ describe('DlItemSection', () => {
         })
         it('should have the right style', function () {
             expect(wrapper.vm.cssVars['--dl-item-color']).toBe(
-                'var(--dell-yellow-500, var(--dell-gray-800))'
+                'var(--dell-yellow-600, var(--dell-gray-800))'
             )
         })
     })

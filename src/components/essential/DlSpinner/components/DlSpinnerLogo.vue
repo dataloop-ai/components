@@ -3,19 +3,26 @@
         <svg
             :width="size"
             :height="size"
-            viewBox="0 0 64 64"
+            viewBox="0 0 50 50"
             shape-rendering="geometricPrecision"
-            text-rendering="geometricPrecision"
         >
-            <g class="first-rect">
-                <rect />
-            </g>
-            <g class="second-rect">
-                <rect />
-            </g>
-            <g class="third-rect">
-                <rect />
-            </g>
+            <circle
+                cx="25"
+                cy="25"
+                r="20"
+                fill="var(--dell-white)"
+                stroke="none"
+            />
+            <circle
+                class="spinner-arc"
+                cx="25"
+                cy="25"
+                r="16.5"
+                fill="none"
+                stroke="var(--dell-blue-500)"
+                stroke-width="1.39"
+                stroke-linecap="round"
+            />
         </svg>
     </div>
 </template>
@@ -37,59 +44,36 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import '../styles/spinnerStyles.scss';
 
-@keyframes moveFirstRect {
+@keyframes dell-spin {
     0% {
-        transform: translate(2px, 2px);
+        transform: rotate(0deg);
     }
-    25%,
-    75% {
-        transform: translate(38px, 2px);
-    }
-    95%,
     100% {
-        transform: translate(38px, 38px);
+        transform: rotate(360deg);
     }
 }
 
-@keyframes moveSecondRect {
-    0%,
-    25% {
-        transform: translate(2px, 38px);
+@keyframes dell-dash {
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
     }
-    45%,
-    100% {
-        transform: translate(2px, 2px);
-    }
-}
-
-@keyframes moveThirdRect {
-    0%,
     50% {
-        transform: translate(38px, 38px);
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
     }
-    70%,
     100% {
-        transform: translate(2px, 38px);
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
     }
 }
 
-rect {
-    width: 24px;
-    height: 24px;
-    fill: #ffd7e2;
-    stroke: #ef6284;
-    stroke-width: 4;
+svg {
+    animation: dell-spin 1.4s linear infinite;
 }
 
-.first-rect {
-    animation: moveFirstRect 2s ease-out infinite;
-}
-
-.second-rect {
-    animation: moveSecondRect 2s ease-out infinite;
-}
-
-.third-rect {
-    animation: moveThirdRect 2s ease-out infinite;
+.spinner-arc {
+    animation: dell-dash 1.4s ease-in-out infinite;
+    transform-origin: center;
 }
 </style>
