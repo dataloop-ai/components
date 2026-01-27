@@ -8,13 +8,32 @@ const allColorNames = {
 }
 
 const getLighterGradient = (color: string, magnitude = MAGNITUDE) => {
-    color = color.replace('dl', '--dl')
+    if (color.startsWith('dl-') || color.startsWith('dell-')) {
+        color = `--${color}`
+    }
+    if (color.startsWith('--dell-')) {
+        const colorMatch = color.match(/--dell-(\w+)-(\d+)/)
+        if (colorMatch) {
+            try {
+                const colorName = colorMatch[1]
+                const colorValue = parseInt(colorMatch[2])
+                const nextColorValue = colorValue + 100
+                const colorToReplace = `--dell-${colorName}-${nextColorValue}`
+                if (colorToReplace in allColorNames) {
+                    return allColorNames[
+                        colorToReplace as keyof typeof allColorNames
+                    ]
+                }
+            } catch (error) {
+                // skip error
+            }
+        }
+    }
     let newColor =
         color in allColorNames
             ? allColorNames[color as keyof typeof allColorNames]
             : color
     newColor = newColor.replace(`#`, ``).trim()
-
     if (newColor.length === 6) {
         const decimalColor = parseInt(newColor, 16)
 
