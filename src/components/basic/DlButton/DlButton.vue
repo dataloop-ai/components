@@ -441,14 +441,25 @@ export default defineComponent({
                     }),
                     '--dl-button-bg-pressed':
                         this.pressedBgColor ??
-                        setBgOnPressed({
-                            shaded: this.shaded,
-                            outlined: this.outlined
-                        }),
+                        (this.outlined && !this.disabled && !this.flat && !this.shaded
+                            ? 'var(--dell-blue-200)'
+                            :
+                        (this.filled &&
+                        !this.disabled &&
+                        !this.flat &&
+                        !this.outlined &&
+                        !this.shaded &&
+                        !this.color
+                            ? 'var(--dell-blue-700)'
+                            : setBgOnPressed({
+                                  shaded: this.shaded
+                              }))),
 
                     '--dl-button-border-pressed': setBorderOnPressed({
                         shaded: this.shaded,
-                        outlined: this.outlined
+                        disabled: this.disabled,
+                        flat: this.flat,
+                        color: this.color
                     })
                 }
             }

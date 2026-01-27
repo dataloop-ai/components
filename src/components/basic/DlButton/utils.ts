@@ -120,7 +120,7 @@ export const setBgColor = ({
         return 'var(--dl-color-fill)'
     }
 
-    return getColor(color, 'dl-color-secondary')
+    return getColor(color, 'dell-blue-500')
 }
 
 export const setBorder = ({
@@ -142,7 +142,7 @@ export const setBorder = ({
         return 'var(--dl-color-transparent)'
     }
 
-    return getColor(color, 'dl-color-secondary')
+    return getColor(color, 'dell-blue-500')
 }
 
 export const setColorOnHover = ({
@@ -177,7 +177,7 @@ export const setBorderOnHover = ({
     if (color) {
         return getLighterGradient(color)
     }
-    return 'var(--dl-color-hover)'
+    return 'var(--dell-blue-600)'
 }
 
 export const setBgOnHover = ({
@@ -192,6 +192,10 @@ export const setBgOnHover = ({
         return 'var(--dl-color-fill)'
     }
 
+    if (outlined && !disabled) {
+        return 'var(--dell-blue-100)'
+    }
+
     if (disabled || flat || outlined) {
         return 'var(--dl-color-transparent)'
     }
@@ -199,7 +203,7 @@ export const setBgOnHover = ({
     if (color) return getLighterGradient(color)
 
     if (filled) {
-        return 'var(--dl-color-hover)'
+        return 'var(--dell-blue-600)'
     }
 
     return 'var(--dl-color-panel-background)'
