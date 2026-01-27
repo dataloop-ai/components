@@ -114,7 +114,7 @@ const typeToIconMap: Record<DlAlertType, string> = {
 const typeToIconColorMap: Record<DlAlertType, string> = {
     info: 'dell-blue-500',
     success: 'dell-green-500',
-    warning: 'dell-yellow-800',
+    warning: 'dell-yellow-600',
     error: 'dell-red-500',
     discovery: 'dl-color-discovery'
 }
@@ -250,7 +250,7 @@ export default defineComponent({
                 const iconS: Record<string, any> = {
                     display: 'flex',
                     alignSelf: 'flex-start',
-                    paddingTop: '4px'
+                    paddingTop: '2px'
                 }
                 const closeS: Record<string, any> = {
                     display: 'flex',
@@ -340,7 +340,7 @@ export default defineComponent({
     border-top: 1px solid var(--dl-alert-border-color, transparent);
     border-right: 1px solid var(--dl-alert-border-color, transparent);
     border-bottom: 1px solid var(--dl-alert-border-color, transparent);
-    border-radius: 2px;
+    border-radius: 0px;
     box-sizing: border-box;
 
     ::v-deep a {
@@ -370,8 +370,8 @@ export default defineComponent({
     }
 
     .text {
-        padding-left: 10px;
-        padding-top: 4px;
+        padding-left: 8px;
+        padding-top: 2px;
         font-size: var(--dl-font-size-body);
         line-height: normal;
         align-self: flex-start;
