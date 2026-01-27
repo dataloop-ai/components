@@ -1,104 +1,71 @@
 <template>
     <div :id="uuid" class="dl-date-time-range">
-        <date-input
-            :text="dateInputText"
-            :input-style="dateInputStyle"
-            :disabled="disabled"
-            :width="width"
-        >
-            <dl-menu
-                ref="dateTimeRangeMenu"
-                anchor="bottom middle"
-                self="top middle"
-                :offset="[0, 5]"
+        <template v-if="isInputMode">
+            <date-input
+                :text="dateInputText"
+                :input-style="dateInputStyle"
                 :disabled="disabled"
+                :width="width"
             >
-                <div class="dl-date-time-range--card">
-                    <div
-                        v-if="mode === 'multi'"
-                        class="dl-date-time-range--card_sidebar"
-                    >
-                        <card-sidebar
-                            v-if="typeState === 'day'"
-                            :options="sidebarDayOptions"
-                            :current-option="currentSidebarOption"
-                            @click="handleDayTypeOptionClick"
-                        />
-                        <card-sidebar
-                            v-else
-                            :options="sidebarMonthOptions"
-                            :current-option="currentSidebarOption"
-                            @click="handleMonthTypeOptionClick"
-                        />
-                    </div>
-                    <div
-                        class="dl-date-time-range--card_content"
-                        :style="cardContentStyles"
-                    >
-                        <dl-date-picker
-                            :model-value="dateInterval"
-                            :type="typeState"
-                            :available-range="availableRange"
-                            :disabled="isInputDisabled"
-                            :normalize-calendars="normalizeCalendars"
-                            :active-date-from="activeDateFrom"
-                            :active-date-to="activeDateTo"
-                            @update:model-value="
-                                updateDateIntervalWithAutoClose
-                            "
-                            @update:from-to-date="updateFromToDate"
-                        />
-                        <dl-time-picker
-                            v-if="showTime && typeState === 'day'"
-                            :disabled="isInputDisabled"
-                            :model-value="dateInterval"
-                            @update:model-value="updateDateInterval"
-                        />
-
-                        <dl-button
-                            size="s"
-                            outlined
-                            class="dl-date-time-range--button"
-                            @click="handleClearAction"
-                        >
-                            <span style="text-transform: capitalize">
-                                Clear
-                            </span>
-                        </dl-button>
-                    </div>
-                </div>
-            </dl-menu>
-        </date-input>
+                <dl-menu
+                    ref="dateTimeRangeMenu"
+                    anchor="bottom middle"
+                    self="top middle"
+                    :offset="[0, 5]"
+                    :disabled="disabled"
+                >
+                    <date-time-range-content
+                        v-bind="dateTimeRangeContentProps"
+                        @day-type-option-click="handleDayTypeOptionClick"
+                        @month-type-option-click="handleMonthTypeOptionClick"
+                        @update-date-interval="updateDateInterval"
+                        @update-date-interval-with-auto-close="
+                            updateDateIntervalWithAutoClose
+                        "
+                        @update-from-to-date="updateFromToDate"
+                        @clear="handleClearAction"
+                    />
+                </dl-menu>
+            </date-input>
+        </template>
+        <template v-else>
+            <date-time-range-content
+                v-bind="dateTimeRangeContentProps"
+                @day-type-option-click="handleDayTypeOptionClick"
+                @month-type-option-click="handleMonthTypeOptionClick"
+                @update-date-interval="updateDateInterval"
+                @update-date-interval-with-auto-close="
+                    updateDateIntervalWithAutoClose
+                "
+                @update-from-to-date="updateFromToDate"
+                @clear="handleClearAction"
+            />
+        </template>
     </div>
 </template>
 <script lang="ts">
-import { DlTimePicker } from '../DlTimePicker'
 import { DateInterval } from '../types'
-import CardSidebar from './CardSidebar.vue'
 import {
     DayTypeOption,
     DAY_SIDEBAR_OPTION,
     MonthTypeOption,
-    MONTH_SIDEBAR_OPTION
+    MONTH_SIDEBAR_OPTION,
+    DATETIME_RANGE_VIEW_MODE
 } from './types'
 import { CustomDate } from '../DlDatePicker/models/CustomDate'
-import DlDatePicker from '../DlDatePicker/DlDatePicker.vue'
 import { CalendarDate } from '../DlDatePicker/models/CalendarDate'
 import DateInput from './DateInput.vue'
+import DateTimeRangeContent from './DateTimeRangeContent.vue'
 import { DlMenu } from '../../../essential'
-import { DlButton } from '../../../basic'
 import { defineComponent, PropType } from 'vue-demi'
 import { isInRange } from '../DlDatePicker/utils'
 import { v4 } from 'uuid'
 
 export default defineComponent({
     components: {
-        CardSidebar,
-        DlDatePicker,
-        DlTimePicker,
         DateInput,
-        DlMenu,
-        DlButton
+        DateTimeRangeContent,
+        DlMenu
     },
     model: {
         prop: 'modelValue',
@@ -150,6 +117,14 @@ export default defineComponent({
             default: false
         },
         shouldClearSelectFirstOption: {
+            type: Boolean,
+            default: false
+        },
+        viewMode: {
+            type: String as PropType<DATETIME_RANGE_VIEW_MODE>,
+            default: DATETIME_RANGE_VIEW_MODE.input
+        },
+        hideClearButton: {
             type: Boolean,
             default: false
         }
@@ -437,6 +412,27 @@ export default defineComponent({
             return {
                 '--card-content-width': this.datePickerCardWidth
             }
+        },
+        isInputMode(): boolean {
+            return this.viewMode === DATETIME_RANGE_VIEW_MODE.input
+        },
+        dateTimeRangeContentProps(): Record<string, any> {
+            return {
+                mode: this.mode,
+                typeState: this.typeState,
+                sidebarDayOptions: this.sidebarDayOptions,
+                sidebarMonthOptions: this.sidebarMonthOptions,
+                currentSidebarOption: this.currentSidebarOption,
+                dateInterval: this.dateInterval,
+                availableRange: this.availableRange,
+                isInputDisabled: this.isInputDisabled,
+                normalizeCalendars: this.normalizeCalendars,
+                activeDateFrom: this.activeDateFrom,
+                activeDateTo: this.activeDateTo,
+                showTime: this.showTime,
+                cardContentStyles: this.cardContentStyles,
+                hideClearButton: this.hideClearButton
+            }
         }
     },
     watch: {
@@ -516,13 +512,24 @@ export default defineComponent({
             this.typeState = value
             this.$emit('set-type', value)
         },
-        updateDateInterval(value: DateInterval | null) {
+        updateDateInterval(
+            value: DateInterval | null,
+            skipSidebarUpdate = false
+        ) {
             if (value === null) {
                 this.dateInterval = null
             } else {
                 this.dateInterval = {
                     from: value.from,
                     to: new Date(value.to)
+                }
+                // When in multi mode, update sidebar option to custom if user manually selects date
+                if (this.mode === 'multi' && !skipSidebarUpdate) {
+                    this.currentSidebarOption =
+                        this.typeState === 'day'
+                            ? DAY_SIDEBAR_OPTION.custom
+                            : MONTH_SIDEBAR_OPTION.custom
+                    this.isInputDisabled = false
                 }
             }
             this.$emit('update:model-value', value)
@@ -532,16 +539,24 @@ export default defineComponent({
             this.activeDateFrom = value?.from || null
             this.activeDateTo = value?.to || null
         },
-        updateDateIntervalWithAutoClose(value: DateInterval) {
-            this.updateDateInterval(value)
+        updateDateIntervalWithAutoClose(
+            value: DateInterval,
+            skipSidebarUpdate = false
+        ) {
+            this.updateDateInterval(value, skipSidebarUpdate)
 
-            if (this.autoClose) {
+            if (
+                this.autoClose &&
+                this.viewMode === DATETIME_RANGE_VIEW_MODE.input
+            ) {
                 const dateTimeRangeMenu = this.$refs[
                     'dateTimeRangeMenu'
                 ] as unknown as {
                     hide: () => void
                 }
-                dateTimeRangeMenu.hide()
+                if (dateTimeRangeMenu) {
+                    dateTimeRangeMenu.hide()
+                }
             }
         },
         handleDayTypeOptionClick(option: DayTypeOption) {
@@ -555,9 +570,9 @@ export default defineComponent({
 
             if (option.key === DAY_SIDEBAR_OPTION.custom_by_month) {
                 this.handleTypeChange('month')
-                this.updateDateInterval(option.value)
+                this.updateDateInterval(option.value, true)
             } else {
-                this.updateDateIntervalWithAutoClose(option.value)
+                this.updateDateIntervalWithAutoClose(option.value, true)
             }
         },
         handleMonthTypeOptionClick(option: MonthTypeOption) {
@@ -571,9 +586,9 @@ export default defineComponent({
 
             if (option.key === MONTH_SIDEBAR_OPTION.custom_by_day) {
                 this.handleTypeChange('day')
-                this.updateDateInterval(option.value)
+                this.updateDateInterval(option.value, true)
             } else {
-                this.updateDateIntervalWithAutoClose(option.value)
+                this.updateDateIntervalWithAutoClose(option.value, true)
             }
         }
     }
@@ -583,25 +598,5 @@ export default defineComponent({
 .dl-date-time-range {
     display: flex;
     justify-content: center;
-
-    &--card {
-        background-color: var(--dl-color-bg);
-        z-index: 1;
-        display: flex;
-        border-radius: 2px;
-        border-radius: 2px;
-    }
-
-    &--card_content {
-        width: var(--card-content-width);
-    }
-
-    &--button {
-        display: flex;
-        margin-left: auto;
-        width: fit-content;
-        margin-right: 16px;
-        margin-bottom: 16px;
-    }
 }
 </style>

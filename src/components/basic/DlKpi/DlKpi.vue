@@ -1,11 +1,8 @@
 <template>
-    <div
-        class="kpi_box"
-        :style="cssVars"
-    >
+    <div class="kpi_box" :style="cssVars">
         <div class="kpi_box__counter">
             <dl-typography
-                :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
+                :color="hasValue ? 'dell-gray-800' : 'dell-gray-600'"
                 variant="h1"
                 :size="counterFontSizeComputed"
                 :style="typographyStyles"
@@ -38,10 +35,7 @@
                 </dl-typography>
             </div>
         </div>
-        <div
-            v-if="progress"
-            class="kpi_box__progress_bar"
-        >
+        <div v-if="progress" class="kpi_box__progress_bar">
             <dl-progress-bar
                 color="dl-color-darker"
                 height="5px"

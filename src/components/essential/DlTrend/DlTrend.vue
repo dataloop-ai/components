@@ -1,8 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        class="trend-wrapper"
-    >
+    <div :id="uuid" class="trend-wrapper">
         <span
             v-if="withArrow"
             class="direction-arrow"
@@ -24,6 +21,24 @@ import { getColor } from '../../../utils'
 
 const colorValidator = (val: string | null) =>
     val === 'negative' || val === 'positive' || val === null
+
+const getColorByName = (name: string) => {
+    if (name === 'negative') {
+        return 'dell-red-500'
+    } else if (name === 'positive') {
+        return 'dell-green-500'
+    } else {
+        return 'dell-gray-800'
+    }
+}
+
+const getColorByDirection = (direction: string) => {
+    if (direction === 'up') {
+        return 'dell-green-500'
+    } else {
+        return 'dell-red-500'
+    }
+}
 
 export default defineComponent({
     name: 'DlTrend',
@@ -63,9 +78,9 @@ export default defineComponent({
         },
         computedColor(): string {
             if (this.color !== null || !colorValidator(this.color)) {
-                return getColor(`dl-color-${this.color}`)
+                return getColor(getColorByName(this.color))
             }
-            return getColor(`dl-color-${this.isUp ? 'positive' : 'negative'}`)
+            return getColor(getColorByDirection(this.direction))
         },
         withArrow(): boolean {
             return !(this.value === 0 || this.value === '0')
@@ -83,7 +98,7 @@ export default defineComponent({
     font-size: var(--dl-font-size-body);
     line-height: 1;
     padding: 2px 0;
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-800);
 }
 .direction-arrow {
     width: 8px;

@@ -42,6 +42,7 @@
 
         <dl-smart-search-input
             v-model="queryObject"
+            no-tooltip
             :aliases="aliases"
             :schema="schema"
             :color-schema="colorSchema"

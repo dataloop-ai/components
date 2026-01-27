@@ -12,11 +12,7 @@
                         :icon="
                             focused ? defaultIcon : statusIcon || defaultIcon
                         "
-                        :color="
-                            focused
-                                ? defaultIconColor
-                                : statusIconColor || defaultIconColor
-                        "
+                        :color="iconColor"
                         size="16px"
                         :inline="false"
                     />
@@ -53,7 +49,7 @@
                     </div>
                 </div>
                 <dl-tooltip
-                    v-if="!focused"
+                    v-if="!focused && !noTooltip"
                     border="1px solid var(--dl-color-separator)"
                     background-color="dl-color-panel-background"
                     color="dl-color-darker"
@@ -248,6 +244,10 @@ export default defineComponent({
             type: String,
             default: '28px'
         },
+        noTooltip: {
+            type: Boolean,
+            default: false
+        },
         omitSuggestions: {
             type: Array as PropType<string[]>,
             default: () => [] as string[]
@@ -275,6 +275,7 @@ export default defineComponent({
         'blur',
         'input',
         'search',
+        'status',
         'error',
         'clear'
     ],
@@ -297,6 +298,7 @@ export default defineComponent({
             defaultIcon,
             defaultIconColor,
             schema,
+            noTooltip,
             omitSuggestions,
             operatorsOverride,
             height,
@@ -960,6 +962,16 @@ export default defineComponent({
             }
         })
 
+        const iconColor = computed(() => {
+            if (disabled.value) {
+                return 'dl-color-disabled'
+            }
+            if (focused.value) {
+                return defaultIconColor.value
+            }
+            return statusIconColor.value || defaultIconColor.value
+        })
+
         const textareaStyles = computed<Record<string, string | number>>(() => {
             const overflow: string =
                 scroll.value && focused.value ? 'scroll' : 'hidden'
@@ -994,9 +1006,14 @@ export default defineComponent({
         })
 
         const inputClass = computed<string>(() => {
-            return `dl-smart-search-input__textarea${
-                focused.value ? ' focus' : ''
-            }`
+            let classes = 'dl-smart-search-input__textarea'
+            if (focused.value) {
+                classes += ' focus'
+            }
+            if (disabled.value) {
+                classes += ' dl-smart-search-input__textarea--disabled'
+            }
+            return classes
         })
 
         const showClearButton = computed(() => {
@@ -1035,24 +1052,31 @@ export default defineComponent({
                 return status.value
             }
 
+            let newStatus: {
+                type: string
+                message: string
+            }
+
             if (!error.value && searchQuery.value !== '') {
-                return {
+                newStatus = {
                     type: 'success',
                     message: ''
                 }
-            }
-
-            if (error.value === 'warning') {
-                return {
+            } else if (error.value === 'warning') {
+                newStatus = {
                     type: 'warning',
                     message: 'The query is not supported technically.'
                 }
+            } else {
+                newStatus = {
+                    type: 'error',
+                    message: error.value
+                }
             }
 
-            return {
-                type: 'error',
-                message: error.value
-            }
+            emit('status', newStatus)
+
+            return newStatus
         })
 
         const inputPlaceholder = computed<string>(() => {
@@ -1085,9 +1109,21 @@ export default defineComponent({
             })
         })
 
+        const uuid = v4()
+        const watchFocusIn = () => {
+            focused.value = focused.value ||
+                !!document.activeElement?.closest(`#DlSmartSearchInput${uuid}`)
+        }
+
         watch(focused, (value, old) => {
             if (old === value) {
                 return
+            }
+
+            if (!value) {
+                const focusIn = 'focusin'
+                window.removeEventListener(focusIn, watchFocusIn)
+                window.addEventListener(focusIn, watchFocusIn)
             }
 
             updateParentElementWidth()
@@ -1150,7 +1186,7 @@ export default defineComponent({
         })
 
         return {
-            uuid: v4(),
+            uuid,
             suggestionsDropdown,
             container,
             input,
@@ -1173,6 +1209,7 @@ export default defineComponent({
             debouncedSetInputValue,
             statusIcon,
             statusIconColor,
+            iconColor,
             textareaStyles,
             searchBarClasses,
             inputClass,
@@ -1322,6 +1359,21 @@ export default defineComponent({
         }
         & > * {
             display: flex;
+        }
+    }
+
+    &__textarea--disabled {
+        &::before {
+            color: var(--dl-color-disabled);
+        }
+    }
+
+    &__search-bar--disabled {
+        .dl-smart-search-input__input,
+        .dl-smart-search-input__textarea {
+            &::before {
+                color: var(--dl-color-disabled);
+            }
         }
     }
 

@@ -9,20 +9,20 @@
     border-spacing: 0;
 
     .vertical-border {
-        border-left: 1px solid var(--dl-color-separator);
-        border-right: 1px solid var(--dl-color-separator);
+        border-left: 1px solid var(--dell-gray-300);
+        border-right: 1px solid var(--dell-gray-300);
     }
 
     thead {
         position: sticky;
         top: 0;
-        background-color: var(--dl-color-panel-background);
+        background-color: var(--dell-white);
         z-index: 50;
     }
 
     .sticky-col {
         position: sticky;
-        background-color: var(--dl-color-panel-background);
+        background-color: var(--dell-white);
         z-index: 50;
     }
 
@@ -84,7 +84,7 @@
     //markup-table
 
     &__card {
-        background-color: var(--dl-color-panel-background);
+        background-color: var(--dell-white);
         border-radius: 2px;
 
         .dl-table__middle {
@@ -101,7 +101,7 @@
     .dl-table__bottom,
     thead tr:first-child th {
         /* bg color is important for th; just specify one */
-        background-color: var(--dl-color-panel-background);
+        background-color: var(--dell-white);
     }
 
     thead tr th {
@@ -134,14 +134,14 @@
                 opacity: 1;
             }
             td:not(.dl-td--no-hover) {
-                background-color: var(--dl-color-fill-hover);
+                background-color: var(--dell-blue-100);
             }
         }
     }
 
     tbody tr.highlighted {
         td {
-            background-color: var(--dl-color-fill);
+            background-color: var(--dell-blue-100);
         }
     }
 
@@ -158,7 +158,7 @@
         font-weight: 400;
         font-size: 14px;
         line-height: 14px;
-        color: var(--dl-color-medium);
+        color: var(--dell-gray-900);
         background-color: inherit;
         user-select: none;
 
@@ -197,7 +197,7 @@
     }
 
     .dl-td {
-        background-color: var(--dl-color-panel-background);
+        background-color: var(--dell-white);
         &--no-hover {
             &:hover {
                 background-color: none !important;
@@ -211,7 +211,7 @@
 
     tbody {
         tr.selected td {
-            background-color: var(--dl-color-fill);
+            background-color: var(--dell-blue-100);
         }
 
         tr.selected td:after {
@@ -264,11 +264,11 @@
         font-size: 20px;
         letter-spacing: 0.005em;
         font-weight: 400;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
     }
 
     &--bordered {
-        border: 1px solid var(--dl-color-separator);
+        border: 1px solid var(--dell-gray-300);
         border-radius: 2px;
     }
 
@@ -321,7 +321,7 @@
     }
 
     &__bottom {
-        border-top: 1px solid var(--dl-color-separator);
+        border-top: 1px solid var(--dell-gray-300);
         min-height: 50px;
         padding: 4px 14px 4px 16px;
         font-size: 12px;
@@ -364,7 +364,7 @@
     tr,
     th,
     td {
-        border-color: var(--dl-color-separator);
+        border-color: var(--dell-gray-300);
 
         &>label {
             padding: 0;
@@ -377,7 +377,7 @@
             font-size: 12px;
             line-height: 14px;
             background-color: inherit;
-            color: var(--dl-color-darker);
+            color: var(--dell-gray-800);
 
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -400,13 +400,13 @@
     }
 
     &__is-dragging {
-        background-color: var(--dl-color-fill);
+        background-color: var(--dell-blue-200);
     }
 
     &__selected {
-        background-color: var(--dl-color-fill) !important;
+        background-color: var(--dell-blue-100) !important;
         color: var(--dl-color-fill) !important;
-        border-color: var(--dl-color-fill) !important;
+        border-color: var(--dell-gray-300) !important;
     }
 
     &__drag {
@@ -419,7 +419,7 @@
         box-shadow: 0px 3px 6px rgba(16, 30, 115, 0.15);
         border-radius: 2px;
         font-size: 12px;
-        background-color: var(--dl-color-panel-background);
+        background-color: var(--dell-white);
 
         & th {
             cursor: grabbing !important;
@@ -554,7 +554,7 @@
 
     .dl-table__top {
         position: relative;
-        border-bottom: 1px solid var(--dl-color-separator);
+        border-bottom: 1px solid var(--dell-gray-300);
     }
 }
 

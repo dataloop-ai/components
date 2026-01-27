@@ -91,6 +91,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dl-spinner-text {
-    color: var(--dl-color-darker);
+    color: var(--dell-white);
+    margin-top: 12px;
 }
 </style>

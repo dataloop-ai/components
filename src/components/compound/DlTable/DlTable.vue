@@ -88,7 +88,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
-                                        :color="color"
+                                        :color="checkboxColor"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
                                         @update:model-value="
@@ -161,16 +161,16 @@
                                     <div
                                         v-if="
                                             visibleColumns &&
-                                            visibleColumns.length
+                                                visibleColumns.length
                                         "
                                         class="visible-columns-justify-end"
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            :text-color="
+                                            :icon-color="
                                                 isVisibleColumnsOpen
-                                                    ? 'dl-color-secondary'
-                                                    : 'dl-color-medium'
+                                                    ? 'dell-blue-600'
+                                                    : 'dell-gray-600'
                                             "
                                             flat
                                             icon="icon-dl-column"
@@ -274,8 +274,8 @@
                                     isRowSelected(getRowKey(props.item))
                                         ? 'selected'
                                         : hasAnyAction
-                                        ? ' cursor-pointer'
-                                        : ''
+                                            ? ' cursor-pointer'
+                                            : ''
                                 "
                                 :no-hover="noHover"
                                 @click="
@@ -325,7 +325,7 @@
                                         "
                                     >
                                         <DlCheckbox
-                                            :color="color"
+                                            :color="checkboxColor"
                                             :model-value="
                                                 isRowSelected(
                                                     getRowKey(props.item)
@@ -490,7 +490,7 @@
                                     v-bind="getHeaderScope({})"
                                 >
                                     <DlCheckbox
-                                        :color="color"
+                                        :color="checkboxColor"
                                         :model-value="headerSelectedValue"
                                         :indeterminate-value="true"
                                         @update:model-value="
@@ -565,13 +565,13 @@
                                     <div
                                         v-if="
                                             visibleColumns &&
-                                            visibleColumns.length
+                                                visibleColumns.length
                                         "
                                         class="visible-columns-justify-end"
                                         style="width: 100%; display: flex"
                                     >
                                         <dl-button
-                                            :text-color="
+                                            :icon-color="
                                                 isVisibleColumnsOpen
                                                     ? 'dl-color-secondary'
                                                     : 'dl-color-medium'
@@ -674,8 +674,8 @@
                             <dl-top-scroll
                                 v-if="
                                     tableScroll &&
-                                    infiniteScroll &&
-                                    !isDataEmpty
+                                        infiniteScroll &&
+                                        !isDataEmpty
                                 "
                                 :container-ref="tableScroll"
                                 @scroll-to-top="
@@ -709,8 +709,8 @@
                                         isRowSelected(getRowKey(row))
                                             ? 'selected'
                                             : hasAnyAction
-                                            ? ' cursor-pointer'
-                                            : ''
+                                                ? ' cursor-pointer'
+                                                : ''
                                     "
                                     :no-hover="noHover"
                                     @click="onTrClick($event, row, pageIndex)"
@@ -747,7 +747,7 @@
                                             "
                                         >
                                             <DlCheckbox
-                                                :color="color"
+                                                :color="checkboxColor"
                                                 :model-value="
                                                     isRowSelected(
                                                         getRowKey(row)
@@ -845,8 +845,8 @@
                             <dl-bottom-scroll
                                 v-if="
                                     tableScroll &&
-                                    infiniteScroll &&
-                                    !isDataEmpty
+                                        infiniteScroll &&
+                                        !isDataEmpty
                                 "
                                 :container-ref="tableScroll"
                                 @scroll-to-bottom="
@@ -903,7 +903,7 @@
                     <div
                         v-if="
                             hasBottomSelectionBanner &&
-                            selectedRowsLabel(rowsSelectedNumber)
+                                selectedRowsLabel(rowsSelectedNumber)
                         "
                         class="dl-table__control"
                     >
@@ -1284,6 +1284,10 @@ export default defineComponent({
             default: null,
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
+        },
+        checkboxColor: {
+            type: String,
+            default: 'dell-blue-500'
         },
         ...useTableActionsProps,
         ...commonVirtScrollProps,

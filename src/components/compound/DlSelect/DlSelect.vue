@@ -63,7 +63,7 @@
                             v-if="searchable"
                             icon="icon-dl-search"
                             :size="iconSize"
-                            color="dl-color-lighter"
+                            color="dell-gray-500"
                         />
                     </slot>
                 </div>
@@ -166,17 +166,21 @@
                 @selected-item="handleSelectedItem"
             >
                 <dl-list-item v-if="hasBeforeOptions && !noOptions">
-                    <dl-item-section color="dl-color-medium">
+                    <dl-item-section color="dell-gray-600">
                         <slot name="before-options" />
                     </dl-item-section>
                 </dl-list-item>
-                <dl-list-item v-if="noOptions" :style="computedNoOptionsStyle">
-                    <dl-item-section color="dl-color-medium">
+                <dl-list-item
+                    v-if="noOptions"
+                    :style="computedNoOptionsStyle"
+                    :padding="noOptionsPadding"
+                >
+                    <dl-item-section color="dell-gray-600">
                         <slot name="no-options"> No options </slot>
                     </dl-item-section>
                 </dl-list-item>
                 <dl-list
-                    v-if="showMenuList"
+                    v-else-if="showMenuList"
                     class="select-list"
                     :padding="false"
                     :style="
@@ -351,7 +355,7 @@
                     v-if="error && !!errorMessage.length"
                     :icon="errorIcon"
                     :inline="false"
-                    color="dl-color-negative"
+                    color="dell-red-500"
                     :size="iconSize"
                 >
                     <dl-tooltip>
@@ -512,6 +516,10 @@ export default defineComponent({
             default: false
         },
         afterOptionsPadding: {
+            type: String,
+            default: null
+        },
+        noOptionsPadding: {
             type: String,
             default: null
         },
@@ -807,8 +815,8 @@ export default defineComponent({
             return {
                 '--placeholder-color': getColor(
                     this.modelValueLength > 0 || this.selectedIndex !== -1
-                        ? 'dl-color-darker'
-                        : 'dl-color-lighter'
+                        ? 'dell-gray-800'
+                        : 'dell-gray-500'
                 )
             }
         },
@@ -929,7 +937,7 @@ export default defineComponent({
             return !!this.$slots.prepend && !this.isSmall
         },
         chevronIconColor(): string {
-            return `${this.disabled ? 'dl-color-disabled' : null}`
+            return `${this.disabled ? 'dell-gray-500' : null}`
         },
         showMenuList(): boolean {
             if (
@@ -1048,7 +1056,11 @@ export default defineComponent({
             return !!option?.readonly
         },
         isDisableRowOption(option: DlSelectOptionType) {
-            return typeof option === 'object' && option !== null && !!option.disableRow
+            return (
+                typeof option === 'object' &&
+                option !== null &&
+                !!option.disableRow
+            )
         },
         getOptionCount(option: any) {
             return option?.count ?? null
@@ -1323,10 +1335,10 @@ export default defineComponent({
     }
 
     .dl_select__select {
-        border: 1px solid var(--dl-color-separator);
-        border-radius: 2px;
+        border: 1px solid var(--dell-gray-500);
+        border-radius: 0px;
         cursor: pointer;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
         height: 12px;
         width: 100%;
         box-sizing: content-box;
@@ -1415,11 +1427,11 @@ export default defineComponent({
         }
 
         &:hover {
-            border-color: var(--dl-color-hover);
+            border-color: var(--dell-gray-800);
         }
 
         &--focused {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dell-blue-500) !important;
         }
 
         &--disabled {

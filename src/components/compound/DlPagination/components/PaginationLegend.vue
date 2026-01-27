@@ -81,7 +81,7 @@ export default defineComponent({
 .dl-pagination--legend {
     justify-content: flex-end;
     display: flex;
-    color: var(--dl-color-lighter);
+    color: var(--dell-gray-500);
     height: 100%;
     min-width: min-content;
     overflow-y: scroll;

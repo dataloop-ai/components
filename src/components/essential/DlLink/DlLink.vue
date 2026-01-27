@@ -1,13 +1,10 @@
 <template>
-    <div
-        :id="uuid"
-        class="link-wrapper"
-    >
+    <div :id="uuid" class="link-wrapper">
         <a
             :href="link"
             :target="target"
             :rel="rel"
-            :style="`color: var(--${textColor});`"
+            :style="linkStyles"
             :class="`${disabled ? 'disabled' : ''}`"
             @click="$emit('click')"
         >
@@ -28,7 +25,8 @@ export default defineComponent({
         newtab: { required: false, default: false, type: Boolean },
         external: { required: false, default: false, type: Boolean },
         disabled: { required: false, default: false, type: Boolean },
-        color: { required: false, type: String, default: null }
+        color: { required: false, type: String, default: null },
+        hoverColor: { required: false, type: String, default: null }
     },
     data() {
         return {
@@ -44,8 +42,17 @@ export default defineComponent({
                 ? `${this.href}`
                 : `${window.origin}/${this.href}`
         },
-        textColor(): string {
-            return this.color ?? 'dl-color-studio-secondary'
+        linkStyles(): Record<string, string> {
+            const textColor = this.color ?? 'dell-blue-600'
+            const hoverTextColor = this.hoverColor
+                ? this.hoverColor
+                : this.color
+                ? this.color
+                : 'dell-blue-700'
+            return {
+                '--link-color': `var(--${textColor})`,
+                '--link-hover-color': `var(--${hoverTextColor})`
+            }
         },
         target(): string | null {
             if (!this.href) {
@@ -68,16 +75,19 @@ export default defineComponent({
 a {
     text-decoration: none;
     font-size: var(--dl-font-size-body);
+    color: var(--link-color) !important;
 }
 
 a:hover {
     text-decoration: underline;
     cursor: pointer;
+    color: var(--link-hover-color) !important;
 }
 
 .disabled {
     pointer-events: none;
     color: var(--dl-color-disabled) !important;
+    text-decoration: none !important;
 }
 
 .link-wrapper {

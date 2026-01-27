@@ -14,7 +14,11 @@ import {
     DayTypeOption,
     MonthTypeOption
 } from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
-import { DAY_SIDEBAR_OPTION } from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
+import {
+    DAY_SIDEBAR_OPTION,
+    MONTH_SIDEBAR_OPTION,
+    DATETIME_RANGE_VIEW_MODE
+} from '../../src/components/compound/DlDateTime/DlDateTimeRange/types'
 
 const date1 = new Date(1990, 12, 1)
 const date2 = new Date(1990, 12, 2)
@@ -242,6 +246,244 @@ describe('Date Time Range', () => {
         expect(wrapper.vm.currentSidebarOption).toEqual(
             DAY_SIDEBAR_OPTION.custom
         )
+    })
+
+    describe('View Mode', () => {
+        it('should default to input mode', () => {
+            const wrapper = mount(DlDateTimeRange)
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
+            expect(wrapper.props('viewMode')).toBe(
+                DATETIME_RANGE_VIEW_MODE.input
+            )
+        })
+
+        it('should render in input mode when viewMode is "input"', () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input
+                }
+            })
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
+            const html = wrapper.html()
+            expect(html).toContain('dl-date-time-range')
+        })
+
+        it('should render in inline mode when viewMode is "inline"', () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline
+                }
+            })
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.inline)
+            const html = wrapper.html()
+            expect(html).toContain('dl-date-time-range')
+        })
+
+        it('should switch between input and inline modes', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input
+                }
+            })
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
+
+            await wrapper.setProps({
+                viewMode: DATETIME_RANGE_VIEW_MODE.inline
+            })
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.inline)
+
+            await wrapper.setProps({
+                viewMode: DATETIME_RANGE_VIEW_MODE.input
+            })
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.input)
+        })
+
+        it('should work with all props in inline mode', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline,
+                    modelValue: {
+                        from: date1,
+                        to: date2
+                    },
+                    type: 'day',
+                    mode: 'multi',
+                    showTime: true
+                }
+            })
+
+            expect(wrapper.vm.viewMode).toBe(DATETIME_RANGE_VIEW_MODE.inline)
+            expect(wrapper.vm.dateInterval).toEqual({
+                from: date1,
+                to: date2
+            })
+        })
+
+        it('should emit events correctly in inline mode', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline,
+                    modelValue: {
+                        from: date1,
+                        to: date2
+                    }
+                }
+            })
+
+            const today = wrapper.vm.sidebarDayOptions[0] as DayTypeOption
+            wrapper.vm.handleDayTypeOptionClick(today)
+            expect(wrapper.emitted()['update:model-value']).toBeDefined()
+        })
+    })
+
+    describe('Auto Close', () => {
+        it('should update date interval in input mode with autoClose', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input,
+                    autoClose: true
+                }
+            })
+
+            wrapper.vm.updateDateIntervalWithAutoClose({
+                from: date1,
+                to: date2
+            })
+
+            // Should update the date interval
+            expect(wrapper.vm.dateInterval).toEqual({
+                from: date1,
+                to: date2
+            })
+            // Should emit the update event
+            expect(wrapper.emitted()['update:model-value']).toBeDefined()
+        })
+
+        it('should not auto-close in inline mode even when autoClose is true', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.inline,
+                    autoClose: true
+                }
+            })
+
+            wrapper.vm.updateDateIntervalWithAutoClose({
+                from: date1,
+                to: date2
+            })
+
+            // In inline mode, there's no menu to close, so it should just update
+            expect(wrapper.vm.dateInterval).toEqual({
+                from: date1,
+                to: date2
+            })
+        })
+
+        it('should update date interval when autoClose is false', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input,
+                    autoClose: false
+                }
+            })
+
+            wrapper.vm.updateDateIntervalWithAutoClose({
+                from: date1,
+                to: date2
+            })
+
+            // Should still update the date interval
+            expect(wrapper.vm.dateInterval).toEqual({
+                from: date1,
+                to: date2
+            })
+        })
+    })
+
+    describe('Hide Clear Button', () => {
+        it('should show clear button by default', () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    modelValue: {
+                        from: date1,
+                        to: date2
+                    }
+                }
+            })
+            expect(wrapper.vm.hideClearButton).toBe(false)
+        })
+
+        it('should hide clear button when hideClearButton is true', () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    hideClearButton: true,
+                    modelValue: {
+                        from: date1,
+                        to: date2
+                    }
+                }
+            })
+            expect(wrapper.vm.hideClearButton).toBe(true)
+        })
+
+        it('should work with hideClearButton in both input and inline modes', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    viewMode: DATETIME_RANGE_VIEW_MODE.input,
+                    hideClearButton: true,
+                    modelValue: {
+                        from: date1,
+                        to: date2
+                    }
+                }
+            })
+            expect(wrapper.vm.hideClearButton).toBe(true)
+
+            await wrapper.setProps({
+                viewMode: DATETIME_RANGE_VIEW_MODE.inline
+            })
+            expect(wrapper.vm.hideClearButton).toBe(true)
+        })
+    })
+
+    describe('Multi mode with manual date selection', () => {
+        it('should update sidebar option to custom when manually selecting date in multi mode', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    mode: 'multi',
+                    type: 'day'
+                }
+            })
+
+            wrapper.vm.updateDateInterval({
+                from: date1,
+                to: date2
+            })
+
+            expect(wrapper.vm.currentSidebarOption).toBe(
+                DAY_SIDEBAR_OPTION.custom
+            )
+            expect(wrapper.vm.isInputDisabled).toBe(false)
+        })
+
+        it('should update sidebar option to custom for month type in multi mode', async () => {
+            const wrapper = mount(DlDateTimeRange, {
+                props: {
+                    mode: 'multi',
+                    type: 'month'
+                }
+            })
+
+            wrapper.vm.updateDateInterval({
+                from: date1,
+                to: date2
+            })
+
+            expect(wrapper.vm.currentSidebarOption).toBe(
+                MONTH_SIDEBAR_OPTION.custom
+            )
+            expect(wrapper.vm.isInputDisabled).toBe(false)
+        })
     })
 
     afterAll(() => {

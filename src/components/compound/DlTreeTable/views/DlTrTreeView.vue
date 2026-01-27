@@ -16,7 +16,7 @@
             }`"
         >
             <dl-icon
-               v-if="hasDraggableRows && !row.disableDraggable"
+                v-if="hasDraggableRows && !row.disableDraggable"
                 class="draggable-icon"
                 icon="icon-dl-drag"
                 size="12px"
