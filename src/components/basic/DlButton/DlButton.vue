@@ -421,6 +421,7 @@ export default defineComponent({
                             disabled: this.disabled,
                             flat: this.flat,
                             shaded: this.shaded,
+                            outlined: this.outlined,
                             color: this.color
                         }),
                     '--dl-button-bg-hover':
@@ -442,13 +443,21 @@ export default defineComponent({
                     '--dl-button-bg-pressed':
                         this.pressedBgColor ??
                         setBgOnPressed({
+                            disabled: this.disabled,
+                            flat: this.flat,
                             shaded: this.shaded,
-                            outlined: this.outlined
+                            outlined: this.outlined,
+                            filled: this.filled,
+                            color: this.color
                         }),
 
                     '--dl-button-border-pressed': setBorderOnPressed({
+                        disabled: this.disabled,
+                        flat: this.flat,
                         shaded: this.shaded,
-                        outlined: this.outlined
+                        outlined: this.outlined,
+                        filled: this.filled,
+                        color: this.color
                     })
                 }
             }
