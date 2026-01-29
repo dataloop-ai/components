@@ -115,6 +115,7 @@
                                         text-color="dl-color-darker"
                                         flat
                                         fluid
+                                        :padding="clearIconSizePadding"
                                         @click="onClear"
                                     />
                                     <dl-tooltip v-if="clearButtonTooltip">
@@ -347,6 +348,7 @@ import { setCaretAtTheEnd } from '../../../utils'
 import { DlInputFile, DlInputSuggestion } from './types'
 import InputFileElement from './components/InputFileElement.vue'
 import { stateManager } from '../../../StateManager'
+import { setIconPadding } from '../../basic/DlButton/utils'
 
 export default defineComponent({
     name: 'DlInput',
@@ -1078,6 +1080,10 @@ export default defineComponent({
         clearIconSize(): string {
             if (this.isSmall) return 'xs'
             return 'm'
+        },
+        clearIconSizePadding(): string {
+            const paddingRight = setIconPadding(this.clearIconSize)
+            return `0 ${paddingRight} 0 0`
         },
         passShowIcon(): string {
             return this.showPass ? 'icon-dl-hide' : 'icon-dl-show'
