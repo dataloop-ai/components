@@ -30,7 +30,7 @@ export default defineComponent({
 .skeleton-box {
     position: relative;
     overflow: hidden;
-    background-color: #24282d;
+    background-color: var(--dell-gray-200);
 }
 .skeleton-box::after {
     position: absolute;

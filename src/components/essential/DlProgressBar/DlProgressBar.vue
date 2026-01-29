@@ -27,7 +27,7 @@
             </span>
             <p
                 v-if="showValue && !indeterminate && !summary"
-                class="dl-progress-bar-label"
+                class="dl-progress-bar-value"
             >
                 {{ computedValue }}{{ showPercentage ? '%' : '' }}
             </p>
@@ -114,6 +114,12 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .dl-progress-bar-label {
+    margin: 0;
+    font-size: var(--dl-font-size-body);
+    line-height: 1;
+    color: var(--dell-gray-600);
+}
+.dl-progress-bar-value {
     margin: 0;
     font-size: var(--dl-font-size-body);
     line-height: 1;
