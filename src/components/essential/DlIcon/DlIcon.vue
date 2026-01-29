@@ -90,12 +90,25 @@ export default defineComponent({
         tooltip: {
             type: String,
             default: null
+        },
+        activeColor: {
+            type: String,
+            default: null
         }
     },
     emits: ['click', 'mousemove', 'mouseup', 'mousedown'],
     setup(props) {
-        const { styles, color, size, icon, svg, inline, svgSource, tooltip } =
-            toRefs(props)
+        const {
+            styles,
+            color,
+            size,
+            icon,
+            svg,
+            inline,
+            svgSource,
+            tooltip,
+            activeColor
+        } = toRefs(props)
 
         const svgIcon = ref(null)
         const isDestroyed = ref(false)
@@ -129,6 +142,9 @@ export default defineComponent({
                               : color.value,
                           'dell-gray-800'
                       )
+                    : 'inherit',
+                '--dl-icon-color-active': activeColor.value
+                    ? getColor(activeColor.value, 'dell-gray-800')
                     : 'inherit'
             }
         })
@@ -250,5 +266,9 @@ export default defineComponent({
     display: inline-flex;
     color: var(--dl-icon-color);
     font-size: var(--dl-icon-font-size);
+
+    &:active {
+        color: var(--dl-icon-color-active);
+    }
 }
 </style>
