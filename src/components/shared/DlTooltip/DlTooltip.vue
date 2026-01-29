@@ -77,12 +77,12 @@ export default defineComponent({
         color: {
             type: String,
             required: false,
-            default: 'dl-color-tooltip-text'
+            default: 'dell-gray-800'
         },
         backgroundColor: {
             type: String,
             required: false,
-            default: 'dl-color-tooltip-background'
+            default: 'dell-white'
         },
         maxHeight: {
             type: String,
@@ -414,7 +414,7 @@ export default defineComponent({
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
                         : 'none',
-                    '--dl-tooltip-border': props.border
+                    '--dl-tooltip-border': props.border || 'dell-gray-200'
                 }
             ] as any
         }
@@ -435,8 +435,9 @@ export default defineComponent({
     line-height: 16px;
     color: var(--dl-tooltip-color);
     background: var(--dl-tooltip-background);
-    border: var(--dl-tooltip-border);
-    border-radius: 2px;
+    border: 1px solid var(--dl-tooltip-border, #eaeaea);
+    border-radius: 0px;
+    box-shadow: 0 2px 2px 0 var(--dell-shadow, rgba(0, 0, 0, 0.14));
     text-transform: none;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
