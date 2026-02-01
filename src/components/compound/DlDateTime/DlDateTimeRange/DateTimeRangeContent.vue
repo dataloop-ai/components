@@ -161,15 +161,6 @@ export default defineComponent({
     z-index: 1;
     display: flex;
     border-radius: 2px;
-
-    /* Selection: dell blue 100 – applies when card is in menu (teleported) so variables cascade */
-    --dl-date-time-range-selection: #ebf4fb;
-    --dl-date-time-range-selection-text: var(--dl-color-text-800, #252525);
-
-    --dl-color-secondary: var(--dl-date-time-range-selection);
-    --dl-color-text-buttons: var(--dl-date-time-range-selection-text);
-    --dl-date-picker-selected-strip: var(--dl-date-time-range-selection);
-    --dl-date-picker-selected-date: var(--dl-date-time-range-selection);
 }
 
 .dl-date-time-range--card_content {
