@@ -414,7 +414,7 @@ export default defineComponent({
                     '--dl-tooltip-text-transform': props.capitalized
                         ? 'capitalize'
                         : 'none',
-                    '--dl-tooltip-border': props.border || 'dell-gray-200'
+                    '--dl-tooltip-border': props.border
                 }
             ] as any
         }
