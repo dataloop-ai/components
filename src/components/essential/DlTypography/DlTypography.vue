@@ -55,7 +55,7 @@ export default defineComponent({
                 fontWeight: this.bold ? 500 : 400,
                 '--dl-typography-color-active': this.activeColor
                     ? getColor(this.activeColor as string, 'dell-gray-800')
-                    : null
+                    : 'inherit'
             }
 
             if (this.size && !sizes.includes(this.size)) {
