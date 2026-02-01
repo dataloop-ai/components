@@ -34,8 +34,7 @@ describe('DlIcon', () => {
             inline: false,
             svg: true,
             svgSource: '@dataloop-ai/icons/assets',
-            tooltip: null,
-            activeColor: null
+            tooltip: null
         }
         let wrapper: VueWrapper<any>
         let image: DOMWrapper<SVGImageElement>
