@@ -61,7 +61,8 @@ export default defineComponent({
         closedIcon: { type: String, default: 'icon-dl-right-chevron' },
         openedIcon: { type: String, default: 'icon-dl-down-chevron' },
         backgroundColor: { type: String, default: 'dell-blue-100' },
-        withBackground: { type: Boolean, default: true }
+        formMode: { type: Boolean, default: false },
+        withBackground: { type: Boolean, default: false }
     },
     emits: ['click'],
     setup() {
@@ -78,7 +79,17 @@ export default defineComponent({
             let bgColor = ''
             let hoverBgColor = ''
             let activeBgColor = ''
-            if (this.withBackground) {
+            let padding = '12px 16px'
+            let marginBottom = '0px'
+            let borderRadius = '0px'
+            let borderTop = 'none'
+            if (this.formMode) {
+                padding = this.isOpen
+                    ? '12px 16px 12px 12px'
+                    : '11px 16px 12px 16px'
+                borderTop = !this.isOpen
+                    ? '1px solid var(--dell-gray-300, #C5C5C5)'
+                    : 'none'
                 if (this.isOpen) {
                     bgColor = getColor(this.backgroundColor)
                     const nextShadeColor = getDellColorNextShade(
@@ -100,6 +111,13 @@ export default defineComponent({
                         ? getColor(nextShadeColor)
                         : hoverBgColor
                 }
+            } else if (this.withBackground) {
+                ;(hoverBgColor = !this.isOpen
+                    ? getColor(this.backgroundColor)
+                    : ''),
+                    (padding = '4px')
+                marginBottom = '2px'
+                borderRadius = !this.isOpen ? '4px' : '0px'
             }
 
             return {
@@ -115,9 +133,10 @@ export default defineComponent({
                 '--dl-accordion-header-background-color': bgColor,
                 '--dl-accordion-header-hover-background-color': hoverBgColor,
                 '--dl-accordion-header-active-background-color': activeBgColor,
-                '--dl-accordion-header-border-radius': '0px',
-                '--dl-accordion-header-padding': '12px 16px',
-                '--dl-accordion-header-margin-bottom': '0px'
+                '--dl-accordion-header-border-radius': borderRadius,
+                '--dl-accordion-header-padding': padding,
+                '--dl-accordion-header-margin-bottom': marginBottom,
+                '--dl-accordion-header-border-top': borderTop
             }
         },
         hasSlot(): boolean {
@@ -148,6 +167,7 @@ export default defineComponent({
     color: var(--dl-title-color);
     margin-bottom: var(--dl-accordion-header-margin-bottom);
     background-color: var(--dl-accordion-header-background-color, transparent);
+    border-top: var(--dl-accordion-header-border-top, none);
 }
 
 .accordion-header:hover {

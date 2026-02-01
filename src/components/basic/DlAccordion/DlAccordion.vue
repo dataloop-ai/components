@@ -18,7 +18,8 @@
             :opened-icon="openedIcon"
             data-test-id="accordion-header"
             :background-color="backgroundColor"
-            with-background
+            :form-mode="formMode"
+            :with-background="withBackground"
             @click="handleClick"
         >
             <template #header>
@@ -88,7 +89,8 @@ export default defineComponent({
         closedIcon: { type: String, default: 'icon-dl-right-chevron' },
         openedIcon: { type: String, default: 'icon-dl-down-chevron' },
         backgroundColor: { type: String, default: 'dell-blue-100' },
-        withBackground: { type: Boolean, default: false }
+        withBackground: { type: Boolean, default: false },
+        formMode: { type: Boolean, default: false }
     },
     emits: ['update:model-value', 'hide', 'show'],
     data() {
@@ -106,20 +108,31 @@ export default defineComponent({
             return this.$slots.header !== undefined
         },
         accordionContentStyles(): Record<string, string> {
+            let padding = '0 16px 15px 38px'
+            if (this.formMode) {
+                padding = '8px 16px 8px 34px'
+            } else if (this.withBackground) {
+                padding = '16px'
+            }
             return {
                 '--dl-color-accordion-content-background':
                     this.withBackground && this.isOpen
                         ? getColor(this.backgroundColor)
                         : '',
-                '--dl-accordion-content-padding': this.withBackground
-                    ? '16px'
-                    : '0 16px 15px 38px',
+                '--dl-accordion-content-padding': padding,
                 '--dl-accordion-content-border-radius': this.withBackground
                     ? '4px'
                     : '',
                 '--dl-accordion-margin-left': this.withBackground
                     ? '12px'
-                    : '0px'
+                    : '0px',
+                '--dl-accordion-border-left':
+                    this.formMode && this.isOpen
+                        ? '4px solid var(--dell-blue-500)'
+                        : 'none',
+                '--dl-accordion-border-bottom': this.separator
+                    ? '1px solid var(--dell-gray-300)'
+                    : 'none'
             }
         }
     },
@@ -139,6 +152,7 @@ export default defineComponent({
 .accordion {
     max-width: 100%;
     margin-left: var(--dl-accordion-margin-left);
+    border-left: var(--dl-accordion-border-left, none);
 }
 .accordion-content {
     text-align: left;
@@ -150,7 +164,7 @@ export default defineComponent({
     max-height: fit-content;
     overflow: hidden;
     &__border {
-        border-bottom: 1px solid var(--dell-gray-300);
+        border-bottom: var(--dl-accordion-border-bottom, none);
     }
     &.right-side {
         padding: 0 38px 16px 16px;
@@ -158,6 +172,7 @@ export default defineComponent({
     &.closed {
         border-color: transparent;
         padding-bottom: 0;
+        padding-top: 0;
     }
     background-color: var(--dl-color-accordion-content-background);
     border-radius: var(--dl-accordion-content-border-radius);
