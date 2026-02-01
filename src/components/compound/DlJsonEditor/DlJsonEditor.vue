@@ -1,8 +1,5 @@
 <template>
-    <div
-        ref="jsonEditorRef"
-        class="json-editor"
-    />
+    <div ref="jsonEditorRef" class="json-editor" />
 </template>
 
 <script lang="ts">
@@ -58,7 +55,14 @@ export default defineComponent({
             default: Mode.text
         }
     },
-    emits: ['update:model-value', 'align-text', 'change', 'content-error', 'focus', 'blur'],
+    emits: [
+        'update:model-value',
+        'align-text',
+        'change',
+        'content-error',
+        'focus',
+        'blur'
+    ],
     setup(props, { emit }) {
         const { modelValue, indentation, readonly, mode } = toRefs(props)
 
@@ -228,6 +232,9 @@ export default defineComponent({
     --jse-panel-background: var(--dl-json-editor-panel-background);
     --jse-panel-border: var(--dl-color-separator);
     --jse-main-border: 1px solid var(--dl-color-separator);
+    --jse-error-color: var(--dell-red-500, #af0000);
+    --jse-message-error-background: var(--jse-error-color);
+    --jse-message-error-color: var(--dell-white, #fff);
 
     .jse-error {
         display: none !important;
