@@ -7,26 +7,45 @@ const allColorNames = {
     ...getRootStyles()
 }
 
+const getDellColorNextShade = (color: string): string | null => {
+    if (!color) {
+        return null
+    }
+    if (!color.startsWith('dell-')) {
+        return color
+    }
+
+    const colorMatch = color.match(/dell-(\w+)-(\d+)/)
+    if (!colorMatch) {
+        return color
+    }
+
+    try {
+        const colorName = colorMatch[1]
+        const colorValue = parseInt(colorMatch[2])
+        const nextColorValue = colorValue + 100
+        const nextColor = `--dell-${colorName}-${nextColorValue}`
+
+        if (nextColor in allColorNames) {
+            return `dell-${colorName}-${nextColorValue}`
+        }
+    } catch (error) {
+        // skip error
+    }
+
+    return color
+}
 const getLighterGradient = (color: string, magnitude = MAGNITUDE) => {
-    if (color.startsWith('dl-') || color.startsWith('dell-')) {
+    if (color.startsWith('dl-')) {
         color = `--${color}`
     }
-    if (color.startsWith('--dell-')) {
-        const colorMatch = color.match(/--dell-(\w+)-(\d+)/)
-        if (colorMatch) {
-            try {
-                const colorName = colorMatch[1]
-                const colorValue = parseInt(colorMatch[2])
-                const nextColorValue = colorValue + 100
-                const colorToReplace = `--dell-${colorName}-${nextColorValue}`
-                if (colorToReplace in allColorNames) {
-                    return allColorNames[
-                        colorToReplace as keyof typeof allColorNames
-                    ]
-                }
-            } catch (error) {
-                // skip error
-            }
+    if (color.startsWith('dell-')) {
+        const nextColor = getDellColorNextShade(color)
+        const nextColorName = `--${nextColor}`
+        if (nextColorName && nextColorName in allColorNames) {
+            return allColorNames[nextColorName as keyof typeof allColorNames]
+        } else {
+            color = nextColor
         }
     }
     let newColor =
@@ -52,4 +71,4 @@ const getLighterGradient = (color: string, magnitude = MAGNITUDE) => {
     }
 }
 
-export { getLighterGradient }
+export { getLighterGradient, getDellColorNextShade }

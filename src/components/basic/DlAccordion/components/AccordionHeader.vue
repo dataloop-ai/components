@@ -42,6 +42,7 @@ import { DlIcon } from '../../../essential'
 import { defineComponent, ref } from 'vue-demi'
 import { getColor } from '../../../../utils'
 import { useSizeObserver } from '../../../../hooks/use-size-observer'
+import { getDellColorNextShade } from '../../../../utils/getLighterGradient'
 export default defineComponent({
     name: 'AccordionHeader',
     components: {
@@ -54,13 +55,13 @@ export default defineComponent({
         fontSize: { type: String, default: '12px' },
         fontWeight: { type: String, default: '400' },
         title: { type: String, default: null },
-        titleColor: { type: String, default: 'dl-color-medium' },
+        titleColor: { type: String, default: 'dell-gray-800' },
         isOpen: { type: Boolean, default: false },
         rightSide: { type: Boolean, default: false },
         closedIcon: { type: String, default: 'icon-dl-right-chevron' },
         openedIcon: { type: String, default: 'icon-dl-down-chevron' },
-        backgroundColor: { type: String, default: 'dl-color-fill' },
-        withBackground: { type: Boolean, default: false }
+        backgroundColor: { type: String, default: 'dell-blue-100' },
+        withBackground: { type: Boolean, default: true }
     },
     emits: ['click'],
     setup() {
@@ -74,6 +75,33 @@ export default defineComponent({
     },
     computed: {
         accordionHeadStyles(): Record<string, string> {
+            let bgColor = ''
+            let hoverBgColor = ''
+            let activeBgColor = ''
+            if (this.withBackground) {
+                if (this.isOpen) {
+                    bgColor = getColor(this.backgroundColor)
+                    const nextShadeColor = getDellColorNextShade(
+                        this.backgroundColor
+                    )
+                    if (nextShadeColor) {
+                        hoverBgColor = getColor(nextShadeColor)
+                        activeBgColor = hoverBgColor
+                    } else {
+                        hoverBgColor = bgColor
+                        activeBgColor = bgColor
+                    }
+                } else {
+                    hoverBgColor = getColor(this.backgroundColor)
+                    const nextShadeColor = getDellColorNextShade(
+                        this.backgroundColor
+                    )
+                    activeBgColor = nextShadeColor
+                        ? getColor(nextShadeColor)
+                        : hoverBgColor
+                }
+            }
+
             return {
                 '--dl-title-color': getColor(this.titleColor, 'dell-gray-600'),
                 '--dl-expand-icon-color': `var(--${
@@ -84,18 +112,12 @@ export default defineComponent({
                     : 'row',
                 '--dl-accordion-header-fontsize': this.fontSize,
                 '--dl-accordion-header-fontweight': this.fontWeight,
-                '--dl-accordion-header-background-color':
-                    this.withBackground && !this.isOpen
-                        ? getColor(this.backgroundColor)
-                        : '',
-                '--dl-accordion-header-border-radius':
-                    this.withBackground && !this.isOpen ? '4px' : '0px',
-                '--dl-accordion-header-padding': this.withBackground
-                    ? '4px'
-                    : '12px 16px',
-                '--dl-accordion-header-margin-bottom': this.withBackground
-                    ? '2px'
-                    : '0px'
+                '--dl-accordion-header-background-color': bgColor,
+                '--dl-accordion-header-hover-background-color': hoverBgColor,
+                '--dl-accordion-header-active-background-color': activeBgColor,
+                '--dl-accordion-header-border-radius': '0px',
+                '--dl-accordion-header-padding': '12px 16px',
+                '--dl-accordion-header-margin-bottom': '0px'
             }
         },
         hasSlot(): boolean {
@@ -125,11 +147,22 @@ export default defineComponent({
     flex-direction: var(--dl-accordion-header-flex-direction);
     color: var(--dl-title-color);
     margin-bottom: var(--dl-accordion-header-margin-bottom);
+    background-color: var(--dl-accordion-header-background-color, transparent);
 }
 
 .accordion-header:hover {
-    background-color: var(--dl-accordion-header-background-color, transparent);
+    background-color: var(
+        --dl-accordion-header-hover-background-color,
+        transparent
+    );
     border-radius: var(--dl-accordion-header-border-radius, 0px);
+}
+
+.accordion-header:active {
+    background-color: var(
+        --dl-accordion-header-active-background-color,
+        transparent
+    );
 }
 
 .accordion-title {

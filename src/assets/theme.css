@@ -94,7 +94,7 @@ body {
     --dl-color-chart-brush: #eef1ff; /* not in use */
 
     --dl-date-picker-shadow: 0px 3px 6px #101e7326; /* not in use */
-    --dl-date-picker-selected-strip: #0076CE; /* base color replace to --dell-blue-500: #0076CE */
+    --dl-date-picker-selected-strip: #ebf4fb; /* replace to --dell-blue-100: #ebf4fb */
     --dl-date-picker-selected-date: #8fa0ff; /* not in use in OA, maybe in use in other repos*/
 
     /* DlJsonEditor based on atom one themes */
