@@ -18,7 +18,7 @@
             :opened-icon="openedIcon"
             data-test-id="accordion-header"
             :background-color="backgroundColor"
-            :with-background="withBackground"
+            with-background
             @click="handleClick"
         >
             <template #header>
@@ -87,9 +87,8 @@ export default defineComponent({
         separator: { type: Boolean, default: false },
         closedIcon: { type: String, default: 'icon-dl-right-chevron' },
         openedIcon: { type: String, default: 'icon-dl-down-chevron' },
-        backgroundColor: { type: String, default: 'dl-color-fill' },
-        withBackground: { type: Boolean, default: false },
-        iconHoverColor: { type: String, default: 'dl-color-primary' }
+        backgroundColor: { type: String, default: 'dell-blue-100' },
+        withBackground: { type: Boolean, default: false }
     },
     emits: ['update:model-value', 'hide', 'show'],
     data() {
