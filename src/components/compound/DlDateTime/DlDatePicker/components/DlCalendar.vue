@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="dl-calendar"
-        :class="{ 'dl-calendar-disabled': disabled }"
-    >
+    <div class="dl-calendar" :class="{ 'dl-calendar-disabled': disabled }">
         <div
             class="dl-calendar--title"
             :class="{ 'dl-calendar--title-disabled': disabled }"
@@ -343,6 +340,12 @@ export default defineComponent({
         justify-content: center;
         align-items: center;
         margin: 0 auto;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--dell-blue-100);
+            border-radius: 11px;
+        }
     }
 
     &--header_item,
@@ -354,5 +357,13 @@ export default defineComponent({
 
 .dl-calendar-disabled {
     cursor: not-allowed !important;
+
+    .dl-calendar--inner_day {
+        cursor: not-allowed;
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
 }
 </style>

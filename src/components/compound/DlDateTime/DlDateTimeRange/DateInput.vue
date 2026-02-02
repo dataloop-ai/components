@@ -21,7 +21,7 @@
                 readonly
                 @focus="focused = true"
                 @blur="focused = false"
-            >
+            />
         </div>
         <slot />
     </div>
@@ -68,7 +68,7 @@ export default defineComponent({
     background-color: var(--dl-color-bg);
     border: 1px solid var(--dl-color-separator);
     color: var(--dl-color-darker);
-    border-radius: 2px;
+    border-radius: 0;
     padding: 5px 10px;
     display: flex;
     width: var(--dl-date-input-width);
