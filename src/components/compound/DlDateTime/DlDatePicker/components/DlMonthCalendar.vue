@@ -30,7 +30,13 @@
                 v-for="month in months"
                 :key="month.name"
                 class="dl-month-calendar--month"
-                :class="{ 'dl-month-calendar--month-disabled': disabled }"
+                :class="{
+                    'dl-month-calendar--month-disabled':
+                        disabled || isMonthOutOfRange(month.value),
+                    'dl-month-calendar--month-selected': isMonthSelected(
+                        month.value
+                    )
+                }"
                 :style="getMonthStyle(month.value)"
                 @click="handleClick(month.value)"
                 @mouseenter="handleMouseenter(month.value)"
@@ -98,9 +104,40 @@ export default defineComponent({
         }
     },
     methods: {
+        isMonthOutOfRange(value: number): boolean {
+            const d = new CalendarDate().year(parseInt(this.title)).month(value)
+            return !isInRange(this.availableRange, d)
+        },
+        isMonthSelected(value: number): boolean {
+            if (
+                this.modelValue === null ||
+                !this.modelValue.from ||
+                !this.modelValue.to
+            )
+                return false
+            const d = new CalendarDate().year(parseInt(this.title)).month(value)
+            const from = new CalendarDate(this.modelValue.from)
+            const to = new CalendarDate(this.modelValue.to)
+            return d.isSame(from, 'month') || d.isSame(to, 'month')
+        },
         handleClick(value: number) {
-            const d = new CalendarDate()
-            d.year(parseInt(this.title)).month(value)
+            const d = new CalendarDate().year(parseInt(this.title)).month(value)
+
+            // Check if this month is already selected
+            if (
+                this.modelValue !== null &&
+                this.modelValue.from &&
+                this.modelValue.to
+            ) {
+                const selectedFrom = new CalendarDate(this.modelValue.from)
+                const selectedTo = new CalendarDate(this.modelValue.to)
+                if (
+                    d.isSame(selectedFrom, 'month') ||
+                    d.isSame(selectedTo, 'month')
+                ) {
+                    return
+                }
+            }
 
             const from = new CalendarDate(d)
             const to = new CalendarDate(d)
@@ -147,8 +184,9 @@ export default defineComponent({
             let style: Record<string, any> = {}
 
             const selectedStyle = {
-                color: 'var(--dl-color-text-buttons)',
-                background: 'var(--dl-color-secondary)'
+                color: 'var(--dell-white)',
+                background: 'var(--dell-blue-500)',
+                border: 'none'
             }
 
             const initialD = new CalendarDate()
@@ -158,8 +196,9 @@ export default defineComponent({
 
             if (!isInRange(this.availableRange, d)) {
                 style = {
-                    'border-color': 'var(--dl-color-disabled)',
-                    color: 'var(--dl-color-disabled)',
+                    'background-color': 'var(--dell-gray-100)',
+                    'border-color': 'var(--dell-gray-500)',
+                    color: 'var(--dell-gray-500)',
                     cursor: 'not-allowed'
                 }
             } else if (this.modelValue !== null) {
@@ -267,7 +306,7 @@ export default defineComponent({
     &--month {
         color: var(--dl-color-darker);
         border: 1px solid var(--dl-color-separator);
-        border-radius: 2px;
+        border-radius: 0;
         margin-left: 15px;
         margin-bottom: 10px;
         cursor: pointer;
@@ -275,10 +314,33 @@ export default defineComponent({
         text-transform: capitalize;
         padding: 4px 21px;
 
+        &:hover:not(.dl-month-calendar--month-disabled) {
+            background-color: var(--dell-blue-100);
+            border-color: var(--dell-blue-500);
+        }
+
+        &:active:not(.dl-month-calendar--month-disabled) {
+            background-color: var(--dell-blue-200) !important;
+            color: var(--dell-blue-600) !important;
+            border: 1px solid var(--dell-blue-500) !important;
+        }
+
+        &-selected {
+            cursor: default;
+            pointer-events: none;
+        }
+
         &-disabled {
             cursor: not-allowed;
-            color: var(--dl-color-disabled);
-            border: 1px solid var(--dl-color-disabled);
+            background-color: var(--dell-gray-100);
+            color: var(--dell-gray-500);
+            border: 1px solid var(--dell-gray-500);
+
+            &:hover {
+                background-color: var(--dell-gray-100);
+                color: var(--dell-gray-500);
+                border-color: var(--dell-gray-500);
+            }
         }
     }
 }
