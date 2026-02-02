@@ -100,7 +100,12 @@ export default defineComponent({
     }
 }
 
-.card-sidebar--item:not(.card-sidebar--item-disabled):hover {
+.card-sidebar--item:not(.card-sidebar--item-disabled):not(
+        .card-sidebar--item-active
+    ):hover {
+    background-color: var(--dell-blue-100);
+    color: var(--dell-blue-600);
+
     .card-sidebar--focus_helper {
         opacity: 0.15;
     }
