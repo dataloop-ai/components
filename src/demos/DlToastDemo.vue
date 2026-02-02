@@ -104,6 +104,12 @@
                 :left-label="htmlEnabled ? 'HTML true' : 'HTML false'"
             />
         </div>
+        <dl-button @click="showToastWithTitleTextCaption" style="margin-top: 8px">
+            Toast with Title + Text + Caption
+        </dl-button>
+        <dl-button style="margin-top: 8px" @click="showToastWithTwoActions">
+            Toast with buttons
+        </dl-button>
     </div>
 </template>
 
@@ -139,6 +145,33 @@ export default defineComponent({
         const width = ref('auto')
         const collapseCount = ref(null)
         const htmlEnabled = ref(false)
+
+        function showToastWithTwoActions() {
+            DlToast.open({
+                message: '',
+                caption: 'This is a single-line caption toast with 2 actions.',
+                multiLine: false,
+                position: position.value as DlToastPositions,
+                type: type.value as DlToastTypes,
+                duration: Number(duration.value) || 1000,
+                closable: closable.value,
+                width: width.value,
+                collapseCount: collapseCount.value,
+                actions: [
+                    {
+                        label: 'Action 1',
+                        closeOnClick: true,
+                        handler: () => undefined
+                    },
+                    {
+                        label: 'Action 2',
+                        closeOnClick: true,
+                        handler: () => undefined
+                    }
+                ]
+            })
+        }
+
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
@@ -202,11 +235,27 @@ export default defineComponent({
                 multiLine: true
             } as any)
         }
+
+        function showToastWithTitleTextCaption() {
+            DlToast.open({
+                title: 'Toast Title',
+                message: 'This is the main message text that appears in the toast.',
+                caption: 'This is the caption that appears below the message.',
+                position: position.value as DlToastPositions,
+                type: type.value as DlToastTypes,
+                duration: Number(duration.value) || 1000,
+                closable: closable.value,
+                width: width.value,
+                collapseCount: collapseCount.value
+            })
+        }
         return {
             showToastMessageCustom,
             showToastMessage,
             showToastMultiLine,
             showToastWithLink,
+            showToastWithTitleTextCaption,
+            showToastWithTwoActions,
             message,
             duration,
             type,
