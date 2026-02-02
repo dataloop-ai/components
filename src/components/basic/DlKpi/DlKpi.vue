@@ -134,19 +134,13 @@ export default defineComponent({
 
         const emptyString = '---'
 
-        const isSingleWord = (text: string) => text?.split(' ').length === 1
-
         const cssVars = computed<Record<string, string>>(() => {
             const vars: Record<string, string> = {
                 '--dl-kpi-border': props.bordered
                     ? '1px solid var(--dl-color-separator)'
                     : '',
-                '--dl-kpi-title-max-width': isSingleWord(props.title)
-                    ? '100%'
-                    : '90%', // todo: caused a bug with single words
-                '--dl-kpi-sub-title-max-width': isSingleWord(props.subtitle)
-                    ? '100%'
-                    : '90%'
+                '--dl-kpi-title-max-width': '100%',
+                '--dl-kpi-sub-title-max-width': '100%'
             }
 
             if (props.dense) {
