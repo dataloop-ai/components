@@ -110,7 +110,12 @@ export default defineComponent({
             return !isInRange(this.availableRange, d)
         },
         isMonthSelected(value: number): boolean {
-            if (this.modelValue === null) return false
+            if (
+                this.modelValue === null ||
+                !this.modelValue.from ||
+                !this.modelValue.to
+            )
+                return false
             const d = new CalendarDate()
             d.year(parseInt(this.title)).month(value)
             const from = new CalendarDate(this.modelValue.from)
@@ -122,7 +127,11 @@ export default defineComponent({
             d.year(parseInt(this.title)).month(value)
 
             // Check if this month is already selected
-            if (this.modelValue !== null) {
+            if (
+                this.modelValue !== null &&
+                this.modelValue.from &&
+                this.modelValue.to
+            ) {
                 const selectedFrom = new CalendarDate(this.modelValue.from)
                 const selectedTo = new CalendarDate(this.modelValue.to)
                 if (
