@@ -342,12 +342,15 @@ export default defineComponent({
 .toast-text {
     min-width: 0;
     flex: 1 1 auto;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .toast-title {
-    font-size: var(--dl-font-size-alert-title, 16px);
+    color: var(--dell-gray-800);
+    font-size: 16px;
+    font-weight: 400;
     line-height: 150%;
-    margin-bottom: 2px;
 }
 
 .toast-text--single {
@@ -358,7 +361,7 @@ export default defineComponent({
 
 .toast-caption {
     margin-top: 2px;
-    opacity: 0.8;
+    font-size: inherit;
 }
 
 .toast-message--pre-line {
