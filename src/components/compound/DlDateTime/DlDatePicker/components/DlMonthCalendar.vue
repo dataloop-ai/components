@@ -105,8 +105,7 @@ export default defineComponent({
     },
     methods: {
         isMonthOutOfRange(value: number): boolean {
-            const d = new CalendarDate()
-            d.year(parseInt(this.title)).month(value)
+            const d = new CalendarDate().year(parseInt(this.title)).month(value)
             return !isInRange(this.availableRange, d)
         },
         isMonthSelected(value: number): boolean {
@@ -116,15 +115,13 @@ export default defineComponent({
                 !this.modelValue.to
             )
                 return false
-            const d = new CalendarDate()
-            d.year(parseInt(this.title)).month(value)
+            const d = new CalendarDate().year(parseInt(this.title)).month(value)
             const from = new CalendarDate(this.modelValue.from)
             const to = new CalendarDate(this.modelValue.to)
             return d.isSame(from, 'month') || d.isSame(to, 'month')
         },
         handleClick(value: number) {
-            const d = new CalendarDate()
-            d.year(parseInt(this.title)).month(value)
+            const d = new CalendarDate().year(parseInt(this.title)).month(value)
 
             // Check if this month is already selected
             if (
