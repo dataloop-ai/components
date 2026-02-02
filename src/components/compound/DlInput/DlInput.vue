@@ -983,15 +983,6 @@ export default defineComponent({
             }
             return classes
         },
-        getBorderColor(): string {
-            if (this.error) {
-                return `var(--dell-red-500)`
-            } else if (this.warning) {
-                return `var(--dell-yellow-600)`
-            } else {
-                return `var(--dell-blue-500)`
-            }
-        },
         cssVars(): Record<string, any> {
             let inputMargin = this.margin
 
@@ -1000,7 +991,6 @@ export default defineComponent({
             }
             return {
                 '--dl-input-margin': inputMargin,
-                '--dl-input-border-color-hover': this.getBorderColor,
                 '--dl-input-height': this.height ? this.height : null,
                 '--dl-input-align-items':
                     this.expandable || this.height ? 'flex-start' : 'center',
@@ -1374,6 +1364,7 @@ export default defineComponent({
     display: inline;
     opacity: 1;
     -webkit-text-security: none;
+    cursor: text;
 }
 
 .dl-input {
@@ -1455,23 +1446,31 @@ export default defineComponent({
         max-height: var(--dl-input-max-height);
         height: var(--dl-input-height);
 
-        &--readonly {
-            border-color: var(--dell-gray-500) !important;
-        }
-
-        &:hover {
+        &:hover:not(&--disabled):not(&--readonly):not(&--error) {
             border-color: var(--dell-gray-800);
         }
-        &--error {
-            border-color: var(--dl-color-negative);
+
+        &:focus-within:not(&--disabled):not(&--readonly):not(&--error) {
+            border-color: var(--dell-blue-500);
+
+            ::v-deep .dl-icon {
+                color: var(--dell-blue-500);
+            }
         }
-        &--warning {
-            border-color: var(--dl-input-border-color-hover);
+
+        &--error {
+            border-color: var(--dell-red-500);
+        }
+        &--warning:not(&--error) {
+            border-color: var(--dell-yellow-600);
         }
         &--disabled {
             border-color: var(--dell-gray-500);
             color: var(--dl-color-disabled);
             cursor: not-allowed;
+        }
+        &--readonly {
+            border-color: var(--dell-gray-500);
         }
         &--s {
             height: 18px;
@@ -1565,21 +1564,12 @@ export default defineComponent({
             opacity: 1;
         }
 
-        &:hover {
-            border-color: var(--dl-input-border-color-hover);
-        }
-
         &:focus {
-            border-color: var(--dl-input-border-color-hover);
             text-overflow: clip;
         }
 
         &:read-only {
-            border-color: var(--dl-color-separator);
             cursor: text;
-            &:hover {
-                border-color: var(--dl-color-separator) !important;
-            }
         }
 
         .placeholder-string--disabled,
