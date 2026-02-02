@@ -1432,6 +1432,10 @@ export default defineComponent({
 
         &--focused {
             border-color: var(--dell-blue-500) !important;
+
+            ::v-deep .dl-icon {
+                color: var(--dell-blue-500);
+            }
         }
 
         &--disabled {
