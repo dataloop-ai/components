@@ -106,7 +106,7 @@ export default defineComponent({
     methods: {
         isMonthOutOfRange(value: number): boolean {
             const d = new CalendarDate()
-            d.year(parseInt(this.title)).month(value).startOf('month')
+            d.year(parseInt(this.title)).month(value)
             return !isInRange(this.availableRange, d)
         },
         isMonthSelected(value: number): boolean {
