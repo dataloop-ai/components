@@ -8,7 +8,7 @@
             :style="rootStyle"
             data-test="root"
         >
-            <div>
+            <div class="content">
                 <dl-icon
                     data-test="icon"
                     :style="iconStyle"
@@ -16,12 +16,12 @@
                     :color="iconColor"
                     :size="iconSize"
                 />
-                <span class="text" :style="textStyle">
+                <div class="text" :style="textStyle">
                     <slot v-if="!text" />
                     <span v-else>
                         {{ text }}
                     </span>
-                </span>
+                </div>
             </div>
             <div
                 v-if="$slots.actions"
@@ -250,7 +250,7 @@ export default defineComponent({
                 const iconS: Record<string, any> = {
                     display: 'flex',
                     alignSelf: 'flex-start',
-                    paddingTop: '2px'
+                    marginTop: '2px'
                 }
                 const closeS: Record<string, any> = {
                     display: 'flex',
@@ -277,7 +277,7 @@ export default defineComponent({
                 if (padding.value) {
                     rootS['--dl-alert-padding'] = padding.value
                 } else {
-                    rootS['--dl-alert-padding'] = '8px 16px'
+                    rootS['--dl-alert-padding'] = '8px 16px 8px 12px'
                 }
 
                 iconStyle.value = iconS
@@ -335,6 +335,7 @@ export default defineComponent({
     display: inline-flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: stretch;
     min-height: 36px;
     border-left: 4px solid var(--dl-alert-indicator-color, transparent);
     border-top: 1px solid var(--dl-alert-border-color, transparent);
@@ -363,22 +364,24 @@ export default defineComponent({
         text-decoration: underline;
     }
 
-    > div {
+    .content {
         display: flex;
         flex-direction: row;
-        padding: var(--dl-alert-padding, 10px 16px);
+        align-items: center;
+        gap: 8px;
+        padding: var(--dl-alert-padding);
+        min-width: 0;
+        flex: 1 1 auto;
     }
 
     .text {
-        padding-left: 8px;
-        padding-top: 2px;
-        font-size: var(--dl-font-size-body);
-        line-height: normal;
-        align-self: flex-start;
+        color: var(--dell-gray-800);
+        align-self: center;
         font-size: 14px;
-        line-height: 16px;
+        line-height: 20px;
         font-weight: 400;
         word-break: break-word;
+        min-width: 0;
     }
 
     .close-button {
