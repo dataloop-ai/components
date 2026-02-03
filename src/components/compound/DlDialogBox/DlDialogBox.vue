@@ -292,7 +292,7 @@ export default defineComponent({
     width: 100%;
     background-color: var(--dl-color-panel-background);
     border: 1px solid var(--dl-color-separator);
-    color: var(--dell-gray-200);
+    color: var(--dell-gray-600);
     display: flex;
     flex-direction: column;
     z-index: var(--dialog-z-index);
