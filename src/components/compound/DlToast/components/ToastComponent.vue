@@ -119,7 +119,7 @@ import { Animation } from '../types'
 import { v4 } from 'uuid'
 
 const DEFAULT_ACTION_BUTTON_STYLES =
-    'min-width:73px; max-width:100px; height:24px; max-height:24px; padding:0 8px; border-radius:2px;'
+    'min-width:73px; max-width:150px; height:24px; max-height:24px; padding:0 8px; border-radius:2px;'
 
 export default defineComponent({
     name: 'ToastComponent',
