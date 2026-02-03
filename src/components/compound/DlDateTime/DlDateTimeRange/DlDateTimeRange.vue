@@ -127,6 +127,10 @@ export default defineComponent({
         hideClearButton: {
             type: Boolean,
             default: false
+        },
+        enabledWholePeriod: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -161,8 +165,25 @@ export default defineComponent({
             const yesterday = CustomDate.subtract(1, 'day')
                 .startOf('day')
                 .toDate()
-
+            let allowWholePeriod = this.enabledWholePeriod
+            if (!this.availableRange || !this.availableRange.from) {
+                allowWholePeriod = false
+            }
             return [
+                ...(allowWholePeriod
+                    ? [
+                          {
+                              title: 'whole period',
+                              key: DAY_SIDEBAR_OPTION.whole_period,
+                              value: {
+                                  from: this.availableRange?.from,
+                                  to: new CustomDate(today)
+                                      .endOf('day')
+                                      .toDate()
+                              }
+                          }
+                      ]
+                    : []),
                 {
                     title: 'today',
                     key: DAY_SIDEBAR_OPTION.today,
