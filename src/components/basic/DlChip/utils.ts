@@ -12,6 +12,90 @@ export interface DlChipProps {
     noBorder: boolean
 }
 
+export interface ChipColorMapping {
+    bg: string
+    text: string
+    border: string
+}
+
+const COLOR_MAPPINGS: Record<string, ChipColorMapping> = {
+    '#f3d9d9': {
+        bg: 'var(--dell-red-500)',
+        text: 'var(--dell-white)',
+        border: 'var(--dell-red-500)'
+    },
+    '#fff7d9': {
+        bg: 'var(--dell-yellow-500)',
+        text: 'var(--dell-yellow-800)',
+        border: 'var(--dell-yellow-500)'
+    },
+    '#757575': {
+        bg: 'var(--dell-white)',
+        text: 'var(--dell-gray-500)',
+        border: 'var(--dell-gray-500)'
+    },
+    '#ddedd9': {
+        bg: 'var(--dell-white)',
+        text: 'var(--dell-gray-500)',
+        border: 'var(--dell-gray-500)'
+    },
+    '#1b8500': {
+        bg: 'var(--dell-green-500)',
+        text: 'var(--dell-white)',
+        border: 'var(--dell-green-500)'
+    },
+    '#ffc700': {
+        bg: 'var(--dell-yellow-500)',
+        text: 'var(--dell-yellow-800)',
+        border: 'var(--dell-yellow-500)'
+    },
+    '#af0000': {
+        bg: 'var(--dell-red-500)',
+        text: 'var(--dell-white)',
+        border: 'var(--dell-red-500)'
+    },
+    '#bebc5d': {
+        bg: 'var(--dell-white)',
+        text: 'var(--dell-gray-500)',
+        border: 'var(--dell-gray-500)'
+    },
+    '#32766e': {
+        bg: 'var(--dell-green-100)',
+        text: 'var(--dell-gray-800)',
+        border: 'var(--dell-green-500)'
+    },
+    '#c5c5c5': {
+        bg: 'var(--dell-gray-500)',
+        text: 'var(--dell-gray-700)',
+        border: 'var(--dell-gray-500)'
+    },
+    '#0076ce': {
+        bg: 'var(--dell-blue-500)',
+        text: 'var(--dell-white)',
+        border: 'var(--dell-blue-500)'
+    },
+    transparent: {
+        bg: 'var(--dell-white)',
+        text: 'var(--dell-gray-700)',
+        border: 'var(--dell-gray-500)'
+    },
+    '#00000000': {
+        bg: 'var(--dell-white)',
+        text: 'var(--dell-gray-700)',
+        border: 'var(--dell-gray-500)'
+    },
+    '#f4f4f4': {
+        bg: 'var(--dell-white)',
+        text: 'var(--dell-gray-700)',
+        border: 'var(--dell-gray-500)'
+    }
+}
+
+export const getColorMapping = (bgColor: string): ChipColorMapping | null => {
+    const normalizedColor = bgColor.toLowerCase().trim()
+    return COLOR_MAPPINGS[normalizedColor] || null
+}
+
 export const setTextColor = ({
     disabled,
     outlined,

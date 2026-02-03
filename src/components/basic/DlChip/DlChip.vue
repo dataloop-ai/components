@@ -55,7 +55,8 @@ import {
     setPadding,
     setLeftIconColor,
     setMaxWidth,
-    setRemoveIconWidth
+    setRemoveIconWidth,
+    getColorMapping
 } from './utils'
 import { v4 } from 'uuid'
 import { DlTextTransformOptions } from '../../shared/types'
@@ -136,6 +137,14 @@ export default defineComponent({
             return classes
         },
         cssChipVars(): Record<string, string | number> {
+            const originalBgColor = setBgColor({
+                outlined: this.outlined,
+                disabled: this.disabled,
+                color: this.color
+            })
+
+            const colorMapping = getColorMapping(originalBgColor)
+
             return {
                 '--dl-chip-max-width': this.fit
                     ? 'fit-content'
@@ -145,22 +154,24 @@ export default defineComponent({
                     removable: this.removable,
                     hasIcon: this.hasIcon
                 }),
-                '--dl-chip-text-color': setTextColor({
-                    outlined: this.outlined,
-                    filled: this.filled,
-                    disabled: this.disabled,
-                    textColor: this.textColor
-                }),
-                '--dl-chip-bg-color': setBgColor({
-                    outlined: this.outlined,
-                    disabled: this.disabled,
-                    color: this.color
-                }),
-                '--dl-chip-border': setBorder({
-                    noBorder: this.noBorder,
-                    disabled: this.disabled,
-                    color: this.color
-                }),
+                '--dl-chip-text-color': colorMapping
+                    ? colorMapping.text
+                    : setTextColor({
+                          outlined: this.outlined,
+                          filled: this.filled,
+                          disabled: this.disabled,
+                          textColor: this.textColor
+                      }),
+                '--dl-chip-bg-color': colorMapping
+                    ? colorMapping.bg
+                    : originalBgColor,
+                '--dl-chip-border': colorMapping
+                    ? `1px solid ${colorMapping.border}`
+                    : setBorder({
+                          noBorder: this.noBorder,
+                          disabled: this.disabled,
+                          color: this.color
+                      }),
                 '--dl-chip-padding': setPadding({
                     hasLabel: this.hasLabel,
                     removable: this.removable,
