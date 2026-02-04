@@ -253,6 +253,9 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
+            if (this.flat && this.hasIcon && !this.hasContent && this.icon === 'icon-dl-info') {
+                return null
+            }
             if (this.disabled) {
                 if (this.disabledIconColor) {
                     return this.disabledIconColor
@@ -303,7 +306,15 @@ export default defineComponent({
                 return this.textColor
             }
 
-            return null
+            return setTextColor({
+                disabled: this.disabled,
+                outlined: this.outlined,
+                flat: this.flat,
+                color: this.color,
+                filled: this.filled,
+                shaded: this.shaded,
+                textColor: this.textColor
+            })
         },
         computedStyles(): Record<string, string> {
             return isString(this.styles)

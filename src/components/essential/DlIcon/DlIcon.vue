@@ -50,7 +50,6 @@ import {
     onMounted,
     onUnmounted,
     ref,
-    useSlots,
     toRefs,
     watch
 } from 'vue-demi'
@@ -102,7 +101,6 @@ export default defineComponent({
         const { styles, color, size, icon, svg, inline, svgSource, tooltip } =
             toRefs(props)
 
-        const slots = useSlots()
         const svgIcon = ref(null)
         const isDestroyed = ref(false)
         const uuid = `dl-icon-${v4()}`
@@ -110,17 +108,10 @@ export default defineComponent({
         const logger = loggerFactory('dl-icon')
         const isHovered = ref(false)
 
-        const hasDefaultSlot = computed<boolean>(() => {
-            const slot = slots.default
-            if (!slot) return false
-            return slot().length > 0
-        })
-
         const isInfoDefault = computed<boolean>(() => {
             return (
                 icon.value === 'icon-dl-info' &&
-                !color.value &&
-                !hasDefaultSlot.value
+                !color.value
             )
         })
 
