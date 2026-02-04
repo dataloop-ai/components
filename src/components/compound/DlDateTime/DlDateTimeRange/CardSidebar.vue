@@ -105,7 +105,7 @@ export default defineComponent({
         .card-sidebar--item-active
     ):hover {
     background-color: var(--dell-blue-100);
-    color: var(--dell-gray-800);
+    color: var(--dell-blue-600);
 
     .card-sidebar--focus_helper {
         opacity: 0.15;

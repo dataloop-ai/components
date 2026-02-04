@@ -128,7 +128,9 @@ describe('DlCalendar', () => {
             })
         })
         it('should compute right getInnerDayStyle', () => {
-            expect(wrapper.vm.getInnerDayStyle(calendarDates[0])).toEqual({})
+            expect(wrapper.vm.getInnerDayStyle(calendarDates[0])).toEqual({
+                color: 'var(--dell-gray-800)'
+            })
         })
     })
     describe('When get styles according to the specific date, last date in the month', () => {
@@ -156,7 +158,9 @@ describe('DlCalendar', () => {
                 wrapper.vm.getInnerDayStyle(
                     calendarDates[calendarDates.length - 1]
                 )
-            ).toEqual({})
+            ).toEqual({
+                color: 'var(--dell-gray-800)'
+            })
         })
     })
     describe('When get styles according to the specific date, selected date boundry', () => {
@@ -177,14 +181,14 @@ describe('DlCalendar', () => {
         it('should compute right getDayStyle', () => {
             expect(wrapper.vm.getDayStyle(new CalendarDate(date))).toEqual({
                 background:
-                    'linear-gradient(to right, transparent 50%, var(--dl-date-picker-selected-strip) 50%)'
+                    'linear-gradient(to right, transparent 50%, var(--dell-blue-100) 50%)'
             })
         })
         it('should compute right getInnerDayStyle', () => {
             expect(wrapper.vm.getInnerDayStyle(new CalendarDate(date))).toEqual(
                 {
-                    backgroundColor: 'var(--dl-color-secondary)',
-                    color: 'var(--dl-color-text-buttons)',
+                    backgroundColor: 'var(--dell-blue-500)',
+                    color: 'var(--dell-white)',
                     borderRadius: '11px'
                 }
             )
@@ -213,7 +217,9 @@ describe('DlCalendar', () => {
             })
         })
         it('should compute right getInnerDayStyle', () => {
-            expect(wrapper.vm.getInnerDayStyle(startOfTheWeek)).toEqual({})
+            expect(wrapper.vm.getInnerDayStyle(startOfTheWeek)).toEqual({
+                color: 'var(--dell-gray-800)'
+            })
         })
     })
     describe('When get styles according to the specific date, interval date + end of the week', () => {
@@ -235,16 +241,16 @@ describe('DlCalendar', () => {
         it('should compute right getDayStyle', () => {
             expect(wrapper.vm.getDayStyle(endOfWeek)).toEqual({
                 background:
-                    'linear-gradient(to right, var(--dl-date-picker-selected-strip) 50%, transparent 50%)',
+                    'linear-gradient(to right, var(--dell-blue-100) 50%, transparent 50%)',
                 borderBottomRightRadius: '11px',
                 borderTopRightRadius: '11px'
             })
         })
         it('should compute right getInnerDayStyle', () => {
             expect(wrapper.vm.getInnerDayStyle(endOfWeek)).toEqual({
-                backgroundColor: 'var(--dl-color-secondary)',
+                backgroundColor: 'var(--dell-blue-500)',
                 borderRadius: '11px',
-                color: 'var(--dl-color-text-buttons)'
+                color: 'var(--dell-white)'
             })
         })
     })
