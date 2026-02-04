@@ -37,6 +37,7 @@
             :hide-bottom="hideBottom"
             :hide-no-data="hideNoData"
             identifier-as-tooltip
+            class="dl-label-picker-tree-table"
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -291,6 +292,9 @@ export default defineComponent({
 
 .dl-label-picker .dl-table tbody tr.selected td {
     background-color: var(--dl-color-fill);
+}
+.dl-label-picker > div.dl-label-picker-tree-table .draggable-icon-container {
+    display: none;
 }
 </style>
 

@@ -14,6 +14,7 @@
             :style="`width: 25px; opacity: ${
                 isDragIconVisible || isRowHighlighted ? '1' : '0'
             }`"
+            class="draggable-icon-container"
         >
             <dl-icon
                 v-if="hasDraggableRows && !row.disableDraggable"
