@@ -177,7 +177,10 @@ export default defineComponent({
             }
         }
         &-active {
-            background-color: var(--dell-blue-200);
+            background-color: var(--dell-blue-100);
+        }
+        &:hover {
+            background-color: var(--dell-blue-100);
         }
     }
 
