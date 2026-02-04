@@ -45,10 +45,12 @@ export default defineComponent({
     },
     computed: {
         styles(): Record<string, string | number> {
+            const typographyColor = this.color
+                ? getColor(this.color as string, 'dell-gray-800')
+                : 'inherit'
             const styles: Record<string, string | number> = {
-                '--dl-typography-color': this.color
-                    ? getColor(this.color as string, 'dell-gray-800')
-                    : 'inherit',
+                '--dl-typography-color': typographyColor,
+                '--dl-typography-color-active': typographyColor,
                 '--dl-typography-text-transform': this.letterClass
                     ? null
                     : this.transform,
