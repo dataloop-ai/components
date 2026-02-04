@@ -1421,8 +1421,8 @@ export default defineComponent({
             }
         }
 
-        &::placeholder {
-            color: var(--dl-color-lighter);
+        & input::placeholder {
+            color: var(--placeholder-color);
             opacity: 1;
         }
 

@@ -137,7 +137,7 @@ export default defineComponent({
             const to = new CalendarDate(this.modelValue.to)
 
             if (!from.isSameOrAfter(to, 'date')) {
-                const bgColor = 'var(--dl-date-picker-selected-strip)'
+                const bgColor = 'var(--dell-blue-100)'
 
                 if (value.isAfter(from, 'day') && value.isBefore(to, 'day')) {
                     style.background = bgColor
@@ -198,8 +198,8 @@ export default defineComponent({
                 }
             } else if (this.modelValue !== null) {
                 const selectedStyle = {
-                    backgroundColor: 'var(--dl-color-secondary)',
-                    color: 'var(--dl-color-text-buttons)',
+                    backgroundColor: 'var(--dell-blue-500)',
+                    color: 'var(--dell-white)',
                     borderRadius: '11px'
                 }
 
@@ -209,27 +209,34 @@ export default defineComponent({
                 const isIntervalBoundary =
                     value.isSame(from, 'day') || value.isSame(to, 'day')
 
+                const isInRange =
+                    value.isAfter(from, 'day') && value.isBefore(to, 'day')
+
+                // Start/end days get blue background with white text
                 if (isIntervalBoundary && this.disabled) {
                     style = {
                         ...style,
                         ...selectedStyle,
-                        opacity: disabledOpacity,
-                        backgroundColor: 'var(--dl-date-picker-selected-date)'
+                        opacity: disabledOpacity
                     }
                 } else if (isIntervalBoundary) {
                     style = {
                         ...style,
                         ...selectedStyle
                     }
-                } else if (isToday && !isIntervalBoundary && this.disabled) {
-                    style.color = 'var(--dl-color-secondary)'
-                    style.opacity = disabledOpacity
-                } else if (isToday && !isIntervalBoundary) {
-                    style.color = 'var(--dl-color-secondary)'
-                } else if (this.disabled) {
-                    style.color = 'var(--dl-color-disabled)'
+                } else if (isInRange) {
+                    // Range dates should always use dell-gray-800, regardless of disabled state
+                    if (value.isDisabled) {
+                        style.color = 'var(--dl-color-lighter)'
+                    } else {
+                        style.color = 'var(--dell-gray-800)'
+                    }
                 } else if (value.isDisabled) {
+                    // Only actual disabled dates get lighter color
                     style.color = 'var(--dl-color-lighter)'
+                } else {
+                    // All other dates (including those outside range) should use dell-gray-800
+                    style.color = 'var(--dell-gray-800)'
                 }
             } else {
                 if (isToday) {
@@ -238,10 +245,12 @@ export default defineComponent({
                     if (this.disabled) {
                         style.opacity = disabledOpacity
                     }
-                } else if (this.disabled) {
-                    style.color = 'var(--dl-color-disabled)'
                 } else if (value.isDisabled) {
+                    // Only actual disabled dates get lighter color
                     style.color = 'var(--dl-color-lighter)'
+                } else {
+                    // Default color for unselected dates
+                    style.color = 'var(--dell-gray-800)'
                 }
             }
 
@@ -326,7 +335,7 @@ export default defineComponent({
 
     &--day {
         min-height: 20px;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
 
         &-disabled {
             color: var(--dl-color-disabled);
@@ -341,6 +350,7 @@ export default defineComponent({
         align-items: center;
         margin: 0 auto;
         cursor: pointer;
+        color: var(--dell-gray-800);
 
         &:hover {
             background-color: var(--dell-blue-100);

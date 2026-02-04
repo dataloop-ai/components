@@ -161,6 +161,7 @@ export default defineComponent({
     z-index: 1;
     display: flex;
     border-radius: 2px;
+    box-shadow: 0 8px 8px 0 var(--dell-shadow, rgba(0, 0, 0, 0.14));
 }
 
 .dl-date-time-range--card_content {

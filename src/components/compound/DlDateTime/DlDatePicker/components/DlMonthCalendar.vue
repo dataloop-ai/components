@@ -205,34 +205,19 @@ export default defineComponent({
                 const from = new CalendarDate(this.modelValue.from)
                 const to = new CalendarDate(this.modelValue.to)
 
-                const bgColor = 'var(--dl-color-secondary)'
-                const intervalOpacity = 0.3
-
                 const isInInterval =
                     d.isAfter(from, 'month') && d.isBefore(to, 'month')
 
                 const isIntervalBoundary =
                     d.isSame(from, 'month') || d.isSame(to, 'month')
 
-                if (isInInterval && this.disabled) {
-                    style = {
-                        ...selectedStyle,
-                        background: bgColor,
-                        opacity: intervalOpacity
-                    }
-                } else if (isInInterval) {
-                    style = {
-                        background: bgColor,
-                        color: 'var(--dl-color-text-buttons)',
-                        opacity: intervalOpacity
-                    }
-                } else if (isIntervalBoundary && this.disabled) {
+                if ((isInInterval || isIntervalBoundary) && this.disabled) {
                     style = {
                         ...style,
                         ...selectedStyle,
                         opacity: 0.6
                     }
-                } else if (isIntervalBoundary) {
+                } else if (isInInterval || isIntervalBoundary) {
                     style = {
                         ...style,
                         ...selectedStyle
