@@ -62,9 +62,15 @@
                         :label="action.label"
                         :icon="action.icon"
                         :color="action.textColor || 'dl-alert-border-color'"
-                        :text-color="action.textColor || 'dl-alert-border-color'"
-                        :hover-border-color="action.textColor || 'dl-alert-border-color'"
-                        :hover-text-color="action.textColor || 'dl-alert-border-color'"
+                        :text-color="
+                            action.textColor || 'dl-alert-border-color'
+                        "
+                        :hover-border-color="
+                            action.textColor || 'dl-alert-border-color'
+                        "
+                        :hover-text-color="
+                            action.textColor || 'dl-alert-border-color'
+                        "
                         :hover-bg-color="'transparent'"
                         :pressed-bg-color="'transparent'"
                         :styles="action.styles || defaultActionButtonStyles"

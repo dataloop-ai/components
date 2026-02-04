@@ -2,7 +2,7 @@
     <div class="kpi_box" :style="cssVars">
         <div class="kpi_box__counter">
             <dl-typography
-                :color="hasValue ? 'dell-gray-800' : 'dell-gray-600'"
+                :color="hasValue ? 'dell-gray-800' : 'dell-gray-500'"
                 variant="h1"
                 :size="counterFontSizeComputed"
                 :style="typographyStyles"
@@ -14,7 +14,7 @@
             <div class="kpi_box__title__text">
                 <div>
                     <dl-typography
-                        color="dl-color-darker"
+                        color="dell-gray-600"
                         variant="h3"
                         :size="titleFontSizeComputed"
                     >
