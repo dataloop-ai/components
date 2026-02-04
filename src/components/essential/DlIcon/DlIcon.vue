@@ -50,6 +50,7 @@ import {
     onMounted,
     onUnmounted,
     ref,
+    useSlots,
     toRefs,
     watch
 } from 'vue-demi'
@@ -101,6 +102,7 @@ export default defineComponent({
         const { styles, color, size, icon, svg, inline, svgSource, tooltip } =
             toRefs(props)
 
+        const slots = useSlots()
         const svgIcon = ref(null)
         const isDestroyed = ref(false)
         const uuid = `dl-icon-${v4()}`

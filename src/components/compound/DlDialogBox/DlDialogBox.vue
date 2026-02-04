@@ -281,7 +281,7 @@ export default defineComponent({
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: var(--dl-backdrop-color);
+    background-color: var(--dell-overlay);
     z-index: var(
         --dialog-z-index
     ); // todo: check if this should be overlay instead.
@@ -292,7 +292,7 @@ export default defineComponent({
     width: 100%;
     background-color: var(--dl-color-panel-background);
     border: 1px solid var(--dl-color-separator);
-    color: var(--dell-gray-200);
+    color: var(--dell-gray-800);
     display: flex;
     flex-direction: column;
     z-index: var(--dialog-z-index);
