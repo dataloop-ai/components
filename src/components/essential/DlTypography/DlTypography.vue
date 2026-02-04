@@ -129,7 +129,7 @@ export default defineComponent({
     }
 
     &:active {
-        color: var(--dl-typography-color-active);
+        color: var(--dl-typography-color-active, var(--dl-typography-color));
     }
 }
 </style>
