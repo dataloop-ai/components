@@ -69,6 +69,7 @@ import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
 import { DlEmptyStateProps, DlTableColumn, DlTableRow } from '../../types'
 import { DlLabelPickerItem } from './types'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     name: 'DlLabelPicker',
@@ -190,7 +191,8 @@ export default defineComponent({
                 mapObjects(item, (obj: DlLabelPickerItem) => {
                     return {
                         ...obj,
-                        name: obj.displayLabel
+                        name: obj.displayLabel,
+                        id: obj.id || v4()
                     }
                 })
             )

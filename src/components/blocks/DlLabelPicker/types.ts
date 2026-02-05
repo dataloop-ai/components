@@ -3,4 +3,5 @@ export type DlLabelPickerItem = {
     identifier: string
     displayLabel: string
     children?: DlLabelPickerItem[]
+    id?: string
 }
