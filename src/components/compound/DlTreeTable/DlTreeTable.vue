@@ -1068,7 +1068,7 @@ export default defineComponent({
             const parentMap = buildParentMap(props.rows)
             let level = 1
             let currentId = row.id
-            while (parentMap.has(currentId)) {
+            while (parentMap.has(currentId) && currentId) {
                 level++
                 currentId = parentMap.get(currentId)!
             }
