@@ -145,7 +145,7 @@
                 </div>
             </div>
             <dl-menu
-                v-if="!noOptions || !hideEmptyMenu"
+                v-if="!noOptions || !hideEmptyMenu || showAfterOptionsWhenEmpty"
                 ref="menu"
                 v-model="isExpanded"
                 fit-container
@@ -327,7 +327,7 @@
                     </div>
                 </dl-list>
                 <dl-list-item
-                    v-if="hasAfterOptions && !noOptions"
+                    v-if="hasAfterOptions && (!noOptions || showAfterOptionsWhenEmpty)"
                     :padding="afterOptionsPadding"
                 >
                     <dl-item-section>
@@ -528,6 +528,10 @@ export default defineComponent({
             default: false
         },
         hideEmptyMenu: {
+            type: Boolean,
+            default: false
+        },
+        showAfterOptionsWhenEmpty: {
             type: Boolean,
             default: false
         },
