@@ -16,7 +16,7 @@
                 >
                     <date-time-range-content
                         v-bind="dateTimeRangeContentProps"
-                        :is-first-render="isFirstRender"
+                        :is-first-click="isFirstClick"
                         @day-type-option-click="handleDayTypeOptionClick"
                         @month-type-option-click="handleMonthTypeOptionClick"
                         @update-date-interval="updateDateInterval"
@@ -32,7 +32,7 @@
         <template v-else>
             <date-time-range-content
                 v-bind="dateTimeRangeContentProps"
-                :is-first-render="isFirstRender"
+                :is-first-click="isFirstClick"
                 @day-type-option-click="handleDayTypeOptionClick"
                 @month-type-option-click="handleMonthTypeOptionClick"
                 @update-date-interval="updateDateInterval"
@@ -137,7 +137,7 @@ export default defineComponent({
         },
         shouldSelectByClick: {
             type: Boolean,
-            default: false
+            default: true
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -150,7 +150,7 @@ export default defineComponent({
         currentSidebarOption: DAY_SIDEBAR_OPTION | MONTH_SIDEBAR_OPTION
         activeDateTo: CalendarDate | null
         activeDateFrom: CalendarDate | null
-        isFirstRender: boolean
+        isFirstClick: boolean
         debouncedUpdateFromToDate: (() => void) & { cancel: () => void }
     } {
         let type: 'day' | 'month' = this.type
@@ -166,7 +166,7 @@ export default defineComponent({
             currentSidebarOption: DAY_SIDEBAR_OPTION.custom,
             activeDateTo: null,
             activeDateFrom: null,
-            isFirstRender: true,
+            isFirstClick: true,
             debouncedUpdateFromToDate: (() => {}) as (() => void) & {
                 cancel: () => void
             }
@@ -524,7 +524,7 @@ export default defineComponent({
     created() {
         this.debouncedUpdateFromToDate = debounce(() => {
             if (this.shouldSelectByClick) {
-                this.isFirstRender = !this.isFirstRender
+                this.isFirstClick = !this.isFirstClick
             }
         }, 100)
     },

@@ -88,7 +88,7 @@ export default defineComponent({
             type: Object as PropType<DateInterval | null>,
             default: null
         },
-        isFirstRender: {
+        isFirstClick: {
             type: Boolean,
             default: true
         },
@@ -140,7 +140,7 @@ export default defineComponent({
         handleClick(value: Partial<CustomDate>) {
             if (!isInRange(this.availableRange, value as CustomDate)) return
             const newDate =
-                this.modelValue && !this.isFirstRender
+                this.modelValue && !this.isFirstClick
                     ? this.getRange(this.modelValue?.from, value)
                     : {
                           from: value.toDate(),

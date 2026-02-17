@@ -26,7 +26,7 @@
                 :normalize-calendars="normalizeCalendars"
                 :active-date-from="activeDateFrom"
                 :active-date-to="activeDateTo"
-                :is-first-render="isFirstRender"
+                :is-first-click="isFirstClick"
                 @update:model-value="updateDateIntervalWithAutoClose"
                 @update:from-to-date="updateFromToDate"
             />
@@ -124,7 +124,7 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        isFirstRender: {
+        isFirstClick: {
             type: Boolean,
             default: true
         }
