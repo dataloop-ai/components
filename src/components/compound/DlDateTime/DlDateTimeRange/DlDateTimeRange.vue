@@ -16,6 +16,7 @@
                 >
                     <date-time-range-content
                         v-bind="dateTimeRangeContentProps"
+                        :is-first-click="isFirstClick"
                         @day-type-option-click="handleDayTypeOptionClick"
                         @month-type-option-click="handleMonthTypeOptionClick"
                         @update-date-interval="updateDateInterval"
@@ -31,6 +32,7 @@
         <template v-else>
             <date-time-range-content
                 v-bind="dateTimeRangeContentProps"
+                :is-first-click="isFirstClick"
                 @day-type-option-click="handleDayTypeOptionClick"
                 @month-type-option-click="handleMonthTypeOptionClick"
                 @update-date-interval="updateDateInterval"
@@ -58,6 +60,7 @@ import DateInput from './DateInput.vue'
 import DateTimeRangeContent from './DateTimeRangeContent.vue'
 import { DlMenu } from '../../../essential'
 import { defineComponent, PropType } from 'vue-demi'
+import { debounce } from 'lodash'
 import { isInRange } from '../DlDatePicker/utils'
 import { v4 } from 'uuid'
 
@@ -131,6 +134,10 @@ export default defineComponent({
         enabledWholePeriod: {
             type: Boolean,
             default: false
+        },
+        shouldSelectByClick: {
+            type: Boolean,
+            default: true
         }
     },
     emits: ['update:model-value', 'set-type', 'change'],
@@ -143,6 +150,8 @@ export default defineComponent({
         currentSidebarOption: DAY_SIDEBAR_OPTION | MONTH_SIDEBAR_OPTION
         activeDateTo: CalendarDate | null
         activeDateFrom: CalendarDate | null
+        isFirstClick: boolean
+        debouncedUpdateFromToDate: (() => void) & { cancel: () => void }
     } {
         let type: 'day' | 'month' = this.type
         if (this.disabledType === this.type) {
@@ -156,7 +165,11 @@ export default defineComponent({
             isInputDisabled: false,
             currentSidebarOption: DAY_SIDEBAR_OPTION.custom,
             activeDateTo: null,
-            activeDateFrom: null
+            activeDateFrom: null,
+            isFirstClick: true,
+            debouncedUpdateFromToDate: (() => {}) as (() => void) & {
+                cancel: () => void
+            }
         }
     },
     computed: {
@@ -508,6 +521,16 @@ export default defineComponent({
             this.dateInterval = value
         }
     },
+    created() {
+        this.debouncedUpdateFromToDate = debounce(() => {
+            if (this.shouldSelectByClick) {
+                this.isFirstClick = !this.isFirstClick
+            }
+        }, 100)
+    },
+    beforeUnmount() {
+        this.debouncedUpdateFromToDate?.cancel?.()
+    },
     methods: {
         handleClearAction() {
             this.updateFromToDate()
@@ -559,6 +582,7 @@ export default defineComponent({
         updateFromToDate(value?: { from: CalendarDate; to: CalendarDate }) {
             this.activeDateFrom = value?.from || null
             this.activeDateTo = value?.to || null
+            this.debouncedUpdateFromToDate()
         },
         updateDateIntervalWithAutoClose(
             value: DateInterval,

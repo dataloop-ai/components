@@ -109,6 +109,7 @@
                     :should-clear-select-first-option="
                         shouldClearSelectFirstOption
                     "
+                    should-select-by-click
                     @set-type="handleSetType"
                     @change="handleModelValueUpdate"
                 />

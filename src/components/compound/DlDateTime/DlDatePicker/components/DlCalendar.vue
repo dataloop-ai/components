@@ -88,6 +88,10 @@ export default defineComponent({
             type: Object as PropType<DateInterval | null>,
             default: null
         },
+        isFirstClick: {
+            type: Boolean,
+            default: true
+        },
         withLeftChevron: Boolean,
         withRightChevron: Boolean,
         disabled: Boolean
@@ -117,12 +121,31 @@ export default defineComponent({
         }
     },
     methods: {
+        getRange(
+            a: Date | Partial<CalendarDate> | Partial<CustomDate>,
+            b: Date | Partial<CalendarDate> | Partial<CustomDate>
+        ): { from: Date; to: Date } {
+            const dateA =
+                a instanceof Date
+                    ? new CalendarDate(a)
+                    : new CalendarDate((a as CustomDate).toDate())
+            const dateB =
+                b instanceof Date
+                    ? new CalendarDate(b)
+                    : new CalendarDate((b as CustomDate).toDate())
+            return dateA.isBefore(dateB, 'day')
+                ? { from: dateA.toDate(), to: dateB.toDate() }
+                : { from: dateB.toDate(), to: dateA.toDate() }
+        },
         handleClick(value: Partial<CustomDate>) {
             if (!isInRange(this.availableRange, value as CustomDate)) return
-            const newDate = {
-                from: value.toDate(),
-                to: value.toDate()
-            }
+            const newDate =
+                this.modelValue && !this.isFirstClick
+                    ? this.getRange(this.modelValue?.from, value)
+                    : {
+                          from: value.toDate(),
+                          to: value.toDate()
+                      }
 
             this.$emit('update:model-value', newDate)
             this.$emit('change', newDate)
