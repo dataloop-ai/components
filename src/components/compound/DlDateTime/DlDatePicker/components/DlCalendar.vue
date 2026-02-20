@@ -212,10 +212,10 @@ export default defineComponent({
             ) {
                 style.cursor = 'not-allowed'
                 if (isToday && this.disabled) {
-                    style.color = 'var(--dl-color-secondary)'
+                    style.color = 'var(--dell-blue-500)'
                     style.opacity = disabledOpacity
                 } else if (isToday) {
-                    style.color = 'var(--dl-color-secondary)'
+                    style.color = 'var(--dell-blue-500)'
                 } else {
                     style.color = 'var(--dl-color-disabled)'
                 }
@@ -261,9 +261,13 @@ export default defineComponent({
                     // All other dates (including those outside range) should use dell-gray-800
                     style.color = 'var(--dell-gray-800)'
                 }
+                if (isToday) {
+                    if (!style.backgroundColor?.includes('blue'))
+                        style.color = 'var(--dell-blue-500)'
+                }
             } else {
                 if (isToday) {
-                    style.color = 'var(--dl-color-secondary)'
+                    style.color = 'var(--dell-blue-500)'
 
                     if (this.disabled) {
                         style.opacity = disabledOpacity
