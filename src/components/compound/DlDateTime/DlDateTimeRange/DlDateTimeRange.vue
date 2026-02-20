@@ -13,6 +13,7 @@
                     self="top middle"
                     :offset="[0, 5]"
                     :disabled="disabled"
+                    menu-class="dl-date-time-range--menu"
                 >
                     <date-time-range-content
                         v-bind="dateTimeRangeContentProps"
@@ -643,5 +644,11 @@ export default defineComponent({
 .dl-date-time-range {
     display: flex;
     justify-content: center;
+}
+</style>
+<style lang="scss" global>
+div.dl-menu.dl-date-time-range--menu {
+    border: 1px solid var(--dell-gray-200);
+    box-shadow: 0 8px 8px 0 var(--dell-shadow, rgba(0, 0, 0, 0.14));
 }
 </style>
