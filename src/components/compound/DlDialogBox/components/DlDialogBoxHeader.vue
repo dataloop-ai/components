@@ -24,10 +24,7 @@
         </div>
         <dl-button
             v-if="closeButton"
-            style="
-                --dl-button-padding: 5px;
-                --dl-button-bg-hover: var(--dl-color-fill-secondary);
-            "
+            style="--dl-button-bg-hover: var(--dl-color-fill-secondary)"
             class="close-button"
             icon="icon-dl-close"
             size="xl"
