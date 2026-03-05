@@ -11,6 +11,7 @@
             flat
             icon="icon-dl-close"
             size="xl"
+            :padding="closeIconSizePadding"
             @click="$emit('close')"
         />
     </div>
@@ -18,6 +19,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
 import { DlButton } from '../../../basic'
+import { setIconPadding } from '../../../basic/DlButton/utils'
 import { DlTypography } from '../../../essential'
 
 export default defineComponent({
@@ -34,7 +36,11 @@ export default defineComponent({
         },
         hideCloseButton: Boolean
     },
-    emits: ['close']
+    emits: ['close'],
+    setup() {
+        const closeIconSizePadding = `0 ${setIconPadding('xl')} 0 0`
+        return { closeIconSizePadding }
+    }
 })
 </script>
 <style lang="scss" scoped>
