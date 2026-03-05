@@ -38,7 +38,7 @@ export default defineComponent({
     },
     emits: ['close'],
     setup() {
-        const closeIconSizePadding = `0 ${setIconPadding('xl')} 0 0`
+        const closeIconSizePadding = `0 0 0 0`
         return { closeIconSizePadding }
     }
 })

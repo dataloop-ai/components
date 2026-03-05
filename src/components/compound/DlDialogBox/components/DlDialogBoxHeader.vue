@@ -62,7 +62,7 @@ export default defineComponent({
     setup(props, { slots }) {
         const hasTitle = computed(() => !!props.title || !!slots.title)
         const hasSubtitle = computed(() => !!props.subtitle || !!slots.subtitle)
-        const closeIconSizePadding = `0 ${setIconPadding('xl')} 0 0`
+        const closeIconSizePadding = `0 0 0 0`
         return { hasTitle, hasSubtitle, closeIconSizePadding }
     }
 })
