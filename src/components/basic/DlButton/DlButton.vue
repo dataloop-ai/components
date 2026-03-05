@@ -253,7 +253,12 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
-            if (this.flat && this.hasIcon && !this.hasContent && this.icon === 'icon-dl-info') {
+            if (
+                this.flat &&
+                this.hasIcon &&
+                !this.hasContent &&
+                this.icon === 'icon-dl-info'
+            ) {
                 return null
             }
             if (this.disabled) {

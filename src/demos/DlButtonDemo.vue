@@ -1,9 +1,6 @@
 <template>
     <div style="width: 950px; padding-top: 20px">
-        <div
-            v-for="buttonSize in buttons"
-            :key="buttonSize"
-        >
+        <div v-for="buttonSize in buttons" :key="buttonSize">
             <h3>Size {{ buttonSize }}</h3>
             <div style="display: flex; gap: 10px; justify-content: center">
                 <div class="col">
@@ -13,18 +10,10 @@
                         label="Contained text filled"
                         @click="log"
                     />
-                    <DlButton
-                        :size="buttonSize"
-                        outlined
-                        @click="log"
-                    >
+                    <DlButton :size="buttonSize" outlined @click="log">
                         Outlined
                     </DlButton>
-                    <DlButton
-                        :size="buttonSize"
-                        flat
-                        @click="log"
-                    >
+                    <DlButton :size="buttonSize" flat @click="log">
                         flat primary
                     </DlButton>
                     <DlButton
@@ -35,19 +24,10 @@
                     >
                         Flat Secondary
                     </DlButton>
-                    <DlButton
-                        flat
-                        disabled
-                        :size="buttonSize"
-                        @click="log"
-                    >
+                    <DlButton flat disabled :size="buttonSize" @click="log">
                         Disabled Flat
                     </DlButton>
-                    <DlButton
-                        disabled
-                        :size="buttonSize"
-                        @click="log"
-                    >
+                    <DlButton disabled :size="buttonSize" @click="log">
                         Disabled
                     </DlButton>
                 </div>
@@ -62,39 +42,14 @@
                 margin-top: 50px;
             "
         >
-            <DlButton
-                :fluid="true"
-                size="xl"
-                @click="log"
-            >
+            <DlButton :fluid="true" size="xl" @click="log">
                 Fluid Button
             </DlButton>
-            <DlButton
-                size="xl"
-                outlined
-                @click="log"
-            >
-                Outlined
-            </DlButton>
-            <DlButton
-                size="xl"
-                flat
-                @click="log"
-            >
-                Flat
-            </DlButton>
-            <DlButton
-                size="xl"
-                disabled
-                @click="log"
-            >
-                Disabled
-            </DlButton>
+            <DlButton size="xl" outlined @click="log"> Outlined </DlButton>
+            <DlButton size="xl" flat @click="log"> Flat </DlButton>
+            <DlButton size="xl" disabled @click="log"> Disabled </DlButton>
         </div>
-        <div
-            v-for="buttonSize in buttons"
-            :key="buttonSize"
-        >
+        <div v-for="buttonSize in buttons" :key="buttonSize">
             <h3>Size {{ buttonSize }}</h3>
             <div style="display: flex; gap: 10px; justify-content: center">
                 <DlButton
@@ -103,11 +58,7 @@
                     round
                     @click="log"
                 />
-                <DlButton
-                    icon="icon-dl-add"
-                    :size="buttonSize"
-                    @click="log"
-                />
+                <DlButton icon="icon-dl-add" :size="buttonSize" @click="log" />
                 <DlButton
                     icon="icon-dl-add"
                     :size="buttonSize"
@@ -161,36 +112,16 @@
                 margin-top: 50px;
             "
         >
-            <DlButton
-                icon="icon-dl-add"
-                :fluid="true"
-                size="xl"
-                @click="log"
-            >
+            <DlButton icon="icon-dl-add" :fluid="true" size="xl" @click="log">
                 Fluid Button
             </DlButton>
-            <DlButton
-                icon="icon-dl-add"
-                size="xl"
-                outlined
-                @click="log"
-            >
+            <DlButton icon="icon-dl-add" size="xl" outlined @click="log">
                 Outlined
             </DlButton>
-            <DlButton
-                icon="icon-dl-add"
-                size="xl"
-                flat
-                @click="log"
-            >
+            <DlButton icon="icon-dl-add" size="xl" flat @click="log">
                 Flat
             </DlButton>
-            <DlButton
-                icon="icon-dl-add"
-                size="xl"
-                disabled
-                @click="log"
-            >
+            <DlButton icon="icon-dl-add" size="xl" disabled @click="log">
                 Disabled
             </DlButton>
         </div>
@@ -225,36 +156,21 @@
             <h3>With badge</h3>
 
             <dl-button>
-                <dl-badge
-                    with-border
-                    floating
-                    align="top"
-                    color="red"
-                />
+                <dl-badge with-border floating align="top" color="red" />
                 button with badge
             </dl-button>
         </div>
         <div>
             <h3>Button with label and slot</h3>
 
-            <dl-button label="Hello">
-                World
-            </dl-button>
+            <dl-button label="Hello"> World </dl-button>
         </div>
         <div>
             <h3>Button with icon and slot</h3>
 
             <dl-button icon="icon-dl-search">
-                <dl-icon
-                    size="16px"
-                    icon="icon-dl-cart"
-                />
-                <dl-badge
-                    with-border
-                    floating
-                    align="top"
-                    color="red"
-                />
+                <dl-icon size="16px" icon="icon-dl-cart" />
+                <dl-badge with-border floating align="top" color="red" />
             </dl-button>
         </div>
         <div>
@@ -286,12 +202,7 @@
         </div>
         <div>
             <h3>Shaded and outlined</h3>
-            <dl-button
-                icon="icon-dl-search"
-                label="test me"
-                shaded
-                outlined
-            />
+            <dl-button icon="icon-dl-search" label="test me" shaded outlined />
         </div>
         <div style="display: flex; flex-direction: column">
             <h3>button with icon color</h3>
@@ -334,10 +245,7 @@
         </div>
         <div style="display: flex; flex-direction: column">
             <h3>button with tooltip</h3>
-            <dl-button
-                label="test me"
-                tooltip="test me please"
-            />
+            <dl-button label="test me" tooltip="test me please" />
         </div>
         <div style="display: flex; justify-content: center; margin-top: 50px">
             <dl-button

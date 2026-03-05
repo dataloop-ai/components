@@ -2,10 +2,7 @@
     <div style="width: 950px; padding-top: 20px">
         <div class="flex">
             <div>
-                <dl-text-area
-                    v-model="message"
-                    title="Message"
-                />
+                <dl-text-area v-model="message" title="Message" />
                 <dl-input
                     v-model="duration"
                     type="number"
@@ -16,34 +13,15 @@
                     type="number"
                     title="Collapse count"
                 />
-                <dl-input
-                    v-model="width"
-                    title="Custom width for toast item"
-                />
+                <dl-input v-model="width" title="Custom width for toast item" />
             </div>
             <div class="flex">
                 <div>
                     Type
-                    <dl-radio
-                        v-model="type"
-                        value="success"
-                        label="Success"
-                    />
-                    <dl-radio
-                        v-model="type"
-                        value="warning"
-                        label="Warning"
-                    />
-                    <dl-radio
-                        v-model="type"
-                        value="error"
-                        label="Error"
-                    />
-                    <dl-radio
-                        v-model="type"
-                        value="info"
-                        label="Info"
-                    />
+                    <dl-radio v-model="type" value="success" label="Success" />
+                    <dl-radio v-model="type" value="warning" label="Warning" />
+                    <dl-radio v-model="type" value="error" label="Error" />
+                    <dl-radio v-model="type" value="info" label="Info" />
                 </div>
                 <div>
                     Position
@@ -62,11 +40,7 @@
                         value="bottom-right"
                         label="Bottom right"
                     />
-                    <dl-radio
-                        v-model="position"
-                        value="top"
-                        label="Top"
-                    />
+                    <dl-radio v-model="position" value="top" label="Top" />
                     <dl-radio
                         v-model="position"
                         value="top-left"
@@ -79,32 +53,26 @@
                     />
                 </div>
                 <div>
-                    <dl-switch
-                        v-model="closable"
-                        left-label="Closable"
-                    />
+                    <dl-switch v-model="closable" left-label="Closable" />
                 </div>
             </div>
         </div>
-        <dl-button @click="showToastMessage">
-            Show Toast Message
-        </dl-button>
+        <dl-button @click="showToastMessage"> Show Toast Message </dl-button>
         <dl-button @click="showToastMessageCustom">
             Show Toast Message
         </dl-button>
-        <dl-button @click="showToastMultiLine">
-            Multi Line
-        </dl-button>
+        <dl-button @click="showToastMultiLine"> Multi Line </dl-button>
         <div class="flex-row" style="margin-top: 8px">
-            <dl-button @click="showToastWithLink">
-                Toast with link
-            </dl-button>
+            <dl-button @click="showToastWithLink"> Toast with link </dl-button>
             <dl-switch
                 v-model="htmlEnabled"
                 :left-label="htmlEnabled ? 'HTML true' : 'HTML false'"
             />
         </div>
-        <dl-button @click="showToastWithTitleTextCaption" style="margin-top: 8px">
+        <dl-button
+            style="margin-top: 8px"
+            @click="showToastWithTitleTextCaption"
+        >
             Toast with Title + Text + Caption
         </dl-button>
         <dl-button style="margin-top: 8px" @click="showToastWithTwoActions">
@@ -239,7 +207,8 @@ export default defineComponent({
         function showToastWithTitleTextCaption() {
             DlToast.open({
                 title: 'Toast Title',
-                message: 'This is the main message text that appears in the toast.',
+                message:
+                    'This is the main message text that appears in the toast.',
                 caption: 'This is the caption that appears below the message.',
                 position: position.value as DlToastPositions,
                 type: type.value as DlToastTypes,

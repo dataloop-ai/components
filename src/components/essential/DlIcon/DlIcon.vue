@@ -111,10 +111,7 @@ export default defineComponent({
         const isHovered = ref(false)
 
         const isInfoDefault = computed<boolean>(() => {
-            return (
-                icon.value === 'icon-dl-info' &&
-                !color.value
-            )
+            return icon.value === 'icon-dl-info' && !color.value
         })
 
         const effectiveColor = computed<string | null>(() => {
