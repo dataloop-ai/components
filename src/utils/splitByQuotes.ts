@@ -1,4 +1,4 @@
-import Tokenizr from 'tokenizr/src/tokenizr.js'
+import Tokenizr from 'tokenizr'
 
 export enum TokenType {
     NUMBER = 'number',
@@ -94,6 +94,17 @@ tokenizer.rule(/(?<!\\)['"](.*)/, (ctx, match) => {
 
 tokenizer.rule(/\s+/, (ctx) => {
     ctx.accept(TokenType.WHITESPACE)
+})
+
+tokenizer.rule(/[a-z*]*/i, (ctx, match) => {
+    if (
+        ctx.tagged(Tags.HAD_FIELD) &&
+        !ctx.tagged(Tags.HAD_VALUE) &&
+        !['TRUE', 'FALSE'].includes(match[0].toUpperCase())
+    ) {
+        // an unquoted string with an asterisk
+        ctx.accept(TokenType.PARTIAL_VALUE).tag(Tags.HAD_VALUE)
+    }
 })
 
 tokenizer.rule(/.+/, (ctx, match) => {

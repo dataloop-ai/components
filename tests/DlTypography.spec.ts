@@ -20,7 +20,7 @@ describe('DlTypography', () => {
         })
         it('should right dom node html', function () {
             expect(wrapper.html()).toBe(
-                `<p data-v-50b0b5ef="" id="${wrapper.vm.uuid}" class="dl-typography first-letter-capitalized" style="font-weight: 400; font-size: 30px;" uppercase="true">some</p>`
+                `<p data-v-50b0b5ef="" id="${wrapper.vm.uuid}" class="dl-typography first-letter-capitalized" style="--dl-typography-color: inherit; --dl-typography-font-weight: 400; font-size: 30px;" uppercase="true">some</p>`
             )
         })
         describe('When change props', () => {
@@ -29,7 +29,7 @@ describe('DlTypography', () => {
             })
             it('should right dom node styles', function () {
                 expect(wrapper.html()).toBe(
-                    `<p data-v-50b0b5ef="" id="${wrapper.vm.uuid}" class="dl-typography first-letter-capitalized" style="font-weight: 500; font-size: 30px;" uppercase="false">some</p>`
+                    `<p data-v-50b0b5ef="" id="${wrapper.vm.uuid}" class="dl-typography first-letter-capitalized" style="--dl-typography-color: inherit; --dl-typography-font-weight: 500; font-size: 30px;" uppercase="false">some</p>`
                 )
             })
         })

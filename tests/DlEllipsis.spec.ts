@@ -12,6 +12,7 @@ const props = {
     tooltip: true,
     tooltipPosition: 'top middle',
     tooltipOffset: [0, 25],
+    tooltipText: '',
     multiline: false,
     maxLines: 3,
     textClass: ''

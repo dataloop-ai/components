@@ -81,29 +81,29 @@ export const setTextColor = ({
     textColor
 }: DlButtonProps): string => {
     if (disabled) {
-        return getColor('', 'dl-color-disabled')
+        return getColor('', 'dell-gray-500')
     }
     if (shaded && outlined) {
-        return getColor(textColor, 'dl-color-text-darker-buttons')
+        return getColor(textColor, 'dell-gray-800')
     }
     if (outlined) {
-        return getColor(textColor, 'dl-color-secondary')
+        return getColor(textColor, 'dell-blue-500')
     }
     if (flat) {
         if (color === 'secondary') {
-            return getColor(textColor, 'dl-color-darker')
+            return getColor(textColor, 'dell-gray-800')
         }
 
-        return getColor(textColor, 'dl-color-secondary')
+        return getColor(textColor, 'dell-blue-500')
     }
     if (shaded) {
-        return getColor(textColor, 'dl-color-darker')
+        return getColor(textColor, 'dell-gray-800')
     }
     if (filled) {
-        return getColor(textColor, 'dl-color-text-buttons')
+        return getColor(textColor, 'dell-white')
     }
 
-    return getColor(textColor, 'dl-color-text-buttons')
+    return getColor(textColor, 'dell-white')
 }
 
 export const setBgColor = ({
@@ -120,7 +120,7 @@ export const setBgColor = ({
         return 'var(--dl-color-fill)'
     }
 
-    return getColor(color, 'dl-color-secondary')
+    return getColor(color, 'dell-blue-500')
 }
 
 export const setBorder = ({
@@ -142,7 +142,7 @@ export const setBorder = ({
         return 'var(--dl-color-transparent)'
     }
 
-    return getColor(color, 'dl-color-secondary')
+    return getColor(color, 'dell-blue-500')
 }
 
 export const setColorOnHover = ({
@@ -151,11 +151,14 @@ export const setColorOnHover = ({
     outlined,
     color
 }: Partial<DlButtonProps>) => {
-    if (color) return getLighterGradient(color)
     if (disabled) {
         return flat ? 'var(--dl-color-transparent)' : 'var(--dl-color-disabled)'
     }
-    if (outlined || flat) {
+    if (outlined) {
+        return getColor(color || '', 'dell-blue-500')
+    }
+    if (color) return getLighterGradient(color)
+    if (flat) {
         return 'var(--dl-color-hover)'
     }
 
@@ -166,7 +169,8 @@ export const setBorderOnHover = ({
     disabled,
     flat,
     color,
-    shaded
+    shaded,
+    outlined
 }: Partial<DlButtonProps>) => {
     if (disabled) {
         return 'var(--dl-color-separator)'
@@ -174,10 +178,13 @@ export const setBorderOnHover = ({
     if (flat || shaded) {
         return 'var(--dl-color-transparent)'
     }
+    if (outlined) {
+        return getColor(color || '', 'dell-blue-500')
+    }
     if (color) {
         return getLighterGradient(color)
     }
-    return 'var(--dl-color-hover)'
+    return 'var(--dell-blue-600)'
 }
 
 export const setBgOnHover = ({
@@ -192,6 +199,10 @@ export const setBgOnHover = ({
         return 'var(--dl-color-fill)'
     }
 
+    if (outlined && !disabled) {
+        return 'var(--dell-blue-100)'
+    }
+
     if (disabled || flat || outlined) {
         return 'var(--dl-color-transparent)'
     }
@@ -199,30 +210,56 @@ export const setBgOnHover = ({
     if (color) return getLighterGradient(color)
 
     if (filled) {
-        return 'var(--dl-color-hover)'
+        return 'var(--dell-blue-600)'
     }
 
     return 'var(--dl-color-panel-background)'
 }
 
-export const setBgOnPressed = ({ shaded }: Partial<DlButtonProps>) => {
+export const setBgOnPressed = ({
+    disabled,
+    flat,
+    shaded,
+    outlined,
+    filled,
+    color
+}: Partial<DlButtonProps>) => {
     if (shaded) {
         return 'var(--dl-color-fill-hover)'
     }
+
+    if (disabled) {
+        return 'var(--dl-button-bg)'
+    }
+
+    if (outlined && !flat) {
+        return 'var(--dell-blue-200)'
+    }
+
+    if (filled && !flat && !outlined && !color) {
+        return 'var(--dell-blue-700)'
+    }
+
     return 'var(--dl-button-bg)'
 }
 
 export const setTextOnPressed = ({
-    shaded,
-    outlined
+    disabled,
+    flat,
+    textColor
 }: Partial<DlButtonProps>) => {
-    return 'var(--dl-button-text-color)'
+    if (textColor) return getColor(textColor, 'dl-color-secondary')
+    if (disabled) return getColor('', 'dl-color-disabled')
+    if (!flat) return 'var(--dl-button-text-color)'
+    return 'var(--dl-color-secondary)'
 }
 
 export const setBorderOnPressed = ({
-    shaded,
     disabled,
     flat,
+    shaded,
+    outlined,
+    filled,
     color
 }: Partial<DlButtonProps>) => {
     if (disabled) {
@@ -231,6 +268,13 @@ export const setBorderOnPressed = ({
     if (flat || shaded) {
         return 'var(--dl-color-transparent)'
     }
+    if (outlined) {
+        return getColor(color || '', 'dell-blue-500')
+    }
     if (color) return getLighterGradient(color)
+    const isFilled = filled !== false
+    if (isFilled && !color) {
+        return 'var(--dell-blue-700, var(--dl-button-border))'
+    }
     return 'var(--dl-button-border)'
 }

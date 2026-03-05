@@ -8,7 +8,7 @@
             :style="rootStyle"
             data-test="root"
         >
-            <div>
+            <div class="content">
                 <dl-icon
                     data-test="icon"
                     :style="iconStyle"
@@ -16,12 +16,15 @@
                     :color="iconColor"
                     :size="iconSize"
                 />
-                <span class="text" :style="textStyle">
+                <div class="text" :style="textStyle">
                     <slot v-if="!text" />
                     <span v-else>
                         {{ text }}
                     </span>
-                </span>
+                </div>
+            </div>
+            <div v-if="$slots.actions" class="actions" data-test="actions">
+                <slot name="actions" />
             </div>
             <div
                 v-if="closable"
@@ -33,7 +36,7 @@
                     class="close-button-icon"
                     data-test="close-button-icon"
                     icon="icon-dl-close"
-                    color="dl-color-darker"
+                    color="dell-gray-800"
                     size="16px"
                     @click="handleClose"
                 />
@@ -100,21 +103,32 @@ const typeToIconMap: Record<DlAlertType, string> = {
     info: 'icon-dl-info-filled',
     success: 'icon-dl-approve-filled',
     warning: 'icon-dl-alert-filled',
-    error: 'icon-dl-error-filled'
+    error: 'icon-dl-error-filled',
+    discovery: 'icon-dl-error-filled'
 }
 
 const typeToIconColorMap: Record<DlAlertType, string> = {
-    info: 'dl-color-info',
-    success: 'dl-color-positive',
-    warning: 'dl-color-warning',
-    error: 'dl-color-negative'
+    info: 'dell-blue-500',
+    success: 'dell-green-500',
+    warning: 'dell-yellow-600',
+    error: 'dell-red-500',
+    discovery: 'dl-color-discovery'
+}
+
+const typeToIndicatorColorMap: Record<DlAlertType, string> = {
+    info: 'dell-blue-500',
+    success: 'dell-green-500',
+    warning: 'dell-yellow-800',
+    error: 'dell-red-500',
+    discovery: 'dl-color-discovery'
 }
 
 const typeToBackgroundMap: Record<DlAlertType, string> = {
-    info: 'dl-color-info-background',
-    success: 'dl-color-positive-background',
-    warning: 'dl-color-warning-background',
-    error: 'dl-color-negative-background'
+    info: 'dell-blue-200',
+    success: 'dell-green-200',
+    warning: 'dell-yellow-200',
+    error: 'dell-red-200',
+    discovery: 'dl-color-discovery-bg'
 }
 
 export default defineComponent({
@@ -139,7 +153,10 @@ export default defineComponent({
             type: String,
             required: true,
             validator: (value: string) =>
-                includes(['info', 'success', 'warning', 'error'], value)
+                includes(
+                    ['info', 'success', 'warning', 'error', 'discovery'],
+                    value
+                )
         },
         textColor: {
             type: String,
@@ -230,18 +247,26 @@ export default defineComponent({
 
                 const { height } = rootElement.getBoundingClientRect()
                 const iconS: Record<string, any> = {
-                    display: 'flex'
+                    display: 'flex',
+                    alignSelf: 'flex-start',
+                    marginTop: '2px'
+                }
+                const closeS: Record<string, any> = {
+                    display: 'flex',
+                    alignSelf: 'flex-start'
                 }
                 const rootS: Record<string, any> = {
                     backgroundColor: getColor(
                         typeToBackgroundMap[type.value as DlAlertType]
                     )
                 }
-                if (height > 46) {
-                    iconS.alignSelf = 'flex-start'
-                } else {
-                    iconS.alignSelf = 'center'
-                }
+                rootS['--dl-alert-indicator-color'] = getColor(
+                    typeToIndicatorColorMap[type.value as DlAlertType]
+                )
+                rootS['--dl-alert-border-color'] = getColor(
+                    typeToIndicatorColorMap[type.value as DlAlertType]
+                )
+
                 if (fluid === true) {
                     rootS.width = '100%'
                 } else {
@@ -250,11 +275,13 @@ export default defineComponent({
 
                 if (padding.value) {
                     rootS['--dl-alert-padding'] = padding.value
+                } else {
+                    rootS['--dl-alert-padding'] = '8px 16px 8px 12px'
                 }
 
                 iconStyle.value = iconS
                 rootStyle.value = rootS
-                closeButtonStyle.value = iconS
+                closeButtonStyle.value = closeS
             })
         }
 
@@ -307,28 +334,70 @@ export default defineComponent({
     display: inline-flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: stretch;
     min-height: 36px;
-    border-radius: 2px;
+    border-left: 4px solid var(--dl-alert-indicator-color, transparent);
+    border-top: 1px solid var(--dl-alert-border-color, transparent);
+    border-right: 1px solid var(--dl-alert-border-color, transparent);
+    border-bottom: 1px solid var(--dl-alert-border-color, transparent);
+    border-radius: 0px;
     box-sizing: border-box;
 
-    > div {
+    ::v-deep a {
+        color: var(--dell-blue-600);
+        text-decoration: none;
+    }
+
+    ::v-deep a:visited {
+        color: var(--dell-blue-600);
+        text-decoration: none;
+    }
+
+    ::v-deep a:hover {
+        color: var(--dell-blue-700);
+        text-decoration: underline;
+    }
+
+    ::v-deep a:active {
+        color: var(--dell-blue-800);
+        text-decoration: underline;
+    }
+
+    .content {
         display: flex;
         flex-direction: row;
-        padding: var(--dl-alert-padding, 10px 16px);
+        align-items: center;
+        gap: 8px;
+        padding: var(--dl-alert-padding);
+        min-width: 0;
+        flex: 1 1 auto;
     }
 
     .text {
-        padding-left: 10px;
-        font-size: var(--dl-font-size-body);
-        line-height: normal;
+        color: var(--dell-gray-800);
         align-self: center;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
         word-break: break-word;
+        min-width: 0;
     }
 
     .close-button {
-        padding-right: 10px;
-        padding-left: 10px;
-        align-items: var(--dl-alert-align-button, start);
+        display: flex;
+        padding: 12px;
+        align-items: flex-start;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        height: 40px;
+        max-height: 40px;
+        box-sizing: border-box;
+        align-self: flex-start;
     }
 
     .icon-dl-close:hover {
@@ -342,7 +411,7 @@ export default defineComponent({
 
 .confirm-message {
     margin: 0;
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-800);
     font-size: var(--dl-font-size-body);
     line-height: 1.5;
 }

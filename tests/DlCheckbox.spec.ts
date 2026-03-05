@@ -71,9 +71,7 @@ describe('DlCheckbox', () => {
         })
         it('should have the right active color', function () {
             const cssVars = wrapper.vm.cssSvgVars
-            expect(cssVars['--dl-active-color']).toBe(
-                'var(--dl-color-disabled)'
-            )
+            expect(cssVars['--dl-active-color']).toBe('var(--dell-gray-500)')
         })
     })
     describe('When compute isIndeterminate value properly', () => {

@@ -71,7 +71,10 @@ export default defineComponent({
         cursor: pointer;
         color: var(--dl-color-darker);
     }
-
+    &--item:not(&--item-active):hover {
+        background-color: var(--dell-blue-100);
+        border-radius: 11px;
+    }
     &--item-active {
         font-size: 12px;
         color: var(--dl-color-text-buttons);

@@ -17,7 +17,7 @@
         <dl-list-item
             v-else
             class="option"
-            :class="{ 
+            :class="{
                 highlighted: highlightSelected && isSelected,
                 'disabled-row': disableRow
             }"
@@ -142,10 +142,7 @@ import { v4 } from 'uuid'
 import { debounce } from 'lodash'
 import { stateManager } from '../../../../StateManager'
 import { getCaseInsensitiveInput, getLabel } from '../utils'
-import {
-    DlSelectOption,
-    DlSelectOptionType
-} from '../../types'
+import { DlSelectOption, DlSelectOptionType } from '../../types'
 
 const ValueTypes = [Array, Boolean, String, Number, Object, Function]
 
@@ -225,7 +222,7 @@ export default defineComponent({
             return `dl-select-option-${this.value}`.replaceAll(' ', '-')
         },
         color(): string | null {
-            return this.defaultStyles ? 'dl-color-darker' : null
+            return this.defaultStyles ? 'dell-gray-800' : null
         },
         isSelected(): boolean {
             return (
@@ -271,7 +268,7 @@ export default defineComponent({
 
                 highlightedHtml = label.replace(
                     toReplace,
-                    `<span style="background: var(--dl-color-warning)">${getCaseInsensitiveInput(
+                    `<span style="background: var(--dell-yellow-600)">${getCaseInsensitiveInput(
                         label,
                         this.filterTerm
                     )}</span>`
@@ -406,7 +403,11 @@ export default defineComponent({
             return !!option?.readonly
         },
         isDisableRowOption(option: DlSelectOptionType) {
-            return typeof option === 'object' && option !== null && !!option.disableRow
+            return (
+                typeof option === 'object' &&
+                option !== null &&
+                !!option.disableRow
+            )
         }
     }
 })

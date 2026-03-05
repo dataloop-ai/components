@@ -4,10 +4,7 @@
             class="dl-time-picker-input--clock_img"
             :class="{ 'dl-time-picker-input--clock_img-disabled': disabled }"
         >
-            <dl-icon
-                icon="icon-dl-time"
-                size="16px"
-            />
+            <dl-icon icon="icon-dl-time" size="16px" />
         </div>
         <div
             class="dl-time-picker-input--text"
@@ -61,9 +58,7 @@
                         @click="handleMinuteDownChevronClick"
                     />
                 </div>
-                <div class="dl-time-picker-input--dots">
-                    :
-                </div>
+                <div class="dl-time-picker-input--dots">:</div>
             </div>
         </dl-menu>
     </div>
@@ -309,6 +304,9 @@ export default defineComponent({
         position: absolute;
         top: 46%;
         left: 49%;
+    }
+    &:hover {
+        border-color: var(--dell-gray-800);
     }
 }
 </style>

@@ -58,15 +58,17 @@
                 :style="`
                     background-color: ${separatorColor}`"
             />
-            <dl-icon
-                class="expand-icon"
-                :class="iconClass"
-                :icon="dropdownIcon"
-                :size="iconSize"
-                :color="getIconColor"
-                :tooltip="iconTooltip"
-                @click="onIconClicked"
-            />
+            <slot name="suffix-icon">
+                <dl-icon
+                    class="expand-icon"
+                    :class="iconClass"
+                    :icon="dropdownIcon"
+                    :size="iconSize"
+                    :color="getIconColor"
+                    :tooltip="iconTooltip"
+                    @click="onIconClicked"
+                />
+            </slot>
         </dl-button>
         <dl-menu
             ref="menuRef"
@@ -116,10 +118,7 @@
         @click="onClick"
     >
         <div class="dl-button-dropdown--simple__title">
-            <template v-if="hasLabelSlot">
-                <slot name="label" />
-            </template>
-            <template v-else>
+            <slot name="label">
                 <span
                     :class="{
                         'dl-button-no-wrap': noWrap
@@ -128,15 +127,17 @@
                 >
                     {{ label }}
                 </span>
-            </template>
-            <dl-icon
-                :class="iconClass"
-                :icon="dropdownIcon"
-                :size="iconSize"
-                :color="getIconColor"
-                :tooltip="iconTooltip"
-                @click="onIconClicked"
-            />
+            </slot>
+            <slot name="suffix-icon">
+                <dl-icon
+                    :class="iconClass"
+                    :icon="dropdownIcon"
+                    :size="iconSize"
+                    :color="getIconColor"
+                    :tooltip="iconTooltip"
+                    @click="onIconClicked"
+                />
+            </slot>
         </div>
 
         <dl-menu
@@ -301,9 +302,6 @@ export default defineComponent({
         const showing = ref<boolean>(!!props.modelValue) as Ref<boolean>
         const menuRef = ref(null)
 
-        const hasLabelSlot = computed(() => {
-            return !!slots.label
-        })
         const attributes = computed(() => {
             const acc: Record<string, string> = {
                 'aria-expanded': showing.value === true ? 'true' : 'false',
@@ -512,8 +510,7 @@ export default defineComponent({
             cssVars,
             getIconColor,
             computedTextColor,
-            separatorColor,
-            hasLabelSlot
+            separatorColor
         }
     }
 })

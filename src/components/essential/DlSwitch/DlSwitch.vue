@@ -7,17 +7,16 @@
         }`"
     >
         <label
-            v-if="!!leftLabel"
+            v-if="hasLeftLabel"
             class="left dl-switch-label"
             :for="computedId"
             :style="cssLabelVars"
         >
-            {{ leftLabel }}
+            <slot name="left-label">
+                {{ leftLabel }}
+            </slot>
         </label>
-        <span
-            class="dl-switch-container"
-            :style="`max-height: ${size}px;`"
-        >
+        <span class="dl-switch-container" :style="`max-height: ${size}px;`">
             <input
                 :id="computedId"
                 ref="input"
@@ -27,7 +26,7 @@
                 class="dl-switch-checkbox"
                 :style="cssVars"
                 @change="handleChange"
-            >
+            />
             <label
                 :for="computedId"
                 class="dl-switch"
@@ -35,12 +34,14 @@
             />
         </span>
         <label
-            v-if="!!rightLabel"
+            v-if="hasRightLabel"
             class="right dl-switch-label"
             :for="computedId"
             :style="cssLabelVars"
         >
-            {{ rightLabel }}
+            <slot name="right-label">
+                {{ rightLabel }}
+            </slot>
         </label>
     </div>
 </template>
@@ -143,6 +144,12 @@ export default defineComponent({
                 ? this.index === -1
                 : toRaw(this.modelValue) === toRaw(this.falseValue)
         },
+        hasLeftLabel(): boolean {
+            return !!this.leftLabel || !!this.$slots['left-label']
+        },
+        hasRightLabel(): boolean {
+            return !!this.rightLabel || !!this.$slots['right-label']
+        },
         cssVars(): Record<string, string> {
             return {
                 '--dl-checkbox-height': `${this.size}px`,
@@ -181,7 +188,7 @@ export default defineComponent({
             // todo: what the hell ?
             debounce(() => {
                 nextTick(() => {
-                    (this.$refs.input as HTMLInputElement).checked =
+                    ;(this.$refs.input as HTMLInputElement).checked =
                         this.isTrue
                 })
             }, 100)
@@ -193,7 +200,7 @@ export default defineComponent({
                 stopAndPrevent(e)
             }
 
-            (e.target as HTMLInputElement).checked = this.isTrue
+            ;(e.target as HTMLInputElement).checked = this.isTrue
 
             if (!this.disabled) {
                 let newValue: any | any[]

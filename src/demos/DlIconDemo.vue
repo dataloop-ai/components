@@ -26,6 +26,9 @@
             title="Custom Label"
         />
         <DlIcon size="50px" :icon="inputValue" />
+        <div style="margin-top: 24px">
+            <DlIcon size="24px" icon="icon-dl-info" />
+        </div>
     </div>
 </template>
 

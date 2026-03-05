@@ -8,10 +8,7 @@
     >
         <div class="dl-label__prefix">
             <slot name="prefix">
-                <div
-                    v-if="indicatorColor"
-                    class="dl-label__line"
-                />
+                <div v-if="indicatorColor" class="dl-label__line" />
             </slot>
         </div>
         <div class="dl-label__content">
@@ -22,10 +19,7 @@
                 :class="!suffix && fluid ? 'dl-label__fluid' : ''"
                 :text="text"
             />
-            <dl-ellipsis
-                v-else
-                class="dl-label__text"
-            >
+            <dl-ellipsis v-else class="dl-label__text">
                 <slot name="default" />
             </dl-ellipsis>
             <span
@@ -42,10 +36,7 @@
                 class="dl-label__suffix"
             >
                 <div class="dl-label__suffix-slot">
-                    <slot
-                        v-if="mouseOver"
-                        name="actions"
-                    />
+                    <slot v-if="mouseOver" name="actions" />
                 </div>
                 <slot name="hint">
                     <dl-icon
@@ -113,7 +104,7 @@ export default defineComponent({
          */
         color: {
             type: String,
-            default: 'dl-color-darker'
+            default: 'dell-gray-800'
         },
         /**
          * Will fill the container size its given

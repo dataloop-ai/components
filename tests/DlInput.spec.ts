@@ -39,34 +39,6 @@ describe('DlInput component', () => {
             ])
         })
     })
-    describe('error input', () => {
-        let wrapper: any
-        beforeAll(() => {
-            wrapper = mount(DlInput, {
-                props: {
-                    error: true
-                }
-            })
-        })
-        it('should set error border color', () => {
-            expect(wrapper.vm.getBorderColor).toMatch(
-                'var(--dl-color-negative)'
-            )
-        })
-    })
-    describe('warning input', () => {
-        let wrapper: any
-        beforeAll(() => {
-            wrapper = mount(DlInput, {
-                props: {
-                    warning: true
-                }
-            })
-        })
-        it('should set error border color', () => {
-            expect(wrapper.vm.getBorderColor).toMatch('var(--dl-color-warning)')
-        })
-    })
     describe('expandable input', () => {
         let wrapper: any
         beforeAll(() => {

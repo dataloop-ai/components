@@ -37,6 +37,10 @@
             :hide-bottom="hideBottom"
             :hide-no-data="hideNoData"
             identifier-as-tooltip
+            :class="{
+                'dl-label-picker-tree-table': true,
+                'has-not-children': hasNotChildren
+            }"
             @row-click="handleRowClick"
         >
             <template #body-cell-displayLabel="item">
@@ -65,6 +69,7 @@ import { DlLabel, DlIcon } from '../../essential'
 import { DlInput, DlTreeTable } from '../../compound'
 import { DlEmptyStateProps, DlTableColumn, DlTableRow } from '../../types'
 import { DlLabelPickerItem } from './types'
+import { v4 } from 'uuid'
 
 export default defineComponent({
     name: 'DlLabelPicker',
@@ -142,6 +147,9 @@ export default defineComponent({
             emit('click', item)
         }
 
+        const hasNotChildren = computed(() => {
+            return !items.value?.some((item) => item.children?.length > 0)
+        })
         const placeHolderText = computed(() => {
             if (!currentSelectedLabel.value) {
                 return 'Search a label'
@@ -183,7 +191,8 @@ export default defineComponent({
                 mapObjects(item, (obj: DlLabelPickerItem) => {
                     return {
                         ...obj,
-                        name: obj.displayLabel
+                        name: obj.displayLabel,
+                        id: obj.id || v4()
                     }
                 })
             )
@@ -260,6 +269,7 @@ export default defineComponent({
         return {
             handleRowClick,
             inputValue,
+            hasNotChildren,
             columns,
             placeHolderText,
             inputStyles,
@@ -291,6 +301,15 @@ export default defineComponent({
 
 .dl-label-picker .dl-table tbody tr.selected td {
     background-color: var(--dl-color-fill);
+}
+.dl-label-picker > div.dl-label-picker-tree-table td.dl-draggable-container {
+    width: 0;
+    padding: 0;
+}
+.dl-label-picker
+    > div.dl-label-picker-tree-table.has-not-children
+    td.chevron-icon-container {
+    width: 10px;
 }
 </style>
 

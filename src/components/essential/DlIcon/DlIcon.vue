@@ -3,6 +3,8 @@
         v-if="!isSVG"
         :id="uuid"
         :style="[inlineStyles, computedStyles]"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
         @click="$emit('click', $event)"
         @mousedown="$emit('mousedown', $event)"
         @mouseup="$emit('mouseup', $event)"
@@ -26,6 +28,8 @@
         v-else
         :id="uuid"
         :style="[inlineStyles, computedStyles]"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
         @click="$emit('click', $event)"
         @mousedown="$emit('mousedown', $event)"
         @mouseup="$emit('mouseup', $event)"
@@ -46,6 +50,7 @@ import {
     onMounted,
     onUnmounted,
     ref,
+    useSlots,
     toRefs,
     watch
 } from 'vue-demi'
@@ -97,11 +102,24 @@ export default defineComponent({
         const { styles, color, size, icon, svg, inline, svgSource, tooltip } =
             toRefs(props)
 
+        const slots = useSlots()
         const svgIcon = ref(null)
         const isDestroyed = ref(false)
         const uuid = `dl-icon-${v4()}`
         const externalIconSource = 'material-icons'
         const logger = loggerFactory('dl-icon')
+        const isHovered = ref(false)
+
+        const isInfoDefault = computed<boolean>(() => {
+            return icon.value === 'icon-dl-info' && !color.value
+        })
+
+        const effectiveColor = computed<string | null>(() => {
+            if (isInfoDefault.value) {
+                return isHovered.value ? 'dell-blue-600' : 'dell-blue-500'
+            }
+            return color.value
+        })
 
         const computedStyles = computed<Record<string, string>>(() => {
             const generatedStyles = isString(styles.value)
@@ -121,13 +139,13 @@ export default defineComponent({
         const cssIconVars = computed<Record<string, string>>(() => {
             return {
                 '--dl-icon-font-size': `${size.value}`,
-                '--dl-icon-color': color.value
+                '--dl-icon-color': effectiveColor.value
                     ? // todo: remove this. this is needed for now until the swap of DLBTN in OA
                       getColor(
-                          color.value === 'secondary'
+                          effectiveColor.value === 'secondary'
                               ? 'q-color-secondary'
-                              : color.value,
-                          'dl-color-icon-default'
+                              : effectiveColor.value,
+                          'dell-gray-800'
                       )
                     : 'inherit'
             }
@@ -163,6 +181,18 @@ export default defineComponent({
         const inlineStyles = computed<Record<string, string>>(() => {
             return { display: inline.value ? 'inline-flex' : 'flex' }
         })
+
+        const onMouseEnter = () => {
+            if (isInfoDefault.value) {
+                isHovered.value = true
+            }
+        }
+
+        const onMouseLeave = () => {
+            if (isInfoDefault.value) {
+                isHovered.value = false
+            }
+        }
 
         const loadSvg = () => {
             return new Promise<void>((resolve, reject) => {
@@ -239,7 +269,9 @@ export default defineComponent({
             loadSvg,
             isDestroyed,
             externalIcon,
-            inlineStyles
+            inlineStyles,
+            onMouseEnter,
+            onMouseLeave
         }
     }
 })

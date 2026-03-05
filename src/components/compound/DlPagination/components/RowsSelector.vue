@@ -1,10 +1,9 @@
 <template>
     <div class="dl-pagination--rows_selector">
-        <span class="dl-pagination--rows_per_page_label">{{ itemsName }} per page:</span>
-        <dl-typography
-            v-if="hasSingeValue"
-            color="dl-color-darker"
+        <span class="dl-pagination--rows_per_page_label"
+        >{{ itemsName }} per page:</span
         >
+        <dl-typography v-if="hasSingeValue" color="dell-gray-800">
             {{ modelValue }}
         </dl-typography>
         <dl-select
@@ -72,7 +71,7 @@ export default defineComponent({
     &--rows_selector {
         display: flex;
         align-items: center;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
     }
 
     &--rows_per_page_label {

@@ -27,7 +27,7 @@
             </span>
             <p
                 v-if="showValue && !indeterminate && !summary"
-                class="dl-progress-bar-label"
+                class="dl-progress-bar-value"
             >
                 {{ computedValue }}{{ showPercentage ? '%' : '' }}
             </p>
@@ -51,7 +51,7 @@ export default defineComponent({
     props: {
         color: {
             type: String,
-            default: 'dl-color-secondary'
+            default: 'dell-blue-500'
         },
         label: {
             type: String,
@@ -117,14 +117,20 @@ export default defineComponent({
     margin: 0;
     font-size: var(--dl-font-size-body);
     line-height: 1;
-    color: var(--dl-color-darker);
+    color: var(--dell-gray-600);
+}
+.dl-progress-bar-value {
+    margin: 0;
+    font-size: var(--dl-font-size-body);
+    line-height: 1;
+    color: var(--dell-gray-800);
 }
 .dl-progress-bar {
     overflow: hidden;
     width: 100%;
     height: var(--dl-progress-bar-height);
     border-radius: 2px;
-    background-color: var(--dl-color-separator);
+    background-color: var(--dell-gray-300);
     margin: 6px 0;
 }
 .dl-progress-bar-indicator {
@@ -156,7 +162,7 @@ export default defineComponent({
     line-height: 12px;
     text-transform: capitalize;
     font-feature-settings: 'cpsp' on;
-    color: var(--dl-color-lighter);
+    color: var(--dell-gray-500);
 }
 @keyframes indeterminate-loading {
     0% {

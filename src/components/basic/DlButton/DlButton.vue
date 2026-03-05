@@ -16,8 +16,9 @@
             @click="onClick"
             @dblclick="onDblClick"
             @mousedown="onMouseDown"
+            @mouseup="mouseDown = false"
             @mouseenter="mouseOver = true"
-            @mouseleave="mouseOver = false"
+            @mouseleave="onMouseLeave"
         >
             <dl-tooltip
                 v-if="!tooltip && overflow && isOverflowing && hasLabel"
@@ -219,6 +220,7 @@ export default defineComponent({
         const buttonLabelRef = ref(null)
         const { hasEllipsis } = useSizeObserver(buttonLabelRef)
         const mouseOver = ref(false)
+        const mouseDown = ref(false)
 
         const buttonClass = computed(() => {
             const classes = ['dl-button']
@@ -239,6 +241,7 @@ export default defineComponent({
             isOverflowing: hasEllipsis,
             buttonClass,
             mouseOver,
+            mouseDown,
             buttonTimeout
         }
     },
@@ -250,6 +253,14 @@ export default defineComponent({
             ]
         },
         getIconColor(): string {
+            if (
+                this.flat &&
+                this.hasIcon &&
+                !this.hasContent &&
+                this.icon === 'icon-dl-info'
+            ) {
+                return null
+            }
             if (this.disabled) {
                 if (this.disabledIconColor) {
                     return this.disabledIconColor
@@ -261,9 +272,24 @@ export default defineComponent({
                     color: this.color,
                     filled: this.filled,
                     shaded: this.shaded,
-                    textColor: this.iconColor ?? this.textColor
+                    textColor: this.iconColor || this.textColor
                 })
             }
+
+            if (this.mouseDown) {
+                if (this.colorsObject?.PRESSED?.TEXT) {
+                    return this.colorsObject.PRESSED.TEXT
+                }
+                if (!this.flat) {
+                    return 'var(--dl-button-text-color)'
+                }
+                return setTextOnPressed({
+                    disabled: this.disabled,
+                    flat: this.flat,
+                    textColor: this.iconColor || this.textColor
+                })
+            }
+
             if (this.mouseOver) {
                 return (
                     this.hoverTextColor ??
@@ -272,7 +298,7 @@ export default defineComponent({
                         outlined: this.outlined,
                         shaded: this.shaded,
                         flat: this.flat,
-                        color: this.iconColor ?? this.textColor
+                        color: this.iconColor || this.textColor
                     })
                 )
             }
@@ -285,7 +311,15 @@ export default defineComponent({
                 return this.textColor
             }
 
-            return null
+            return setTextColor({
+                disabled: this.disabled,
+                outlined: this.outlined,
+                flat: this.flat,
+                color: this.color,
+                filled: this.filled,
+                shaded: this.shaded,
+                textColor: this.textColor
+            })
         },
         computedStyles(): Record<string, string> {
             return isString(this.styles)
@@ -403,6 +437,7 @@ export default defineComponent({
                             disabled: this.disabled,
                             flat: this.flat,
                             shaded: this.shaded,
+                            outlined: this.outlined,
                             color: this.color
                         }),
                     '--dl-button-bg-hover':
@@ -416,19 +451,29 @@ export default defineComponent({
                             color: this.color
                         }),
                     '--dl-button-text-color-pressed': setTextOnPressed({
-                        shaded: this.shaded,
-                        outlined: this.shaded
+                        disabled: this.disabled,
+                        flat: this.flat,
+                        color: this.color,
+                        textColor: this.textColor
                     }),
                     '--dl-button-bg-pressed':
                         this.pressedBgColor ??
                         setBgOnPressed({
+                            disabled: this.disabled,
+                            flat: this.flat,
                             shaded: this.shaded,
-                            outlined: this.outlined
+                            outlined: this.outlined,
+                            filled: this.filled,
+                            color: this.color
                         }),
 
                     '--dl-button-border-pressed': setBorderOnPressed({
+                        disabled: this.disabled,
+                        flat: this.flat,
                         shaded: this.shaded,
-                        outlined: this.outlined
+                        outlined: this.outlined,
+                        filled: this.filled,
+                        color: this.color
                     })
                 }
             }
@@ -497,8 +542,13 @@ export default defineComponent({
                     }
                 }
 
+                this.mouseDown = true
                 this.$emit('mousedown', e)
             }
+        },
+        onMouseLeave() {
+            this.mouseOver = false
+            this.mouseDown = false
         }
     }
 })
@@ -542,6 +592,7 @@ export default defineComponent({
             transition: var(--dl-button-text-transition-duration);
         }
     }
+    outline: none;
 
     &--dense {
         border: none;
@@ -561,6 +612,11 @@ export default defineComponent({
         .dl-icon {
             color: var(--dl-button-text-color-hover) !important;
         }
+    }
+    &:focus-visible {
+        outline: 1px solid var(--dell-blue-500);
+        outline-offset: 2px;
+        border-radius: var(--dl-button-border-radius);
     }
 }
 

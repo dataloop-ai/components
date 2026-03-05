@@ -11,12 +11,13 @@
         @mouseleave="onRowHoverEnd($event, row, rowIndex)"
     >
         <td
-            :style="`width: 25px; opacity: ${
+            :style="`opacity: ${
                 isDragIconVisible || isRowHighlighted ? '1' : '0'
             }`"
+            class="dl-draggable-container"
         >
             <dl-icon
-               v-if="hasDraggableRows && !row.disableDraggable"
+                v-if="hasDraggableRows && !row.disableDraggable"
                 class="draggable-icon"
                 icon="icon-dl-drag"
                 size="12px"
@@ -451,5 +452,8 @@ export default defineComponent({
     &.no-children {
         cursor: default;
     }
+}
+.dl-draggable-container {
+    width: 25px;
 }
 </style>

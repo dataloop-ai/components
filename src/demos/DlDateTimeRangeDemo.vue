@@ -109,6 +109,7 @@
                     :should-clear-select-first-option="
                         shouldClearSelectFirstOption
                     "
+                    should-select-by-click
                     @set-type="handleSetType"
                     @change="handleModelValueUpdate"
                 />
@@ -172,6 +173,26 @@
                 :show-time="showTime"
                 :auto-close="autoClose"
                 :including-current-month="includesCurrentMonthEnd"
+                @set-type="handleSetType"
+                @change="handleModelValueUpdate"
+            />
+        </div>
+        <div style="width: 500px; margin-top: 30px">
+            <div style="margin-bottom: 10px; font-weight: bold">
+                Inline Mode
+            </div>
+            <dl-date-time-range
+                v-model="date"
+                :type="type"
+                width="100%"
+                :available-range="range ? availableRange : null"
+                :mode="mode"
+                :show-time="showTime"
+                :auto-close="autoClose"
+                :including-current-month="includesCurrentMonthEnd"
+                :should-clear-select-first-option="shouldClearSelectFirstOption"
+                :disabled-type="type === 'day' ? 'month' : 'day'"
+                view-mode="inline"
                 @set-type="handleSetType"
                 @change="handleModelValueUpdate"
             />

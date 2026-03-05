@@ -1,11 +1,8 @@
 <template>
-    <div
-        class="kpi_box"
-        :style="cssVars"
-    >
+    <div class="kpi_box" :style="cssVars">
         <div class="kpi_box__counter">
             <dl-typography
-                :color="hasValue ? 'dl-color-secondary' : 'dl-color-medium'"
+                :color="hasValue ? 'dell-gray-800' : 'dell-gray-500'"
                 variant="h1"
                 :size="counterFontSizeComputed"
                 :style="typographyStyles"
@@ -17,7 +14,7 @@
             <div class="kpi_box__title__text">
                 <div>
                     <dl-typography
-                        color="dl-color-darker"
+                        color="dell-gray-600"
                         variant="h3"
                         :size="titleFontSizeComputed"
                     >
@@ -38,10 +35,7 @@
                 </dl-typography>
             </div>
         </div>
-        <div
-            v-if="progress"
-            class="kpi_box__progress_bar"
-        >
+        <div v-if="progress" class="kpi_box__progress_bar">
             <dl-progress-bar
                 color="dl-color-darker"
                 height="5px"
@@ -140,19 +134,13 @@ export default defineComponent({
 
         const emptyString = '---'
 
-        const isSingleWord = (text: string) => text?.split(' ').length === 1
-
         const cssVars = computed<Record<string, string>>(() => {
             const vars: Record<string, string> = {
                 '--dl-kpi-border': props.bordered
                     ? '1px solid var(--dl-color-separator)'
                     : '',
-                '--dl-kpi-title-max-width': isSingleWord(props.title)
-                    ? '100%'
-                    : '90%', // todo: caused a bug with single words
-                '--dl-kpi-sub-title-max-width': isSingleWord(props.subtitle)
-                    ? '100%'
-                    : '90%'
+                '--dl-kpi-title-max-width': '100%',
+                '--dl-kpi-sub-title-max-width': '100%'
             }
 
             if (props.dense) {

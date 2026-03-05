@@ -10,6 +10,7 @@
                     :available-range="availableRange"
                     :disabled="disabled"
                     :with-left-chevron="true"
+                    :is-first-click="isFirstClick"
                     @prev="handleDatePrev"
                     @update:model-value="updateDateInterval"
                     @mousedown="handleMousedown"
@@ -26,6 +27,7 @@
                     :disabled="disabled"
                     :with-left-chevron="singleCalendar"
                     :with-right-chevron="true"
+                    :is-first-click="isFirstClick"
                     @prev="handleDatePrev"
                     @next="handleDateNext"
                     @update:model-value="updateDateInterval"
@@ -112,6 +114,10 @@ export default defineComponent({
         activeDateTo: {
             type: Object as PropType<Partial<CalendarDate> | null>,
             default: null
+        },
+        isFirstClick: {
+            type: Boolean,
+            default: true
         },
         normalizeCalendars: Boolean,
         disabled: Boolean
@@ -270,7 +276,10 @@ export default defineComponent({
 
             window.addEventListener('mouseup', this.handleMouseup)
 
-            this.dateInterval = { from: date, to: date }
+            this.dateInterval =
+                !this.dateInterval || this.type !== 'day' || this.isFirstClick
+                    ? { from: date, to: date }
+                    : this.dateInterval
 
             if (!this.singleSelection) {
                 this.isSelectionMode = true

@@ -124,7 +124,9 @@ export default defineComponent({
 
         let localScrollTarget: HTMLElement | undefined
         const rootRef: Ref<HTMLElement | null> = ref(null)
-        const scrollSizeItem: Ref<number> = ref(40)
+        const scrollSizeItem: Ref<number> = ref(
+            virtualScrollItemSize.value || 40
+        )
 
         const isDefined = (v: any) => v !== undefined && v !== null
 

@@ -63,7 +63,7 @@
                             v-if="searchable"
                             icon="icon-dl-search"
                             :size="iconSize"
-                            color="dl-color-lighter"
+                            color="dell-gray-500"
                         />
                     </slot>
                 </div>
@@ -145,7 +145,7 @@
                 </div>
             </div>
             <dl-menu
-                v-if="!noOptions || !hideEmptyMenu"
+                v-if="!noOptions || !hideEmptyMenu || showAfterOptionsWhenEmpty"
                 ref="menu"
                 v-model="isExpanded"
                 fit-container
@@ -166,17 +166,21 @@
                 @selected-item="handleSelectedItem"
             >
                 <dl-list-item v-if="hasBeforeOptions && !noOptions">
-                    <dl-item-section color="dl-color-medium">
+                    <dl-item-section color="dell-gray-600">
                         <slot name="before-options" />
                     </dl-item-section>
                 </dl-list-item>
-                <dl-list-item v-if="noOptions" :style="computedNoOptionsStyle">
-                    <dl-item-section color="dl-color-medium">
+                <dl-list-item
+                    v-if="noOptions"
+                    :style="computedNoOptionsStyle"
+                    :padding="noOptionsPadding"
+                >
+                    <dl-item-section color="dell-gray-600">
                         <slot name="no-options"> No options </slot>
                     </dl-item-section>
                 </dl-list-item>
                 <dl-list
-                    v-if="showMenuList"
+                    v-else-if="showMenuList"
                     class="select-list"
                     :padding="false"
                     :style="
@@ -323,7 +327,10 @@
                     </div>
                 </dl-list>
                 <dl-list-item
-                    v-if="hasAfterOptions && !noOptions"
+                    v-if="
+                        hasAfterOptions &&
+                            (!noOptions || showAfterOptionsWhenEmpty)
+                    "
                     :padding="afterOptionsPadding"
                 >
                     <dl-item-section>
@@ -351,7 +358,7 @@
                     v-if="error && !!errorMessage.length"
                     :icon="errorIcon"
                     :inline="false"
-                    color="dl-color-negative"
+                    color="dell-red-500"
                     :size="iconSize"
                 >
                     <dl-tooltip>
@@ -515,11 +522,19 @@ export default defineComponent({
             type: String,
             default: null
         },
+        noOptionsPadding: {
+            type: String,
+            default: null
+        },
         keepFocusOnBlur: {
             type: Boolean,
             default: false
         },
         hideEmptyMenu: {
+            type: Boolean,
+            default: false
+        },
+        showAfterOptionsWhenEmpty: {
             type: Boolean,
             default: false
         },
@@ -807,8 +822,8 @@ export default defineComponent({
             return {
                 '--placeholder-color': getColor(
                     this.modelValueLength > 0 || this.selectedIndex !== -1
-                        ? 'dl-color-darker'
-                        : 'dl-color-lighter'
+                        ? 'dell-gray-800'
+                        : 'dell-gray-500'
                 )
             }
         },
@@ -929,7 +944,7 @@ export default defineComponent({
             return !!this.$slots.prepend && !this.isSmall
         },
         chevronIconColor(): string {
-            return `${this.disabled ? 'dl-color-disabled' : null}`
+            return `${this.disabled ? 'dell-gray-500' : null}`
         },
         showMenuList(): boolean {
             if (
@@ -1048,7 +1063,11 @@ export default defineComponent({
             return !!option?.readonly
         },
         isDisableRowOption(option: DlSelectOptionType) {
-            return typeof option === 'object' && option !== null && !!option.disableRow
+            return (
+                typeof option === 'object' &&
+                option !== null &&
+                !!option.disableRow
+            )
         },
         getOptionCount(option: any) {
             return option?.count ?? null
@@ -1323,10 +1342,10 @@ export default defineComponent({
     }
 
     .dl_select__select {
-        border: 1px solid var(--dl-color-separator);
-        border-radius: 2px;
+        border: 1px solid var(--dell-gray-500);
+        border-radius: 0px;
         cursor: pointer;
-        color: var(--dl-color-darker);
+        color: var(--dell-gray-800);
         height: 12px;
         width: 100%;
         box-sizing: content-box;
@@ -1409,17 +1428,21 @@ export default defineComponent({
             }
         }
 
-        &::placeholder {
-            color: var(--dl-color-lighter);
+        & input::placeholder {
+            color: var(--placeholder-color);
             opacity: 1;
         }
 
         &:hover {
-            border-color: var(--dl-color-hover);
+            border-color: var(--dell-gray-800);
         }
 
         &--focused {
-            border-color: var(--dl-color-secondary);
+            border-color: var(--dell-blue-500) !important;
+
+            ::v-deep .dl-icon {
+                color: var(--dell-blue-500);
+            }
         }
 
         &--disabled {

@@ -35,7 +35,7 @@ export default defineComponent({
         bold: Boolean,
         color: {
             type: String,
-            default: 'dl-color-darker'
+            default: null
         }
     },
     data() {
@@ -46,9 +46,13 @@ export default defineComponent({
     computed: {
         styles(): Record<string, string | number> {
             const styles: Record<string, string | number> = {
-                color: getColor(this.color as string, 'dl-color-darker'),
-                textTransform: this.letterClass ? null : this.transform,
-                fontWeight: this.bold ? 500 : 400
+                '--dl-typography-color': this.color
+                    ? getColor(this.color as string, 'dell-gray-800')
+                    : 'inherit',
+                '--dl-typography-text-transform': this.letterClass
+                    ? null
+                    : this.transform,
+                '--dl-typography-font-weight': this.bold ? 500 : 400
             }
 
             if (this.size && !sizes.includes(this.size)) {
@@ -91,6 +95,9 @@ export default defineComponent({
 .dl-typography {
     margin: 0;
     padding: 0;
+    color: var(--dl-typography-color);
+    text-transform: var(--dl-typography-text-transform);
+    font-weight: var(--dl-typography-font-weight);
 
     // important needed below for sizing of h tags.. quasar conflict
     // to deal with quasar conflicts.
@@ -119,6 +126,10 @@ export default defineComponent({
     }
     &--small {
         font-size: var(--dl-font-size-small);
+    }
+
+    &:active {
+        color: var(--dl-typography-color-active, var(--dl-typography-color));
     }
 }
 </style>

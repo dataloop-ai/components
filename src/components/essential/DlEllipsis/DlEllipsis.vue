@@ -36,7 +36,8 @@
             :anchor="tooltipPosition"
             :offset="tooltipOffset"
         >
-            <slot v-if="hasDefaultSlot" name="default" />
+            <span v-if="tooltipText">{{ tooltipText }}</span>
+            <slot v-else-if="hasDefaultSlot" name="default" />
             <span v-else>{{ fullText }}</span>
         </dl-tooltip>
     </div>
@@ -96,6 +97,10 @@ export default defineComponent({
             type: Array,
             default: () => [0, 25]
         },
+        tooltipText: {
+            type: String,
+            default: ''
+        },
         /**
          * Allows to display multiline text
          */
@@ -142,7 +147,7 @@ export default defineComponent({
             return ''
         })
         const shouldShowTooltip = computed(
-            () => hasEllipsis.value && props.tooltip
+            () => props.tooltip && (hasEllipsis.value || !!props.tooltipText)
         )
         const fullText = computed(() => props.text)
 

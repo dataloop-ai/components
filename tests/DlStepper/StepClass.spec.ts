@@ -12,12 +12,14 @@ describe('Step', () => {
     const initialState = {
         active: false,
         subtitle: 'First',
+        subtitleTooltip: '',
         completed: true,
+        optional: false,
         disabled: false,
         disabledTooltip: '',
-        optional: false,
-        warning: '',
         error: '',
+        warning: '',
+        icon: undefined,
         value: '1',
         title: 'One'
     }

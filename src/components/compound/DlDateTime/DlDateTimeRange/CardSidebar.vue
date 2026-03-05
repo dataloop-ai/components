@@ -74,11 +74,12 @@ export default defineComponent({
         white-space: nowrap;
         padding: 7px 10px;
         cursor: pointer;
-        color: var(--dl-color-darker);
+        background-color: var(--dell-white);
+        color: var(--dell-gray-800);
 
         &-active {
-            background-color: var(--dl-color-secondary);
-            color: var(--dl-color-text-buttons);
+            background-color: var(--dell-blue-100);
+            color: var(--dell-blue-600);
         }
 
         &-disabled {
@@ -100,7 +101,23 @@ export default defineComponent({
     }
 }
 
-.card-sidebar--item:not(.card-sidebar--item-disabled):hover {
+.card-sidebar--item:not(.card-sidebar--item-disabled):not(
+        .card-sidebar--item-active
+    ):hover {
+    background-color: var(--dell-blue-100);
+    color: var(--dell-blue-600);
+
+    .card-sidebar--focus_helper {
+        opacity: 0.15;
+    }
+}
+
+.card-sidebar--item:not(.card-sidebar--item-disabled):not(
+        .card-sidebar--item-active
+    ):active {
+    background-color: var(--dell-blue-200);
+    color: var(--dell-blue-600);
+
     .card-sidebar--focus_helper {
         opacity: 0.15;
     }

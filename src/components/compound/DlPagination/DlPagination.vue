@@ -115,15 +115,15 @@ export default defineComponent({
         },
         textColor: {
             type: String,
-            default: 'dl-color-darker'
+            default: 'dell-gray-800'
         },
         activeColor: {
             type: String,
-            default: 'dl-color-secondary'
+            default: 'dell-blue-500'
         },
         activeTextColor: {
             type: String,
-            default: 'dl-color-text-buttons'
+            default: 'dell-white'
         },
         totalItems: {
             type: Number,

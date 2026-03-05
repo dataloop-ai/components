@@ -37,7 +37,7 @@ describe('DlTrend', () => {
             })
             it('should the right computedColor', function () {
                 expect(wrapper.vm.computedColor).toBe(
-                    'var(--dl-color-negative, var(--dl-color-darker))'
+                    'var(--dell-red-500, var(--dell-gray-800))'
                 )
             })
         })
