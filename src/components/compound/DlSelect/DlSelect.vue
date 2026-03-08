@@ -327,7 +327,10 @@
                     </div>
                 </dl-list>
                 <dl-list-item
-                    v-if="hasAfterOptions && (!noOptions || showAfterOptionsWhenEmpty)"
+                    v-if="
+                        hasAfterOptions &&
+                            (!noOptions || showAfterOptionsWhenEmpty)
+                    "
                     :padding="afterOptionsPadding"
                 >
                     <dl-item-section>

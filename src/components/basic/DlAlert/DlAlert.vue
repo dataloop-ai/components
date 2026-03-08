@@ -23,11 +23,7 @@
                     </span>
                 </div>
             </div>
-            <div
-                v-if="$slots.actions"
-                class="actions"
-                data-test="actions"
-            >
+            <div v-if="$slots.actions" class="actions" data-test="actions">
                 <slot name="actions" />
             </div>
             <div
@@ -157,7 +153,10 @@ export default defineComponent({
             type: String,
             required: true,
             validator: (value: string) =>
-                includes(['info', 'success', 'warning', 'error', 'discovery'], value)
+                includes(
+                    ['info', 'success', 'warning', 'error', 'discovery'],
+                    value
+                )
         },
         textColor: {
             type: String,

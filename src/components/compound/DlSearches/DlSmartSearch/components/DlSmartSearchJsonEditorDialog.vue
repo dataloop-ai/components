@@ -4,7 +4,10 @@
             v-model="isOpen"
             :height="500"
             :width="800"
-            style="--dl-dialog-box-footer-padding: 10px 16px; --dl-dialog-box-content-padding: 0"
+            style="
+                --dl-dialog-box-footer-padding: 10px 16px;
+                --dl-dialog-box-content-padding: 0;
+            "
         >
             <template #header>
                 <dl-dialog-box-header
@@ -17,8 +20,8 @@
                 <div class="json-editor-layout">
                     <div class="json-query-menu">
                         <dl-select
-                            :model-value="selectedOption"
                             ref="jsonQueryMenu"
+                            :model-value="selectedOption"
                             width="300px"
                             :options="selectOptions"
                             placeholder="New Query"
@@ -39,7 +42,10 @@
                                     v-if="selectOptions.length < 2"
                                     class="json-query-menu-no-option"
                                     disabled
-                                    style="cursor: default !important; padding: 14px 0 10px 0;"
+                                    style="
+                                        cursor: default !important;
+                                        padding: 14px 0 10px 0;
+                                    "
                                 >
                                     No Saved Queries
                                 </div>
@@ -197,7 +203,8 @@
             </template>
             <template #body>
                 <dl-typography size="h5">
-                    Are you sure you want to permanently delete the following query?
+                    Are you sure you want to permanently delete the following
+                    query?
                     <br />
                     {{ optionToDelete.label }}
                     <br />
@@ -207,9 +214,7 @@
             </template>
             <template #footer>
                 <div class="full-width flex justify-end">
-                    <dl-button @click="deleteQuery">
-                        Delete
-                    </dl-button>
+                    <dl-button @click="deleteQuery"> Delete </dl-button>
                 </div>
             </template>
         </dl-dialog-box>
@@ -287,18 +292,6 @@ export default defineComponent({
         'delete',
         'select'
     ],
-    methods: {
-        onDelete(option: DlSelectOption) {
-            const select = this.$refs['jsonQueryMenu'] as InstanceType<typeof DlSelect>
-            select?.closeMenu()
-            this.optionToDelete = option
-        },
-        onSave() {
-            const select = this.$refs['jsonQueryMenu'] as InstanceType<typeof DlSelect>
-            select?.closeMenu()
-            this.showSaveDialog = true
-        }
-    },
     setup(props, { emit }) {
         const { modelValue, options, json, selectedFilter } = toRefs(props)
 
@@ -497,6 +490,22 @@ export default defineComponent({
             onContentError,
             saveQuery,
             deleteQuery
+        }
+    },
+    methods: {
+        onDelete(option: DlSelectOption) {
+            const select = this.$refs['jsonQueryMenu'] as InstanceType<
+                typeof DlSelect
+            >
+            select?.closeMenu()
+            this.optionToDelete = option
+        },
+        onSave() {
+            const select = this.$refs['jsonQueryMenu'] as InstanceType<
+                typeof DlSelect
+            >
+            select?.closeMenu()
+            this.showSaveDialog = true
         }
     }
 })

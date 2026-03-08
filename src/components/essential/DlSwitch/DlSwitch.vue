@@ -16,10 +16,7 @@
                 {{ leftLabel }}
             </slot>
         </label>
-        <span
-            class="dl-switch-container"
-            :style="`max-height: ${size}px;`"
-        >
+        <span class="dl-switch-container" :style="`max-height: ${size}px;`">
             <input
                 :id="computedId"
                 ref="input"
@@ -29,7 +26,7 @@
                 class="dl-switch-checkbox"
                 :style="cssVars"
                 @change="handleChange"
-            >
+            />
             <label
                 :for="computedId"
                 class="dl-switch"
@@ -191,7 +188,7 @@ export default defineComponent({
             // todo: what the hell ?
             debounce(() => {
                 nextTick(() => {
-                    (this.$refs.input as HTMLInputElement).checked =
+                    ;(this.$refs.input as HTMLInputElement).checked =
                         this.isTrue
                 })
             }, 100)
@@ -203,7 +200,7 @@ export default defineComponent({
                 stopAndPrevent(e)
             }
 
-            (e.target as HTMLInputElement).checked = this.isTrue
+            ;(e.target as HTMLInputElement).checked = this.isTrue
 
             if (!this.disabled) {
                 let newValue: any | any[]

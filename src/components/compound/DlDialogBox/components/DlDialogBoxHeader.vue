@@ -24,15 +24,13 @@
         </div>
         <dl-button
             v-if="closeButton"
-            style="
-                --dl-button-padding: 5px;
-                --dl-button-bg-hover: var(--dl-color-fill-secondary);
-            "
+            style="--dl-button-bg-hover: var(--dl-color-fill-secondary)"
             class="close-button"
             icon="icon-dl-close"
             size="xl"
             flat
             text-color="dl-color-darker"
+            :padding="closeIconSizePadding"
             @click="$emit('onClose')"
         >
             <dl-tooltip :delay="800"> Close </dl-tooltip>
@@ -43,6 +41,7 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue-demi'
 import DlButton from '../../../basic/DlButton/DlButton.vue'
+import { setIconPadding } from '../../../basic/DlButton/utils'
 import { DlEllipsis } from '../../../essential'
 import { DlTooltip } from '../../../shared'
 
@@ -63,7 +62,8 @@ export default defineComponent({
     setup(props, { slots }) {
         const hasTitle = computed(() => !!props.title || !!slots.title)
         const hasSubtitle = computed(() => !!props.subtitle || !!slots.subtitle)
-        return { hasTitle, hasSubtitle }
+        const closeIconSizePadding = `0 0 0 0`
+        return { hasTitle, hasSubtitle, closeIconSizePadding }
     }
 })
 </script>

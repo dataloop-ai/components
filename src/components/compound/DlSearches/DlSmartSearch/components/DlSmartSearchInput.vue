@@ -1111,7 +1111,8 @@ export default defineComponent({
 
         const uuid = v4()
         const watchFocusIn = () => {
-            focused.value = focused.value ||
+            focused.value =
+                focused.value ||
                 !!document.activeElement?.closest(`#DlSmartSearchInput${uuid}`)
         }
 
