@@ -143,6 +143,7 @@ export default defineComponent({
         function showToastMessage() {
             DlToast.open({
                 message: message.value,
+                multiLine: false,
                 position: position.value as DlToastPositions,
                 type: type.value as DlToastTypes,
                 duration: Number(duration.value) || 1000,
