@@ -16,7 +16,7 @@
                     :color="iconColor"
                     :size="iconSize"
                 />
-                <div class="text" :style="textStyle">
+                <div ref="textRef" class="text" :style="textStyle">
                     <slot v-if="!text" />
                     <span v-else>
                         {{ text }}
@@ -208,6 +208,7 @@ export default defineComponent({
         }))
 
         const rootRef = ref(null)
+        const textRef = ref(null)
         const rootStyle = ref()
         const iconStyle = ref()
         const closeButtonStyle = ref()
@@ -245,7 +246,7 @@ export default defineComponent({
                     return
                 }
 
-                const { height } = rootElement.getBoundingClientRect()
+                const textElement = (textRef as Ref<HTMLElement | null>).value
                 const iconS: Record<string, any> = {
                     display: 'flex',
                     alignSelf: 'flex-start',
@@ -277,6 +278,14 @@ export default defineComponent({
                     rootS['--dl-alert-padding'] = padding.value
                 } else {
                     rootS['--dl-alert-padding'] = '8px 16px 8px 12px'
+                }
+
+                if (
+                    textElement?.querySelector(
+                        '.toast-text--single, .toast-text--with-title'
+                    )
+                ) {
+                    iconS.marginTop = '4px'
                 }
 
                 iconStyle.value = iconS
@@ -311,6 +320,7 @@ export default defineComponent({
         return {
             uuid: `dl-alert-${v4()}`,
             rootRef,
+            textRef,
             show,
             icon,
             iconColor,
