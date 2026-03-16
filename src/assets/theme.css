@@ -30,16 +30,16 @@ body {
     --dl-color-transparent: transparent; /* replace to --dell-transparent: transparent */
 
     /* fontSizes */
-    --dl-font-size-h1: 30px;
-    --dl-font-size-h2: 20px;
-    --dl-font-size-h3: 16px;
-    --dl-font-size-h4: 14px;
-    --dl-font-size-h5: 12px;
-    --dl-font-size-h6: 10px;
-    --dl-font-size-body: 12px;
-    --dl-font-size-small: 10px;
-    --dl-font-size-alert: 14px;
-    --dl-font-size-alert-title: 16px;
+    --dl-font-size-h1: 42px; /* typography.header.h1 — replace to --dell-typography-header-h1-font-size: 42px */
+    --dl-font-size-h2: 36px; /* typography.header.h2 — replace to --dell-typography-header-h2-font-size: 36px */
+    --dl-font-size-h3: 16px; /* typography.header.h3 — on hold, no token implementation at this stage */
+    --dl-font-size-h4: 28px; /* typography.header.h4 — replace to --dell-typography-header-h4-font-size: 28px */
+    --dl-font-size-h5: 24px; /* typography.header.h5 — replace to --dell-typography-header-h5-font-size: 24px */
+    --dl-font-size-h6: 18px; /* typography.header.h6.regular — replace to --dell-typography-header-h6-regular-font-size: 18px */
+    --dl-font-size-body: 12px; /* typography.body.body3.regular — replace to --dell-typography-body-body3-regular-font-size: 12px */
+    --dl-font-size-small: 10px; /* no direct typography token mapping */
+    --dl-font-size-alert: 14px; /* typography.body.body2.regular — replace to --dell-typography-body-body2-regular-font-size: 14px */
+    --dl-font-size-alert-title: 16px; /* typography.body.body1.regular — replace to --dell-typography-body-body1-regular-font-size: 16px */
 
     /* shadows */
     --dl-menu-shadow: rgba(0, 0, 0, 0.14); /* replace to --dell-shadow: rgba(0, 0, 0, 0.14); */

@@ -91,4 +91,78 @@
     --dell-berry-500: #A10061;
     --dell-color-discovery: #7F3EE0;
     --dell-color-discovery-bg: #F6F2FD;
+
+    /* Dell Typography Tokens */
+
+    /* Font Families (configurable per typography group) */
+    --dell-font-family-header: 'Roboto', sans-serif;
+    --dell-font-family-body: 'Roboto', sans-serif;
+
+    /* typography.header.h1 */
+    --dell-typography-header-h1-font-family: var(--dell-font-family-header);
+    --dell-typography-header-h1-font-size: 42px;
+    --dell-typography-header-h1-line-height: 48px;
+    --dell-typography-header-h1-font-weight: 400;
+
+    /* typography.header.h2 */
+    --dell-typography-header-h2-font-family: var(--dell-font-family-header);
+    --dell-typography-header-h2-font-size: 36px;
+    --dell-typography-header-h2-line-height: 44px;
+    --dell-typography-header-h2-font-weight: 400;
+
+    /* typography.header.h3 — on hold, no token implementation at this stage */
+
+    /* typography.header.h4 */
+    --dell-typography-header-h4-font-family: var(--dell-font-family-header);
+    --dell-typography-header-h4-font-size: 28px;
+    --dell-typography-header-h4-line-height: 36px;
+    --dell-typography-header-h4-font-weight: 400;
+
+    /* typography.header.h5 */
+    --dell-typography-header-h5-font-family: var(--dell-font-family-header);
+    --dell-typography-header-h5-font-size: 24px;
+    --dell-typography-header-h5-line-height: 32px;
+    --dell-typography-header-h5-font-weight: 400;
+
+    /* typography.header.h6.regular */
+    --dell-typography-header-h6-regular-font-family: var(--dell-font-family-header);
+    --dell-typography-header-h6-regular-font-size: 18px;
+    --dell-typography-header-h6-regular-line-height: 24px;
+    --dell-typography-header-h6-regular-font-weight: 400;
+
+    /* typography.header.h6.medium */
+    --dell-typography-header-h6-medium-font-family: var(--dell-font-family-header);
+    --dell-typography-header-h6-medium-font-size: 18px;
+    --dell-typography-header-h6-medium-line-height: 24px;
+    --dell-typography-header-h6-medium-font-weight: 500;
+
+    /* typography.body.body1.regular */
+    --dell-typography-body-body1-regular-font-family: var(--dell-font-family-body);
+    --dell-typography-body-body1-regular-font-size: 16px;
+    --dell-typography-body-body1-regular-line-height: 24px;
+    --dell-typography-body-body1-regular-font-weight: 400;
+
+    /* typography.body.body1.medium */
+    --dell-typography-body-body1-medium-font-family: var(--dell-font-family-body);
+    --dell-typography-body-body1-medium-font-size: 16px;
+    --dell-typography-body-body1-medium-line-height: 24px;
+    --dell-typography-body-body1-medium-font-weight: 500;
+
+    /* typography.body.body2.regular */
+    --dell-typography-body-body2-regular-font-family: var(--dell-font-family-body);
+    --dell-typography-body-body2-regular-font-size: 14px;
+    --dell-typography-body-body2-regular-line-height: 20px;
+    --dell-typography-body-body2-regular-font-weight: 400;
+
+    /* typography.body.body2.medium */
+    --dell-typography-body-body2-medium-font-family: var(--dell-font-family-body);
+    --dell-typography-body-body2-medium-font-size: 14px;
+    --dell-typography-body-body2-medium-line-height: 20px;
+    --dell-typography-body-body2-medium-font-weight: 500;
+
+    /* typography.body.body3.regular */
+    --dell-typography-body-body3-regular-font-family: var(--dell-font-family-body);
+    --dell-typography-body-body3-regular-font-size: 12px;
+    --dell-typography-body-body3-regular-line-height: 18px;
+    --dell-typography-body-body3-regular-font-weight: 400;
 }
