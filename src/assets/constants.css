@@ -91,4 +91,62 @@
     --dell-berry-500: #A10061;
     --dell-color-discovery: #7F3EE0;
     --dell-color-discovery-bg: #F6F2FD;
+
+    /* Typography – Font Families (per group, configurable independently) */
+    --dl-typography-font-family-header: 'Roboto', sans-serif;
+    --dl-typography-font-family-body: 'Roboto', sans-serif;
+
+    /* Typography – Header 1 */
+    --dl-typography-header-h1-font-family: var(--dl-typography-font-family-header);
+    --dl-typography-header-h1-font-size: 42px;
+    --dl-typography-header-h1-line-height: 48px;
+    --dl-typography-header-h1-font-weight: 400;
+
+    /* Typography – Header 2: on hold */
+    /* Typography – Header 3: on hold */
+
+    /* Typography – Header 4 */
+    --dl-typography-header-h4-font-family: var(--dl-typography-font-family-header);
+    --dl-typography-header-h4-font-size: 28px;
+    --dl-typography-header-h4-line-height: 36px;
+    --dl-typography-header-h4-font-weight: 400;
+
+    /* Typography – Header 5 */
+    --dl-typography-header-h5-font-family: var(--dl-typography-font-family-header);
+    --dl-typography-header-h5-font-size: 24px;
+    --dl-typography-header-h5-line-height: 32px;
+    --dl-typography-header-h5-font-weight: 400;
+
+    /* Typography – Header 6 – Regular */
+    --dl-typography-header-h6-font-family: var(--dl-typography-font-family-header);
+    --dl-typography-header-h6-font-size: 18px;
+    --dl-typography-header-h6-line-height: 24px;
+    --dl-typography-header-h6-font-weight: 400;
+
+    /* Typography – Header 6 – Medium */
+    --dl-typography-header-h6-medium-font-weight: 500;
+
+    /* Typography – Body 1 – Regular */
+    --dl-typography-body-body1-font-family: var(--dl-typography-font-family-body);
+    --dl-typography-body-body1-font-size: 16px;
+    --dl-typography-body-body1-line-height: 24px;
+    --dl-typography-body-body1-font-weight: 400;
+
+    /* Typography – Body 1 – Medium */
+    --dl-typography-body-body1-medium-font-weight: 500;
+
+    /* Typography – Body 2 – Regular */
+    --dl-typography-body-body2-font-family: var(--dl-typography-font-family-body);
+    --dl-typography-body-body2-font-size: 14px;
+    --dl-typography-body-body2-line-height: 20px;
+    --dl-typography-body-body2-font-weight: 400;
+
+    /* Typography – Body 2 – Medium */
+    --dl-typography-body-body2-medium-font-weight: 500;
+
+    /* Typography – Body 3 – Regular */
+    --dl-typography-body-body3-font-family: var(--dl-typography-font-family-body);
+    --dl-typography-body-body3-font-size: 12px;
+    --dl-typography-body-body3-line-height: 18px;
+    --dl-typography-body-body3-font-weight: 400;
 }
