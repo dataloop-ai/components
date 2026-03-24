@@ -73,7 +73,7 @@
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :text="computedStatus.message"
-                :color="computedStatus.type === 'error' ? 'red' : 'gray'"
+                :color="computedStatus.type === 'error' ? 'var(--dell-red-500)' : 'gray'"
                 :style="labelStyles"
             />
         </div>
@@ -1037,7 +1037,7 @@ export default defineComponent({
 
         const labelStyles = computed<Record<string, string | number>>(() => {
             return {
-                color: computedStatus.value.type === 'error' ? 'red' : 'gray'
+                color: computedStatus.value.type === 'error' ? 'var(--dell-red-500)' : 'gray'
             }
         })
 
