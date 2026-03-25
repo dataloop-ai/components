@@ -489,6 +489,39 @@ describe('dl-select computed', () => {
             ).toBe(true)
         })
     })
+
+    describe('when using showPrepend prop', () => {
+        it('should show prepend adornment by default when searchable', () => {
+            const wrapper = mount(DlSelect, {
+                props: {
+                    searchable: true
+                }
+            })
+            expect(wrapper.vm.hasLeftAdornment).toBe(true)
+        })
+
+        it('should hide prepend adornment when showPrepend is false', () => {
+            const wrapper = mount(DlSelect, {
+                props: {
+                    searchable: true,
+                    showPrepend: false
+                }
+            })
+            expect(wrapper.vm.hasLeftAdornment).toBe(false)
+        })
+
+        it('should not add prepend classes when showPrepend is false', async () => {
+            const wrapper = mount(DlSelect, {
+                props: {
+                    searchable: true,
+                    showPrepend: false
+                }
+            })
+            expect(wrapper.vm.selectClasses).not.toContain(
+                'dl_select__select--prepend'
+            )
+        })
+    })
 })
 
 describe('DlSelect', () => {
