@@ -565,7 +565,7 @@ export default defineComponent({
     padding: var(--dl-button-padding);
     margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--dl-typography-font-family-body);
     font-size: var(--dl-button-font-size);
     cursor: var(--dl-button-cursor);
     color: var(--dl-button-text-color);
