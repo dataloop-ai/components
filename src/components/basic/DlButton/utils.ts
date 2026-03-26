@@ -39,10 +39,10 @@ const maxHeights: { [key: string]: string } = {
 }
 
 const fontSizes: { [key: string]: string } = {
-    s: '12px',
-    m: '14px',
-    l: '16px',
-    xl: '18px'
+    s: 'var(--dl-typography-body-body3-font-size)',
+    m: 'var(--dl-typography-body-body2-font-size)',
+    l: 'var(--dl-typography-body-body1-font-size)',
+    xl: 'var(--dl-typography-header-h6-font-size)'
 }
 
 export interface DlButtonProps {
