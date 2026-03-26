@@ -52,7 +52,7 @@
         >
             <div ref="select" :class="selectClasses">
                 <div
-                    v-if="hasPrepend || searchable"
+                    v-if="hasLeftAdornment"
                     :class="[
                         ...adornmentClasses,
                         'adornment-container--pos-left'
@@ -444,6 +444,7 @@ export default defineComponent({
         withoutBorders: { type: Boolean, default: false },
         title: { type: String, default: '' },
         searchable: { type: Boolean, default: false },
+        showPrepend: { type: Boolean, default: true },
         customFilter: { type: Boolean, default: false },
         required: { type: Boolean, default: false },
         optional: { type: Boolean, default: false },
@@ -894,7 +895,7 @@ export default defineComponent({
             if (this.withoutBorders && this.hasPrepend) {
                 classes.push('dl_select__select--without-border__with-prepend')
             }
-            if (this.hasPrepend || this.searchable) {
+            if (this.hasLeftAdornment) {
                 classes.push('dl_select__select--prepend')
                 classes.push('dl_select__select--both-adornments')
             }
@@ -942,6 +943,9 @@ export default defineComponent({
         },
         hasPrepend(): boolean {
             return !!this.$slots.prepend && !this.isSmall
+        },
+        hasLeftAdornment(): boolean {
+            return this.showPrepend && (this.hasPrepend || this.searchable)
         },
         chevronIconColor(): string {
             return `${this.disabled ? 'dell-gray-500' : null}`

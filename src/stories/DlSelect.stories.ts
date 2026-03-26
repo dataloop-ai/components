@@ -153,6 +153,21 @@ export const SelectWithSearch: Story = {
     }
 }
 
+export const SearchableWithoutPrependIcon: Story = {
+    args: {
+        size: 'm',
+        searchable: true,
+        showPrepend: false,
+        emitValue: true,
+        width: '300px',
+        options: [
+            { label: 'Contributor 1', value: 'c1' },
+            { label: 'Contributor 2', value: 'c2' },
+            { label: 'Contributor 3', value: 'c3' }
+        ]
+    }
+}
+
 export const SelectWithChildren: Story = {
     args: {
         size: 'm',
