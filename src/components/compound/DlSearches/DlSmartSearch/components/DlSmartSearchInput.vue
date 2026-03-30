@@ -41,6 +41,8 @@
                         <dl-button
                             icon="icon-dl-close"
                             size="m"
+                            text-color="dell-gray-600"
+                            hover-text-color="var(--dell-gray-800)"
                             flat
                             :disabled="disabled"
                             @mousedown="onClear"
@@ -73,7 +75,11 @@
                 ref="label"
                 class="dl-smart-search-input__search-label"
                 :text="computedStatus.message"
-                :color="computedStatus.type === 'error' ? 'var(--dell-red-500)' : 'gray'"
+                :color="
+                    computedStatus.type === 'error'
+                        ? 'var(--dell-red-500)'
+                        : 'gray'
+                "
                 :style="labelStyles"
             />
         </div>
@@ -1037,7 +1043,10 @@ export default defineComponent({
 
         const labelStyles = computed<Record<string, string | number>>(() => {
             return {
-                color: computedStatus.value.type === 'error' ? 'var(--dell-red-500)' : 'gray'
+                color:
+                    computedStatus.value.type === 'error'
+                        ? 'var(--dell-red-500)'
+                        : 'gray'
             }
         })
 
@@ -1414,7 +1423,6 @@ export default defineComponent({
         }
         ::v-deep .dl-button {
             padding: 0px;
-            color: var(--dl-color-darker);
         }
     }
 
