@@ -104,7 +104,8 @@
                                     ref="input-clear-button"
                                     icon="icon-dl-close"
                                     size="m"
-                                    text-color="dl-color-darker"
+                                    text-color="dell-gray-600"
+                                    hover-text-color="var(--dell-gray-800)"
                                     flat
                                     fluid
                                     @click="onClear"
