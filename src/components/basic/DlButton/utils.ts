@@ -45,6 +45,20 @@ const fontSizes: { [key: string]: string } = {
     xl: 'var(--dl-typography-header-h6-font-size)'
 }
 
+const lineHeights: { [key: string]: string } = {
+    s: 'var(--dl-typography-body-body3-line-height)',
+    m: 'var(--dl-typography-body-body2-line-height)',
+    l: 'var(--dl-typography-body-body1-line-height)',
+    xl: 'var(--dl-typography-header-h6-line-height)'
+}
+
+const fontWeights: { [key: string]: string } = {
+    s: 'var(--dl-typography-body-body3-font-weight)',
+    m: 'var(--dl-typography-body-body2-font-weight)',
+    l: 'var(--dl-typography-body-body1-font-weight)',
+    xl: 'var(--dl-typography-header-h6-font-weight)'
+}
+
 export interface DlButtonProps {
     disabled: boolean
     outlined: boolean
@@ -67,6 +81,12 @@ export const setIconPadding = (
 
 export const setFontSize = (size: ButtonSizes | string): string | undefined =>
     fontSizes[size]
+
+export const setLineHeight = (size: ButtonSizes | string): string | undefined =>
+    lineHeights[size]
+
+export const setFontWeight = (size: ButtonSizes | string): string | undefined =>
+    fontWeights[size]
 
 export const setMaxHeight = (size: ButtonSizes | string): string | undefined =>
     maxHeights[size]

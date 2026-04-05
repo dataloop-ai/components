@@ -76,7 +76,9 @@ import {
     setTextOnPressed,
     setIconSize,
     setIconPadding,
-    setMaxHeight
+    setMaxHeight,
+    setLineHeight,
+    setFontWeight
 } from './utils'
 import type { ButtonSizes } from './utils'
 import { computed, defineComponent, PropType, ref, toRefs } from 'vue-demi'
@@ -491,6 +493,8 @@ export default defineComponent({
                     : setPadding(this.size),
                 '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
+                '--dl-button-line-height': setLineHeight(this.size),
+                '--dl-button-font-weight': setFontWeight(this.size),
                 '--dl-button-cursor': this.isActionable
                     ? 'pointer'
                     : 'not-allowed',
@@ -567,6 +571,8 @@ export default defineComponent({
     border-radius: var(--dl-button-border-radius);
     font-family: var(--dl-typography-font-family-body);
     font-size: var(--dl-button-font-size);
+    line-height: var(--dl-button-line-height, 1);
+    font-weight: var(--dl-button-font-weight, 400);
     cursor: var(--dl-button-cursor);
     color: var(--dl-button-text-color);
     background-color: var(--dl-button-bg);
@@ -628,7 +634,7 @@ export default defineComponent({
     padding: 0;
     flex: 10000 1 0%;
     flex-wrap: nowrap;
-    line-height: 1;
+    line-height: inherit;
     z-index: 0;
     user-select: none !important;
     gap: var(--dl-button-content-gap, 7px);
