@@ -214,13 +214,6 @@ export default defineComponent({
     &:active {
         background-color: var(--dl-list-item-active);
     }
-    :deep(.dl-item__section) {
-        font-size: inherit;
-        line-height: inherit;
-    }
-    :deep(.checkbox-label) {
-        font-size: inherit;
-    }
 }
 
 .separator {

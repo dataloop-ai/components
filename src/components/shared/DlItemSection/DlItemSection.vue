@@ -1,9 +1,5 @@
 <template>
-    <div
-        :id="uuid"
-        :style="cssVars"
-        :class="classes"
-    >
+    <div :id="uuid" :style="cssVars" :class="classes">
         <slot />
     </div>
 </template>
@@ -55,7 +51,10 @@ export default defineComponent({
 .dl-item__section {
     padding-left: 0;
     padding-right: 0;
-    font-size: var(--dl-font-size-body);
+    font-family: var(--dl-typography-body-body2-font-family);
+    font-size: var(--dl-typography-body-body2-font-size);
+    line-height: var(--dl-typography-body-body2-line-height);
+    font-weight: var(--dl-typography-body-body2-font-weight);
     color: var(--dl-item-color);
     min-width: 0;
     justify-content: flex-start;

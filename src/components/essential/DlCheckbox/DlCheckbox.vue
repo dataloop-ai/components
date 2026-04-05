@@ -277,7 +277,7 @@ input {
 }
 
 .checkbox-label {
-    font-size: var(--dl-font-size-body);
+    font-size: var(--dl-typography-body-body2-font-size);
     color: var(--dell-gray-800);
     overflow-wrap: break-word;
     width: 100%;
