@@ -214,6 +214,9 @@ export default defineComponent({
     &:active {
         background-color: var(--dl-list-item-active);
     }
+    :deep(.checkbox-label) {
+        font-size: inherit;
+    }
 }
 
 .separator {
