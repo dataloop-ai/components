@@ -1,9 +1,5 @@
 <template>
-    <component
-        :is="type"
-        :id="uuid"
-        class="list-item-wrapper"
-    >
+    <component :is="type" :id="uuid" class="list-item-wrapper">
         <div
             v-wave="!disabled && withWave"
             :class="[
@@ -17,11 +13,7 @@
             @click="onClick"
         >
             <slot name="prefix">
-                <dl-item-section
-                    v-if="startIcon"
-                    side
-                    style="display: flex"
-                >
+                <dl-item-section v-if="startIcon" side style="display: flex">
                     <dl-icon
                         :icon="startIconData.icon"
                         :color="getIconColor(startIconData.color)"
@@ -31,11 +23,7 @@
             </slot>
             <slot />
             <slot name="suffix">
-                <dl-item-section
-                    v-if="endIcon"
-                    side
-                    style="display: flex"
-                >
+                <dl-item-section v-if="endIcon" side style="display: flex">
                     <dl-icon
                         :icon="endIconData.icon"
                         :color="getIconColor(endIconData.color)"
@@ -215,8 +203,10 @@ export default defineComponent({
     min-height: var(--dl-list-item-height);
     height: 100%;
     padding: var(--dl-list-item-padding);
-    font-size: var(--dl-font-size-body);
-    line-height: 14px;
+    font-family: var(--dl-typography-body-body2-font-family);
+    font-size: var(--dl-typography-body-body2-font-size);
+    line-height: var(--dl-typography-body-body2-line-height);
+    font-weight: var(--dl-typography-body-body2-font-weight);
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     &:hover {
         background-color: var(--dl-list-item-hover);
