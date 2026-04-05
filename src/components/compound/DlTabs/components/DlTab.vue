@@ -136,6 +136,7 @@ export default defineComponent({
         }
     }
     &--simple {
+        padding: 12.5px 16px;
         font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-tab-font-size);
         line-height: var(--dl-typography-body-body2-line-height);
