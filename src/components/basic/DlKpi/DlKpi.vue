@@ -86,7 +86,7 @@ export default defineComponent({
         },
         titleFontSize: {
             type: String,
-            default: '16px',
+            default: 'body1',
             required: false
         },
         subtitle: {
@@ -96,7 +96,7 @@ export default defineComponent({
         },
         subtitleFontSize: {
             type: String,
-            default: '12px',
+            default: 'body3',
             required: false
         },
         infoMessage: {
@@ -160,7 +160,7 @@ export default defineComponent({
             props.small ? '20px' : props.counterFontSize
         )
         const titleFontSizeComputed = computed(() =>
-            props.small ? '14px' : props.titleFontSize
+            props.small ? 'body2' : props.titleFontSize
         )
 
         const typographyStyles = computed<Record<string, string>>(() => {
@@ -287,9 +287,6 @@ export default defineComponent({
             max-width: var(--dl-kpi-max-width, var(--dl-kpi-title-max-width));
             max-height: 40px;
             font-style: normal;
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 19px;
             text-transform: capitalize;
             text-align: center;
             overflow: hidden;
@@ -302,9 +299,6 @@ export default defineComponent({
             );
             max-height: 40px;
             font-style: normal;
-            font-weight: 400;
-            font-size: 12px;
-            line-height: 19px;
             text-transform: capitalize;
             text-align: center;
             overflow: hidden;

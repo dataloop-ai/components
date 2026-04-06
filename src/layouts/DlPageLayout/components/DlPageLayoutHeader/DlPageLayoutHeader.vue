@@ -1,19 +1,13 @@
 <template>
     <div class="page-layout-header">
         <div class="page-layout-header__title-container">
-            <dl-typography
-                color="dl-color-lighter"
-                variant="h6"
-            >
+            <dl-typography color="dl-color-lighter" variant="h6">
                 <slot name="subtitle">
                     {{ subTitle }}
                 </slot>
             </dl-typography>
             <div class="page-layout-header__title">
-                <dl-typography
-                    color="dl-color-darker"
-                    variant="h1"
-                >
+                <dl-typography color="dl-color-darker" variant="h1">
                     <slot name="title">
                         {{ title }}
                     </slot>
@@ -21,13 +15,10 @@
                 <slot name="actions" />
             </div>
         </div>
-        <div
-            v-if="counters.length > 0"
-            class="page-layout-header__counters"
-        >
+        <div v-if="counters.length > 0" class="page-layout-header__counters">
             <dl-counters
                 counter-font-size="20px"
-                title-font-size="12px"
+                title-font-size="body3"
                 :items="counters"
             />
         </div>

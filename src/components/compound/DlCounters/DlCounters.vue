@@ -1,15 +1,7 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-counters-container"
-        :style="cssVars"
-    >
+    <div :id="uuid" class="dl-counters-container" :style="cssVars">
         <ul>
-            <li
-                v-for="(item, index) in items"
-                :key="index"
-                class="item"
-            >
+            <li v-for="(item, index) in items" :key="index" class="item">
                 <div :class="computeClass('item-content')">
                     <dl-kpi
                         :counter="kpiValue(item)"
@@ -64,11 +56,11 @@ export default defineComponent({
         },
         titleFontSize: {
             type: String,
-            default: '16px'
+            default: 'body1'
         },
         subtitleFontSize: {
             type: String,
-            default: '12px'
+            default: 'body3'
         },
         dense: Boolean
     },
