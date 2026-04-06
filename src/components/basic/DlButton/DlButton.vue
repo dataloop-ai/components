@@ -563,8 +563,6 @@ export default defineComponent({
 
 .dl-button {
     padding: var(--dl-button-padding);
-    padding-top: 0;
-    padding-bottom: 0;
     margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
     font-family: var(--dl-typography-body-body2-font-family);
@@ -575,7 +573,8 @@ export default defineComponent({
     background-color: var(--dl-button-bg);
     border: 1px solid var(--dl-button-border);
     width: var(--dl-button-width);
-    height: var(--dl-button-max-height, auto);
+    max-height: var(--dl-button-max-height);
+    height: auto;
     display: inline-flex;
     flex-direction: column;
     align-items: stretch;
@@ -634,10 +633,6 @@ export default defineComponent({
     z-index: 0;
     user-select: none !important;
     gap: var(--dl-button-content-gap, 7px);
-}
-
-.dl-button-label {
-    line-height: var(--dl-typography-body-body2-line-height);
 }
 
 .dl-button-icon {
