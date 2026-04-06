@@ -10,10 +10,10 @@ export enum ButtonSizes {
 }
 
 const paddings: { [key: string]: string } = {
-    s: '4px 16px',
-    m: '6px 16px',
-    l: '6px 16px',
-    xl: '9px 16px'
+    s: '7px 16px',
+    m: '9px 16px',
+    l: '10px 16px',
+    xl: '12px 16px'
 }
 
 const iconPaddings: { [key: string]: string } = {

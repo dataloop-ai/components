@@ -571,7 +571,6 @@ export default defineComponent({
     border-radius: var(--dl-button-border-radius);
     font-family: var(--dl-typography-font-family-body);
     font-size: var(--dl-button-font-size);
-    line-height: var(--dl-button-line-height, 1);
     font-weight: var(--dl-button-font-weight, 400);
     cursor: var(--dl-button-cursor);
     color: var(--dl-button-text-color);
@@ -634,10 +633,14 @@ export default defineComponent({
     padding: 0;
     flex: 10000 1 0%;
     flex-wrap: nowrap;
-    line-height: inherit;
+    line-height: 1;
     z-index: 0;
     user-select: none !important;
     gap: var(--dl-button-content-gap, 7px);
+}
+
+.dl-button-label {
+    line-height: var(--dl-button-line-height, 1);
 }
 
 .dl-button-icon {
