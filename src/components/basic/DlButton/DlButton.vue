@@ -568,6 +568,7 @@ export default defineComponent({
     font-family: var(--dl-typography-body-body2-font-family);
     font-size: var(--dl-button-font-size);
     font-weight: var(--dl-typography-body-body2-font-weight);
+    letter-spacing: 0;
     cursor: var(--dl-button-cursor);
     color: var(--dl-button-text-color);
     background-color: var(--dl-button-bg);
@@ -633,6 +634,10 @@ export default defineComponent({
     z-index: 0;
     user-select: none !important;
     gap: var(--dl-button-content-gap, 7px);
+}
+
+.dl-button-label {
+    line-height: var(--dl-typography-body-body2-line-height);
 }
 
 .dl-button-icon {
