@@ -563,6 +563,8 @@ export default defineComponent({
 
 .dl-button {
     padding: var(--dl-button-padding);
+    padding-top: 0;
+    padding-bottom: 0;
     margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
     font-family: var(--dl-typography-body-body2-font-family);
@@ -573,8 +575,7 @@ export default defineComponent({
     background-color: var(--dl-button-bg);
     border: 1px solid var(--dl-button-border);
     width: var(--dl-button-width);
-    max-height: var(--dl-button-max-height);
-    height: auto;
+    height: var(--dl-button-max-height, auto);
     display: inline-flex;
     flex-direction: column;
     align-items: stretch;
