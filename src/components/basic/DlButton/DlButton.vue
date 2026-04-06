@@ -76,9 +76,7 @@ import {
     setTextOnPressed,
     setIconSize,
     setIconPadding,
-    setMaxHeight,
-    setLineHeight,
-    setFontWeight
+    setMaxHeight
 } from './utils'
 import type { ButtonSizes } from './utils'
 import { computed, defineComponent, PropType, ref, toRefs } from 'vue-demi'
@@ -493,8 +491,6 @@ export default defineComponent({
                     : setPadding(this.size),
                 '--dl-button-margin': this.margin,
                 '--dl-button-font-size': setFontSize(this.size),
-                '--dl-button-line-height': setLineHeight(this.size),
-                '--dl-button-font-weight': setFontWeight(this.size),
                 '--dl-button-cursor': this.isActionable
                     ? 'pointer'
                     : 'not-allowed',
@@ -569,9 +565,9 @@ export default defineComponent({
     padding: var(--dl-button-padding);
     margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
-    font-family: var(--dl-typography-font-family-body);
+    font-family: var(--dl-typography-body-body2-font-family);
     font-size: var(--dl-button-font-size);
-    font-weight: var(--dl-button-font-weight, 400);
+    font-weight: var(--dl-typography-body-body2-font-weight);
     cursor: var(--dl-button-cursor);
     color: var(--dl-button-text-color);
     background-color: var(--dl-button-bg);
@@ -640,7 +636,7 @@ export default defineComponent({
 }
 
 .dl-button-label {
-    line-height: var(--dl-button-line-height, 1);
+    line-height: var(--dl-typography-body-body2-line-height);
 }
 
 .dl-button-icon {
