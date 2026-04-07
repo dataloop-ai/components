@@ -17,8 +17,9 @@
         </div>
         <div v-if="counters.length > 0" class="page-layout-header__counters">
             <dl-counters
-                counter-font-size="20px"
+                counter-font-size="header6"
                 title-font-size="body3"
+                :show-divider="showDivider"
                 :items="counters"
             />
         </div>
@@ -48,6 +49,10 @@ export default defineComponent({
         counters: {
             type: Array as PropType<DlCounterItem[]>,
             default: () => [] as DlCounterItem[]
+        },
+        showDivider: {
+            type: Boolean,
+            default: true
         }
     }
 })
