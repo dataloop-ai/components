@@ -16,7 +16,7 @@
                         :dense="dense"
                     />
                 </div>
-                <div class="divider" />
+                <div v-if="showDivider" class="divider" />
             </li>
         </ul>
     </div>
@@ -62,7 +62,11 @@ export default defineComponent({
             type: String,
             default: 'body3'
         },
-        dense: Boolean
+        dense: Boolean,
+        showDivider: {
+            type: Boolean,
+            default: true
+        }
     },
     data() {
         return {
@@ -110,11 +114,11 @@ export default defineComponent({
 
 ul {
     list-style-type: none;
-    overflow: hidden;
     margin: 0;
     padding: 0;
     display: flex;
     align-items: stretch;
+    gap: var(--dl-counter-gap, 0px);
 
     .item {
         display: flex;
@@ -125,12 +129,13 @@ ul {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-left: var(--dl-counter-spacing);
-        padding-right: var(--dl-counter-spacing);
+        padding: var(--dl-counter-cell-padding, 0 var(--dl-counter-spacing));
 
         &--small {
-            padding-left: var(--dl-counter-spacing);
-            padding-right: var(--dl-counter-spacing);
+            padding: var(
+                --dl-counter-cell-padding,
+                0 var(--dl-counter-spacing)
+            );
         }
     }
 
@@ -178,7 +183,6 @@ ul {
     }
 
     li {
-        float: left;
         text-decoration: none;
         position: relative;
 

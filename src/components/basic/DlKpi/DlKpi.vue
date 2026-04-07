@@ -278,7 +278,7 @@ export default defineComponent({
         align-items: center;
         width: 100%;
         justify-content: center;
-        padding-top: 6px;
+        padding-top: var(--dl-kpi-title-padding-top, 6px);
         color: var(--dl-color-darker);
 
         &__text {

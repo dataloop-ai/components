@@ -65,9 +65,10 @@ export default defineComponent({
     &__title-container {
         display: flex;
         height: 100%;
-        padding-left: 25px;
-        flex-direction: column;
-        justify-content: center;
+        padding-left: var(--dl-page-layout-header-title-padding-left, 25px);
+        padding-top: var(--dl-page-layout-header-title-padding-top, 0px);
+        justify-content: var(--dl-page-layout-header-title-justify, center);
+        box-sizing: border-box;
         flex-grow: 1;
     }
 
