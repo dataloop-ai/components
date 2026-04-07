@@ -73,6 +73,7 @@ export default defineComponent({
         padding-left: var(--dl-page-layout-header-title-padding-left, 25px);
         padding-top: var(--dl-page-layout-header-title-padding-top, 0px);
         justify-content: var(--dl-page-layout-header-title-justify, center);
+        flex-direction: column;
         box-sizing: border-box;
         flex-grow: 1;
     }
