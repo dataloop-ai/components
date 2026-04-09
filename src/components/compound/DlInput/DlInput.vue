@@ -1467,6 +1467,10 @@ export default defineComponent({
             ::v-deep .dl-icon {
                 color: var(--dell-blue-500);
             }
+
+            .dl-input__adornment-container--clear ::v-deep .dl-icon {
+                color: var(--dl-icon-color);
+            }
         }
 
         &--error {
