@@ -50,7 +50,10 @@ export default defineComponent({
         showTooltip: { type: Boolean, default: false },
         tooltip: { type: String, default: null },
         tabindex: { type: String, default: '0' },
-        fontSize: { type: String, default: '18px' },
+        fontSize: {
+            type: String,
+            default: 'var(--dl-typography-body-body2-font-size)'
+        },
         bordered: { type: Boolean, default: true },
         icon: { type: String, default: '' }
     },
@@ -133,7 +136,11 @@ export default defineComponent({
         }
     }
     &--simple {
+        padding: 12.5px 16px;
+        font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-tab-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         border-bottom: 1px solid var(--dl-color-separator);
         &.active {
             border-color: var(--dl-color-secondary);
@@ -141,8 +148,10 @@ export default defineComponent({
     }
     &--vertical {
         padding: 5px 10px;
+        font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-tab-font-size);
-        line-height: 14px;
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         border-color: var(--dl-color-separator) !important;
         &:not(:last-child) {
             border-right: 1px solid var(--dl-color-separator);

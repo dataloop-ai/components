@@ -565,8 +565,9 @@ export default defineComponent({
     padding: var(--dl-button-padding);
     margin: var(--dl-button-margin);
     border-radius: var(--dl-button-border-radius);
-    font-family: var(--dl-typography-font-family-body);
+    font-family: var(--dl-typography-body-body2-font-family);
     font-size: var(--dl-button-font-size);
+    font-weight: var(--dl-typography-body-body2-font-weight);
     cursor: var(--dl-button-cursor);
     color: var(--dl-button-text-color);
     background-color: var(--dl-button-bg);
