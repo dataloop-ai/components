@@ -68,7 +68,10 @@ export default defineComponent({
         fluid: { type: Boolean, default: false },
         disabled: { type: Boolean, default: false },
         modelValue: { type: String, required: true },
-        fontSize: { type: String, default: '18px' },
+        fontSize: {
+            type: String,
+            default: 'var(--dl-typography-body-body2-font-size)'
+        },
         gap: { type: String, default: '40px' },
         bordered: { type: Boolean, default: true }
     },

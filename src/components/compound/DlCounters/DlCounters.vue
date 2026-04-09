@@ -1,15 +1,7 @@
 <template>
-    <div
-        :id="uuid"
-        class="dl-counters-container"
-        :style="cssVars"
-    >
+    <div :id="uuid" class="dl-counters-container" :style="cssVars">
         <ul>
-            <li
-                v-for="(item, index) in items"
-                :key="index"
-                class="item"
-            >
+            <li v-for="(item, index) in items" :key="index" class="item">
                 <div :class="computeClass('item-content')">
                     <dl-kpi
                         :counter="kpiValue(item)"
@@ -24,7 +16,7 @@
                         :dense="dense"
                     />
                 </div>
-                <div class="divider" />
+                <div v-if="showDivider" class="divider" />
             </li>
         </ul>
     </div>
@@ -64,13 +56,17 @@ export default defineComponent({
         },
         titleFontSize: {
             type: String,
-            default: '16px'
+            default: 'body1'
         },
         subtitleFontSize: {
             type: String,
-            default: '12px'
+            default: 'body3'
         },
-        dense: Boolean
+        dense: Boolean,
+        showDivider: {
+            type: Boolean,
+            default: true
+        }
     },
     data() {
         return {
@@ -118,11 +114,11 @@ export default defineComponent({
 
 ul {
     list-style-type: none;
-    overflow: hidden;
     margin: 0;
     padding: 0;
     display: flex;
     align-items: stretch;
+    gap: var(--dl-counter-gap, 0px);
 
     .item {
         display: flex;
@@ -133,12 +129,13 @@ ul {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-left: var(--dl-counter-spacing);
-        padding-right: var(--dl-counter-spacing);
+        padding: var(--dl-counter-cell-padding, 0 var(--dl-counter-spacing));
 
         &--small {
-            padding-left: var(--dl-counter-spacing);
-            padding-right: var(--dl-counter-spacing);
+            padding: var(
+                --dl-counter-cell-padding,
+                0 var(--dl-counter-spacing)
+            );
         }
     }
 
@@ -186,7 +183,6 @@ ul {
     }
 
     li {
-        float: left;
         text-decoration: none;
         position: relative;
 

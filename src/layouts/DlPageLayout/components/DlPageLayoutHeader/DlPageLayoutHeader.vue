@@ -1,19 +1,13 @@
 <template>
     <div class="page-layout-header">
         <div class="page-layout-header__title-container">
-            <dl-typography
-                color="dl-color-lighter"
-                variant="h6"
-            >
+            <dl-typography color="dl-color-lighter" variant="h6">
                 <slot name="subtitle">
                     {{ subTitle }}
                 </slot>
             </dl-typography>
             <div class="page-layout-header__title">
-                <dl-typography
-                    color="dl-color-darker"
-                    variant="h1"
-                >
+                <dl-typography color="dl-color-darker" variant="h1">
                     <slot name="title">
                         {{ title }}
                     </slot>
@@ -21,13 +15,11 @@
                 <slot name="actions" />
             </div>
         </div>
-        <div
-            v-if="counters.length > 0"
-            class="page-layout-header__counters"
-        >
+        <div v-if="counters.length > 0" class="page-layout-header__counters">
             <dl-counters
-                counter-font-size="20px"
-                title-font-size="12px"
+                counter-font-size="header6"
+                title-font-size="body3"
+                :show-divider="showDivider"
                 :items="counters"
             />
         </div>
@@ -57,6 +49,10 @@ export default defineComponent({
         counters: {
             type: Array as PropType<DlCounterItem[]>,
             default: () => [] as DlCounterItem[]
+        },
+        showDivider: {
+            type: Boolean,
+            default: true
         }
     }
 })
@@ -74,9 +70,11 @@ export default defineComponent({
     &__title-container {
         display: flex;
         height: 100%;
-        padding-left: 25px;
+        padding-left: var(--dl-page-layout-header-title-padding-left, 25px);
+        padding-top: var(--dl-page-layout-header-title-padding-top, 0px);
+        justify-content: var(--dl-page-layout-header-title-justify, center);
         flex-direction: column;
-        justify-content: center;
+        box-sizing: border-box;
         flex-grow: 1;
     }
 
