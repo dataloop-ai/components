@@ -142,6 +142,10 @@ export default defineComponent({
     }
     &--quick_nav_link {
         margin-left: 5px;
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
     }
 }
 
