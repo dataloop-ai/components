@@ -86,5 +86,9 @@ export default defineComponent({
     min-width: min-content;
     overflow-y: scroll;
     align-items: center;
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
 }
 </style>
