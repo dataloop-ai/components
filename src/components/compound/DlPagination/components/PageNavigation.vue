@@ -169,7 +169,7 @@ export default defineComponent({
             return this.value === this.max
         },
         buttonMinWidth(): string {
-            return `3em`
+            return `20px`
         },
         cssVars(): Record<string, any> {
             return {
@@ -297,9 +297,10 @@ export default defineComponent({
         text-align: center;
         width: 20px;
         height: 20px;
-        font-size: 12px;
-        line-height: 14px;
-        font-weight: 400;
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         white-space: nowrap;
     }
 

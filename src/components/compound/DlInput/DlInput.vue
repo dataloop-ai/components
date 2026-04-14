@@ -1413,7 +1413,10 @@ export default defineComponent({
 
     &__title {
         color: var(--dl-color-medium);
+        font-family: var(--dl-typography-body-body3-font-family);
         font-size: var(--dl-typography-body-body3-font-size);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
         text-align: left;
         margin-right: 5px;
         white-space: nowrap;
@@ -1421,7 +1424,10 @@ export default defineComponent({
 
     &__asterisk {
         color: var(--dl-color-medium);
+        font-family: var(--dl-typography-body-body3-font-family);
         font-size: var(--dl-typography-body-body3-font-size);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
         user-select: none;
 
         &--red {
@@ -1497,11 +1503,12 @@ export default defineComponent({
 
     &__input {
         display: inline-block;
-        font-family: var(--dl-typography-font-family-body);
+        font-family: var(--dl-typography-body-body2-font-family);
         border-right: none;
         border-radius: 0px;
         white-space: var(--dl-input-white-space);
-        font-size: var(--dl-typography-body-body3-font-size);
+        font-size: var(--dl-typography-body-body2-font-size);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         overflow: hidden scroll;
         text-overflow: ellipsis;
         box-sizing: content-box;
@@ -1622,7 +1629,10 @@ export default defineComponent({
 
     &__counter {
         margin-left: 10px;
+        font-family: var(--dl-typography-body-body3-font-family);
         font-size: var(--dl-typography-body-body3-font-size);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
         color: var(--dl-color-darker);
     }
 

@@ -190,8 +190,10 @@ export default defineComponent({
 .dl-pagination {
     width: 100%;
     height: 40px;
-    font-size: 12px;
-    font-weight: 400;
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
 
     &--container {
         height: 100%;
