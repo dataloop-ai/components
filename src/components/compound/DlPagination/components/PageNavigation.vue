@@ -169,7 +169,7 @@ export default defineComponent({
             return this.value === this.max
         },
         buttonMinWidth(): string {
-            return `3em`
+            return `20px`
         },
         cssVars(): Record<string, any> {
             return {

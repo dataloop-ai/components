@@ -1,6 +1,6 @@
 <template>
     <div class="dl-pagination--quick_navigation">
-        <dl-typography> Go to page </dl-typography>
+        <dl-typography size="body3"> Go to page </dl-typography>
         <input
             v-model="inputValue"
             type="number"
