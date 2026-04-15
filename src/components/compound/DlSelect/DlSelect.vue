@@ -1387,12 +1387,12 @@ export default defineComponent({
         }
 
         &--m {
-            padding-top: 7px;
-            padding-bottom: 7px;
+            padding-top: 9px;
+            padding-bottom: 9px;
         }
         &--medium {
-            padding-top: 7px;
-            padding-bottom: 7px;
+            padding-top: 9px;
+            padding-bottom: 9px;
         }
 
         &--s {
@@ -1520,11 +1520,11 @@ export default defineComponent({
         }
 
         &--m {
-            height: 28px;
+            height: 32px;
         }
 
         &--medium {
-            height: 28px;
+            height: 32px;
         }
 
         &--s {
@@ -1554,10 +1554,6 @@ export default defineComponent({
         border: 0;
         outline: none;
         background: none;
-        color: var(--dl-color-darker);
-        font-family: 'Roboto', sans-serif;
-        font-size: 12px;
-        height: 14px;
 
         &.hidden {
             position: absolute;

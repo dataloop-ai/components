@@ -77,15 +77,20 @@ export default defineComponent({
 }
 
 .title {
-    font-size: var(--dl-font-size-h2);
+    font-family: var(--dl-typography-header-h5-font-family);
+    font-size: var(--dl-typography-header-h5-font-size);
+    line-height: var(--dl-typography-header-h5-line-height);
+    font-weight: var(--dl-typography-header-h5-font-weight);
     margin: 0;
-    color: var(--dl-color-darker);
-    line-height: 2rem !important;
+    color: var(--dell-gray-800);
 }
 
 .subtitle {
-    font-size: var(--dl-font-size-body);
-    color: var(--dl-color-medium);
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
+    color: var(--dell-gray-600);
     margin: 0;
 }
 
