@@ -1,7 +1,7 @@
 <template>
     <div class="dl-stepper-header">
         <slot>
-            <dl-typography size="h2" variant="h2">
+            <dl-typography size="header5" variant="h2" color="dell-gray-800">
                 {{ headerTitle }}
             </dl-typography>
         </slot>
