@@ -429,7 +429,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
     white-space: nowrap;
-    overflow: hidden;
 }
 
 .multiselect-label {
