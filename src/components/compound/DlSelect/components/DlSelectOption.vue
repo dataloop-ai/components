@@ -1,3 +1,4 @@
+0
 <template>
     <div :id="uuid" :class="identifierClass" style="width: 100%">
         <div
@@ -428,6 +429,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 .multiselect-label {
