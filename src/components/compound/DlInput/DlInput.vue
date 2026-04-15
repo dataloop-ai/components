@@ -1497,7 +1497,7 @@ export default defineComponent({
             height: 18px;
         }
         &--m {
-            height: 26px;
+            height: 32px;
         }
     }
 

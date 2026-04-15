@@ -1520,11 +1520,11 @@ export default defineComponent({
         }
 
         &--m {
-            height: 28px;
+            height: 32px;
         }
 
         &--medium {
-            height: 28px;
+            height: 32px;
         }
 
         &--s {
