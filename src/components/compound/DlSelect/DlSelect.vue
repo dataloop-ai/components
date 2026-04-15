@@ -1554,10 +1554,6 @@ export default defineComponent({
         border: 0;
         outline: none;
         background: none;
-        color: var(--dl-color-darker);
-        font-family: 'Roboto', sans-serif;
-        font-size: 12px;
-        height: 14px;
 
         &.hidden {
             position: absolute;
