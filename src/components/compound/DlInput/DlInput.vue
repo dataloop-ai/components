@@ -1556,12 +1556,12 @@ export default defineComponent({
         &--m {
             height: 12px;
             line-height: 12px;
-            padding-top: 7px;
-            padding-bottom: 7px;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
         &--medium {
-            padding-top: 7px;
-            padding-bottom: 7px;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         &--s {

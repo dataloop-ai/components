@@ -1387,12 +1387,12 @@ export default defineComponent({
         }
 
         &--m {
-            padding-top: 7px;
-            padding-bottom: 7px;
+            padding-top: 9px;
+            padding-bottom: 9px;
         }
         &--medium {
-            padding-top: 7px;
-            padding-bottom: 7px;
+            padding-top: 9px;
+            padding-bottom: 9px;
         }
 
         &--s {
