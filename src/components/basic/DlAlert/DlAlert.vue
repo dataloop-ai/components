@@ -386,9 +386,10 @@ export default defineComponent({
     .text {
         color: var(--dell-gray-800);
         align-self: center;
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: 400;
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         word-break: break-word;
         min-width: 0;
     }

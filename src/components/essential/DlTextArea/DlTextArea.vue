@@ -356,8 +356,10 @@ export default defineComponent({
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
     padding: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-size: var(--dl-font-size-body);
+    font-family: var(--dl-typography-body-body2-font-family);
+    font-size: var(--dl-typography-body-body2-font-size);
+    line-height: var(--dl-typography-body-body2-line-height);
+    font-weight: var(--dl-typography-body-body2-font-weight);
     width: 100%;
     min-width: 100px;
     max-width: 100%;
@@ -371,7 +373,10 @@ export default defineComponent({
     }
     &__asterisk {
         color: var(--dl-color-medium);
-        font-size: var(--dl-font-size-body);
+        font-family: var(--dl-typography-body-body3-font-family);
+        font-size: var(--dl-typography-body-body3-font-size);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
         user-select: none;
         &--red {
             color: var(--dl-color-negative);
@@ -394,7 +399,10 @@ export default defineComponent({
     }
     &__title {
         color: var(--dl-color-medium);
-        font-size: var(--dl-font-size-body);
+        font-family: var(--dl-typography-body-body3-font-family);
+        font-size: var(--dl-typography-body-body3-font-size);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
         text-align: left;
         margin-right: 5px;
         white-space: nowrap;
@@ -465,7 +473,10 @@ export default defineComponent({
 
 span {
     margin-top: 3px;
-    font-size: var(--dl-font-size-body);
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
     color: var(--dl-color-darker);
 }
 </style>

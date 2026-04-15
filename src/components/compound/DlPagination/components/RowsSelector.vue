@@ -77,6 +77,10 @@ export default defineComponent({
     &--rows_per_page_label {
         white-space: nowrap;
         padding-right: 4px;
+        font-family: var(--dl-typography-body-body3-font-family);
+        font-size: var(--dl-typography-body-body3-font-size);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
         &::first-letter {
             text-transform: uppercase;
         }

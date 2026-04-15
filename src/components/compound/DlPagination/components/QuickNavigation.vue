@@ -1,6 +1,6 @@
 <template>
     <div class="dl-pagination--quick_navigation">
-        <dl-typography> Go to page </dl-typography>
+        <dl-typography size="body3"> Go to page </dl-typography>
         <input
             v-model="inputValue"
             type="number"
@@ -111,7 +111,10 @@ export default defineComponent({
         padding-bottom: 3px;
         padding-left: 5px;
         padding-right: 5px;
-        font-size: 10px;
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         max-width: 30px; // 40px - 10px (paddings)
         -moz-appearance: textfield;
         &::-webkit-outer-spin-button,
@@ -139,6 +142,10 @@ export default defineComponent({
     }
     &--quick_nav_link {
         margin-left: 5px;
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
     }
 }
 

@@ -112,93 +112,107 @@ export default defineComponent({
     text-transform: var(--dl-typography-text-transform);
     font-weight: var(--dl-typography-font-weight);
 
-    // important needed below for sizing of h tags.. quasar conflict
-    // to deal with quasar conflicts.
-    line-height: initial !important;
+    line-height: initial;
 
     &--h1 {
         font-size: var(--dl-font-size-h1);
+        line-height: 40px;
     }
     &--h2 {
         font-size: var(--dl-font-size-h2);
+        line-height: 28px;
     }
     &--h3 {
+        font-family: var(--dl-typography-body-body1-font-family);
         font-size: var(--dl-font-size-h3);
+        line-height: var(--dl-typography-body-body1-line-height);
+        font-weight: var(--dl-typography-body-body1-font-weight);
     }
     &--h4 {
+        font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-font-size-h4);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
     }
     &--h5 {
+        font-family: var(--dl-typography-body-body3-font-family);
         font-size: var(--dl-font-size-h5);
+        line-height: var(--dl-typography-body-body3-line-height);
+        font-weight: var(--dl-typography-body-body3-font-weight);
     }
     &--h6 {
         font-size: var(--dl-font-size-h6);
+        line-height: 14px;
     }
     &--body {
-        font-size: var(--dl-font-size-body);
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        line-height: var(--dl-typography-body-body2-line-height);
+        font-weight: var(--dl-typography-body-body2-font-weight);
     }
     &--small {
         font-size: var(--dl-font-size-small);
+        line-height: 14px;
     }
 
     &--header1 {
         font-family: var(--dl-typography-header-h1-font-family);
         font-size: var(--dl-typography-header-h1-font-size);
-        line-height: var(--dl-typography-header-h1-line-height) !important;
+        line-height: var(--dl-typography-header-h1-line-height);
         font-weight: var(--dl-typography-header-h1-font-weight);
     }
     &--header4 {
         font-family: var(--dl-typography-header-h4-font-family);
         font-size: var(--dl-typography-header-h4-font-size);
-        line-height: var(--dl-typography-header-h4-line-height) !important;
+        line-height: var(--dl-typography-header-h4-line-height);
         font-weight: var(--dl-typography-header-h4-font-weight);
     }
     &--header5 {
         font-family: var(--dl-typography-header-h5-font-family);
         font-size: var(--dl-typography-header-h5-font-size);
-        line-height: var(--dl-typography-header-h5-line-height) !important;
+        line-height: var(--dl-typography-header-h5-line-height);
         font-weight: var(--dl-typography-header-h5-font-weight);
     }
     &--header6 {
         font-family: var(--dl-typography-header-h6-font-family);
         font-size: var(--dl-typography-header-h6-font-size);
-        line-height: var(--dl-typography-header-h6-line-height) !important;
+        line-height: var(--dl-typography-header-h6-line-height);
         font-weight: var(--dl-typography-header-h6-font-weight);
     }
     &--header6-medium {
         font-family: var(--dl-typography-header-h6-font-family);
         font-size: var(--dl-typography-header-h6-font-size);
-        line-height: var(--dl-typography-header-h6-line-height) !important;
+        line-height: var(--dl-typography-header-h6-line-height);
         font-weight: var(--dl-typography-header-h6-medium-font-weight);
     }
     &--body1 {
         font-family: var(--dl-typography-body-body1-font-family);
         font-size: var(--dl-typography-body-body1-font-size);
-        line-height: var(--dl-typography-body-body1-line-height) !important;
+        line-height: var(--dl-typography-body-body1-line-height);
         font-weight: var(--dl-typography-body-body1-font-weight);
     }
     &--body1-medium {
         font-family: var(--dl-typography-body-body1-font-family);
         font-size: var(--dl-typography-body-body1-font-size);
-        line-height: var(--dl-typography-body-body1-line-height) !important;
+        line-height: var(--dl-typography-body-body1-line-height);
         font-weight: var(--dl-typography-body-body1-medium-font-weight);
     }
     &--body2 {
         font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-typography-body-body2-font-size);
-        line-height: var(--dl-typography-body-body2-line-height) !important;
+        line-height: var(--dl-typography-body-body2-line-height);
         font-weight: var(--dl-typography-body-body2-font-weight);
     }
     &--body2-medium {
         font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-typography-body-body2-font-size);
-        line-height: var(--dl-typography-body-body2-line-height) !important;
+        line-height: var(--dl-typography-body-body2-line-height);
         font-weight: var(--dl-typography-body-body2-medium-font-weight);
     }
     &--body3 {
         font-family: var(--dl-typography-body-body3-font-family);
         font-size: var(--dl-typography-body-body3-font-size);
-        line-height: var(--dl-typography-body-body3-line-height) !important;
+        line-height: var(--dl-typography-body-body3-line-height);
         font-weight: var(--dl-typography-body-body3-font-weight);
     }
 
