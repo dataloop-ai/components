@@ -75,18 +75,37 @@ describe('DlInput component', () => {
     })
     describe('password type input', () => {
         let wrapper: any
-        const height = '100px'
         beforeAll(() => {
             wrapper = mount(DlInput, {
                 props: {
-                    type: 'password'
+                    type: 'password',
+                    modelValue: 'secret'
                 }
             })
         })
-        it('should set a password class', () => {
-            expect(
-                wrapper.vm.inputClasses.includes('dl-input__input--password')
-            ).toBe(true)
+
+        it('should use native input in password mode', () => {
+            const input = wrapper.find('input')
+            expect(input.exists()).toBe(true)
+            expect(wrapper.find('[contenteditable]').exists()).toBe(false)
+            expect((input.element as HTMLInputElement).type).toBe('password')
+        })
+
+        it('should toggle native input type on visibility button click', async () => {
+            expect(wrapper.vm.showPass).toBe(false)
+            wrapper.vm.onPassShowClick()
+            await wrapper.vm.$nextTick()
+
+            const input = wrapper.find('input')
+            expect(wrapper.vm.showPass).toBe(true)
+            expect((input.element as HTMLInputElement).type).toBe('text')
+        })
+
+        it('should emit native input value from password field', async () => {
+            const input = wrapper.find('input')
+            await input.setValue('my-updated-secret')
+            const emitted = wrapper.emitted()['update:model-value']
+            expect(emitted[emitted.length - 1]).toEqual(['my-updated-secret'])
         })
     })
     describe('input with slots', () => {
