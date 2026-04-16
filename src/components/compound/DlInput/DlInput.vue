@@ -74,7 +74,26 @@
                             >
                                 <slot name="prepend" />
                             </div>
+                            <input
+                                v-if="isPasswordType"
+                                ref="input"
+                                :value="modelValue"
+                                :type="showPass ? 'text' : 'password'"
+                                :class="inputClasses"
+                                :placeholder="placeholder"
+                                :style="stylesInput"
+                                :disabled="disabled"
+                                :readonly="readonly"
+                                :maxlength="maxLength"
+                                @input="onNativeInput"
+                                @focus="onNativeFocus"
+                                @blur="onNativeBlur"
+                                @keydown="onKeydown"
+                                @keyup.enter="onNativeEnterPress"
+                                @mouseover="onHover"
+                            />
                             <div
+                                v-else
                                 ref="input"
                                 :contenteditable="contenteditable"
                                 :class="inputClasses"
@@ -857,6 +876,11 @@ export default defineComponent({
         })
 
         const onModelValueChange = (val: string | number) => {
+            if (type.value === 'password') {
+                isInternalChange.value = false
+                return
+            }
+
             if (val !== null && val !== undefined) {
                 if (val === input.value.innerHTML) {
                     return
@@ -885,6 +909,10 @@ export default defineComponent({
             (val: string | number) => {
                 if (isInternalChange.value) {
                     isInternalChange.value = false
+                    return
+                }
+
+                if (type.value === 'password') {
                     return
                 }
 
@@ -924,7 +952,7 @@ export default defineComponent({
 
         const prevInputValue = ref('')
         watch([disabled, readonly], (value) => {
-            if (!input.value) {
+            if (!input.value || type.value === 'password') {
                 return
             }
 
@@ -1023,9 +1051,6 @@ export default defineComponent({
             if (this.hasPrepend && this.hasAppend) {
                 classes.push('dl-input__input--both-adornments')
             }
-            if (this.type === 'password' && !this.showPass) {
-                classes.push('dl-input__input--password')
-            }
 
             if (this.disabled) {
                 classes.push('dl-input__input--disabled')
@@ -1062,6 +1087,9 @@ export default defineComponent({
                 this.size === (InputSizes.s as TInputSizes) ||
                 this.size === (InputSizes.small as TInputSizes)
             )
+        },
+        isPasswordType(): boolean {
+            return this.type === 'password'
         },
         hasPrepend(): boolean {
             return !!this.$slots.prepend
@@ -1164,6 +1192,10 @@ export default defineComponent({
             }
 
             this.$emit('keydown', e)
+
+            if (this.isPasswordType) {
+                return
+            }
 
             if (e.key !== 'Backspace') {
                 /**
@@ -1270,6 +1302,24 @@ export default defineComponent({
             this.$emit('blur', e)
             this.handleValueTrim()
         },
+        onNativeInput(e: Event): void {
+            const target = e.target as HTMLInputElement
+            const value = target.value
+            this.$emit('input', value, e)
+            this.$emit('update:model-value', value)
+        },
+        onNativeFocus(e: FocusEvent): void {
+            this.focused = true
+            this.$emit('focus', e)
+        },
+        onNativeBlur(e: FocusEvent): void {
+            this.focused = false
+            this.$emit('blur', e)
+        },
+        onNativeEnterPress(e: KeyboardEvent): void {
+            const target = e.target as HTMLInputElement
+            this.$emit('enter', target.value, e)
+        },
         onEnterPress(e: any): void {
             this.$emit('enter', e.target.innerText, e)
         },
@@ -1280,7 +1330,11 @@ export default defineComponent({
             this.$emit('update:model-value', clearValue)
 
             const inputRef = this.$refs.input as HTMLInputElement
-            inputRef.innerHTML = ''
+            if (this.isPasswordType) {
+                inputRef.value = ''
+            } else {
+                inputRef.innerHTML = ''
+            }
             inputRef.focus()
         },
         onPassShowClick(): void {
@@ -1504,7 +1558,7 @@ export default defineComponent({
     &__input {
         display: inline-block;
         font-family: var(--dl-typography-body-body2-font-family);
-        border-right: none;
+        border: none;
         border-radius: 0px;
         white-space: var(--dl-input-white-space);
         font-size: var(--dl-typography-body-body2-font-size);
