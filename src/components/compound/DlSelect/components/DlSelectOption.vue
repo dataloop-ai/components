@@ -441,7 +441,10 @@ export default defineComponent({
 
 .counter {
     color: var(--dl-color-lighter);
-    font-size: 10px;
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
 }
 .expand-icon {
     display: flex !important;
