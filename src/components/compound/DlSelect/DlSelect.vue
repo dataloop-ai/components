@@ -183,11 +183,7 @@
                     v-else-if="showMenuList"
                     class="select-list"
                     :padding="false"
-                    :style="
-                        optionsCount > MAX_ITEMS_PER_LIST
-                            ? ''
-                            : `width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px); overflow-y: auto;`
-                    "
+                    :style="dropdownListStyle"
                 >
                     <dl-select-option
                         v-if="showAllItems"
@@ -218,7 +214,7 @@
                         :virtual-scroll-item-size="28"
                         :virtual-scroll-sticky-size-start="28"
                         :virtual-scroll-sticky-size-end="20"
-                        :style="`width: 100%; max-height: calc(${calculatedDropdownMaxHeight} - 20px);`"
+                        :style="virtualScrollStyle"
                     >
                         <dl-select-option
                             :key="getKeyForOption(item)"
@@ -685,6 +681,25 @@ export default defineComponent({
 
             // :shrug: if it's not a known value, just return it
             return `calc(${this.dropdownMaxHeight} - 20px)`
+        },
+        dropdownListStyle(): Record<string, string> {
+            if (this.optionsCount > this.MAX_ITEMS_PER_LIST) {
+                return {}
+            }
+            return {
+                ...this.baseDropdownStyle,
+                overflowY: 'auto'
+            }
+        },
+        virtualScrollStyle(): Record<string, string> {
+            return this.baseDropdownStyle
+        },
+        baseDropdownStyle(): Record<string, string> {
+            return {
+                width: '100%',
+                maxHeight: `calc(${this.calculatedDropdownMaxHeight} - 20px)`,
+                overflowX: 'hidden'
+            }
         },
         computedMenuStyle(): string {
             let style = this.menuStyle ?? ''
