@@ -687,13 +687,14 @@ export default defineComponent({
                 return {}
             }
             return {
-                width: '100%',
-                maxHeight: `calc(${this.calculatedDropdownMaxHeight} - 20px)`,
-                overflowY: 'auto',
-                overflowX: 'hidden'
+                ...this.baseDropdownStyle,
+                overflowY: 'auto'
             }
         },
         virtualScrollStyle(): Record<string, string> {
+            return this.baseDropdownStyle
+        },
+        baseDropdownStyle(): Record<string, string> {
             return {
                 width: '100%',
                 maxHeight: `calc(${this.calculatedDropdownMaxHeight} - 20px)`,
