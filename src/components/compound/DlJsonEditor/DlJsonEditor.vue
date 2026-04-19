@@ -75,6 +75,28 @@ export default defineComponent({
         const jsonEditorRef = ref(null)
         const jsonEditor = ref<JSONEditor>(null as any)
         const innerUpdate = ref(false)
+        const suppressProgrammaticFocus = ref(false)
+
+        const blurEditorIfFocused = () => {
+            const target = jsonEditorRef.value as HTMLElement | null
+            if (target?.contains(document.activeElement)) {
+                ;(document.activeElement as HTMLElement)?.blur()
+            }
+        }
+
+        const runWithoutAutoFocus = (fn: () => void) => {
+            if (autoFocus.value) {
+                fn()
+                return
+            }
+
+            suppressProgrammaticFocus.value = true
+            fn()
+            nextTick(() => {
+                blurEditorIfFocused()
+                suppressProgrammaticFocus.value = false
+            })
+        }
 
         watch(modelValue, (val) => {
             if (innerUpdate.value) {
@@ -82,15 +104,19 @@ export default defineComponent({
                 return
             }
 
-            jsonEditor.value?.set({
-                text: val
+            runWithoutAutoFocus(() => {
+                jsonEditor.value?.set({
+                    text: val
+                })
             })
         })
 
         watch(mode, (val) => {
-            jsonEditor.value?.updateProps({
-                mode: val,
-                readOnly: val === Mode.tree
+            runWithoutAutoFocus(() => {
+                jsonEditor.value?.updateProps({
+                    mode: val,
+                    readOnly: val === Mode.tree
+                })
             })
         })
 
@@ -142,6 +168,10 @@ export default defineComponent({
                 navigationBar: false,
                 statusBar: false,
                 onFocus: () => {
+                    if (suppressProgrammaticFocus.value) {
+                        blurEditorIfFocused()
+                        return
+                    }
                     emit('focus')
                 },
                 onBlur: () => {
@@ -159,21 +189,22 @@ export default defineComponent({
                 props: initialAttrs
             })
 
-            jsonEditor.value?.set({
-                text: modelValue.value
-            })
+            runWithoutAutoFocus(() => {
+                jsonEditor.value?.set({
+                    text: modelValue.value
+                })
 
-            nextTick(() => {
-                jsonEditor.value?.refresh()
-                if (autoFocus.value) {
-                    jsonEditor.value?.focus()
-                }
+                nextTick(() => {
+                    jsonEditor.value?.refresh()
+                })
             })
         }
 
         watch(readonly, (val) => {
-            jsonEditor.value?.updateProps({
-                readOnly: val || mode.value === Mode.tree
+            runWithoutAutoFocus(() => {
+                jsonEditor.value?.updateProps({
+                    readOnly: val || mode.value === Mode.tree
+                })
             })
         })
 
