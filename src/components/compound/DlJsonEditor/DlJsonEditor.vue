@@ -132,13 +132,6 @@ export default defineComponent({
             return debounce(handleJSONChange, 100)
         })
 
-        const blurEditorIfFocused = () => {
-            const target = jsonEditorRef.value as HTMLElement | null
-            if (target?.contains(document.activeElement)) {
-                ;(document.activeElement as HTMLElement)?.blur()
-            }
-        }
-
         const initJsonEditor = () => {
             const initialAttrs: JSONEditorPropsOptional = {
                 onChange: debouncedHandleJSONChange.value,
@@ -172,8 +165,8 @@ export default defineComponent({
 
             nextTick(() => {
                 jsonEditor.value?.refresh()
-                if (!autoFocus.value) {
-                    blurEditorIfFocused()
+                if (autoFocus.value) {
+                    jsonEditor.value?.focus()
                 }
             })
         }
