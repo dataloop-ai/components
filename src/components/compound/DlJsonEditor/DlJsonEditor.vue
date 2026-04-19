@@ -75,6 +75,7 @@ export default defineComponent({
         const jsonEditorRef = ref(null)
         const jsonEditor = ref<JSONEditor>(null as any)
         const innerUpdate = ref(false)
+        const suppressNextFocus = ref(false)
 
         const blurActiveEditorElement = () => {
             const target = jsonEditorRef.value as HTMLElement | null
@@ -89,9 +90,18 @@ export default defineComponent({
                 return
             }
 
+            if (!autoFocus.value) {
+                suppressNextFocus.value = true
+            }
             jsonEditor.value?.set({
                 text: val
             })
+            if (!autoFocus.value) {
+                nextTick(() => {
+                    blurActiveEditorElement()
+                    suppressNextFocus.value = false
+                })
+            }
         })
 
         watch(mode, (val) => {
@@ -149,6 +159,10 @@ export default defineComponent({
                 navigationBar: false,
                 statusBar: false,
                 onFocus: () => {
+                    if (suppressNextFocus.value) {
+                        blurActiveEditorElement()
+                        return
+                    }
                     emit('focus')
                 },
                 onBlur: () => {
