@@ -53,6 +53,11 @@ export default defineComponent({
             required: false,
             type: String as PropType<Mode>,
             default: Mode.text
+        },
+        autoFocus: {
+            required: false,
+            type: Boolean,
+            default: true
         }
     },
     emits: [
@@ -64,7 +69,8 @@ export default defineComponent({
         'blur'
     ],
     setup(props, { emit }) {
-        const { modelValue, indentation, readonly, mode } = toRefs(props)
+        const { modelValue, indentation, readonly, mode, autoFocus } =
+            toRefs(props)
 
         const jsonEditorRef = ref(null)
         const jsonEditor = ref<JSONEditor>(null as any)
@@ -126,6 +132,13 @@ export default defineComponent({
             return debounce(handleJSONChange, 100)
         })
 
+        const blurEditorIfFocused = () => {
+            const target = jsonEditorRef.value as HTMLElement | null
+            if (target?.contains(document.activeElement)) {
+                ;(document.activeElement as HTMLElement)?.blur()
+            }
+        }
+
         const initJsonEditor = () => {
             const initialAttrs: JSONEditorPropsOptional = {
                 onChange: debouncedHandleJSONChange.value,
@@ -159,6 +172,9 @@ export default defineComponent({
 
             nextTick(() => {
                 jsonEditor.value?.refresh()
+                if (!autoFocus.value) {
+                    blurEditorIfFocused()
+                }
             })
         }
 
