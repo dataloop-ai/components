@@ -204,7 +204,7 @@ export default defineComponent({
     padding-bottom: 0;
     outline: 0;
     min-width: 18px;
-    height: 20px;
+    min-height: 20px;
     align-items: center;
     max-width: var(--dl-chip-max-width);
     color: var(--dl-chip-text-color);
