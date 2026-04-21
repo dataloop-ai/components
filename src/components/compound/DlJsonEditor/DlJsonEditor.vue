@@ -53,6 +53,11 @@ export default defineComponent({
             required: false,
             type: String as PropType<Mode>,
             default: Mode.text
+        },
+        autoFocus: {
+            required: false,
+            type: Boolean,
+            default: true
         }
     },
     emits: [
@@ -64,11 +69,20 @@ export default defineComponent({
         'blur'
     ],
     setup(props, { emit }) {
-        const { modelValue, indentation, readonly, mode } = toRefs(props)
+        const { modelValue, indentation, readonly, mode, autoFocus } =
+            toRefs(props)
 
         const jsonEditorRef = ref(null)
         const jsonEditor = ref<JSONEditor>(null as any)
         const innerUpdate = ref(false)
+        const suppressNextFocus = ref(false)
+
+        const blurActiveEditorElement = () => {
+            const target = jsonEditorRef.value as HTMLElement | null
+            if (target?.contains(document.activeElement)) {
+                ;(document.activeElement as HTMLElement)?.blur()
+            }
+        }
 
         watch(modelValue, (val) => {
             if (innerUpdate.value) {
@@ -76,9 +90,18 @@ export default defineComponent({
                 return
             }
 
+            if (!autoFocus.value) {
+                suppressNextFocus.value = true
+            }
             jsonEditor.value?.set({
                 text: val
             })
+            if (!autoFocus.value) {
+                nextTick(() => {
+                    blurActiveEditorElement()
+                    suppressNextFocus.value = false
+                })
+            }
         })
 
         watch(mode, (val) => {
@@ -136,6 +159,10 @@ export default defineComponent({
                 navigationBar: false,
                 statusBar: false,
                 onFocus: () => {
+                    if (suppressNextFocus.value) {
+                        blurActiveEditorElement()
+                        return
+                    }
                     emit('focus')
                 },
                 onBlur: () => {
@@ -156,10 +183,15 @@ export default defineComponent({
             jsonEditor.value?.set({
                 text: modelValue.value
             })
-
             nextTick(() => {
                 jsonEditor.value?.refresh()
             })
+
+            if (!autoFocus.value) {
+                nextTick(() => {
+                    blurActiveEditorElement()
+                })
+            }
         }
 
         watch(readonly, (val) => {
