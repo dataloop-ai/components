@@ -748,7 +748,7 @@ export default defineComponent({
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
         }
-        const handleSelectedItem = (value: unknown) => {
+        const handleSelectedItem = (value: string | null | undefined) => {
             if (typeof value !== 'string') {
                 return
             }
@@ -1173,10 +1173,7 @@ export default defineComponent({
             return !this.$slots.append && this.type === 'password'
         },
         showSuggestItems(): boolean {
-            const hasValue =
-                this.modelValue !== null &&
-                this.modelValue !== undefined &&
-                `${this.modelValue}`.length > 0
+            const hasValue = String(this.modelValue ?? '').length > 0
             return (
                 !!this.suggestItems?.length &&
                 (hasValue || (this.openSuggestionsOnFocus && this.focused))
