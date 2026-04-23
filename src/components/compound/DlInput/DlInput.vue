@@ -1358,6 +1358,14 @@ export default defineComponent({
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.blur()
         },
+        closeSuggestionMenuAfterBlur(): void {
+            // Delay close so suggestion item click can finish before menu teardown.
+            setTimeout(() => {
+                if (!this.focused) {
+                    this.isMenuOpen = false
+                }
+            }, 0)
+        },
         onBlur(e: InputEvent): void {
             const el = e.target as HTMLElement
             el.innerText = (el.innerText ?? '').endsWith('.')
@@ -1365,7 +1373,7 @@ export default defineComponent({
                 : el.innerText
             el.scroll(0, 0)
             this.focused = false
-            this.isMenuOpen = false
+            this.closeSuggestionMenuAfterBlur()
             this.$emit('blur', e)
             this.handleValueTrim()
         },
@@ -1382,7 +1390,7 @@ export default defineComponent({
         },
         onNativeBlur(e: FocusEvent): void {
             this.focused = false
-            this.isMenuOpen = false
+            this.closeSuggestionMenuAfterBlur()
             this.$emit('blur', e)
         },
         onNativeEnterPress(e: KeyboardEvent): void {
