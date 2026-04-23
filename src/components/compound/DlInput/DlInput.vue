@@ -1321,6 +1321,16 @@ export default defineComponent({
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.focus()
         },
+        openSuggestionMenuOnFocus(): void {
+            if (!this.openSuggestionsOnFocus || !this.suggestItems?.length) {
+                return
+            }
+            this.$nextTick(() => {
+                if (this.focused) {
+                    this.isMenuOpen = true
+                }
+            })
+        },
         onFocus(e: InputEvent): void {
             this.handleValueTrim()
             const el = e.target as HTMLElement
@@ -1328,9 +1338,7 @@ export default defineComponent({
                 el.scroll(el.scrollWidth, 0)
             }
             this.focused = true
-            if (this.openSuggestionsOnFocus && this.suggestItems?.length) {
-                this.isMenuOpen = true
-            }
+            this.openSuggestionMenuOnFocus()
             this.$emit('focus', e)
         },
         blur(): void {
@@ -1356,9 +1364,7 @@ export default defineComponent({
         },
         onNativeFocus(e: FocusEvent): void {
             this.focused = true
-            if (this.openSuggestionsOnFocus && this.suggestItems?.length) {
-                this.isMenuOpen = true
-            }
+            this.openSuggestionMenuOnFocus()
             this.$emit('focus', e)
         },
         onNativeBlur(e: FocusEvent): void {
