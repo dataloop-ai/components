@@ -16,7 +16,8 @@ export function addEventListenersToElement(
 }
 
 export function clearSuggestion(text: string, suggestion: string) {
-    return text.split(' ').slice(0, -1).join(' ') + ' ' + suggestion
+    const prefix = text.split(' ').slice(0, -1).join(' ')
+    return prefix ? `${prefix} ${suggestion}` : suggestion
 }
 
 export function setInnerHTMLWithCursor(

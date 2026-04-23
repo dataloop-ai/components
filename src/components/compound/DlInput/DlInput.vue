@@ -160,14 +160,15 @@
                         </div>
                         <dl-menu
                             v-if="showSuggestItems"
-                            v-model="isMenuOpen"
-                            auto-close
+                            :model-value="isMenuOpen"
+                            persistent
                             no-focus
+                            no-refocus
                             :offset="[0, 3]"
                             fit-container
                             :fit-content="fitContent"
                             :arrow-nav-items="stringSuggestions"
-                            @click="onMenuShow"
+                            @update:model-value="onSuggestionMenuModelUpdate"
                             @highlighted-item="setHighlightedIndex"
                             @selected-item="handleSelectedItem"
                         >
@@ -176,7 +177,10 @@
                                 :style="{ maxWidth: suggestMenuWidth }"
                             >
                                 <slot name="suggestion-header">
-                                    <dl-list-item v-if="suggestionHeader">
+                                    <dl-list-item
+                                        v-if="suggestionHeader"
+                                        class="dl-input__suggestion--header"
+                                    >
                                         {{ suggestionHeader }}
                                     </dl-list-item>
                                 </slot>
@@ -193,6 +197,7 @@
                                     :highlighted="
                                         suggestIndex === highlightedIndex
                                     "
+                                    @mousedown.prevent
                                     @click="onClick($event, item)"
                                 >
                                     <slot
@@ -742,7 +747,10 @@ export default defineComponent({
         const setHighlightedIndex = (value: any) => {
             highlightedIndex.value = value
         }
-        const handleSelectedItem = (value: any) => {
+        const handleSelectedItem = (value: unknown) => {
+            if (typeof value !== 'string') {
+                return
+            }
             onAutoSuggestClick(null, value)
         }
 
@@ -834,7 +842,11 @@ export default defineComponent({
         }
 
         const onAutoSuggestClick = (e: Event, item: string): void => {
-            const newValue = clearSuggestion(modelValue.value.toString(), item)
+            if (typeof item !== 'string' || !item.trim().length) {
+                return
+            }
+            const currentValue = String(modelValue.value ?? '')
+            const newValue = clearSuggestion(currentValue, item)
             if (!maxLength.value || newValue.length < maxLength.value) {
                 const toEmit = newValue.replace(new RegExp('&nbsp;', 'g'), ' ')
                 emit('input', toEmit, e)
@@ -843,6 +855,7 @@ export default defineComponent({
                 setCaretAtTheEnd(input.value)
                 isInternalChange.value = true
             }
+            isMenuOpen.value = false
         }
 
         const emitAddFile = (file: DlInputFile) => {
@@ -1396,8 +1409,12 @@ export default defineComponent({
         onPassShowClick(): void {
             this.showPass = !this.showPass
         },
-        onMenuShow(): void {
-            this.focus()
+        onSuggestionMenuModelUpdate(value: boolean): void {
+            if (!value && this.focused && this.openSuggestionsOnFocus) {
+                this.openSuggestionMenuOnFocus()
+                return
+            }
+            this.isMenuOpen = value
         },
         getSuggestWords(
             item: string,
@@ -1747,6 +1764,13 @@ export default defineComponent({
     }
 
     &__suggestion {
+        &--header {
+            font-family: var(--dl-typography-body-body3-font-family);
+            font-size: var(--dl-typography-body-body3-font-size);
+            line-height: var(--dl-typography-body-body3-line-height);
+            font-weight: var(--dl-typography-body-body3-font-weight);
+            color: var(--dell-gray-600);
+        }
         &--highlighted {
             background-color: var(--dl-color-warning);
             border-radius: 2px;

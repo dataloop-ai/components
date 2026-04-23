@@ -124,6 +124,15 @@
                 />
             </template>
         </dl-input>
+        <dl-input
+            v-model="headerSuggestionsValue"
+            style="width: 320px"
+            title="Suggestions with header and icons"
+            placeholder="Type to see suggestions"
+            suggestion-header="Suggested users"
+            :auto-suggest-items="headerSuggestionsItems"
+            open-suggestions-on-focus
+        />
         <div class="numberClip" style="max-width: 64px">
             <dl-input
                 v-model="numberClip"
@@ -249,7 +258,10 @@
 import { v4 } from 'uuid'
 import { computed, defineComponent, ref } from 'vue-demi'
 import { DlInput, DlButton, DlIcon, DlSwitch } from '../components'
-import { DlInputFile } from '../components/compound/DlInput/types'
+import {
+    DlInputFile,
+    DlInputSuggestion
+} from '../components/compound/DlInput/types'
 export default defineComponent({
     name: 'DlInputDemo',
     components: {
@@ -265,6 +277,21 @@ export default defineComponent({
         const sizeSFieldValue = ref<string>('')
         const errorFieldValue = ref<string>('')
         const saveInputValue = ref<string>('Test vaaalueeee')
+        const headerSuggestionsValue = ref<string>('')
+        const headerSuggestionsItems = ref<DlInputSuggestion[]>([
+            {
+                suggestion: '@john-doe',
+                startIcon: 'icon-dl-user'
+            },
+            {
+                suggestion: '@jane-smith',
+                startIcon: 'icon-dl-user'
+            },
+            {
+                suggestion: '@team-design',
+                startIcon: 'icon-dl-users'
+            }
+        ])
 
         const files = ref<DlInputFile[]>([])
         const addFile = (e: Event) => {
@@ -313,6 +340,8 @@ export default defineComponent({
             warningFieldValue,
             errorFieldValue,
             saveInputValue,
+            headerSuggestionsValue,
+            headerSuggestionsItems,
             sizeSFieldValue,
             files,
             updateFiles,
