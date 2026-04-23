@@ -175,10 +175,16 @@
                                 bordered
                                 :style="{ maxWidth: suggestMenuWidth }"
                             >
+                                <slot name="suggestion-header">
+                                    <dl-list-item v-if="suggestionHeader">
+                                        {{ suggestionHeader }}
+                                    </dl-list-item>
+                                </slot>
                                 <dl-list-item
                                     v-for="(item, suggestIndex) in suggestItems"
                                     :key="item.suggestion"
                                     clickable
+                                    :start-icon="getSuggestionStartIcon(item)"
                                     style="
                                         font-size: var(
                                             --dl-typography-body-body3-font-size
@@ -189,35 +195,44 @@
                                     "
                                     @click="onClick($event, item)"
                                 >
-                                    <img
-                                        v-if="item.image"
-                                        :src="item.image"
-                                        class="dl-input__suggestion--image"
-                                    />
-                                    <span
-                                        v-for="(word, index) in getSuggestWords(
-                                            item.suggestion,
-                                            modelValue
-                                        )"
-                                        :key="JSON.stringify(word) + index"
-                                        :class="{
-                                            'dl-input__suggestion--highlighted':
-                                                word.highlighted
-                                        }"
+                                    <slot
+                                        name="suggestion-item"
+                                        :item="item"
+                                        :keyword="modelValue"
+                                        :suggest-index="suggestIndex"
                                     >
-                                        <span v-if="word.value[0] === ' '"
-                                        >&nbsp;</span
-                                        >
-                                        {{ word.value }}
+                                        <img
+                                            v-if="item.image"
+                                            :src="item.image"
+                                            class="dl-input__suggestion--image"
+                                        />
                                         <span
-                                            v-if="
-                                                word.value[
-                                                    word.value.length - 1
-                                                ] === ' '
-                                            "
-                                        >&nbsp;</span
+                                            v-for="(
+                                                word, index
+                                            ) in getSuggestWords(
+                                                item.suggestion,
+                                                modelValue
+                                            )"
+                                            :key="JSON.stringify(word) + index"
+                                            :class="{
+                                                'dl-input__suggestion--highlighted':
+                                                    word.highlighted
+                                            }"
                                         >
-                                    </span>
+                                            <span v-if="word.value[0] === ' '"
+                                            >&nbsp;</span
+                                            >
+                                            {{ word.value }}
+                                            <span
+                                                v-if="
+                                                    word.value[
+                                                        word.value.length - 1
+                                                    ] === ' '
+                                                "
+                                            >&nbsp;</span
+                                            >
+                                        </span>
+                                    </slot>
                                 </dl-list-item>
                             </dl-list>
                         </dl-menu>
@@ -610,6 +625,20 @@ export default defineComponent({
             default: 'auto'
         },
         /**
+         * Text shown at the top of the suggestions list
+         */
+        suggestionHeader: {
+            type: String,
+            default: ''
+        },
+        /**
+         * Open suggestion menu when input is focused
+         */
+        openSuggestionsOnFocus: {
+            type: Boolean,
+            default: false
+        },
+        /**
          * Tooltip showed when hovering over the clear button
          */
         clearButtonTooltip: {
@@ -697,12 +726,17 @@ export default defineComponent({
         const isInternalChange = ref(false)
 
         const suggestItems = computed<DlInputSuggestion[]>(() => {
-            if (!modelValue.value) return []
+            const inputValue =
+                modelValue.value === null || modelValue.value === undefined
+                    ? ''
+                    : modelValue.value.toString()
             return getSuggestItems(
                 autoSuggestItems.value,
-                modelValue.value?.toString()
+                inputValue
             ) as DlInputSuggestion[]
         })
+        const getSuggestionStartIcon = (item: DlInputSuggestion) =>
+            (item as any).startIcon
         const input = ref(null)
 
         const setHighlightedIndex = (value: any) => {
@@ -977,6 +1011,7 @@ export default defineComponent({
             emitAddFile,
             emitRemoveFile,
             updateSyntax,
+            getSuggestionStartIcon,
             stringSuggestions,
             showPlaceholder,
             spanText,
@@ -1124,7 +1159,14 @@ export default defineComponent({
             return !this.$slots.append && this.type === 'password'
         },
         showSuggestItems(): boolean {
-            return !!this.suggestItems?.length && !!this.modelValue
+            const hasValue =
+                this.modelValue !== null &&
+                this.modelValue !== undefined &&
+                `${this.modelValue}`.length > 0
+            return (
+                !!this.suggestItems?.length &&
+                (hasValue || (this.openSuggestionsOnFocus && this.focused))
+            )
         },
         debouncedBlur(): any {
             if (stateManager.disableDebounce) {
@@ -1286,6 +1328,9 @@ export default defineComponent({
                 el.scroll(el.scrollWidth, 0)
             }
             this.focused = true
+            if (this.openSuggestionsOnFocus && this.suggestItems?.length) {
+                this.isMenuOpen = true
+            }
             this.$emit('focus', e)
         },
         blur(): void {
@@ -1299,6 +1344,7 @@ export default defineComponent({
                 : el.innerText
             el.scroll(0, 0)
             this.focused = false
+            this.isMenuOpen = false
             this.$emit('blur', e)
             this.handleValueTrim()
         },
@@ -1310,10 +1356,14 @@ export default defineComponent({
         },
         onNativeFocus(e: FocusEvent): void {
             this.focused = true
+            if (this.openSuggestionsOnFocus && this.suggestItems?.length) {
+                this.isMenuOpen = true
+            }
             this.$emit('focus', e)
         },
         onNativeBlur(e: FocusEvent): void {
             this.focused = false
+            this.isMenuOpen = false
             this.$emit('blur', e)
         },
         onNativeEnterPress(e: KeyboardEvent): void {
