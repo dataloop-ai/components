@@ -1563,7 +1563,7 @@ export default defineComponent({
         white-space: var(--dl-input-white-space);
         font-size: var(--dl-typography-body-body2-font-size);
         font-weight: var(--dl-typography-body-body2-font-weight);
-        overflow: hidden scroll;
+        overflow: hidden auto;
         text-overflow: ellipsis;
         box-sizing: content-box;
         word-wrap: break-word;
