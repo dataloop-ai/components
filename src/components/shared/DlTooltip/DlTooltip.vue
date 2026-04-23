@@ -443,7 +443,7 @@ export default defineComponent({
     text-transform: none;
     text-align: var(--dl-tooltip-text-align);
     white-space: break-spaces;
-    word-break: break-word;
+    word-break: normal;
     pointer-events: none;
 }
 .capitalize {
