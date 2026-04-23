@@ -1367,12 +1367,9 @@ export default defineComponent({
             return !!relatedTarget?.closest(`.${this.suggestionMenuClass()}`)
         },
         closeSuggestionMenuAfterBlur(): void {
-            // Delay close so suggestion item click can finish before menu teardown.
-            setTimeout(() => {
-                if (!this.focused) {
-                    this.isMenuOpen = false
-                }
-            }, 0)
+            if (!this.focused) {
+                this.isMenuOpen = false
+            }
         },
         onBlur(e: FocusEvent): void {
             if (this.isBlurToSuggestionMenu(e)) {
