@@ -842,6 +842,7 @@ export default defineComponent({
         }
 
         const onAutoSuggestClick = (e: Event, item: string): void => {
+            console.log('### onAutoSuggestClick', item, e)
             if (typeof item !== 'string' || !item.trim().length) {
                 return
             }
@@ -1289,6 +1290,7 @@ export default defineComponent({
             }
         },
         onClick(e: Event, item: DlInputSuggestion) {
+            console.log('### onClick', item, e)
             this.onAutoSuggestClick(e, item.suggestion)
         },
         async handlePaste() {
@@ -1355,6 +1357,7 @@ export default defineComponent({
             this.$emit('focus', e)
         },
         blur(): void {
+            console.log('### blur')
             const inputRef = this.$refs.input as HTMLInputElement
             inputRef.blur()
         },
@@ -1367,6 +1370,7 @@ export default defineComponent({
             }, 0)
         },
         onBlur(e: InputEvent): void {
+            console.log('### onBlur', e)
             const el = e.target as HTMLElement
             el.innerText = (el.innerText ?? '').endsWith('.')
                 ? el.innerText.slice(0, -1)
@@ -1389,6 +1393,7 @@ export default defineComponent({
             this.$emit('focus', e)
         },
         onNativeBlur(e: FocusEvent): void {
+            console.log('### onNativeBlur', e)
             this.focused = false
             this.closeSuggestionMenuAfterBlur()
             this.$emit('blur', e)
