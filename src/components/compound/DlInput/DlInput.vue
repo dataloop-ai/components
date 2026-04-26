@@ -1565,7 +1565,7 @@ export default defineComponent({
         font-weight: var(--dl-typography-body-body2-font-weight);
         overflow: hidden scroll;
         text-overflow: ellipsis;
-        box-sizing: border-box;
+        box-sizing: content-box;
         word-wrap: break-word;
         outline: none;
         background: none;
