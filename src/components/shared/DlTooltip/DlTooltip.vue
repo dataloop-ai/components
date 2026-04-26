@@ -444,7 +444,7 @@ export default defineComponent({
     text-align: var(--dl-tooltip-text-align);
     white-space: break-spaces;
     word-break: break-word;
-    width: max-content;
+    min-width: min-content;
     pointer-events: none;
 }
 .capitalize {
