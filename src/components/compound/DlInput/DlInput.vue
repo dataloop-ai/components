@@ -1586,6 +1586,7 @@ export default defineComponent({
         &--prepend {
             flex: 1;
             min-width: 0;
+            width: auto;
         }
 
         &--append {
