@@ -185,7 +185,7 @@ describe('DlInput component', () => {
             const newSuggestion = 'suggestion1'
             wrapper.vm.onAutoSuggestClick({ target: null }, newSuggestion)
             expect(wrapper.emitted()['update:model-value']).toEqual([
-                [' ' + newSuggestion]
+                [newSuggestion]
             ])
         })
     })
