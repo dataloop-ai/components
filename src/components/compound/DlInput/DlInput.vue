@@ -1585,6 +1585,7 @@ export default defineComponent({
 
         &--prepend {
             width: calc(100% - 10px - 28px);
+            padding-right: 8px;
         }
 
         &--append {
