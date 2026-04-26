@@ -287,6 +287,8 @@ export default defineComponent({
                 return
             }
 
+            const naturalWidth = el.scrollWidth
+
             setPosition({
                 el,
                 offset: props.offset as number[],
@@ -296,6 +298,10 @@ export default defineComponent({
                 maxWidth: props.maxWidth,
                 maxHeight: props.maxHeight
             })
+
+            if (naturalWidth <= 20) {
+                el.style.width = 'max-content'
+            }
         }
 
         function delayShow(evt: AnchorEvent) {
@@ -444,7 +450,6 @@ export default defineComponent({
     text-align: var(--dl-tooltip-text-align);
     white-space: break-spaces;
     word-break: break-word;
-    min-width: min-content;
     pointer-events: none;
 }
 .capitalize {
