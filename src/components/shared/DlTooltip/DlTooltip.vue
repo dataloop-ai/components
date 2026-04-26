@@ -299,7 +299,7 @@ export default defineComponent({
                 maxHeight: props.maxHeight
             })
 
-            if (naturalWidth <= 20) {
+            if (naturalWidth <= 60) {
                 el.style.width = 'max-content'
             }
         }
