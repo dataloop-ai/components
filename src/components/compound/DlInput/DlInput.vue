@@ -1584,7 +1584,8 @@ export default defineComponent({
         }
 
         &--prepend {
-            width: calc(100% - 10px - 28px);
+            flex: 1;
+            min-width: 0;
         }
 
         &--append {
