@@ -355,7 +355,7 @@ export default defineComponent({
     background: none;
     border: 1px solid var(--dl-color-separator);
     border-radius: 2px;
-    padding: 10px;
+    padding: 6px;
     font-family: var(--dl-typography-body-body2-font-family);
     font-size: var(--dl-typography-body-body2-font-size);
     line-height: var(--dl-typography-body-body2-line-height);

@@ -136,10 +136,9 @@
                                             }
                                         "
                                     >
-                                        <dl-ellipsis v-if="fitAllColumns">
+                                        <dl-ellipsis>
                                             {{ col.label }}
                                         </dl-ellipsis>
-                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
@@ -540,10 +539,9 @@
                                             }
                                         "
                                     >
-                                        <dl-ellipsis v-if="fitAllColumns">
+                                        <dl-ellipsis>
                                             {{ col.label }}
                                         </dl-ellipsis>
-                                        <span v-else> {{ col.label }} </span>
                                     </span>
                                 </DlTh>
                             </slot>
