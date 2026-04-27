@@ -48,6 +48,7 @@ describe('DlButton', () => {
                 hoverBgColor: null,
                 hoverBorderColor: null,
                 hoverTextColor: null,
+                pressedTextColor: null,
                 pressedBgColor: null,
                 disabledIconColor: null
             })
