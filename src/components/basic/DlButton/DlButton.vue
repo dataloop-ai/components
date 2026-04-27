@@ -458,7 +458,7 @@ export default defineComponent({
                         disabled: this.disabled,
                         flat: this.flat,
                         color: this.color,
-                        textColor: this.textColor
+                        textColor: this.pressedTextColor ?? this.textColor
                     }),
                     '--dl-button-bg-pressed':
                         this.pressedBgColor ??
