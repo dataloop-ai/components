@@ -205,6 +205,7 @@ export default defineComponent({
          * Overwrite default border color on hover
          */
         hoverBorderColor: { type: String, default: null },
+        pressedTextColor: { type: String, default: null },
         /**
          * Overwrite default text color on hover
          */
@@ -286,7 +287,10 @@ export default defineComponent({
                 return setTextOnPressed({
                     disabled: this.disabled,
                     flat: this.flat,
-                    textColor: this.iconColor || this.textColor
+                    textColor:
+                        this.pressedTextColor ||
+                        this.iconColor ||
+                        this.textColor
                 })
             }
 
@@ -454,7 +458,7 @@ export default defineComponent({
                         disabled: this.disabled,
                         flat: this.flat,
                         color: this.color,
-                        textColor: this.textColor
+                        textColor: this.pressedTextColor ?? this.textColor
                     }),
                     '--dl-button-bg-pressed':
                         this.pressedBgColor ??
