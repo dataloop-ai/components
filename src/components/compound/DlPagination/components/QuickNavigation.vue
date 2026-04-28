@@ -116,6 +116,7 @@ export default defineComponent({
         line-height: var(--dl-typography-body-body2-line-height);
         font-weight: var(--dl-typography-body-body2-font-weight);
         max-width: 30px; // 40px - 10px (paddings)
+        width: 30px;
         -moz-appearance: textfield;
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
