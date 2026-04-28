@@ -295,7 +295,7 @@ export default defineComponent({
 
     &--page_button {
         text-align: center;
-        width: 20px;
+        min-width: 20px;
         height: 20px;
         font-family: var(--dl-typography-body-body2-font-family);
         font-size: var(--dl-typography-body-body2-font-size);
