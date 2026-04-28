@@ -1731,7 +1731,7 @@ export default defineComponent({
         }
 
         &:focus {
-            text-overflow: clip;
+            text-overflow: ellipsis;
         }
 
         &:read-only {
