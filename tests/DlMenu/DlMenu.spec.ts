@@ -62,6 +62,7 @@ describe('DlMenu', () => {
             width: 'auto',
             height: 'auto',
             hoverGroup: '',
+            menuStyle: '',
             ignoreEvents: null
         })
         expect(wrapper.vm.showing).toBe(false)

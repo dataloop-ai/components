@@ -5,6 +5,7 @@
             title="Title"
             required
             fit
+            menu-style="--attribute-scope-menu-width:25px"
         />
         <dl-select
             v-model="disabledSelected"

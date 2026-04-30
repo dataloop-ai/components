@@ -159,6 +159,10 @@ export default defineComponent({
             type: String,
             default: ''
         },
+        menuStyle: {
+            type: String,
+            default: ''
+        },
         arrowNavItems: {
             type: Array as PropType<any[]>,
             default: () => [] as any[]
@@ -551,6 +555,7 @@ export default defineComponent({
         const computedStyles = computed<any>(() => {
             return [
                 attrs.style,
+                props.menuStyle,
                 transitionStyle.value,
                 {
                     '--menu-z-index': zIndex.value ?? 'var(--dl-z-index-menu)',
