@@ -24,12 +24,16 @@
         </div>
         <dl-button
             v-if="closeButton"
-            style="--dl-button-bg-hover: var(--dl-color-fill-secondary)"
             class="close-button"
             icon="icon-dl-close"
-            size="xl"
+            icon-size="16px"
             flat
-            text-color="dl-color-darker"
+            size="m"
+            text-color="var(--dell-gray-600)"
+            hover-bg-color="var(--dell-gray-100)"
+            pressed-bg-color="var(--dell-gray-200)"
+            hover-text-color="var(--dell-gray-800)"
+            pressed-text-color="var(--dell-gray-800)"
             :padding="closeIconSizePadding"
             @click="$emit('onClose')"
         >
@@ -98,5 +102,11 @@ export default defineComponent({
     margin-top: 5px;
     display: flex;
     align-items: flex-start;
+    ::v-deep button.dl-button {
+        --dl-button-border-radius: 0;
+        &:focus-visible {
+            --dl-button-border-radius: 2px;
+        }
+    }
 }
 </style>
