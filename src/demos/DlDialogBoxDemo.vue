@@ -1,20 +1,9 @@
 <template>
     <div>
-        <dl-switch
-            v-model="draggable"
-            left-label="Draggable"
-        />
-        <dl-switch
-            v-model="fullscreen"
-            left-label="Full screen"
-        />
-        <dl-switch
-            v-model="fullHeight"
-            left-label="Full height"
-        />
-        <dl-button @click="openModal">
-            Open modal
-        </dl-button>
+        <dl-switch v-model="draggable" left-label="Draggable" />
+        <dl-switch v-model="fullscreen" left-label="Full screen" />
+        <dl-switch v-model="fullHeight" left-label="Full height" />
+        <dl-button @click="openModal"> Open modal </dl-button>
         <dl-dialog-box
             ref="modalOne"
             v-model="isOpenedFirstModal"
@@ -27,7 +16,58 @@
                     title="Dialog Box Title"
                     subtitle="updated by rotemshaham@dataloop.ai"
                     @on-close="closeModal"
-                />
+                >
+                    <template #actions>
+                        <dl-button
+                            icon="icon-dl-edit"
+                            icon-size="16px"
+                            size="m"
+                            flat
+                            text-color="var(--dell-gray-600)"
+                            hover-bg-color="var(--dell-gray-100)"
+                            pressed-bg-color="var(--dell-gray-200)"
+                            hover-text-color="var(--dell-gray-800)"
+                            pressed-text-color="var(--dell-gray-800)"
+                            padding="0 0 0 0"
+                        />
+                        <dl-button
+                            icon="icon-dl-delete"
+                            icon-size="16px"
+                            size="m"
+                            flat
+                            text-color="var(--dell-gray-600)"
+                            hover-bg-color="var(--dell-gray-100)"
+                            pressed-bg-color="var(--dell-gray-200)"
+                            hover-text-color="var(--dell-gray-800)"
+                            pressed-text-color="var(--dell-gray-800)"
+                            padding="0 0 0 0"
+                        />
+                        <dl-button
+                            icon="icon-dl-download"
+                            icon-size="16px"
+                            size="m"
+                            flat
+                            text-color="var(--dell-gray-600)"
+                            hover-bg-color="var(--dell-gray-100)"
+                            pressed-bg-color="var(--dell-gray-200)"
+                            hover-text-color="var(--dell-gray-800)"
+                            pressed-text-color="var(--dell-gray-800)"
+                            padding="0 0 0 0"
+                        />
+                        <dl-button
+                            icon="icon-dl-settings"
+                            icon-size="16px"
+                            size="m"
+                            flat
+                            text-color="var(--dell-gray-600)"
+                            hover-bg-color="var(--dell-gray-100)"
+                            pressed-bg-color="var(--dell-gray-200)"
+                            hover-text-color="var(--dell-gray-800)"
+                            pressed-text-color="var(--dell-gray-800)"
+                            padding="0 0 0 0"
+                        />
+                    </template>
+                </dl-dialog-box-header>
             </template>
             <template #body>
                 <div
@@ -95,24 +135,17 @@
             </template>
             <template #footer>
                 <dl-dialog-box-footer>
-                    <dl-button
-                        outlined
-                        @click="openSecondModal"
-                    >
+                    <dl-button outlined @click="openSecondModal">
                         Open empty modal
                     </dl-button>
-                    <dl-button @click="closeModal">
-                        Close
-                    </dl-button>
+                    <dl-button @click="closeModal"> Close </dl-button>
                 </dl-dialog-box-footer>
             </template>
         </dl-dialog-box>
 
         <div>
             Styled Tooltip using a class
-            <dl-button @click="openModal2">
-                Open modal
-            </dl-button>
+            <dl-button @click="openModal2"> Open modal </dl-button>
             <dl-dialog-box
                 ref="modalTwo"
                 v-model="isOpenedSecondModal"
@@ -162,10 +195,7 @@
                 </template>
                 <template #footer>
                     <dl-dialog-box-footer>
-                        <dl-button
-                            outlined
-                            @click="openSecondModal"
-                        >
+                        <dl-button outlined @click="openSecondModal">
                             Open empty modal
                         </dl-button>
                         <dl-button @click="isOpenedSecondModal = false">
@@ -177,9 +207,7 @@
         </div>
         <div>
             Styled Tooltip using an id
-            <dl-button @click="openModal3">
-                Open modal
-            </dl-button>
+            <dl-button @click="openModal3"> Open modal </dl-button>
             <dl-dialog-box
                 ref="modalThree"
                 v-model="isOpenedThirdModal"
@@ -228,10 +256,7 @@
                 </template>
                 <template #footer>
                     <dl-dialog-box-footer>
-                        <dl-button
-                            outlined
-                            @click="openSecondModal"
-                        >
+                        <dl-button outlined @click="openSecondModal">
                             Open empty modal
                         </dl-button>
                         <dl-button @click="isOpenedThirdModal = false">
