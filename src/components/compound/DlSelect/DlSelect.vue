@@ -153,8 +153,7 @@
                 square
                 no-focus
                 :offset="[0, 3]"
-                style="border-radius: 0"
-                :style="computedMenuStyle"
+                :menu-style="computedMenuStyle"
                 :menu-class="menuClass"
                 :disabled="disabled || readonly"
                 :arrow-nav-items="options"
@@ -703,6 +702,7 @@ export default defineComponent({
         },
         computedMenuStyle(): string {
             let style = this.menuStyle ?? ''
+            style += '; border-radius: 0'
             if (this.optionsCount > this.MAX_ITEMS_PER_LIST) {
                 style += '; overflow-y: hidden'
             }
