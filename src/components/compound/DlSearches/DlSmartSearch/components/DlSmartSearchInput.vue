@@ -1368,6 +1368,10 @@ export default defineComponent({
             color: var(--dl-color-lighter);
             /* In case this causes render shadowing move to use html/injection approach */
             content: attr(placeholder);
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         & > * {
             display: flex;
