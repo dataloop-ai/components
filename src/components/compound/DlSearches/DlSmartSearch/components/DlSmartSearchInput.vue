@@ -1277,7 +1277,9 @@ export default defineComponent({
         background-color: var(--dl-color-panel-background);
         cursor: text;
 
-        font-size: 12px;
+        font-family: var(--dl-typography-body-body2-font-family);
+        font-size: var(--dl-typography-body-body2-font-size);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         line-height: 14px;
 
         border: 1px solid var(--dl-color-separator);
@@ -1338,10 +1340,10 @@ export default defineComponent({
     }
 
     &__textarea {
-        font-size: 12px;
-        font-weight: 400;
+        font-size: var(--dl-typography-body-body2-font-size);
+        font-weight: var(--dl-typography-body-body2-font-weight);
         line-height: 14px;
-        font-family: 'Roboto', sans-serif;
+        font-family: var(--dl-typography-body-body2-font-family);
         width: 100%;
         border: none;
         outline: none;
