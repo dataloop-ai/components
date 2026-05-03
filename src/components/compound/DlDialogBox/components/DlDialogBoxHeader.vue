@@ -22,23 +22,25 @@
                 </slot>
             </p>
         </div>
-        <dl-button
-            v-if="closeButton"
-            class="close-button"
-            icon="icon-dl-close"
-            icon-size="16px"
-            flat
-            size="m"
-            text-color="var(--dell-gray-600)"
-            hover-bg-color="var(--dell-gray-100)"
-            pressed-bg-color="var(--dell-gray-200)"
-            hover-text-color="var(--dell-gray-800)"
-            pressed-text-color="var(--dell-gray-800)"
-            :padding="closeIconSizePadding"
-            @click="$emit('onClose')"
-        >
-            <dl-tooltip :delay="800"> Close </dl-tooltip>
-        </dl-button>
+        <div class="actions-container">
+            <slot name="actions" />
+            <dl-button
+                v-if="closeButton"
+                icon="icon-dl-close"
+                icon-size="16px"
+                flat
+                size="m"
+                text-color="var(--dell-gray-600)"
+                hover-bg-color="var(--dell-gray-100)"
+                pressed-bg-color="var(--dell-gray-200)"
+                hover-text-color="var(--dell-gray-800)"
+                pressed-text-color="var(--dell-gray-800)"
+                :padding="closeIconSizePadding"
+                @click="$emit('onClose')"
+            >
+                <dl-tooltip :delay="800"> Close </dl-tooltip>
+            </dl-button>
+        </div>
     </div>
 </template>
 
@@ -98,9 +100,10 @@ export default defineComponent({
     margin: 0;
 }
 
-.close-button {
+.actions-container {
     margin-top: 5px;
     display: flex;
+    gap: var(--dl-dialog-box-header-actions-gap, 4px);
     align-items: flex-start;
     ::v-deep button.dl-button {
         --dl-button-border-radius: 0;
