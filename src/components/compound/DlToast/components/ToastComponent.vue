@@ -71,6 +71,7 @@
                 </template>
                 <dl-badge
                     v-if="count"
+                    class="toast-counter"
                     with-border
                     floating
                     align="top"
@@ -79,14 +80,6 @@
                         type === 'warning'
                             ? 'var(--dl-color-alert-text)'
                             : 'var(--dl-color-text-buttons)'
-                    "
-                    style="
-                        display: grid;
-                        text-align: center;
-                        width: fit-content;
-                        padding: 3px;
-                        min-width: 1em;
-                        top: -5px;
                     "
                 >
                     {{ count + 1 }}
@@ -356,6 +349,21 @@ export default defineComponent({
 .toast-caption {
     margin-top: 2px;
     font-size: inherit;
+}
+
+.toast-counter.toast-counter {
+    display: grid;
+    text-align: center;
+    width: fit-content;
+    padding: 1px 3px;
+    min-width: 20px;
+    min-height: 20px;
+    top: -5px;
+    right: -8px;
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
 }
 
 .toast-message--pre-line {
