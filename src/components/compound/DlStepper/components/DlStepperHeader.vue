@@ -7,10 +7,16 @@
         </slot>
         <dl-button
             v-if="!hideCloseButton"
-            text-color="dl-color-darker"
-            flat
+            class="close-button"
             icon="icon-dl-close"
-            size="xl"
+            icon-size="16px"
+            flat
+            size="m"
+            text-color="var(--dell-gray-600)"
+            hover-bg-color="var(--dell-gray-100)"
+            pressed-bg-color="var(--dell-gray-200)"
+            hover-text-color="var(--dell-gray-800)"
+            pressed-text-color="var(--dell-gray-800)"
             :padding="closeIconSizePadding"
             @click="$emit('close')"
         />
@@ -38,7 +44,7 @@ export default defineComponent({
     },
     emits: ['close'],
     setup() {
-        const closeIconSizePadding = `0 0 0 0`
+        const closeIconSizePadding = `4px`
         return { closeIconSizePadding }
     }
 })
@@ -50,5 +56,14 @@ export default defineComponent({
     align-items: center;
     padding: 16px;
     border-bottom: 1px solid var(--dl-color-separator);
+}
+.close-button {
+    ::v-deep button.dl-button {
+        --dl-button-border-radius: 0;
+        border: none;
+        &:focus-visible {
+            --dl-button-border-radius: 2px;
+        }
+    }
 }
 </style>
