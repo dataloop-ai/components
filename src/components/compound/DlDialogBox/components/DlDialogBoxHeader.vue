@@ -26,6 +26,7 @@
             <slot name="actions" />
             <dl-button
                 v-if="closeButton"
+                class="close-button"
                 icon="icon-dl-close"
                 icon-size="16px"
                 flat
@@ -68,7 +69,7 @@ export default defineComponent({
     setup(props, { slots }) {
         const hasTitle = computed(() => !!props.title || !!slots.title)
         const hasSubtitle = computed(() => !!props.subtitle || !!slots.subtitle)
-        const closeIconSizePadding = `0 0 0 0`
+        const closeIconSizePadding = `4px`
         return { hasTitle, hasSubtitle, closeIconSizePadding }
     }
 })
@@ -105,8 +106,10 @@ export default defineComponent({
     display: flex;
     gap: var(--dl-dialog-box-header-actions-gap, 4px);
     align-items: flex-start;
-    ::v-deep button.dl-button {
+    .close-button ::v-deep button.dl-button {
         --dl-button-border-radius: 0;
+        border: none;
+        --dl-button-border: none;
         &:focus-visible {
             --dl-button-border-radius: 2px;
         }
