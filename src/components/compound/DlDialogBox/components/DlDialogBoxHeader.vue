@@ -26,6 +26,7 @@
             <slot name="actions" />
             <dl-button
                 v-if="closeButton"
+                class="close-button"
                 icon="icon-dl-close"
                 icon-size="16px"
                 flat
@@ -105,7 +106,7 @@ export default defineComponent({
     display: flex;
     gap: var(--dl-dialog-box-header-actions-gap, 4px);
     align-items: flex-start;
-    ::v-deep button.dl-button {
+    .close-button ::v-deep button.dl-button {
         --dl-button-border-radius: 0;
         border: none;
         --dl-button-border: none;
