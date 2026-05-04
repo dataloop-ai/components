@@ -23,20 +23,12 @@
             </p>
         </div>
         <div class="actions-container">
-            <slot name="actions" />
+            <slot name="actions" :button-props="actionButtonProps" />
             <dl-button
                 v-if="closeButton"
                 class="close-button"
+                v-bind="actionButtonProps"
                 icon="icon-dl-close"
-                icon-size="16px"
-                flat
-                size="m"
-                text-color="var(--dell-gray-600)"
-                hover-bg-color="var(--dell-gray-100)"
-                pressed-bg-color="var(--dell-gray-200)"
-                hover-text-color="var(--dell-gray-800)"
-                pressed-text-color="var(--dell-gray-800)"
-                :padding="closeIconSizePadding"
                 @click="$emit('onClose')"
             >
                 <dl-tooltip :delay="800"> Close </dl-tooltip>
@@ -69,8 +61,19 @@ export default defineComponent({
     setup(props, { slots }) {
         const hasTitle = computed(() => !!props.title || !!slots.title)
         const hasSubtitle = computed(() => !!props.subtitle || !!slots.subtitle)
-        const closeIconSizePadding = `4px`
-        return { hasTitle, hasSubtitle, closeIconSizePadding }
+        const actionButtonProps = {
+            iconSize: '16px',
+            flat: true,
+            size: 'm',
+            textColor: 'var(--dell-gray-600)',
+            hoverBgColor: 'var(--dell-gray-100)',
+            pressedBgColor: 'var(--dell-gray-200)',
+            hoverTextColor: 'var(--dell-gray-800)',
+            pressedTextColor: 'var(--dell-gray-800)',
+            padding: '4px'
+        }
+
+        return { hasTitle, hasSubtitle, actionButtonProps }
     }
 })
 </script>
@@ -106,7 +109,7 @@ export default defineComponent({
     display: flex;
     gap: var(--dl-dialog-box-header-actions-gap, 4px);
     align-items: flex-start;
-    .close-button ::v-deep button.dl-button {
+    ::v-deep button.dl-button {
         --dl-button-border-radius: 0;
         border: none;
         --dl-button-border: none;

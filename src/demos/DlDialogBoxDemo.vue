@@ -17,54 +17,16 @@
                     subtitle="updated by rotemshaham@dataloop.ai"
                     @on-close="closeModal"
                 >
-                    <template #actions>
+                    <template #actions="{ buttonProps }">
+                        <dl-button v-bind="buttonProps" icon="icon-dl-edit" />
+                        <dl-button v-bind="buttonProps" icon="icon-dl-delete" />
                         <dl-button
-                            icon="icon-dl-edit"
-                            icon-size="16px"
-                            size="m"
-                            flat
-                            text-color="var(--dell-gray-600)"
-                            hover-bg-color="var(--dell-gray-100)"
-                            pressed-bg-color="var(--dell-gray-200)"
-                            hover-text-color="var(--dell-gray-800)"
-                            pressed-text-color="var(--dell-gray-800)"
-                            padding="0 0 0 0"
-                        />
-                        <dl-button
-                            icon="icon-dl-delete"
-                            icon-size="16px"
-                            size="m"
-                            flat
-                            text-color="var(--dell-gray-600)"
-                            hover-bg-color="var(--dell-gray-100)"
-                            pressed-bg-color="var(--dell-gray-200)"
-                            hover-text-color="var(--dell-gray-800)"
-                            pressed-text-color="var(--dell-gray-800)"
-                            padding="0 0 0 0"
-                        />
-                        <dl-button
+                            v-bind="buttonProps"
                             icon="icon-dl-download"
-                            icon-size="16px"
-                            size="m"
-                            flat
-                            text-color="var(--dell-gray-600)"
-                            hover-bg-color="var(--dell-gray-100)"
-                            pressed-bg-color="var(--dell-gray-200)"
-                            hover-text-color="var(--dell-gray-800)"
-                            pressed-text-color="var(--dell-gray-800)"
-                            padding="0 0 0 0"
                         />
                         <dl-button
+                            v-bind="buttonProps"
                             icon="icon-dl-settings"
-                            icon-size="16px"
-                            size="m"
-                            flat
-                            text-color="var(--dell-gray-600)"
-                            hover-bg-color="var(--dell-gray-100)"
-                            pressed-bg-color="var(--dell-gray-200)"
-                            hover-text-color="var(--dell-gray-800)"
-                            pressed-text-color="var(--dell-gray-800)"
-                            padding="0 0 0 0"
                         />
                     </template>
                 </dl-dialog-box-header>
