@@ -1731,6 +1731,10 @@ export default defineComponent({
         }
 
         &:focus {
+            text-overflow: clip;
+        }
+
+        &:focus:empty {
             text-overflow: ellipsis;
         }
 
