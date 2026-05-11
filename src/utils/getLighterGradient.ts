@@ -48,11 +48,11 @@ const getLighterGradient = (color: string, magnitude = MAGNITUDE) => {
             color = nextColor
         }
     }
-    let newColor =
+    const originalColor =
         color in allColorNames
             ? allColorNames[color as keyof typeof allColorNames]
             : color
-    newColor = newColor.replace(`#`, ``).trim()
+    const newColor = originalColor.replace(`#`, ``).trim()
     if (newColor.length === 6) {
         const decimalColor = parseInt(newColor, 16)
 
@@ -67,7 +67,7 @@ const getLighterGradient = (color: string, magnitude = MAGNITUDE) => {
         if (b < 0) b = 0
         return `#${(g | (b << 8) | (r << 16)).toString(16)}`
     } else {
-        return newColor
+        return originalColor
     }
 }
 
