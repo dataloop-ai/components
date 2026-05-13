@@ -3,6 +3,7 @@
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
+                ref="leftSideRef"
                 v-model="rowsPerPageState"
                 class="dl-pagination--sides dl-pagination--sides--left"
                 :options="rowsPerPageOptions"
@@ -11,6 +12,7 @@
             />
             <div
                 v-else-if="withLegend"
+                ref="leftSideRef"
                 class="dl-pagination--sides dl-pagination--sides--left"
             />
 
@@ -41,6 +43,7 @@
             </div>
             <quick-navigation
                 v-if="withQuickNavigation && rowsPerPageState"
+                ref="quickNavRef"
                 class="dl-pagination--quick-navigation"
                 :model-value="value"
                 :max="max"
@@ -50,6 +53,7 @@
             />
             <pagination-legend
                 v-if="withLegend"
+                ref="rightSideRef"
                 :from="rowFrom"
                 :to="rowTo"
                 :total="totalItems"
@@ -58,6 +62,7 @@
             />
             <div
                 v-else-if="withRowsPerPage && rowsPerPageState"
+                ref="rightSideRef"
                 class="dl-pagination--sides dl-pagination--sides--right"
             />
         </div>
@@ -145,6 +150,9 @@ export default defineComponent({
             value: this.modelValue,
             rowsPerPageState: this.rowsPerPage,
             rootWidth: 0,
+            leftSideWidth: 0,
+            rightSideWidth: 0,
+            quickNavWidth: 0,
             resizeObserver: null as ResizeObserver | null
         }
     },
@@ -153,7 +161,7 @@ export default defineComponent({
             // Approximate width of the page-navigation when rendered with the
             // full `maxDisplayRange` page buttons; used to decide when to
             // reduce visible items so content doesn't overflow/clip.
-            const buttonWidth = 28
+            const buttonWidth = 30
             const horizontalPadding = 52
             let buttonCount = this.maxDisplayRange + 1 // pages + ellipsis
             if (this.boundaryNumbers) buttonCount += 2
@@ -161,18 +169,13 @@ export default defineComponent({
             if (this.boundaryLinks) buttonCount += 2
             return buttonCount * buttonWidth + horizontalPadding
         },
-        estimatedSidesWidth(): number {
-            // Approximate width of the elements that flank the page navigation.
-            // Used to estimate how much room is available for the page numbers.
-            let w = 0
-            if (this.withRowsPerPage) w += 140
-            if (this.withQuickNavigation) w += 150
-            if (this.withLegend) w += 200
-            return w
-        },
         effectiveMaxDisplayRange(): number {
             if (this.rootWidth === 0) return this.maxDisplayRange
-            const available = this.rootWidth - this.estimatedSidesWidth
+            const available =
+                this.rootWidth -
+                this.leftSideWidth -
+                this.rightSideWidth -
+                this.quickNavWidth
             if (available < this.navNaturalWidth) {
                 return Math.min(this.maxDisplayRange, 5)
             }
@@ -212,13 +215,35 @@ export default defineComponent({
     mounted() {
         this.resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
-                this.rootWidth = entry.contentRect.width
+                const target = entry.target as HTMLElement
+                const width = entry.contentRect.width
+                if (target === (this.$refs.rootRef as Element)) {
+                    this.rootWidth = width
+                } else if (
+                    target.classList.contains('dl-pagination--sides--left')
+                ) {
+                    this.leftSideWidth = width
+                } else if (
+                    target.classList.contains('dl-pagination--sides--right')
+                ) {
+                    this.rightSideWidth = width
+                } else if (
+                    target.classList.contains('dl-pagination--quick-navigation')
+                ) {
+                    this.quickNavWidth = width
+                }
             }
         })
-        const rootEl = this.$refs.rootRef as Element | undefined
-        if (rootEl) {
-            this.resizeObserver.observe(rootEl)
+        const observeEl = (ref: any) => {
+            const el = (ref?.$el ?? ref) as Element | undefined
+            if (el && el instanceof Element) {
+                this.resizeObserver?.observe(el)
+            }
         }
+        observeEl(this.$refs.rootRef)
+        observeEl(this.$refs.leftSideRef)
+        observeEl(this.$refs.rightSideRef)
+        observeEl(this.$refs.quickNavRef)
     },
     beforeUnmount() {
         this.resizeObserver?.disconnect()
@@ -257,8 +282,9 @@ export default defineComponent({
     &--navigation {
         display: flex;
         flex: 1 1 auto;
-        min-width: max-content;
+        min-width: 0;
         justify-content: center;
+        overflow: hidden;
         &--maximized {
             width: 100%;
         }
