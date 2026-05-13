@@ -1,5 +1,5 @@
 <template>
-    <div :id="uuid" class="dl-pagination">
+    <div :id="uuid" ref="rootRef" class="dl-pagination">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
@@ -27,7 +27,7 @@
                     :model-value="value"
                     :min="min"
                     :max="max"
-                    :max-display-range="maxDisplayRange"
+                    :max-display-range="effectiveMaxDisplayRange"
                     :disabled="disabled"
                     :boundary-numbers="boundaryNumbers"
                     :boundary-links="boundaryLinks"
@@ -142,10 +142,18 @@ export default defineComponent({
         return {
             uuid: `dl-pagination-${v4()}`,
             value: this.modelValue,
-            rowsPerPageState: this.rowsPerPage
+            rowsPerPageState: this.rowsPerPage,
+            containerWidth: 0,
+            resizeObserver: null as ResizeObserver | null
         }
     },
     computed: {
+        effectiveMaxDisplayRange(): number {
+            if (this.containerWidth > 0 && this.containerWidth < 800) {
+                return Math.min(this.maxDisplayRange, 5)
+            }
+            return this.maxDisplayRange
+        },
         rowFrom(): number {
             return 1 + this.rowsPerPageState * (this.value - 1)
         },
@@ -177,6 +185,22 @@ export default defineComponent({
         }
     },
 
+    mounted() {
+        this.resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                this.containerWidth = entry.contentRect.width
+            }
+        })
+        this.resizeObserver.observe(this.$refs.rootRef as Element)
+    },
+    beforeUnmount() {
+        this.resizeObserver?.disconnect()
+        this.resizeObserver = null
+    },
+    beforeDestroy() {
+        this.resizeObserver?.disconnect()
+        this.resizeObserver = null
+    },
     methods: {
         setValue(value: number) {
             this.value = value
