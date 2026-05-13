@@ -233,33 +233,39 @@ export default defineComponent({
                 return el instanceof Element ? el : null
             }
 
-            const targets: [Element | null, (w: number) => void][] = [
-                [resolveEl(this.$refs.rootRef), (w) => (this.rootWidth = w)],
-                [
-                    resolveEl(this.$refs.leftSideRef),
-                    (w) => (this.leftSideWidth = w)
-                ],
-                [
-                    resolveEl(this.$refs.rightSideRef),
-                    (w) => (this.rightSideWidth = w)
-                ],
-                [
-                    resolveEl(this.$refs.quickNavRef),
-                    (w) => (this.quickNavWidth = w)
-                ]
+            const targets: {
+                element: Element | null
+                setWidth: (width: number) => void
+            }[] = [
+                {
+                    element: resolveEl(this.$refs.rootRef),
+                    setWidth: (w) => (this.rootWidth = w)
+                },
+                {
+                    element: resolveEl(this.$refs.leftSideRef),
+                    setWidth: (w) => (this.leftSideWidth = w)
+                },
+                {
+                    element: resolveEl(this.$refs.rightSideRef),
+                    setWidth: (w) => (this.rightSideWidth = w)
+                },
+                {
+                    element: resolveEl(this.$refs.quickNavRef),
+                    setWidth: (w) => (this.quickNavWidth = w)
+                }
             ]
 
             this.resizeObserver = new ResizeObserver((entries) => {
                 for (const entry of entries) {
-                    const match = targets.find(([el]) => el === entry.target)
-                    if (match) {
-                        match[1](entry.contentRect.width)
-                    }
+                    const target = targets.find(
+                        (t) => t.element === entry.target
+                    )
+                    target?.setWidth(entry.contentRect.width)
                 }
             })
 
-            for (const [el] of targets) {
-                if (el) this.resizeObserver.observe(el)
+            for (const { element } of targets) {
+                if (element) this.resizeObserver.observe(element)
             }
         },
         teardownResizeObserver() {
