@@ -1,5 +1,5 @@
 <template>
-    <div :id="uuid" class="dl-pagination">
+    <div :id="uuid" ref="rootRef" class="dl-pagination">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
@@ -16,7 +16,6 @@
 
             <div
                 v-if="rowsPerPageState"
-                ref="navRef"
                 class="dl-pagination--navigation dl-pagination--navigation-legend"
                 :class="
                     withLegend || (withRowsPerPage && rowsPerPageState)
@@ -145,7 +144,7 @@ export default defineComponent({
             uuid: `dl-pagination-${v4()}`,
             value: this.modelValue,
             rowsPerPageState: this.rowsPerPage,
-            navWidth: 0,
+            rootWidth: 0,
             resizeObserver: null as ResizeObserver | null
         }
     },
@@ -162,8 +161,19 @@ export default defineComponent({
             if (this.boundaryLinks) buttonCount += 2
             return buttonCount * buttonWidth + horizontalPadding
         },
+        estimatedSidesWidth(): number {
+            // Approximate width of the elements that flank the page navigation.
+            // Used to estimate how much room is available for the page numbers.
+            let w = 0
+            if (this.withRowsPerPage) w += 140
+            if (this.withQuickNavigation) w += 150
+            if (this.withLegend) w += 200
+            return w
+        },
         effectiveMaxDisplayRange(): number {
-            if (this.navWidth > 0 && this.navWidth < this.navNaturalWidth) {
+            if (this.rootWidth === 0) return this.maxDisplayRange
+            const available = this.rootWidth - this.estimatedSidesWidth
+            if (available < this.navNaturalWidth) {
                 return Math.min(this.maxDisplayRange, 5)
             }
             return this.maxDisplayRange
@@ -202,12 +212,12 @@ export default defineComponent({
     mounted() {
         this.resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
-                this.navWidth = entry.contentRect.width
+                this.rootWidth = entry.contentRect.width
             }
         })
-        const navEl = this.$refs.navRef as Element | undefined
-        if (navEl) {
-            this.resizeObserver.observe(navEl)
+        const rootEl = this.$refs.rootRef as Element | undefined
+        if (rootEl) {
+            this.resizeObserver.observe(rootEl)
         }
     },
     beforeUnmount() {
@@ -247,9 +257,8 @@ export default defineComponent({
     &--navigation {
         display: flex;
         flex: 1 1 auto;
-        min-width: 0;
+        min-width: max-content;
         justify-content: center;
-        overflow: hidden;
         &--maximized {
             width: 100%;
         }
