@@ -292,7 +292,7 @@ export default defineComponent({
     }
 
     &--page-navigation-wrapper {
-        flex: 1 1 auto;
+        flex: 0 1 auto;
         min-width: 0;
         display: flex;
         justify-content: center;
