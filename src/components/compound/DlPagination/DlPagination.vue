@@ -1,5 +1,5 @@
 <template>
-    <div :id="uuid" ref="rootRef" class="dl-pagination">
+    <div :id="uuid" class="dl-pagination">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
@@ -16,6 +16,7 @@
 
             <div
                 v-if="rowsPerPageState"
+                ref="navRef"
                 class="dl-pagination--navigation dl-pagination--navigation-legend"
                 :class="
                     withLegend || (withRowsPerPage && rowsPerPageState)
@@ -143,13 +144,13 @@ export default defineComponent({
             uuid: `dl-pagination-${v4()}`,
             value: this.modelValue,
             rowsPerPageState: this.rowsPerPage,
-            containerWidth: 0,
+            navWidth: 0,
             resizeObserver: null as ResizeObserver | null
         }
     },
     computed: {
         effectiveMaxDisplayRange(): number {
-            if (this.containerWidth > 0 && this.containerWidth < 800) {
+            if (this.navWidth > 0 && this.navWidth < 350) {
                 return Math.min(this.maxDisplayRange, 5)
             }
             return this.maxDisplayRange
@@ -188,10 +189,13 @@ export default defineComponent({
     mounted() {
         this.resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
-                this.containerWidth = entry.contentRect.width
+                this.navWidth = entry.contentRect.width
             }
         })
-        this.resizeObserver.observe(this.$refs.rootRef as Element)
+        const navEl = this.$refs.navRef as Element | undefined
+        if (navEl) {
+            this.resizeObserver.observe(navEl)
+        }
     },
     beforeUnmount() {
         this.resizeObserver?.disconnect()
@@ -229,16 +233,18 @@ export default defineComponent({
 
     &--navigation {
         display: flex;
-        flex-grow: 1;
-        width: 60%;
+        flex: 1 1 auto;
+        min-width: 0;
         justify-content: center;
+        overflow: hidden;
         &--maximized {
             width: 100%;
         }
     }
 
     &--sides {
-        width: 20%;
+        flex: 0 0 auto;
+        min-width: max-content;
     }
 }
 </style>
