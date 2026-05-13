@@ -231,8 +231,7 @@ export default defineComponent({
             this.$emit('update:model-value', value)
         },
         setupResizeObserver() {
-            type VueRef = Element | { $el?: unknown } | null | undefined
-            const resolveEl = (ref: VueRef): Element | null => {
+            const resolveEl = (ref: unknown): Element | null => {
                 const el = (ref as { $el?: unknown })?.$el ?? ref
                 return el instanceof Element ? el : null
             }
