@@ -87,7 +87,14 @@
     --dell-red-700: #730000;
     --dell-overlay: rgba(0, 0, 0, 0.6);
     --dell-shadow: rgba(0, 0, 0, 0.14);
+    --dell-teal-100: #EBF5F7;
+    --dell-teal-200: #D9ECF0;
     --dell-teal-500: #00819e;
+    --dell-violet-100: #F5EBF9;
+    --dell-violet-200: #EBD9F4;
+    --dell-violet-500: #7C01B7;
+    --dell-berry-100: #F7EBF2;
+    --dell-berry-200: #F1D9E7;
     --dell-berry-500: #A10061;
     --dell-color-discovery: #7F3EE0;
     --dell-color-discovery-bg: #F6F2FD;
