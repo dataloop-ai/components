@@ -206,6 +206,9 @@ export default defineComponent({
         max() {
             this.updateState()
         },
+        maxDisplayRange() {
+            this.updateState()
+        },
         modelValue() {
             this.value = this.modelValue
         }
