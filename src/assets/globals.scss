@@ -450,4 +450,75 @@ html {
     opacity: 1 !important;
 }
 
+/* Typography utility classes – mirror tokens in constants.css */
+.dell-h1 {
+    font-family: var(--dl-typography-header-h1-font-family);
+    font-size: var(--dl-typography-header-h1-font-size);
+    line-height: var(--dl-typography-header-h1-line-height);
+    font-weight: var(--dl-typography-header-h1-font-weight);
+}
+
+.dell-h4 {
+    font-family: var(--dl-typography-header-h4-font-family);
+    font-size: var(--dl-typography-header-h4-font-size);
+    line-height: var(--dl-typography-header-h4-line-height);
+    font-weight: var(--dl-typography-header-h4-font-weight);
+}
+
+.dell-h5 {
+    font-family: var(--dl-typography-header-h5-font-family);
+    font-size: var(--dl-typography-header-h5-font-size);
+    line-height: var(--dl-typography-header-h5-line-height);
+    font-weight: var(--dl-typography-header-h5-font-weight);
+}
+
+.dell-h6 {
+    font-family: var(--dl-typography-header-h6-font-family);
+    font-size: var(--dl-typography-header-h6-font-size);
+    line-height: var(--dl-typography-header-h6-line-height);
+    font-weight: var(--dl-typography-header-h6-font-weight);
+}
+
+.dell-h6-medium {
+    font-family: var(--dl-typography-header-h6-font-family);
+    font-size: var(--dl-typography-header-h6-font-size);
+    line-height: var(--dl-typography-header-h6-line-height);
+    font-weight: var(--dl-typography-header-h6-medium-font-weight);
+}
+
+.dell-body1 {
+    font-family: var(--dl-typography-body-body1-font-family);
+    font-size: var(--dl-typography-body-body1-font-size);
+    line-height: var(--dl-typography-body-body1-line-height);
+    font-weight: var(--dl-typography-body-body1-font-weight);
+}
+
+.dell-body1-medium {
+    font-family: var(--dl-typography-body-body1-font-family);
+    font-size: var(--dl-typography-body-body1-font-size);
+    line-height: var(--dl-typography-body-body1-line-height);
+    font-weight: var(--dl-typography-body-body1-medium-font-weight);
+}
+
+.dell-body2 {
+    font-family: var(--dl-typography-body-body2-font-family);
+    font-size: var(--dl-typography-body-body2-font-size);
+    line-height: var(--dl-typography-body-body2-line-height);
+    font-weight: var(--dl-typography-body-body2-font-weight);
+}
+
+.dell-body2-medium {
+    font-family: var(--dl-typography-body-body2-font-family);
+    font-size: var(--dl-typography-body-body2-font-size);
+    line-height: var(--dl-typography-body-body2-line-height);
+    font-weight: var(--dl-typography-body-body2-medium-font-weight);
+}
+
+.dell-body3 {
+    font-family: var(--dl-typography-body-body3-font-family);
+    font-size: var(--dl-typography-body-body3-font-size);
+    line-height: var(--dl-typography-body-body3-line-height);
+    font-weight: var(--dl-typography-body-body3-font-weight);
+}
+
 @import 'grid';

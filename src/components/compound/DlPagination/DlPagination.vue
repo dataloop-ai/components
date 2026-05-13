@@ -1,8 +1,9 @@
 <template>
-    <div :id="uuid" class="dl-pagination">
+    <div :id="uuid" ref="rootRef" class="dl-pagination dell-body3">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
+                ref="leftSideRef"
                 v-model="rowsPerPageState"
                 class="dl-pagination--sides dl-pagination--sides--left"
                 :options="rowsPerPageOptions"
@@ -11,6 +12,7 @@
             />
             <div
                 v-else-if="withLegend"
+                ref="leftSideRef"
                 class="dl-pagination--sides dl-pagination--sides--left"
             />
 
@@ -23,23 +25,27 @@
                         : 'dl-pagination--navigation--maximized'
                 "
             >
-                <page-navigation
-                    :model-value="value"
-                    :min="min"
-                    :max="max"
-                    :max-display-range="maxDisplayRange"
-                    :disabled="disabled"
-                    :boundary-numbers="boundaryNumbers"
-                    :boundary-links="boundaryLinks"
-                    :direction-links="directionLinks"
-                    :color="color"
-                    :active-color="activeColor"
-                    :text-color="textColor"
-                    :active-text-color="activeTextColor"
-                    @update:model-value="setValue"
-                />
+                <div class="dl-pagination--page-navigation-wrapper">
+                    <page-navigation
+                        :model-value="value"
+                        :min="min"
+                        :max="max"
+                        :max-display-range="effectiveMaxDisplayRange"
+                        :disabled="disabled"
+                        :boundary-numbers="boundaryNumbers"
+                        :boundary-links="boundaryLinks"
+                        :direction-links="directionLinks"
+                        :color="color"
+                        :active-color="activeColor"
+                        :text-color="textColor"
+                        :active-text-color="activeTextColor"
+                        @update:model-value="setValue"
+                    />
+                </div>
                 <quick-navigation
                     v-if="withQuickNavigation"
+                    ref="quickNavRef"
+                    class="dl-pagination--quick-navigation"
                     :model-value="value"
                     :max="max"
                     :min="min"
@@ -49,6 +55,7 @@
             </div>
             <pagination-legend
                 v-if="withLegend"
+                ref="rightSideRef"
                 :from="rowFrom"
                 :to="rowTo"
                 :total="totalItems"
@@ -57,6 +64,7 @@
             />
             <div
                 v-else-if="withRowsPerPage && rowsPerPageState"
+                ref="rightSideRef"
                 class="dl-pagination--sides dl-pagination--sides--right"
             />
         </div>
@@ -70,6 +78,10 @@ import PageNavigation from './components/PageNavigation.vue'
 import QuickNavigation from './components/QuickNavigation.vue'
 import PaginationLegend from './components/PaginationLegend.vue'
 import { v4 } from 'uuid'
+
+const PAGE_BUTTON_AVG_WIDTH_PX = 16
+const NAV_HORIZONTAL_PADDING_PX = 52
+const REDUCED_DISPLAY_RANGE = 5
 
 export default defineComponent({
     name: 'DlPagination',
@@ -142,10 +154,37 @@ export default defineComponent({
         return {
             uuid: `dl-pagination-${v4()}`,
             value: this.modelValue,
-            rowsPerPageState: this.rowsPerPage
+            rowsPerPageState: this.rowsPerPage,
+            rootWidth: 0,
+            leftSideWidth: 0,
+            rightSideWidth: 0,
+            quickNavWidth: 0,
+            resizeObserver: null as ResizeObserver | null
         }
     },
     computed: {
+        navNaturalWidth(): number {
+            let buttonCount = this.maxDisplayRange + 1
+            if (this.boundaryNumbers) buttonCount += 2
+            if (this.directionLinks) buttonCount += 2
+            if (this.boundaryLinks) buttonCount += 2
+            return (
+                buttonCount * PAGE_BUTTON_AVG_WIDTH_PX +
+                NAV_HORIZONTAL_PADDING_PX
+            )
+        },
+        effectiveMaxDisplayRange(): number {
+            if (this.rootWidth === 0) return this.maxDisplayRange
+            const available =
+                this.rootWidth -
+                this.leftSideWidth -
+                this.rightSideWidth -
+                this.quickNavWidth
+            if (available < this.navNaturalWidth) {
+                return Math.min(this.maxDisplayRange, REDUCED_DISPLAY_RANGE)
+            }
+            return this.maxDisplayRange
+        },
         rowFrom(): number {
             return 1 + this.rowsPerPageState * (this.value - 1)
         },
@@ -177,10 +216,61 @@ export default defineComponent({
         }
     },
 
+    mounted() {
+        this.setupResizeObserver()
+    },
+    beforeUnmount() {
+        this.teardownResizeObserver()
+    },
     methods: {
         setValue(value: number) {
             this.value = value
             this.$emit('update:model-value', value)
+        },
+        setupResizeObserver() {
+            const resolveEl = (ref: unknown): Element | null => {
+                const el = (ref as { $el?: unknown })?.$el ?? ref
+                return el instanceof Element ? el : null
+            }
+
+            const targets: {
+                element: Element | null
+                setWidth: (width: number) => void
+            }[] = [
+                {
+                    element: resolveEl(this.$refs.rootRef),
+                    setWidth: (w) => (this.rootWidth = w)
+                },
+                {
+                    element: resolveEl(this.$refs.leftSideRef),
+                    setWidth: (w) => (this.leftSideWidth = w)
+                },
+                {
+                    element: resolveEl(this.$refs.rightSideRef),
+                    setWidth: (w) => (this.rightSideWidth = w)
+                },
+                {
+                    element: resolveEl(this.$refs.quickNavRef),
+                    setWidth: (w) => (this.quickNavWidth = w)
+                }
+            ]
+
+            this.resizeObserver = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    const target = targets.find(
+                        (t) => t.element === entry.target
+                    )
+                    target?.setWidth(entry.contentRect.width)
+                }
+            })
+
+            for (const { element } of targets) {
+                if (element) this.resizeObserver.observe(element)
+            }
+        },
+        teardownResizeObserver() {
+            this.resizeObserver?.disconnect()
+            this.resizeObserver = null
         }
     }
 })
@@ -190,10 +280,6 @@ export default defineComponent({
 .dl-pagination {
     width: 100%;
     height: 40px;
-    font-family: var(--dl-typography-body-body3-font-family);
-    font-size: var(--dl-typography-body-body3-font-size);
-    line-height: var(--dl-typography-body-body3-line-height);
-    font-weight: var(--dl-typography-body-body3-font-weight);
 
     &--container {
         height: 100%;
@@ -205,16 +291,30 @@ export default defineComponent({
 
     &--navigation {
         display: flex;
-        flex-grow: 1;
-        width: 60%;
+        flex: 1 1 auto;
+        min-width: 0;
         justify-content: center;
+        align-items: center;
         &--maximized {
             width: 100%;
         }
     }
 
+    &--page-navigation-wrapper {
+        flex: 0 1 auto;
+        min-width: 0;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+    }
+
     &--sides {
-        width: 20%;
+        flex: 1 1 0;
+        min-width: max-content;
+    }
+
+    &--quick-navigation {
+        flex: 0 0 auto;
     }
 }
 </style>
