@@ -161,7 +161,7 @@ export default defineComponent({
             // Approximate width of the page-navigation when rendered with the
             // full `maxDisplayRange` page buttons; used to decide when to
             // reduce visible items so content doesn't overflow/clip.
-            const buttonWidth = 22
+            const buttonWidth = 16
             const horizontalPadding = 52
             let buttonCount = this.maxDisplayRange + 1 // pages + ellipsis
             if (this.boundaryNumbers) buttonCount += 2
