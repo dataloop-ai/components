@@ -222,9 +222,6 @@ export default defineComponent({
     beforeUnmount() {
         this.teardownResizeObserver()
     },
-    beforeDestroy() {
-        this.teardownResizeObserver()
-    },
     methods: {
         setValue(value: number) {
             this.value = value
