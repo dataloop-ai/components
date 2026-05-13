@@ -300,7 +300,7 @@ export default defineComponent({
     }
 
     &--sides {
-        flex: 0 0 auto;
+        flex: 1 1 0;
         min-width: max-content;
     }
 
