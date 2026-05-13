@@ -1,5 +1,5 @@
 <template>
-    <div :id="uuid" ref="rootRef" class="dl-pagination body3">
+    <div :id="uuid" ref="rootRef" class="dl-pagination dell-body3">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
