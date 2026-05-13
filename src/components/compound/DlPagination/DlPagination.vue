@@ -1,5 +1,5 @@
 <template>
-    <div :id="uuid" ref="rootRef" class="dl-pagination">
+    <div :id="uuid" ref="rootRef" class="dl-pagination body3">
         <div class="dl-pagination--container">
             <rows-selector
                 v-if="withRowsPerPage && rowsPerPageState"
@@ -274,10 +274,6 @@ export default defineComponent({
 .dl-pagination {
     width: 100%;
     height: 40px;
-    font-family: var(--dl-typography-body-body3-font-family);
-    font-size: var(--dl-typography-body-body3-font-size);
-    line-height: var(--dl-typography-body-body3-line-height);
-    font-weight: var(--dl-typography-body-body3-font-weight);
 
     &--container {
         height: 100%;
