@@ -213,37 +213,36 @@ export default defineComponent({
     },
 
     mounted() {
+        const resolveEl = (ref: unknown): Element | null => {
+            const el = (ref as { $el?: unknown })?.$el ?? ref
+            return el instanceof Element ? el : null
+        }
+
+        const targets: [Element | null, (w: number) => void][] = [
+            [resolveEl(this.$refs.rootRef), (w) => (this.rootWidth = w)],
+            [
+                resolveEl(this.$refs.leftSideRef),
+                (w) => (this.leftSideWidth = w)
+            ],
+            [
+                resolveEl(this.$refs.rightSideRef),
+                (w) => (this.rightSideWidth = w)
+            ],
+            [resolveEl(this.$refs.quickNavRef), (w) => (this.quickNavWidth = w)]
+        ]
+
         this.resizeObserver = new ResizeObserver((entries) => {
             for (const entry of entries) {
-                const target = entry.target as HTMLElement
-                const width = entry.contentRect.width
-                if (target === (this.$refs.rootRef as Element)) {
-                    this.rootWidth = width
-                } else if (
-                    target.classList.contains('dl-pagination--sides--left')
-                ) {
-                    this.leftSideWidth = width
-                } else if (
-                    target.classList.contains('dl-pagination--sides--right')
-                ) {
-                    this.rightSideWidth = width
-                } else if (
-                    target.classList.contains('dl-pagination--quick-navigation')
-                ) {
-                    this.quickNavWidth = width
+                const match = targets.find(([el]) => el === entry.target)
+                if (match) {
+                    match[1](entry.contentRect.width)
                 }
             }
         })
-        const observeEl = (ref: any) => {
-            const el = (ref?.$el ?? ref) as Element | undefined
-            if (el && el instanceof Element) {
-                this.resizeObserver?.observe(el)
-            }
+
+        for (const [el] of targets) {
+            if (el) this.resizeObserver.observe(el)
         }
-        observeEl(this.$refs.rootRef)
-        observeEl(this.$refs.leftSideRef)
-        observeEl(this.$refs.rightSideRef)
-        observeEl(this.$refs.quickNavRef)
     },
     beforeUnmount() {
         this.resizeObserver?.disconnect()
