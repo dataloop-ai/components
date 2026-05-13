@@ -25,32 +25,34 @@
                         : 'dl-pagination--navigation--maximized'
                 "
             >
-                <page-navigation
+                <div class="dl-pagination--page-navigation-wrapper">
+                    <page-navigation
+                        :model-value="value"
+                        :min="min"
+                        :max="max"
+                        :max-display-range="effectiveMaxDisplayRange"
+                        :disabled="disabled"
+                        :boundary-numbers="boundaryNumbers"
+                        :boundary-links="boundaryLinks"
+                        :direction-links="directionLinks"
+                        :color="color"
+                        :active-color="activeColor"
+                        :text-color="textColor"
+                        :active-text-color="activeTextColor"
+                        @update:model-value="setValue"
+                    />
+                </div>
+                <quick-navigation
+                    v-if="withQuickNavigation"
+                    ref="quickNavRef"
+                    class="dl-pagination--quick-navigation"
                     :model-value="value"
-                    :min="min"
                     :max="max"
-                    :max-display-range="effectiveMaxDisplayRange"
+                    :min="min"
                     :disabled="disabled"
-                    :boundary-numbers="boundaryNumbers"
-                    :boundary-links="boundaryLinks"
-                    :direction-links="directionLinks"
-                    :color="color"
-                    :active-color="activeColor"
-                    :text-color="textColor"
-                    :active-text-color="activeTextColor"
                     @update:model-value="setValue"
                 />
             </div>
-            <quick-navigation
-                v-if="withQuickNavigation && rowsPerPageState"
-                ref="quickNavRef"
-                class="dl-pagination--quick-navigation"
-                :model-value="value"
-                :max="max"
-                :min="min"
-                :disabled="disabled"
-                @update:model-value="setValue"
-            />
             <pagination-legend
                 v-if="withLegend"
                 ref="rightSideRef"
@@ -283,10 +285,18 @@ export default defineComponent({
         flex: 1 1 auto;
         min-width: 0;
         justify-content: center;
-        overflow: hidden;
+        align-items: center;
         &--maximized {
             width: 100%;
         }
+    }
+
+    &--page-navigation-wrapper {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
     }
 
     &--sides {
