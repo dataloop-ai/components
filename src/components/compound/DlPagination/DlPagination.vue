@@ -39,15 +39,16 @@
                     :active-text-color="activeTextColor"
                     @update:model-value="setValue"
                 />
-                <quick-navigation
-                    v-if="withQuickNavigation"
-                    :model-value="value"
-                    :max="max"
-                    :min="min"
-                    :disabled="disabled"
-                    @update:model-value="setValue"
-                />
             </div>
+            <quick-navigation
+                v-if="withQuickNavigation && rowsPerPageState"
+                class="dl-pagination--quick-navigation"
+                :model-value="value"
+                :max="max"
+                :min="min"
+                :disabled="disabled"
+                @update:model-value="setValue"
+            />
             <pagination-legend
                 v-if="withLegend"
                 :from="rowFrom"
@@ -149,8 +150,20 @@ export default defineComponent({
         }
     },
     computed: {
+        navNaturalWidth(): number {
+            // Approximate width of the page-navigation when rendered with the
+            // full `maxDisplayRange` page buttons; used to decide when to
+            // reduce visible items so content doesn't overflow/clip.
+            const buttonWidth = 28
+            const horizontalPadding = 52
+            let buttonCount = this.maxDisplayRange + 1 // pages + ellipsis
+            if (this.boundaryNumbers) buttonCount += 2
+            if (this.directionLinks) buttonCount += 2
+            if (this.boundaryLinks) buttonCount += 2
+            return buttonCount * buttonWidth + horizontalPadding
+        },
         effectiveMaxDisplayRange(): number {
-            if (this.navWidth > 0 && this.navWidth < 350) {
+            if (this.navWidth > 0 && this.navWidth < this.navNaturalWidth) {
                 return Math.min(this.maxDisplayRange, 5)
             }
             return this.maxDisplayRange
@@ -245,6 +258,10 @@ export default defineComponent({
     &--sides {
         flex: 0 0 auto;
         min-width: max-content;
+    }
+
+    &--quick-navigation {
+        flex: 0 0 auto;
     }
 }
 </style>
