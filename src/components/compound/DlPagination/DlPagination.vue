@@ -79,6 +79,10 @@ import QuickNavigation from './components/QuickNavigation.vue'
 import PaginationLegend from './components/PaginationLegend.vue'
 import { v4 } from 'uuid'
 
+const PAGE_BUTTON_AVG_WIDTH_PX = 16
+const NAV_HORIZONTAL_PADDING_PX = 52
+const REDUCED_DISPLAY_RANGE = 5
+
 export default defineComponent({
     name: 'DlPagination',
     components: {
@@ -160,16 +164,14 @@ export default defineComponent({
     },
     computed: {
         navNaturalWidth(): number {
-            // Approximate width of the page-navigation when rendered with the
-            // full `maxDisplayRange` page buttons; used to decide when to
-            // reduce visible items so content doesn't overflow/clip.
-            const buttonWidth = 16
-            const horizontalPadding = 52
-            let buttonCount = this.maxDisplayRange + 1 // pages + ellipsis
+            let buttonCount = this.maxDisplayRange + 1
             if (this.boundaryNumbers) buttonCount += 2
             if (this.directionLinks) buttonCount += 2
             if (this.boundaryLinks) buttonCount += 2
-            return buttonCount * buttonWidth + horizontalPadding
+            return (
+                buttonCount * PAGE_BUTTON_AVG_WIDTH_PX +
+                NAV_HORIZONTAL_PADDING_PX
+            )
         },
         effectiveMaxDisplayRange(): number {
             if (this.rootWidth === 0) return this.maxDisplayRange
@@ -179,7 +181,7 @@ export default defineComponent({
                 this.rightSideWidth -
                 this.quickNavWidth
             if (available < this.navNaturalWidth) {
-                return Math.min(this.maxDisplayRange, 5)
+                return Math.min(this.maxDisplayRange, REDUCED_DISPLAY_RANGE)
             }
             return this.maxDisplayRange
         },
@@ -215,49 +217,58 @@ export default defineComponent({
     },
 
     mounted() {
-        const resolveEl = (ref: unknown): Element | null => {
-            const el = (ref as { $el?: unknown })?.$el ?? ref
-            return el instanceof Element ? el : null
-        }
-
-        const targets: [Element | null, (w: number) => void][] = [
-            [resolveEl(this.$refs.rootRef), (w) => (this.rootWidth = w)],
-            [
-                resolveEl(this.$refs.leftSideRef),
-                (w) => (this.leftSideWidth = w)
-            ],
-            [
-                resolveEl(this.$refs.rightSideRef),
-                (w) => (this.rightSideWidth = w)
-            ],
-            [resolveEl(this.$refs.quickNavRef), (w) => (this.quickNavWidth = w)]
-        ]
-
-        this.resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const match = targets.find(([el]) => el === entry.target)
-                if (match) {
-                    match[1](entry.contentRect.width)
-                }
-            }
-        })
-
-        for (const [el] of targets) {
-            if (el) this.resizeObserver.observe(el)
-        }
+        this.setupResizeObserver()
     },
     beforeUnmount() {
-        this.resizeObserver?.disconnect()
-        this.resizeObserver = null
+        this.teardownResizeObserver()
     },
     beforeDestroy() {
-        this.resizeObserver?.disconnect()
-        this.resizeObserver = null
+        this.teardownResizeObserver()
     },
     methods: {
         setValue(value: number) {
             this.value = value
             this.$emit('update:model-value', value)
+        },
+        setupResizeObserver() {
+            type VueRef = Element | { $el?: unknown } | null | undefined
+            const resolveEl = (ref: VueRef): Element | null => {
+                const el = (ref as { $el?: unknown })?.$el ?? ref
+                return el instanceof Element ? el : null
+            }
+
+            const targets: [Element | null, (w: number) => void][] = [
+                [resolveEl(this.$refs.rootRef), (w) => (this.rootWidth = w)],
+                [
+                    resolveEl(this.$refs.leftSideRef),
+                    (w) => (this.leftSideWidth = w)
+                ],
+                [
+                    resolveEl(this.$refs.rightSideRef),
+                    (w) => (this.rightSideWidth = w)
+                ],
+                [
+                    resolveEl(this.$refs.quickNavRef),
+                    (w) => (this.quickNavWidth = w)
+                ]
+            ]
+
+            this.resizeObserver = new ResizeObserver((entries) => {
+                for (const entry of entries) {
+                    const match = targets.find(([el]) => el === entry.target)
+                    if (match) {
+                        match[1](entry.contentRect.width)
+                    }
+                }
+            })
+
+            for (const [el] of targets) {
+                if (el) this.resizeObserver.observe(el)
+            }
+        },
+        teardownResizeObserver() {
+            this.resizeObserver?.disconnect()
+            this.resizeObserver = null
         }
     }
 })
