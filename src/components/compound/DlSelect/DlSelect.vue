@@ -85,12 +85,11 @@
                 <dl-tooltip v-if="disabled && disabledTooltip">
                     {{ disabledTooltip }}
                 </dl-tooltip>
-                <div v-if="hasSelectedSlot" style="width: 100%">
-                    <slot
-                        v-if="!isActiveSearchInput"
-                        :opt="selectedOption"
-                        name="selected"
-                    >
+                <div
+                    v-if="hasSelectedSlot && !isActiveSearchInput"
+                    style="width: 100%"
+                >
+                    <slot :opt="selectedOption" name="selected">
                         <span class="root-container--placeholder">
                             <dl-ellipsis :text="filterSelectLabel" />
                         </span>
