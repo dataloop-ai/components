@@ -212,32 +212,40 @@
                                             :src="item.image"
                                             class="dl-input__suggestion--image"
                                         />
-                                        <span
-                                            v-for="(
-                                                word, index
-                                            ) in getSuggestWords(
-                                                item.suggestion,
-                                                modelValue
-                                            )"
-                                            :key="JSON.stringify(word) + index"
-                                            :class="{
-                                                'dl-input__suggestion--highlighted':
-                                                    word.highlighted
-                                            }"
+                                        <dl-ellipsis
+                                            class="dl-input__suggestion--text"
                                         >
-                                            <span v-if="word.value[0] === ' '"
-                                            >&nbsp;</span
-                                            >
-                                            {{ word.value }}
                                             <span
-                                                v-if="
-                                                    word.value[
-                                                        word.value.length - 1
-                                                    ] === ' '
+                                                v-for="(
+                                                    word, index
+                                                ) in getSuggestWords(
+                                                    item.suggestion,
+                                                    modelValue
+                                                )"
+                                                :key="
+                                                    JSON.stringify(word) + index
                                                 "
-                                            >&nbsp;</span
+                                                :class="{
+                                                    'dl-input__suggestion--highlighted':
+                                                        word.highlighted
+                                                }"
                                             >
-                                        </span>
+                                                <span
+                                                    v-if="word.value[0] === ' '"
+                                                >&nbsp;</span
+                                                >
+                                                {{ word.value }}
+                                                <span
+                                                    v-if="
+                                                        word.value[
+                                                            word.value.length -
+                                                            1
+                                                        ] === ' '
+                                                    "
+                                                >&nbsp;</span
+                                                >
+                                            </span>
+                                        </dl-ellipsis>
                                     </slot>
                                 </dl-list-item>
                             </dl-list>
@@ -1797,6 +1805,14 @@ export default defineComponent({
             background-color: var(--dl-color-warning);
             border-radius: 2px;
             color: var(--dl-color-text-darker-buttons);
+        }
+        &--text {
+            flex: 1 1 auto;
+            min-width: 0;
+
+            ::v-deep .dl-ellipsis__left {
+                white-space: nowrap;
+            }
         }
         &--image {
             margin-right: 5px;
