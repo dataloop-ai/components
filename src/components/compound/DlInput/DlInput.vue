@@ -1664,6 +1664,7 @@ export default defineComponent({
         position: relative;
         line-height: 10px;
         width: 100%;
+        contain: inline-size;
 
         &--text-color {
             color: var(--dell-gray-800);
