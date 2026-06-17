@@ -290,6 +290,11 @@ export default defineComponent({
             {
                 suggestion: '@team-design',
                 startIcon: 'icon-dl-users'
+            },
+            {
+                suggestion:
+                    'averyveryveryveryveryveryveryverylongtextwithoutanyspaces',
+                startIcon: 'icon-dl-users'
             }
         ])
 
