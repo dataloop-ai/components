@@ -618,16 +618,15 @@ export default defineComponent({
                 return
             }
 
-            if (focused.value) {
-                return
+            if (!focused.value) {
+                input.value.scrollTo(0, input.value.scrollHeight)
+                input.value.scrollLeft = input.value.scrollWidth
+
+                input.value.focus()
+
+                focused.value = true
+                emit('focus')
             }
-
-            input.value.scrollTo(0, input.value.scrollHeight)
-            input.value.scrollLeft = input.value.scrollWidth
-
-            input.value.focus()
-
-            focused.value = true
             if (suggestions.value.length) {
                 showSuggestions.value = true
 
@@ -637,7 +636,6 @@ export default defineComponent({
                     )
                 })
             }
-            emit('focus')
         }
 
         const processBlur = () => {
