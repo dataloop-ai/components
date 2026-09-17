@@ -13,7 +13,7 @@ git add .
 
 sleep 0.5
 A=$(date +"%m-%d-%y %r")
-git commit -m "NEW ICONS - $A"
+git commit -n -m "NEW ICONS - $A"
 
 sleep 0.5
 npm version patch
