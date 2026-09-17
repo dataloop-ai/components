@@ -20,7 +20,7 @@
     "lint-staged": "npm run check-only && lint-staged",
     "test": "vitest",
     "test:coverage": "vitest run --coverage --silent",
-    "check-only": "if grep -E -H -r --exclude-dir=.git --exclude-dir=node_modules --exclude=*.json --exclude=*.yml '^(describe|it).only' .; then echo 'Found only in test files' && exit 1; fi"
+    "check-only": "node misc/check-only.js"
   },
   "dependencies": {
     "@dataloop-ai/icons": "^3.1.96",
