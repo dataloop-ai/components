@@ -17,6 +17,7 @@ git commit -n -m "NEW ICONS - $A"
 
 sleep 0.5
 npm version patch
+git commit -n -m "Bump version"
 git push --follow-tags
 
 echo 'Changes committed and new version published'
