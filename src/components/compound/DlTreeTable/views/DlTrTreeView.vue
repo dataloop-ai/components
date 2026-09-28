@@ -1,6 +1,9 @@
 <template>
     <DlTrTree
-        :class="{ selected: isRowSelected, highlighted: isRowHighlighted }"
+        :class="{
+            'dl-tr--selected': isRowSelected,
+            highlighted: isRowHighlighted
+        }"
         :no-hover="noHover"
         :children="childrenCount"
         :props="{ row }"
@@ -446,5 +449,8 @@ export default defineComponent({
 }
 .dl-draggable-container {
     width: 25px;
+}
+.dl-table tbody tr.dl-tr--selected td {
+    background-color: var(--dell-blue-100);
 }
 </style>
