@@ -1,6 +1,6 @@
 <template>
     <DlTrTree
-        :class="rowClass()"
+        :class="{ selected: isRowSelected, highlighted: isRowHighlighted }"
         :no-hover="noHover"
         :children="childrenCount"
         :props="{ row }"
@@ -10,15 +10,13 @@
         @mouseenter="onRowHoverStart($event, row, rowIndex)"
         @mouseleave="onRowHoverEnd($event, row, rowIndex)"
     >
-        <td
-            :style="`opacity: ${
-                isDragIconVisible || isRowHighlighted ? '1' : '0'
-            }`"
-            class="dl-draggable-container"
-        >
+        <td class="dl-draggable-container">
             <dl-icon
                 v-if="hasDraggableRows && !row.disableDraggable"
                 class="draggable-icon"
+                :style="`opacity: ${
+                    isDragIconVisible || isRowHighlighted ? '1' : '0'
+                }`"
                 icon="icon-dl-drag"
                 size="12px"
                 :color="
@@ -138,8 +136,8 @@ export default defineComponent({
             type: [String, Function]
         },
         isRowSelected: {
-            type: [Boolean, String],
-            default: null
+            type: Boolean,
+            default: false
         },
         hasAnyAction: {
             type: Boolean,
@@ -342,12 +340,6 @@ export default defineComponent({
                 : 'body-cell'
         }
 
-        const rowClass = (): string => {
-            if (props.isRowHighlighted) {
-                return 'highlighted'
-            }
-        }
-
         const getExpandedvisibleChildren = (): void => {
             visibleChildren.value = 1
             updateExpandedvisibleChildren(row.value)
@@ -419,7 +411,6 @@ export default defineComponent({
             emitUpdateExpandedRow,
             getCellValue,
             hasSlotByName,
-            rowClass,
             getSlotByName,
             getExpandedvisibleChildren,
             updateExpandedvisibleChildren,
