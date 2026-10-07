@@ -455,7 +455,7 @@ export default defineComponent({
 }
 .dl-table--horizontal-separator,
 .dl-table--cell-separator {
-    tbody tr.dl-tr > td {
+    .dl-table tbody tr.dl-tr > td {
         border-bottom-width: 0;
         box-shadow: inset 0 -1px 0 var(--dell-gray-300);
     }
