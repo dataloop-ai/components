@@ -453,4 +453,10 @@ export default defineComponent({
 .dl-table tbody tr.dl-tr--selected td {
     background-color: var(--dell-blue-100);
 }
+.dl-table--horizontal-separator,
+.dl-table--cell-separator {
+    tr.dl-tr > td {
+        border-bottom-width: 1px;
+    }
+}
 </style>
