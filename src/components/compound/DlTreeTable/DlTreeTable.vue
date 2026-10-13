@@ -611,9 +611,8 @@ export default defineComponent({
                 row,
                 rowIndex: index,
                 rowKey: props.rowKey,
-                isRowSelected: isRowSelected(props.rowKey, getRowKey.value(row))
-                    ? 'selected'
-                    : '',
+                isRowSelected:
+                    isRowSelected(props.rowKey, getRowKey.value(row)) === true,
                 isRowHighlighted:
                     props.highlightedRow &&
                     (typeof props.rowKey === 'string'
