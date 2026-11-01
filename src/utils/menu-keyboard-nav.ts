@@ -1,19 +1,18 @@
-import { isVue2 } from 'vue-demi'
-
 /**
- * Keyboard support for DlMenu / DlPopup content: list items are plain divs
- * and focus never enters a menu on its own.
- * Register globally (`Vue.directive('menu-keyboard-nav', MenuKeyboardNav)`)
- * and put `v-menu-keyboard-nav` on an element inside the menu content; the
- * enclosing `.dl-menu` is what gets navigated.
+ * Built-in keyboard support for DlMenu content (and so DlPopup, which renders
+ * through DlMenu). DlMenu attaches it to its content element while showing,
+ * unless `arrowNavItems` drives the menu or `noKeyboardNav` is set.
  *
  * - Opening a menu from the keyboard moves focus to its first item
  * - ArrowDown / ArrowUp / Home / End move between items
  * - Enter / Space activate the focused item
  * - ArrowRight, Enter or Space on an item with a submenu opens it,
  *   ArrowLeft closes it and returns to the parent item
- * - Tab closes the whole menu chain and returns focus to its trigger
+ * - Tab on an item closes the whole menu chain and returns focus to its trigger
  * - Escape is already handled by DlMenu (closes the top-most menu)
+ *
+ * Keys are only handled while focus is on a menu item (or on the menu itself),
+ * so other focusable content in a menu or popup keeps its own key handling.
  */
 
 const ITEM_SELECTOR = [
@@ -23,7 +22,6 @@ const ITEM_SELECTOR = [
     'input.dl-switch-checkbox' // DlSwitch
 ].join(', ')
 const SUBMENU_ICON_SELECTOR = '.icon-dl-right-chevron'
-const INSTANCE_KEY = '_menuKeyboardNav'
 
 interface MenuNavInstance {
     root: HTMLElement
@@ -46,32 +44,35 @@ let pendingSubmenuFocus = false
  * closes the menu and refocuses the trigger), the keyup that follows would
  * immediately toggle the menu again, so it is swallowed at its target.
  */
-function swallowEvent(e: Event) {
+const swallowEvent = (e: Event) => {
     e.preventDefault()
     e.stopImmediatePropagation()
 }
 
-function onWindowKeydown(e: KeyboardEvent) {
+const onWindowKeydown = (e: KeyboardEvent) => {
     keyboardMode = true
     if (e.key === 'Enter' || e.key === ' ') {
         heldActivationKey = e.key
     }
-    // Menu opened with the mouse: arrows move focus into it
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') {
+        return
+    }
+    // Menu opened with the mouse: arrows move focus into it, as long as focus
+    // is still on its trigger (or nowhere)
+    const top = instances[instances.length - 1]
+    const active = document.activeElement
     if (
-        (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
-        instances.length &&
-        !isTextField(e.target as HTMLElement) &&
-        !instances.some((i) => i.root.contains(document.activeElement))
+        top &&
+        (!active || active === document.body || active === top.opener) &&
+        !isTextField(active as HTMLElement) &&
+        getItems(top.root).length
     ) {
         e.preventDefault()
-        focusItem(
-            instances[instances.length - 1],
-            e.key === 'ArrowDown' ? 0 : -1
-        )
+        focusItem(top, e.key === 'ArrowDown' ? 0 : -1)
     }
 }
 
-function onWindowKeyup(e: KeyboardEvent) {
+const onWindowKeyup = (e: KeyboardEvent) => {
     if (e.key === heldActivationKey) {
         heldActivationKey = null
     }
@@ -84,12 +85,12 @@ function onWindowKeyup(e: KeyboardEvent) {
     }
 }
 
-function onWindowPointerdown() {
+const onWindowPointerdown = () => {
     keyboardMode = false
     pendingSubmenuFocus = false
 }
 
-function installListeners() {
+const installListeners = () => {
     if (listenersInstalled) {
         return
     }
@@ -99,7 +100,7 @@ function installListeners() {
     window.addEventListener('pointerdown', onWindowPointerdown, true)
 }
 
-function isTextField(el: HTMLElement | null) {
+const isTextField = (el: HTMLElement | null) => {
     if (!el) {
         return false
     }
@@ -112,16 +113,16 @@ function isTextField(el: HTMLElement | null) {
     )
 }
 
-function isListItem(el: HTMLElement) {
+const isListItem = (el: HTMLElement) => {
     return el.classList.contains('dl-list-item')
 }
 
-function isClickableListItem(el: HTMLElement) {
+const isClickableListItem = (el: HTMLElement) => {
     // DlListItem exposes clickable && !disabled only through this inline var
     return el.style.getPropertyValue('--dl-list-item-cursor') === 'pointer'
 }
 
-function isEnabled(el: HTMLElement) {
+const isEnabled = (el: HTMLElement) => {
     if (isListItem(el)) {
         return isClickableListItem(el)
     }
@@ -134,11 +135,11 @@ function isEnabled(el: HTMLElement) {
     )
 }
 
-function hasSubmenu(el: HTMLElement) {
+const hasSubmenu = (el: HTMLElement) => {
     return isListItem(el) && !!el.querySelector(SUBMENU_ICON_SELECTOR)
 }
 
-function getItems(root: HTMLElement): HTMLElement[] {
+const getItems = (root: HTMLElement): HTMLElement[] => {
     const candidates = Array.from(
         root.querySelectorAll<HTMLElement>(ITEM_SELECTOR)
     )
@@ -171,25 +172,24 @@ function getItems(root: HTMLElement): HTMLElement[] {
     return items
 }
 
-function focusItem(instance: MenuNavInstance, index: number) {
+const focusItem = (instance: MenuNavInstance, index: number) => {
     const items = getItems(instance.root)
     if (!items.length) {
-        instance.root.focus({ preventScroll: true })
         return
     }
     const wrapped = ((index % items.length) + items.length) % items.length
     items[wrapped].focus({ preventScroll: true })
 }
 
-function childOf(instance: MenuNavInstance, opener: HTMLElement) {
+const childOf = (instance: MenuNavInstance, opener: HTMLElement) => {
     return instances.find((i) => i.parent === instance && i.opener === opener)
 }
 
 /**
- * Submenus in the app open on hover (mouseenter -> ref.show()), which is
- * idempotent, unlike the anchor click handler that toggles.
+ * Submenus open on hover (mouseenter -> show()), which is idempotent,
+ * unlike the anchor click handler that toggles.
  */
-function openSubmenu(instance: MenuNavInstance, item: HTMLElement) {
+const openSubmenu = (instance: MenuNavInstance, item: HTMLElement) => {
     const child = childOf(instance, item)
     if (child) {
         focusItem(child, 0)
@@ -202,7 +202,7 @@ function openSubmenu(instance: MenuNavInstance, item: HTMLElement) {
 }
 
 /** DlMenu only closes from its own escape-key handler, so reuse it. */
-function dispatchEscape() {
+const dispatchEscape = () => {
     for (const type of ['keydown', 'keyup']) {
         const evt = new KeyboardEvent(type, { key: 'Escape' })
         Object.defineProperty(evt, 'keyCode', { get: () => 27 })
@@ -210,11 +210,11 @@ function dispatchEscape() {
     }
 }
 
-function nextFrame() {
+const nextFrame = () => {
     return new Promise((resolve) => requestAnimationFrame(resolve))
 }
 
-function closeSubmenu(instance: MenuNavInstance) {
+const closeSubmenu = (instance: MenuNavInstance) => {
     const parentItem = instance.opener
     dispatchEscape()
     requestAnimationFrame(() => {
@@ -224,7 +224,7 @@ function closeSubmenu(instance: MenuNavInstance) {
     })
 }
 
-async function closeChain(instance: MenuNavInstance) {
+const closeChain = async (instance: MenuNavInstance) => {
     const chain: MenuNavInstance[] = []
     for (let i = instance; i; i = i.parent) {
         chain.push(i)
@@ -243,13 +243,17 @@ async function closeChain(instance: MenuNavInstance) {
     }
 }
 
-function onMenuKeydown(instance: MenuNavInstance, e: KeyboardEvent) {
+const onMenuKeydown = (instance: MenuNavInstance, e: KeyboardEvent) => {
     const target = e.target as HTMLElement
     if (e.defaultPrevented || isTextField(target)) {
         return
     }
     const items = getItems(instance.root)
     const current = items.find((i) => i === target || i.contains(target))
+    // Other focusable content (buttons, selects, editors...) keeps its keys
+    if (!items.length || (!current && target !== instance.root)) {
+        return
+    }
     const index = current ? items.indexOf(current) : -1
 
     switch (e.key) {
@@ -294,6 +298,9 @@ function onMenuKeydown(instance: MenuNavInstance, e: KeyboardEvent) {
             }
             break
         case 'Tab':
+            if (!current) {
+                return
+            }
             closeChain(instance)
             break
         default:
@@ -303,72 +310,55 @@ function onMenuKeydown(instance: MenuNavInstance, e: KeyboardEvent) {
     e.stopPropagation()
 }
 
-const menuKeyboardNavV2 = {
-    inserted(el: any) {
-        // The whole menu is navigated, so popup headers / footers are included
-        const root = el.closest('.dl-menu') as HTMLElement | null
-        if (!root) {
-            return
-        }
-        installListeners()
-        const opener =
-            document.activeElement instanceof HTMLElement
-                ? document.activeElement
-                : null
-        const parent =
-            [...instances]
-                .reverse()
-                .find((i) => opener && i.root.contains(opener)) || null
-        const instance: MenuNavInstance = {
-            root,
-            opener,
-            parent,
-            onKeydown: (e) => onMenuKeydown(instance, e)
-        }
-        el[INSTANCE_KEY] = instance
-        instances.push(instance)
-        root.addEventListener('keydown', instance.onKeydown)
-        if (!root.hasAttribute('role')) {
-            root.setAttribute('role', 'menu')
-        }
+/**
+ * Enables keyboard navigation for a menu content element.
+ * Call when the menu content is rendered; returns the cleanup function.
+ */
+export const attachMenuKeyboardNav = (root: HTMLElement): (() => void) => {
+    installListeners()
+    const opener =
+        document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null
+    const parent =
+        [...instances]
+            .reverse()
+            .find((i) => opener && i.root.contains(opener)) || null
+    const instance: MenuNavInstance = {
+        root,
+        opener,
+        parent,
+        onKeydown: (e) => onMenuKeydown(instance, e)
+    }
+    instances.push(instance)
+    root.addEventListener('keydown', instance.onKeydown)
+    if (!root.hasAttribute('role')) {
+        root.setAttribute('role', 'menu')
+    }
 
-        // Opened by an Enter keydown: its keyup must not toggle it closed
-        if (heldActivationKey === 'Enter') {
-            keyupToSwallow = 'Enter'
-        }
-        const focusFirst = parent ? pendingSubmenuFocus : keyboardMode
-        if (parent) {
-            pendingSubmenuFocus = false
-        }
-        if (focusFirst) {
-            requestAnimationFrame(() => {
-                if (instances.includes(instance)) {
-                    focusItem(instance, 0)
-                }
-            })
-        }
-    },
-    unbind(el: any) {
-        const instance: MenuNavInstance = el[INSTANCE_KEY]
-        if (!instance) {
-            return
-        }
-        instance.root.removeEventListener('keydown', instance.onKeydown)
+    // Opened by an Enter keydown: its keyup must not toggle it closed
+    if (heldActivationKey === 'Enter') {
+        keyupToSwallow = 'Enter'
+    }
+    const focusFirst =
+        (parent ? pendingSubmenuFocus : keyboardMode) &&
+        !root.querySelector('[autofocus], [data-autofocus]')
+    if (parent) {
+        pendingSubmenuFocus = false
+    }
+    if (focusFirst) {
+        requestAnimationFrame(() => {
+            if (instances.includes(instance)) {
+                focusItem(instance, 0)
+            }
+        })
+    }
+
+    return () => {
+        root.removeEventListener('keydown', instance.onKeydown)
         const index = instances.indexOf(instance)
         if (index > -1) {
             instances.splice(index, 1)
         }
-        delete el[INSTANCE_KEY]
     }
 }
-
-const menuKeyboardNavV3 = {
-    mounted(el: any) {
-        menuKeyboardNavV2.inserted(el)
-    },
-    unmounted(el: any) {
-        menuKeyboardNavV2.unbind(el)
-    }
-}
-
-export default isVue2 ? menuKeyboardNavV2 : menuKeyboardNavV3

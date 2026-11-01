@@ -521,7 +521,7 @@ html {
     font-weight: var(--dl-typography-body-body3-font-weight);
 }
 
-// Focus ring for menu items reached through the keyboard (see directives/MenuKeyboardNav.ts)
+// Focus ring for menu items reached through the keyboard (see utils/menu-keyboard-nav.ts)
 .dl-menu .dl-list-item:focus-visible,
 .dl-menu [data-menu-item]:focus-visible,
 .dl-menu .container-wrapper > label.container:focus-visible {

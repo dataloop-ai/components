@@ -58,6 +58,7 @@ import {
     ClickOutsideEvent
 } from '../../../utils/click-outside'
 import { addFocusFn } from '../../../utils/focus-manager'
+import { attachMenuKeyboardNav } from '../../../utils/menu-keyboard-nav'
 
 import {
     validatePosition,
@@ -105,6 +106,10 @@ export default defineComponent({
         autoClose: Boolean,
 
         noRefocus: Boolean,
+        /**
+         * Disables the built-in keyboard navigation between menu items
+         */
+        noKeyboardNav: Boolean,
 
         fitContainer: Boolean,
         fitContent: Boolean,
@@ -548,6 +553,30 @@ export default defineComponent({
         })
         watch(highlightedIndex, (value: any) => {
             emit('highlighted-item', value, arrowNavItems.value[value] ?? null)
+        })
+
+        // Menus driven by arrowNavItems keep focus on their input instead
+        let detachKeyboardNav: (() => void) | null = null
+        const updateKeyboardNav = () => {
+            const el = innerRef.value
+            if (
+                showing.value &&
+                el &&
+                !props.noKeyboardNav &&
+                !arrowNavItems.value?.length
+            ) {
+                if (!detachKeyboardNav) {
+                    detachKeyboardNav = attachMenuKeyboardNav(el)
+                }
+                return
+            }
+            detachKeyboardNav?.()
+            detachKeyboardNav = null
+        }
+        watch([showing, innerRef], updateKeyboardNav, { flush: 'post' })
+        onBeforeUnmount(() => {
+            detachKeyboardNav?.()
+            detachKeyboardNav = null
         })
 
         const { zIndex, height, width } = toRefs(props)
