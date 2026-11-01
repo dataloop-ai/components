@@ -521,4 +521,25 @@ html {
     font-weight: var(--dl-typography-body-body3-font-weight);
 }
 
+// Focus ring for menu items reached through the keyboard (see directives/MenuKeyboardNav.ts)
+.dl-menu .dl-list-item:focus-visible,
+.dl-menu [data-menu-item]:focus-visible,
+.dl-menu .container-wrapper > label.container:focus-visible {
+    outline: 2px solid var(--dl-color-secondary);
+    outline-offset: -2px;
+}
+
+.dl-menu .dl-list-item:focus-visible {
+    background-color: var(--dl-list-item-hover);
+}
+
+.dl-menu .dl-switch-checkbox:focus-visible {
+    outline: none;
+}
+
+.dl-menu .dl-switch-checkbox:focus-visible + .dl-switch {
+    outline: 2px solid var(--dl-color-secondary);
+    outline-offset: 2px;
+}
+
 @import 'grid';
