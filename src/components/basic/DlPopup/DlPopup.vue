@@ -114,6 +114,7 @@ export default defineComponent({
         persistent: Boolean,
         autoClose: Boolean,
         noRefocus: Boolean,
+        noKeyboardNav: Boolean,
         fitContainer: Boolean,
         fitContent: Boolean,
         cover: Boolean,
