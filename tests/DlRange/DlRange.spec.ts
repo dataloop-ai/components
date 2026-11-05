@@ -138,7 +138,7 @@ describe('DlRange', () => {
                 expect(wrapper.emitted()['update:model-value'][0]).toEqual([
                     { min: 0, max: 100 }
                 ])
-                expect(wrapper.vm.$data.model).toEqual({
+                expect(wrapper.vm.model).toEqual({
                     min: 0,
                     max: 100
                 })
@@ -154,7 +154,7 @@ describe('DlRange', () => {
                 expect(wrapper.emitted()).not.toHaveProperty(
                     'update:model-value'
                 )
-                expect(wrapper.vm.$data.model).toEqual({
+                expect(wrapper.vm.model).toEqual({
                     min: 0,
                     max: 100
                 })
