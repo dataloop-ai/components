@@ -1,20 +1,8 @@
 <template>
-    <div
-        :style="cssVars"
-        :class="chartWrapperClasses"
-    >
-        <dl-empty-state
-            v-if="isEmpty"
-            v-bind="emptyStateProps"
-        >
-            <template
-                v-for="(_, slot) in $slots"
-                #[slot]="props"
-            >
-                <slot
-                    :name="slot"
-                    v-bind="props"
-                />
+    <div :style="cssVars" :class="chartWrapperClasses">
+        <dl-empty-state v-if="isEmpty" v-bind="emptyStateProps">
+            <template v-for="(_, slot) in $slots" #[slot]="props">
+                <slot :name="slot" v-bind="props" />
             </template>
         </dl-empty-state>
         <DlLine
@@ -186,7 +174,7 @@ export default defineComponent({
         ...CommonProps,
         ...ColumnChartProps
     } as { [key: string]: any },
-    setup(props) {
+    setup(props: Record<string, any>) {
         const { variables } = useThemeVariables()
         const {
             data,

@@ -175,7 +175,7 @@ export default defineComponent({
         ...CommonProps,
         ...ColumnChartProps
     } as { [key: string]: any },
-    setup(props) {
+    setup(props: Record<string, any>) {
         const { variables } = useThemeVariables()
 
         const chartWidth = ref('100%')

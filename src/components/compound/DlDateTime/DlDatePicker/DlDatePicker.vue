@@ -189,8 +189,12 @@ export default defineComponent({
         this.calendarTo.activeDate = cDateTo
 
         if (this.activeDateFrom && this.activeDateTo) {
-            this.calendarFrom.activeDate = new CalendarDate(this.activeDateFrom)
-            this.calendarTo.activeDate = new CalendarDate(this.activeDateTo)
+            this.calendarFrom.activeDate = new CalendarDate(
+                this.activeDateFrom as CalendarDate
+            )
+            this.calendarTo.activeDate = new CalendarDate(
+                this.activeDateTo as CalendarDate
+            )
         }
     },
     beforeUnmount() {

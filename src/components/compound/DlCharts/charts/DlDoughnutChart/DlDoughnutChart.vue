@@ -99,7 +99,7 @@ import DlEmptyState from '../../../../basic/DlEmptyState/DlEmptyState.vue'
 import { DlEmptyStateProps } from '../../../../basic/DlEmptyState/types'
 
 type SetupParams = {
-    attrs: { onItemClick?: (index: number) => void }
+    attrs: { onItemClick?: (index: number) => void; [key: string]: unknown }
     listeners?: { itemClick?: (index: number) => void }
 }
 

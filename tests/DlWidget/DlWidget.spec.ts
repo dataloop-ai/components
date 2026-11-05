@@ -73,13 +73,8 @@ describe('DlWidget', () => {
             const child = document.createElement('div')
             parent.appendChild(child)
             document.body.appendChild(parent)
-            wrapper = mount(DlWidget, {
-                data() {
-                    return {
-                        hoveredWidget: child
-                    }
-                }
-            })
+            wrapper = mount(DlWidget)
+            wrapper.vm.hoveredWidget = child
         })
         it('should insert widget', function () {
             wrapper.vm.insertWidget()
