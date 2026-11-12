@@ -258,7 +258,7 @@ export default defineComponent({
                 this.flat &&
                 this.hasIcon &&
                 !this.hasContent &&
-                this.icon === 'icon-dl-info'
+                ['icon-dl-info', 'icons-dl-info'].includes(this.icon)
             ) {
                 return null
             }

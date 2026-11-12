@@ -411,7 +411,8 @@ export default defineComponent({
         align-self: flex-start;
     }
 
-    .icon-dl-close:hover {
+    .icon-dl-close:hover,
+    .icons-dl-close:hover {
         cursor: pointer;
     }
 

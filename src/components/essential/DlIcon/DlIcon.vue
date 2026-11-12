@@ -12,7 +12,7 @@
     >
         <i
             class="dl-icon"
-            :class="`${icon} ${externalIcon ? externalIconSource : ''}`"
+            :class="`${iconClass} ${externalIcon ? externalIconSource : ''}`"
             aria-hidden="true"
             role="presentation"
             :style="cssIconVars"
@@ -110,8 +110,33 @@ export default defineComponent({
         const logger = loggerFactory('dl-icon')
         const isHovered = ref(false)
 
+        const DL_ICON_PREFIXES = ['icons-dl-', 'icon-dl-']
+
+        const isDlIcon = computed<boolean>(() => {
+            return DL_ICON_PREFIXES.some((prefix) =>
+                icon.value.startsWith(prefix)
+            )
+        })
+
+        const cleanedIconName = computed<string>(() => {
+            const prefix = DL_ICON_PREFIXES.find((p) =>
+                icon.value.startsWith(p)
+            )
+            return prefix ? icon.value.slice(prefix.length) : icon.value
+        })
+
+        const iconClass = computed<string>(() => {
+            return isDlIcon.value
+                ? `icons-dl-${cleanedIconName.value}`
+                : icon.value
+        })
+
         const isInfoDefault = computed<boolean>(() => {
-            return icon.value === 'icon-dl-info' && !color.value
+            return (
+                isDlIcon.value &&
+                cleanedIconName.value === 'info' &&
+                !color.value
+            )
         })
 
         const effectiveColor = computed<string | null>(() => {
@@ -151,12 +176,6 @@ export default defineComponent({
             }
         })
 
-        const cleanedIconName = computed<string>(() => {
-            return icon.value.startsWith('icon-dl-')
-                ? icon.value.replace('icon-dl-', '')
-                : icon.value
-        })
-
         const isSVG = computed<boolean>(() => {
             if (!icon.value) {
                 return false
@@ -172,7 +191,7 @@ export default defineComponent({
 
         const externalIcon = computed<boolean>(() => {
             return (
-                !icon.value.startsWith('icon-dl-') &&
+                !isDlIcon.value &&
                 !icon.value.startsWith('fas') &&
                 !icon.value.startsWith('fa-')
             )
@@ -269,6 +288,7 @@ export default defineComponent({
             loadSvg,
             isDestroyed,
             externalIcon,
+            iconClass,
             inlineStyles,
             onMouseEnter,
             onMouseLeave
