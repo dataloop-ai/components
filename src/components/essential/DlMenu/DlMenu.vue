@@ -574,7 +574,7 @@ export default defineComponent({
             anchorEl,
             showing,
             innerRef,
-            portalEl: isVue2 ? '[data-test-id="portal"]' : portalEl,
+            portalEl,
             portalIsActive,
             classes,
             styles: computedStyles,
