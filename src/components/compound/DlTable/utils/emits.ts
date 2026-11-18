@@ -10,6 +10,8 @@ export const emits = [
     'col-update',
     /** name -> width in px of every column the user resized */
     'update:column-widths',
+    /** DlTableState after a user change of order, visibility, widths or sort */
+    'update:state',
     'row-click',
     'th-click',
     'row-dblclick',

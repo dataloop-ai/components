@@ -64,9 +64,23 @@ export type DlTableColumn = {
     primary?: boolean
     /** pin to the start or end edge while scrolling horizontally */
     pinned?: 'start' | 'end'
+    /** hidden unless `visibleColumns` or the table `state` shows it */
+    hiddenByDefault?: boolean
     hint?: string
     sticky?: boolean
     ignoreTooltip?: boolean
+}
+
+/** SETTINGS-01: serializable table settings (store it as JSON) */
+export type DlTableState = {
+    version: 1
+    /** all column names in display order */
+    order: string[]
+    /** names of the hidden columns */
+    hidden: string[]
+    /** user-resized widths in px */
+    widths: Record<string, number>
+    sort: { sortBy: string | null; descending: boolean }
 }
 
 export type DlTableFilterMethod = (

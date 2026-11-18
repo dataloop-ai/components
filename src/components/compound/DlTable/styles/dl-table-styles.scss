@@ -110,7 +110,7 @@
     .dl-table__bottom,
     thead tr:first-child th {
         /* bg color is important for th; just specify one */
-        background-color: var(--dell-white);
+        background-color: var(--dl-table-header-background, var(--dell-white));
     }
 
     thead tr th {
@@ -132,18 +132,18 @@
     }
 
     thead tr {
-        height: 34px;
+        height: var(--dl-table-header-height, 34px);
     }
 
     tbody tr {
-        height: 40px;
+        height: var(--dl-table-row-height, 40px);
 
         &:not(.dl-tr--no-hover):hover {
             .dl-table__drag-icon>div {
                 opacity: 1;
             }
             td:not(.dl-td--no-hover) {
-                background-color: var(--dell-blue-100);
+                background-color: var(--dl-table-row-hover-background, var(--dell-blue-100));
             }
         }
     }
@@ -220,7 +220,7 @@
 
     tbody {
         tr.selected td {
-            background-color: var(--dell-blue-100);
+            background-color: var(--dl-table-row-selected-background, var(--dell-blue-100));
         }
 
         tr.selected td:after {
@@ -373,7 +373,7 @@
     tr,
     th,
     td {
-        border-color: var(--dell-gray-300);
+        border-color: var(--dl-table-border-color, var(--dell-gray-300));
 
         &>label {
             padding: 0;

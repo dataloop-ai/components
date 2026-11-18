@@ -130,9 +130,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="
-                                        isTreeTable ? '0' : `0 ${columnSpacing}`
-                                    "
+                                    :padding="isTreeTable ? '0' : cellPadding"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -379,7 +377,7 @@
                                     :no-hover="noHover"
                                     :col-index="colIndex"
                                     :no-tooltip="col.ignoreTooltip"
-                                    :padding="`0 ${columnSpacing}`"
+                                    :padding="cellPadding"
                                 >
                                     <slot
                                         v-bind="
@@ -552,9 +550,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="
-                                        isTreeTable ? '0' : `0 ${columnSpacing}`
-                                    "
+                                    :padding="isTreeTable ? '0' : cellPadding"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -803,7 +799,7 @@
                                         :style="col.tdStyle(row)"
                                         :col-index="colIndex"
                                         :no-tooltip="col.ignoreTooltip"
-                                        :padding="`0 ${columnSpacing}`"
+                                        :padding="cellPadding"
                                     >
                                         <slot
                                             v-bind="
@@ -1020,6 +1016,7 @@ import {
     DlTableRow,
     DlTableProps,
     DlTableColumn,
+    DlTableState,
     TableStickyPosition
 } from './types'
 import { DlPagination } from '../DlPagination'
@@ -1324,6 +1321,29 @@ export default defineComponent({
                 ['first', 'last', 'both'].includes(value)
         },
         /**
+         * Table settings: column order, hidden columns, user widths and sort.
+         * Use with v-model:state (Vue 3) or :state.sync (Vue 2); the table
+         * emits update:state when the user changes any of them.
+         */
+        state: {
+            type: Object as PropType<DlTableState>,
+            default: null as DlTableState
+        },
+        /**
+         * Row actions (body-cell-row-actions slot): always visible, or only
+         * while the row is hovered or has keyboard focus
+         */
+        rowActionsMode: {
+            type: String as PropType<'always' | 'hover'>,
+            default: 'always',
+            validator: (v: string) => ['always', 'hover'].includes(v)
+        },
+        /** fixed width of the row actions column in px */
+        rowActionsWidth: {
+            type: Number,
+            default: null as number
+        },
+        /**
          * Keep the `bottom-row` slot (e.g. a totals row) pinned to the bottom
          * of the scroll area
          */
@@ -1538,7 +1558,15 @@ export default defineComponent({
         watch(
             visibleColumns,
             (value: string[]) => {
-                visibleColumnsState.value = value
+                const all = (columns.value || []) as DlTableColumn[]
+                // col.hiddenByDefault: hidden until visibleColumns/state says otherwise
+                visibleColumnsState.value =
+                    (!value || !value.length) &&
+                    all.some((col) => col.hiddenByDefault)
+                        ? all
+                              .filter((col) => !col.hiddenByDefault)
+                              .map((col) => col.name)
+                        : value
             },
             { immediate: true, deep: true }
         )
@@ -1775,6 +1803,11 @@ export default defineComponent({
             },
             setResizingInProgress
         })
+
+        // DEBT-05: --dl-table-cell-padding-x overrides the horizontal padding
+        const cellPadding = computed(
+            () => `0 var(--dl-table-cell-padding-x, ${props.columnSpacing})`
+        )
 
         const bottomRowClasses = computed(() => ({
             'dl-table__bottom-row': true,
@@ -2151,6 +2184,81 @@ export default defineComponent({
             emit('col-update', newColumns)
         }
 
+        // ---- SETTINGS-01: one serializable table state ----------------------
+        // persistence stays with the consumer; the table only reads and emits it
+        const currentState = computed<DlTableState>(() => {
+            const all = columns.value as DlTableColumn[]
+            const visible = new Set(computedCols.value.map((col) => col.name))
+            return {
+                version: 1,
+                order: columnOrder.value || all.map((col) => col.name),
+                hidden: all
+                    .filter((col) => !visible.has(col.name))
+                    .map((col) => col.name),
+                widths: { ...columnLayout.userWidths },
+                sort: {
+                    sortBy: computedPagination.value.sortBy ?? null,
+                    descending: !!computedPagination.value.descending
+                }
+            }
+        })
+
+        let lastState: DlTableState = null
+
+        watch(
+            currentState,
+            (value) => {
+                if (
+                    columnDrag.previewOrder.value ||
+                    isEqual(value, lastState)
+                ) {
+                    return
+                }
+                lastState = value
+                emit('update:state', value)
+            },
+            { deep: true }
+        )
+
+        const applyState = (state: DlTableState) => {
+            if (!state || isEqual(state, lastState)) return
+            const names = (columns.value as DlTableColumn[]).map(
+                (col) => col.name
+            )
+            const known = new Set(names)
+            // unknown column names in a stored state are ignored
+            if (Array.isArray(state.order)) {
+                const order = state.order.filter((name) => known.has(name))
+                columnOrder.value = order.length ? order : null
+            }
+            if (Array.isArray(state.hidden)) {
+                const hidden = new Set(state.hidden)
+                const visible = names.filter((name) => !hidden.has(name))
+                if (visible.length) visibleColumnsState.value = visible
+            }
+            if (state.widths) {
+                columnLayout.resetUserWidths()
+                Object.keys(state.widths)
+                    .filter((name) => known.has(name))
+                    .forEach((name) =>
+                        columnLayout.setUserWidth(name, state.widths[name])
+                    )
+            }
+            if (state.sort) {
+                const { sortBy, descending } = state.sort
+                setPagination(
+                    {
+                        sortBy: sortBy && known.has(sortBy) ? sortBy : null,
+                        descending: !!descending
+                    },
+                    false
+                )
+            }
+            lastState = currentState.value
+        }
+
+        watch(() => props.state, applyState, { immediate: true, deep: true })
+
         // expose public methods and needed computed props
         Object.assign(vm.proxy, {
             resetVirtualScroll,
@@ -2245,6 +2353,7 @@ export default defineComponent({
             dragRef,
             layoutClasses,
             bottomRowClasses,
+            cellPadding,
             onHeadPointerDown,
             onHeadPointerMove,
             onHeadPointerUp,

@@ -22,6 +22,10 @@ export interface LayoutCssInput {
     resizeHover: number | null
     /** data column index being resized */
     resizing: number | null
+    /** ROW-01: show the row actions only on row hover / focus */
+    actionsOnHover?: boolean
+    /** ROW-01: fixed width of the actions column (px) */
+    actionsFixedWidth?: number | null
 }
 
 const px = (n: number) => `${Math.round(n)}px`
@@ -128,6 +132,21 @@ export function buildLayoutCss(input: LayoutCssInput): string {
         const first = dataCount - pinnedEnd
         rules.push(
             `${root}.dl-table--scrolled-end th[data-col-index="${first}"],${root}.dl-table--scrolled-end td[data-col-index="${first}"]{box-shadow:var(--dl-table-pinned-shadow-end, -4px 0 4px -2px rgba(16, 30, 115, 0.15))}`
+        )
+    }
+
+    const actions = `${root} .dl-table-visible-column`
+    if (input.actionsFixedWidth) {
+        const w = px(input.actionsFixedWidth)
+        rules.push(`${actions}{width:${w};min-width:${w};max-width:${w}}`)
+    }
+    if (input.actionsOnHover) {
+        // opacity (not visibility) so the buttons stay reachable with Tab
+        rules.push(
+            `${root} tbody tr.dl-tr>td.dl-table-visible-column>*{opacity:0}`
+        )
+        rules.push(
+            `${root} tbody tr.dl-tr:hover>td.dl-table-visible-column>*,${root} tbody tr.dl-tr:focus-within>td.dl-table-visible-column>*{opacity:1}`
         )
     }
 

@@ -33,6 +33,8 @@ export interface ColumnLayoutOptions {
         isTreeTable: boolean
         columnMinWidth: number
         columnMaxWidth: number
+        rowActionsMode?: 'always' | 'hover'
+        rowActionsWidth?: number
     }
     /** visible data columns, in render order */
     columns: ComputedRef<DlTableColumn[]>
@@ -153,7 +155,9 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
             renderedWidths: renderedWidths.value,
             fitAllColumns: props.fitAllColumns,
             resizeHover: resizeHover.value,
-            resizing: resizing.value
+            resizing: resizing.value,
+            actionsOnHover: props.rowActionsMode === 'hover',
+            actionsFixedWidth: props.rowActionsWidth ?? null
         })
     )
 
