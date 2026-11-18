@@ -75,6 +75,8 @@ export default defineComponent({
             default: 0
         },
         tableColspan: { type: [Number, String], required: false, default: 100 },
+        /** attributes of the <table> rendered for DlTable (role, aria-*) */
+        tableAttrs: { type: Object, required: false, default: null },
         virtualScrollHorizontal: {
             type: Boolean,
             required: false,
@@ -335,7 +337,8 @@ export default defineComponent({
                     class: 'dl-table__middle ' + this.classes
                 },
                 getVirtualChildren(renderFn),
-                renderFn
+                renderFn,
+                (this.$props as any).tableAttrs
             )
         }
 

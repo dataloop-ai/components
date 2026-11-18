@@ -5,6 +5,7 @@
         :data-dl-table-id="uuid"
         :style="containerStyle"
         :class="[containerClass, layoutClasses]"
+        @keydown="onGridKeydown"
     >
         <div ref="dragRef" class="dl-table__drag" />
         <!-- Top Slots -->
@@ -43,6 +44,7 @@
             :class="virtualScrollClasses"
             :style="tableStyle"
             :table-colspan="colspanWithExpandableRow"
+            :table-attrs="tableAttrs"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
@@ -57,6 +59,7 @@
                     @pointerup="onHeadPointerUp"
                     @pointercancel="onHeadPointerCancel"
                     @pointerleave="onHeadPointerLeave"
+                    @dblclick="onHeadDblClick"
                 >
                     <slot
                         v-if="!hideHeader"
@@ -296,6 +299,12 @@
                                             : ''
                                 "
                                 :no-hover="noHover"
+                                :aria-selected="
+                                    hasSelectionMode
+                                        ? isRowSelected(getRowKey(props.item))
+                                        : undefined
+                                "
+                                :aria-rowindex="ariaRowIndex(props.index)"
                                 @click="
                                     onTrClick(
                                         $event,
@@ -351,9 +360,8 @@
                                             "
                                             @update:model-value="
                                                 (adding, evt) =>
-                                                    updateSelection(
-                                                        [getRowKey(props.item)],
-                                                        [props.item],
+                                                    onRowCheckbox(
+                                                        props.item,
                                                         adding,
                                                         evt
                                                     )
@@ -364,7 +372,18 @@
                                 <td v-if="expandableRows">
                                     <dl-icon
                                         :icon="getRowExpandedIcon(props.item)"
+                                        role="button"
+                                        tabindex="0"
+                                        :aria-expanded="
+                                            isRowExpanded(props.item)
+                                                ? 'true'
+                                                : 'false'
+                                        "
+                                        aria-label="Toggle row details"
                                         @click.stop.prevent="
+                                            updateExpanded(props.item)
+                                        "
+                                        @keydown.enter.space.stop.prevent="
                                             updateExpanded(props.item)
                                         "
                                     />
@@ -468,7 +487,12 @@
         <!--  -->
 
         <div v-else ref="tableScroll" class="dl-table__middle scroll">
-            <table ref="tableRef" class="dl-table" :class="additionalClasses">
+            <table
+                ref="tableRef"
+                class="dl-table"
+                :class="additionalClasses"
+                v-bind="tableAttrs"
+            >
                 <thead
                     :colspan="colspanWithExpandableRow"
                     style="position: relative; z-index: 100"
@@ -477,6 +501,7 @@
                     @pointerup="onHeadPointerUp"
                     @pointercancel="onHeadPointerCancel"
                     @pointerleave="onHeadPointerLeave"
+                    @dblclick="onHeadDblClick"
                 >
                     <slot
                         v-if="!hideHeader"
@@ -732,6 +757,14 @@
                                                 : ''
                                     "
                                     :no-hover="noHover"
+                                    :aria-selected="
+                                        hasSelectionMode
+                                            ? isRowSelected(getRowKey(row))
+                                            : undefined
+                                    "
+                                    :aria-rowindex="
+                                        ariaRowIndex(firstRowIndex + pageIndex)
+                                    "
                                     @click="onTrClick($event, row, pageIndex)"
                                     @dblclick="
                                         onTrDblClick($event, row, pageIndex)
@@ -774,9 +807,8 @@
                                                 "
                                                 @update:model-value="
                                                     (adding, evt) =>
-                                                        updateSelection(
-                                                            [getRowKey(row)],
-                                                            [row],
+                                                        onRowCheckbox(
+                                                            row,
                                                             adding,
                                                             evt
                                                         )
@@ -787,7 +819,18 @@
                                     <td v-if="expandableRows">
                                         <dl-icon
                                             :icon="getRowExpandedIcon(row)"
+                                            role="button"
+                                            tabindex="0"
+                                            :aria-expanded="
+                                                isRowExpanded(row)
+                                                    ? 'true'
+                                                    : 'false'
+                                            "
+                                            aria-label="Toggle row details"
                                             @click.stop.prevent="
+                                                updateExpanded(row)
+                                            "
+                                            @keydown.enter.space.stop.prevent="
                                                 updateExpanded(row)
                                             "
                                         />
@@ -1011,6 +1054,7 @@ import {
 } from './hooks/tableActions'
 import { useColumnLayout } from './hooks/useColumnLayout'
 import { moveName, useColumnDrag } from './hooks/useColumnDrag'
+import { useGridNavigation } from './hooks/useGridNavigation'
 import { injectProp } from '../../../utils/inject-object-prop'
 import {
     DlTableRow,
@@ -1328,6 +1372,21 @@ export default defineComponent({
         state: {
             type: Object as PropType<DlTableState>,
             default: null as DlTableState
+        },
+        /**
+         * Turn off arrow-key navigation between cells (A11Y-02)
+         */
+        noGridNavigation: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Expose the table as an ARIA grid (role="grid"). Off by default so
+         * the native table/row/cell roles are kept.
+         */
+        gridRole: {
+            type: Boolean,
+            default: false
         },
         /**
          * Row actions (body-cell-row-actions slot): always visible, or only
@@ -1837,6 +1896,8 @@ export default defineComponent({
             columnDrag.onPointerCancel()
         }
         const onHeadPointerLeave = () => columnLayout.onHeadPointerLeave()
+        const onHeadDblClick = (evt: MouseEvent) =>
+            columnLayout.onHeadDblClick(evt)
 
         // measure only when what the widths depend on changes, never on scroll
         watch(
@@ -2184,6 +2245,98 @@ export default defineComponent({
             emit('col-update', newColumns)
         }
 
+        // ---- A11Y-01 / A11Y-02 / SEL-03 / RESIZE-03 -------------------------
+        /** aria-rowcount/rowindex only matter when not every row is rendered */
+        const exposesRowIndex = computed(
+            () => hasVirtScroll.value || isServerSide.value
+        )
+
+        const tableAttrs = computed(() => {
+            const attrs: Record<string, any> = {}
+            if (props.gridRole) attrs.role = 'grid'
+            if (exposesRowIndex.value) {
+                const total = isServerSide.value
+                    ? computedPagination.value.rowsNumber
+                    : filteredSortedRowsNumber.value
+                attrs['aria-rowcount'] = total + (props.hideHeader ? 0 : 1)
+            }
+            return attrs
+        })
+
+        /** 1-based, the header row is row 1 */
+        const ariaRowIndex = (index: number) =>
+            exposesRowIndex.value
+                ? index + (props.hideHeader ? 1 : 2)
+                : undefined
+
+        // SEL-03: Shift+click on a row checkbox selects the range from the last one
+        let lastCheckedIndex: number = null
+        const onRowCheckbox = (
+            row: DlTableRow,
+            adding: boolean,
+            evt?: MouseEvent
+        ) => {
+            const index = computedRows.value.indexOf(row)
+            if (
+                evt?.shiftKey &&
+                multipleSelection.value &&
+                lastCheckedIndex !== null &&
+                index !== -1
+            ) {
+                const [from, to] = [lastCheckedIndex, index].sort(
+                    (a, b) => a - b
+                )
+                const range = computedRows.value.slice(from, to + 1)
+                updateSelection(
+                    range.map(getRowKey.value as any),
+                    range,
+                    adding,
+                    evt as any
+                )
+            } else {
+                updateSelection(
+                    [getRowKey.value(row)],
+                    [row],
+                    adding,
+                    evt as any
+                )
+            }
+            lastCheckedIndex = index
+        }
+
+        const gridNavigation = useGridNavigation({
+            enabled: () => !props.noGridNavigation,
+            getTable: getTableEl,
+            onToggleRow: (tr) => {
+                if (!hasSelectionMode.value) return
+                const body = tr.parentElement
+                const rowsInBody = Array.from(body.children).filter((el) =>
+                    el.classList.contains('dl-tr')
+                )
+                const row = computedRows.value[rowsInBody.indexOf(tr)]
+                if (row) {
+                    onRowCheckbox(row, !isRowSelected(getRowKey.value(row)))
+                }
+            },
+            onResizeKey: (index, delta) => {
+                if (!props.resizable) return
+                const col = computedCols.value[index]
+                if (!col) return
+                columnLayout.setUserWidth(
+                    col.name,
+                    columnLayout.currentWidth(index) + delta
+                )
+                emit('update:column-widths', { ...columnLayout.userWidths })
+            }
+        })
+        const onGridKeydown = (evt: KeyboardEvent) =>
+            gridNavigation.onKeydown(evt)
+
+        watch(computedRows, () => nextTick(gridNavigation.ensureEntryPoint), {
+            flush: 'post',
+            immediate: true
+        })
+
         // ---- SETTINGS-01: one serializable table state ----------------------
         // persistence stays with the consumer; the table only reads and emits it
         const currentState = computed<DlTableState>(() => {
@@ -2354,11 +2507,17 @@ export default defineComponent({
             layoutClasses,
             bottomRowClasses,
             cellPadding,
+            tableAttrs,
+            ariaRowIndex,
+            onRowCheckbox,
+            onGridKeydown,
+            firstRowIndex,
             onHeadPointerDown,
             onHeadPointerMove,
             onHeadPointerUp,
             onHeadPointerCancel,
             onHeadPointerLeave,
+            onHeadDblClick,
             containerClass,
             computedRows,
             computedCols,

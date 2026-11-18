@@ -394,6 +394,19 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
         }
     }
 
+    /** RESIZE-03: double-click on a header boundary fits the column to its content */
+    function onHeadDblClick(evt: MouseEvent): boolean {
+        const target = edgeTarget(evt as PointerEvent)
+        if (target === null) return false
+        const col = columns.value[target]
+        measure()
+        setUserWidth(col.name, measurements.value[col.name] || 0)
+        options.onResizeEnd({ [col.name]: userWidths[col.name] })
+        evt.preventDefault()
+        evt.stopPropagation()
+        return true
+    }
+
     // ---- lifecycle --------------------------------------------------------
     onMounted(() => {
         styleEl = document.createElement('style')
@@ -429,6 +442,7 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
         currentWidth,
         setUserWidth,
         resetUserWidths,
+        onHeadDblClick,
         onHeadPointerMove,
         onHeadPointerLeave,
         onHeadPointerDown,
