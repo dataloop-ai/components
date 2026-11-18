@@ -62,14 +62,29 @@ describe('client sort, 10k rows', () => {
     })
 })
 
+const indexedFilterHook = mountComposition(() =>
+    useTableFilter(
+        { filterMethod: undefined },
+        () => {},
+        () => rows10k,
+        () => columns as any,
+        getCellValue
+    )
+).result.current!
+// build the search index once, as the first keystroke does
+indexedFilterHook.filterRows('i')
+
 describe('client filter keystroke, 10k rows x 20 cols', () => {
-    bench('filter', () => {
+    bench('filter (default filterMethod, no index)', () => {
         filterHook.computedFilterMethod.value(
             rows10k,
             'item12',
             columns,
             getCellValue
         )
+    })
+    bench('filter keystroke (table path, search index)', () => {
+        indexedFilterHook.filterRows('item12')
     })
 })
 
