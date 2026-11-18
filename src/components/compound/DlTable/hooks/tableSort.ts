@@ -2,8 +2,14 @@ import { computed, ComputedRef } from 'vue-demi'
 
 import { sortDate } from '../../../../utils/sort'
 import { isNumber, isDate, isObject } from '../../../../utils/is'
-import { DlTableProps, DlTableColumn, DlTableSortMethod } from '../types'
+import {
+    DlTableProps,
+    DlTableColumn,
+    DlTableRow,
+    DlTableSortMethod
+} from '../types'
 import { TablePagination } from './tablePagination'
+import { getFieldValue } from '../utils/getCellValue'
 import { isUndefined } from 'lodash'
 
 export const useTableSortProps = {
@@ -14,6 +20,70 @@ export const useTableSortProps = {
         validator: (v: string) => v === 'asc' || v === 'des',
         default: 'asc'
     }
+}
+
+let collator: Intl.Collator = null
+const getCollator = () => {
+    if (!collator) {
+        collator = new Intl.Collator(undefined, {
+            numeric: true,
+            sensitivity: 'base'
+        })
+    }
+    return collator
+}
+
+const isNil = (v: any) => v === null || isUndefined(v)
+
+function compareValues(A: any, B: any) {
+    if (isNumber(A) && isNumber(B)) return A - B
+    if (isDate(A) && isDate(B)) return sortDate(A, B)
+    if (typeof A === 'boolean' && typeof B === 'boolean') {
+        return Number(A) - Number(B)
+    }
+    return getCollator().compare(String(A), String(B))
+}
+
+/**
+ * Sorts in place and returns `data`. Reads each row's value once
+ * (decorate-sort-undecorate) through the same accessor the cell displays.
+ * Nulls go last in both directions unless `col.nullsPosition` says otherwise
+ * ('comparator' hands nulls to `col.sort`). Ties keep their original order.
+ */
+export function sortRows(
+    data: DlTableRow[],
+    col: DlTableColumn,
+    descending: boolean
+) {
+    const dir = descending ? -1 : 1
+    const nulls = col.nullsPosition ?? 'last'
+    const decorated = data.map((row, index) => ({
+        row,
+        index,
+        value: getFieldValue(col, row)
+    }))
+
+    decorated.sort((a, b) => {
+        const A = a.value
+        const B = b.value
+        if (nulls !== 'comparator') {
+            const aNil = isNil(A)
+            const bNil = isNil(B)
+            if (aNil || bNil) {
+                if (aNil && bNil) return a.index - b.index
+                return (aNil ? 1 : -1) * (nulls === 'first' ? -1 : 1)
+            }
+        }
+        const result = col.sort
+            ? col.sort(A, B, a.row, b.row)
+            : compareValues(A, B)
+        return result * dir || a.index - b.index
+    })
+
+    for (let i = 0; i < decorated.length; i++) {
+        data[i] = decorated[i].row
+    }
+    return data
 }
 
 export function useTableSort(
@@ -40,42 +110,7 @@ export function useTableSort(
             if (isUndefined(col) || isUndefined(col.field)) {
                 return data
             }
-
-            const dir = descending === true ? -1 : 1
-            const val =
-                typeof col.field === 'function'
-                    ? (v: string) => (col.field as Function)(v)
-                    : (v: Record<string, any>) => v[col.field as string]
-
-            return data.sort((a: any, b: any) => {
-                let A = val(a)
-                let B = val(b)
-
-                if (A === null || isUndefined(A)) {
-                    return -1 * dir
-                }
-                if (B === null || isUndefined(B)) {
-                    return 1 * dir
-                }
-                if (col.sort) {
-                    return col.sort(A, B, a, b) * dir
-                }
-                if (isNumber(A) === true && isNumber(B) === true) {
-                    return (A - B) * dir
-                }
-                if (isDate(A) === true && isDate(B) === true) {
-                    return sortDate(A, B) * dir
-                }
-                if (typeof A === 'boolean' && typeof B === 'boolean') {
-                    return (Number(A) - Number(B)) * dir
-                }
-
-                [A, B] = [A, B].map((s) =>
-                    (s + '').toLocaleString().toLowerCase()
-                )
-
-                return A < B ? -1 * dir : A === B ? 0 : dir
-            })
+            return sortRows(data, col, descending === true)
         }
 
         return sortMethod

@@ -36,6 +36,11 @@ export type DlTableColumn = {
     sortable?: boolean
     sort?: (a: any, b: any, rowA: DlTableRow, rowB: DlTableRow) => number
     sortOrder?: 'asc' | 'des'
+    /**
+     * Where empty (null/undefined) values go when sorting, in both directions.
+     * 'comparator' passes them to `sort` instead. Default: 'last'
+     */
+    nullsPosition?: 'first' | 'last' | 'comparator'
     format?: (val: any, row: DlTableRow) => any
     style?: string | ((row: DlTableRow) => string)
     classes?: string | ((row: DlTableRow) => string)
