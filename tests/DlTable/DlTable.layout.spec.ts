@@ -138,8 +138,8 @@ describe('LAYOUT-03: overflow instead of squeezing', () => {
 describe('LAYOUT-04: pinned columns', () => {
     it('pins the first column with sticky positioning', async () => {
         const wrapper = await mountTable({ stickyColumns: 'first' })
-        expect(styleOf(wrapper)).toMatch(
-            /th\[data-col-index="0"\],[^{]*td\[data-col-index="0"\]\{position:sticky;left:0px\}/
+        expect(styleOf(wrapper)).toContain(
+            'tr.dl-tr>[data-col-index="0"]{position:sticky;left:0px}'
         )
     })
 
@@ -155,8 +155,8 @@ describe('LAYOUT-04: pinned columns', () => {
 
     it('pins the last column from the end', async () => {
         const wrapper = await mountTable({ stickyColumns: 'last' })
-        expect(styleOf(wrapper)).toMatch(
-            /td\[data-col-index="2"\]\{position:sticky;right:0px\}/
+        expect(styleOf(wrapper)).toContain(
+            'tr.dl-tr>[data-col-index="2"]{position:sticky;right:0px}'
         )
     })
 

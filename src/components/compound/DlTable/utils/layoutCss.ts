@@ -34,8 +34,11 @@ const px = (n: number) => `${Math.round(n)}px`
  */
 export function buildLayoutCss(input: LayoutCssInput): string {
     const root = `[data-dl-table-id="${input.tableId}"]`
+    // low specificity on purpose: consumer CSS on [data-col-index] keeps winning
     const cell = (i: number) =>
         `${root} th[data-col-index="${i}"],${root} td[data-col-index="${i}"]`
+    // pinning must beat the library's own `tbody td { position: relative }`
+    const pinCell = (i: number) => `${root} tr.dl-tr>[data-col-index="${i}"]`
     const rules: string[] = []
 
     input.widths.forEach((width, i) => {
@@ -92,9 +95,13 @@ export function buildLayoutCss(input: LayoutCssInput): string {
             offset += input.utilityWidths[k]
         }
         for (let i = 0; i < pinnedStart; i++) {
-            rules.push(sticky(cell(i), 'left', offset))
-            rules.push(`${root} th[data-col-index="${i}"]{${headSticky}}`)
-            rules.push(`${root} td[data-col-index="${i}"]{${bodySticky}}`)
+            rules.push(sticky(pinCell(i), 'left', offset))
+            rules.push(
+                `${root} tr.dl-tr>th[data-col-index="${i}"]{${headSticky}}`
+            )
+            rules.push(
+                `${root} tr.dl-tr>td[data-col-index="${i}"]{${bodySticky}}`
+            )
             offset += widthOf(i)
         }
         rules.push(
@@ -109,9 +116,13 @@ export function buildLayoutCss(input: LayoutCssInput): string {
     if (pinnedEnd > 0) {
         let offset = input.actionsWidth
         for (let i = dataCount - 1; i >= dataCount - pinnedEnd; i--) {
-            rules.push(sticky(cell(i), 'right', offset))
-            rules.push(`${root} th[data-col-index="${i}"]{${headSticky}}`)
-            rules.push(`${root} td[data-col-index="${i}"]{${bodySticky}}`)
+            rules.push(sticky(pinCell(i), 'right', offset))
+            rules.push(
+                `${root} tr.dl-tr>th[data-col-index="${i}"]{${headSticky}}`
+            )
+            rules.push(
+                `${root} tr.dl-tr>td[data-col-index="${i}"]{${bodySticky}}`
+            )
             offset += widthOf(i)
         }
         const first = dataCount - pinnedEnd
