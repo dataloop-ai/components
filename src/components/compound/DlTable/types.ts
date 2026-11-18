@@ -34,6 +34,8 @@ export type DlTableColumn = {
     required?: boolean
     align?: 'right' | 'left' | 'center'
     sortable?: boolean
+    /** header tooltip explaining why the column is not sortable */
+    sortDisabledReason?: string
     sort?: (a: any, b: any, rowA: DlTableRow, rowB: DlTableRow) => number
     sortOrder?: 'asc' | 'des'
     /**

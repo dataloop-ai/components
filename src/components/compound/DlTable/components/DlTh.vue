@@ -22,7 +22,10 @@
                     "
                 />
             </span>
-            <dl-tooltip v-if="hasEllipsis">
+            <dl-tooltip v-if="sortDisabledReason">
+                {{ sortDisabledReason }}
+            </dl-tooltip>
+            <dl-tooltip v-else-if="hasEllipsis">
                 <slot />
             </dl-tooltip>
             <slot />
@@ -144,6 +147,7 @@ export default defineComponent({
                 headerStyle: null,
                 thClasses: null,
                 isSortable: false,
+                sortDisabledReason: null,
                 hasEllipsis: false,
                 onPointerEnter: () => {},
                 onClick: onClickFn,
@@ -179,6 +183,13 @@ export default defineComponent({
 
         const onClick = !hasOptionalProps.value ? onClickFn : handleClick
 
+        // SORT-04: why a column cannot be sorted (e.g. the data source refuses it)
+        const sortDisabledReason = computed(() =>
+            !column.value?.sortable && column.value?.sortDisabledReason
+                ? column.value.sortDisabledReason
+                : null
+        )
+
         return {
             hasHint,
             isDense,
@@ -201,6 +212,7 @@ export default defineComponent({
             ] as any,
             tableTh,
             hasEllipsis,
+            sortDisabledReason,
             onPointerEnter,
             onClick,
             column,

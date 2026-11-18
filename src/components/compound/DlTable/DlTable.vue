@@ -1368,9 +1368,9 @@ export default defineComponent({
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
         )
-        const hasVirtScroll = computed<boolean>(
-            () => virtualScroll.value && !hasExpandableSlot.value
-        )
+        // PERF-06: expandable rows keep virtual scrolling; an expanded row is
+        // measured together with its parent row (dl-virtual-scroll--with-prev)
+        const hasVirtScroll = computed<boolean>(() => virtualScroll.value)
 
         const hasEmptyStateProps = computed(() =>
             emptyStateProps.value
@@ -1525,13 +1525,27 @@ export default defineComponent({
             }
         )
 
-        const { innerPagination, computedPagination, setPagination } =
-            useTablePaginationState(vm, getCellValue)
+        /**
+         * Server mode: `rows` is only one page of the data. Then the table does
+         * no client filter, sort or slice and emits `request` on every user
+         * change (update:pagination is still emitted as before).
+         */
+        const isServerSide = computed(() => {
+            const total = computedPagination.value.rowsNumber
+            return typeof total === 'number' && total > rows.value.length
+        })
+
+        const {
+            innerPagination,
+            computedPagination,
+            setPagination,
+            requestServerInteraction
+        } = useTablePaginationState(vm, getCellValue, () => isServerSide.value)
 
         watch(
             pagination,
             (newPagination) => {
-                setPagination(newPagination)
+                setPagination(newPagination, false)
             },
             { deep: true }
         )
@@ -1544,13 +1558,30 @@ export default defineComponent({
             getCellValue
         )
 
-        const { isRowExpanded, setExpanded, updateExpanded } =
-            useTableRowExpand(props, emit)
+        const {
+            isRowExpanded,
+            setExpanded,
+            updateExpanded: toggleExpanded
+        } = useTableRowExpand(props, emit)
+
+        const updateExpanded = (row: DlTableRow) => {
+            toggleExpanded(row)
+            if (!hasVirtScroll.value) return
+            // let the virtual list re-measure the rows around the expanded one
+            nextTick(() => {
+                const scroller = virtScrollRef.value?.rootRef as HTMLElement
+                scroller?.dispatchEvent(new Event('scroll'))
+            })
+        }
+
+        watch(filter, (value) => {
+            if (isServerSide.value) requestServerInteraction({ filter: value })
+        })
 
         const filteredSortedRows = computed(() => {
             let filtered = rows.value as DlTableRow[]
 
-            if (filtered.length === 0) {
+            if (filtered.length === 0 || isServerSide.value) {
                 return rows.value as DlTableRow[]
             }
 
@@ -1576,7 +1607,9 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            if (props.infiniteScroll) return filteredSortedRows.value
+            if (props.infiniteScroll || isServerSide.value) {
+                return filteredSortedRows.value
+            }
             let filtered = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
