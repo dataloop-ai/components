@@ -1848,7 +1848,9 @@ export default defineComponent({
             getScrollContainer,
             getTable: getTableEl,
             onResizeEnd: (changed: Record<string, number>) => {
-                emit('update:column-widths', { ...columnLayout.userWidths })
+                emit('update:column-widths', {
+                    ...columnLayout.userWidths.value
+                })
                 // deprecated: same payload shape as before, only the resized
                 // column carries a new width
                 emit(
@@ -2326,7 +2328,9 @@ export default defineComponent({
                     col.name,
                     columnLayout.currentWidth(index) + delta
                 )
-                emit('update:column-widths', { ...columnLayout.userWidths })
+                emit('update:column-widths', {
+                    ...columnLayout.userWidths.value
+                })
             }
         })
         const onGridKeydown = (evt: KeyboardEvent) =>
@@ -2348,7 +2352,7 @@ export default defineComponent({
                 hidden: all
                     .filter((col) => !visible.has(col.name))
                     .map((col) => col.name),
-                widths: { ...columnLayout.userWidths },
+                widths: { ...columnLayout.userWidths.value },
                 sort: {
                     sortBy: computedPagination.value.sortBy ?? null,
                     descending: !!computedPagination.value.descending

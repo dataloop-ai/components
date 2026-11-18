@@ -1,13 +1,10 @@
 import {
     computed,
     ComputedRef,
-    del,
     nextTick,
     onBeforeUnmount,
     onMounted,
-    reactive,
     ref,
-    set,
     watch
 } from 'vue-demi'
 import { DlTableColumn, TableStickyPosition } from '../types'
@@ -80,7 +77,8 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
     const utilityWidths = ref<number[]>([])
     const actionsWidth = ref(0)
     const containerWidth = ref(0)
-    const userWidths = reactive<Record<string, number>>({})
+    // replaced, never mutated: Vue 2 cannot track keys added to an object
+    const userWidths = ref<Record<string, number>>({})
     const scrolledStart = ref(false)
     const scrolledEnd = ref(false)
     const resizeHover = ref<number | null>(null)
@@ -101,7 +99,7 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
                     actionsWidth.value
             ),
             measurements: measurements.value,
-            userWidths,
+            userWidths: userWidths.value,
             limits: limits.value,
             // tree tables keep browser-shared widths (their body is a nested
             // table that consumers size with their own CSS)
@@ -144,7 +142,7 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
             widths: columns.value.map((col) => layout.value.widths[col.name]),
             userSized: new Set(
                 columns.value
-                    .map((col, i) => (col.name in userWidths ? i : -1))
+                    .map((col, i) => (col.name in userWidths.value ? i : -1))
                     .filter((i) => i >= 0)
             ),
             total: layout.value.total,
@@ -309,11 +307,14 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
         const col = columns.value[index]
         if (!col) return
         const { min, max } = columnLimits(col, limits.value)
-        set(
-            userWidths,
-            col.name,
-            clampWidth(resizeStartWidth + clientX - resizeStartX, min, max)
-        )
+        userWidths.value = {
+            ...userWidths.value,
+            [col.name]: clampWidth(
+                resizeStartWidth + clientX - resizeStartX,
+                min,
+                max
+            )
+        }
     }
 
     function onHeadPointerMove(evt: PointerEvent) {
@@ -374,8 +375,8 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
         captureEl = null
         pendingX = null
         resizing.value = null
-        if (col && col.name in userWidths) {
-            options.onResizeEnd({ [col.name]: userWidths[col.name] })
+        if (col && col.name in userWidths.value) {
+            options.onResizeEnd({ [col.name]: userWidths.value[col.name] })
         }
         // swallow the click that follows the pointerup
         setTimeout(() => options.setResizingInProgress(false), 200)
@@ -385,13 +386,19 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
         const col = columns.value.find((c) => c.name === name)
         if (!col) return
         const { min, max } = columnLimits(col, limits.value)
-        set(userWidths, name, clampWidth(width, min, max))
+        userWidths.value = {
+            ...userWidths.value,
+            [name]: clampWidth(width, min, max)
+        }
     }
 
     function resetUserWidths(names?: string[]) {
-        for (const name of names ?? Object.keys(userWidths)) {
-            del(userWidths, name)
-        }
+        const remove = new Set(names ?? Object.keys(userWidths.value))
+        userWidths.value = Object.fromEntries(
+            Object.entries(userWidths.value).filter(
+                ([name]) => !remove.has(name)
+            )
+        )
     }
 
     /** RESIZE-03: double-click on a header boundary fits the column to its content */
@@ -401,7 +408,7 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
         const col = columns.value[target]
         measure()
         setUserWidth(col.name, measurements.value[col.name] || 0)
-        options.onResizeEnd({ [col.name]: userWidths[col.name] })
+        options.onResizeEnd({ [col.name]: userWidths.value[col.name] })
         evt.preventDefault()
         evt.stopPropagation()
         return true
