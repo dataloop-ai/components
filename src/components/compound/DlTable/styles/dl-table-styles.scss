@@ -19,6 +19,14 @@
         z-index: 100;
     }
 
+    .dl-table__bottom-row--sticky > tr > td,
+    .dl-table__bottom-row--sticky > tr > th {
+        position: sticky;
+        bottom: 0;
+        z-index: 50;
+        background-color: var(--dl-table-pinned-background, var(--dell-white));
+    }
+
     // row actions / manage-columns column stays at the trailing edge
     th.dl-table-visible-column,
     td.dl-table-visible-column {

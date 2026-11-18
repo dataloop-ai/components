@@ -4,7 +4,10 @@
         :style="headerStyle"
         :class="thClasses"
         :data-col-index="colIndex"
+        :aria-sort="ariaSort"
+        :tabindex="isSortable ? 0 : undefined"
         @click="onClick"
+        @keydown="onKeydown"
         @pointerenter="onPointerEnter"
         @mouseenter="iconHover = true"
         @mouseleave="iconHover = false"
@@ -147,6 +150,8 @@ export default defineComponent({
                 headerStyle: null,
                 thClasses: null,
                 isSortable: false,
+                ariaSort: undefined,
+                onKeydown: () => {},
                 sortDisabledReason: null,
                 hasEllipsis: false,
                 onPointerEnter: () => {},
@@ -190,26 +195,52 @@ export default defineComponent({
                 : null
         )
 
+        // SORT-05: computed, so later changes of the column (thClass carries
+        // `sorted`/`sort-desc`, sortable, headerStyle) reach the header
+        const isSortable = computed<boolean>(() =>
+            !hasOptionalProps.value ? false : !!column.value?.sortable
+        )
+
+        const ariaSort = computed(() => {
+            if (!isSortable.value) return undefined
+            if (!isCurrentlySorted.value) return 'none'
+            return props.pagination.descending ? 'descending' : 'ascending'
+        })
+
+        // A11Y-02: sortable headers are reachable with the keyboard
+        const onKeydown = (evt: KeyboardEvent) => {
+            if (!isSortable.value) return
+            if (evt.key === 'Enter' || evt.key === ' ') {
+                evt.preventDefault()
+                handleClick(evt)
+            }
+        }
+
         return {
             hasHint,
             isDense,
             isResizingInProgress,
-            isSortable: !hasOptionalProps.value
-                ? false
-                : column?.value?.sortable ?? false,
-            thClasses: ((attrs.class ?? '') + ' ' + thClasses.value).trim(),
-            align: column?.value?.align ?? 'left',
-            iconClass: column?.value?.iconClass ?? null,
+            isSortable,
+            ariaSort,
+            onKeydown,
+            thClasses: computed(() =>
+                ((attrs.class ?? '') + ' ' + thClasses.value).trim()
+            ),
+            align: computed(() => column.value?.align ?? 'left'),
+            iconClass: computed(() => column.value?.iconClass ?? null),
             hasOptionalProps,
-            headerStyle: [
-                {
-                    padding: props.padding
-                },
-                isString(attrs.style)
-                    ? stringStyleToRecord(attrs.style)
-                    : attrs.style,
-                stringStyleToRecord(column.value.headerStyle ?? '')
-            ] as any,
+            headerStyle: computed(
+                () =>
+                    [
+                        {
+                            padding: props.padding
+                        },
+                        isString(attrs.style)
+                            ? stringStyleToRecord(attrs.style)
+                            : attrs.style,
+                        stringStyleToRecord(column.value?.headerStyle ?? '')
+                    ] as any
+            ),
             tableTh,
             hasEllipsis,
             sortDisabledReason,

@@ -103,11 +103,14 @@ export default defineComponent({
             }
         }
 
-        const { row } = props.props
-
+        // computed, so a later change of the row or column reaches the cell
         return {
-            classes: tdClasses.value + column.value.tdClass(row),
-            styles: tdStyles.value + column.value.tdStyle(row),
+            classes: computed(
+                () => tdClasses.value + column.value.tdClass(props.props.row)
+            ),
+            styles: computed(
+                () => tdStyles.value + column.value.tdStyle(props.props.row)
+            ),
             tableTd,
             hasEllipsis,
             onPointerEnter

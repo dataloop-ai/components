@@ -130,7 +130,9 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="`0 ${columnSpacing}`"
+                                    :padding="
+                                        isTreeTable ? '0' : `0 ${columnSpacing}`
+                                    "
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -252,6 +254,20 @@
                         </th>
                     </tr>
                 </thead>
+                <tbody
+                    v-if="hasSlotByName('top-row')"
+                    class="dl-table__top-row"
+                >
+                    <slot name="top-row" :cols="computedCols" />
+                </tbody>
+            </template>
+            <template #after>
+                <tbody
+                    v-if="hasSlotByName('bottom-row')"
+                    :class="bottomRowClasses"
+                >
+                    <slot name="bottom-row" :cols="computedCols" />
+                </tbody>
             </template>
             <template #default="props">
                 <slot name="table-body" v-bind="props">
@@ -775,7 +791,9 @@
                                     <td v-if="expandableRows">
                                         <dl-icon
                                             :icon="getRowExpandedIcon(row)"
-                                            @click="updateExpanded(row)"
+                                            @click.stop.prevent="
+                                                updateExpanded(row)
+                                            "
                                         />
                                     </td>
                                     <DlTd
@@ -866,9 +884,19 @@
                             />
                         </slot>
 
-                        <slot name="bottom-row" :cols="computedCols" />
+                        <slot
+                            v-if="!stickyBottomRow"
+                            name="bottom-row"
+                            :cols="computedCols"
+                        />
                     </Sortable>
                 </slot>
+                <tbody
+                    v-if="stickyBottomRow && hasSlotByName('bottom-row')"
+                    :class="bottomRowClasses"
+                >
+                    <slot name="bottom-row" :cols="computedCols" />
+                </tbody>
             </table>
         </div>
 
@@ -1294,6 +1322,14 @@ export default defineComponent({
             default: null,
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
+        },
+        /**
+         * Keep the `bottom-row` slot (e.g. a totals row) pinned to the bottom
+         * of the scroll area
+         */
+        stickyBottomRow: {
+            type: Boolean,
+            default: false
         },
         /**
          * Minimum column width in px (content sizing and user resize).
@@ -1739,6 +1775,11 @@ export default defineComponent({
             },
             setResizingInProgress
         })
+
+        const bottomRowClasses = computed(() => ({
+            'dl-table__bottom-row': true,
+            'dl-table__bottom-row--sticky': props.stickyBottomRow
+        }))
 
         const layoutClasses = computed(() => ({
             'dl-table--scrolled-start': columnLayout.scrolledStart.value,
@@ -2203,6 +2244,7 @@ export default defineComponent({
             rootRef,
             dragRef,
             layoutClasses,
+            bottomRowClasses,
             onHeadPointerDown,
             onHeadPointerMove,
             onHeadPointerUp,
