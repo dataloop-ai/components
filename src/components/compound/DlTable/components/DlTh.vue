@@ -5,6 +5,7 @@
         :class="thClasses"
         :data-col-index="colIndex"
         @click="onClick"
+        @pointerenter="onPointerEnter"
         @mouseenter="iconHover = true"
         @mouseleave="iconHover = false"
     >
@@ -55,7 +56,7 @@
 <script lang="ts">
 import { isString } from 'lodash'
 import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
-import { useSizeObserver } from '../../../../hooks/use-size-observer'
+import { useLazyEllipsis } from '../../../../hooks/use-lazy-ellipsis'
 import { stringStyleToRecord } from '../../../../utils'
 import { DlIcon } from '../../../essential'
 import { DlTooltip } from '../../../shared'
@@ -89,7 +90,7 @@ export default defineComponent({
         const tableTh = ref(null)
         const iconHover = ref(false)
 
-        const { hasEllipsis } = useSizeObserver(tableTh)
+        const { hasEllipsis, onPointerEnter } = useLazyEllipsis(tableTh)
 
         const onClickFn = (event: Event, name: string) => {
             emit('click', event, name)
@@ -147,6 +148,7 @@ export default defineComponent({
                 thClasses: null,
                 isSortable: false,
                 hasEllipsis: false,
+                onPointerEnter: () => {},
                 onClick: onClickFn,
                 hasHint,
                 isDense
@@ -202,6 +204,7 @@ export default defineComponent({
             ] as any,
             tableTh,
             hasEllipsis,
+            onPointerEnter,
             onClick,
             column,
             computedSortIcon,
