@@ -1,10 +1,10 @@
 <template>
     <div
         :id="uuid"
-        :key="tableKey"
         ref="rootRef"
+        :data-dl-table-id="uuid"
         :style="containerStyle"
-        :class="containerClass"
+        :class="[containerClass, layoutClasses]"
     >
         <div ref="dragRef" class="dl-table__drag" />
         <!-- Top Slots -->
@@ -52,6 +52,11 @@
                 <thead
                     :colspan="colspanWithExpandableRow"
                     style="position: relative; z-index: 100"
+                    @pointerdown="onHeadPointerDown"
+                    @pointermove="onHeadPointerMove"
+                    @pointerup="onHeadPointerUp"
+                    @pointercancel="onHeadPointerCancel"
+                    @pointerleave="onHeadPointerLeave"
                 >
                     <slot
                         v-if="!hideHeader"
@@ -453,6 +458,11 @@
                 <thead
                     :colspan="colspanWithExpandableRow"
                     style="position: relative; z-index: 100"
+                    @pointerdown="onHeadPointerDown"
+                    @pointermove="onHeadPointerMove"
+                    @pointerup="onHeadPointerUp"
+                    @pointercancel="onHeadPointerCancel"
+                    @pointerleave="onHeadPointerLeave"
                 >
                     <slot
                         v-if="!hideHeader"
@@ -658,7 +668,6 @@
                     }"
                 >
                     <Sortable
-                        :key="tbodyKey"
                         ref="tbody"
                         tag="tbody"
                         class="nested-table dl-virtual-scroll__content"
@@ -939,8 +948,6 @@ import {
     watch,
     getCurrentInstance,
     ComputedRef,
-    onMounted,
-    onBeforeUnmount,
     toRefs,
     nextTick,
     PropType
@@ -978,7 +985,8 @@ import {
     useTableActions,
     useTableActionsProps
 } from './hooks/tableActions'
-import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
+import { useColumnLayout } from './hooks/useColumnLayout'
+import { moveName, useColumnDrag } from './hooks/useColumnDrag'
 import { injectProp } from '../../../utils/inject-object-prop'
 import {
     DlTableRow,
@@ -998,7 +1006,7 @@ import { DlButton, DlPopup } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
-import { stopAndPrevent, setAllColumnWidths } from '../../../utils'
+import { stopAndPrevent } from '../../../utils'
 import { DlEmptyStateProps, DlVirtualScrollEvent } from '../../types'
 import Sortable from './components/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
@@ -1287,6 +1295,22 @@ export default defineComponent({
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
         },
+        /**
+         * Minimum column width in px (content sizing and user resize).
+         * A column `minWidth` overrides it.
+         */
+        columnMinWidth: {
+            type: Number,
+            default: 64
+        },
+        /**
+         * Maximum column width in px; none by default.
+         * A column `maxWidth` overrides it.
+         */
+        columnMaxWidth: {
+            type: Number,
+            default: null as number
+        },
         checkboxColor: {
             type: String,
             default: 'dell-blue-500'
@@ -1333,10 +1357,6 @@ export default defineComponent({
             virtualScrollStickySizeStart,
             noHover
         } = toRefs(props)
-
-        const tbodyKey = ref()
-        const tableKey = ref()
-        const getTableKey = () => tableKey.value
 
         const rootRef = ref<HTMLDivElement>(null)
         const tableRef = ref<HTMLTableElement>(null)
@@ -1461,126 +1481,23 @@ export default defineComponent({
             ['columns', 'both'].includes(draggable.value)
         )
 
-        const removeDraggableColumns = () => {}
-
-        let tableEl: HTMLTableElement = null
-
         const totalItemsCount = computed(() => {
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
-        const updateTableSizing = () => {
-            tableEl =
-                tableRef.value ||
-                virtScrollRef.value.rootRef.querySelector('table') ||
-                (document.querySelector('table.dl-table') as HTMLTableElement)
-            const cols = getVisibleColumnsState()
-                ? props.columns.filter((col: any) =>
-                      getVisibleColumnsState().includes(col.name)
-                  )
-                : props.columns
-            nextTick(() => {
-                setAllColumnWidths(
-                    tableEl,
-                    cols as DlTableColumn[],
-                    props.stickyColumns,
-                    props.fitAllColumns,
-                    !!props.visibleColumns
-                )
-            })
-            return tableEl
-        }
+        /** the rendered table element of this instance (never another table) */
+        const getTableEl = (): HTMLTableElement =>
+            tableRef.value ||
+            (virtScrollRef.value?.rootRef?.querySelector?.(
+                'table'
+            ) as HTMLTableElement) ||
+            null
 
-        onMounted(() => {
-            const tableEl = updateTableSizing()
-            window.addEventListener(
-                'virtual-scroll-content-update',
-                updateTableSizing
-            )
-            if (resizable.value) {
-                applyResizableColumns(tableEl, vm)
-            }
-            if (hasDraggableColumns.value === true) {
-                applyDraggableColumns(
-                    tableEl,
-                    vm,
-                    vm.refs.dragRef as HTMLDivElement
-                )
-            }
-        })
-        onBeforeUnmount(() => {
-            window.removeEventListener(
-                'virtual-scroll-content-update',
-                updateTableSizing
-            )
-        })
-
-        watch(
-            hasVirtScroll,
-            () => {
-                tableEl =
-                    tableRef.value ||
-                    virtScrollRef.value.rootRef.querySelector('table') ||
-                    (document.querySelector(
-                        'table.dl-table'
-                    ) as HTMLTableElement)
-                const cols = getVisibleColumnsState()
-                    ? props.columns.filter((col: any) =>
-                          getVisibleColumnsState().includes(col.name)
-                      )
-                    : props.columns
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableEl,
-                        cols as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns,
-                        !!props.visibleColumns
-                    )
-                })
-
-                if (resizable.value) {
-                    applyResizableColumns(tableEl, vm)
-                }
-                if (hasDraggableColumns.value === true) {
-                    applyDraggableColumns(
-                        tableEl,
-                        vm,
-                        vm.refs.dragRef as HTMLDivElement
-                    )
-                }
-            },
-            {
-                flush: 'post'
-            }
-        )
-
-        watch(resizable, () => {
-            applyResizableColumns(tableEl, vm)
-        })
-
-        watch(
-            columns,
-            (newColumns) => {
-                tableEl =
-                    tableRef.value ||
-                    virtScrollRef.value.rootRef.querySelector('table') ||
-                    (document.querySelector(
-                        'table.dl-table'
-                    ) as HTMLTableElement)
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableRef.value,
-                        newColumns as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
-                    )
-                })
-            },
-            {
-                flush: 'post'
-            }
-        )
+        /** element that scrolls horizontally and whose width the columns share */
+        const getScrollContainer = (): HTMLElement =>
+            hasVirtScroll.value
+                ? virtScrollRef.value?.rootRef || null
+                : tableScroll.value || null
 
         watch(
             visibleColumns,
@@ -1588,24 +1505,6 @@ export default defineComponent({
                 visibleColumnsState.value = value
             },
             { immediate: true, deep: true }
-        )
-
-        watch(
-            draggable,
-            () => {
-                if (tableEl && !visibleColumns.value) {
-                    if (hasDraggableColumns.value === true) {
-                        applyDraggableColumns(
-                            tableEl,
-                            vm,
-                            vm.refs.dragRef as HTMLDivElement
-                        )
-                    } else {
-                        removeDraggableColumns()
-                    }
-                }
-            },
-            { immediate: true }
         )
 
         watch(
@@ -1628,16 +1527,6 @@ export default defineComponent({
 
         const { innerPagination, computedPagination, setPagination } =
             useTablePaginationState(vm, getCellValue)
-
-        watch(
-            [computedPagination, dense],
-            () => {
-                if (tableEl && props.resizable) {
-                    const tableHeight = tableEl.offsetHeight || 0
-                }
-            },
-            { deep: true, flush: 'post' }
-        )
 
         watch(
             pagination,
@@ -1748,14 +1637,118 @@ export default defineComponent({
             computedRows,
             getRowKey as ComputedRef<(val: string | DlTableRow) => any>
         )
+        // ---- column order (drag) -------------------------------------------
+        /** order dropped by the user, kept until the consumer changes `columns` */
+        const columnOrder = ref<string[] | null>(null)
+        const visibleDataColumns = computed(
+            () => computedCols.value as DlTableColumn[]
+        )
+
+        const handleColumnDrop = (order: string[]) => {
+            const all = columns.value as DlTableColumn[]
+            const byName = new Map(all.map((col) => [col.name, col]))
+            const visible = new Set(order)
+            const queue = order.slice()
+            // visible columns take the new order, hidden ones keep their slot
+            const newColumns = all.map((col) =>
+                visible.has(col.name) ? byName.get(queue.shift()) : col
+            )
+            if (isEqual(newColumns, columns.value)) return
+            columnOrder.value = newColumns.map((col) => col.name)
+            emit('col-reorder', newColumns)
+            emit('col-update', newColumns)
+        }
+
+        const dragRef = ref<HTMLDivElement>(null)
+        const columnDrag = useColumnDrag({
+            enabled: () => hasDraggableColumns.value,
+            columns: visibleDataColumns,
+            getTable: getTableEl,
+            getCloneHost: () => dragRef.value,
+            onDrop: handleColumnDrop,
+            setDragging: setIsDragging,
+            setClickSuppressed: setResizingInProgress
+        })
+
+        watch(columns, () => {
+            columnOrder.value = null
+        })
+
         const { colList, computedCols, computedColsMap, computedColspan } =
             useTableColumnSelection(
                 props as unknown as DlTableProps,
                 computedPagination,
                 hasSelectionMode,
                 hasDraggableRows,
-                visibleColumnsState
+                visibleColumnsState,
+                () => columnDrag.previewOrder.value || columnOrder.value
             )
+
+        // ---- column geometry ----------------------------------------------
+        const columnLayout = useColumnLayout({
+            tableId: tableUuid,
+            props: props as any,
+            columns: visibleDataColumns,
+            getScrollContainer,
+            getTable: getTableEl,
+            onResizeEnd: (changed: Record<string, number>) => {
+                emit('update:column-widths', { ...columnLayout.userWidths })
+                // deprecated: same payload shape as before, only the resized
+                // column carries a new width
+                emit(
+                    'col-update',
+                    (columns.value as DlTableColumn[]).map((col) =>
+                        col.name in changed
+                            ? { ...col, width: changed[col.name] }
+                            : col
+                    )
+                )
+            },
+            setResizingInProgress
+        })
+
+        const layoutClasses = computed(() => ({
+            'dl-table--scrolled-start': columnLayout.scrolledStart.value,
+            'dl-table--scrolled-end': columnLayout.scrolledEnd.value,
+            'dl-table--resizing': columnLayout.resizing.value !== null
+        }))
+
+        const onHeadPointerDown = (evt: PointerEvent) => {
+            if (columnLayout.onHeadPointerDown(evt)) return
+            columnDrag.onPointerDown(evt)
+        }
+        const onHeadPointerMove = (evt: PointerEvent) => {
+            if (columnDrag.onPointerMove(evt)) return
+            columnLayout.onHeadPointerMove(evt)
+        }
+        const onHeadPointerUp = (evt: PointerEvent) => {
+            columnLayout.onHeadPointerUp(evt)
+            columnDrag.onPointerUp()
+        }
+        const onHeadPointerCancel = () => {
+            columnLayout.onHeadPointerUp()
+            columnDrag.onPointerCancel()
+        }
+        const onHeadPointerLeave = () => columnLayout.onHeadPointerLeave()
+
+        // measure only when what the widths depend on changes, never on scroll
+        watch(
+            () => computedCols.value.map((col) => col.name).join('\u0000'),
+            columnLayout.scheduleMeasure,
+            { flush: 'post' }
+        )
+        watch([isDataEmpty, dense], columnLayout.scheduleMeasure, {
+            flush: 'post'
+        })
+        watch(
+            hasVirtScroll,
+            () =>
+                nextTick(() => {
+                    columnLayout.observeContainer()
+                    columnLayout.measure()
+                }),
+            { flush: 'post' }
+        )
 
         const colspanWithActionsRow = computed(() => {
             return computedColspan.value + (showRowActions.value ? 1 : 0)
@@ -1923,8 +1916,14 @@ export default defineComponent({
         }
 
         const prevScroll = ref<DlVirtualScrollEvent>(null)
+        let measuredVirtualRows = false
 
         function onVScroll(info: DlVirtualScrollEvent) {
+            // the first slice of a virtual table renders after mount
+            if (!measuredVirtualRows) {
+                measuredVirtualRows = true
+                columnLayout.scheduleMeasure()
+            }
             if (isEqual(prevScroll.value, info)) {
                 return
             }
@@ -2051,24 +2050,28 @@ export default defineComponent({
         )
 
         const handleSortableEvent = (event: SortableEvent) => {
-            const { oldIndex, newIndex } = event
+            const { oldIndex, newIndex, item, from } = event
+            // SortableJS already moved the node; put it back so Vue applies the
+            // new order itself (keyed diff) instead of remounting the tbody
+            if (item && from && oldIndex !== newIndex) {
+                from.removeChild(item)
+                from.insertBefore(item, from.children[oldIndex] || null)
+            }
             const newRows = insertAtIndex(rows.value, oldIndex, newIndex)
             emit('row-reorder', newRows)
-            nextTick(() => {
-                tbodyKey.value = v4()
-            })
         }
 
+        /** move a visible column (indexes among the visible data columns) */
         const reorderColumns = (sourceIndex: number, targetIndex: number) => {
-            const newColumns = insertAtIndex(
-                columns.value,
-                sourceIndex,
-                targetIndex
-            )
-            if (isEqual(newColumns, columns.value)) return
-            tableKey.value = v4()
-            emit('col-update', newColumns)
+            const order = computedCols.value.map((col) => col.name)
+            const source = order[sourceIndex]
+            const target = order[targetIndex]
+            if (source === undefined || target === undefined) return
+            handleColumnDrop(moveName(order, source, target))
         }
+
+        const resetColumnWidths = (names?: string[]) =>
+            columnLayout.resetUserWidths(names)
 
         const updateColumns = (newColumns: DlTableColumn[]) => {
             emit('col-update', newColumns)
@@ -2086,14 +2089,14 @@ export default defineComponent({
             lastPage,
             updateColumns,
             reorderColumns,
+            resetColumnWidths,
             setIsResizing,
             setResizingInProgress,
             setIsDragging,
             getIsResizing,
             getResizingInProgress,
             getIsDragging,
-            getVisibleColumnsState,
-            getTableKey
+            getVisibleColumnsState
         })
 
         const slotNames = computed(() => {
@@ -2163,10 +2166,15 @@ export default defineComponent({
             containerStyle,
             isDataEmpty,
             handleSortableEvent,
-            tbodyKey,
-            tableKey,
             uuid: tableUuid,
             rootRef,
+            dragRef,
+            layoutClasses,
+            onHeadPointerDown,
+            onHeadPointerMove,
+            onHeadPointerUp,
+            onHeadPointerCancel,
+            onHeadPointerLeave,
             containerClass,
             computedRows,
             computedCols,

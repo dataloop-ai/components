@@ -57,13 +57,13 @@ const setOverflowAnchor =
                   )
               }
 
-              (contentEl as any)._dlOverflowAnimationFrame =
+              ;(contentEl as any)._dlOverflowAnimationFrame =
                   requestAnimationFrame(() => {
                       if (contentEl === null) {
                           return
                       }
 
-                      (contentEl as any)._dlOverflowAnimationFrame = void 0
+                      ;(contentEl as any)._dlOverflowAnimationFrame = void 0
 
                       const children = (contentEl.children ||
                           []) as HTMLCollection
@@ -846,8 +846,6 @@ export function useVirtualScroll({
             ['--dl-virtual-scroll-item-' + paddingSize]:
                 virtualScrollItemSizeComputed.value + 'px'
         }
-        const onUpdate = new Event('virtual-scroll-content-update')
-
         return [
             tag === 'tbody'
                 ? create(
@@ -891,10 +889,7 @@ export function useVirtualScroll({
                     ref: styles ? 'grid' : contentRef,
                     tabindex: -1
                 },
-                (() => {
-                    window.dispatchEvent(onUpdate)
-                    return content.flat()
-                })()
+                content.flat()
             ),
 
             tag === 'tbody'

@@ -75,12 +75,6 @@ export default defineComponent({
                     `background: ${getColor(props.bgColor, '')};`
                 )
             }
-            if (vm.vnode.key === 'visibleColumnsSlot') {
-                // todo: this assumes that if a column is actions slot then its always sticky. we need to see if its true
-                styles = styles.concat(
-                    'position: sticky; right: 0; z-index: 101;'
-                )
-            }
             return styles
         })
 

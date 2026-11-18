@@ -47,7 +47,21 @@ export type DlTableColumn = {
     headerStyle?: string
     headerClasses?: string
     textTransform?: DlTextTransformOptions
-    width?: number
+    /** number (px) or any CSS length */
+    width?: number | string
+    /** minimum width in px; defaults to the table `columnMinWidth` */
+    minWidth?: number
+    /** maximum width in px; defaults to the table `columnMaxWidth` */
+    maxWidth?: number
+    /**
+     * fixed: keeps its width; constrained (default) / flex: starts at its
+     * content width and takes a share of the spare space
+     */
+    widthMode?: 'fixed' | 'flex' | 'constrained'
+    /** never narrower than other columns when there is spare space */
+    primary?: boolean
+    /** pin to the start or end edge while scrolling horizontally */
+    pinned?: 'start' | 'end'
     hint?: string
     sticky?: boolean
     ignoreTooltip?: boolean

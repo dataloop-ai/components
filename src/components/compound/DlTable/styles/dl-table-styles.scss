@@ -8,20 +8,9 @@
     border-collapse: separate;
     border-spacing: 0;
 
-    .vertical-border {
-        border-left: 1px solid var(--dell-gray-300);
-        border-right: 1px solid var(--dell-gray-300);
-    }
-
     thead {
         position: sticky;
         top: 0;
-        background-color: var(--dell-white);
-        z-index: 50;
-    }
-
-    .sticky-col {
-        position: sticky;
         background-color: var(--dell-white);
         z-index: 50;
     }
@@ -30,8 +19,20 @@
         z-index: 100;
     }
 
-    .dl-th.sticky-col {
+    // row actions / manage-columns column stays at the trailing edge
+    th.dl-table-visible-column,
+    td.dl-table-visible-column {
+        position: sticky;
+        right: 0;
+    }
+
+    th.dl-table-visible-column {
         z-index: 101;
+    }
+
+    td.dl-table-visible-column {
+        z-index: 50;
+        background-color: var(--dl-table-pinned-background, var(--dell-white));
     }
 
     .inner-th-wrapper {
