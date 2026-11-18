@@ -973,7 +973,11 @@ import {
     useTableRowExpand,
     useTableRowExpandProps
 } from './hooks/tableRowExpand'
-import { useTableActions, useTableActionsProps } from './hooks/tableActions'
+import {
+    hasListener,
+    useTableActions,
+    useTableActionsProps
+} from './hooks/tableActions'
 import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
 import { injectProp } from '../../../utils/inject-object-prop'
 import {
@@ -1373,7 +1377,7 @@ export default defineComponent({
             computedCols.value.map((col) => col.name)
         )
 
-        const { hasAnyAction } = useTableActions(props) // todo: does not work
+        const { hasAnyAction } = useTableActions(props, vm)
 
         const getRowKey = computed(() =>
             typeof rowKey.value === 'function'
@@ -1643,7 +1647,13 @@ export default defineComponent({
             { deep: true }
         )
 
-        const { computedFilterMethod } = useTableFilter(props, setPagination)
+        const { filterRows } = useTableFilter(
+            props,
+            setPagination,
+            () => rows.value as DlTableRow[],
+            () => computedCols.value,
+            getCellValue
+        )
 
         const { isRowExpanded, setExpanded, updateExpanded } =
             useTableRowExpand(props, emit)
@@ -1658,12 +1668,7 @@ export default defineComponent({
             const { sortBy, descending } = computedPagination.value
 
             if (filter.value) {
-                filtered = computedFilterMethod.value(
-                    rows.value,
-                    filter.value,
-                    computedCols.value,
-                    getCellValue
-                )
+                filtered = filterRows(filter.value)
             }
 
             if (columnToSort.value !== null) {
@@ -1941,6 +1946,11 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
+            // the delay only exists to tell a click apart from a double click
+            if (!hasListener(vm, 'row-dblclick')) {
+                emit('row-click', evt, row, pageIndex)
+                return
+            }
             clearTimeout(trClickTimeout.value)
             trClickTimeout.value = setTimeout(() => {
                 emit('row-click', evt, row, pageIndex)
