@@ -552,3 +552,101 @@ export const EmptyData: Story = {
         }
     }
 }
+
+const manyColumns = times(14, (i) => ({
+    name: `col${i}`,
+    label: `Column ${i}`,
+    field: `col${i}`,
+    sortable: i % 2 === 0,
+    sortDisabledReason: i % 2 ? 'Not sortable by the server' : undefined,
+    minWidth: 80,
+    maxWidth: 480,
+    primary: i === 0
+}))
+const manyRows = (count: number) =>
+    times(count, (r) => {
+        const row: Record<string, any> = { id: r }
+        manyColumns.forEach((col, i) => {
+            row[col.field] = `row ${r} value ${i}`
+        })
+        return row
+    })
+
+/**
+ * Column widths, pinning, resize and table state.
+ *
+ * - column fields: width (number = px), minWidth, maxWidth,
+ *   widthMode ('fixed' | 'flex' | 'constrained'), primary, pinned
+ *   ('start' | 'end'), hiddenByDefault, sortDisabledReason, nullsPosition
+ * - table props: columnMinWidth, columnMaxWidth, stickyColumns, resizable,
+ *   rowActionsMode ('always' | 'hover'), rowActionsWidth, stickyBottomRow,
+ *   state (v-model:state), noGridNavigation, gridRole
+ * - events: update:column-widths, update:state, col-reorder, request
+ *   (when pagination.rowsNumber > rows.length); col-update is deprecated
+ * - CSS custom properties: --dl-table-row-height, --dl-table-header-height,
+ *   --dl-table-header-background, --dl-table-row-hover-background,
+ *   --dl-table-row-selected-background, --dl-table-border-color,
+ *   --dl-table-cell-padding-x, --dl-table-pinned-background,
+ *   --dl-table-pinned-shadow-start, --dl-table-pinned-shadow-end,
+ *   --dl-table-resize-hover-color, --dl-table-resize-guide-color
+ * - keyboard: arrows/Home/End move between cells, Space toggles the row,
+ *   Enter/Space sorts a focused header, Alt+Left/Right resizes it
+ *   (Shift for bigger steps); double-click a header boundary to fit
+ */
+export const LayoutPinningAndState: Story = {
+    render: () => ({
+        components: { DlTable },
+        setup() {
+            const state = ref(null)
+            const rows = ref(manyRows(30))
+            return { state, rows, columns: manyColumns }
+        },
+        template: `
+            <div style="width: 900px">
+                <DlTable
+                    v-model:state="state"
+                    :columns="columns"
+                    :rows="rows"
+                    row-key="id"
+                    selection="multiple"
+                    sticky-columns="first"
+                    draggable="columns"
+                    resizable
+                    row-actions-mode="hover"
+                    :row-actions-width="48"
+                    style="--dl-table-row-height: 36px"
+                >
+                    <template #body-cell-row-actions>
+                        <button>⋮</button>
+                    </template>
+                </DlTable>
+                <pre>{{ JSON.stringify(state, null, 2) }}</pre>
+            </div>
+        `
+    })
+}
+
+/**
+ * PERF-08: 10k rows x 14 columns, virtual scroll. Record a Chrome performance
+ * trace while scrolling and while resizing a column (budgets: >= 55 fps,
+ * no long task > 50 ms, at most one forced layout per frame while resizing).
+ */
+export const Performance: Story = {
+    render: () => ({
+        components: { DlTable },
+        setup() {
+            return { rows: manyRows(10000), columns: manyColumns }
+        },
+        template: `
+            <DlTable
+                :columns="columns"
+                :rows="rows"
+                row-key="id"
+                virtual-scroll
+                resizable
+                sticky-columns="first"
+                style="--dl-table-height: 600px; width: 1000px"
+            />
+        `
+    })
+}
