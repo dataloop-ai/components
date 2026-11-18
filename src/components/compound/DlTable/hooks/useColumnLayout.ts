@@ -51,6 +51,22 @@ const getIconWidth = (el: HTMLElement) => {
     return (iconEl?.scrollWidth ?? 0) + (sortEl?.scrollWidth ?? 0)
 }
 
+/**
+ * Full width of the header label. `.inner-th` is squeezed to the cell, but the
+ * DlEllipsis text spans keep their full width as scrollWidth.
+ */
+const headerLabelWidth = (th: HTMLElement) => {
+    const inner = th.querySelector('.inner-th') as HTMLElement
+    if (!inner) return th.scrollWidth
+    const parts = inner.querySelectorAll(
+        '.dl-ellipsis__left, .dl-ellipsis__right'
+    )
+    if (!parts.length) return inner.scrollWidth
+    let width = 0
+    parts.forEach((part) => (width += (part as HTMLElement).scrollWidth))
+    return Math.max(width, inner.scrollWidth)
+}
+
 const headerRow = (table: HTMLTableElement) =>
     (table.tHead?.rows[0] as HTMLTableRowElement) || null
 
@@ -174,11 +190,8 @@ export function useColumnLayout(options: ColumnLayoutOptions) {
                 const col = cols[Number(index)]
                 if (!col) continue
                 rendered[Number(index)] = th.offsetWidth
-                const inner = th.querySelector('.inner-th') as HTMLElement
                 content[col.name] =
-                    (inner ? inner.scrollWidth : th.scrollWidth) +
-                    getIconWidth(th) +
-                    HEADER_EXTRA_WIDTH
+                    headerLabelWidth(th) + getIconWidth(th) + HEADER_EXTRA_WIDTH
             }
         }
 
