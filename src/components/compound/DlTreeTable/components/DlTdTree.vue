@@ -4,6 +4,7 @@
         :class="classes"
         :style="styles"
         :data-col-index="colIndex"
+        @pointerenter="onPointerEnter"
     >
         <slot name="icon" />
         <dl-tooltip v-if="tooltip">
@@ -20,7 +21,7 @@
 import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { getColor } from '../../../../utils'
 import { DlTooltip } from '../../../shared'
-import { useSizeObserver } from '../../../../hooks/use-size-observer'
+import { useLazyEllipsis } from '../../../../hooks/use-lazy-ellipsis'
 
 export default defineComponent({
     name: 'DlTdTree',
@@ -53,7 +54,7 @@ export default defineComponent({
 
         const tableTd = ref(null)
 
-        const { hasEllipsis } = useSizeObserver(tableTd)
+        const { hasEllipsis, onPointerEnter } = useLazyEllipsis(tableTd)
 
         const hasOptionalProps = computed(() => {
             return props.props !== void 0
@@ -100,7 +101,8 @@ export default defineComponent({
                 classes: tdClasses,
                 styles: tdStyles,
                 tableTd,
-                hasEllipsis
+                hasEllipsis,
+                onPointerEnter
             }
         }
 
@@ -114,7 +116,8 @@ export default defineComponent({
             classes: tdClasses.value + column.value.tdClass(row),
             styles: tdStyles.value + column.value.tdStyle(row),
             tableTd,
-            hasEllipsis
+            hasEllipsis,
+            onPointerEnter
         }
     }
 })

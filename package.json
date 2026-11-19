@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.20.292",
+  "version": "0.20.293-table.0",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -20,6 +20,7 @@
     "lint-staged": "npm run check-only && lint-staged",
     "test": "vitest",
     "test:coverage": "vitest run --coverage --silent",
+    "bench": "vitest bench --run",
     "check-only": "node misc/check-only.js"
   },
   "dependencies": {

@@ -21,15 +21,9 @@ export function useTableRowSelection(
     computedRows: ComputedRef<DlTableRow[]>,
     getRowKey: ComputedRef<(val: string | DlTableRow) => any>
 ) {
-    const selectedKeys = computed(() => {
-        return props.selected
-            .map(getRowKey.value)
-            .reduce((acc, key: string) => {
-                acc[key] = true
-
-                return acc
-            }, {} as Record<string, boolean>)
-    })
+    const selectedKeys = computed(
+        () => new Set<any>(props.selected.map(getRowKey.value))
+    )
 
     const hasSelectionMode = computed(() => {
         return props.selection !== 'none'
@@ -46,8 +40,8 @@ export function useTableRowSelection(
     const allRowsSelected = computed(
         () =>
             computedRows.value.length > 0 &&
-            computedRows.value.every(
-                (row) => selectedKeys.value[getRowKey.value(row)] === true
+            computedRows.value.every((row) =>
+                selectedKeys.value.has(getRowKey.value(row))
             )
     )
 
@@ -56,7 +50,7 @@ export function useTableRowSelection(
         const stack = computedRows.value.slice()
         while (stack.length) {
             const row = stack.pop()
-            if (selectedKeys.value[getRowKey.value(row)] === true) return true
+            if (selectedKeys.value.has(getRowKey.value(row))) return true
             if (row.children && row.children.length) {
                 stack.push(...row.children)
             }
@@ -66,7 +60,25 @@ export function useTableRowSelection(
     const rowsSelectedNumber = computed(() => props.selected.length)
 
     function isRowSelected(key: string) {
-        return selectedKeys.value[key] === true
+        return selectedKeys.value.has(key)
+    }
+
+    function addRows(rows: (string | DlTableRow)[]) {
+        const seen = new Set(selectedKeys.value)
+        const added = rows.filter((row) => {
+            const key = getRowKey.value(row)
+            if (seen.has(key)) return false
+            seen.add(key)
+            return true
+        })
+        return props.selected.concat(added as string[])
+    }
+
+    function removeKeys(keys: string[]) {
+        const toRemove = new Set(keys)
+        return props.selected.filter(
+            (row) => !toRemove.has(getRowKey.value(row))
+        )
     }
 
     function clearSelection() {
@@ -87,10 +99,8 @@ export function useTableRowSelection(
                     ? rows
                     : []
                 : added === true
-                ? props.selected.concat(rows as string[])
-                : props.selected.filter(
-                      (row) => keys.includes(getRowKey.value(row)) === false
-                  )
+                ? addRows(rows)
+                : removeKeys(keys)
 
         emit('update:selected', payload)
     }
