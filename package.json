@@ -1,6 +1,6 @@
 {
   "name": "@dataloop-ai/components",
-  "version": "0.20.293-table.0",
+  "version": "0.20.293",
   "exports": {
     ".": "./index.ts",
     "./models": "./models.ts",
@@ -46,7 +46,7 @@
     "vanilla-jsoneditor": "^0.10.2",
     "vue-demi": "^0.14.5",
     "vue-sortable": "^0.1.3",
-    "vue2-teleport": "1.0.1"
+    "vue2-teleport": "1.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
