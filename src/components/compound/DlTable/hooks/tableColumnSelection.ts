@@ -17,11 +17,24 @@ export function useTableColumnSelection(
     computedPagination: ComputedRef<TablePagination>,
     hasSelectionMode: ComputedRef<boolean>,
     hasDraggableRows: ComputedRef<boolean>,
-    visibleColumnsState: Ref
+    visibleColumnsState: Ref,
+    /** column names in display order (drag preview or a dropped order) */
+    getOrder: () => string[] | null = () => null
 ) {
     const colList = computed(() => {
         if (props.columns) {
+            const order = getOrder()
+            if (!order || !order.length) return props.columns
+            const rank = new Map(order.map((name, i) => [name, i]))
+            // columns missing from the order keep their place after the ordered ones
             return props.columns
+                .map((col, i) => ({ col, i }))
+                .sort(
+                    (a, b) =>
+                        (rank.get(a.col.name) ?? order.length + a.i) -
+                        (rank.get(b.col.name) ?? order.length + b.i)
+                )
+                .map(({ col }) => col)
         }
 
         // we infer columns from first row

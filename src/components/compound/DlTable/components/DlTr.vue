@@ -1,9 +1,5 @@
 <template>
-    <tr
-        :class="trClasses"
-        v-bind="$attrs"
-        v-on="listeners"
-    >
+    <tr :class="trClasses" v-bind="$attrs" v-on="listeners">
         <slot />
     </tr>
 </template>
@@ -19,12 +15,12 @@ export default defineComponent({
     },
     computed: {
         listeners(): any {
-            if (isVue2) {
-                // @ts-ignore
-                return this.$listeners
-            } else {
-                return this.$attrs
-            }
+            // Vue 3: listeners are part of $attrs (onX) and already bound with
+            // v-bind; passing $attrs to v-on too turned every attribute
+            // (class, aria-*) into an invalid "event handler" with a warning
+            // on each row render
+            // @ts-ignore
+            return isVue2 ? this.$listeners : {}
         },
         trClasses(): string {
             let classes = 'dl-tr'

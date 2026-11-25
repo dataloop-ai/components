@@ -1,10 +1,11 @@
 <template>
     <div
         :id="uuid"
-        :key="tableKey"
         ref="rootRef"
+        :data-dl-table-id="uuid"
         :style="containerStyle"
-        :class="containerClass"
+        :class="[containerClass, layoutClasses]"
+        @keydown="onGridKeydown"
     >
         <div ref="dragRef" class="dl-table__drag" />
         <!-- Top Slots -->
@@ -43,6 +44,7 @@
             :class="virtualScrollClasses"
             :style="tableStyle"
             :table-colspan="colspanWithExpandableRow"
+            :table-attrs="tableAttrs"
             :scroll-target="virtualScrollTarget"
             :items="computedRows"
             :scroll-debounce="scrollDebounce"
@@ -52,6 +54,12 @@
                 <thead
                     :colspan="colspanWithExpandableRow"
                     style="position: relative; z-index: 100"
+                    @pointerdown="onHeadPointerDown"
+                    @pointermove="onHeadPointerMove"
+                    @pointerup="onHeadPointerUp"
+                    @pointercancel="onHeadPointerCancel"
+                    @pointerleave="onHeadPointerLeave"
+                    @dblclick="onHeadDblClick"
                 >
                     <slot
                         v-if="!hideHeader"
@@ -125,7 +133,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="`0 ${columnSpacing}`"
+                                    :padding="isTreeTable ? '0' : cellPadding"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -247,6 +255,20 @@
                         </th>
                     </tr>
                 </thead>
+                <tbody
+                    v-if="hasSlotByName('top-row')"
+                    class="dl-table__top-row"
+                >
+                    <slot name="top-row" :cols="computedCols" />
+                </tbody>
+            </template>
+            <template #after>
+                <tbody
+                    v-if="hasSlotByName('bottom-row')"
+                    :class="bottomRowClasses"
+                >
+                    <slot name="bottom-row" :cols="computedCols" />
+                </tbody>
             </template>
             <template #default="props">
                 <slot name="table-body" v-bind="props">
@@ -277,6 +299,12 @@
                                             : ''
                                 "
                                 :no-hover="noHover"
+                                :aria-selected="
+                                    hasSelectionMode
+                                        ? isRowSelected(getRowKey(props.item))
+                                        : undefined
+                                "
+                                :aria-rowindex="ariaRowIndex(props.index)"
                                 @click="
                                     onTrClick(
                                         $event,
@@ -332,9 +360,8 @@
                                             "
                                             @update:model-value="
                                                 (adding, evt) =>
-                                                    updateSelection(
-                                                        [getRowKey(props.item)],
-                                                        [props.item],
+                                                    onRowCheckbox(
+                                                        props.item,
                                                         adding,
                                                         evt
                                                     )
@@ -345,7 +372,18 @@
                                 <td v-if="expandableRows">
                                     <dl-icon
                                         :icon="getRowExpandedIcon(props.item)"
+                                        role="button"
+                                        tabindex="0"
+                                        :aria-expanded="
+                                            isRowExpanded(props.item)
+                                                ? 'true'
+                                                : 'false'
+                                        "
+                                        aria-label="Toggle row details"
                                         @click.stop.prevent="
+                                            updateExpanded(props.item)
+                                        "
+                                        @keydown.enter.space.stop.prevent="
                                             updateExpanded(props.item)
                                         "
                                     />
@@ -358,7 +396,7 @@
                                     :no-hover="noHover"
                                     :col-index="colIndex"
                                     :no-tooltip="col.ignoreTooltip"
-                                    :padding="`0 ${columnSpacing}`"
+                                    :padding="cellPadding"
                                 >
                                     <slot
                                         v-bind="
@@ -449,10 +487,21 @@
         <!--  -->
 
         <div v-else ref="tableScroll" class="dl-table__middle scroll">
-            <table ref="tableRef" class="dl-table" :class="additionalClasses">
+            <table
+                ref="tableRef"
+                class="dl-table"
+                :class="additionalClasses"
+                v-bind="tableAttrs"
+            >
                 <thead
                     :colspan="colspanWithExpandableRow"
                     style="position: relative; z-index: 100"
+                    @pointerdown="onHeadPointerDown"
+                    @pointermove="onHeadPointerMove"
+                    @pointerup="onHeadPointerUp"
+                    @pointercancel="onHeadPointerCancel"
+                    @pointerleave="onHeadPointerLeave"
+                    @dblclick="onHeadDblClick"
                 >
                     <slot
                         v-if="!hideHeader"
@@ -526,9 +575,7 @@
                                     :props="getHeaderScope({ col })"
                                     :col-index="colIndex"
                                     :pagination="computedPagination"
-                                    :padding="
-                                        isTreeTable ? '0' : `0 ${columnSpacing}`
-                                    "
+                                    :padding="isTreeTable ? '0' : cellPadding"
                                     @click="onThClick($event, col.name)"
                                 >
                                     <span
@@ -658,7 +705,6 @@
                     }"
                 >
                     <Sortable
-                        :key="tbodyKey"
                         ref="tbody"
                         tag="tbody"
                         class="nested-table dl-virtual-scroll__content"
@@ -711,6 +757,14 @@
                                                 : ''
                                     "
                                     :no-hover="noHover"
+                                    :aria-selected="
+                                        hasSelectionMode
+                                            ? isRowSelected(getRowKey(row))
+                                            : undefined
+                                    "
+                                    :aria-rowindex="
+                                        ariaRowIndex(firstRowIndex + pageIndex)
+                                    "
                                     @click="onTrClick($event, row, pageIndex)"
                                     @dblclick="
                                         onTrDblClick($event, row, pageIndex)
@@ -753,9 +807,8 @@
                                                 "
                                                 @update:model-value="
                                                     (adding, evt) =>
-                                                        updateSelection(
-                                                            [getRowKey(row)],
-                                                            [row],
+                                                        onRowCheckbox(
+                                                            row,
                                                             adding,
                                                             evt
                                                         )
@@ -766,7 +819,20 @@
                                     <td v-if="expandableRows">
                                         <dl-icon
                                             :icon="getRowExpandedIcon(row)"
-                                            @click="updateExpanded(row)"
+                                            role="button"
+                                            tabindex="0"
+                                            :aria-expanded="
+                                                isRowExpanded(row)
+                                                    ? 'true'
+                                                    : 'false'
+                                            "
+                                            aria-label="Toggle row details"
+                                            @click.stop.prevent="
+                                                updateExpanded(row)
+                                            "
+                                            @keydown.enter.space.stop.prevent="
+                                                updateExpanded(row)
+                                            "
                                         />
                                     </td>
                                     <DlTd
@@ -776,7 +842,7 @@
                                         :style="col.tdStyle(row)"
                                         :col-index="colIndex"
                                         :no-tooltip="col.ignoreTooltip"
-                                        :padding="`0 ${columnSpacing}`"
+                                        :padding="cellPadding"
                                     >
                                         <slot
                                             v-bind="
@@ -857,9 +923,19 @@
                             />
                         </slot>
 
-                        <slot name="bottom-row" :cols="computedCols" />
+                        <slot
+                            v-if="!stickyBottomRow"
+                            name="bottom-row"
+                            :cols="computedCols"
+                        />
                     </Sortable>
                 </slot>
+                <tbody
+                    v-if="stickyBottomRow && hasSlotByName('bottom-row')"
+                    :class="bottomRowClasses"
+                >
+                    <slot name="bottom-row" :cols="computedCols" />
+                </tbody>
             </table>
         </div>
 
@@ -939,8 +1015,6 @@ import {
     watch,
     getCurrentInstance,
     ComputedRef,
-    onMounted,
-    onBeforeUnmount,
     toRefs,
     nextTick,
     PropType
@@ -973,13 +1047,20 @@ import {
     useTableRowExpand,
     useTableRowExpandProps
 } from './hooks/tableRowExpand'
-import { useTableActions, useTableActionsProps } from './hooks/tableActions'
-import { applyDraggableColumns, applyResizableColumns } from '../../../utils'
+import {
+    hasListener,
+    useTableActions,
+    useTableActionsProps
+} from './hooks/tableActions'
+import { useColumnLayout } from './hooks/useColumnLayout'
+import { moveName, useColumnDrag } from './hooks/useColumnDrag'
+import { useGridNavigation } from './hooks/useGridNavigation'
 import { injectProp } from '../../../utils/inject-object-prop'
 import {
     DlTableRow,
     DlTableProps,
     DlTableColumn,
+    DlTableState,
     TableStickyPosition
 } from './types'
 import { DlPagination } from '../DlPagination'
@@ -994,7 +1075,7 @@ import { DlButton, DlPopup } from '../../basic'
 import DlOptionGroup from '../DlOptionGroup/DlOptionGroup.vue'
 import DlEmptyState from '../../basic/DlEmptyState/DlEmptyState.vue'
 import { v4 } from 'uuid'
-import { stopAndPrevent, setAllColumnWidths } from '../../../utils'
+import { stopAndPrevent } from '../../../utils'
 import { DlEmptyStateProps, DlVirtualScrollEvent } from '../../types'
 import Sortable from './components/SortableJS.vue'
 import { SortableEvent } from 'sortablejs'
@@ -1283,6 +1364,68 @@ export default defineComponent({
             validator: (value: string) =>
                 ['first', 'last', 'both'].includes(value)
         },
+        /**
+         * Table settings: column order, hidden columns, user widths and sort.
+         * Use with v-model:state (Vue 3) or :state.sync (Vue 2); the table
+         * emits update:state when the user changes any of them.
+         */
+        state: {
+            type: Object as PropType<DlTableState>,
+            default: null as DlTableState
+        },
+        /**
+         * Turn off arrow-key navigation between cells (A11Y-02)
+         */
+        noGridNavigation: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Expose the table as an ARIA grid (role="grid"). Off by default so
+         * the native table/row/cell roles are kept.
+         */
+        gridRole: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Row actions (body-cell-row-actions slot): always visible, or only
+         * while the row is hovered or has keyboard focus
+         */
+        rowActionsMode: {
+            type: String as PropType<'always' | 'hover'>,
+            default: 'always',
+            validator: (v: string) => ['always', 'hover'].includes(v)
+        },
+        /** fixed width of the row actions column in px */
+        rowActionsWidth: {
+            type: Number,
+            default: null as number
+        },
+        /**
+         * Keep the `bottom-row` slot (e.g. a totals row) pinned to the bottom
+         * of the scroll area
+         */
+        stickyBottomRow: {
+            type: Boolean,
+            default: false
+        },
+        /**
+         * Minimum column width in px (content sizing and user resize).
+         * A column `minWidth` overrides it.
+         */
+        columnMinWidth: {
+            type: Number,
+            default: 64
+        },
+        /**
+         * Maximum column width in px; none by default.
+         * A column `maxWidth` overrides it.
+         */
+        columnMaxWidth: {
+            type: Number,
+            default: null as number
+        },
         checkboxColor: {
             type: String,
             default: 'dell-blue-500'
@@ -1330,10 +1473,6 @@ export default defineComponent({
             noHover
         } = toRefs(props)
 
-        const tbodyKey = ref()
-        const tableKey = ref()
-        const getTableKey = () => tableKey.value
-
         const rootRef = ref<HTMLDivElement>(null)
         const tableRef = ref<HTMLTableElement>(null)
         const virtScrollRef = ref(null)
@@ -1344,9 +1483,9 @@ export default defineComponent({
         const hasExpandableSlot = computed(() =>
             hasSlotByName('body-cell-expandable-content')
         )
-        const hasVirtScroll = computed<boolean>(
-            () => virtualScroll.value && !hasExpandableSlot.value
-        )
+        // PERF-06: expandable rows keep virtual scrolling; an expanded row is
+        // measured together with its parent row (dl-virtual-scroll--with-prev)
+        const hasVirtScroll = computed<boolean>(() => virtualScroll.value)
 
         const hasEmptyStateProps = computed(() =>
             emptyStateProps.value
@@ -1373,7 +1512,7 @@ export default defineComponent({
             computedCols.value.map((col) => col.name)
         )
 
-        const { hasAnyAction } = useTableActions(props) // todo: does not work
+        const { hasAnyAction } = useTableActions(props, vm)
 
         const getRowKey = computed(() =>
             typeof rowKey.value === 'function'
@@ -1457,151 +1596,38 @@ export default defineComponent({
             ['columns', 'both'].includes(draggable.value)
         )
 
-        const removeDraggableColumns = () => {}
-
-        let tableEl: HTMLTableElement = null
-
         const totalItemsCount = computed(() => {
             return computedPagination.value.rowsNumber || rows.value.length
         })
 
-        const updateTableSizing = () => {
-            tableEl =
-                tableRef.value ||
-                virtScrollRef.value.rootRef.querySelector('table') ||
-                (document.querySelector('table.dl-table') as HTMLTableElement)
-            const cols = getVisibleColumnsState()
-                ? props.columns.filter((col: any) =>
-                      getVisibleColumnsState().includes(col.name)
-                  )
-                : props.columns
-            nextTick(() => {
-                setAllColumnWidths(
-                    tableEl,
-                    cols as DlTableColumn[],
-                    props.stickyColumns,
-                    props.fitAllColumns,
-                    !!props.visibleColumns
-                )
-            })
-            return tableEl
-        }
+        /** the rendered table element of this instance (never another table) */
+        const getTableEl = (): HTMLTableElement =>
+            tableRef.value ||
+            (virtScrollRef.value?.rootRef?.querySelector?.(
+                'table'
+            ) as HTMLTableElement) ||
+            null
 
-        onMounted(() => {
-            const tableEl = updateTableSizing()
-            window.addEventListener(
-                'virtual-scroll-content-update',
-                updateTableSizing
-            )
-            if (resizable.value) {
-                applyResizableColumns(tableEl, vm)
-            }
-            if (hasDraggableColumns.value === true) {
-                applyDraggableColumns(
-                    tableEl,
-                    vm,
-                    vm.refs.dragRef as HTMLDivElement
-                )
-            }
-        })
-        onBeforeUnmount(() => {
-            window.removeEventListener(
-                'virtual-scroll-content-update',
-                updateTableSizing
-            )
-        })
-
-        watch(
-            hasVirtScroll,
-            () => {
-                tableEl =
-                    tableRef.value ||
-                    virtScrollRef.value.rootRef.querySelector('table') ||
-                    (document.querySelector(
-                        'table.dl-table'
-                    ) as HTMLTableElement)
-                const cols = getVisibleColumnsState()
-                    ? props.columns.filter((col: any) =>
-                          getVisibleColumnsState().includes(col.name)
-                      )
-                    : props.columns
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableEl,
-                        cols as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns,
-                        !!props.visibleColumns
-                    )
-                })
-
-                if (resizable.value) {
-                    applyResizableColumns(tableEl, vm)
-                }
-                if (hasDraggableColumns.value === true) {
-                    applyDraggableColumns(
-                        tableEl,
-                        vm,
-                        vm.refs.dragRef as HTMLDivElement
-                    )
-                }
-            },
-            {
-                flush: 'post'
-            }
-        )
-
-        watch(resizable, () => {
-            applyResizableColumns(tableEl, vm)
-        })
-
-        watch(
-            columns,
-            (newColumns) => {
-                tableEl =
-                    tableRef.value ||
-                    virtScrollRef.value.rootRef.querySelector('table') ||
-                    (document.querySelector(
-                        'table.dl-table'
-                    ) as HTMLTableElement)
-                nextTick(() => {
-                    setAllColumnWidths(
-                        tableRef.value,
-                        newColumns as DlTableColumn[],
-                        props.stickyColumns,
-                        props.fitAllColumns
-                    )
-                })
-            },
-            {
-                flush: 'post'
-            }
-        )
+        /** element that scrolls horizontally and whose width the columns share */
+        const getScrollContainer = (): HTMLElement =>
+            hasVirtScroll.value
+                ? virtScrollRef.value?.rootRef || null
+                : tableScroll.value || null
 
         watch(
             visibleColumns,
             (value: string[]) => {
-                visibleColumnsState.value = value
+                const all = (columns.value || []) as DlTableColumn[]
+                // col.hiddenByDefault: hidden until visibleColumns/state says otherwise
+                visibleColumnsState.value =
+                    (!value || !value.length) &&
+                    all.some((col) => col.hiddenByDefault)
+                        ? all
+                              .filter((col) => !col.hiddenByDefault)
+                              .map((col) => col.name)
+                        : value
             },
             { immediate: true, deep: true }
-        )
-
-        watch(
-            draggable,
-            () => {
-                if (tableEl && !visibleColumns.value) {
-                    if (hasDraggableColumns.value === true) {
-                        applyDraggableColumns(
-                            tableEl,
-                            vm,
-                            vm.refs.dragRef as HTMLDivElement
-                        )
-                    } else {
-                        removeDraggableColumns()
-                    }
-                }
-            },
-            { immediate: true }
         )
 
         watch(
@@ -1622,48 +1648,70 @@ export default defineComponent({
             }
         )
 
-        const { innerPagination, computedPagination, setPagination } =
-            useTablePaginationState(vm, getCellValue)
+        /**
+         * Server mode: `rows` is only one page of the data. Then the table does
+         * no client filter, sort or slice and emits `request` on every user
+         * change (update:pagination is still emitted as before).
+         */
+        const isServerSide = computed(() => {
+            const total = computedPagination.value.rowsNumber
+            return typeof total === 'number' && total > rows.value.length
+        })
 
-        watch(
-            [computedPagination, dense],
-            () => {
-                if (tableEl && props.resizable) {
-                    const tableHeight = tableEl.offsetHeight || 0
-                }
-            },
-            { deep: true, flush: 'post' }
-        )
+        const {
+            innerPagination,
+            computedPagination,
+            setPagination,
+            requestServerInteraction
+        } = useTablePaginationState(vm, getCellValue, () => isServerSide.value)
 
         watch(
             pagination,
             (newPagination) => {
-                setPagination(newPagination)
+                setPagination(newPagination, false)
             },
             { deep: true }
         )
 
-        const { computedFilterMethod } = useTableFilter(props, setPagination)
+        const { filterRows } = useTableFilter(
+            props,
+            setPagination,
+            () => rows.value as DlTableRow[],
+            () => computedCols.value,
+            getCellValue
+        )
 
-        const { isRowExpanded, setExpanded, updateExpanded } =
-            useTableRowExpand(props, emit)
+        const {
+            isRowExpanded,
+            setExpanded,
+            updateExpanded: toggleExpanded
+        } = useTableRowExpand(props, emit)
+
+        const updateExpanded = (row: DlTableRow) => {
+            toggleExpanded(row)
+            if (!hasVirtScroll.value) return
+            // let the virtual list re-measure the rows around the expanded one
+            nextTick(() => {
+                const scroller = virtScrollRef.value?.rootRef as HTMLElement
+                scroller?.dispatchEvent(new Event('scroll'))
+            })
+        }
+
+        watch(filter, (value) => {
+            if (isServerSide.value) requestServerInteraction({ filter: value })
+        })
 
         const filteredSortedRows = computed(() => {
             let filtered = rows.value as DlTableRow[]
 
-            if (filtered.length === 0) {
+            if (filtered.length === 0 || isServerSide.value) {
                 return rows.value as DlTableRow[]
             }
 
             const { sortBy, descending } = computedPagination.value
 
             if (filter.value) {
-                filtered = computedFilterMethod.value(
-                    rows.value,
-                    filter.value,
-                    computedCols.value,
-                    getCellValue
-                )
+                filtered = filterRows(filter.value)
             }
 
             if (columnToSort.value !== null) {
@@ -1682,7 +1730,9 @@ export default defineComponent({
         )
 
         const computedRows = computed(() => {
-            if (props.infiniteScroll) return filteredSortedRows.value
+            if (props.infiniteScroll || isServerSide.value) {
+                return filteredSortedRows.value
+            }
             let filtered = filteredSortedRows.value
 
             const { rowsPerPage } = computedPagination.value
@@ -1743,14 +1793,132 @@ export default defineComponent({
             computedRows,
             getRowKey as ComputedRef<(val: string | DlTableRow) => any>
         )
+        // ---- column order (drag) -------------------------------------------
+        /** order dropped by the user, kept until the consumer changes `columns` */
+        const columnOrder = ref<string[] | null>(null)
+        const visibleDataColumns = computed(
+            () => computedCols.value as DlTableColumn[]
+        )
+
+        const handleColumnDrop = (order: string[]) => {
+            const all = columns.value as DlTableColumn[]
+            const byName = new Map(all.map((col) => [col.name, col]))
+            const visible = new Set(order)
+            const queue = order.slice()
+            // visible columns take the new order, hidden ones keep their slot
+            const newColumns = all.map((col) =>
+                visible.has(col.name) ? byName.get(queue.shift()) : col
+            )
+            if (isEqual(newColumns, columns.value)) return
+            columnOrder.value = newColumns.map((col) => col.name)
+            emit('col-reorder', newColumns)
+            emit('col-update', newColumns)
+        }
+
+        const dragRef = ref<HTMLDivElement>(null)
+        const columnDrag = useColumnDrag({
+            enabled: () => hasDraggableColumns.value,
+            columns: visibleDataColumns,
+            getTable: getTableEl,
+            getCloneHost: () => dragRef.value,
+            onDrop: handleColumnDrop,
+            setDragging: setIsDragging,
+            setClickSuppressed: setResizingInProgress
+        })
+
+        watch(columns, () => {
+            columnOrder.value = null
+        })
+
         const { colList, computedCols, computedColsMap, computedColspan } =
             useTableColumnSelection(
                 props as unknown as DlTableProps,
                 computedPagination,
                 hasSelectionMode,
                 hasDraggableRows,
-                visibleColumnsState
+                visibleColumnsState,
+                () => columnDrag.previewOrder.value || columnOrder.value
             )
+
+        // ---- column geometry ----------------------------------------------
+        const columnLayout = useColumnLayout({
+            tableId: tableUuid,
+            props: props as any,
+            columns: visibleDataColumns,
+            getScrollContainer,
+            getTable: getTableEl,
+            onResizeEnd: (changed: Record<string, number>) => {
+                emit('update:column-widths', {
+                    ...columnLayout.userWidths.value
+                })
+                // deprecated: same payload shape as before, only the resized
+                // column carries a new width
+                emit(
+                    'col-update',
+                    (columns.value as DlTableColumn[]).map((col) =>
+                        col.name in changed
+                            ? { ...col, width: changed[col.name] }
+                            : col
+                    )
+                )
+            },
+            setResizingInProgress
+        })
+
+        // DEBT-05: --dl-table-cell-padding-x overrides the horizontal padding
+        const cellPadding = computed(
+            () => `0 var(--dl-table-cell-padding-x, ${props.columnSpacing})`
+        )
+
+        const bottomRowClasses = computed(() => ({
+            'dl-table__bottom-row': true,
+            'dl-table__bottom-row--sticky': props.stickyBottomRow
+        }))
+
+        const layoutClasses = computed(() => ({
+            'dl-table--scrolled-start': columnLayout.scrolledStart.value,
+            'dl-table--scrolled-end': columnLayout.scrolledEnd.value,
+            'dl-table--resizing': columnLayout.resizing.value !== null
+        }))
+
+        const onHeadPointerDown = (evt: PointerEvent) => {
+            if (columnLayout.onHeadPointerDown(evt)) return
+            columnDrag.onPointerDown(evt)
+        }
+        const onHeadPointerMove = (evt: PointerEvent) => {
+            if (columnDrag.onPointerMove(evt)) return
+            columnLayout.onHeadPointerMove(evt)
+        }
+        const onHeadPointerUp = (evt: PointerEvent) => {
+            columnLayout.onHeadPointerUp(evt)
+            columnDrag.onPointerUp()
+        }
+        const onHeadPointerCancel = () => {
+            columnLayout.onHeadPointerUp()
+            columnDrag.onPointerCancel()
+        }
+        const onHeadPointerLeave = () => columnLayout.onHeadPointerLeave()
+        const onHeadDblClick = (evt: MouseEvent) =>
+            columnLayout.onHeadDblClick(evt)
+
+        // measure only when what the widths depend on changes, never on scroll
+        watch(
+            () => computedCols.value.map((col) => col.name).join('\u0000'),
+            columnLayout.scheduleMeasure,
+            { flush: 'post' }
+        )
+        watch([isDataEmpty, dense], columnLayout.scheduleMeasure, {
+            flush: 'post'
+        })
+        watch(
+            hasVirtScroll,
+            () =>
+                nextTick(() => {
+                    columnLayout.observeContainer()
+                    columnLayout.measure()
+                }),
+            { flush: 'post' }
+        )
 
         const colspanWithActionsRow = computed(() => {
             return computedColspan.value + (showRowActions.value ? 1 : 0)
@@ -1918,8 +2086,14 @@ export default defineComponent({
         }
 
         const prevScroll = ref<DlVirtualScrollEvent>(null)
+        let measuredVirtualRows = false
 
         function onVScroll(info: DlVirtualScrollEvent) {
+            // the first slice of a virtual table renders after mount
+            if (!measuredVirtualRows) {
+                measuredVirtualRows = true
+                columnLayout.scheduleMeasure()
+            }
             if (isEqual(prevScroll.value, info)) {
                 return
             }
@@ -1941,6 +2115,11 @@ export default defineComponent({
             row: DlTableRow,
             pageIndex: number
         ) => {
+            // the delay only exists to tell a click apart from a double click
+            if (!hasListener(vm, 'row-dblclick')) {
+                emit('row-click', evt, row, pageIndex)
+                return
+            }
             clearTimeout(trClickTimeout.value)
             trClickTimeout.value = setTimeout(() => {
                 emit('row-click', evt, row, pageIndex)
@@ -2041,28 +2220,201 @@ export default defineComponent({
         )
 
         const handleSortableEvent = (event: SortableEvent) => {
-            const { oldIndex, newIndex } = event
+            const { oldIndex, newIndex, item, from } = event
+            // SortableJS already moved the node; put it back so Vue applies the
+            // new order itself (keyed diff) instead of remounting the tbody
+            if (item && from && oldIndex !== newIndex) {
+                from.removeChild(item)
+                from.insertBefore(item, from.children[oldIndex] || null)
+            }
             const newRows = insertAtIndex(rows.value, oldIndex, newIndex)
             emit('row-reorder', newRows)
-            nextTick(() => {
-                tbodyKey.value = v4()
-            })
         }
 
+        /** move a visible column (indexes among the visible data columns) */
         const reorderColumns = (sourceIndex: number, targetIndex: number) => {
-            const newColumns = insertAtIndex(
-                columns.value,
-                sourceIndex,
-                targetIndex
-            )
-            if (isEqual(newColumns, columns.value)) return
-            tableKey.value = v4()
-            emit('col-update', newColumns)
+            const order = computedCols.value.map((col) => col.name)
+            const source = order[sourceIndex]
+            const target = order[targetIndex]
+            if (source === undefined || target === undefined) return
+            handleColumnDrop(moveName(order, source, target))
         }
+
+        const resetColumnWidths = (names?: string[]) =>
+            columnLayout.resetUserWidths(names)
 
         const updateColumns = (newColumns: DlTableColumn[]) => {
             emit('col-update', newColumns)
         }
+
+        // ---- A11Y-01 / A11Y-02 / SEL-03 / RESIZE-03 -------------------------
+        /** aria-rowcount/rowindex only matter when not every row is rendered */
+        const exposesRowIndex = computed(
+            () => hasVirtScroll.value || isServerSide.value
+        )
+
+        const tableAttrs = computed(() => {
+            const attrs: Record<string, any> = {}
+            if (props.gridRole) attrs.role = 'grid'
+            if (exposesRowIndex.value) {
+                const total = isServerSide.value
+                    ? computedPagination.value.rowsNumber
+                    : filteredSortedRowsNumber.value
+                attrs['aria-rowcount'] = total + (props.hideHeader ? 0 : 1)
+            }
+            return attrs
+        })
+
+        /** 1-based, the header row is row 1 */
+        const ariaRowIndex = (index: number) =>
+            exposesRowIndex.value
+                ? index + (props.hideHeader ? 1 : 2)
+                : undefined
+
+        // SEL-03: Shift+click on a row checkbox selects the range from the last one
+        let lastCheckedIndex: number = null
+        const onRowCheckbox = (
+            row: DlTableRow,
+            adding: boolean,
+            evt?: MouseEvent
+        ) => {
+            const index = computedRows.value.indexOf(row)
+            if (
+                evt?.shiftKey &&
+                multipleSelection.value &&
+                lastCheckedIndex !== null &&
+                index !== -1
+            ) {
+                const [from, to] = [lastCheckedIndex, index].sort(
+                    (a, b) => a - b
+                )
+                const range = computedRows.value.slice(from, to + 1)
+                updateSelection(
+                    range.map(getRowKey.value as any),
+                    range,
+                    adding,
+                    evt as any
+                )
+            } else {
+                updateSelection(
+                    [getRowKey.value(row)],
+                    [row],
+                    adding,
+                    evt as any
+                )
+            }
+            lastCheckedIndex = index
+        }
+
+        const gridNavigation = useGridNavigation({
+            enabled: () => !props.noGridNavigation,
+            getTable: getTableEl,
+            onToggleRow: (tr) => {
+                if (!hasSelectionMode.value) return
+                const body = tr.parentElement
+                const rowsInBody = Array.from(body.children).filter((el) =>
+                    el.classList.contains('dl-tr')
+                )
+                const row = computedRows.value[rowsInBody.indexOf(tr)]
+                if (row) {
+                    onRowCheckbox(row, !isRowSelected(getRowKey.value(row)))
+                }
+            },
+            onResizeKey: (index, delta) => {
+                if (!props.resizable) return
+                const col = computedCols.value[index]
+                if (!col) return
+                columnLayout.setUserWidth(
+                    col.name,
+                    columnLayout.currentWidth(index) + delta
+                )
+                emit('update:column-widths', {
+                    ...columnLayout.userWidths.value
+                })
+            }
+        })
+        const onGridKeydown = (evt: KeyboardEvent) =>
+            gridNavigation.onKeydown(evt)
+
+        watch(computedRows, () => nextTick(gridNavigation.ensureEntryPoint), {
+            flush: 'post',
+            immediate: true
+        })
+
+        // ---- SETTINGS-01: one serializable table state ----------------------
+        // persistence stays with the consumer; the table only reads and emits it
+        const currentState = computed<DlTableState>(() => {
+            const all = columns.value as DlTableColumn[]
+            const visible = new Set(computedCols.value.map((col) => col.name))
+            return {
+                version: 1,
+                order: columnOrder.value || all.map((col) => col.name),
+                hidden: all
+                    .filter((col) => !visible.has(col.name))
+                    .map((col) => col.name),
+                widths: { ...columnLayout.userWidths.value },
+                sort: {
+                    sortBy: computedPagination.value.sortBy ?? null,
+                    descending: !!computedPagination.value.descending
+                }
+            }
+        })
+
+        let lastState: DlTableState = null
+
+        watch(
+            currentState,
+            (value) => {
+                if (
+                    columnDrag.previewOrder.value ||
+                    isEqual(value, lastState)
+                ) {
+                    return
+                }
+                lastState = value
+                emit('update:state', value)
+            },
+            { deep: true }
+        )
+
+        const applyState = (state: DlTableState) => {
+            if (!state || isEqual(state, lastState)) return
+            const names = (columns.value as DlTableColumn[]).map(
+                (col) => col.name
+            )
+            const known = new Set(names)
+            // unknown column names in a stored state are ignored
+            if (Array.isArray(state.order)) {
+                const order = state.order.filter((name) => known.has(name))
+                columnOrder.value = order.length ? order : null
+            }
+            if (Array.isArray(state.hidden)) {
+                const hidden = new Set(state.hidden)
+                const visible = names.filter((name) => !hidden.has(name))
+                if (visible.length) visibleColumnsState.value = visible
+            }
+            if (state.widths) {
+                columnLayout.resetUserWidths()
+                Object.keys(state.widths)
+                    .filter((name) => known.has(name))
+                    .forEach((name) =>
+                        columnLayout.setUserWidth(name, state.widths[name])
+                    )
+            }
+            if (state.sort) {
+                const { sortBy, descending } = state.sort
+                setPagination(
+                    {
+                        sortBy: sortBy && known.has(sortBy) ? sortBy : null,
+                        descending: !!descending
+                    },
+                    false
+                )
+            }
+            lastState = currentState.value
+        }
+
+        watch(() => props.state, applyState, { immediate: true, deep: true })
 
         // expose public methods and needed computed props
         Object.assign(vm.proxy, {
@@ -2076,14 +2428,14 @@ export default defineComponent({
             lastPage,
             updateColumns,
             reorderColumns,
+            resetColumnWidths,
             setIsResizing,
             setResizingInProgress,
             setIsDragging,
             getIsResizing,
             getResizingInProgress,
             getIsDragging,
-            getVisibleColumnsState,
-            getTableKey
+            getVisibleColumnsState
         })
 
         const slotNames = computed(() => {
@@ -2153,10 +2505,23 @@ export default defineComponent({
             containerStyle,
             isDataEmpty,
             handleSortableEvent,
-            tbodyKey,
-            tableKey,
             uuid: tableUuid,
             rootRef,
+            dragRef,
+            layoutClasses,
+            bottomRowClasses,
+            cellPadding,
+            tableAttrs,
+            ariaRowIndex,
+            onRowCheckbox,
+            onGridKeydown,
+            firstRowIndex,
+            onHeadPointerDown,
+            onHeadPointerMove,
+            onHeadPointerUp,
+            onHeadPointerCancel,
+            onHeadPointerLeave,
+            onHeadDblClick,
             containerClass,
             computedRows,
             computedCols,

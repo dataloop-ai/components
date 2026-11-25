@@ -52,7 +52,9 @@ export const useTablePaginationProps = {
 
 export function useTablePaginationState(
     vm: Record<string, any>,
-    getCellValue: Function
+    getCellValue: Function,
+    /** true when `rows` is only a page of the data (rowsNumber > rows.length) */
+    isServerSide: () => boolean = () => false
 ) {
     const { props, emit } = vm
 
@@ -105,17 +107,34 @@ export function useTablePaginationState(
         return fixPagination(pag)
     })
 
+    let pendingRequest: Record<string, any> = null
+
+    /**
+     * Emits `request` once for changes made in the same tick (e.g. a filter
+     * change that also resets the page).
+     */
     function requestServerInteraction(prop: Record<string, any> = {}) {
-        nextTick(() => {
-            emit('request', {
-                pagination: prop.pagination || computedPagination.value,
-                filter: prop.filter || props.filter,
-                getCellValue
+        const scheduled = pendingRequest !== null
+        pendingRequest = { ...(pendingRequest || {}), ...prop }
+        if (scheduled) return
+        nextTick(() =>
+            nextTick(() => {
+                const request = pendingRequest
+                pendingRequest = null
+                emit('request', {
+                    pagination: request.pagination || computedPagination.value,
+                    filter: request.filter || props.filter,
+                    getCellValue
+                })
             })
-        })
+        )
     }
 
-    function setPagination(val: Record<string, any>) {
+    /**
+     * @param requestServer false for changes coming from the parent, so that
+     * feeding the server response back into `pagination` never re-requests
+     */
+    function setPagination(val: Record<string, any>, requestServer = true) {
         const newPagination = fixPagination({
             ...computedPagination.value,
             ...val
@@ -125,11 +144,25 @@ export function useTablePaginationState(
             return
         }
 
-        if (!props.pagination || !props['update:pagination']) {
-            innerPagination.value = newPagination
-        }
+        // the inner state always follows the user; a controlling parent still
+        // wins because every `pagination` prop change is merged back in
+        innerPagination.value = newPagination
 
         emitChanges(newPagination)
+
+        if (requestServer && isServerSide()) {
+            const { sortBy, descending, page, rowsPerPage, rowsNumber } =
+                newPagination
+            requestServerInteraction({
+                pagination: {
+                    sortBy,
+                    descending,
+                    page,
+                    rowsPerPage,
+                    rowsNumber
+                }
+            })
+        }
     }
 
     const emitChanges = debounce((value: TablePagination) => {

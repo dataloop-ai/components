@@ -6,6 +6,12 @@ export const emits = [
     'virtual-scroll',
     'row-reorder',
     'col-reorder',
+    /** @deprecated use `update:column-widths` (resize) or `col-reorder` (drag) */
+    'col-update',
+    /** name -> width in px of every column the user resized */
+    'update:column-widths',
+    /** DlTableState after a user change of order, visibility, widths or sort */
+    'update:state',
     'row-click',
     'th-click',
     'row-dblclick',

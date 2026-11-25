@@ -4,6 +4,7 @@
         :class="classes"
         :style="styles"
         :data-col-index="colIndex"
+        @pointerenter="onPointerEnter"
     >
         <dl-tooltip v-if="!noTooltip && hasEllipsis">
             <slot />
@@ -16,7 +17,7 @@
 import { defineComponent, getCurrentInstance, computed, ref } from 'vue-demi'
 import { getColor } from '../../../../utils'
 import { DlTooltip } from '../../../shared'
-import { useSizeObserver } from '../../../../hooks/use-size-observer'
+import { useLazyEllipsis } from '../../../../hooks/use-lazy-ellipsis'
 
 export default defineComponent({
     name: 'DlTd',
@@ -46,7 +47,7 @@ export default defineComponent({
 
         const tableTd = ref(null)
 
-        const { hasEllipsis } = useSizeObserver(tableTd)
+        const { hasEllipsis, onPointerEnter } = useLazyEllipsis(tableTd)
 
         const hasOptionalProps = computed(() => {
             return !!props.props
@@ -74,12 +75,6 @@ export default defineComponent({
                     `background: ${getColor(props.bgColor, '')};`
                 )
             }
-            if (vm.vnode.key === 'visibleColumnsSlot') {
-                // todo: this assumes that if a column is actions slot then its always sticky. we need to see if its true
-                styles = styles.concat(
-                    'position: sticky; right: 0; z-index: 101;'
-                )
-            }
             return styles
         })
 
@@ -103,17 +98,22 @@ export default defineComponent({
                 classes: tdClasses,
                 styles: tdStyles,
                 tableTd,
-                hasEllipsis
+                hasEllipsis,
+                onPointerEnter
             }
         }
 
-        const { row } = props.props
-
+        // computed, so a later change of the row or column reaches the cell
         return {
-            classes: tdClasses.value + column.value.tdClass(row),
-            styles: tdStyles.value + column.value.tdStyle(row),
+            classes: computed(
+                () => tdClasses.value + column.value.tdClass(props.props.row)
+            ),
+            styles: computed(
+                () => tdStyles.value + column.value.tdStyle(props.props.row)
+            ),
             tableTd,
-            hasEllipsis
+            hasEllipsis,
+            onPointerEnter
         }
     }
 })

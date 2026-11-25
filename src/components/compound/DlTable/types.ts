@@ -34,18 +34,53 @@ export type DlTableColumn = {
     required?: boolean
     align?: 'right' | 'left' | 'center'
     sortable?: boolean
+    /** header tooltip explaining why the column is not sortable */
+    sortDisabledReason?: string
     sort?: (a: any, b: any, rowA: DlTableRow, rowB: DlTableRow) => number
     sortOrder?: 'asc' | 'des'
+    /**
+     * Where empty (null/undefined) values go when sorting, in both directions.
+     * 'comparator' passes them to `sort` instead. Default: 'last'
+     */
+    nullsPosition?: 'first' | 'last' | 'comparator'
     format?: (val: any, row: DlTableRow) => any
     style?: string | ((row: DlTableRow) => string)
     classes?: string | ((row: DlTableRow) => string)
     headerStyle?: string
     headerClasses?: string
     textTransform?: DlTextTransformOptions
-    width?: number
+    /** number (px) or any CSS length */
+    width?: number | string
+    /** minimum width in px; defaults to the table `columnMinWidth` */
+    minWidth?: number
+    /** maximum width in px; defaults to the table `columnMaxWidth` */
+    maxWidth?: number
+    /**
+     * fixed: keeps its width; constrained (default) / flex: starts at its
+     * content width and takes a share of the spare space
+     */
+    widthMode?: 'fixed' | 'flex' | 'constrained'
+    /** never narrower than other columns when there is spare space */
+    primary?: boolean
+    /** pin to the start or end edge while scrolling horizontally */
+    pinned?: 'start' | 'end'
+    /** hidden unless `visibleColumns` or the table `state` shows it */
+    hiddenByDefault?: boolean
     hint?: string
     sticky?: boolean
     ignoreTooltip?: boolean
+}
+
+/** SETTINGS-01: serializable table settings (store it as JSON) */
+export type DlTableState = {
+    version: 1
+    /** all column names in display order */
+    order: string[]
+    /** names of the hidden columns */
+    hidden: string[]
+    /** user-resized widths in px */
+    widths: Record<string, number>
+    sort: { sortBy: string | null; descending: boolean }
 }
 
 export type DlTableFilterMethod = (
